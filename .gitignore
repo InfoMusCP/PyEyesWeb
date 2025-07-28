@@ -1,0 +1,44 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and cache
+*.log
+*.cache
+*.tmp
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+
+# Test data or large media files
+*.mp4
+*.avi
+*.mov
+*.csv
+*.npy
+*.h5
+
+# Python virtualenv/poetry
+poetry.lock
+*.egg-info/
+
+# Build artifacts
+build/
+dist/
+*.egg
