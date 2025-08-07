@@ -2,9 +2,12 @@ import sys, os
 
 if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.data_models.sliding_window import SlidingWindow
+
 import cv2
 import mediapipe as mp
-import numpy as np
 from core.sync import Synchronization
 
 # Function to extract the y-coordinate of a specified keypoint (e.g., wrist) from the Mediapipe Pose results.
@@ -27,7 +30,8 @@ def main():
 
     # Create an instance of the Synchronization class with specified parameters
     # filter_params can be used for preprocessing time-series data (e.g., applying filters)
-    sync = Synchronization(window_size=30, sensitivity=100, output_phase=True, filter_params=None)
+    sync = Synchronization(sensitivity=100, output_phase=True, filter_params=None)
+    sliding_window = SlidingWindow(max_length=50, n_columns=2)
 
     # Set up video capture using the default webcam (index 0)
     cap = cv2.VideoCapture(0)
@@ -58,7 +62,8 @@ def main():
 
                 if left_wrist_y is not None and right_wrist_y is not None:
                     # Process the extracted wrist coordinates using the Synchronization library
-                    sync.process(left_wrist_y, right_wrist_y)
+                    sliding_window.append([left_wrist_y, right_wrist_y])
+                    sync(sliding_window)
 
             # Display the processed video frame in a window named 'MediaPipe Pose'
             cv2.imshow('MediaPipe Pose', frame)

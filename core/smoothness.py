@@ -3,15 +3,13 @@ from collections import deque
 from scipy.signal import savgol_filter
 from scipy.fft import fft, fftfreq
 
+from core.data_models.sliding_window import SlidingWindow
+
+
 class Smoothness:
-    def __init__(self, window_size=50, rate_hz=50.0, use_filter=True):
-        self.window_size = window_size
+    def __init__(self, rate_hz=50.0, use_filter=True):
         self.rate_hz = rate_hz
         self.use_filter = use_filter
-        self.data = deque(maxlen=window_size)
-
-    def add_data(self, point):
-        self.data.append(point)
 
     def _filter_signal(self, signal):
         """Apply Savitzky-Golay filter if enabled and enough data."""
@@ -47,12 +45,13 @@ class Smoothness:
         jerk = np.diff(signal) / dt
         return np.sqrt(np.mean(jerk ** 2))
 
-    def process(self):
-        if len(self.data) < 5:
+    def __call__(self, sliding_window: SlidingWindow):
+        if len(sliding_window) < 5:
             return None, None
 
-        signal = np.array(self.data, dtype=np.float64)
-        filtered = self._filter_signal(signal)
+        signal, _ = sliding_window.to_array()
+
+        filtered = self._filter_signal(signal.squeeze())
 
         max_val = np.max(np.abs(filtered))
         normalized = filtered / max_val if max_val != 0 else filtered

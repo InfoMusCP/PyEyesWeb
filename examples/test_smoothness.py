@@ -3,6 +3,9 @@ import sys, os
 # Add project root to import path
 if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.data_models.sliding_window import SlidingWindow
 
 import cv2
 import mediapipe as mp
@@ -23,7 +26,8 @@ def main():
     pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
     # Enable filter to stabilize signal
-    smoother = Smoothness(window_size=50, rate_hz=30, use_filter=True)
+    smoother = Smoothness(rate_hz=30, use_filter=True)
+    sliding_window = SlidingWindow(50, 1)
     cap = cv2.VideoCapture(0)
 
     LEFT_WRIST_IDX = 15
@@ -55,8 +59,8 @@ def main():
 
                         # Clamp unrealistic velocity spikes (in pixels/sec)
                         if velocity < 1000:
-                            smoother.add_data(velocity)
-                            sparc, jerk = smoother.process()
+                            sliding_window.append([velocity])
+                            sparc, jerk = smoother(sliding_window)
                             if sparc is not None:
                                 print(f"SPARC: {sparc:.3f}, Jerk RMS: {jerk:.1f}")
 
