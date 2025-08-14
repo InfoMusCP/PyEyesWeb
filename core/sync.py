@@ -1,12 +1,13 @@
 import sys, os
 
-from core.data_models.sliding_window import SlidingWindow
-
 if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
+
 import numpy as np
 from collections import deque
 from scipy.signal import hilbert, butter, filtfilt
+
+from core.data_models.sliding_window import SlidingWindow
 
 
 class Synchronization:

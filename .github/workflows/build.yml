@@ -1,0 +1,53 @@
+name: Build Library
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Python Library
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: [3.11]
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      # 3. Upgrade pip & install build tools
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip setuptools wheel build
+
+      # 4. Build the library into a wheel
+      - name: Build library wheel
+        run: |
+          python -m build --wheel --outdir ./demos/build
+
+      # 5. Install the library into a common cross-platform folder
+      - name: Install library into Lib folder
+        run: |
+          TARGET_DIR="./demos/Lib"
+          python -m pip install --upgrade --target "$TARGET_DIR" .
+
+      # 6. Push the installed library to the repository
+      - name: Commit Lib folder
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ./demos/Lib
+          git commit -m "Add built library"
+          git push

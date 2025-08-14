@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=78.1.1", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cp-testing-package"
+version = "0.0.1-alpha"
+#authors = [
+#    {name = "Your Name", email = "your.email@example.com"},
+#]
+#maintainers = [
+#    {name = "Your Name", email = "your.email@example.com"},
+#]
+#description = "A short description of your package"
+#readme = "README.md"
+#license = {file = "LICENSE"}
+#requires-python = ">=3.8"
+#classifiers = [
+#    "Development Status :: 3 - Alpha",
+#    "Intended Audience :: Developers",
+#    "License :: OSI Approved :: MIT License",
+#    "Operating System :: OS Independent",
+#    "Programming Language :: Python :: 3",
+#    "Programming Language :: Python :: 3.8",
+#    "Programming Language :: Python :: 3.9",
+#    "Programming Language :: Python :: 3.10",
+#    "Programming Language :: Python :: 3.11",
+#    "Programming Language :: Python :: 3.12",
+#]
+#keywords = ["keyword1", "keyword2", "keyword3"]
+dependencies = [
+    "numpy==1.24.1",
+    "scipy==1.15.0"
+
+]
+
+[project.optional-dependencies]
+dev = [
+    "build==1.3.0",
+    "mediapipe==0.10.21",
+    "setuptools==78.1.1",
+    "wheel==0.45.1"
+]
+#docs = [
+#    "sphinx>=4.0",
+#    "sphinx-rtd-theme>=1.0",
+#]
+#test = [
+#    "pytest>=6.0",
+#    "pytest-cov>=2.0",
+#    "tox>=3.0",
+#]
+
+[project.urls]
+#"Homepage" = "https://github.com/yourusername/your-package-name"
+#"Bug Reports" = "https://github.com/yourusername/your-package-name/issues"
+#"Source" = "https://github.com/yourusername/your-package-name"
+#"Documentation" = "https://your-package-name.readthedocs.io/"
+
+[project.scripts]
+# your-cli-command = "your_package.cli:main"
+
+[tool.setuptools]
+[tool.setuptools.packages.find]
+where = ["."]
