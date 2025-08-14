@@ -44,7 +44,7 @@ jobs:
 
       # 6. Push the installed library to the repository
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: library-build-${{ matrix.os }}
           path: |
