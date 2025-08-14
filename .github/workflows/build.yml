@@ -40,8 +40,7 @@ jobs:
       # 5. Install the library into a common cross-platform folder
       - name: Install library into Lib folder
         run: |
-          TARGET_DIR="./demos/Lib"
-          python -m pip install --upgrade --target "$TARGET_DIR" .
+          python -m pip install --upgrade --target ./demos/Lib .
 
       # 6. Push the installed library to the repository
       - name: Commit Lib folder
