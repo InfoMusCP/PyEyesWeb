@@ -43,10 +43,10 @@ jobs:
           python -m pip install --upgrade --target ./demos/Lib .
 
       # 6. Push the installed library to the repository
-      - name: Commit Lib folder
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add ./demos/Lib
-          git commit -m "Add built library"
-          git push
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: library-build-${{ matrix.os }}
+          path: |
+            ./demos/build
+            ./demos/Lib
