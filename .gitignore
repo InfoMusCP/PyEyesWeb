@@ -42,3 +42,6 @@ poetry.lock
 build/
 dist/
 *.egg
+
+demos/Backup
+demos/Lib

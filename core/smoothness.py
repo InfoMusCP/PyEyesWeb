@@ -1,5 +1,4 @@
 import numpy as np
-from collections import deque
 from scipy.signal import savgol_filter
 from scipy.fft import fft, fftfreq
 
