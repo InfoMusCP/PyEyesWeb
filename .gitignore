@@ -44,3 +44,4 @@ dist/
 *.egg
 
 demos/Backup
+demos/Lib

@@ -1,4 +1,0 @@
-build
-core
-demos
-examples
