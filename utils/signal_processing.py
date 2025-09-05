@@ -30,3 +30,21 @@ def compute_hilbert_phases(sig):
     phase2 = np.angle(analytic_signal2)
     
     return phase1, phase2
+
+
+def apply_savgol_filter(signal, rate_hz=50.0):
+    """Apply Savitzky-Golay filter if enough data is available."""
+    if len(signal) < 5:
+        return np.array(signal)
+
+    N = len(signal)
+    polyorder = 3
+    window_length = min(N if N % 2 == 1 else N - 1, 11)
+    if window_length <= polyorder:
+        return np.array(signal)
+
+    try:
+        from scipy.signal import savgol_filter
+        return savgol_filter(signal, window_length=window_length, polyorder=polyorder)
+    except Exception:
+        return np.array(signal)
