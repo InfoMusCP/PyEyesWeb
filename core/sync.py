@@ -52,8 +52,7 @@ class Synchronization:
         sig = self.bandpass_filter(sig)
 
         # Remove the mean from each signal to center the data.
-        sig[:, 0] -= np.mean(sig[:, 0])
-        sig[:, 1] -= np.mean(sig[:, 1])
+        sig = sig - np.mean(sig, axis=0, keepdims=True)
 
         # Apply the Hilbert Transform to obtain the analytic signal, which provides both amplitude and phase information.
         analytic_signal1 = hilbert(sig[:, 0])
@@ -66,19 +65,15 @@ class Synchronization:
         # Compute the phase difference between the two signals.
         phase_diff = phase1 - phase2
 
-        # Ensure the phase difference is wrapped between -π and π.
-        phase_diff = np.arctan2(np.sin(phase_diff), np.cos(phase_diff))
-
         # Convert the phase difference to a complex exponential and compute the Phase Locking Value (PLV).
         phase_diff_exp = np.exp(1j * phase_diff)
-        plv = np.abs(np.sum(phase_diff_exp)) / len(signals)  # PLV is the magnitude of the average phase difference.
+        plv = np.abs(np.mean(phase_diff_exp))  # PLV is the magnitude of the average phase difference.
         self.plv_history.append(plv)  # Store the PLV in the history buffer.
 
         phase_status = None
         if self.output_phase:
-            # Compute the Mean Vector Length (MVL) to determine phase synchronization status.
-            mvl = np.abs(np.mean(phase_diff_exp))
-            phase_status = "IN PHASE" if mvl > 0.7 else "OUT OF PHASE"
+            # Use PLV (which is the same as MVL) to determine phase synchronization status.
+            phase_status = "IN PHASE" if plv > 0.7 else "OUT OF PHASE"
 
         return plv, phase_status  # Return the computed PLV and phase status.
 
