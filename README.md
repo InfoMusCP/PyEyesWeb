@@ -145,19 +145,10 @@ learning_progress = coordination_tracker.track_skill_acquisition(
 
 InfoMove implements peer-reviewed computational methods from:
 - Motor control and biomechanics literature
-- Signal processing and time series analysis
-- Multivariate statistics and machine learning
+- Signal processing, multivariate stats and time series analysis
 - Computational geometry and spatial analysis
 
 We are working on having parameter validation and numerical stability checks for all algorithms in this repository.
-
-## Contributing
-
-Contributions from the movement science research community are welcome. Please review:
-
-- [Contributing Guidelines](docs/contributing.md)
-- [Development Setup](docs/development.md)
-- [Research Integration](docs/research/contributing.md)
 
 ## License
 
