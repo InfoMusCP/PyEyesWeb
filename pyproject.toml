@@ -3,8 +3,50 @@ requires = ["setuptools>=78.1.1", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cp-testing-package"
+name = "pyeyesweb"
 version = "0.0.1-alpha"
+requires-python = ">=3.8"
+authors = [
+    {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
+]
+maintainers = [
+    {name = "Nicola Corbellini", email = "nicola.corbellini@edu.unige.it"},
+    {name = "Gabriele Romano", email = "gabriele.romano@edu.unige.it"},
+    {name = "Sanket Rajeev Sabharwal", email = "sabharwal@edu.unige.it"},
+    {name = "Simone Ghisio", email = "simoneghisio@gmail.com"},
+    {name = "Paolo Coletta", email = "paolocoletta@gmail.com"}
+]
+description = """PyEyesWeb is a research toolkit for extracting quantitative features from human movement data.
+It offers computational methods to analyze different qualities of movement."""
+readme = "README.md"
+# license
+# license-files
+keywords = [
+    "movement analysis",
+    "human movement",
+    "motor control",
+    "biomechanics",
+    "kinematics",
+    "time series",
+    "synchronization",
+    "computational movement",
+    "quantitative movement"
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+#    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
 
 dependencies = [
     "numpy==1.24.1",
@@ -19,6 +61,11 @@ dev = [
     "setuptools==78.1.1",
     "wheel==0.45.1"
 ]
+
+[project.urls]
+Documentation = "https://infomuscp.github.io/PyEyesWeb/"
+"Casa Paganini" = "http://www.casapaganini.org/index_eng.php"
+"Resilence EU Project" = "https://resilence.eu/"
 
 [tool.setuptools]
 [tool.setuptools.packages.find]
