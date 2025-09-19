@@ -1,7 +1,7 @@
-# InfoMove
+# PyEyesWeb
 ## Quantitative movement analysis toolkit
 
-InfoMove is a research toolkit for extracting quantitative features from human movement data. It offers computational methods to analyze different qualities of movement. The repository is still in development, with the goal of creating an easy-to-use library for extracting movement qualities from raw motion data.
+PyEyesWeb is a research toolkit for extracting quantitative features from human movement data. It offers computational methods to analyze different qualities of movement. The repository is still in development, with the goal of creating an easy-to-use library for extracting movement qualities from raw motion data.
 
 ## Overview
 
