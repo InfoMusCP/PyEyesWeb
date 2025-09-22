@@ -69,3 +69,4 @@ Documentation = "https://infomuscp.github.io/PyEyesWeb/"
 [tool.setuptools]
 [tool.setuptools.packages.find]
 where = ["core"]
+
