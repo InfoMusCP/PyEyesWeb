@@ -1,6 +1,6 @@
 # Module Documentation
 
-At the moment, InfoMove provides four core modules for movement analysis. Each module addresses specific aspects of movement quantification with research-validated methods.
+At the moment, PyEyesWeb provides four core modules for movement analysis. Each module addresses specific aspects of movement quantification with research-validated methods.
 
 ## Core Modules Overview
 
