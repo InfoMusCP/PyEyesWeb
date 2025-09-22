@@ -5,7 +5,7 @@ PyEyesWeb is a research toolkit for extracting quantitative features from human 
 
 ## Overview
 
-Movement analysis involves extracting meaningful features from high-dimensional spatiotemporal data. InfoMove provides computational methods to quantify movement characteristics at multiple levels, from basic kinematics to complex coordination patterns.
+Movement analysis involves extracting meaningful features from high-dimensional spatiotemporal data. PyEyesWeb provides computational methods to quantify movement characteristics at multiple levels, from basic kinematics to complex coordination patterns.
 
 At the moment, this toolkit addresses four key movement qualities:
 - **Smoothness**: Measuring smoothness and control with SPARC and jerk-based metrics
@@ -16,8 +16,8 @@ At the moment, this toolkit addresses four key movement qualities:
 ## Installation
 
 ```bash
-git clone https://github.com/InfoMusCP/InfoMove.git
-cd InfoMove
+git clone https://github.com/InfoMusCP/PyEyesWeb.git
+cd PyEyesWeb
 pip install -e .
 
 # For development
@@ -143,7 +143,7 @@ learning_progress = coordination_tracker.track_skill_acquisition(
 
 ## Methodological Foundation
 
-InfoMove implements peer-reviewed computational methods from:
+PyEyesWeb implements peer-reviewed computational methods from:
 - Motor control and biomechanics literature
 - Signal processing, multivariate stats and time series analysis
 - Computational geometry and spatial analysis

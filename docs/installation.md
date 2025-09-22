@@ -2,7 +2,7 @@
 
 ## Requirements
 
-InfoMove requires Python 3.8+ and the following dependencies:
+PyEyesWeb requires Python 3.8+ and the following dependencies:
 
 ### Core Dependencies
 - NumPy 1.24.1
@@ -18,8 +18,8 @@ InfoMove requires Python 3.8+ and the following dependencies:
 ### Standard Installation
 
 ```bash
-git clone https://github.com/your-org/InfoMove.git
-cd InfoMove
+git clone https://github.com/your-org/PyEyesWeb.git
+cd PyEyesWeb
 pip install -e .
 ```
 
@@ -28,8 +28,8 @@ pip install -e .
 For contributors and researchers who need development tools:
 
 ```bash
-git clone https://github.com/your-org/InfoMove.git
-cd InfoMove
+git clone https://github.com/your-org/PyEyesWeb.git
+cd PyEyesWeb
 pip install -e .[dev]
 ```
 
@@ -38,8 +38,8 @@ pip install -e .[dev]
 Recommended for research environments:
 
 ```bash
-python -m venv infomove-env
-source infomove-env/bin/activate  # On Windows: infomove-env\Scripts\activate
+python -m venv pyeyesweb-env
+source pyeyesweb-env/bin/activate  # On Windows: pyeyesweb-env\Scripts\activate
 pip install -e .
 ```
 
@@ -50,7 +50,7 @@ Test your installation:
 ```python
 import core
 from core import Smoothness, BilateralSymmetryAnalyzer
-print("InfoMove successfully installed")
+print("PyEyesWeb successfully installed")
 ```
 
 ## Common Issues
