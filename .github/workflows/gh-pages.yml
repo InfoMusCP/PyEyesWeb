@@ -1,0 +1,40 @@
+name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout repo (code + docs)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # 3. Install docs dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 4. Build MkDocs
+      - name: Build MkDocs site
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: mkdocs build
+
+      # 5. Deploy
+      - name: Deploy to GitHub Pages 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          force_orphan: true
+          enable_jekyll: false
