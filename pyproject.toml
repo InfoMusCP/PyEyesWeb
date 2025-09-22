@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyeyesweb"
-version = "0.0.1-alpha"
+version = "0.0.1a0"
 requires-python = ">=3.8"
 authors = [
     {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
@@ -17,7 +17,7 @@ maintainers = [
     {name = "Paolo Coletta", email = "paolocoletta@gmail.com"}
 ]
 description = """PyEyesWeb is a research toolkit for extracting quantitative features from human movement data.
-It offers computational methods to analyze different qualities of movement."""
+It offers computational methods to analyze different expressive qualities of movement."""
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE.md"]
@@ -39,7 +39,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering :: Human Machine Interfaces",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -69,4 +68,5 @@ Documentation = "https://infomuscp.github.io/PyEyesWeb/"
 
 [tool.setuptools]
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["core"]
+

@@ -3,12 +3,11 @@ import sys, os
 if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 
-import numpy as np
 from collections import deque
 
 from core.data_models.sliding_window import SlidingWindow
-from utils.signal_processing import bandpass_filter, compute_hilbert_phases
-from utils.math_utils import compute_phase_locking_value, center_signals
+from core.utils.signal_processing import bandpass_filter, compute_hilbert_phases
+from core.utils.math_utils import compute_phase_locking_value, center_signals
 
 
 class Synchronization:
