@@ -1,0 +1,67 @@
+site_name: PyEyesWeb
+
+plugins:
+  - gen-files:
+      scripts:
+        - gen_pages.py
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: numpy
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+
+markdown_extensions:
+  - admonition
+  - footnotes
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.snippets
+  - pymdownx.keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+theme:
+  name: material
+  logo: assets/eyesweb-logo.png
+  favicon: assets/favicon-32x32.png
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.instant
+#    - navigation.expand
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: black
+      accent: red
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - Modules:
+      - Bilateral Symmetry: modules/bilateral_symmetry.md
+      - Contraction Expansion: modules/contraction_expansion.md
+      - Smoothness: modules/smoothness.md
+      - Synchronization: modules/synchronization.md
+      - TSV Reader: modules/tsv_reader.md
+  - API: API/
+  - Integrations: integrations.md
