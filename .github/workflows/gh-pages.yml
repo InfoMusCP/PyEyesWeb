@@ -25,6 +25,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[dev]   # installs mkdocs and all extras
 
-      # 4. Push to gh-pages branch
-      - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force
+      # 4. Build doc
+      - name: Build MkDocs site
+        env:
+          PYTHONPATH: ${{ github.workspace }}/PyEyesWeb
+        run: mkdocs build --verbose
+
+      # 5. Push to gh-pages
+      - name: Deploy to GitHub Pages 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # no PAT needed
+          publish_dir: ./site
+          publish_branch: gh-pages
+          force_orphan: true
