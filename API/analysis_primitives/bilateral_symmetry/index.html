@@ -1,0 +1,1994 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../../modules/tsv_reader/">
+      
+      
+        <link rel="next" href="../../data_models/sliding_window/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon-32x32.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>bilateral_symmetry - PyEyesWeb</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="PyEyesWeb" class="md-header__button md-logo" aria-label="PyEyesWeb" data-md-component="logo">
+      
+  <img src="../../../assets/eyesweb-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PyEyesWeb
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              bilateral_symmetry
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../getting_started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../modules/bilateral_symmetry/" class="md-tabs__link">
+          
+  
+  
+  Modules
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  API
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../integrations/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Integrations
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="PyEyesWeb" class="md-nav__button md-logo" aria-label="PyEyesWeb" data-md-component="logo">
+      
+  <img src="../../../assets/eyesweb-logo.png" alt="logo">
+
+    </a>
+    PyEyesWeb
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Modules
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Modules
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/bilateral_symmetry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Bilateral Symmetry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/contraction_expansion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contraction Expansion
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/smoothness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Smoothness
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/synchronization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Synchronization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/tsv_reader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TSV Reader
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    analysis_primitives
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            analysis_primitives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    bilateral_symmetry
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    bilateral_symmetry
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      bilateral_symmetry
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      BilateralSymmetryAnalyzer
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BilateralSymmetryAnalyzer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer.analyze_frame" class="md-nav__link">
+    <span class="md-ellipsis">
+      analyze_frame
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    data_models
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            data_models
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/sliding_window/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    sliding_window
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    low_level
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            low_level
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../low_level/contraction_expansion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    contraction_expansion
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../low_level/equilibrium/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    equilibrium
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    mid_level
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            mid_level
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mid_level/smoothness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    smoothness
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    sync
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    utils
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            utils
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/math_utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    math_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/signal_processing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    signal_processing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/tsv_reader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    tsv_reader
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../integrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      bilateral_symmetry
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      BilateralSymmetryAnalyzer
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BilateralSymmetryAnalyzer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer.analyze_frame" class="md-nav__link">
+    <span class="md-ellipsis">
+      analyze_frame
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>bilateral_symmetry</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="pyeyesweb.analysis_primitives.bilateral_symmetry"></a>
+    <div class="doc doc-contents first">
+
+        <p>Bilateral Symmetry Analysis for Motion Capture Data</p>
+<p>Below are a few research paper references:
+1. "Movement Symmetry Assessment by Bilateral Motion Data Fusion" (2018)
+   Link: https://pubmed.ncbi.nlm.nih.gov/29993408/
+   Provides Canonical Correlation Analysis (CCA) methodology and introduces bilateral motion data fusion concepts</p>
+<ol>
+<li>
+<p>"Symmetry Analysis of Manual Wheelchair Propulsion Using Motion Capture Techniques" (2022)
+   Link: https://www.mdpi.com/2073-8994/14/6/1164/htm
+   Provides coefficient of variation calculation method and shows marker-based symmetry comparison approach</p>
+</li>
+<li>
+<p>General bilateral coordination research concepts from multiple biomechanics papers
+   Phase synchronization using Hilbert transform and bilateral symmetry index calculations</p>
+</li>
+</ol>
+<p>Note: Specific implementation details are adapted for a real-time MoCap analysis. Must be tested by us at CP.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer" class="doc doc-heading">
+            <code>BilateralSymmetryAnalyzer</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Real-time bilateral symmetry analysis for motion capture data.</p>
+<p>Based on research methods from bilateral motion data fusion and 
+wheelchair propulsion symmetry analysis papers.</p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>pyeyesweb/analysis_primitives/bilateral_symmetry.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BilateralSymmetryAnalyzer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Real-time bilateral symmetry analysis for motion capture data.</span>
+
+<span class="sd">    Based on research methods from bilateral motion data fusion and </span>
+<span class="sd">    wheelchair propulsion symmetry analysis papers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">joint_pairs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize bilateral symmetry analyzer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window_size: Number of frames for sliding window analysis</span>
+<span class="sd">            joint_pairs: List of tuples defining bilateral joint pairs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+
+        <span class="c1"># Default joint pairs for standard MoCap setup</span>
+        <span class="k">if</span> <span class="n">joint_pairs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">joint_pairs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>   <span class="c1"># left_shoulder, right_shoulder</span>
+                <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>   <span class="c1"># left_elbow, right_elbow  </span>
+                <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>   <span class="c1"># left_wrist, right_wrist</span>
+                <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="c1"># left_hip, right_hip</span>
+                <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="c1"># left_knee, right_knee</span>
+                <span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="c1"># left_ankle, right_ankle</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">joint_pairs</span> <span class="o">=</span> <span class="n">joint_pairs</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_bilateral_symmetry_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_data</span><span class="p">,</span> <span class="n">right_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute Bilateral Symmetry Index based on research methodology.</span>
+
+<span class="sd">        Inspired by wheelchair propulsion research paper method:</span>
+<span class="sd">        Compares mirrored bilateral movements and calculates relative differences.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            left_data: (n_frames, 3) array of left joint positions</span>
+<span class="sd">            right_data: (n_frames, 3) array of right joint positions</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Symmetry index (0-1, where 1 is perfect symmetry)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Mirror right side data across sagittal plane (flip x-coordinate)</span>
+        <span class="n">right_mirrored</span> <span class="o">=</span> <span class="n">right_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">right_mirrored</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Flip x-axis for bilateral comparison</span>
+
+        <span class="c1"># Calculate relative differences (from wheelchair research)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">left_data</span> <span class="o">-</span> <span class="n">right_mirrored</span><span class="p">)</span>
+        <span class="n">sum_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">left_data</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">right_mirrored</span><span class="p">)</span>
+
+        <span class="c1"># Avoid division by zero</span>
+        <span class="n">sum_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sum_val</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">sum_val</span><span class="p">)</span>
+
+        <span class="c1"># Relative asymmetry percentage</span>
+        <span class="n">relative_asymmetry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff</span> <span class="o">/</span> <span class="n">sum_val</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+        <span class="c1"># Convert to symmetry index (100% asymmetry = 0 symmetry)</span>
+        <span class="n">symmetry_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">relative_asymmetry</span> <span class="o">/</span> <span class="mi">100</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">symmetry_index</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_phase_synchronization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_signal</span><span class="p">,</span> <span class="n">right_signal</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute phase synchronization using Hilbert Transform.</span>
+
+<span class="sd">        Based on general biomechanics research for bilateral coordination.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            left_signal: 1D array of left limb signal (e.g., vertical displacement)</span>
+<span class="sd">            right_signal: 1D array of right limb signal</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Phase locking value (0-1, where 1 is perfect synchronization)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_signal</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>  <span class="c1"># Need minimum data for Hilbert</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Extract phases using Hilbert transform</span>
+            <span class="n">left_analytic</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">left_signal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">left_signal</span><span class="p">))</span>
+            <span class="n">right_analytic</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">right_signal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">right_signal</span><span class="p">))</span>
+
+            <span class="n">left_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">left_analytic</span><span class="p">)</span>
+            <span class="n">right_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">right_analytic</span><span class="p">)</span>
+
+            <span class="c1"># Compute Phase Locking Value (PLV)</span>
+            <span class="n">phase_diff</span> <span class="o">=</span> <span class="n">left_phase</span> <span class="o">-</span> <span class="n">right_phase</span>
+            <span class="n">plv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phase_diff</span><span class="p">)))</span>
+
+            <span class="k">return</span> <span class="n">plv</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cca_correlation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_data</span><span class="p">,</span> <span class="n">right_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute canonical correlation between bilateral data.</span>
+
+<span class="sd">        Based on &quot;Movement Symmetry Assessment by Bilateral Motion Data Fusion&quot; paper</span>
+<span class="sd">        methodology using Canonical Correlation Analysis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            left_data: (n_frames, 3) left joint data</span>
+<span class="sd">            right_data: (n_frames, 3) right joint data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Canonical correlation (0-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">left_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>  <span class="c1"># Need minimum samples for CCA</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Flatten spatial coordinates for CCA analysis</span>
+            <span class="n">left_features</span> <span class="o">=</span> <span class="n">left_data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">left_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">right_features</span> <span class="o">=</span> <span class="n">right_data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">right_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Apply CCA with single component</span>
+            <span class="n">cca</span> <span class="o">=</span> <span class="n">CCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">left_c</span><span class="p">,</span> <span class="n">right_c</span> <span class="o">=</span> <span class="n">cca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">left_features</span><span class="p">,</span> <span class="n">right_features</span><span class="p">)</span>
+
+            <span class="c1"># Compute canonical correlation</span>
+            <span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">left_c</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">right_c</span><span class="o">.</span><span class="n">flatten</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Handle NaN cases</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">correlation</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+
+            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>  <span class="c1"># Take absolute value</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyze_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mocap_frame</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyze single frame of MoCap data for bilateral symmetry.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mocap_frame: (n_joints, 3) array of joint positions for one frame</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Symmetry metrics for current frame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mocap_frame</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>  <span class="c1"># Need minimum history for analysis</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;overall_symmetry&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s1">&#39;phase_sync&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s1">&#39;cca_correlation&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s1">&#39;joint_symmetries&#39;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+
+        <span class="c1"># Convert history to array for analysis</span>
+        <span class="n">history_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">))</span>  <span class="c1"># (n_frames, n_joints, 3)</span>
+
+        <span class="n">joint_symmetries</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">symmetry_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">phase_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cca_scores</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Analyze each bilateral joint pair</span>
+        <span class="k">for</span> <span class="n">left_idx</span><span class="p">,</span> <span class="n">right_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_pairs</span><span class="p">:</span>
+            <span class="n">left_joint_data</span> <span class="o">=</span> <span class="n">history_array</span><span class="p">[:,</span> <span class="n">left_idx</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">right_joint_data</span> <span class="o">=</span> <span class="n">history_array</span><span class="p">[:,</span> <span class="n">right_idx</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="c1"># Compute multiple symmetry metrics</span>
+            <span class="n">bsi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_bilateral_symmetry_index</span><span class="p">(</span><span class="n">left_joint_data</span><span class="p">,</span> <span class="n">right_joint_data</span><span class="p">)</span>
+
+            <span class="c1"># Use vertical movement for phase analysis (most relevant for gait)</span>
+            <span class="n">phase_sync</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_phase_synchronization</span><span class="p">(</span>
+                <span class="n">left_joint_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">right_joint_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">cca_corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cca_correlation</span><span class="p">(</span><span class="n">left_joint_data</span><span class="p">,</span> <span class="n">right_joint_data</span><span class="p">)</span>
+
+            <span class="n">joint_pair_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;joint_</span><span class="si">{</span><span class="n">left_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">right_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">joint_symmetries</span><span class="p">[</span><span class="n">joint_pair_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;bilateral_symmetry_index&#39;</span><span class="p">:</span> <span class="n">bsi</span><span class="p">,</span>
+                <span class="s1">&#39;phase_synchronization&#39;</span><span class="p">:</span> <span class="n">phase_sync</span><span class="p">,</span>
+                <span class="s1">&#39;cca_correlation&#39;</span><span class="p">:</span> <span class="n">cca_corr</span>
+            <span class="p">}</span>
+
+            <span class="n">symmetry_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bsi</span><span class="p">)</span>
+            <span class="n">phase_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phase_sync</span><span class="p">)</span>
+            <span class="n">cca_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cca_corr</span><span class="p">)</span>
+
+        <span class="c1"># Compute overall metrics</span>
+        <span class="n">overall_symmetry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">symmetry_scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">symmetry_scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">overall_phase_sync</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">phase_scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">phase_scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">overall_cca</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cca_scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">cca_scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;overall_symmetry&#39;</span><span class="p">:</span> <span class="n">overall_symmetry</span><span class="p">,</span>
+            <span class="s1">&#39;phase_sync&#39;</span><span class="p">:</span> <span class="n">overall_phase_sync</span><span class="p">,</span>
+            <span class="s1">&#39;cca_correlation&#39;</span><span class="p">:</span> <span class="n">overall_cca</span><span class="p">,</span>
+            <span class="s1">&#39;joint_symmetries&#39;</span><span class="p">:</span> <span class="n">joint_symmetries</span>
+        <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">joint_pairs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Initialize bilateral symmetry analyzer.</p>
+<p>Args:
+    window_size: Number of frames for sliding window analysis
+    joint_pairs: List of tuples defining bilateral joint pairs</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>pyeyesweb/analysis_primitives/bilateral_symmetry.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">joint_pairs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize bilateral symmetry analyzer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        window_size: Number of frames for sliding window analysis</span>
+<span class="sd">        joint_pairs: List of tuples defining bilateral joint pairs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+
+    <span class="c1"># Default joint pairs for standard MoCap setup</span>
+    <span class="k">if</span> <span class="n">joint_pairs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint_pairs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>   <span class="c1"># left_shoulder, right_shoulder</span>
+            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>   <span class="c1"># left_elbow, right_elbow  </span>
+            <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>   <span class="c1"># left_wrist, right_wrist</span>
+            <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="c1"># left_hip, right_hip</span>
+            <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="c1"># left_knee, right_knee</span>
+            <span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="c1"># left_ankle, right_ankle</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint_pairs</span> <span class="o">=</span> <span class="n">joint_pairs</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pyeyesweb.analysis_primitives.bilateral_symmetry.BilateralSymmetryAnalyzer.analyze_frame" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">analyze_frame</span><span class="p">(</span><span class="n">mocap_frame</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Analyze single frame of MoCap data for bilateral symmetry.</p>
+<p>Args:
+    mocap_frame: (n_joints, 3) array of joint positions for one frame</p>
+<p>Returns:
+    dict: Symmetry metrics for current frame</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>pyeyesweb/analysis_primitives/bilateral_symmetry.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">analyze_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mocap_frame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analyze single frame of MoCap data for bilateral symmetry.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mocap_frame: (n_joints, 3) array of joint positions for one frame</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Symmetry metrics for current frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mocap_frame</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>  <span class="c1"># Need minimum history for analysis</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;overall_symmetry&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s1">&#39;phase_sync&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s1">&#39;cca_correlation&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s1">&#39;joint_symmetries&#39;</span><span class="p">:</span> <span class="p">{}</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Convert history to array for analysis</span>
+    <span class="n">history_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">))</span>  <span class="c1"># (n_frames, n_joints, 3)</span>
+
+    <span class="n">joint_symmetries</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">symmetry_scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">phase_scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cca_scores</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Analyze each bilateral joint pair</span>
+    <span class="k">for</span> <span class="n">left_idx</span><span class="p">,</span> <span class="n">right_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_pairs</span><span class="p">:</span>
+        <span class="n">left_joint_data</span> <span class="o">=</span> <span class="n">history_array</span><span class="p">[:,</span> <span class="n">left_idx</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">right_joint_data</span> <span class="o">=</span> <span class="n">history_array</span><span class="p">[:,</span> <span class="n">right_idx</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Compute multiple symmetry metrics</span>
+        <span class="n">bsi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_bilateral_symmetry_index</span><span class="p">(</span><span class="n">left_joint_data</span><span class="p">,</span> <span class="n">right_joint_data</span><span class="p">)</span>
+
+        <span class="c1"># Use vertical movement for phase analysis (most relevant for gait)</span>
+        <span class="n">phase_sync</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_phase_synchronization</span><span class="p">(</span>
+            <span class="n">left_joint_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">right_joint_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">cca_corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cca_correlation</span><span class="p">(</span><span class="n">left_joint_data</span><span class="p">,</span> <span class="n">right_joint_data</span><span class="p">)</span>
+
+        <span class="n">joint_pair_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;joint_</span><span class="si">{</span><span class="n">left_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">right_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">joint_symmetries</span><span class="p">[</span><span class="n">joint_pair_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bilateral_symmetry_index&#39;</span><span class="p">:</span> <span class="n">bsi</span><span class="p">,</span>
+            <span class="s1">&#39;phase_synchronization&#39;</span><span class="p">:</span> <span class="n">phase_sync</span><span class="p">,</span>
+            <span class="s1">&#39;cca_correlation&#39;</span><span class="p">:</span> <span class="n">cca_corr</span>
+        <span class="p">}</span>
+
+        <span class="n">symmetry_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bsi</span><span class="p">)</span>
+        <span class="n">phase_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phase_sync</span><span class="p">)</span>
+        <span class="n">cca_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cca_corr</span><span class="p">)</span>
+
+    <span class="c1"># Compute overall metrics</span>
+    <span class="n">overall_symmetry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">symmetry_scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">symmetry_scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">overall_phase_sync</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">phase_scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">phase_scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">overall_cca</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cca_scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">cca_scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;overall_symmetry&#39;</span><span class="p">:</span> <span class="n">overall_symmetry</span><span class="p">,</span>
+        <span class="s1">&#39;phase_sync&#39;</span><span class="p">:</span> <span class="n">overall_phase_sync</span><span class="p">,</span>
+        <span class="s1">&#39;cca_correlation&#39;</span><span class="p">:</span> <span class="n">overall_cca</span><span class="p">,</span>
+        <span class="s1">&#39;joint_symmetries&#39;</span><span class="p">:</span> <span class="n">joint_symmetries</span>
+    <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.instant", "content.code.copy", "content.tabs.link", "content.tooltips"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
