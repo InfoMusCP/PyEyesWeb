@@ -5,9 +5,9 @@ if os.getcwd() not in sys.path:
 
 from collections import deque
 
-from core.data_models.sliding_window import SlidingWindow
-from core.utils.signal_processing import bandpass_filter, compute_hilbert_phases
-from core.utils.math_utils import compute_phase_locking_value, center_signals
+from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.utils.signal_processing import bandpass_filter, compute_hilbert_phases
+from pyeyesweb.utils.math_utils import compute_phase_locking_value, center_signals
 
 
 class Synchronization:

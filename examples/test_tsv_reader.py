@@ -1,10 +1,9 @@
 import sys, os
-import time
 
 if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from core.tsv_reader import TSVReader
+from pyeyesweb.utils.tsv_reader import TSVReader
 
 current_dir = os.path.dirname(__file__)
 file_path = os.path.join(current_dir, "..", "resources", "QualisysTSVExample.tsv")

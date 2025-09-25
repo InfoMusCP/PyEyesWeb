@@ -8,7 +8,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.contraction_expansion import analyze_movement
+from pyeyesweb.low_level.contraction_expansion import analyze_movement
 
 
 def demo_2d_analysis():

@@ -81,7 +81,7 @@ Frame	Timestamp	MARKER1_X	MARKER1_Y	MARKER1_Z	MARKER2_X	MARKER2_Y	MARKER2_Z
 ### Basic File Loading
 
 ```python
-from core.tsv_reader import TSVReader
+from pyeyesweb.utils.tsv_reader import TSVReader
 
 # Load complete motion capture file
 reader = TSVReader('motion_capture_data.tsv')

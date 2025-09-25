@@ -67,8 +67,8 @@ Optional Savitzky-Golay filter preprocessing:
 ### Basic Smoothness Analysis
 
 ```python
-from core import Smoothness
-from core.data_models.sliding_window import SlidingWindow
+from pyeyesweb import Smoothness
+from pyeyesweb.data_models.sliding_window import SlidingWindow
 import numpy as np
 
 # Initialize analyzer

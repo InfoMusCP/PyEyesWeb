@@ -48,14 +48,14 @@ Decomposes 3D shapes into tetrahedra and sums volumes using cross products.
 
 ```python
 import numpy as np
-from core.contraction_expansion import _area_2d_fast
+from pyeyesweb.low_level.contraction_expansion import _area_2d_fast
 
 # Define four corner points of a movement trajectory
 trajectory_points = np.array([
-    [0.0, 0.0],    # Point 1
-    [1.0, 0.0],    # Point 2
-    [1.0, 1.0],    # Point 3
-    [0.0, 1.0]     # Point 4
+    [0.0, 0.0],  # Point 1
+    [1.0, 0.0],  # Point 2
+    [1.0, 1.0],  # Point 3
+    [0.0, 1.0]  # Point 4
 ])
 
 area = _area_2d_fast(trajectory_points)
@@ -105,26 +105,27 @@ for frame in motion_data:
 ### 3D Movement Analysis
 
 ```python
-from core.contraction_expansion import _volume_3d_fast
+from pyeyesweb.low_level.contraction_expansion import _volume_3d_fast
+
 
 # Analyze 3D movement volume changes
 def analyze_3d_movement_volume(trajectory_data):
     volume_timeline = []
-    
+
     for frame in trajectory_data:
         # Extract key 3D points
         key_points = extract_key_3d_points(frame)
-        
+
         if len(key_points) >= 4:  # Minimum for volume calculation
             volume = _volume_3d_fast(key_points)
             volume_timeline.append(volume)
-    
+
     # Calculate expansion/contraction phases
     expansion_phases = []
     for i in range(1, len(volume_timeline)):
-        if volume_timeline[i] > volume_timeline[i-1]:
+        if volume_timeline[i] > volume_timeline[i - 1]:
             expansion_phases.append(i)
-    
+
     return {
         'volume_timeline': volume_timeline,
         'expansion_frames': expansion_phases,
@@ -217,8 +218,8 @@ Uses tetrahedron decomposition:
 Combine spatial dynamics with movement smoothness:
 
 ```python
-from core import Smoothness
-from core.contraction_expansion import _area_2d_fast
+from pyeyesweb import Smoothness
+from pyeyesweb.low_level.contraction_expansion import _area_2d_fast
 
 smoothness_analyzer = Smoothness()
 spatial_areas = []
@@ -227,7 +228,7 @@ for frame in motion_data:
     # Calculate spatial measure
     area = _area_2d_fast(extract_corners(frame))
     spatial_areas.append(area)
-    
+
     # Analyze spatial smoothness
     if len(spatial_areas) >= smoothness_analyzer.min_length:
         spatial_smoothness = smoothness_analyzer(spatial_areas)

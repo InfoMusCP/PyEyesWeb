@@ -48,8 +48,8 @@ pip install -e .
 Test your installation:
 
 ```python
-import core
-from core import Smoothness, BilateralSymmetryAnalyzer
+import pyeyesweb
+from pyeyesweb import Smoothness, BilateralSymmetryAnalyzer
 print("PyEyesWeb successfully installed")
 ```
 

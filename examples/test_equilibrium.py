@@ -34,7 +34,7 @@ import sys, os
 if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from core.equilibrium import Equilibrium
+from pyeyesweb.low_level.equilibrium import Equilibrium
 
 # --- Setup test parameters ---
 left_foot = np.array([120, 200, 0])

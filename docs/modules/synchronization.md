@@ -107,7 +107,7 @@ Time-varying synchronization using overlapping windows:
 ### Basic Synchronization Analysis
 
 ```python
-from core.sync import Synchronization
+from pyeyesweb.sync import Synchronization
 import numpy as np
 
 # Initialize synchronization analyzer

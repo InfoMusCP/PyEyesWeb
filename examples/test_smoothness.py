@@ -5,12 +5,12 @@ if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from core.data_models.sliding_window import SlidingWindow
+from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 import cv2
 import mediapipe as mp
 import numpy as np
-from core.smoothness import Smoothness
+from pyeyesweb.mid_level.smoothness import Smoothness
 import time
 
 def extract_wrist_xy(results, keypoint_idx, width, height):

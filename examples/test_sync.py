@@ -4,11 +4,11 @@ if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from core.data_models.sliding_window import SlidingWindow
+from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 import cv2
 import mediapipe as mp
-from core.sync import Synchronization
+from pyeyesweb.sync import Synchronization
 
 # Function to extract the y-coordinate of a specified keypoint (e.g., wrist) from the Mediapipe Pose results.
 # The keypoint's visibility is checked to ensure it's sufficiently visible before processing.

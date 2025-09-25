@@ -27,8 +27,8 @@ pip install -e .[dev]
 ## Quick start
 
 ```python
-from core import Smoothness, BilateralSymmetryAnalyzer
-from core.data_models.sliding_window import SlidingWindow
+from pyeyesweb import Smoothness, BilateralSymmetryAnalyzer
+from pyeyesweb.data_models.sliding_window import SlidingWindow
 import numpy as np
 
 # Movement smoothness analysis

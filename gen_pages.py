@@ -9,8 +9,8 @@ from pathlib import Path
 import mkdocs_gen_files
 
 # -------- SETTINGS --------
-PACKAGE_NAME = "core"
-SRC_DIR = Path("core")
+PACKAGE_NAME = "pyeyesweb"
+SRC_DIR = Path("pyeyesweb")
 API_DOCS_PATH = Path("API")
 # --------------------------
 

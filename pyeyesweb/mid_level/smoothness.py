@@ -1,8 +1,8 @@
 import numpy as np
 
-from core.data_models.sliding_window import SlidingWindow
-from core.utils.signal_processing import apply_savgol_filter
-from core.utils.math_utils import compute_sparc, compute_jerk_rms, normalize_signal
+from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.utils.signal_processing import apply_savgol_filter
+from pyeyesweb.utils.math_utils import compute_sparc, compute_jerk_rms, normalize_signal
 
 
 class Smoothness:

@@ -93,15 +93,15 @@ Temporal correlation with lag compensation:
 ### Basic Symmetry Analysis
 
 ```python
-from core.bilateral_symmetry import BilateralSymmetryAnalyzer
+from pyeyesweb.analysis_primitives.bilateral_symmetry import BilateralSymmetryAnalyzer
 import numpy as np
 
 # Initialize analyzer
 symmetry_analyzer = BilateralSymmetryAnalyzer(window_size=100)
 
 # Load bilateral trajectory data
-left_arm = np.load('left_arm_trajectory.npy')   # Shape: (n_samples, 3)
-right_arm = np.load('right_arm_trajectory.npy') # Shape: (n_samples, 3)
+left_arm = np.load('left_arm_trajectory.npy')  # Shape: (n_samples, 3)
+right_arm = np.load('right_arm_trajectory.npy')  # Shape: (n_samples, 3)
 
 # Calculate symmetry metrics
 metrics = symmetry_analyzer.calculate_symmetry_index(left_arm, right_arm)
