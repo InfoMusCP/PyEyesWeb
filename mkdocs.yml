@@ -1,4 +1,6 @@
 site_name: PyEyesWeb
+repo_url: https://github.com/InfoMusCP/PyEyesWeb
+site_url: https://infomuscp.github.io/PyEyesWeb/
 
 plugins:
   - gen-files:
@@ -23,36 +25,72 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed
   - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
+
 theme:
   name: material
+  custom_dir: overrides
   logo: assets/eyesweb-logo.png
   favicon: assets/favicon-32x32.png
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
   features:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.instant
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
 #    - navigation.expand
     - content.code.copy
     - content.tabs.link
     - content.tooltips
+    - content.code.annotate
+    - content.tables.striped
+    - search.suggest
+    - search.highlight
+    - search.share
+    - toc.follow
   palette:
-    - scheme: default
-      primary: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: red
       accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
-    - scheme: slate
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: black
       accent: red
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/InfoMusCP
+      name: GitHub Organization
+    - icon: material/web
+      link: http://www.casapaganini.org/index_eng.php
+      name: InfoMus Lab - Casa Paganini Website
+
+copyright: Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.
 
 nav:
   - Home: index.md
