@@ -132,8 +132,9 @@ class SlidingWindow:
         >>> print(samples.shape)  # (2, 2)
         >>> print(timestamps.shape)  # (2,)
         """
-        indices = (self._start + np.arange(self._size)) % self._max_length
-        return self._buffer[indices], self._timestamp[indices]
+        with self._lock:
+            indices = (self._start + np.arange(self._size)) % self._max_length
+            return self._buffer[indices].copy(), self._timestamp[indices].copy()
 
     def reset(self) -> None:
         """
@@ -150,10 +151,11 @@ class SlidingWindow:
         >>> window.reset()
         >>> print(len(window))  # 0
         """
-        self._start = 0
-        self._size = 0
-        self._buffer.fill(np.nan)
-        self._timestamp.fill(np.nan)
+        with self._lock:
+            self._start = 0
+            self._size = 0
+            self._buffer.fill(np.nan)
+            self._timestamp.fill(np.nan)
 
     def is_full(self) -> bool:
         """
@@ -172,7 +174,8 @@ class SlidingWindow:
         >>> window.append([2.0])
         >>> print(window.is_full())  # True
         """
-        return self._size == self._max_length
+        with self._lock:
+            return self._size == self._max_length
 
     def __len__(self) -> int:
         """
@@ -190,4 +193,5 @@ class SlidingWindow:
         >>> window.append([1.0, 2.0])
         >>> print(len(window))  # 1
         """
-        return self._size
+        with self._lock:
+            return self._size
