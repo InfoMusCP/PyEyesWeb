@@ -93,9 +93,19 @@ def _analyze_frame_2d(points, baseline_metric):
         0 (neutral), or 1 (expansion).
     """
     metric = _area_2d_fast(points)
-    
+
     if baseline_metric <= 0:
-        index = 1.0 if metric == 0 else np.inf
+        # When baseline is zero or negative, return NaN for index
+        # as expansion/contraction ratio is undefined
+        if baseline_metric < 0:
+            # Negative baseline is invalid
+            index = np.nan
+        elif metric == 0:
+            # Both baseline and current are zero - no change
+            index = 1.0
+        else:
+            # Zero baseline but non-zero current - undefined expansion
+            index = np.nan
         state = 0  # neutral
     else:
         index = metric / baseline_metric
@@ -113,9 +123,19 @@ def _analyze_frame_2d(points, baseline_metric):
 def _analyze_frame_3d(points, baseline_metric):
     """Optimized single frame analysis for 3D."""
     metric = _volume_3d_fast(points)
-    
+
     if baseline_metric <= 0:
-        index = 1.0 if metric == 0 else np.inf
+        # When baseline is zero or negative, return NaN for index
+        # as expansion/contraction ratio is undefined
+        if baseline_metric < 0:
+            # Negative baseline is invalid
+            index = np.nan
+        elif metric == 0:
+            # Both baseline and current are zero - no change
+            index = 1.0
+        else:
+            # Zero baseline but non-zero current - undefined expansion
+            index = np.nan
         state = 0  # neutral
     else:
         index = metric / baseline_metric
