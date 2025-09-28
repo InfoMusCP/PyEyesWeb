@@ -108,6 +108,40 @@ class Synchronization:
     """
 
     def __init__(self, sensitivity=100, output_phase=False, filter_params=None, phase_threshold=0.7):
+        # Validate sensitivity
+        if not isinstance(sensitivity, int):
+            raise TypeError(f"sensitivity must be an integer, got {type(sensitivity).__name__}")
+        if sensitivity <= 0:
+            raise ValueError(f"sensitivity must be positive, got {sensitivity}")
+        if sensitivity > 10000:  # Reasonable upper limit
+            raise ValueError(f"sensitivity too large ({sensitivity}), maximum is 10,000")
+
+        # Validate output_phase
+        if not isinstance(output_phase, bool):
+            raise TypeError(f"output_phase must be boolean, got {type(output_phase).__name__}")
+
+        # Validate phase_threshold
+        if not isinstance(phase_threshold, (int, float)):
+            raise TypeError(f"phase_threshold must be a number, got {type(phase_threshold).__name__}")
+        if not 0 <= phase_threshold <= 1:
+            raise ValueError(f"phase_threshold must be between 0 and 1, got {phase_threshold}")
+
+        # Validate filter_params if provided
+        if filter_params is not None:
+            if not isinstance(filter_params, (tuple, list)):
+                raise TypeError(f"filter_params must be a tuple or list, got {type(filter_params).__name__}")
+            if len(filter_params) != 3:
+                raise ValueError(f"filter_params must have 3 elements (lowcut, highcut, fs), got {len(filter_params)}")
+            lowcut, highcut, fs = filter_params
+            if not all(isinstance(x, (int, float)) for x in filter_params):
+                raise TypeError("filter_params must contain only numbers")
+            if lowcut <= 0 or highcut <= 0 or fs <= 0:
+                raise ValueError("filter_params frequencies must be positive")
+            if lowcut >= highcut:
+                raise ValueError(f"lowcut ({lowcut}) must be less than highcut ({highcut})")
+            if highcut >= fs / 2:
+                raise ValueError(f"highcut ({highcut}) must be less than Nyquist frequency ({fs/2})")
+
         self.plv_history = deque(maxlen=sensitivity)
         self.output_phase = output_phase
         self.filter_params = filter_params
