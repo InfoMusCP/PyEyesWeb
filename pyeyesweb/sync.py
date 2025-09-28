@@ -193,8 +193,12 @@ class Synchronization:
         6. Update PLV history buffer
         7. Determine phase status if requested
         """
+        # Validate input has exactly 2 columns
+        if signals._n_columns != 2:
+            raise ValueError(f"Synchronization requires exactly 2 signal channels, got {signals._n_columns}")
+
         if not signals.is_full():
-            return None, None
+            return float("nan"), None
 
         sig, _ = signals.to_array()
 
