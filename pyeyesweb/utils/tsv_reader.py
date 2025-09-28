@@ -138,14 +138,26 @@ class TSVReader:
 
     # ------------------- SLEEP -------------------
     def _sleep_accurate(self, delay_sec):
+        """Sleep for the specified duration without burning CPU cycles.
+
+        For delays >= 1ms, uses time.sleep() which yields the CPU to OS. For submillisecond delays, uses a hybrid approach for accuracy.
+        """
         if delay_sec <= 0:
             return
-        if delay_sec >= 0.02:  # >20ms sleep normale
-            time.sleep(delay_sec - 0.001)
 
-        target = time.perf_counter() + delay_sec
-        while time.perf_counter() < target:
-            pass
+        # For delays >= 1ms, use regular sleep (yields CPU)
+        if delay_sec >= 0.001:
+            time.sleep(delay_sec)
+        else:
+            # For sub-millisecond delays, minimize busy wait time
+            # Sleep for most of the duration, then busy wait for precision
+            if delay_sec > 0.0002:  # > 0.2ms
+                time.sleep(delay_sec * 0.5)  # Sleep 50% of time
+
+            # Brief busy-wait only for final precision
+            target = time.perf_counter() + (delay_sec * 0.5 if delay_sec > 0.0002 else delay_sec)
+            while time.perf_counter() < target:
+                pass
 
     # ------------------- RESET -------------------
     def reset(self):
