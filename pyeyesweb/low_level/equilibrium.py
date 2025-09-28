@@ -95,11 +95,49 @@ class Equilibrium:
         ])
         rel_rot = rot_matrix @ rel
 
-        norm = (rel_rot[0] / a) ** 2 + (rel_rot[1] / b) ** 2
+        # Handle degenerate ellipse cases to avoid division by zero
+        # Tolerance for considering a value as zero
+        eps = 1e-10
 
-        if norm <= 1.0:
-            value = 1.0 - np.sqrt(norm)
+        if a < eps and b < eps:
+            # Both axes are zero - ellipse is a point
+            # Check if barycenter is at that point
+            if np.linalg.norm(rel) < eps:
+                value = 1.0
+            else:
+                value = 0.0
+        elif a < eps:
+            # Ellipse is a vertical line segment (a=0, b>0)
+            # Only Y position matters
+            if abs(rel_rot[0]) > eps:
+                # Barycenter is off the vertical line
+                value = 0.0
+            else:
+                # Check position along Y axis
+                norm_y = (rel_rot[1] / b) ** 2
+                if norm_y <= 1.0:
+                    value = 1.0 - np.sqrt(norm_y)
+                else:
+                    value = 0.0
+        elif b < eps:
+            # Ellipse is a horizontal line segment (a>0, b=0)
+            # Only X position matters
+            if abs(rel_rot[1]) > eps:
+                # Barycenter is off the horizontal line
+                value = 0.0
+            else:
+                # Check position along X axis
+                norm_x = (rel_rot[0] / a) ** 2
+                if norm_x <= 1.0:
+                    value = 1.0 - np.sqrt(norm_x)
+                else:
+                    value = 0.0
         else:
-            value = 0.0
+            # Normal ellipse case
+            norm = (rel_rot[0] / a) ** 2 + (rel_rot[1] / b) ** 2
+            if norm <= 1.0:
+                value = 1.0 - np.sqrt(norm)
+            else:
+                value = 0.0
 
         return max(0.0, value), np.degrees(angle)
