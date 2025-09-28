@@ -5,7 +5,7 @@ site_url: https://infomuscp.github.io/PyEyesWeb/
 plugins:
   - gen-files:
       scripts:
-        - gen_pages.py
+        - docs/scripts/gen_pages.py
   - mkdocstrings:
       handlers:
         python:

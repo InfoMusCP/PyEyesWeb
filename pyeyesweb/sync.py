@@ -1,3 +1,29 @@
+"""Synchronization analysis module for real time signal phase locking.
+
+This module provides tools for computing phase synchronization between paired
+signals using the Hilbert Transform and Phase Locking Value (PLV) analysis.
+It is designed for real time analysis of motion capture or sensor data streams.
+
+The synchronization analysis follows these steps:
+1. Optional band pass filtering to isolate frequencies of interest
+2. Signal centering (mean removal) to eliminate DC bias
+3. Hilbert Transform to extract instantaneous phase information
+4. Phase Locking Value computation to quantify synchronization strength
+
+Typical use cases include:
+1. Movement coordination analysis between limbs
+2. Human-human or human-robot interaction studies
+3. Neural oscillation synchronization
+4. Periodic signal coupling analysis
+
+References
+----------
+1. Lachaux et al. (1999). Measuring phase synchrony in brain signals.
+  Human Brain Mapping, 8(4), 194-208.
+2. Rosenblum et al. (1996). Phase synchronization of chaotic oscillators.
+  Physical Review Letters, 76(11), 1804.
+"""
+
 import sys, os
 
 if os.getcwd() not in sys.path:
@@ -11,51 +37,168 @@ from pyeyesweb.utils.math_utils import compute_phase_locking_value, center_signa
 
 
 class Synchronization:
-    # Initialization of the Synchronization class with parameters for window size, sensitivity, phase output, and filter settings.
+    """Real time phase synchronization analyzer for paired signals.
+
+    This class computes the Phase Locking Value (PLV) between two signals
+    using the Hilbert Transform to extract instantaneous phase information.
+    It maintains a history buffer for tracking synchronization over time and
+    can optionally apply band-pass filtering to focus on specific frequency bands.
+
+    The PLV ranges from 0 (no synchronization) to 1 (perfect synchronization)
+    and is computed as the absolute value of the mean complex phase difference
+    between the two signals.
+
+    Parameters
+    ----------
+    sensitivity : int, optional
+        Size of the PLV history buffer. Larger values provide more temporal
+        context but increase memory usage. Must be positive (default: 100).
+    output_phase : bool, optional
+        If True, outputs phase synchronization status as "IN PHASE" or
+        "OUT OF PHASE" based on the phase_threshold (default: False).
+    filter_params : tuple of (float, float, float) or None, optional
+        Band-pass filter parameters as (lowcut_hz, highcut_hz, sampling_rate_hz).
+        If None, no filtering is applied. Example: (0.5, 30, 100) for 0.5-30 Hz
+        band with 100 Hz sampling (default: None).
+    phase_threshold : float, optional
+        PLV threshold for phase status determination. Values above this are
+        considered "IN PHASE". Must be between 0 and 1 (default: 0.7).
+
+    Attributes
+    ----------
+    plv_history : collections.deque
+        Rolling buffer storing recent PLV values for temporal analysis.
+    output_phase : bool
+        Flag controlling phase status output.
+    filter_params : tuple or None
+        Band-pass filter configuration.
+    phase_threshold : float
+        Threshold for phase synchronization classification.
+
+    Examples
+    --------
+    >>> from pyeyesweb.sync import Synchronization
+    >>> from pyeyesweb.data_models.sliding_window import SlidingWindow
+    >>>
+    >>> # Create synchronization analyzer with filtering
+    >>> sync = Synchronization(
+    ...     sensitivity=50,
+    ...     output_phase=True,
+    ...     filter_params=(1.0, 10.0, 100.0),  # 1-10 Hz band at 100 Hz
+    ...     phase_threshold=0.8
+    ... )
+    >>>
+    >>> # Create sliding window for two signals
+    >>> window = SlidingWindow(max_length=200, n_columns=2)
+    >>>
+    >>> # Add signal data (e.g., from two sensors)
+    >>> for i in range(200):
+    ...     window.append([signal1[i], signal2[i]])
+    >>>
+    >>> # Compute synchronization
+    >>> plv, status = sync(window)
+    >>> print(f"PLV: {plv:.3f}, Status: {status}")
+
+    Notes
+    -----
+    - Requires at least a full window of data to compute meaningful results
+    - The Hilbert Transform assumes narrowband or filtered signals for best results
+    - Phase differences are most meaningful for signals with similar frequencies
+    - For broadband signals, consider using filter_params to isolate frequency bands
+    """
+
     def __init__(self, sensitivity=100, output_phase=False, filter_params=None, phase_threshold=0.7):
-        self.plv_history = deque(maxlen=sensitivity)  # Buffer to keep track of the phase locking value (PLV) history.
-        self.output_phase = output_phase  # Boolean to control whether phase status is output.
-        self.filter_params = filter_params  # Parameters for the band-pass filter if filtering is needed.
-        self.phase_threshold = phase_threshold  # Threshold for determining phase synchronization status.
+        self.plv_history = deque(maxlen=sensitivity)
+        self.output_phase = output_phase
+        self.filter_params = filter_params
+        self.phase_threshold = phase_threshold
 
 
-    # Method to compute synchronization between the two signals using the Hilbert Transform.
     def compute_synchronization(self, signals: SlidingWindow):
-        """Compute synchronization using the Hilbert Transform."""
+        """Compute phase synchronization between two signals.
 
+        Processes the signal pair through filtering (optional), centering,
+        Hilbert Transform, and PLV computation to quantify synchronization.
+
+        Parameters
+        ----------
+        signals : SlidingWindow
+            Sliding window buffer containing exactly 2 columns of signal data.
+            Must be full (contain max_length samples) for computation.
+
+        Returns
+        -------
+        plv : float or None
+            Phase Locking Value between 0 (no sync) and 1 (perfect sync).
+            Returns None if the window is not full.
+        phase_status : str or None
+            If output_phase is True, returns "IN PHASE" when PLV > phase_threshold,
+            "OUT OF PHASE" otherwise. Returns None if output_phase is False or
+            if the window is not full.
+
+        Notes
+        -----
+        The computation pipeline:
+        1. Check if window has sufficient data (is_full)
+        2. Apply band-pass filter if filter_params is set
+        3. Center signals by removing mean (eliminates DC component)
+        4. Apply Hilbert Transform to get analytic signal and phase
+        5. Compute PLV from phase difference
+        6. Update PLV history buffer
+        7. Determine phase status if requested
+        """
         if not signals.is_full():
             return None, None
 
         sig, _ = signals.to_array()
 
-        # Apply band-pass filtering if filter parameters are provided.
+        # Apply band-pass filtering if filter parameters are provided
         sig = bandpass_filter(sig, self.filter_params)
 
-        # Remove the mean from each signal to center the data.
+        # Remove the mean from each signal to center the data
         sig = center_signals(sig)
 
-        # Extract the phase information from the analytic signals.
+        # Extract the phase information from the analytic signals
         phase1, phase2 = compute_hilbert_phases(sig)
 
-        # Compute the Phase Locking Value (PLV).
+        # Compute the Phase Locking Value (PLV)
         plv = compute_phase_locking_value(phase1, phase2)
-        self.plv_history.append(plv)  # Store the PLV in the history buffer.
+        self.plv_history.append(plv)
 
         phase_status = None
         if self.output_phase:
-            # Use PLV (which is the same as MVL) to determine phase synchronization status.
+            # Determine phase synchronization status based on threshold
             phase_status = "IN PHASE" if plv > self.phase_threshold else "OUT OF PHASE"
 
-        return plv, phase_status  # Return the computed PLV and phase status.
+        return plv, phase_status
 
     def __call__(self, sliding_window: SlidingWindow):
+        """Compute and optionally display synchronization metrics.
+
+        This method allows the class to be used as a callable, providing a convenient interface for real time processing pipelines.
+
+        Parameters
+        ----------
+        sliding_window : SlidingWindow
+            Buffer containing two signal columns to analyze.
+
+        Returns
+        -------
+        plv : float or None
+            Phase Locking Value (0-1) or None if insufficient data.
+        phase_status : str or None
+            Phase status ("IN PHASE"/"OUT OF PHASE") or None.
+
+        Output
+        ------------
+        Prints synchronization metrics to stdout if PLV is computed successfully.
+        Format depends on output_phase setting.
+        """
         plv, phase_status = self.compute_synchronization(sliding_window)
 
         if plv is not None:
             if self.output_phase:
-                # Print the synchronization index and phase status if output_phase is True.
                 print(f"Synchronization Index: {plv:.3f}, Phase Status: {phase_status}")
             else:
-                # Print only the synchronization index if output_phase is False.
                 print(f"Synchronization Index: {plv:.3f}")
-        return plv, phase_status  # Return the computed values.
+        return plv, phase_status
