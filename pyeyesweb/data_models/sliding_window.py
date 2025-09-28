@@ -58,7 +58,7 @@ class SlidingWindow:
             raise ValueError(f"n_columns must be positive, got {n_columns}")
 
         # Reasonable limits to prevent memory exhaustion
-        if max_length > 10_000_000:  # 10 million samples
+        if max_length > 10_000_000:  # Have added 10 million samples
             raise ValueError(f"max_length too large ({max_length}), maximum is 10,000,000")
         if n_columns > 10_000:  # 10k features
             raise ValueError(f"n_columns too large ({n_columns}), maximum is 10,000")
@@ -73,6 +73,18 @@ class SlidingWindow:
 
         self._start = 0
         self._size = 0
+
+    def __del__(self):
+        """Clean up allocated numpy arrays when the object is destroyed.
+
+        This helps ensure memory is released promptly rather than waiting
+        for Python's garbage collector.
+        """
+        # Explicitly delete numpy arrays to free memory
+        if hasattr(self, '_buffer'):
+            del self._buffer
+        if hasattr(self, '_timestamp'):
+            del self._timestamp
 
     def append(self, samples: Union[np.ndarray, list], timestamp: Optional[float] = None) -> None:
         """
