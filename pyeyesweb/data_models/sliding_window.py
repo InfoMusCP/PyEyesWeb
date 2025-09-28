@@ -46,6 +46,23 @@ class SlidingWindow:
     """
 
     def __init__(self, max_length: int, n_columns: int):
+        # Validate inputs
+        if not isinstance(max_length, int):
+            raise TypeError(f"max_length must be an integer, got {type(max_length).__name__}")
+        if not isinstance(n_columns, int):
+            raise TypeError(f"n_columns must be an integer, got {type(n_columns).__name__}")
+
+        if max_length <= 0:
+            raise ValueError(f"max_length must be positive, got {max_length}")
+        if n_columns <= 0:
+            raise ValueError(f"n_columns must be positive, got {n_columns}")
+
+        # Reasonable limits to prevent memory exhaustion
+        if max_length > 10_000_000:  # 10 million samples
+            raise ValueError(f"max_length too large ({max_length}), maximum is 10,000,000")
+        if n_columns > 10_000:  # 10k features
+            raise ValueError(f"n_columns too large ({n_columns}), maximum is 10,000")
+
         self._lock = threading.Lock()
 
         self._max_length = max_length
