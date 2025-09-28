@@ -81,6 +81,17 @@ def compute_sparc(signal, rate_hz=50.0):
     if rate_hz <= 0:
         raise ValueError(f"Sampling rate must be positive, got {rate_hz}")
 
+    # Ensure signal is 1D
+    signal = np.asarray(signal)
+    if signal.ndim > 1:
+        # If 2D, check if it's a single column/row
+        if signal.shape[0] == 1:
+            signal = signal.flatten()
+        elif signal.shape[1] == 1:
+            signal = signal.flatten()
+        else:
+            raise ValueError(f"Signal must be 1D, got shape {signal.shape}")
+
     N = len(signal)
     if N < 2:
         return float("nan")
