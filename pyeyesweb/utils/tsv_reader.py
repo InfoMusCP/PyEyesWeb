@@ -1,7 +1,26 @@
+"""TSV file reader for time-series data with real-time playback support.
+
+This module provides a specialized TSV reader for motion capture and sensor data
+files, supporting multiple reading modes including real-time playback simulation.
+"""
+
 import numpy as np
 import time
 
 class TSVReader:
+    """TSV file reader with multiple reading modes for time-series data.
+
+    Provides three reading modes:
+    1. Block reading: Read fixed-size chunks of data
+    2. Time-based access: Get data at specific time points
+    3. Real-time iteration: Simulate real-time playback with timing delays
+
+    Parameters
+    ----------
+    time_col : str, optional
+        Name of the column containing time values (default: "Time").
+    """
+
     def __init__(self, time_col="Time"):
         self.time_col = time_col
         self.headers = []
@@ -47,9 +66,11 @@ class TSVReader:
         self.time_value = None
         self.n = None
 
-    # ------------------- LOAD FILE -------------------
     def _load_file(self):
-        """Carica il file TSV velocemente usando np.loadtxt."""
+        """Load TSV file quickly using np.loadtxt.
+
+        Expects a TSV file with a header line starting with 'Frame'.
+        """
         with open(self.filename, "r") as f:
             for i, line in enumerate(f):
                 if line.startswith("Frame"):
@@ -57,7 +78,7 @@ class TSVReader:
                     self.headers = line.strip().split("\t")
                     break
             else:
-                raise ValueError("Header 'Frame...' non trovato")
+                raise ValueError("Header 'Frame...' not found")
 
         self.data = np.loadtxt(self.filename, delimiter="\t", skiprows=header_idx+1, dtype=float)
         if self.data.ndim == 1:
@@ -66,7 +87,7 @@ class TSVReader:
         try:
             time_idx = self.headers.index(self.time_col)
         except ValueError:
-            raise ValueError(f"Colonna '{self.time_col}' non trovata negli header")
+            raise ValueError(f"Column '{self.time_col}' not found in headers")
 
         self.time_data = self.data[:, time_idx]
 
