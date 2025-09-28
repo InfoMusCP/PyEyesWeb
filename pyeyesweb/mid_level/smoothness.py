@@ -111,14 +111,19 @@ class Smoothness:
             RMS of jerk (third derivative).
             Returns None if insufficient data.
 
-        Output
-        ------------
-        Prints smoothness metrics to stdout.
+        Returns
+        -------
+        tuple of (float, float)
+            (SPARC value, Jerk RMS value) or (NaN, NaN) if insufficient data.
         """
         if len(sliding_window) < 5:
-            return None, None
+            return float("nan"), float("nan")
 
         signal, _ = sliding_window.to_array()
+
+        # If multi-channel, compute for first channel only
+        if signal.ndim > 1 and signal.shape[1] > 1:
+            signal = signal[:, 0]
 
         filtered = self._filter_signal(signal.squeeze())
         normalized = normalize_signal(filtered)
@@ -126,5 +131,4 @@ class Smoothness:
         sparc = compute_sparc(normalized, self.rate_hz)
         jerk = compute_jerk_rms(filtered, self.rate_hz)
 
-        print(f"SPARC: {sparc:.3f}, Jerk RMS: {jerk:.3f}")
         return sparc, jerk
