@@ -52,17 +52,29 @@ class Synchronization:
     ----------
     sensitivity : int, optional
         Size of the PLV history buffer. Larger values provide more temporal
-        context but increase memory usage. Must be positive (default: 100).
+        context but increase memory usage. Must be positive integer between
+        1 and 10,000 (default: 100).
     output_phase : bool, optional
         If True, outputs phase synchronization status as "IN PHASE" or
-        "OUT OF PHASE" based on the phase_threshold (default: False).
+        "OUT OF PHASE" based on the phase_threshold. Must be boolean
+        (default: False).
     filter_params : tuple of (float, float, float) or None, optional
         Band-pass filter parameters as (lowcut_hz, highcut_hz, sampling_rate_hz).
-        If None, no filtering is applied. Example: (0.5, 30, 100) for 0.5-30 Hz
-        band with 100 Hz sampling (default: None).
+        All frequencies must be positive with lowcut < highcut < sampling_rate/2.
+        Example: (0.5, 30, 100) for 0.5-30 Hz band with 100 Hz sampling.
+        If None, no filtering is applied (default: None).
     phase_threshold : float, optional
         PLV threshold for phase status determination. Values above this are
-        considered "IN PHASE". Must be between 0 and 1 (default: 0.7).
+        considered "IN PHASE". Must be between 0 and 1 inclusive (default: 0.7).
+
+    Raises
+    ------
+    TypeError
+        If sensitivity is not int, output_phase is not bool, phase_threshold
+        is not numeric, or filter_params is not tuple/list.
+    ValueError
+        If sensitivity <= 0 or > 10,000, phase_threshold outside [0, 1],
+        or filter_params contains invalid frequencies.
 
     Attributes
     ----------
