@@ -11,47 +11,6 @@ Bilateral symmetry analysis quantifies how well left and right body sides coordi
 - **Coefficient of Variation**: Statistical symmetry indices
 - **Cross-Correlation**: Temporal alignment analysis
 
-## Class: `BilateralSymmetryAnalyzer`
-
-### Constructor
-
-```python
-BilateralSymmetryAnalyzer(window_size=50, overlap=0.5)
-```
-
-**Parameters:**
-- `window_size` (int): Analysis window length
-- `overlap` (float): Window overlap ratio (0.0-1.0)
-
-### Methods
-
-#### `calculate_symmetry_index(left_trajectory, right_trajectory)`
-
-Computes comprehensive symmetry metrics between bilateral trajectories.
-
-**Parameters:**
-- `left_trajectory` (ndarray): Left side motion data (n_samples, n_dimensions)
-- `right_trajectory` (ndarray): Right side motion data (n_samples, n_dimensions)
-
-**Returns:**
-Dictionary containing:
-- `'cca_correlation'`: Canonical correlation coefficient
-- `'phase_sync'`: Phase synchronization index
-- `'cv_symmetry'`: Coefficient of variation-based symmetry
-- `'cross_correlation'`: Maximum cross-correlation value
-- `'phase_lag'`: Temporal offset between sides (samples)
-
-#### `analyze_real_time(left_data, right_data)`
-
-Real-time bilateral symmetry analysis for streaming data.
-
-**Parameters:**
-- `left_data` (ndarray): Current left side data point
-- `right_data` (ndarray): Current right side data point
-
-**Returns:**
-Updated symmetry metrics dictionary
-
 ## Algorithm Details
 
 ### Canonical Correlation Analysis (CCA)

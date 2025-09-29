@@ -281,12 +281,12 @@ reader = TSVReader('data.tsv', custom_validator=custom_validator)
 
 ```python
 def complete_analysis_pipeline(tsv_file):
-    """Complete motion analysis using TSV reader and analysis modules."""
+    """Complete motion analysis using TSV reader and analysis user_guide."""
     # Load data
     reader = TSVReader(tsv_file)
     data = reader.load_data()
     
-    # Initialize analysis modules
+    # Initialize analysis user_guide
     smoothness = Smoothness(rate_hz=data['frame_rate'])
     bilateral_analyzer = BilateralSymmetryAnalyzer()
     

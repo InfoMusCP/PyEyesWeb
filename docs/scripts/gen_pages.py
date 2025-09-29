@@ -26,7 +26,7 @@ for path in sorted(SRC_DIR.rglob("*.py")):
     doc_path = API_DOCS_PATH / path.relative_to(SRC_DIR).with_suffix(".md")
     module_name = ".".join(module_path.parts)
 
-    # Skip empty __init__.py modules if desired
+    # Skip empty __init__.py user_guide if desired
     if module_name.endswith("__init__"):
         continue
 

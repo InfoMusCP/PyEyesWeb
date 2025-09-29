@@ -112,7 +112,7 @@ These include complex patterns that emerge from coordination and strategy:
 | Resource | Content |
 |----------|---------|
 | [Installation Guide](docs/installation.md) | Dependencies and setup procedures |
-| [Module Documentation](docs/modules/README.md) | Detailed module descriptions |
+| [Module Documentation](docs/scripts/README.md) | Detailed module descriptions |
 
 ## Research Applications
 
