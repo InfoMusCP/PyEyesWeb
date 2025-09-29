@@ -24,6 +24,8 @@ class Equilibrium:
     --------
     >>> import numpy as np
     >>> eq = Equilibrium(margin_mm=120, y_weight=0.6)
+
+    # Using 3D coordinates
     >>> left = np.array([0, 0, 0])
     >>> right = np.array([400, 0, 0])
     >>> barycenter = np.array([200, 50, 0])
@@ -31,6 +33,16 @@ class Equilibrium:
     >>> round(value, 2)
     0.91
     >>> round(angle, 1)
+    0.0
+
+    # Using 2D coordinates (z is optional)
+    >>> left_2d = np.array([0, 0])
+    >>> right_2d = np.array([400, 0])
+    >>> barycenter_2d = np.array([200, 50])
+    >>> value_2d, angle_2d = eq(left_2d, right_2d, barycenter_2d)
+    >>> round(value_2d, 2)
+    0.91
+    >>> round(angle_2d, 1)
     0.0
     """
 
@@ -44,14 +56,14 @@ class Equilibrium:
 
         Parameters
         ----------
-        left_foot : numpy.ndarray, shape (3,)
-            3D coordinates (x, y, z) of the left foot in millimeters.
+        left_foot : numpy.ndarray, shape (2,) or (3,)
+            2D coordinates (x, y) or 3D coordinates (x, y, z) of the left foot in millimeters.
             Only the x and y components are used.
-        right_foot : numpy.ndarray, shape (3,)
-            3D coordinates (x, y, z) of the right foot in millimeters.
+        right_foot : numpy.ndarray, shape (2,) or (3,)
+            2D coordinates (x, y) or 3D coordinates (x, y, z) of the right foot in millimeters.
             Only the x and y components are used.
-        barycenter : numpy.ndarray, shape (3,)
-            3D coordinates (x, y, z) of the barycenter in millimeters.
+        barycenter : numpy.ndarray, shape (2,) or (3,)
+            2D coordinates (x, y) or 3D coordinates (x, y, z) of the barycenter in millimeters.
             Only the x and y components are used.
 
         Returns
@@ -70,10 +82,13 @@ class Equilibrium:
         - The ellipse width corresponds to the horizontal foot span + margin.
         - The ellipse height corresponds to the vertical span + margin,
           scaled by `y_weight`.
+        - If 3D coordinates are provided, the z component is ignored.
         """
-        ps = np.array(left_foot)[:2]
-        pd = np.array(right_foot)[:2]
-        bc = np.array(barycenter)[:2]
+        # Convert to numpy arrays and extract x,y components
+        # Works for both 2D (x,y) and 3D (x,y,z) inputs
+        ps = np.atleast_1d(left_foot).flatten()[:2]
+        pd = np.atleast_1d(right_foot).flatten()[:2]
+        bc = np.atleast_1d(barycenter).flatten()[:2]
 
         min_xy = np.minimum(ps, pd) - self.margin
         max_xy = np.maximum(ps, pd) + self.margin
