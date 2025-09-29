@@ -77,15 +77,44 @@ def compute_sparc(signal, rate_hz=50.0):
     ----------
     Balasubramanian et al. (2015). On the analysis of movement smoothness from the Journal of NeuroEngineering and Rehabilitation.
     """
+    # Validate inputs
+    if rate_hz <= 0:
+        raise ValueError(f"Sampling rate must be positive, got {rate_hz}")
+
+    # Ensure signal is 1D
+    signal = np.asarray(signal)
+    if signal.ndim > 1:
+        # If 2D, check if it's a single column/row
+        if signal.shape[0] == 1:
+            signal = signal.flatten()
+        elif signal.shape[1] == 1:
+            signal = signal.flatten()
+        else:
+            raise ValueError(f"Signal must be 1D, got shape {signal.shape}")
+
     N = len(signal)
     if N < 2:
         return float("nan")
-    
+
+    # Check if signal is constant (no movement)
+    if np.allclose(signal, signal[0]):
+        # For constant signals, return NaN as SPARC is undefined
+        # (no movement means smoothness is not applicable)
+        return float("nan")
+
     from scipy.fft import fft, fftfreq
     yf = np.abs(fft(signal))[:N // 2]
     xf = fftfreq(N, 1.0 / rate_hz)[:N // 2]
 
-    yf /= np.max(yf) if np.max(yf) != 0 else 1.0
+    # Normalize by maximum magnitude
+    max_yf = np.max(yf)
+    if max_yf > 0:
+        yf /= max_yf
+    else:
+        # This should not happen after the constant signal check
+        # but keep as safety fallback
+        return float("nan")
+
     arc = np.sum(np.sqrt(np.diff(xf)**2 + np.diff(yf)**2))
     return -arc
 

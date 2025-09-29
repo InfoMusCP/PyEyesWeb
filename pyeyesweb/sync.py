@@ -52,17 +52,29 @@ class Synchronization:
     ----------
     sensitivity : int, optional
         Size of the PLV history buffer. Larger values provide more temporal
-        context but increase memory usage. Must be positive (default: 100).
+        context but increase memory usage. Must be positive integer between
+        1 and 10,000 (default: 100).
     output_phase : bool, optional
         If True, outputs phase synchronization status as "IN PHASE" or
-        "OUT OF PHASE" based on the phase_threshold (default: False).
+        "OUT OF PHASE" based on the phase_threshold. Must be boolean
+        (default: False).
     filter_params : tuple of (float, float, float) or None, optional
         Band-pass filter parameters as (lowcut_hz, highcut_hz, sampling_rate_hz).
-        If None, no filtering is applied. Example: (0.5, 30, 100) for 0.5-30 Hz
-        band with 100 Hz sampling (default: None).
+        All frequencies must be positive with lowcut < highcut < sampling_rate/2.
+        Example: (0.5, 30, 100) for 0.5-30 Hz band with 100 Hz sampling.
+        If None, no filtering is applied (default: None).
     phase_threshold : float, optional
         PLV threshold for phase status determination. Values above this are
-        considered "IN PHASE". Must be between 0 and 1 (default: 0.7).
+        considered "IN PHASE". Must be between 0 and 1 inclusive (default: 0.7).
+
+    Raises
+    ------
+    TypeError
+        If sensitivity is not int, output_phase is not bool, phase_threshold
+        is not numeric, or filter_params is not tuple/list.
+    ValueError
+        If sensitivity <= 0 or > 10,000, phase_threshold outside [0, 1],
+        or filter_params contains invalid frequencies.
 
     Attributes
     ----------
@@ -108,6 +120,40 @@ class Synchronization:
     """
 
     def __init__(self, sensitivity=100, output_phase=False, filter_params=None, phase_threshold=0.7):
+        # Validate sensitivity
+        if not isinstance(sensitivity, int):
+            raise TypeError(f"sensitivity must be an integer, got {type(sensitivity).__name__}")
+        if sensitivity <= 0:
+            raise ValueError(f"sensitivity must be positive, got {sensitivity}")
+        if sensitivity > 10000:  # Reasonable upper limit
+            raise ValueError(f"sensitivity too large ({sensitivity}), maximum is 10,000")
+
+        # Validate output_phase
+        if not isinstance(output_phase, bool):
+            raise TypeError(f"output_phase must be boolean, got {type(output_phase).__name__}")
+
+        # Validate phase_threshold
+        if not isinstance(phase_threshold, (int, float)):
+            raise TypeError(f"phase_threshold must be a number, got {type(phase_threshold).__name__}")
+        if not 0 <= phase_threshold <= 1:
+            raise ValueError(f"phase_threshold must be between 0 and 1, got {phase_threshold}")
+
+        # Validate filter_params if provided
+        if filter_params is not None:
+            if not isinstance(filter_params, (tuple, list)):
+                raise TypeError(f"filter_params must be a tuple or list, got {type(filter_params).__name__}")
+            if len(filter_params) != 3:
+                raise ValueError(f"filter_params must have 3 elements (lowcut, highcut, fs), got {len(filter_params)}")
+            lowcut, highcut, fs = filter_params
+            if not all(isinstance(x, (int, float)) for x in filter_params):
+                raise TypeError("filter_params must contain only numbers")
+            if lowcut <= 0 or highcut <= 0 or fs <= 0:
+                raise ValueError("filter_params frequencies must be positive")
+            if lowcut >= highcut:
+                raise ValueError(f"lowcut ({lowcut}) must be less than highcut ({highcut})")
+            if highcut >= fs / 2:
+                raise ValueError(f"highcut ({highcut}) must be less than Nyquist frequency ({fs/2})")
+
         self.plv_history = deque(maxlen=sensitivity)
         self.output_phase = output_phase
         self.filter_params = filter_params
@@ -147,8 +193,12 @@ class Synchronization:
         6. Update PLV history buffer
         7. Determine phase status if requested
         """
+        # Validate input has exactly 2 columns
+        if signals._n_columns != 2:
+            raise ValueError(f"Synchronization requires exactly 2 signal channels, got {signals._n_columns}")
+
         if not signals.is_full():
-            return None, None
+            return float("nan"), None
 
         sig, _ = signals.to_array()
 

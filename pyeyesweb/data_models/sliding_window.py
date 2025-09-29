@@ -46,6 +46,23 @@ class SlidingWindow:
     """
 
     def __init__(self, max_length: int, n_columns: int):
+        # Validate inputs
+        if not isinstance(max_length, int):
+            raise TypeError(f"max_length must be an integer, got {type(max_length).__name__}")
+        if not isinstance(n_columns, int):
+            raise TypeError(f"n_columns must be an integer, got {type(n_columns).__name__}")
+
+        if max_length <= 0:
+            raise ValueError(f"max_length must be positive, got {max_length}")
+        if n_columns <= 0:
+            raise ValueError(f"n_columns must be positive, got {n_columns}")
+
+        # Reasonable limits to prevent memory exhaustion
+        if max_length > 10_000_000:  # Have added 10 million samples
+            raise ValueError(f"max_length too large ({max_length}), maximum is 10,000,000")
+        if n_columns > 10_000:  # 10k features
+            raise ValueError(f"n_columns too large ({n_columns}), maximum is 10,000")
+
         self._lock = threading.Lock()
 
         self._max_length = max_length
@@ -56,6 +73,18 @@ class SlidingWindow:
 
         self._start = 0
         self._size = 0
+
+    def __del__(self):
+        """Clean up allocated numpy arrays when the object is destroyed.
+
+        This helps ensure memory is released promptly rather than waiting
+        for Python's garbage collector.
+        """
+        # Explicitly delete numpy arrays to free memory
+        if hasattr(self, '_buffer'):
+            del self._buffer
+        if hasattr(self, '_timestamp'):
+            del self._timestamp
 
     def append(self, samples: Union[np.ndarray, list], timestamp: Optional[float] = None) -> None:
         """
@@ -132,8 +161,9 @@ class SlidingWindow:
         >>> print(samples.shape)  # (2, 2)
         >>> print(timestamps.shape)  # (2,)
         """
-        indices = (self._start + np.arange(self._size)) % self._max_length
-        return self._buffer[indices], self._timestamp[indices]
+        with self._lock:
+            indices = (self._start + np.arange(self._size)) % self._max_length
+            return self._buffer[indices].copy(), self._timestamp[indices].copy()
 
     def reset(self) -> None:
         """
@@ -150,10 +180,11 @@ class SlidingWindow:
         >>> window.reset()
         >>> print(len(window))  # 0
         """
-        self._start = 0
-        self._size = 0
-        self._buffer.fill(np.nan)
-        self._timestamp.fill(np.nan)
+        with self._lock:
+            self._start = 0
+            self._size = 0
+            self._buffer.fill(np.nan)
+            self._timestamp.fill(np.nan)
 
     def is_full(self) -> bool:
         """
@@ -172,7 +203,8 @@ class SlidingWindow:
         >>> window.append([2.0])
         >>> print(window.is_full())  # True
         """
-        return self._size == self._max_length
+        with self._lock:
+            return self._size == self._max_length
 
     def __len__(self) -> int:
         """
@@ -190,4 +222,5 @@ class SlidingWindow:
         >>> window.append([1.0, 2.0])
         >>> print(len(window))  # 1
         """
-        return self._size
+        with self._lock:
+            return self._size

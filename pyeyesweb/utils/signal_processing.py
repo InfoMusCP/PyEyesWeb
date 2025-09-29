@@ -37,7 +37,21 @@ def bandpass_filter(data, filter_params):
         return data
 
     lowcut, highcut, fs = filter_params
+
+    # Validate filter parameters
+    if fs <= 0:
+        raise ValueError(f"Sampling frequency must be positive, got {fs}")
+    if lowcut <= 0:
+        raise ValueError(f"Low cutoff frequency must be positive, got {lowcut}")
+    if highcut <= 0:
+        raise ValueError(f"High cutoff frequency must be positive, got {highcut}")
+    if lowcut >= highcut:
+        raise ValueError(f"Low cutoff ({lowcut}) must be less than high cutoff ({highcut})")
+
     nyquist = 0.5 * fs
+    if highcut >= nyquist:
+        raise ValueError(f"High cutoff ({highcut}) must be less than Nyquist frequency ({nyquist})")
+
     low = lowcut / nyquist
     high = highcut / nyquist
 

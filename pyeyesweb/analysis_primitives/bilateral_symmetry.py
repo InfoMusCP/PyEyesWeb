@@ -101,7 +101,7 @@ class BilateralSymmetryAnalyzer:
             float: Phase locking value (0-1, where 1 is perfect synchronization)
         """
         if len(left_signal) < 10:  # Need minimum data for Hilbert
-            return 0.0
+            return np.nan  # Not enough data for analysis
             
         try:
             # Extract phases using Hilbert transform
@@ -116,10 +116,12 @@ class BilateralSymmetryAnalyzer:
             plv = np.abs(np.mean(np.exp(1j * phase_diff)))
             
             return plv
-            
-        except Exception:
-            return 0.0
-    
+
+        except Exception as e:
+            import warnings
+            warnings.warn(f"Phase symmetry computation failed: {e}", RuntimeWarning)
+            return np.nan
+
     def _compute_cca_correlation(self, left_data, right_data):
         """
         Compute canonical correlation between bilateral data.
@@ -135,7 +137,7 @@ class BilateralSymmetryAnalyzer:
             float: Canonical correlation (0-1)
         """
         if left_data.shape[0] < 5:  # Need minimum samples for CCA
-            return 0.0
+            return np.nan  # Not enough data for CCA
             
         try:
             # Flatten spatial coordinates for CCA analysis
@@ -151,12 +153,14 @@ class BilateralSymmetryAnalyzer:
             
             # Handle NaN cases
             if np.isnan(correlation):
-                return 0.0
+                return np.nan  # Correlation computation failed
                 
             return abs(correlation)  # Take absolute value
-            
-        except Exception:
-            return 0.0
+
+        except Exception as e:
+            import warnings
+            warnings.warn(f"CCA correlation computation failed: {e}", RuntimeWarning)
+            return np.nan
     
     def analyze_frame(self, mocap_frame):
         """
