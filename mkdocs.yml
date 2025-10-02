@@ -44,8 +44,8 @@ theme:
   favicon: assets/favicon-32x32.png
   icon:
     repo: fontawesome/brands/github
-  font:
-    text: Inter
+#  font:
+#    text: Inter
   features:
     - navigation.tabs
     - navigation.tabs.sticky

@@ -1,154 +1,104 @@
-# PyEyesWeb
-## Quantitative movement analysis toolkit
+# PyEyesWeb  
+## Expressive movement analysis toolkit
+*A modern, modular, and accessible Python library for expressive movement analysis — bridging research, health, and the arts*  
 
-PyEyesWeb is a research toolkit for extracting quantitative features from human movement data. It offers computational methods to analyze different qualities of movement. The repository is still in development, with the goal of creating an easy-to-use library for extracting movement qualities from raw motion data.
+[![PyPI version](https://img.shields.io/pypi/v/pyeyesweb.svg)](https://pypi.org/project/pyeyesweb/)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)
+[![License](https://img.shields.io/github/license/USERNAME/PyEyesWeb.svg)](LICENSE) 
 
-## Overview
-
-Movement analysis involves extracting meaningful features from high-dimensional spatiotemporal data. PyEyesWeb provides computational methods to quantify movement characteristics at multiple levels, from basic kinematics to complex coordination patterns.
-
-At the moment, this toolkit addresses four key movement qualities:
-- **Smoothness**: Measuring smoothness and control with SPARC and jerk-based metrics
-- **Bilateral symmetry**: Analyzing left-right coordination through canonical correlation analysis and phase synchronization
-- **Contration-Expansion Index**: Measuring contraction and expansion patterns in movement trajectories
-- **Synchronization Index**: Assessing synchronization between multiple participants or body segments
+`PyEyesWeb` is a research toolkit for extracting quantitative features from human movement data.  
+It builds on the **Expressive Gesture Analysis** library of [EyesWeb](https://casapaganini.unige.it/eyesweb_bp), bringing expressive movement analysis into Python as a core aim of the project.
+The library provides computational methods to analyze different qualities of movement, supporting applications in **research, health, and the arts**.  
+It is designed to facilitate adoption in **artificial intelligence and machine learning pipelines**, while also enabling seamless integration with creative and interactive platforms such as **TouchDesigner, Unity, and Max/MSP**.  
 
 ## Installation
 
 ```bash
-git clone https://github.com/InfoMusCP/PyEyesWeb.git
-cd PyEyesWeb
-pip install -e .
-
-# For development
-pip install -e .[dev]
+pip install pyeyesweb
 ```
 
-## Quick start
-
+## Usage
+A minimal example of extracting movement features with `PyEyesWeb`
+:
 ```python
-from pyeyesweb import Smoothness, BilateralSymmetryAnalyzer
-from pyeyesweb.data_models.sliding_window import SlidingWindow
-import numpy as np
+from pyeyesweb.data_models import SlidingWindow
+from pyeyesweb.mid_level import Smoothness
 
 # Movement smoothness analysis
 smoothness = Smoothness(rate_hz=50.0)
-window = SlidingWindow(window_size=100)
-window.add_frame(motion_data)
+window = SlidingWindow(max_length=100, n_columns=1)
+window.append([motion_data]) 
+# here `motion_data` is a float representing a single sample of motion data
+# (e.g., the x coordinate of the left hand at time t).
 
-metrics = smoothness(window)
-print(f"SPARC: {metrics['sparc']}, Jerk RMS: {metrics['jerk_rms']}")
-
-# Bilateral symmetry analysis
-symmetry_analyzer = BilateralSymmetryAnalyzer()
-symmetry_index = symmetry_analyzer.calculate_symmetry_index(
-    left_trajectory, right_trajectory
-)
+sparc, jerk = smoothness(window)
 ```
+> [!TIP]
+> For more advanced and complete use cases see the [Documentation](https://infomuscp.github.io/PyEyesWeb/)
+> and the [examples](examples) folder.
 
-## Core Modules
+## Documentation
 
-### Smoothness Analysis
-Movement smoothness quantification using a few metrics such as:
-- SPARC (Spectral Arc Length)
-- Root mean square jerk
+Comprehensive documentation for `PyEyesWeb` is available online and includes tutorials, API references, and the theoretical and scientific background of the implemented metrics:
 
-We also use Savitzky-Golay filtering to smoothen signals.
+- [Getting Started](https://infomuscp.github.io/PyEyesWeb/getting_started): step-by-step guide to installation and basic usage.
+- [API Reference](https://infomuscp.github.io/PyEyesWeb/api_reference): technical descriptions of modules, classes, and functions.  
+- [Theoretical Foundation](https://infomuscp.github.io/PyEyesWeb/user_guide): background on the scientific principles and research behind the metrics. 
 
-### Bilateral Symmetry Analysis
-Research-validated methods for bilateral coordination assessment:
-- Canonical Correlation Analysis (CCA)
-- Phase synchronization using Hilbert transform
-- Coefficient of variation-based symmetry indices
+## Support
 
-Based on methodology from:
-- Bilateral motion data fusion research (Pubmed: 29993408)
-- Wheelchair propulsion symmetry analysis (MDPI Symmetry, 2022)
+If you encounter issues or have questions about `PyEyesWeb`, you can get help through the following channels:
 
-### Contraction/Expansion Analysis
-Geometric analysis of spatial movement patterns:
-- Numba-optimized area and volume calculations
-- Real-time contraction/expansion rate computation
-- 2D and 3D spatial pattern detection
+- **GitHub Issues:** report bugs, request features, or ask technical questions on the [PyEyesWeb GitHub Issues page](https://github.com/infomuscp/PyEyesWeb/issues).  
+- **Discussions / Q&A:** participate in conversations or seek advice in [GitHub Discussions](https://github.com/infomuscp/PyEyesWeb/discussions).  
+- **Email:** Reach out to the maintainers at `cp.infomus@gmail.com` for direct support or collaboration inquiries.  
 
-### Synchronization Analysis
-Multi-participant coordination measurement:
-- Cross-correlation analysis
-- Temporal alignment algorithms
-- Phase coherence metrics
+Please provide clear descriptions, minimal reproducible examples, and version information when submitting issues—it helps us respond faster.
 
-### TSV Reader
-Efficient motion capture data processing:
-- TSV file parsing
-- Data integrity check
-- Memory-efficient streaming
+## Roadmap
 
-## Proposed Analysis Framework
+`PyEyesWeb` is under active development, and several features are planned for upcoming releases:  
 
-The toolkit is designed to grow over time, with analyses organized into three levels: low, mid, and high. Each level builds on the one below it, moving from raw measurements to processed characteristics and finally to complex patterns of coordination.
+- **Expanded feature extraction:** addition of more movement expressivity metrics (you can find an example of which features to expect in related [conceptual layer guide]().  
+- **Improved examples and tutorials:** more interactive Jupyter notebooks and example datasets to facilitate learning and adoption.  
+- **Cross-platform compatibility:** streamlined integration with creative and interactive platforms (e.g., [TouchDesigner plugin](https://github.com/InfoMusCP/PyEyesWebTD), Unity, Max/MSP).  
 
-### Low-Level Features
-These include fundamental measurements captured directly from motion data:
-- Position, velocity, and acceleration trajectories
-- Joint angles and angular velocities
-- Derivative-based measures such as jerk
+Future development priorities may evolve based on user feedback and research needs.
+Users are encouraged to suggest features or improvements via [GitHub Issues](https://github.com/infomuscp/PyEyesWeb/issues).
 
-### Mid-Level Features
-These are derived characteristics that describe how movements are performed:
-- Smoothness indices that reflect control and fluidity
-- Symmetry coefficients comparing left and right sides
-- Spatial metrics capturing contraction, expansion, and trajectory patterns
-- Phase relationships between different body parts
+## Contributing
 
-### High-Level Features
-These include complex patterns that emerge from coordination and strategy:
-- Synchronization between multiple participants
-- Quality of bilateral coordination
-- Classification of overall movement strategies
-- Recognition of recurring temporal patterns
+Contributions to `PyEyesWeb` are welcome! Whether it's reporting bugs, adding features, improving documentation, or providing examples, your help is appreciated.  
 
-## Documentation Structure
+### How to Contribute
+1. **Fork the repository** and create a branch for your feature or bug fix:  
+   ```bash
+   git checkout -b feature/your-feature-name
+    ```
+2. Set up the development environment:
+    ```bash
+    pip install pyeyesweb[dev]
+    ```
+3. Make your changes, ensuring code quality and adherence to the project's coding standards.
+4. Submit a pull request to the `main` branch, with a clear description of your changes.
+5. Engage in code reviews and address any feedback provided by maintainers.
 
-| Resource | Content |
-|----------|---------|
-| [Installation Guide](docs/installation.md) | Dependencies and setup procedures |
-| [Module Documentation](docs/scripts/README.md) | Detailed module descriptions |
+## Authors & Acknowledgments
 
-## Research Applications
+`PyEyesWeb` is developed by [**InfoMus Lab – Casa Paganini**](http://www.casapaganini.org/index_eng.php), University of Genoa, as part of the **[Resilence EU Project](https://www.resilence.eu/)**, funded by the European Union’s Horizon programme.  
 
-### Movement Disorder Assessment
-```python
-smoothness_analyzer = Smoothness(rate_hz=100.0)
-patient_metrics = smoothness_analyzer(patient_data)
-# Quantify movement deficits in neurological conditions
-```
+<div align="center">
+<img src="docs/assets/cp-logo.png" alt="InfoMus Lab Logo" width="512" style="margin:15px"/>
+</div>
+<div align="center">
+<img src="docs/assets/resilence-logo.png" alt="Resilence Project Logo" width="200" style="margin:15px"/>
+<img src="docs/assets/eu-logo.png" alt="EU Logo" width="100" style="margin:15px"/>
+</div>
 
-### Biomechanical Analysis
-```python
-symmetry_analyzer = BilateralSymmetryAnalyzer()
-bilateral_coordination = symmetry_analyzer.analyze_gait_symmetry(
-    left_limb_data, right_limb_data
-)
-# Assess gait asymmetries and compensation patterns
-```
-
-### Motor Learning Studies
-```python
-coordination_tracker = SynchronizationAnalyzer()
-learning_progress = coordination_tracker.track_skill_acquisition(
-    baseline_data, training_data
-)
-# Monitor coordination improvements during skill acquisition
-```
-
-## Methodological Foundation
-
-PyEyesWeb implements peer-reviewed computational methods from:
-- Motor control and biomechanics literature
-- Signal processing, multivariate stats and time series analysis
-- Computational geometry and spatial analysis
-
-We are working on having parameter validation and numerical stability checks for all algorithms in this repository.
+### Maintainers & Contributors  
+<a href="https://github.com/InfoMusCP/PyEyesWeb/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=InfoMusCP/PyEyesWeb" />
+</a>
 
 ## License
 

@@ -1,0 +1,16 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  PyEyesWeb: A Python Toolkit for Expressive Movement
+  Analysis
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - name: InfoMus Lab - Casa Paganini
+repository-code: 'https://github.com/InfoMusCP/PyEyesWeb'
+url: 'https://infomuscp.github.io/PyEyesWeb/'
+license: MIT
