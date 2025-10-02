@@ -63,7 +63,7 @@ Originally started in 1997, EyesWeb has been adopted worldwide in scientific res
 
     ---
 
-    Integrate PyEyesWeb in real-time with [TouchDesigner](integrations.md).
+    Integrate PyEyesWeb in real-time with [TouchDesigner](getting_started/integrations.md).
 
 -   :material-hospital:{ .lg .middle } **Health & Rehabilitation** 
 
@@ -116,7 +116,7 @@ funded by the European Union’s Horizon programme.
 ## Explore the Documentation  
 
 - 🚀 [Getting Started](getting_started/getting_started.md) – install, examples, and feature list
-- 🎭 [TouchDesigner Plugin](integrations.md)
+- 🎭 [TouchDesigner Plugin](getting_started/integrations.md)
 
 ## Roadmap 
 

@@ -121,4 +121,3 @@ nav:
           - Bilateral Symmetry: user_guide/analysis_primitives/bilateral_symmetry.md
           - Synchronization: user_guide/analysis_primitives/synchronization.md
   - API: API/
-  - Integrations: integrations.md

@@ -7,20 +7,22 @@ They are typically represented as **time-series** with the same sampling rate as
 
 | Feature                                                   | Description                                                                                                                                                     | Implemented      |
 |-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
-| **Kinematics**                                            | Velocity, acceleration, and jerk.                                                                                                                               | :material-close: |
-| **Gravity**                                               | Acceleration toward the ground.                                                                                                                                 | :material-close: |
-| **Kinetic Energy**                                        | Energy of a cloud of 3D moving joints, possibly weighted by their masses using biometric tables.                                                                | :material-close: |
-| **Motion Index / Quantity of Motion (QoM)**               | Area of the difference between silhouettes in consecutive frames.                                                                                               | :material-close: |
+| **Kinematics** [^1]                                       | Velocity, acceleration, and jerk.                                                                                                                               | :material-close: |
+| **Kinetic Energy** [^1]                                   | Energy of a cloud of 3D moving joints, possibly weighted by their masses using biometric tables.                                                                | :material-close: |
+| **Motion Index / Quantity of Motion (QoM)** [^1]          | Area of the difference between silhouettes in consecutive frames.                                                                                               | :material-close: |
 | [**Postural Contraction**](contraction_expansion.md) [^1] | Extent to which body posture is close to its barycenter.                                                                                                        | :material-close: |
-| **Postural Symmetry**                                     | Geometric symmetry of posture with respect to a plane or axis.                                                                                                  | :material-close: |
 | [**Smoothness**](smoothness.md) [^1]                      | Motion of a joint according to biomechanics laws of smoothness.                                                                                                 | :material-check: |
 | [**Postural Balance**](postural_balance.md) [^1]          | Projection of the body’s barycenter onto the floor within the support area of the feet                                                                          | :material-check: |
-| **Change of Weight Between Feet**                         | Computed from pressure patterns measured by a sensitive floor.                                                                                                  | :material-close: |
-| **Postural Tension**                                      | Vector describing angular relations between feet, hips, trunk, shoulders, and head; inspired by angles in classical painting/sculpture used to express tension. | :material-close: |
+| **Postural Tension** [^1]                                 | Vector describing angular relations between feet, hips, trunk, shoulders, and head; inspired by angles in classical painting/sculpture used to express tension. | :material-close: |
 
 ---
 
 ## References
-[^1]: TODO
+
+[//]: # (Postural tension)
+[^1]: Camurri, Volpe, Piana, Mancini, Alborno, Ghisio (2018) The Energy Lift: automated measurement of postural tension and energy transmission. Proc. MOCO 2018
+
+[//]: # (Postural tension)
+[^2]: Camurri, Volpe, Piana, Mancini, Niewiadomski, Ferrari, Canepa  (2016) The Dancer in the Eye: Towards a Multi-Layered Computational Framework of Qualities in Movement, Proc. MOCO 2016.
 
 
