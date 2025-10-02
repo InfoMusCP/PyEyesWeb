@@ -85,10 +85,12 @@ Contributions to `PyEyesWeb` are welcome! Whether it's reporting bugs, adding fe
 
 ## Authors & Acknowledgments
 
-`PyEyesWeb` is developed by [**InfoMus Lab – Casa Paganini**](http://www.casapaganini.org/index_eng.php){:target="_blank"}, University of Genoa, as part of the **[Resilence EU Project](https://www.resilence.eu/)**, funded by the European Union’s Horizon programme.  
+`PyEyesWeb` is developed by [**InfoMus Lab – Casa Paganini**](http://www.casapaganini.org/index_eng.php), University of Genoa, as part of the **[Resilence EU Project](https://www.resilence.eu/)**, funded by the European Union’s Horizon programme.  
 
 <div align="center">
 <img src="docs/assets/cp-logo.png" alt="InfoMus Lab Logo" width="512" style="margin:15px"/>
+</div>
+<div align="center">
 <img src="docs/assets/resilence-logo.png" alt="Resilence Project Logo" width="200" style="margin:15px"/>
 <img src="docs/assets/eu-logo.png" alt="EU Logo" width="100" style="margin:15px"/>
 </div>
