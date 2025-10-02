@@ -16,7 +16,7 @@ Movement Analysis Toolkit
 
 :material-rocket-launch: **Extract features** from raw human movement data  
 :material-school: **Apply in science, health, and the arts**  
-:material-handshake: **Developed within the [Resilence EU Project](https://resilence.eu/)**
+:material-handshake: **Developed with the partial support of the [EU ICT STARTS Resilence Project](https://resilence.eu/)**
 
 [:octicons-book-24: Get Started](getting_started.md){ .md-button .md-button--primary } [:material-github: GitHub Repository](https://github.com/InfoMusCP/InfoMove){ .md-button }  
 
@@ -102,7 +102,7 @@ This framework models an observer of a dance performance through four interconne
     ![InfoMus Lab Logo](assets/cp-logo.png){ width=512 }
     </div>
 
-PyEyesWeb is developed as part of the **[Resilence EU Project](https://www.resilence.eu/)**,  
+PyEyesWeb is developed the partial support of the [EU ICT STARTS Resilence Project](https://resilence.eu/),
 funded by the European Union’s Horizon programme.  
 
 <div align="center">
