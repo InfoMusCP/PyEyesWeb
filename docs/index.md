@@ -18,7 +18,7 @@ Movement Analysis Toolkit
 :material-school: **Apply in science, health, and the arts**  
 :material-handshake: **Developed with the partial support of the [EU ICT STARTS Resilence Project](https://resilence.eu/)**
 
-[:octicons-book-24: Get Started](getting_started.md){ .md-button .md-button--primary } [:material-github: GitHub Repository](https://github.com/InfoMusCP/InfoMove){ .md-button }  
+[:octicons-book-24: Get Started](getting_started/getting_started.md){ .md-button .md-button--primary } [:material-github: GitHub Repository](https://github.com/InfoMusCP/InfoMove){ .md-button }  
 
 </div>
 
@@ -115,7 +115,7 @@ funded by the European Union’s Horizon programme.
 
 ## Explore the Documentation  
 
-- 🚀 [Getting Started](getting_started.md) – install, examples, and feature list
+- 🚀 [Getting Started](getting_started/getting_started.md) – install, examples, and feature list
 - 🎭 [TouchDesigner Plugin](integrations.md)
 
 ## Roadmap 

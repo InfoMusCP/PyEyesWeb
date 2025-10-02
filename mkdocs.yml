@@ -100,7 +100,9 @@ copyright: Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All 
 
 nav:
   - Home: index.md
-  - Getting Started: getting_started.md
+  - Getting Started:
+      - getting_started/getting_started.md
+      - Integrations: getting_started/integrations.md
   - User Guide:
       - user_guide/index.md
       - Layer 1 - Physical Signals:
@@ -118,10 +120,5 @@ nav:
           - user_guide/analysis_primitives/index.md
           - Bilateral Symmetry: user_guide/analysis_primitives/bilateral_symmetry.md
           - Synchronization: user_guide/analysis_primitives/synchronization.md
-#      - Bilateral Symmetry: user_guide/bilateral_symmetry.md
-#      - Contraction Expansion: user_guide/contraction_expansion.md
-#      - Smoothness: user_guide/smoothness.md
-#      - Synchronization: user_guide/synchronization.md
-#      - TSV Reader: user_guide/tsv_reader.md
   - API: API/
   - Integrations: integrations.md
