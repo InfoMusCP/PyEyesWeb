@@ -1,4 +1,6 @@
 site_name: PyEyesWeb
+repo_url: https://github.com/InfoMusCP/PyEyesWeb
+site_url: https://infomuscp.github.io/PyEyesWeb/
 
 plugins:
   - gen-files:
@@ -23,45 +25,99 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed
   - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.arithmatex:
+      generic: true
 
 theme:
   name: material
+  custom_dir: overrides
   logo: assets/eyesweb-logo.png
   favicon: assets/favicon-32x32.png
+  icon:
+    repo: fontawesome/brands/github
+#  font:
+#    text: Inter
   features:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.instant
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
 #    - navigation.expand
     - content.code.copy
     - content.tabs.link
     - content.tooltips
+    - content.code.annotate
+    - content.tables.striped
+    - search.suggest
+    - search.highlight
+    - search.share
+    - toc.follow
+    - announce.dismiss
   palette:
-    - scheme: default
-      primary: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: red
       accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
-    - scheme: slate
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: black
       accent: red
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
 
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/InfoMusCP
+      name: GitHub Organization
+    - icon: material/web
+      link: http://www.casapaganini.org/index_eng.php
+      name: InfoMus Lab - Casa Paganini Website
+
+copyright: Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.
+
 nav:
   - Home: index.md
-  - Getting Started: getting_started.md
-  - Modules:
-      - Bilateral Symmetry: modules/bilateral_symmetry.md
-      - Contraction Expansion: modules/contraction_expansion.md
-      - Smoothness: modules/smoothness.md
-      - Synchronization: modules/synchronization.md
-      - TSV Reader: modules/tsv_reader.md
+  - Getting Started:
+      - getting_started/getting_started.md
+      - Integrations: getting_started/integrations.md
+  - User Guide:
+      - user_guide/index.md
+      - Layer 1 - Physical Signals:
+          - user_guide/physical_signals/index.md
+      - Layer 2 - Low-Level Features:
+          - user_guide/low_level/index.md
+          - Postural Balance: user_guide/low_level/postural_balance.md
+          - Contraction Expansion: user_guide/low_level/contraction_expansion.md
+          - Smoothness: user_guide/low_level/smoothness.md
+      - Layer 3 - Mid-Level Features:
+          - user_guide/mid_level/index.md
+      - Layer 4 - High-Level Features:
+          - user_guide/high_level/index.md
+      - Analysis Primitives:
+          - user_guide/analysis_primitives/index.md
+          - Bilateral Symmetry: user_guide/analysis_primitives/bilateral_symmetry.md
+          - Synchronization: user_guide/analysis_primitives/synchronization.md
   - API: API/
-  - Integrations: integrations.md

@@ -16,22 +16,28 @@ API_DOCS_PATH = Path("API")
 
 nav = mkdocs_gen_files.Nav()
 
+def format_module_name(name):
+    return " ".join(part.capitalize() for part in name.split("_"))
+
+
 # Generate individual module pages and build nav
 for path in sorted(SRC_DIR.rglob("*.py")):
     module_path = path.relative_to(SRC_DIR).with_suffix("")
     doc_path = API_DOCS_PATH / path.relative_to(SRC_DIR).with_suffix(".md")
     module_name = ".".join(module_path.parts)
 
-    # Skip empty __init__.py modules if desired
+    # Skip empty __init__.py user_guide if desired
     if module_name.endswith("__init__"):
         continue
 
     # Add to literate-nav
-    nav[module_path.parts] = doc_path.relative_to(API_DOCS_PATH).as_posix()
+    formatted_nav = tuple(format_module_name(part) for part in module_path.parts)
+    nav[formatted_nav] = doc_path.relative_to(API_DOCS_PATH).as_posix()
 
     # Generate module page
     doc_path.parent.mkdir(parents=True, exist_ok=True)
     with mkdocs_gen_files.open(doc_path, "w") as f:
+        f.write(f"# {format_module_name(module_path.name)}\n\n")
         print(f"::: {PACKAGE_NAME}.{module_name}", file=f)
 
     mkdocs_gen_files.set_edit_path(doc_path, path)
