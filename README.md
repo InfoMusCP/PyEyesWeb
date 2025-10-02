@@ -2,8 +2,8 @@
 ## Expressive movement analysis toolkit
 *A modern, modular, and accessible Python library for expressive movement analysis — bridging research, health, and the arts*  
 
-[![PyPI version](https://img.shields.io/pypi/v/pyeyesweb.svg)](https://pypi.org/project/pyeyesweb/)  
-[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)  
+[![PyPI version](https://img.shields.io/pypi/v/pyeyesweb.svg)](https://pypi.org/project/pyeyesweb/)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)
 [![License](https://img.shields.io/github/license/USERNAME/PyEyesWeb.svg)](LICENSE) 
 
 `PyEyesWeb` is a research toolkit for extracting quantitative features from human movement data.  
@@ -33,9 +33,9 @@ window.append([motion_data])
 
 sparc, jerk = smoothness(window)
 ```
-!!! tip
-    For more advanced and complete use cases see the [Documentation](https://infomuscp.github.io/PyEyesWeb/)
-    and the [examples](examples) folder.
+> [!TIP]
+> For more advanced and complete use cases see the [Documentation](https://infomuscp.github.io/PyEyesWeb/)
+> and the [examples](examples) folder.
 
 ## Documentation
 
@@ -82,20 +82,6 @@ Contributions to `PyEyesWeb` are welcome! Whether it's reporting bugs, adding fe
 3. Make your changes, ensuring code quality and adherence to the project's coding standards.
 4. Submit a pull request to the `main` branch, with a clear description of your changes.
 5. Engage in code reviews and address any feedback provided by maintainers.
-
-## Citation
-
-If you use `PyEyesWeb` in your research, please cite it as follows:
-
-### BibTeX
-```bibtex
-@misc{pyeyesweb2025,
-  title        = {PyEyesWeb: A Python Toolkit for Expressive Movement Analysis},
-  author       = {InfoMus Lab – Casa Paganini},
-  year         = {2025},
-  howpublished = {\url{https://github.com/infomuscp/PyEyesWeb}}
-}
-```
 
 ## Authors & Acknowledgments
 
