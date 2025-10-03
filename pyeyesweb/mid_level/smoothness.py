@@ -25,6 +25,8 @@ class Smoothness:
     and Jerk RMS metrics. It can optionally apply Savitzky-Golay filtering
     to reduce noise before analysis.
 
+    Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/low_level/smoothness/)
+
     Parameters
     ----------
     rate_hz : float, optional

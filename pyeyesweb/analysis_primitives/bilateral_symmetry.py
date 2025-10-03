@@ -28,6 +28,8 @@ class BilateralSymmetryAnalyzer:
     
     Based on research methods from bilateral motion data fusion and 
     wheelchair propulsion symmetry analysis papers.
+
+    Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry/).
     """
     
     def __init__(self, window_size=100, joint_pairs=None):
