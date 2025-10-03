@@ -10,6 +10,8 @@ class Equilibrium:
     backward sway more than lateral sway. A barycenter is evaluated against
     this ellipse to compute a normalized equilibrium value.
 
+    Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/low_level/postural_balance/)
+
     Parameters
     ----------
     margin_mm : float, optional

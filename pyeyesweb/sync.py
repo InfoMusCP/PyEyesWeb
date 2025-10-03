@@ -48,6 +48,8 @@ class Synchronization:
     and is computed as the absolute value of the mean complex phase difference
     between the two signals.
 
+    Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/synchronization/)
+
     Parameters
     ----------
     sensitivity : int, optional

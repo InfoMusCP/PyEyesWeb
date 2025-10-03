@@ -35,11 +35,11 @@ PyEyesWeb is organized into subpackages analyzing movement features at different
 
 | <div style="min-width:150px">Subpackage</div>                    | Description                                                                                                          | Implemented      |
 |------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|------------------|
-| [`physical_signals`](../user_guide/physical_signals/index.md)       | Data acquisition from physical and virtual sensors (e.g., motion capture, IMU, video, physiological signals).        | :material-close: |
-| [`low_level`](../user_guide/low_level/index.md)                     | Extraction of instantaneous descriptors from raw data (e.g., velocity, acceleration, kinetic energy, posture).       | :material-check: |
-| [`mid_level`](../user_guide/mid_level/index.md)                     | Structural and amodal descriptors over movement units or windows (e.g., fluidity, coordination, lightness).          | :material-check: |
-| [`high_level`](../user_guide/high_level/index.md)                   | Expressive and communicative qualities perceived by an observer (e.g., emotion, saliency, social signals).           | :material-close: |
-| [`analysis_primitives`](../user_guide/analysis_primitives/index.md) | General-purpose operators applied at all levels (e.g., statistical moments, entropy, recurrence, predictive models). | :material-check: |
+| [`physical_signals`](theoretical_framework/physical_signals/index.md)       | Data acquisition from physical and virtual sensors (e.g., motion capture, IMU, video, physiological signals).        | :material-close: |
+| [`low_level`](theoretical_framework/low_level/index.md)                     | Extraction of instantaneous descriptors from raw data (e.g., velocity, acceleration, kinetic energy, posture).       | :material-check: |
+| [`mid_level`](theoretical_framework/mid_level/index.md)                     | Structural and amodal descriptors over movement units or windows (e.g., fluidity, coordination, lightness).          | :material-check: |
+| [`high_level`](theoretical_framework/high_level/index.md)                   | Expressive and communicative qualities perceived by an observer (e.g., emotion, saliency, social signals).           | :material-close: |
+| [`analysis_primitives`](theoretical_framework/analysis_primitives/index.md) | General-purpose operators applied at all levels (e.g., statistical moments, entropy, recurrence, predictive models). | :material-check: |
 
 ## References
 

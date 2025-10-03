@@ -1,15 +1,22 @@
-# User Guide
+# Theoretical Framework
 
 PyEyesWeb inherits from the rich tradition of computational movement analysis initiated by the [EyesWeb](https://casapaganini.unige.it/eyesweb_bp) project [^1][^2][^3]
 and grounds on the multi-layered computational framework of qualities in movement developed in the [DANCE](http://dance.dibris.unige.it/) project [^4].
 
 # Conceptual Model
 
-![conceptual_model.png](../assets/conceptual_model.png)
+![conceptual_model.png](../../assets/conceptual_model.png)
 
-The framework describes how raw sensor data can be progressively transformed into meaningful descriptions of expressive movement qualities and is organized into four layers:
+The framework describes how raw sensor data can be progressively transformed into meaningful descriptions of expressive movement qualities and is organized into four layers.  
+The layers represent a conceptual model and **not a strict processing pipeline**.  
 
 ## Layers Overview
+
+!!! example "Attention!"
+    The concept of **timescale** is crucial in this framework, and each layer operates at different temporal scales.  
+    As an example, a key distinction from Layers 2 and 3 is moving from instantaneous or short-window features (~0.5s)
+    to longer windows (0.5-3s) or movement units (e.g., a specific sport gesture, a choreographic phase).  
+    One same feature **can occur at different layers** and yield **different interpretations** depending on the timescale of analysis.
 
 <div class="grid cards" markdown>
 
@@ -19,7 +26,7 @@ The framework describes how raw sensor data can be progressively transformed int
 
     _Foundation for all higher layers._  
     
-    [→ Learn more](../user_guide/physical_signals/index.md)
+    [→ Learn more](physical_signals/index.md)
 
 -   **Layer 2 – Low-Level Features**  
 
@@ -28,7 +35,7 @@ The framework describes how raw sensor data can be progressively transformed int
     
     _Represented as time-series._  
 
-    [→ Learn more](../user_guide/low_level/index.md)
+    [→ Learn more](low_level/index.md)
 
 -   **Layer 3 – Mid-Level Features**  
 
@@ -37,7 +44,7 @@ The framework describes how raw sensor data can be progressively transformed int
     
     _Introduce amodal descriptors across modalities._
 
-    [→ Learn more](../user_guide/mid_level/index.md)
+    [→ Learn more](mid_level/index.md)
 
 -   **Layer 4 – Expressive Qualities**  
 
@@ -46,7 +53,7 @@ The framework describes how raw sensor data can be progressively transformed int
     
     _Requires context and ML mappings._
 
-    [→ Learn more](../user_guide/high_level/index.md)
+    [→ Learn more](high_level/index.md)
 
 
 </div>
@@ -59,7 +66,7 @@ The framework describes how raw sensor data can be progressively transformed int
     
     _Provide the building blocks for extracting meaningful features._  
     
-    [→ Learn more](../user_guide/analysis_primitives/index.md)
+    [→ Learn more](analysis_primitives/index.md)
 
 </div>
 

@@ -39,7 +39,7 @@ markdown_extensions:
 
 theme:
   name: material
-  custom_dir: overrides
+  custom_dir: docs/overrides
   logo: assets/eyesweb-logo.png
   favicon: assets/favicon-32x32.png
   icon:
@@ -100,24 +100,24 @@ copyright: Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All 
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - getting_started/getting_started.md
-      - Integrations: getting_started/integrations.md
   - User Guide:
-      - user_guide/index.md
-      - Layer 1 - Physical Signals:
-          - user_guide/physical_signals/index.md
-      - Layer 2 - Low-Level Features:
-          - user_guide/low_level/index.md
-          - Postural Balance: user_guide/low_level/postural_balance.md
-          - Contraction Expansion: user_guide/low_level/contraction_expansion.md
-          - Smoothness: user_guide/low_level/smoothness.md
-      - Layer 3 - Mid-Level Features:
-          - user_guide/mid_level/index.md
-      - Layer 4 - High-Level Features:
-          - user_guide/high_level/index.md
-      - Analysis Primitives:
-          - user_guide/analysis_primitives/index.md
-          - Bilateral Symmetry: user_guide/analysis_primitives/bilateral_symmetry.md
-          - Synchronization: user_guide/analysis_primitives/synchronization.md
+      - Getting Started: user_guide/getting_started.md
+      - Theoretical Framework:
+          - user_guide/theoretical_framework/theoretical_framework.md
+          - Layer 1 - Physical Signals:
+              - user_guide/theoretical_framework/physical_signals/index.md
+          - Layer 2 - Low-Level Features:
+              - user_guide/theoretical_framework/low_level/index.md
+              - Postural Balance: user_guide/theoretical_framework/low_level/postural_balance.md
+              - Contraction Expansion: user_guide/theoretical_framework/low_level/contraction_expansion.md
+              - Smoothness: user_guide/theoretical_framework/low_level/smoothness.md
+          - Layer 3 - Mid-Level Features:
+              - user_guide/theoretical_framework/mid_level/index.md
+          - Layer 4 - High-Level Features:
+              - user_guide/theoretical_framework/high_level/index.md
+          - Analysis Primitives:
+              - user_guide/theoretical_framework/analysis_primitives/index.md
+              - Bilateral Symmetry: user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry.md
+              - Synchronization: user_guide/theoretical_framework/analysis_primitives/synchronization.md
+      - Integrations: user_guide/integrations.md
   - API: API/
