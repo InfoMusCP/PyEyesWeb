@@ -1,106 +1,77 @@
 # Synchronization Analysis Module
 
-The Synchronization module quantifies temporal coordination between multiple participants, body segments, or movement components. It provides methods to assess how well different movement signals align in time and phase.
+The **Synchronization Module** quantifies temporal coordination between multiple participants, body segments, or movement components.  
+It provides methods to assess how well different movement signals align in **time** and **phase**.
 
-## Overview
+The module implements validated methods for temporal coordination assessment including:
+- cross-correlation with lag analysis.
+- Phase coupling and Phase Locking Values (PLV).
 
-Movement synchronization analysis is essential for understanding:
-- Multi-person coordination (e.g., dance, sports teams)
-- Inter-limb coordination (e.g., bilateral arm movements)
-- Multi-joint coordination patterns
-- Temporal coupling in rehabilitation settings
+!!! note
+     These methods assume stationarity over the analysis window and Gaussian noise.
 
-The module implements validated methods for temporal coordination assessment including cross-correlation, phase coherence, and lag analysis.
-
-## Class: `Synchronization`
-
-### Constructor
-
-```python
-Synchronization(sampling_rate=50.0, max_lag=None)
-```
-
-**Parameters:**
-- `sampling_rate` (float): Data sampling frequency in Hz
-- `max_lag` (int): Maximum lag for cross-correlation analysis
-
-### Methods
-
-#### `calculate_cross_correlation(signal1, signal2)`
-
-Computes cross-correlation between two signals to assess temporal coordination.
-
-**Parameters:**
-- `signal1` (ndarray): First signal time series
-- `signal2` (ndarray): Second signal time series
-
-**Returns:**
-Dictionary containing:
-- `'max_correlation'`: Peak cross-correlation value
-- `'lag_samples'`: Lag at maximum correlation (in samples)
-- `'lag_seconds'`: Lag at maximum correlation (in seconds)
-- `'correlation_curve'`: Full cross-correlation function
-
-#### `assess_phase_coupling(signal1, signal2)`
-
-Analyzes phase relationships between signals using Hilbert transform.
-
-**Parameters:**
-- `signal1` (ndarray): First signal time series
-- `signal2` (ndarray): Second signal time series
-
-**Returns:**
-Dictionary containing:
-- `'phase_locking_value'`: Phase coupling strength (0-1)
-- `'mean_phase_diff'`: Average phase difference
-- `'phase_consistency'`: Consistency of phase relationship
-
-#### `windowed_synchronization(signal1, signal2, window_size, overlap=0.5)`
-
-Computes time-varying synchronization using sliding windows.
-
-**Parameters:**
-- `signal1`, `signal2` (ndarray): Input signals
-- `window_size` (int): Analysis window length
-- `overlap` (float): Window overlap fraction
-
-**Returns:**
-Time series of synchronization metrics
-
-## Algorithm Details
+## Algorithms Details
 
 ### Cross-Correlation Analysis
 
 Cross-correlation quantifies linear similarity between signals as a function of lag:
 
-```
-R(τ) = Σ(x(t) * y(t+τ)) / √(Σx²(t) * Σy²(t))
-```
+$$
+R_{xy}(\tau) = \frac{\sum_t (x(t)-\bar{x})(y(t+\tau)-\bar{y})}{\sigma_x \sigma_y}
+$$
 
-Where:
-- τ is the lag parameter
-- R(τ) ranges from -1 to +1
-- Maximum |R(τ)| indicates optimal temporal alignment
+- \( \tau \) is the lag  
+- \( R_{xy}(\tau) \in [-1,1] \)  
+
+**Output:**
+
+$$
+\rho_{\max} = \max_\tau R_{xy}(\tau), \quad \tau^* = \arg\max_\tau R_{xy}(\tau)
+$$
+
+!!! tip "Interpretation"
+    | Synchronization Strength                                   | Lag Interpretation                                                                  |
+    |------------------------------------------------------------|-------------------------------------------------------------------------------------|
+    | \( \rho_{\max} > 0.8 \): excellent synchronization         | **Zero lag (\(\tau \approx 0\))**: Signals are perfectly in-phase                   |
+    | \( 0.6 < \rho_{\max} \leq 0.8 \): good synchronization     | **Positive lag (\(\tau > 0\))**: Signal2 leads Signal1 by \(\tau\) seconds          |
+    | \( 0.4 < \rho_{\max} \leq 0.6 \): moderate synchronization | **Negative lag (\(\tau < 0\))**: Signal1 leads Signal2 by \(\tau\) seconds          |
+    | \( \rho_{\max} \leq 0.4 \): poor synchronization           | **Large lag (\(\tau > T_{threshold}\))**: Loose coordination or potential artifacts |
+
 
 ### Phase Coupling Analysis
 
-Phase relationships assessed using analytic signals:
+Phase synchronization measures temporal alignment independent of amplitude:
 
-1. **Hilbert Transform**: Extract instantaneous phases
-2. **Phase Difference**: Compute φ₁(t) - φ₂(t)
-3. **Phase Locking Value**: Assess phase consistency
+1. **Hilbert Transform**: Compute analytic signals  
 
-PLV calculation:
-```
-PLV = |⟨e^(i*Δφ(t))⟩|
-```
+$$
+z_x(t) = x(t) + i H[x(t)], \quad z_y(t) = y(t) + i H[y(t)]
+$$
 
-### Windowed Analysis
+2. **Instantaneous Phases**:
 
-Time-varying synchronization using overlapping windows:
-- Maintains temporal resolution
-- Captures dynamic coordination changes
-- Provides statistical stability
+$$
+\phi_x(t) = \arg(z_x(t)), \quad \phi_y(t) = \arg(z_y(t))
+$$
+
+3. **Phase Difference**:
+
+$$
+\Delta \phi(t) = \phi_x(t) - \phi_y(t)
+$$
+
+4. **Phase Locking Value (PLV)**:
+
+$$
+\text{PLV} = \left| \frac{1}{N} \sum_{t=1}^{N} e^{i \Delta \phi(t)} \right|
+$$
+
+**Output:** \( \text{PLV} \in [0,1] \)
+
+!!! tip "Interpretation"
+    - \( PLV > 0.7 \): strong phase coupling  
+    - \( 0.4 < \rho_{\max} \leq 0.7 \): moderate phase coupling   
+    - \( \rho_{\max} \leq 0.4 \): weak phase coupling 
 
 ## Usage Examples
 
@@ -233,62 +204,6 @@ for frame in motion_stream:
         print("High synchronization detected!")
 ```
 
-## Parameter Selection
-
-### Sampling Rate
-- Match your data acquisition frequency
-- Higher rates improve lag resolution
-- Consider computational requirements for real-time analysis
-
-### Maximum Lag
-- Default: 25% of signal length
-- Longer lags: capture larger temporal offsets
-- Shorter lags: focus on tight synchronization
-
-### Window Size (for windowed analysis)
-- Minimum: 50-100 samples for stable estimates
-- Typical: 2-10 seconds of data
-- Longer windows: more stable metrics, less temporal resolution
-
-## Interpretation Guidelines
-
-### Cross-Correlation Values
-- **r > 0.8**: Excellent synchronization
-- **0.6 < r ≤ 0.8**: Good synchronization  
-- **0.4 < r ≤ 0.6**: Moderate synchronization
-- **r ≤ 0.4**: Poor synchronization
-
-### Phase Locking Values
-- **PLV > 0.7**: Strong phase coupling
-- **0.4 < PLV ≤ 0.7**: Moderate coupling
-- **PLV ≤ 0.4**: Weak coupling
-
-### Lag Interpretation
-- **Zero lag**: Perfectly in-phase coordination
-- **Positive lag**: Signal2 leads Signal1
-- **Negative lag**: Signal1 leads Signal2
-- **Large lags**: May indicate loose coordination or artifacts
-
-## Research Applications
-
-### Interpersonal Coordination
-- Joint action tasks
-- Social motor coordination
-- Music and dance performance
-- Therapeutic interventions
-
-### Motor Control Studies
-- Bilateral coordination assessment
-- Inter-limb coupling analysis
-- Coordination development
-- Neurological coordination deficits
-
-### Rehabilitation Research
-- Coordination training effectiveness
-- Recovery assessment
-- Biofeedback applications
-- Adaptive therapy protocols
-
 ## Integration with Other Modules
 
 ### Combined with Smoothness Analysis
@@ -320,13 +235,6 @@ comprehensive_coordination = {
     'temporal_synchronization': temporal_sync
 }
 ```
-
-## Performance Considerations
-
-- **Memory usage**: Scales with signal length and number of lags
-- **Computational complexity**: O(n log n) for FFT-based correlation
-- **Real-time constraints**: Buffer management and update frequency
-- **Numerical stability**: Normalization and outlier handling
 
 ## References
 
