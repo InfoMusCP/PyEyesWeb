@@ -7,9 +7,16 @@ and grounds on the multi-layered computational framework of qualities in movemen
 
 ![conceptual_model.png](../../assets/conceptual_model.png)
 
-The framework describes how raw sensor data can be progressively transformed into meaningful descriptions of expressive movement qualities and is organized into four layers:
+The framework describes how raw sensor data can be progressively transformed into meaningful descriptions of expressive movement qualities and is organized into four layers.  
+The layers represent a conceptual model and **not a strict processing pipeline**.  
 
 ## Layers Overview
+
+!!! example "Attention!"
+    The concept of **timescale** is crucial in this framework, and each layer operates at different temporal scales.  
+    As an example, a key distinction from Layers 2 and 3 is moving from instantaneous or short-window features (~0.5s)
+    to longer windows (0.5-3s) or movement units (e.g., a specific sport gesture, a choreographic phase).  
+    One same feature **can occur at different layers** and yield **different interpretations** depending on the timescale of analysis.
 
 <div class="grid cards" markdown>
 
