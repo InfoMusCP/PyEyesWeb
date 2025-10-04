@@ -54,8 +54,9 @@ class SlidingWindow:
         if value <= 0:
             raise ValueError("max_length must be positive.")
         if value != self._max_length:
+            old_max_length = self._max_length  # keep old value
             self._max_length = value
-            self._resize()
+            self._resize(old_max_length)
 
     def __init__(self, max_length: int, n_columns: int):
         # Validate inputs
@@ -75,7 +76,7 @@ class SlidingWindow:
         if n_columns > 10_000:  # 10k features
             raise ValueError(f"n_columns too large ({n_columns}), maximum is 10,000")
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
         self._max_length = max_length
         self._n_columns = n_columns
@@ -124,15 +125,17 @@ class SlidingWindow:
         data, timestamps = self.to_array()
         return f"""data=\n{data},\ntimestamps=\n{timestamps}"""
 
-    def _resize(self):
-        old_data, old_timestamps = self.to_array()
+    def _resize(self, old_max_length: int):
+        # build indices with old_max_length, not the new one
+        indices = (self._start + np.arange(self._size)) % old_max_length
+        old_data = self._buffer[indices].copy()
+        old_timestamps = self._timestamp[indices].copy()
+
         new_buffer = np.empty((self._max_length, self._n_columns), dtype=np.float32)
         new_timestamps = np.empty(self._max_length, dtype=np.float64)
 
-        # Determine how many samples we can keep
         keep = min(len(old_data), self._max_length)
-        new_buffer[:keep, :min(old_data.shape[1], self._n_columns)] = old_data[-keep:,
-                                                                      :min(old_data.shape[1], self._n_columns)]
+        new_buffer[:keep, :self._n_columns] = old_data[-keep:, :self._n_columns]
         new_timestamps[:keep] = old_timestamps[-keep:]
 
         self._buffer = new_buffer
@@ -186,6 +189,11 @@ class SlidingWindow:
             else:
                 idx = self._start
                 self._start = (self._start + 1) % self._max_length
+
+            if idx >= self._buffer.shape[0]:
+                raise RuntimeError(
+                    f"Internal error: idx={idx} but buffer length={self._buffer.shape[0]}"
+                )
 
             self._buffer[idx] = value
             self._timestamp[idx] = timestamp

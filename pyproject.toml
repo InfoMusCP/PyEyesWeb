@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyeyesweb"
-version = "0.0.1a3"
+version = "0.0.1a4"
 requires-python = ">=3.8"
 authors = [
     {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
