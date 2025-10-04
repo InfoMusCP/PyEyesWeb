@@ -8,6 +8,50 @@ import numpy as np
 from scipy.signal import hilbert, butter, filtfilt
 
 
+def validate_filter_params(lowcut, highcut, fs):
+    """Validate filter frequency parameters.
+
+    Centralized validation for filter parameters used in bandpass_filter
+    and Synchronization class.
+
+    Parameters
+    ----------
+    lowcut : float
+        Low cutoff frequency in Hz
+    highcut : float
+        High cutoff frequency in Hz
+    fs : float
+        Sampling frequency in Hz
+
+    Returns
+    -------
+    tuple
+        Validated (lowcut, highcut, fs)
+
+    Raises
+    ------
+    ValueError
+        If parameters are invalid
+    """
+    # Validate individual parameters
+    if fs <= 0:
+        raise ValueError(f"Sampling frequency must be positive, got {fs}")
+    if lowcut <= 0:
+        raise ValueError(f"Low cutoff frequency must be positive, got {lowcut}")
+    if highcut <= 0:
+        raise ValueError(f"High cutoff frequency must be positive, got {highcut}")
+
+    # Validate relationships
+    if lowcut >= highcut:
+        raise ValueError(f"Low cutoff ({lowcut}) must be less than high cutoff ({highcut})")
+
+    nyquist = fs / 2
+    if highcut >= nyquist:
+        raise ValueError(f"High cutoff ({highcut}) must be less than Nyquist frequency ({nyquist})")
+
+    return lowcut, highcut, fs
+
+
 def bandpass_filter(data, filter_params):
     """Apply a band-pass filter if filter_params is set.
 
@@ -36,22 +80,10 @@ def bandpass_filter(data, filter_params):
     if filter_params is None:
         return data
 
-    lowcut, highcut, fs = filter_params
-
-    # Validate filter parameters
-    if fs <= 0:
-        raise ValueError(f"Sampling frequency must be positive, got {fs}")
-    if lowcut <= 0:
-        raise ValueError(f"Low cutoff frequency must be positive, got {lowcut}")
-    if highcut <= 0:
-        raise ValueError(f"High cutoff frequency must be positive, got {highcut}")
-    if lowcut >= highcut:
-        raise ValueError(f"Low cutoff ({lowcut}) must be less than high cutoff ({highcut})")
+    # Use centralized validation
+    lowcut, highcut, fs = validate_filter_params(*filter_params)
 
     nyquist = 0.5 * fs
-    if highcut >= nyquist:
-        raise ValueError(f"High cutoff ({highcut}) must be less than Nyquist frequency ({nyquist})")
-
     low = lowcut / nyquist
     high = highcut / nyquist
 
