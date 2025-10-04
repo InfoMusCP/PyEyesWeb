@@ -45,6 +45,18 @@ class SlidingWindow:
     >>> print(f"Buffer contains {len(window)} samples")
     """
 
+    @property
+    def max_length(self):
+        return self._max_length
+
+    @max_length.setter
+    def max_length(self, value: int):
+        if value <= 0:
+            raise ValueError("max_length must be positive.")
+        if value != self._max_length:
+            self._max_length = value
+            self._resize()
+
     def __init__(self, max_length: int, n_columns: int):
         # Validate inputs
         if not isinstance(max_length, int):
@@ -85,6 +97,48 @@ class SlidingWindow:
             del self._buffer
         if hasattr(self, '_timestamp'):
             del self._timestamp
+
+    def __len__(self) -> int:
+        """
+        Return the current number of samples in the sliding window.
+
+        Returns
+        -------
+        int
+            Number of samples currently stored in the buffer.
+
+        Examples
+        --------
+        >>> window = SlidingWindow(max_length=10, n_columns=2)
+        >>> print(len(window))  # 0
+        >>> window.append([1.0, 2.0])
+        >>> print(len(window))  # 1
+        """
+        with self._lock:
+            return self._size
+
+    def __repr__(self) -> str:
+        """
+        Return a concise representation showing max length, shape, and the samples with timestamps.
+        """
+        data, timestamps = self.to_array()
+        return f"""data=\n{data},\ntimestamps=\n{timestamps}"""
+
+    def _resize(self):
+        old_data, old_timestamps = self.to_array()
+        new_buffer = np.empty((self._max_length, self._n_columns), dtype=np.float32)
+        new_timestamps = np.empty(self._max_length, dtype=np.float64)
+
+        # Determine how many samples we can keep
+        keep = min(len(old_data), self._max_length)
+        new_buffer[:keep, :min(old_data.shape[1], self._n_columns)] = old_data[-keep:,
+                                                                      :min(old_data.shape[1], self._n_columns)]
+        new_timestamps[:keep] = old_timestamps[-keep:]
+
+        self._buffer = new_buffer
+        self._timestamp = new_timestamps
+        self._start = 0
+        self._size = keep
 
     def append(self, samples: Union[np.ndarray, list], timestamp: Optional[float] = None) -> None:
         """
@@ -205,22 +259,3 @@ class SlidingWindow:
         """
         with self._lock:
             return self._size == self._max_length
-
-    def __len__(self) -> int:
-        """
-        Return the current number of samples in the sliding window.
-
-        Returns
-        -------
-        int
-            Number of samples currently stored in the buffer.
-
-        Examples
-        --------
-        >>> window = SlidingWindow(max_length=10, n_columns=2)
-        >>> print(len(window))  # 0
-        >>> window.append([1.0, 2.0])
-        >>> print(len(window))  # 1
-        """
-        with self._lock:
-            return self._size
