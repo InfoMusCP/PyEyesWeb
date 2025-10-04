@@ -31,20 +31,20 @@ class Equilibrium:
     >>> left = np.array([0, 0, 0])
     >>> right = np.array([400, 0, 0])
     >>> barycenter = np.array([200, 50, 0])
-    >>> value, angle = eq(left, right, barycenter)
-    >>> round(value, 2)
+    >>> result = eq(left, right, barycenter)
+    >>> round(result['value'], 2)
     0.91
-    >>> round(angle, 1)
+    >>> round(result['angle'], 1)
     0.0
 
     # Using 2D coordinates (z is optional)
     >>> left_2d = np.array([0, 0])
     >>> right_2d = np.array([400, 0])
     >>> barycenter_2d = np.array([200, 50])
-    >>> value_2d, angle_2d = eq(left_2d, right_2d, barycenter_2d)
-    >>> round(value_2d, 2)
+    >>> result_2d = eq(left_2d, right_2d, barycenter_2d)
+    >>> round(result_2d['value'], 2)
     0.91
-    >>> round(angle_2d, 1)
+    >>> round(result_2d['angle'], 1)
     0.0
     """
 
@@ -52,7 +52,7 @@ class Equilibrium:
         self.margin = margin_mm
         self.y_weight = y_weight
 
-    def __call__(self, left_foot: np.ndarray, right_foot: np.ndarray, barycenter: np.ndarray) -> tuple[float, float]:
+    def __call__(self, left_foot: np.ndarray, right_foot: np.ndarray, barycenter: np.ndarray) -> dict:
         """
         Evaluate the equilibrium value and ellipse angle.
 
@@ -70,13 +70,13 @@ class Equilibrium:
 
         Returns
         -------
-        value : float
-            Equilibrium value in [0, 1].
-            - 1 means the barycenter is perfectly at the ellipse center.
-            - 0 means the barycenter is outside the ellipse.
-        angle : float
-            Orientation of the ellipse in degrees, measured counter-clockwise
-            from the X-axis (line connecting left and right foot).
+        dict
+            Dictionary containing:
+            - 'value': Equilibrium value in [0, 1].
+                      1 means the barycenter is perfectly at the ellipse center.
+                      0 means the barycenter is outside the ellipse.
+            - 'angle': Orientation of the ellipse in degrees, measured counter-clockwise
+                      from the X-axis (line connecting left and right foot).
 
         Notes
         -----
@@ -157,4 +157,4 @@ class Equilibrium:
             else:
                 value = 0.0
 
-        return max(0.0, value), np.degrees(angle)
+        return {"value": max(0.0, value), "angle": np.degrees(angle)}

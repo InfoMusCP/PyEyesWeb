@@ -53,8 +53,8 @@ class Smoothness:
     >>> for value in movement_data:
     ...     window.append([value])
     >>>
-    >>> sparc, jerk = smooth(window)
-    >>> print(f"SPARC: {sparc:.3f}, Jerk RMS: {jerk:.3f}")
+    >>> result = smooth(window)
+    >>> print(f"SPARC: {result['sparc']:.3f}, Jerk RMS: {result['jerk_rms']:.3f}")
 
     Notes
     -----
@@ -106,20 +106,15 @@ class Smoothness:
 
         Returns
         -------
-        sparc : float or None
-            Spectral Arc Length (more negative = smoother).
-            Returns None if insufficient data.
-        jerk : float or None
-            RMS of jerk (third derivative).
-            Returns None if insufficient data.
-
-        Returns
-        -------
-        tuple of (float, float)
-            (SPARC value, Jerk RMS value) or (NaN, NaN) if insufficient data.
+        dict
+            Dictionary containing:
+            - 'sparc': Spectral Arc Length (more negative = smoother).
+                      Returns NaN if insufficient data.
+            - 'jerk_rms': RMS of jerk (third derivative).
+                         Returns NaN if insufficient data.
         """
         if len(sliding_window) < 5:
-            return float("nan"), float("nan")
+            return {"sparc": float("nan"), "jerk_rms": float("nan")}
 
         signal, _ = sliding_window.to_array()
 
@@ -133,4 +128,4 @@ class Smoothness:
         sparc = compute_sparc(normalized, self.rate_hz)
         jerk = compute_jerk_rms(filtered, self.rate_hz)
 
-        return sparc, jerk
+        return {"sparc": sparc, "jerk_rms": jerk}

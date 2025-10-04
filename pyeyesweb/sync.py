@@ -30,6 +30,7 @@ if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 
 from collections import deque
+import numpy as np
 
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 from pyeyesweb.utils.signal_processing import bandpass_filter, compute_hilbert_phases
@@ -110,8 +111,8 @@ class Synchronization:
     ...     window.append([signal1[i], signal2[i]])
     >>>
     >>> # Compute synchronization
-    >>> plv, status = sync(window)
-    >>> print(f"PLV: {plv:.3f}, Status: {status}")
+    >>> result = sync(window)
+    >>> print(f"PLV: {result['plv']:.3f}, Status: {result['phase_status']}")
 
     Notes
     -----
@@ -176,13 +177,13 @@ class Synchronization:
 
         Returns
         -------
-        plv : float or None
-            Phase Locking Value between 0 (no sync) and 1 (perfect sync).
-            Returns None if the window is not full.
-        phase_status : str or None
-            If output_phase is True, returns "IN PHASE" when PLV > phase_threshold,
-            "OUT OF PHASE" otherwise. Returns None if output_phase is False or
-            if the window is not full.
+        dict
+            Dictionary containing synchronization metrics:
+            - 'plv': Phase Locking Value between 0 (no sync) and 1 (perfect sync).
+                    Returns NaN if the window is not full.
+            - 'phase_status': If output_phase is True, returns "IN PHASE" when PLV > phase_threshold,
+                            "OUT OF PHASE" otherwise. Returns None if output_phase is False or
+                            if the window is not full.
 
         Notes
         -----
@@ -200,7 +201,7 @@ class Synchronization:
             raise ValueError(f"Synchronization requires exactly 2 signal channels, got {signals._n_columns}")
 
         if not signals.is_full():
-            return float("nan"), None
+            return {"plv": float("nan"), "phase_status": None}
 
         sig, _ = signals.to_array()
 
@@ -222,7 +223,7 @@ class Synchronization:
             # Determine phase synchronization status based on threshold
             phase_status = "IN PHASE" if plv > self.phase_threshold else "OUT OF PHASE"
 
-        return plv, phase_status
+        return {"plv": plv, "phase_status": phase_status}
 
     def __call__(self, sliding_window: SlidingWindow):
         """Compute and optionally display synchronization metrics.
@@ -236,21 +237,23 @@ class Synchronization:
 
         Returns
         -------
-        plv : float or None
-            Phase Locking Value (0-1) or None if insufficient data.
-        phase_status : str or None
-            Phase status ("IN PHASE"/"OUT OF PHASE") or None.
+        dict
+            Dictionary containing synchronization metrics:
+            - 'plv': Phase Locking Value (0-1) or NaN if insufficient data.
+            - 'phase_status': Phase status ("IN PHASE"/"OUT OF PHASE") or None.
 
         Output
         ------------
         Prints synchronization metrics to stdout if PLV is computed successfully.
         Format depends on output_phase setting.
         """
-        plv, phase_status = self.compute_synchronization(sliding_window)
+        result = self.compute_synchronization(sliding_window)
+        plv = result["plv"]
+        phase_status = result["phase_status"]
 
-        if plv is not None:
+        if not np.isnan(plv):
             if self.output_phase:
                 print(f"Synchronization Index: {plv:.3f}, Phase Status: {phase_status}")
             else:
                 print(f"Synchronization Index: {plv:.3f}")
-        return plv, phase_status
+        return result
