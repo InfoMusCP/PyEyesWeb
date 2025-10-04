@@ -16,6 +16,7 @@ import numpy as np
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 from pyeyesweb.utils.signal_processing import apply_savgol_filter
 from pyeyesweb.utils.math_utils import compute_sparc, compute_jerk_rms, normalize_signal
+from pyeyesweb.utils.validators import validate_numeric, validate_boolean
 
 
 class Smoothness:
@@ -64,20 +65,11 @@ class Smoothness:
     """
 
     def __init__(self, rate_hz=50.0, use_filter=True):
-        # Validate rate_hz
-        if not isinstance(rate_hz, (int, float)):
-            raise TypeError(f"rate_hz must be a number, got {type(rate_hz).__name__}")
-        if rate_hz <= 0:
-            raise ValueError(f"rate_hz must be positive, got {rate_hz}")
-        if rate_hz > 100000:  # 100 kHz is a reasonable upper limit
-            raise ValueError(f"rate_hz too high ({rate_hz} Hz), maximum is 100,000 Hz")
+        # Validate rate_hz using centralized validator
+        self.rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.01, max_val=100000)
 
-        # Validate use_filter
-        if not isinstance(use_filter, bool):
-            raise TypeError(f"use_filter must be boolean, got {type(use_filter).__name__}")
-
-        self.rate_hz = float(rate_hz)  # Ensure it's a float
-        self.use_filter = use_filter
+        # Validate use_filter using centralized validator
+        self.use_filter = validate_boolean(use_filter, 'use_filter')
 
     def _filter_signal(self, signal):
         """Apply Savitzky-Golay filter if enabled and enough data.
