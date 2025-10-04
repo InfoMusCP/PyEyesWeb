@@ -30,6 +30,7 @@ if os.getcwd() not in sys.path:
     sys.path.append(os.getcwd())
 
 from collections import deque
+import threading
 import numpy as np
 
 from pyeyesweb.data_models.sliding_window import SlidingWindow
@@ -83,6 +84,7 @@ class Synchronization:
     ----------
     plv_history : collections.deque
         Rolling buffer storing recent PLV values for temporal analysis.
+        Thread safe access is ensured via internal locking.
     output_phase : bool
         Flag controlling phase status output.
     filter_params : tuple or None
@@ -158,6 +160,7 @@ class Synchronization:
                 raise ValueError(f"highcut ({highcut}) must be less than Nyquist frequency ({fs/2})")
 
         self.plv_history = deque(maxlen=sensitivity)
+        self._history_lock = threading.Lock()
         self.output_phase = output_phase
         self.filter_params = filter_params
         self.phase_threshold = phase_threshold
@@ -216,7 +219,8 @@ class Synchronization:
 
         # Compute the Phase Locking Value (PLV)
         plv = compute_phase_locking_value(phase1, phase2)
-        self.plv_history.append(plv)
+        with self._history_lock:
+            self.plv_history.append(plv)
 
         phase_status = None
         if self.output_phase:
