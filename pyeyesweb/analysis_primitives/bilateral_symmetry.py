@@ -229,5 +229,23 @@ class BilateralSymmetryAnalyzer:
             'cca_correlation': overall_cca,
             'joint_symmetries': joint_symmetries
         }
-    
+
+    def __call__(self, mocap_frame):
+        """
+        Compute bilateral symmetry metrics for motion capture frame.
+
+        This method provides a standardized API interface by delegating to analyze_frame.
+
+        Args:
+            mocap_frame: (n_joints, 3) array of joint positions for one frame
+
+        Returns:
+            dict: Symmetry metrics containing:
+                - overall_symmetry: Overall bilateral symmetry score (0-1)
+                - phase_sync: Phase synchronization value
+                - cca_correlation: Canonical correlation coefficient
+                - joint_symmetries: Per-joint-pair symmetry metrics
+        """
+        return self.analyze_frame(mocap_frame)
+
 

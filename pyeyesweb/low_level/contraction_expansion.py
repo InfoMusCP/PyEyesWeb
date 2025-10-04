@@ -194,6 +194,66 @@ def _process_timeseries_3d(data, baseline_frame):
     return metrics, indices, states
 
 
+class ContractionExpansion:
+    """Analyze body movement contraction/expansion patterns.
+
+    This class provides a standardized API for computing area (2D) or volume (3D)
+    metrics for body point configurations and tracking expansion/contraction
+    relative to a baseline.
+
+    Parameters
+    ----------
+    mode : {"2D", "3D", None}, optional
+        Analysis mode. If None, auto-detects from data dimensions.
+    baseline_frame : int, optional
+        Frame index to use as baseline for time series (default: 0).
+
+    Examples
+    --------
+    >>> # Create analyzer
+    >>> ce = ContractionExpansion(mode="2D")
+    >>>
+    >>> # Single frame analysis
+    >>> points_2d = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
+    >>> result = ce(points_2d)
+    >>> print(result['metric'])  # Area of square
+    1.0
+
+    >>> # Time series analysis
+    >>> ce_3d = ContractionExpansion(mode="3D", baseline_frame=0)
+    >>> frames = np.random.randn(100, 4, 3)
+    >>> result = ce_3d(frames)
+    >>> print(result['states'][:10])  # First 10 frame states
+    """
+
+    def __init__(self, mode=None, baseline_frame=0):
+        self.mode = mode
+        self.baseline_frame = baseline_frame
+
+    def __call__(self, data):
+        """Analyze movement data using the configured settings.
+
+        Parameters
+        ----------
+        data : ndarray
+            Either single frame (4, 2) or (4, 3) for 2D/3D points,
+            or time series (n_frames, 4, 2) or (n_frames, 4, 3).
+
+        Returns
+        -------
+        dict
+            For single frame:
+                - 'metric': area or volume value
+                - 'dimension': "2D" or "3D"
+            For time series:
+                - 'metrics': array of area/volume values
+                - 'indices': array of expansion indices relative to baseline
+                - 'states': array of states (-1=contraction, 0=neutral, 1=expansion)
+                - 'dimension': "2D" or "3D"
+        """
+        return analyze_movement(data, mode=self.mode, baseline_frame=self.baseline_frame)
+
+
 def analyze_movement(data, mode=None, baseline_frame=0):
     """Analyze body movement contraction/expansion patterns.
 
