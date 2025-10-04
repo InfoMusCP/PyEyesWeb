@@ -69,9 +69,9 @@ $$
 **Output:** \( \text{PLV} \in [0,1] \)
 
 !!! tip "Interpretation"
-    - \( PLV > 0.7 \): strong phase coupling  
-    - \( 0.4 < \rho_{\max} \leq 0.7 \): moderate phase coupling   
-    - \( \rho_{\max} \leq 0.4 \): weak phase coupling 
+    - \( PLV > 0.7 \): strong phase coupling
+    - \( 0.4 < PLV \leq 0.7 \): moderate phase coupling
+    - \( PLV \leq 0.4 \): weak phase coupling 
 
 ## Usage Examples
 

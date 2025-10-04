@@ -106,7 +106,7 @@ $$
 $$
 
 !!! tip
-    The measurment units is (length unit)/s³ (e.g., m/s³).  
+    The measurement units is (length unit)/s³ (e.g., m/s³).  
     Lower RMS values indicate smoother movement, but the scale depends on movement amplitude and units.
 
 ## Usage Examples
