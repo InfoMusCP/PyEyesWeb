@@ -17,9 +17,12 @@ Note: Specific implementation details are adapted for a real-time MoCap analysis
 """
 
 import numpy as np
+import warnings
 from collections import deque
-from scipy.signal import hilbert
 from sklearn.cross_decomposition import CCA
+
+from pyeyesweb.utils.signal_processing import compute_hilbert_phases
+from pyeyesweb.utils.math_utils import compute_phase_locking_value
 
 
 class BilateralSymmetryAnalyzer:
@@ -102,25 +105,20 @@ class BilateralSymmetryAnalyzer:
         Returns:
             float: Phase locking value (0-1, where 1 is perfect synchronization)
         """
-        if len(left_signal) < 10:  # Need minimum data for Hilbert
-            return np.nan  # Not enough data for analysis
+        if len(left_signal) < 10:  # Need minimum samples for Hilbert Transform
+            return np.nan
             
         try:
-            # Extract phases using Hilbert transform
-            left_analytic = hilbert(left_signal - np.mean(left_signal))
-            right_analytic = hilbert(right_signal - np.mean(right_signal))
-            
-            left_phase = np.angle(left_analytic)
-            right_phase = np.angle(right_analytic)
-            
-            # Compute Phase Locking Value (PLV)
-            phase_diff = left_phase - right_phase
-            plv = np.abs(np.mean(np.exp(1j * phase_diff)))
-            
+            left_centered = left_signal - np.mean(left_signal)
+            right_centered = right_signal - np.mean(right_signal)
+            sig = np.column_stack([left_centered, right_centered])
+
+            phase1, phase2 = compute_hilbert_phases(sig)
+            plv = compute_phase_locking_value(phase1, phase2)
+
             return plv
 
         except Exception as e:
-            import warnings
             warnings.warn(f"Phase symmetry computation failed: {e}", RuntimeWarning)
             return np.nan
 
