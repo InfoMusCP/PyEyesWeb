@@ -18,11 +18,13 @@ Note: Specific implementation details are adapted for a real-time MoCap analysis
 
 import numpy as np
 import warnings
+import threading
 from collections import deque
 from sklearn.cross_decomposition import CCA
 
-from pyeyesweb.utils.signal_processing import compute_hilbert_phases
-from pyeyesweb.utils.math_utils import compute_phase_locking_value
+from pyeyesweb.utils.signal_processing import compute_hilbert_phases, bandpass_filter, validate_filter_params
+from pyeyesweb.utils.math_utils import compute_phase_locking_value, center_signals
+from pyeyesweb.utils.validators import validate_integer, validate_filter_params_tuple
 
 
 class BilateralSymmetryAnalyzer:
@@ -35,22 +37,25 @@ class BilateralSymmetryAnalyzer:
     Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry/).
     """
     
-    def __init__(self, window_size=100, joint_pairs=None):
+    def __init__(self, window_size=100, joint_pairs=None, filter_params=None):
         """
         Initialize bilateral symmetry analyzer.
-        
+
         Args:
             window_size: Number of frames for sliding window analysis
             joint_pairs: List of tuples defining bilateral joint pairs
+            filter_params: Optional tuple of (lowcut_hz, highcut_hz, sampling_rate_hz)
+                          for band-pass filtering. If None, no filtering is applied.
         """
-        self.window_size = window_size
-        self.history = deque(maxlen=window_size)
+        self.window_size = validate_integer(window_size, 'window_size', min_val=1, max_val=10000)
+        self.history = deque(maxlen=self.window_size)
+        self._history_lock = threading.Lock()
         
         # Default joint pairs for standard MoCap setup
         if joint_pairs is None:
             self.joint_pairs = [
                 (4, 5),   # left_shoulder, right_shoulder
-                (6, 7),   # left_elbow, right_elbow  
+                (6, 7),   # left_elbow, right_elbow
                 (8, 9),   # left_wrist, right_wrist
                 (10, 11), # left_hip, right_hip
                 (12, 13), # left_knee, right_knee
@@ -58,6 +63,14 @@ class BilateralSymmetryAnalyzer:
             ]
         else:
             self.joint_pairs = joint_pairs
+
+        # Validate and store filter_params
+        if filter_params is not None:
+            filter_params = validate_filter_params_tuple(filter_params)
+            lowcut, highcut, fs = validate_filter_params(*filter_params)
+            self.filter_params = (lowcut, highcut, fs)
+        else:
+            self.filter_params = None
             
     def _compute_bilateral_symmetry_index(self, left_data, right_data):
         """
@@ -95,24 +108,24 @@ class BilateralSymmetryAnalyzer:
     def _compute_phase_synchronization(self, left_signal, right_signal):
         """
         Compute phase synchronization using Hilbert Transform.
-        
+
         Based on general biomechanics research for bilateral coordination.
-        
+        Reuses centralized utilities from Synchronization class pattern.
+
         Args:
             left_signal: 1D array of left limb signal (e.g., vertical displacement)
             right_signal: 1D array of right limb signal
-            
+
         Returns:
             float: Phase locking value (0-1, where 1 is perfect synchronization)
         """
         if len(left_signal) < 10:  # Need minimum samples for Hilbert Transform
             return np.nan
-            
-        try:
-            left_centered = left_signal - np.mean(left_signal)
-            right_centered = right_signal - np.mean(right_signal)
-            sig = np.column_stack([left_centered, right_centered])
 
+        try:
+            # Stack signals for processing
+            sig = np.column_stack([left_signal, right_signal])
+            sig = center_signals(sig)
             phase1, phase2 = compute_hilbert_phases(sig)
             plv = compute_phase_locking_value(phase1, phase2)
 
@@ -165,25 +178,29 @@ class BilateralSymmetryAnalyzer:
     def analyze_frame(self, mocap_frame):
         """
         Analyze single frame of MoCap data for bilateral symmetry.
-        
+
         Args:
             mocap_frame: (n_joints, 3) array of joint positions for one frame
-            
+
         Returns:
             dict: Symmetry metrics for current frame
         """
-        self.history.append(mocap_frame)
-        
-        if len(self.history) < 10:  # Need minimum history for analysis
+        # Thread-safe history append (reusing pattern from Synchronization)
+        with self._history_lock:
+            self.history.append(mocap_frame)
+            history_length = len(self.history)
+
+        if history_length < 10:  # Need minimum history for analysis
             return {
                 'overall_symmetry': 0.0,
                 'phase_sync': 0.0,
                 'cca_correlation': 0.0,
                 'joint_symmetries': {}
             }
-        
-        # Convert history to array for analysis
-        history_array = np.array(list(self.history))  # (n_frames, n_joints, 3)
+
+        # Thread-safe history conversion to array for analysis
+        with self._history_lock:
+            history_array = np.array(list(self.history))  # (n_frames, n_joints, 3)
         
         joint_symmetries = {}
         symmetry_scores = []
