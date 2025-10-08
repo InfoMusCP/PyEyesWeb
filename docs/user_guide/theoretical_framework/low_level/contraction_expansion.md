@@ -172,7 +172,7 @@ def analyze_3d_movement_volume(trajectory_data):
 ```
 
 ### Integration with Other Modules
-Consider combining with **other metrics** for a more comprehensive analysis.  
+Consider combining with **other metrics** for a more detailed analysis.  
 
 #### Smoothness Analysis
 Combine spatial dynamics with movement smoothness:

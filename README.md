@@ -39,7 +39,7 @@ sparc, jerk = smoothness(window)
 
 ## Documentation
 
-Comprehensive documentation for `PyEyesWeb` is available online and includes tutorials, API references, and the theoretical and scientific background of the implemented metrics:
+Documentation for `PyEyesWeb` is available online and includes tutorials, API references, and the theoretical and scientific background of the implemented metrics:
 
 - [Getting Started](https://infomuscp.github.io/PyEyesWeb/getting_started): step-by-step guide to installation and basic usage.
 - [API Reference](https://infomuscp.github.io/PyEyesWeb/api_reference): technical descriptions of modules, classes, and functions.  

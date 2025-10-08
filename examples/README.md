@@ -1,39 +1,29 @@
 # PyEyesWeb Examples
 
-This directory contains example scripts and demonstrations showcasing the capabilities of PyEyesWeb modules.
+This directory contains example scripts demonstrating the capabilities of PyEyesWeb analysis features.
 
-## Structure
+## Available Examples
 
-- **`test_scripts/`** - Python scripts demonstrating various analysis modules
-- **`touchdesigner/`** - TouchDesigner integration examples and demos
+### Movement Analysis
 
-## Test Scripts
-
-### Movement Analysis Examples
-
-- **`bilateral_symmetry.py`** - Demonstrates bilateral symmetry analysis with realistic human gait simulation
-- **`contraction_expansion.py`** - Shows contraction and expansion analysis for movement data
-- **`equilibrium.py`** - Demonstrates equilibrium analysis with elliptical balance evaluation
-- **`smoothness.py`** - Examples of smoothness analysis for movement trajectories
-- **`synchronization.py`** - Synchronization analysis using webcam and MediaPipe pose detection
+- **`smoothness.py`** - Movement smoothness analysis using SPARC and jerk metrics
+- **`bilateral_symmetry.py`** - Left-right symmetry analysis for bilateral movements
+- **`equilibrium.py`** - Balance and postural stability evaluation
+- **`synchronization.py`** - Multi-signal synchronization and phase locking analysis
+- **`contraction_expansion.py`** - Body area expansion and contraction tracking
 
 ### Data Processing
 
 - **`tsv_reader.py`** - Example of reading and processing TSV (Tab-Separated Values) files
 
-## TouchDesigner Integration
-
-The `touchdesigner/` folder contains:
-- TouchDesigner project files (`.toe`)
-- Setup scripts for Windows environment
-
 ## Running the Examples
 
-Each Python script can be run independently:
+Each script can be run independently from the project root:
 
 ```bash
-python examples/test_scripts/bilateral_symmetry.py
-python examples/test_scripts/synchronization.py
+python examples/smoothness.py
+python examples/bilateral_symmetry.py
+python examples/synchronization.py
 # etc...
 ```
 
@@ -41,12 +31,15 @@ python examples/test_scripts/synchronization.py
 
 - Python 3.x
 - PyEyesWeb package installed
-- Additional dependencies as specified in each script (e.g., OpenCV, MediaPipe for synchronization example)
+- Additional dependencies as specified in each script:
+  - OpenCV and MediaPipe for webcam examples (`smoothness.py`, `synchronization.py`)
+  - Matplotlib for visualization (`equilibrium.py`)
 
 ## Notes
 
-These examples are designed to demonstrate the functionality of various PyEyesWeb modules. They include:
-- Realistic data simulation
+These examples demonstrate PyEyesWeb functionality using:
+- Real-time webcam processing (where applicable)
+- Simulated movement data
 - Interactive visualizations
-- Real-time processing capabilities
-- Integration with external tools
+
+For automated testing with synthetic signals, see `tests/feature_test_cli.py`.
