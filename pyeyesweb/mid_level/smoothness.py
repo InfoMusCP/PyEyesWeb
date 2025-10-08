@@ -52,6 +52,11 @@ class Smoothness:
     --------
     >>> from pyeyesweb.mid_level.smoothness import Smoothness
     >>> from pyeyesweb.data_models.sliding_window import SlidingWindow
+    >>> import numpy as np
+    >>>
+    >>> # Generate sample movement data (simulated velocity profile)
+    >>> t = np.linspace(0, 2, 200)
+    >>> movement_data = np.sin(2 * np.pi * t) + 0.1 * np.random.randn(200)
     >>>
     >>> smooth = Smoothness(rate_hz=100.0, use_filter=True)
     >>> window = SlidingWindow(max_length=200, n_columns=1)
@@ -65,7 +70,7 @@ class Smoothness:
 
     Notes
     -----
-    1. SPARC: More negative values indicate smoother movement
+    1. SPARC: Values closer to 0 indicate smoother movement (less negative = smoother)
     2. Jerk RMS: Lower values indicate smoother movement
     3. Requires at least 5 samples for meaningful analysis
 
@@ -109,7 +114,7 @@ class Smoothness:
         -------
         dict
             Dictionary containing:
-            - 'sparc': Spectral Arc Length (more negative = smoother).
+            - 'sparc': Spectral Arc Length (closer to 0 = smoother).
                       Returns NaN if insufficient data.
             - 'jerk_rms': RMS of jerk (third derivative).
                          Returns NaN if insufficient data.

@@ -121,11 +121,11 @@ import numpy as np
 
 # Initialize analyzer
 smoothness = Smoothness(rate_hz=100.0)
-window = SlidingWindow(window_size=200)
+window = SlidingWindow(max_length=200, n_columns=1)
 
-# Add motion data (3D coordinates)
-for frame in motion_data:
-    window.add_frame(frame)
+# Add motion data (velocity values)
+for value in motion_data:
+    window.append([value])
     
     if len(window) >= 5:  # Minimum data requirement
         metrics = smoothness(window)
@@ -141,12 +141,15 @@ conditions = ['baseline', 'fatigue', 'recovery']
 smoothness_data = {}
 
 for condition in conditions:
-    data = load_condition_data(condition)
-    metrics = smoothness(data)
+    motion_data = load_condition_data(condition)
+    window = SlidingWindow(max_length=200, n_columns=1)
+    for value in motion_data:
+        window.append([value])
+    metrics = smoothness(window)
     smoothness_data[condition] = metrics['sparc']
 
-# Lower SPARC values indicate smoother movement
-print(f"Smoothest condition: {min(smoothness_data, key=smoothness_data.get)}")
+# SPARC closer to 0 indicates smoother movement
+print(f"Smoothest condition: {max(smoothness_data, key=smoothness_data.get)}")
 ```
 
 ## References
