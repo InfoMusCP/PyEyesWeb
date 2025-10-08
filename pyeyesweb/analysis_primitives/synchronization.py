@@ -24,11 +24,6 @@ References
   Physical Review Letters, 76(11), 1804.
 """
 
-import sys, os
-
-if os.getcwd() not in sys.path:
-    sys.path.append(os.getcwd())
-
 from collections import deque
 import threading
 import numpy as np
