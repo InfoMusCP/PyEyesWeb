@@ -8,7 +8,7 @@ from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 import cv2
 import mediapipe as mp
-from pyeyesweb.sync import Synchronization
+from pyeyesweb.analysis_primitives.synchronization import Synchronization
 
 # Function to extract the y-coordinate of a specified keypoint (e.g., wrist) from the Mediapipe Pose results.
 # The keypoint's visibility is checked to ensure it's sufficiently visible before processing.

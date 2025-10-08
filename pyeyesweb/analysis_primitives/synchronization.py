@@ -36,7 +36,7 @@ import numpy as np
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 from pyeyesweb.utils.signal_processing import bandpass_filter, compute_hilbert_phases, validate_filter_params
 from pyeyesweb.utils.math_utils import compute_phase_locking_value, center_signals
-from pyeyesweb.utils.validators import validate_integer, validate_boolean, validate_numeric
+from pyeyesweb.utils.validators import validate_integer, validate_boolean, validate_numeric, validate_filter_params_tuple
 
 
 class Synchronization:
@@ -95,7 +95,7 @@ class Synchronization:
 
     Examples
     --------
-    >>> from pyeyesweb.sync import Synchronization
+    >>> from pyeyesweb.analysis_primitives.synchronization import Synchronization
     >>> from pyeyesweb.data_models.sliding_window import SlidingWindow
     >>>
     >>> # Create synchronization analyzer with filtering
@@ -126,26 +126,13 @@ class Synchronization:
     """
 
     def __init__(self, sensitivity=100, output_phase=False, filter_params=None, phase_threshold=0.7):
-        # Validate sensitivity using centralized validator
         sensitivity = validate_integer(sensitivity, 'sensitivity', min_val=1, max_val=10000)
-
-        # Validate output_phase using centralized validator
         self.output_phase = validate_boolean(output_phase, 'output_phase')
-
-        # Validate phase_threshold using centralized validator with range check
         self.phase_threshold = validate_numeric(phase_threshold, 'phase_threshold', min_val=0, max_val=1)
 
-        # Validate filter_params if provided
         if filter_params is not None:
-            if not isinstance(filter_params, (tuple, list)):
-                raise TypeError(f"filter_params must be a tuple or list, got {type(filter_params).__name__}")
-            if len(filter_params) != 3:
-                raise ValueError(f"filter_params must have 3 elements (lowcut, highcut, fs), got {len(filter_params)}")
-            if not all(isinstance(x, (int, float)) for x in filter_params):
-                raise TypeError("filter_params must contain only numbers")
-            # Use centralized filter validation
+            filter_params = validate_filter_params_tuple(filter_params)
             lowcut, highcut, fs = validate_filter_params(*filter_params)
-            # Store the validated parameters
             filter_params = (lowcut, highcut, fs)
 
         self.plv_history = deque(maxlen=sensitivity)

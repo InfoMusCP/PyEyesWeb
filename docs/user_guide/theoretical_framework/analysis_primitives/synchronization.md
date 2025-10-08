@@ -78,7 +78,7 @@ $$
 ### Basic Synchronization Analysis
 
 ```python
-from pyeyesweb.sync import Synchronization
+from pyeyesweb.analysis_primitives.synchronization import Synchronization
 import numpy as np
 
 # Initialize synchronization analyzer
