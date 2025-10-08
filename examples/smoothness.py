@@ -10,7 +10,7 @@ from pyeyesweb.data_models.sliding_window import SlidingWindow
 import cv2
 import mediapipe as mp
 import numpy as np
-from pyeyesweb.mid_level.smoothness import Smoothness
+from pyeyesweb.low_level.smoothness import Smoothness
 import time
 
 def extract_wrist_xy(results, keypoint_idx, width, height):

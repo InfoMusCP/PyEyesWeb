@@ -26,6 +26,12 @@ class Smoothness:
     and Jerk RMS metrics. It can optionally apply Savitzky-Golay filtering
     to reduce noise before analysis.
 
+    SPARC implementation is based on Balasubramanian et al. (2015) "On the analysis
+    of movement smoothness" from Journal of NeuroEngineering and Rehabilitation.
+    SPARC values are typically negative, with values closer to 0 indicating less
+    smooth movements. Healthy reaching movements typically yield SPARC values around
+    -1.4 to -1.6, while pathological movements may range from -3 to -10 or lower.
+
     Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/low_level/smoothness/)
 
     Parameters
@@ -44,8 +50,13 @@ class Smoothness:
 
     Examples
     --------
-    >>> from pyeyesweb.mid_level.smoothness import Smoothness
+    >>> from pyeyesweb.low_level.smoothness import Smoothness
     >>> from pyeyesweb.data_models.sliding_window import SlidingWindow
+    >>> import numpy as np
+    >>>
+    >>> # Generate sample movement data (simulated velocity profile)
+    >>> t = np.linspace(0, 2, 200)
+    >>> movement_data = np.sin(2 * np.pi * t) + 0.1 * np.random.randn(200)
     >>>
     >>> smooth = Smoothness(rate_hz=100.0, use_filter=True)
     >>> window = SlidingWindow(max_length=200, n_columns=1)
@@ -59,16 +70,19 @@ class Smoothness:
 
     Notes
     -----
-    1. SPARC: More negative values indicate smoother movement
+    1. SPARC: Values closer to 0 indicate smoother movement (less negative = smoother)
     2. Jerk RMS: Lower values indicate smoother movement
     3. Requires at least 5 samples for meaningful analysis
+
+    References
+    ----------
+    Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015).
+    On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,
+    12(1), 1-11.
     """
 
     def __init__(self, rate_hz=50.0, use_filter=True):
-        # Validate rate_hz using centralized validator
         self.rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.01, max_val=100000)
-
-        # Validate use_filter using centralized validator
         self.use_filter = validate_boolean(use_filter, 'use_filter')
 
     def _filter_signal(self, signal):
@@ -100,7 +114,7 @@ class Smoothness:
         -------
         dict
             Dictionary containing:
-            - 'sparc': Spectral Arc Length (more negative = smoother).
+            - 'sparc': Spectral Arc Length (closer to 0 = smoother).
                       Returns NaN if insufficient data.
             - 'jerk_rms': RMS of jerk (third derivative).
                          Returns NaN if insufficient data.

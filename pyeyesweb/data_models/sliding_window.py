@@ -60,7 +60,6 @@ class SlidingWindow:
             self._resize(old_max_length)
 
     def __init__(self, max_length: int, n_columns: int):
-        # Validate inputs using centralized validators
         self._max_length = validate_integer(max_length, 'max_length', min_val=1, max_val=10_000_000)
         self._n_columns = validate_integer(n_columns, 'n_columns', min_val=1, max_val=10_000)
 

@@ -80,7 +80,6 @@ def bandpass_filter(data, filter_params):
     if filter_params is None:
         return data
 
-    # Use centralized validation
     lowcut, highcut, fs = validate_filter_params(*filter_params)
 
     nyquist = 0.5 * fs

@@ -5,6 +5,7 @@ library for signal processing, phase analysis, and movement metrics.
 """
 
 import numpy as np
+from pyeyesweb.utils.validators import validate_numeric
 
 def compute_phase_locking_value(phase1, phase2):
     """Compute the Phase Locking Value (PLV) from two phase arrays.
@@ -60,6 +61,12 @@ def compute_sparc(signal, rate_hz=50.0):
     smoothness independent of movement amplitude and duration. More negative
     values indicate smoother movement.
 
+    This implementation is based on the original algorithm by Balasubramanian et al. (2015).
+    SPARC values are typically negative, with values closer to 0 indicating less smooth
+    (more complex) movements. For healthy reaching movements, values around -1.4 to -1.6
+    are common. Pathological or very unsmooth movements may have values ranging from
+    -3 to -10 or lower, depending on the degree of movement fragmentation.
+
     Parameters
     ----------
     signal : ndarray
@@ -75,11 +82,11 @@ def compute_sparc(signal, rate_hz=50.0):
 
     References
     ----------
-    Balasubramanian et al. (2015). On the analysis of movement smoothness from the Journal of NeuroEngineering and Rehabilitation.
+    Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015).
+    On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,
+    12(1), 1-11.
     """
-    # Validate inputs
-    if rate_hz <= 0:
-        raise ValueError(f"Sampling rate must be positive, got {rate_hz}")
+    rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
 
     # Ensure signal is 1D
     signal = np.asarray(signal)
@@ -106,7 +113,7 @@ def compute_sparc(signal, rate_hz=50.0):
     yf = np.abs(fft(signal))[:N // 2]
     xf = fftfreq(N, 1.0 / rate_hz)[:N // 2]
 
-    # Normalize by maximum magnitude
+    # Normalize magnitude by maximum value
     max_yf = np.max(yf)
     if max_yf > 0:
         yf /= max_yf
@@ -115,7 +122,14 @@ def compute_sparc(signal, rate_hz=50.0):
         # but keep as safety fallback
         return float("nan")
 
-    arc = np.sum(np.sqrt(np.diff(xf)**2 + np.diff(yf)**2))
+    # Compute arc length with normalized frequency differences
+    # Following Balasubramanian et al. (2015) implementation
+    freq_range = xf[-1] - xf[0]
+    if freq_range <= 0:
+        return float("nan")
+
+    # Normalize frequency differences by the frequency range
+    arc = np.sum(np.sqrt((np.diff(xf) / freq_range)**2 + np.diff(yf)**2))
     return -arc
 
 
@@ -145,6 +159,7 @@ def compute_jerk_rms(signal, rate_hz=50.0):
     """
     if len(signal) < 2:
         return float("nan")
+    rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
     dt = 1.0 / rate_hz
     jerk = np.diff(signal) / dt
     return np.sqrt(np.mean(jerk ** 2))
