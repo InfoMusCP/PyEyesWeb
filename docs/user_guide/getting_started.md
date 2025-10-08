@@ -17,7 +17,7 @@ Here's a simple example to get you started with PyEyesWeb. This example demonstr
 
 ```python
 from pyeyesweb.data_models import SlidingWindow
-from pyeyesweb.mid_level import Smoothness
+from pyeyesweb.low_level import Smoothness
 
 # Movement smoothness analysis
 smoothness = Smoothness(rate_hz=50.0)

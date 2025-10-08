@@ -4,7 +4,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/pyeyesweb.svg)](https://pypi.org/project/pyeyesweb/)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)
-[![License](https://img.shields.io/github/license/USERNAME/PyEyesWeb.svg)](LICENSE) 
+[![License](https://img.shields.io/github/license/USERNAME/PyEyesWeb.svg)](.github/LICENSE) 
 
 `PyEyesWeb` is a research toolkit for extracting quantitative features from human movement data.  
 It builds on the **Expressive Gesture Analysis** library of [EyesWeb](https://casapaganini.unige.it/eyesweb_bp), bringing expressive movement analysis into Python as a core aim of the project.
@@ -22,7 +22,7 @@ A minimal example of extracting movement features with `PyEyesWeb`
 :
 ```python
 from pyeyesweb.data_models import SlidingWindow
-from pyeyesweb.mid_level import Smoothness
+from pyeyesweb.low_level import Smoothness
 
 # Movement smoothness analysis
 smoothness = Smoothness(rate_hz=50.0)

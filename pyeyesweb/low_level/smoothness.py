@@ -50,7 +50,7 @@ class Smoothness:
 
     Examples
     --------
-    >>> from pyeyesweb.mid_level.smoothness import Smoothness
+    >>> from pyeyesweb.low_level.smoothness import Smoothness
     >>> from pyeyesweb.data_models.sliding_window import SlidingWindow
     >>> import numpy as np
     >>>

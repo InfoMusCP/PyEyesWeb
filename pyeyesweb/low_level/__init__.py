@@ -1,2 +1,3 @@
 from pyeyesweb.low_level.equilibrium import Equilibrium
 from pyeyesweb.low_level.contraction_expansion import ContractionExpansion, analyze_movement
+from pyeyesweb.low_level.smoothness import Smoothness

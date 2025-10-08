@@ -20,7 +20,7 @@ description = """PyEyesWeb is a research toolkit for extracting quantitative fea
 It offers computational methods to analyze different expressive qualities of movement."""
 readme = "README.md"
 license = "MIT"
-license-files = ["LICENSE.md"]
+license-files = [".github/LICENSE"]
 keywords = [
     "movement analysis",
     "human movement",
