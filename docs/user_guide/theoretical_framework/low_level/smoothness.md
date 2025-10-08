@@ -59,8 +59,9 @@ $$
 $$
 
 !!! tip
-    SPARC values typically range from -1.5 to -6.0, where **more negative values indicate smoother motion**.  
-    Values > -1.5 may indicate very jerky movement, while values < -6.0 may suggest over-smoothed or artificial data.
+    SPARC values are typically negative, where **more negative values indicate less smooth (more complex) motion**.
+    Smooth, simple movements (like a sine wave) typically have values around -2 to -4, while complex, jerky movements can have much more negative values (-10 to -30 or lower).
+    The exact range depends on the movement characteristics and noise level.
 
 ---
 
