@@ -8,145 +8,152 @@ The module implements two primary metrics validated in motor control research [^
 - **Spectral Arc Length (SPARC)**: frequency domain smoothness measure.
 - **Jerk Root Mean Square (RMS)**: time domain measure based on movement derivatives.
 
-<span style="color:#d32f2f; font-weight:bold;">
-This metric has been used for... **ADD PAPERS**
-</span>
 
 ## Algorithms Details
 
 ### SPARC Calculation
 
-The **Spectral Arc Length (SPARC)** quantifies movement smoothness by measuring the arc length of the normalized power spectral density (PSD) of the velocity profile.
+The **Spectral Arc Length (SPARC)** quantifies movement smoothness by measuring the arc length of the **normalized Fourier magnitude spectrum** of the signal.
 
-1. **Compute the power spectral density (PSD)**  
-   Using Welch's method, obtain the PSD of the velocity signal \( v(t) \):
+1. **Compute the Fourier magnitude spectrum**  
+   Take the Fast Fourier Transform (FFT) of the input signal \( s(t) \) and keep only the positive frequencies:
 
 $$
-P(f) = \text{WelchPSD}[v(t)]
+Y(f) = |\text{FFT}[s(t)]|_{f > 0}
 $$
 
 <ol start="2">
 <li>
-<strong>Normalize the PSD</strong>  
-<br>Normalize frequency and magnitude to unit range:  
+<strong>Normalize the spectrum</strong>  
+<br>Normalize the magnitude by its maximum value:
 </li>
-</ol>  
+</ol>
 
 $$
-\hat{f} \in [0,1], \quad \hat{P}(\hat{f}) = \frac{P(f)}{\max P(f)}
+\hat{Y}(f) = \frac{Y(f)}{\max(Y(f))}
 $$
 
 <ol start="3">
 <li>
 <strong>Calculate arc length</strong>  
-<br>The spectral arc length is:   
+<br>Compute the total Euclidean arc length of the normalized spectrum:
 </li>
-</ol> 
+</ol>
 
 $$
-L = \sum_{i=1}^{N-1} \sqrt{\big(\hat{f}_{i+1}-\hat{f}_i\big)^2 + \big(\hat{P}(\hat{f}_{i+1})-\hat{P}(\hat{f}_i)\big)^2}
+L = \sum_{i=1}^{N-1} \sqrt{(f_{i+1} - f_i)^2 + (\hat{Y}_{i+1} - \hat{Y}_i)^2}
 $$
 
 <ol start="4">
 <li>
 <strong>Return negative arc length</strong>  
-<br>Define SPARC as:   
+<br>Define SPARC as:
 </li>
-</ol>  
+</ol>
 
 $$
 \text{SPARC} = -L
 $$
 
 !!! tip
-    SPARC values typically range from -1.5 to -6.0, where **more negative values indicate smoother motion**.  
-    Values > -1.5 may indicate very jerky movement, while values < -6.0 may suggest over-smoothed or artificial data.
+    SPARC values are **negative**, where more negative values indicate **smoother movement**.  
+    Constant signals or signals with no variation return *NaN* (undefined smoothness).
 
 ---
 
 ### Jerk RMS Calculation
 
-The **Jerk Root Mean Square (RMS)** measures smoothness as the average magnitude of the third derivative of position.
+The **Jerk Root Mean Square (RMS)** measures smoothness as the average magnitude of the **finite-difference derivative** of the signal.
 
-1. **Compute velocity** from position \( x(t) \): 
+1. **Compute discrete derivative**  
+   Approximate the first derivative using finite differences with sampling rate \( f_s \):
 
 $$
-v(t) = \frac{dx(t)}{dt}
+j_i = \frac{s_{i+1} - s_i}{1 / f_s}
 $$
 
 <ol start="2">
 <li>
-<strong>Compute acceleration</strong>:   
+<strong>Compute RMS of derivative (jerk) values</strong>:  
+<br>For <i>N</i> samples,
 </li>
-</ol> 
+</ol>
 
 $$
-a(t) = \frac{dv(t)}{dt}
-$$
-
-<ol start="3">
-<li>
-<strong>Compute jerk</strong>:  
-</li>
-</ol>  
-
-$$
-j(t) = \frac{da(t)}{dt} = \frac{d^3 x(t)}{dt^3}
-$$
-
-<ol start="4">
-<li>
-<strong>Calculate RMS of jerk values</strong>:  
-<br>For \(N\) samples,
-</li>
-</ol> 
-
-$$
-\text{RMS}_j = \sqrt{\frac{1}{N}\sum_{i=1}^{N} j(t_i)^2}
+\text{RMS}_j = \sqrt{\frac{1}{N} \sum_{i=1}^{N} j_i^2}
 $$
 
 !!! tip
-    The measurement units is (length unit)/s³ (e.g., m/s³).  
-    Lower RMS values indicate smoother movement, but the scale depends on movement amplitude and units.
+    Lower RMS jerk values indicate smoother motion.  
+    In this implementation, the function directly differentiates the provided signal once.
+    Hence, the algorithm expects to receive **accelerations** as input; if you input **position**, you get **velocity RMS**.
 
-## Usage Examples
+[//]: # (## Usage Examples)
 
-### Basic Smoothness Analysis
+[//]: # ()
+[//]: # (### Basic Smoothness Analysis)
 
-```python
-from pyeyesweb import Smoothness
-from pyeyesweb.data_models.sliding_window import SlidingWindow
-import numpy as np
+[//]: # ()
+[//]: # (```python)
 
-# Initialize analyzer
-smoothness = Smoothness(rate_hz=100.0)
-window = SlidingWindow(window_size=200)
+[//]: # (from pyeyesweb import Smoothness)
 
-# Add motion data (3D coordinates)
-for frame in motion_data:
-    window.add_frame(frame)
-    
-    if len(window) >= 5:  # Minimum data requirement
-        metrics = smoothness(window)
-        print(f"SPARC: {metrics['sparc']:.3f}")
-        print(f"Jerk RMS: {metrics['jerk_rms']:.3f}")
-```
+[//]: # (from pyeyesweb.data_models.sliding_window import SlidingWindow)
 
-### Comparative Analysis
+[//]: # (import numpy as np)
 
-```python
-# Compare smoothness across conditions
-conditions = ['baseline', 'fatigue', 'recovery']
-smoothness_data = {}
+[//]: # ()
+[//]: # (# Initialize analyzer)
 
-for condition in conditions:
-    data = load_condition_data(condition)
-    metrics = smoothness(data)
-    smoothness_data[condition] = metrics['sparc']
+[//]: # (smoothness = Smoothness&#40;rate_hz=100.0&#41;)
 
-# Lower SPARC values indicate smoother movement
-print(f"Smoothest condition: {min(smoothness_data, key=smoothness_data.get)}")
-```
+[//]: # (window = SlidingWindow&#40;window_size=200&#41;)
+
+[//]: # ()
+[//]: # (# Add motion data &#40;3D coordinates&#41;)
+
+[//]: # (for frame in motion_data:)
+
+[//]: # (    window.add_frame&#40;frame&#41;)
+
+[//]: # (    )
+[//]: # (    if len&#40;window&#41; >= 5:  # Minimum data requirement)
+
+[//]: # (        metrics = smoothness&#40;window&#41;)
+
+[//]: # (        print&#40;f"SPARC: {metrics['sparc']:.3f}"&#41;)
+
+[//]: # (        print&#40;f"Jerk RMS: {metrics['jerk_rms']:.3f}"&#41;)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (### Comparative Analysis)
+
+[//]: # ()
+[//]: # (```python)
+
+[//]: # (# Compare smoothness across conditions)
+
+[//]: # (conditions = ['baseline', 'fatigue', 'recovery'])
+
+[//]: # (smoothness_data = {})
+
+[//]: # ()
+[//]: # (for condition in conditions:)
+
+[//]: # (    data = load_condition_data&#40;condition&#41;)
+
+[//]: # (    metrics = smoothness&#40;data&#41;)
+
+[//]: # (    smoothness_data[condition] = metrics['sparc'])
+
+[//]: # ()
+[//]: # (# Lower SPARC values indicate smoother movement)
+
+[//]: # (print&#40;f"Smoothest condition: {min&#40;smoothness_data, key=smoothness_data.get&#41;}"&#41;)
+
+[//]: # (```)
 
 ## References
 
