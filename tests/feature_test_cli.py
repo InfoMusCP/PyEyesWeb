@@ -4,119 +4,84 @@ PyEyesWeb Feature Testing Framework
 A unified CLI tool for testing all PyEyesWeb features with various signal types.
 
 Author: PyEyesWeb Testing Framework
-Usage: python test_feature.py <feature> [options]
+Usage: python feature_test_cli.py <feature> [options]
 
 Examples:
-    python test_feature.py synchronization --signal sine --freq 10
-    python test_feature.py smoothness --signal random --length 1000
-    python test_feature.py bilateral-symmetry --signal chirp --freq-start 1 --freq-end 50
-    python test_feature.py equilibrium --signal gaussian --std 1.5
-    python test_feature.py contraction-expansion --signal square --freq 5
+    python feature_test_cli.py synchronization --signal sine --freq 10
+    python feature_test_cli.py smoothness --signal random --length 1000
+    python feature_test_cli.py bilateral-symmetry --signal chirp --freq-start 1 --freq-end 50
+    python feature_test_cli.py equilibrium --signal gaussian --std 1.5
+    python feature_test_cli.py contraction-expansion --signal square --freq 5
 """
 
 import argparse
 import sys
 import numpy as np
-from typing import Dict, Tuple, List, Any, Optional
+from typing import Dict, Any, Optional
 import time
 from datetime import datetime
 import json
 from pathlib import Path
-import os
 
-# Add parent directory to path for imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Import test helpers
+try:
+    # When run as module: python -m tests.feature_test_cli
+    from tests.test_helpers import FeatureTester, Colors
+except ModuleNotFoundError:
+    # When run as script: python tests/feature_test_cli.py
+    from test_helpers import FeatureTester, Colors
 
-# Import the signal generator from utils
-from pyeyesweb.utils.signal_generators import SignalGenerator, generate_signal
+# Import PyEyesWeb components as needed in each tester
 
-# Color codes for beautiful CLI output
-class Colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 # ============================================================================
-# FEATURE TESTERS (Using centralized signal generator)
+# FEATURE TESTERS
 # ============================================================================
-
-class FeatureTester:
-    """Base class for feature testing."""
-
-    def __init__(self, verbose: bool = True):
-        self.verbose = verbose
-
-    def print_header(self, title: str):
-        """Print a formatted header."""
-        if self.verbose:
-            print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
-            print(f"{Colors.BOLD}{title}{Colors.ENDC}")
-            print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}")
-
-    def print_info(self, label: str, value: Any):
-        """Print formatted information."""
-        if self.verbose:
-            print(f"{Colors.OKCYAN}{label:20s}{Colors.ENDC}: {value}")
-
-    def print_success(self, message: str):
-        """Print success message."""
-        if self.verbose:
-            print(f"{Colors.OKGREEN}✓ {message}{Colors.ENDC}")
-
-    def print_warning(self, message: str):
-        """Print warning message."""
-        if self.verbose:
-            print(f"{Colors.WARNING}⚠ {message}{Colors.ENDC}")
-
-    def print_error(self, message: str):
-        """Print error message."""
-        print(f"{Colors.FAIL}✗ {message}{Colors.ENDC}")
 
 class SynchronizationTester(FeatureTester):
     """Test synchronization features."""
 
-    def test(self, signal_type: str, **kwargs):
+    def _modify_signal_for_comparison(
+        self,
+        signal: np.ndarray,
+        signal_type: str,
+        **kwargs
+    ) -> np.ndarray:
+        """Add phase shift for synchronization testing."""
+        phase_shift = kwargs.get('phase_shift', np.pi/4)
+        kwargs_copy = kwargs.copy()
+        kwargs_copy['phase'] = kwargs.get('phase', 0) + phase_shift
+        _, signal2, _ = self.generator.generate(signal_type, **kwargs_copy)
+        return signal2
+
+    def test(self, signal_type: str, **kwargs) -> Optional[Dict[str, Any]]:
+        """Test synchronization between two signals."""
         from pyeyesweb.analysis_primitives.synchronization import Synchronization
+        from pyeyesweb.data_models.sliding_window import SlidingWindow
 
         self.print_header("SYNCHRONIZATION FEATURE TEST")
 
-        # Generate test signals
+        # Generate signals using base class method
+        signal1, signal2, metadata = self.generate_signal_pair(
+            signal_type,
+            kwargs.get('signal2'),
+            **kwargs
+        )
+
         length = kwargs.get('length', 1000)
-        generator = SignalGenerator()
-        t1, signal1, metadata1 = generator.generate(signal_type, **kwargs)
 
-        # Check if user specified a different second signal
-        signal2_type = kwargs.get('signal2', None)
-
-        if signal2_type:
-            # Generate different signal type for comparison
-            t2, signal2, metadata2 = generator.generate(signal2_type, **kwargs)
+        # Display test info
+        if metadata['comparison_mode'] == 'different_signals':
             self.print_info("Signal 1 Type", signal_type)
-            self.print_info("Signal 2 Type", signal2_type)
+            self.print_info("Signal 2 Type", metadata['signal2_type'])
         else:
-            # Create a second signal of same type with phase shift for testing
-            phase_shift = kwargs.get('phase_shift', np.pi/4)
-            kwargs_copy = kwargs.copy()
-            kwargs_copy['phase'] = kwargs.get('phase', 0) + phase_shift
-            t2, signal2, metadata2 = generator.generate(signal_type, **kwargs_copy)
             self.print_info("Signal Type", f"{signal_type} (both)")
-            self.print_info("Phase Shift", f"{phase_shift:.3f} radians")
+            self.print_info("Phase Shift", f"{kwargs.get('phase_shift', np.pi/4):.3f} radians")
 
         self.print_info("Signal Length", length)
 
-        # Test synchronization
         try:
-            from pyeyesweb.data_models.sliding_window import SlidingWindow
-
             sync = Synchronization(output_phase=True)
-
-            # Create a sliding window with both signals
             window = SlidingWindow(max_length=length, n_columns=2)
 
             # Fill the window with both signals
@@ -124,7 +89,7 @@ class SynchronizationTester(FeatureTester):
                 window.append([signal1[i], signal2[i]])
 
             # Calculate PLV
-            print(f"\n{Colors.BOLD}Phase Locking Value (PLV) Analysis:{Colors.ENDC}")
+            self.print_section("Phase Locking Value (PLV) Analysis:")
             result = sync.compute_synchronization(window)
             plv = result['plv']
             phase_status = result['phase_status']
@@ -132,9 +97,10 @@ class SynchronizationTester(FeatureTester):
             self.print_info("PLV", f"{plv:.4f}")
             self.print_info("Phase Status", phase_status)
 
-            if plv > 0.8:
+            # Interpret using thresholds
+            if plv > self.thresholds.sync.HIGH:
                 self.print_success(f"High synchronization detected (PLV={plv:.4f})")
-            elif plv > 0.5:
+            elif plv > self.thresholds.sync.MODERATE:
                 self.print_warning(f"Moderate synchronization (PLV={plv:.4f})")
             else:
                 self.print_warning(f"Low synchronization (PLV={plv:.4f})")
@@ -143,7 +109,7 @@ class SynchronizationTester(FeatureTester):
             window_size = min(100, length // 10)
             sync_windowed = Synchronization(sensitivity=window_size, output_phase=True)
 
-            print(f"\n{Colors.BOLD}Windowed Analysis (window={window_size}):{Colors.ENDC}")
+            self.print_section(f"Windowed Analysis (window={window_size}):")
 
             # Process some windows
             n_windows = min(10, length // window_size)
@@ -153,7 +119,6 @@ class SynchronizationTester(FeatureTester):
                 start = i * window_size
                 end = start + window_size
 
-                # Create a window for this segment
                 segment_window = SlidingWindow(max_length=window_size, n_columns=2)
                 for j in range(start, end):
                     if j < length:
@@ -171,7 +136,6 @@ class SynchronizationTester(FeatureTester):
 
             self.print_success("Synchronization test completed successfully")
 
-            # Return results
             return {
                 'plv': plv,
                 'phase_status': phase_status,
@@ -184,33 +148,30 @@ class SynchronizationTester(FeatureTester):
             self.print_error(f"Error in synchronization test: {str(e)}")
             return None
 
+
 class SmoothnessTester(FeatureTester):
     """Test smoothness features."""
 
-    def test(self, signal_type: str, **kwargs):
+    def test(self, signal_type: str, **kwargs) -> Optional[Dict[str, Any]]:
+        """Test smoothness of signal(s)."""
         from pyeyesweb.low_level.smoothness import Smoothness
         from pyeyesweb.data_models.sliding_window import SlidingWindow
 
         self.print_header("SMOOTHNESS FEATURE TEST")
 
-        # Generate test signal(s)
-        length = kwargs.get('length', 1000)
-        generator = SignalGenerator()
+        # Extract common parameters
+        length, signal2_type = self._extract_common_params(**kwargs)
 
-        # Check if user wants to compare two different signals
-        signal2_type = kwargs.get('signal2', None)
+        # Generate signals
+        t1, signal1, t2, signal2 = self._generate_test_signals(signal_type, signal2_type, **kwargs)
 
+        # Display test info
         if signal2_type:
-            # Compare smoothness of two different signals
-            t1, signal1, metadata1 = generator.generate(signal_type, **kwargs)
-            t2, signal2, metadata2 = generator.generate(signal2_type, **kwargs)
             self.print_info("Comparing Signals", f"{signal_type} vs {signal2_type}")
             signals_to_test = [(signal_type, signal1), (signal2_type, signal2)]
         else:
-            # Single signal test
-            t, signal, metadata = generator.generate(signal_type, **kwargs)
             self.print_info("Signal Type", signal_type)
-            signals_to_test = [(signal_type, signal)]
+            signals_to_test = [(signal_type, signal1)]
 
         self.print_info("Signal Length", length)
 
@@ -222,9 +183,9 @@ class SmoothnessTester(FeatureTester):
                 # Create a sliding window with the signal
                 window = SlidingWindow(max_length=length, n_columns=1)
                 for i in range(length):
-                    window.append([sig_data[i]])  # Wrap in list for proper format
+                    window.append([sig_data[i]])
 
-                print(f"\n{Colors.BOLD}Smoothness Analysis for {sig_type}:{Colors.ENDC}")
+                self.print_section(f"Smoothness Analysis for {sig_type}:")
 
                 # Calculate smoothness metrics
                 result = smoothness(window)
@@ -234,10 +195,10 @@ class SmoothnessTester(FeatureTester):
                 self.print_info("SPARC", f"{sparc:.6f}")
                 self.print_info("Jerk RMS", f"{jerk_rms:.6f}")
 
-                # Interpret results (SPARC is negative; closer to 0 = less smooth)
-                if sparc > -1.6:
+                # Interpret results using thresholds
+                if sparc > self.thresholds.smoothness.VERY_SMOOTH:
                     self.print_success("Very smooth signal detected (healthy-like movement)")
-                elif sparc > -3.0:
+                elif sparc > self.thresholds.smoothness.MODERATELY_SMOOTH:
                     self.print_warning("Moderately smooth signal")
                 else:
                     self.print_warning("Rough/pathological signal detected")
@@ -246,51 +207,45 @@ class SmoothnessTester(FeatureTester):
 
             # If comparing two signals, show comparison
             if signal2_type:
-                print(f"\n{Colors.BOLD}Comparison Summary:{Colors.ENDC}")
-                sparc_diff = all_results[signal_type]['sparc'] - all_results[signal2_type]['sparc']
-                jerk_diff = all_results[signal_type]['jerk_rms'] - all_results[signal2_type]['jerk_rms']
-
-                if sparc_diff > 0:
-                    self.print_info("Smoother Signal", f"{signal_type} (SPARC diff: {sparc_diff:.4f})")
-                else:
-                    self.print_info("Smoother Signal", f"{signal2_type} (SPARC diff: {-sparc_diff:.4f})")
+                self.compare_two_signals(
+                    signal1, signal2, signal_type, signal2_type,
+                    all_results[signal_type]['sparc'],
+                    all_results[signal2_type]['sparc'],
+                    'SPARC', higher_is_better=True
+                )
 
             self.print_success("Smoothness test completed successfully")
 
-            return {
-                'sparc': sparc,
-                'jerk_rms': jerk_rms
-            }
+            # Return the last computed results
+            return all_results[signals_to_test[-1][0]]
 
         except Exception as e:
             self.print_error(f"Error in smoothness test: {str(e)}")
             return None
 
+
 class BilateralSymmetryTester(FeatureTester):
     """Test bilateral symmetry features."""
 
-    def test(self, signal_type: str, **kwargs):
+    def test(self, signal_type: str, **kwargs) -> Optional[Dict[str, Any]]:
+        """Test bilateral symmetry between left and right signals."""
         from pyeyesweb.analysis_primitives.bilateral_symmetry import BilateralSymmetryAnalyzer
 
         self.print_header("BILATERAL SYMMETRY FEATURE TEST")
 
         # Generate test signals for left and right
         length = kwargs.get('length', 1000)
-        generator = SignalGenerator()
-
-        # Check if user wants different signals for left/right
         signal2_type = kwargs.get('signal2', None)
 
         if signal2_type:
             # Use different signals for left and right
-            t_left, left_signal, metadata_left = generator.generate(signal_type, **kwargs)
-            t_right, right_signal, metadata_right = generator.generate(signal2_type, **kwargs)
+            t_left, left_signal, metadata_left = self.generate_single_signal(signal_type, **kwargs)
+            t_right, right_signal, metadata_right = self.generate_single_signal(signal2_type, **kwargs)
             self.print_info("Left Signal", signal_type)
             self.print_info("Right Signal", signal2_type)
         else:
             # Use same signal type with asymmetry
-            t, left_signal, metadata = generator.generate(signal_type, **kwargs)
-            # Create right signal with optional asymmetry
+            t, left_signal, metadata = self.generate_single_signal(signal_type, **kwargs)
             asymmetry = kwargs.get('asymmetry', 0.1)
             right_signal = left_signal * (1 + asymmetry) + np.random.normal(0, 0.01, length)
             self.print_info("Signal Type", f"{signal_type} (both)")
@@ -299,24 +254,22 @@ class BilateralSymmetryTester(FeatureTester):
         self.print_info("Signal Length", length)
 
         try:
-            # Define joint pairs (simulating left-right pairs like wrists, ankles)
-            joint_pairs = [(0, 1)]  # One pair for simplicity
+            # Define joint pairs (simulating left-right pairs)
+            joint_pairs = [(0, 1)]
             analyzer = BilateralSymmetryAnalyzer(window_size=min(100, length), joint_pairs=joint_pairs)
 
-            print(f"\n{Colors.BOLD}Bilateral Symmetry Analysis:{Colors.ENDC}")
+            self.print_section("Bilateral Symmetry Analysis:")
 
             # Create mocap frames from signals
-            # Simulate 2 joints (left and right) with 3D positions
             for i in range(length):
                 mocap_frame = np.array([
                     [left_signal[i], 0, left_signal[i]],   # Left joint (x, y, z)
                     [right_signal[i], 0, right_signal[i]]   # Right joint (x, y, z)
                 ])
-                # Feed frame to analyzer
                 analyzer(mocap_frame)
 
             # Get the final analysis
-            results = analyzer.analyze_frame(mocap_frame)  # Use last frame to trigger analysis
+            results = analyzer.analyze_frame(mocap_frame)
 
             self.print_info("Overall Symmetry", f"{results['overall_symmetry']:.4f}")
             self.print_info("Phase Synchronization", f"{results['phase_sync']:.4f}")
@@ -326,15 +279,15 @@ class BilateralSymmetryTester(FeatureTester):
             if results['joint_symmetries']:
                 joint_name = list(results['joint_symmetries'].keys())[0]
                 joint_data = results['joint_symmetries'][joint_name]
-                print(f"\n{Colors.BOLD}Joint Pair Analysis:{Colors.ENDC}")
+                self.print_section("Joint Pair Analysis:")
                 self.print_info("Bilateral Symmetry Index", f"{joint_data['bilateral_symmetry_index']:.4f}")
                 self.print_info("Phase Sync", f"{joint_data['phase_synchronization']:.4f}")
                 self.print_info("CCA Corr", f"{joint_data['cca_correlation']:.4f}")
 
-            # Interpret results
-            if results['overall_symmetry'] > 0.95:
+            # Interpret results using thresholds
+            if results['overall_symmetry'] > self.thresholds.symmetry.HIGH_SYMMETRY:
                 self.print_success("High bilateral symmetry detected")
-            elif results['overall_symmetry'] > 0.8:
+            elif results['overall_symmetry'] > self.thresholds.symmetry.MODERATE_SYMMETRY:
                 self.print_warning("Moderate bilateral symmetry")
             else:
                 self.print_warning("Low bilateral symmetry")
@@ -347,45 +300,36 @@ class BilateralSymmetryTester(FeatureTester):
             self.print_error(f"Error in bilateral symmetry test: {str(e)}")
             return None
 
+
 class EquilibriumTester(FeatureTester):
     """Test equilibrium features."""
 
-    def test(self, signal_type: str, **kwargs):
+    def test(self, signal_type: str, **kwargs) -> Optional[Dict[str, Any]]:
+        """Test equilibrium/stability of signal(s)."""
         from pyeyesweb.low_level.equilibrium import Equilibrium
 
         self.print_header("EQUILIBRIUM FEATURE TEST")
 
-        # Generate test signal(s)
-        length = kwargs.get('length', 1000)
-        generator = SignalGenerator()
+        # Extract common parameters
+        length, signal2_type = self._extract_common_params(**kwargs)
+        drift = kwargs.get('drift', 0.001)
 
-        # Check if user wants to compare equilibrium with two different signals
-        signal2_type = kwargs.get('signal2', None)
+        # Generate signals
+        t1, signal1, t2, signal2 = self._generate_test_signals(signal_type, signal2_type, **kwargs)
 
+        # Add drift for testing equilibrium
+        signal1 = signal1 + drift * t1
+        signal2 = signal2 + drift * t2
+
+        # Display test info
         if signal2_type:
-            # Compare equilibrium between two different signal types
-            t1, signal1, metadata1 = generator.generate(signal_type, **kwargs)
-            t2, signal2, metadata2 = generator.generate(signal2_type, **kwargs)
-
-            # Add drift for testing equilibrium
-            drift = kwargs.get('drift', 0.001)
-            signal1 += drift * t1
-            signal2 += drift * t2
-
             self.print_info("Signal 1", signal_type)
             self.print_info("Signal 2", signal2_type)
             self.print_info("Mode", "Comparing two signals")
             signals_to_test = [(signal_type, signal1, t1), (signal2_type, signal2, t2)]
         else:
-            # Single signal test
-            t, signal, metadata = generator.generate(signal_type, **kwargs)
-
-            # Add drift for testing equilibrium
-            drift = kwargs.get('drift', 0.001)
-            signal += drift * t
-
             self.print_info("Signal Type", signal_type)
-            signals_to_test = [(signal_type, signal, t)]
+            signals_to_test = [(signal_type, signal1, t1)]
 
         self.print_info("Signal Length", length)
         self.print_info("Added Drift", f"{drift:.4f}")
@@ -395,19 +339,18 @@ class EquilibriumTester(FeatureTester):
             all_results = {}
 
             # Simulate foot positions (fixed) and barycenter movement from signal
-            left_foot = np.array([0, 0, 0])  # Left foot at origin
-            right_foot = np.array([400, 0, 0])  # Right foot 400mm away
+            left_foot = np.array([0, 0, 0])
+            right_foot = np.array([400, 0, 0])
 
             for sig_type, sig_data, time_arr in signals_to_test:
-                print(f"\n{Colors.BOLD}Equilibrium Analysis for {sig_type}:{Colors.ENDC}")
+                self.print_section(f"Equilibrium Analysis for {sig_type}:")
 
                 # Test equilibrium at various points in the signal
                 equilibrium_values = []
-                for i in range(0, length, max(1, length // 20)):  # Sample 20 points
-                    # Use signal to move barycenter (center of mass)
-                    # x: lateral sway, y: forward/backward sway
+                for i in range(0, length, max(1, length // 20)):
+                    # Use signal to move barycenter
                     barycenter = np.array([
-                        200 + sig_data[i] * 50,  # Center between feet + lateral movement
+                        200 + sig_data[i] * 50,  # Center + lateral movement
                         sig_data[i] * 100,  # Forward/backward movement
                         0
                     ])
@@ -424,10 +367,10 @@ class EquilibriumTester(FeatureTester):
                 self.print_info("Min Equilibrium", f"{min_equilibrium:.4f}")
                 self.print_info("Max Equilibrium", f"{max_equilibrium:.4f}")
 
-                # Interpret results (equilibrium value: 1 = perfect balance, 0 = outside ellipse)
-                if mean_equilibrium > 0.9:
+                # Interpret results using thresholds
+                if mean_equilibrium > self.thresholds.equilibrium.HIGH_STABILITY:
                     self.print_success("High stability/equilibrium detected")
-                elif mean_equilibrium > 0.7:
+                elif mean_equilibrium > self.thresholds.equilibrium.MODERATE_STABILITY:
                     self.print_warning("Moderate stability")
                 else:
                     self.print_warning("Low stability/equilibrium")
@@ -441,65 +384,52 @@ class EquilibriumTester(FeatureTester):
 
             # If comparing two signals, show comparison
             if signal2_type:
-                print(f"\n{Colors.BOLD}Comparison Summary:{Colors.ENDC}")
-                mean_diff = all_results[signal_type]['mean'] - all_results[signal2_type]['mean']
-                if mean_diff > 0:
-                    self.print_info("More Stable Signal", f"{signal_type} (mean diff: {mean_diff:.4f})")
-                else:
-                    self.print_info("More Stable Signal", f"{signal2_type} (mean diff: {-mean_diff:.4f})")
+                self.compare_two_signals(
+                    signal1, signal2, signal_type, signal2_type,
+                    all_results[signal_type]['mean'],
+                    all_results[signal2_type]['mean'],
+                    'Mean Equilibrium', higher_is_better=True
+                )
 
             self.print_success("Equilibrium test completed successfully")
 
-            return {
-                'mean_equilibrium': mean_equilibrium,
-                'std_equilibrium': std_equilibrium,
-                'min_equilibrium': min_equilibrium,
-                'max_equilibrium': max_equilibrium
-            }
+            # Return the last computed results
+            return all_results[signals_to_test[-1][0]]
 
         except Exception as e:
             self.print_error(f"Error in equilibrium test: {str(e)}")
             return None
 
+
 class ContractionExpansionTester(FeatureTester):
     """Test contraction-expansion features."""
 
-    def test(self, signal_type: str, **kwargs):
+    def test(self, signal_type: str, **kwargs) -> Optional[Dict[str, Any]]:
+        """Test contraction-expansion dynamics."""
         from pyeyesweb.low_level.contraction_expansion import ContractionExpansion
 
         self.print_header("CONTRACTION-EXPANSION FEATURE TEST")
 
-        # Generate test signal(s)
-        length = kwargs.get('length', 1000)
-        generator = SignalGenerator()
+        # Extract common parameters
+        length, signal2_type = self._extract_common_params(**kwargs)
 
-        # Check if user wants to compare two signals
-        signal2_type = kwargs.get('signal2', None)
+        # Generate signals
+        t1, signal1, t2, signal2 = self._generate_test_signals(signal_type, signal2_type, **kwargs)
 
+        # Apply envelope modulation
+        envelope1 = 1 + 0.5 * np.sin(2 * np.pi * 0.1 * t1)
+        envelope2 = 1 + 0.5 * np.sin(2 * np.pi * 0.1 * t2)
+        signal1 = signal1 * envelope1
+        signal2 = signal2 * envelope2
+
+        # Display test info
         if signal2_type:
-            # Compare contraction-expansion between two signals
-            t1, signal1, metadata1 = generator.generate(signal_type, **kwargs)
-            t2, signal2, metadata2 = generator.generate(signal2_type, **kwargs)
-
-            # Apply envelope modulation for testing
-            envelope1 = 1 + 0.5 * np.sin(2 * np.pi * 0.1 * t1)
-            envelope2 = 1 + 0.5 * np.sin(2 * np.pi * 0.1 * t2)
-            signal1 = signal1 * envelope1
-            signal2 = signal2 * envelope2
-
             self.print_info("Signal 1", signal_type)
             self.print_info("Signal 2", signal2_type)
             signals_to_test = [(signal_type, signal1, t1), (signal2_type, signal2, t2)]
         else:
-            # Single signal test
-            t, signal, metadata = generator.generate(signal_type, **kwargs)
-
-            # Apply envelope modulation for testing
-            envelope = 1 + 0.5 * np.sin(2 * np.pi * 0.1 * t)
-            signal = signal * envelope
-
             self.print_info("Signal Type", signal_type)
-            signals_to_test = [(signal_type, signal, t)]
+            signals_to_test = [(signal_type, signal1, t1)]
 
         self.print_info("Signal Length", length)
         self.print_info("Envelope Applied", "Yes (sinusoidal)")
@@ -509,13 +439,12 @@ class ContractionExpansionTester(FeatureTester):
             all_results = {}
 
             for sig_type, sig_data, time_arr in signals_to_test:
-                print(f"\n{Colors.BOLD}Contraction-Expansion Analysis for {sig_type}:{Colors.ENDC}")
+                self.print_section(f"Contraction-Expansion Analysis for {sig_type}:")
 
-                # Create time series of 4 points forming a square that expands/contracts based on signal
+                # Create time series of 4 points forming a square
                 frames = []
                 for i in range(length):
-                    # Use signal to modulate square size
-                    size = 1.0 + sig_data[i] * 0.5  # Base size + modulation
+                    size = 1.0 + sig_data[i] * 0.5
                     points = np.array([
                         [0, 0],           # Bottom-left
                         [size, 0],        # Bottom-right
@@ -530,10 +459,9 @@ class ContractionExpansionTester(FeatureTester):
 
                 metrics = result['metrics']
                 states = result['states']
-                # The baseline is the first metric (baseline_frame=0)
                 baseline_metric = metrics[0] if len(metrics) > 0 else 1.0
 
-                # Count states (-1=contraction, 0=neutral, 1=expansion)
+                # Count states
                 n_contractions = np.sum(states == -1)
                 n_expansions = np.sum(states == 1)
                 n_stable = np.sum(states == 0)
@@ -544,15 +472,16 @@ class ContractionExpansionTester(FeatureTester):
                 self.print_info("Min Area", f"{np.min(metrics):.4f}")
                 self.print_info("Max Area", f"{np.max(metrics):.4f}")
 
-                print(f"\n{Colors.BOLD}State Analysis:{Colors.ENDC}")
+                self.print_section("State Analysis:")
                 self.print_info("Contraction Frames", f"{n_contractions} ({100*n_contractions/length:.1f}%)")
                 self.print_info("Expansion Frames", f"{n_expansions} ({100*n_expansions/length:.1f}%)")
                 self.print_info("Stable Frames", f"{n_stable} ({100*n_stable/length:.1f}%)")
 
-                # Interpret results
-                if n_contractions > n_expansions * 1.2:
+                # Interpret results using thresholds
+                imbalance_ratio = self.thresholds.contraction_expansion.IMBALANCE_RATIO
+                if n_contractions > n_expansions * imbalance_ratio:
                     self.print_warning("Signal shows more contraction than expansion")
-                elif n_expansions > n_contractions * 1.2:
+                elif n_expansions > n_contractions * imbalance_ratio:
                     self.print_warning("Signal shows more expansion than contraction")
                 else:
                     self.print_success("Signal shows balanced contraction-expansion")
@@ -568,27 +497,22 @@ class ContractionExpansionTester(FeatureTester):
 
             # If comparing two signals, show comparison
             if signal2_type:
-                print(f"\n{Colors.BOLD}Comparison Summary:{Colors.ENDC}")
-                mean_diff = all_results[signal_type]['mean_area'] - all_results[signal2_type]['mean_area']
-                if mean_diff > 0:
-                    self.print_info("Larger Area Signal", f"{signal_type} (mean diff: {mean_diff:.4f})")
-                else:
-                    self.print_info("Larger Area Signal", f"{signal2_type} (mean diff: {-mean_diff:.4f})")
+                self.compare_two_signals(
+                    signal1, signal2, signal_type, signal2_type,
+                    all_results[signal_type]['mean_area'],
+                    all_results[signal2_type]['mean_area'],
+                    'Mean Area', higher_is_better=True
+                )
 
             self.print_success("Contraction-Expansion test completed successfully")
 
-            return {
-                'baseline_metric': baseline_metric,
-                'mean_area': np.mean(metrics),
-                'std_area': np.std(metrics),
-                'n_contractions': n_contractions,
-                'n_expansions': n_expansions,
-                'n_stable': n_stable
-            }
+            # Return the last computed results
+            return all_results[signals_to_test[-1][0]]
 
         except Exception as e:
             self.print_error(f"Error in contraction-expansion test: {str(e)}")
             return None
+
 
 # ============================================================================
 # MAIN CLI INTERFACE
@@ -608,8 +532,8 @@ Examples:
   python tests/feature_test_cli.py bilateral-symmetry --signal chirp --freq-start 1 --freq-end 50
   python tests/feature_test_cli.py equilibrium --signal gaussian --std 1.5 --drift 0.01
   python tests/feature_test_cli.py contraction-expansion --signal square --freq 5
-  python tests/feature_test_cli.py smoothness --signal sine --save-results test.json  # Saves as output/YYYYMMDD_HHMMSS_test.json
-  python tests/feature_test_cli.py --help  # Show all options
+  python tests/feature_test_cli.py smoothness --signal sine --save-results test.json
+  python tests/feature_test_cli.py --help
         """
     )
 
@@ -634,7 +558,7 @@ Examples:
         '--signal2', '-s2',
         type=str,
         default=None,
-        help='Second signal type for comparison (optional). If not specified, uses --signal with modifications'
+        help='Second signal type for comparison (optional)'
     )
 
     parser.add_argument(
@@ -746,8 +670,11 @@ Examples:
 
     return parser
 
+
 def list_signals():
     """List all available signal types."""
+    from pyeyesweb.utils.signal_generators import SignalGenerator
+
     generator = SignalGenerator()
     available_signals = generator.available_signals
     signal_info = generator.signal_info
@@ -773,7 +700,8 @@ def list_signals():
                     print(f"  {Colors.OKCYAN}{signal_type:18s}{Colors.ENDC} - {desc}")
 
     print(f"\n{Colors.OKGREEN}Use any of these with --signal parameter{Colors.ENDC}")
-    print(f"{Colors.OKGREEN}Example: python test_feature.py synchronization --signal ecg --heart-rate 80{Colors.ENDC}")
+    print(f"{Colors.OKGREEN}Example: python tests/feature_test_cli.py synchronization --signal sine --freq 10{Colors.ENDC}")
+
 
 def list_features():
     """List all available features."""
@@ -793,6 +721,7 @@ def list_features():
         print(f"  {Colors.OKCYAN}{feature:20s}{Colors.ENDC} - {description}")
 
     print(f"\n{Colors.OKGREEN}Use any of these as the first argument{Colors.ENDC}")
+
 
 def main():
     """Main entry point for the CLI."""
@@ -826,7 +755,7 @@ def main():
 
     if args.feature not in testers:
         print(f"{Colors.FAIL}Unknown feature: {args.feature}{Colors.ENDC}")
-        print("Run 'python test_feature.py list-features' to see available features")
+        print("Run 'python tests/feature_test_cli.py list-features' to see available features")
         sys.exit(1)
 
     # Create tester instance
@@ -847,7 +776,7 @@ def main():
         'asymmetry': args.asymmetry,
         'drift': args.drift,
         'seed': args.seed,
-        'signal2': args.signal2,  # Add the second signal type
+        'signal2': args.signal2,
     }
 
     # Run the test
@@ -857,7 +786,7 @@ def main():
 
     if results:
         if verbose:
-            print(f"\n{Colors.OKBLUE}Test completed in {elapsed_time:.3f} seconds{Colors.ENDC}")
+            tester.print_timing(elapsed_time)
 
         # Save results if requested
         if args.save_results:
@@ -877,21 +806,17 @@ def main():
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             output_path = Path(args.save_results)
 
-            # Add timestamp to filename (timestamp first for proper sorting)
+            # Add timestamp to filename
             if output_path.suffix == '.json':
-                # Has .json extension - put timestamp at start
                 filename_base = output_path.stem
                 timestamped_filename = f"{timestamp}_{filename_base}.json"
             else:
-                # No extension or different extension - add timestamp and .json
                 timestamped_filename = f"{timestamp}_{args.save_results}.json"
 
             # Determine final output path
             if not output_path.is_absolute() and output_path.parent == Path('.'):
-                # Just a filename provided - save in output/
                 output_path = output_dir / timestamped_filename
             else:
-                # Full path provided - use provided directory with timestamped filename
                 output_path = output_path.parent / timestamped_filename
 
             # Ensure parent directory exists
@@ -905,6 +830,7 @@ def main():
     else:
         print(f"{Colors.FAIL}Test failed!{Colors.ENDC}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

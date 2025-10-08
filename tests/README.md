@@ -238,3 +238,102 @@ Example output structure:
   }
 }
 ```
+
+---
+
+# Testing Framework
+
+## Project Structure
+
+```
+tests/
+├── feature_test_cli.py       # Main CLI tool
+├── conftest.py                # Pytest fixtures & helpers
+├── test_helpers/              # Reusable utilities
+│   ├── cli_formatting.py      # Colors & formatting
+│   ├── thresholds.py          # Threshold values
+│   └── base_tester.py         # Base tester class
+└── unit/
+    └── test_complete.py       # Unit tests (50 tests)
+```
+
+## Running Tests
+
+```bash
+# Run all tests
+python -m pytest tests/unit/test_complete.py -v
+
+# Run quietly
+python -m pytest tests/unit/test_complete.py -q
+
+# Run specific test class
+python -m pytest tests/unit/test_complete.py::TestSynchronizationTester -v
+
+# Run specific test
+python -m pytest tests/unit/test_complete.py::TestSynchronizationTester::test_basic_sync_test -v
+```
+
+## Writing Tests
+
+We will be using fixtures from `conftest.py` instead of creating test files manually:
+
+```python
+def test_example(sync_tester):
+    """Test synchronization."""
+    result = sync_tester.test('sine', length=100, freq=1.0)
+    assert_valid_result(result, ['plv', 'phase_status'])
+    assert result['plv'] > 0.5
+```
+
+Available fixtures:
+- `sync_tester` - SynchronizationTester
+- `smoothness_tester` - SmoothnessTester
+- `symmetry_tester` - BilateralSymmetryTester
+- `equilibrium_tester` - EquilibriumTester
+- `contraction_tester` - ContractionExpansionTester
+
+Helper function `assert_valid_result(result, expected_keys)` validates results contain expected keys.
+
+## Parametrized Tests
+
+Test multiple scenarios efficiently:
+
+```python
+@pytest.mark.parametrize("signal_type", ['sine', 'square', 'triangle'])
+def test_multiple_signals(sync_tester, signal_type):
+    result = sync_tester.test(signal_type, length=100)
+    assert_valid_result(result, ['plv'])
+```
+
+## Thresholds
+
+Threshold values are in `test_helpers/thresholds.py`:
+
+```python
+from tests.test_helpers import FeatureThresholds
+
+thresholds = FeatureThresholds()
+thresholds.sync.HIGH                    # 0.8
+thresholds.smoothness.VERY_SMOOTH       # -1.6
+thresholds.equilibrium.HIGH_STABILITY   # 0.9
+thresholds.symmetry.HIGH_SYMMETRY       # 0.95
+```
+
+Edit that file to change threshold values globally.
+
+## Troubleshooting
+
+**Import errors**: Install package in editable mode
+```bash
+pip install -e .
+```
+
+**Fixtures not found**: Verify conftest.py location
+```bash
+python -m pytest tests/ --collect-only
+```
+
+**Slow tests**: Use quiet mode
+```bash
+python -m pytest tests/unit/test_complete.py -q --tb=line
+```
