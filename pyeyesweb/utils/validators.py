@@ -166,3 +166,49 @@ def validate_range(value, name, min_val, max_val):
     if not min_val <= value <= max_val:
         raise ValueError(f"{name} must be between {min_val} and {max_val}, got {value}")
     return value
+
+
+def validate_filter_params_tuple(value, name='filter_params'):
+    """Validate filter parameters tuple structure.
+
+    Ensures the value is a tuple/list with exactly 3 numeric elements
+    before passing to validate_filter_params for frequency validation.
+
+    Parameters
+    ----------
+    value : any
+        Value to validate as filter parameters tuple
+    name : str, optional
+        Parameter name for error messages (default: 'filter_params')
+
+    Returns
+    -------
+    tuple
+        Validated tuple of (lowcut, highcut, fs)
+
+    Raises
+    ------
+    TypeError
+        If value is not a tuple/list or contains non-numeric elements
+    ValueError
+        If value doesn't have exactly 3 elements
+
+    Examples
+    --------
+    >>> validate_filter_params_tuple((1.0, 10.0, 100.0))
+    (1.0, 10.0, 100.0)
+    >>> validate_filter_params_tuple([1, 10, 100])
+    (1, 10, 100)
+    >>> validate_filter_params_tuple("invalid")
+    TypeError: filter_params must be a tuple or list, got str
+    """
+    if not isinstance(value, (tuple, list)):
+        raise TypeError(f"{name} must be a tuple or list, got {type(value).__name__}")
+
+    if len(value) != 3:
+        raise ValueError(f"{name} must have 3 elements (lowcut, highcut, fs), got {len(value)}")
+
+    if not all(isinstance(x, (int, float)) for x in value):
+        raise TypeError(f"{name} must contain only numbers")
+
+    return tuple(value)
