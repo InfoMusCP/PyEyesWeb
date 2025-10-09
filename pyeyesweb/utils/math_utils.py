@@ -204,3 +204,54 @@ def normalize_signal(signal):
     """
     max_val = np.max(np.abs(signal))
     return signal / max_val if max_val != 0 else signal
+
+
+def extract_velocity_from_position(position, rate_hz=50.0):
+    """Extract velocity from position data.
+
+    Computes velocity magnitude from position data of any dimensionality.
+    For 1D position, returns absolute velocity. For multi-dimensional position,
+    returns the Euclidean norm of the velocity vector.
+
+    Parameters
+    ----------
+    position : ndarray
+        Position data. Can be:
+        - 1D array: single position coordinate
+        - 2D array with shape (n_samples, n_dims): multi-dimensional positions
+    rate_hz : float, optional
+        Sampling rate in Hz (default: 50.0).
+
+    Returns
+    -------
+    ndarray
+        1D array of velocity magnitudes.
+
+    Examples
+    --------
+    >>> # 1D position data
+    >>> position_1d = np.array([0, 1, 2, 3, 4])
+    >>> velocity = extract_velocity_from_position(position_1d, rate_hz=100)
+
+    >>> # 2D position data (x, y coordinates)
+    >>> position_2d = np.array([[0, 0], [1, 0], [1, 1], [2, 1]])
+    >>> velocity = extract_velocity_from_position(position_2d, rate_hz=100)
+    """
+    rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
+    dt = 1.0 / rate_hz
+
+    position = np.asarray(position)
+
+    # Handle 1D position
+    if position.ndim == 1 or (position.ndim == 2 and position.shape[1] == 1):
+        signal_1d = position.squeeze()
+        return np.abs(np.gradient(signal_1d, dt))
+
+    # Handle multi-dimensional position
+    if position.ndim == 2:
+        # Compute derivatives along time axis (axis=0)
+        derivatives = np.gradient(position, dt, axis=0)
+        # Return Euclidean norm of velocity vector
+        return np.linalg.norm(derivatives, axis=1)
+
+    raise ValueError(f"Position must be 1D or 2D array, got shape {position.shape}")
