@@ -35,6 +35,34 @@ class SignalGenerator:
         self.sampling_rate = sampling_rate
         self._register_generators()
 
+    def _create_time_array(self, length: int) -> np.ndarray:
+        """Create time array for signal generation.
+
+        Args:
+            length: Number of samples
+
+        Returns:
+            Time array from 0 to duration
+        """
+        return np.linspace(0, length / self.sampling_rate, length)
+
+    def _create_metadata(self, signal_type: str, **params) -> Dict[str, Any]:
+        """Create metadata dictionary with common fields.
+
+        Args:
+            signal_type: Type of signal
+            **params: Additional parameters to include
+
+        Returns:
+            Metadata dictionary with type, sampling_rate, and additional params
+        """
+        metadata = {
+            'type': signal_type,
+            'sampling_rate': self.sampling_rate
+        }
+        metadata.update(params)
+        return metadata
+
     def _register_generators(self):
         """Register all available signal generators."""
         self._generators = {
@@ -209,22 +237,21 @@ class SignalGenerator:
     def sine_wave(self, length: int, freq: float = 1.0, amplitude: float = 1.0,
                   phase: float = 0.0, dc_offset: float = 0.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a sine wave."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * np.sin(2 * np.pi * freq * t + phase) + dc_offset
-        metadata = {
-            'type': 'sine',
-            'frequency': freq,
-            'amplitude': amplitude,
-            'phase': phase,
-            'dc_offset': dc_offset,
-            'sampling_rate': self.sampling_rate
-        }
+        metadata = self._create_metadata(
+            'sine',
+            frequency=freq,
+            amplitude=amplitude,
+            phase=phase,
+            dc_offset=dc_offset
+        )
         return t, signal, metadata
 
     def cosine_wave(self, length: int, freq: float = 1.0, amplitude: float = 1.0,
                     phase: float = 0.0, dc_offset: float = 0.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a cosine wave."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * np.cos(2 * np.pi * freq * t + phase) + dc_offset
         metadata = {
             'type': 'cosine',
@@ -239,7 +266,7 @@ class SignalGenerator:
     def square_wave(self, length: int, freq: float = 1.0, amplitude: float = 1.0,
                    duty_cycle: float = 0.5, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a square wave."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * sp_signal.square(2 * np.pi * freq * t, duty=duty_cycle)
         metadata = {
             'type': 'square',
@@ -253,7 +280,7 @@ class SignalGenerator:
     def sawtooth_wave(self, length: int, freq: float = 1.0, amplitude: float = 1.0,
                      width: float = 1.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a sawtooth wave."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * sp_signal.sawtooth(2 * np.pi * freq * t, width=width)
         metadata = {
             'type': 'sawtooth',
@@ -267,7 +294,7 @@ class SignalGenerator:
     def triangle_wave(self, length: int, freq: float = 1.0, amplitude: float = 1.0,
                      **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a triangle wave."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * sp_signal.sawtooth(2 * np.pi * freq * t, width=0.5)
         metadata = {
             'type': 'triangle',
@@ -286,7 +313,7 @@ class SignalGenerator:
         """Generate random uniform noise."""
         if seed is not None:
             np.random.seed(seed)
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.random.uniform(min_val, max_val, length)
         metadata = {
             'type': 'random',
@@ -302,7 +329,7 @@ class SignalGenerator:
         """Generate Gaussian (white) noise."""
         if seed is not None:
             np.random.seed(seed)
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.random.normal(mean, std, length)
         metadata = {
             'type': 'gaussian',
@@ -318,7 +345,7 @@ class SignalGenerator:
         """Generate white noise with specified power."""
         if seed is not None:
             np.random.seed(seed)
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.random.normal(0, np.sqrt(power), length)
         metadata = {
             'type': 'white_noise',
@@ -347,7 +374,7 @@ class SignalGenerator:
         # Normalize
         signal = amplitude * signal / np.std(signal)
 
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         metadata = {
             'type': 'pink_noise',
             'amplitude': amplitude,
@@ -361,7 +388,7 @@ class SignalGenerator:
         """Generate Brownian motion (random walk)."""
         if seed is not None:
             np.random.seed(seed)
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         steps = np.random.normal(0, std, length)
         signal = np.cumsum(steps)
         metadata = {
@@ -380,7 +407,7 @@ class SignalGenerator:
                     amplitude: float = 1.0, method: str = 'linear',
                     **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a chirp signal (linear frequency sweep)."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * sp_signal.chirp(t, freq_start, t[-1], freq_end, method=method)
         metadata = {
             'type': 'chirp',
@@ -413,7 +440,7 @@ class SignalGenerator:
         if phases is None:
             phases = [0.0] * len(frequencies)
 
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.zeros(length)
 
         for freq, amp, phase in zip(frequencies, amplitudes, phases):
@@ -438,7 +465,7 @@ class SignalGenerator:
                 {'freq': 20, 'amp': 0.3, 'phase': np.pi/2}
             ]
 
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.zeros(length)
 
         for comp in components:
@@ -459,7 +486,7 @@ class SignalGenerator:
                           modulation_freq: float = 1.0, modulation_index: float = 0.5,
                           **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate an amplitude modulated signal."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         carrier = np.sin(2 * np.pi * carrier_freq * t)
         modulator = 1 + modulation_index * np.sin(2 * np.pi * modulation_freq * t)
         signal = modulator * carrier
@@ -476,7 +503,7 @@ class SignalGenerator:
                           modulation_freq: float = 1.0, modulation_index: float = 5.0,
                           **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a frequency modulated signal."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         modulator = modulation_index * np.sin(2 * np.pi * modulation_freq * t)
         phase = 2 * np.pi * carrier_freq * t + modulator
         signal = np.sin(phase)
@@ -493,7 +520,7 @@ class SignalGenerator:
                        modulation_freq: float = 1.0, modulation_index: float = np.pi,
                        **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a phase modulated signal."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         phase_modulation = modulation_index * np.sin(2 * np.pi * modulation_freq * t)
         signal = np.sin(2 * np.pi * carrier_freq * t + phase_modulation)
         metadata = {
@@ -508,7 +535,7 @@ class SignalGenerator:
     def pulse_width_modulated(self, length: int, carrier_freq: float = 10.0,
                             modulation_freq: float = 1.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a pulse width modulated signal."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         duty_cycle = 0.5 + 0.4 * np.sin(2 * np.pi * modulation_freq * t)
         signal = np.zeros(length)
 
@@ -532,7 +559,7 @@ class SignalGenerator:
     def impulse_train(self, length: int, period: int = 100, amplitude: float = 1.0,
                      jitter: float = 0.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate an impulse train with optional jitter."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.zeros(length)
 
         if jitter > 0:
@@ -570,7 +597,7 @@ class SignalGenerator:
     def ramp_function(self, length: int, slope: float = 1.0, start_value: float = 0.0,
                      **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a ramp function."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = start_value + slope * t
         metadata = {
             'type': 'ramp',
@@ -583,7 +610,7 @@ class SignalGenerator:
     def exponential_decay(self, length: int, amplitude: float = 1.0, decay_rate: float = 1.0,
                         **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate an exponential decay signal."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = amplitude * np.exp(-decay_rate * t)
         metadata = {
             'type': 'exponential_decay',
@@ -597,7 +624,7 @@ class SignalGenerator:
     def damped_sine(self, length: int, freq: float = 5.0, amplitude: float = 1.0,
                    damping: float = 0.1, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a damped sine wave."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         envelope = amplitude * np.exp(-damping * t)
         signal = envelope * np.sin(2 * np.pi * freq * t)
         metadata = {
@@ -616,7 +643,7 @@ class SignalGenerator:
     def ecg_like(self, length: int, heart_rate: float = 60.0, amplitude: float = 1.0,
                 **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate an ECG-like signal."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         beat_period = 60.0 / heart_rate  # Period in seconds
         n_beats = int(t[-1] / beat_period)
 
@@ -649,7 +676,7 @@ class SignalGenerator:
     def emg_like(self, length: int, burst_frequency: float = 2.0, burst_duration: float = 0.2,
                 amplitude: float = 1.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate an EMG-like signal with bursts of activity."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.zeros(length)
 
         # Generate burst envelope
@@ -675,7 +702,7 @@ class SignalGenerator:
                      tremor_amplitude: float = 0.3, base_amplitude: float = 1.0,
                      **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a tremor-like signal (slow movement with superimposed tremor)."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         base_movement = base_amplitude * np.sin(2 * np.pi * base_freq * t)
         tremor = tremor_amplitude * np.sin(2 * np.pi * tremor_freq * t)
         signal = base_movement + tremor
@@ -692,7 +719,7 @@ class SignalGenerator:
     def gait_pattern(self, length: int, step_frequency: float = 2.0, amplitude: float = 1.0,
                     **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a gait-like pattern."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         # Double bump pattern for heel strike and toe-off
         signal = amplitude * (np.sin(2 * np.pi * step_frequency * t) +
                              0.3 * np.sin(4 * np.pi * step_frequency * t))
@@ -710,7 +737,7 @@ class SignalGenerator:
                         inhale_ratio: float = 0.4, amplitude: float = 1.0,
                         **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a breathing-like pattern."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         breathing_period = 60.0 / breathing_rate  # Period in seconds
         signal = np.zeros(length)
 
@@ -778,7 +805,7 @@ class SignalGenerator:
     def logistic_map(self, length: int, r: float = 3.8, x0: float = 0.5,
                     **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate signal from logistic map (chaotic for r > 3.57)."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.zeros(length)
         x = x0
 
@@ -818,7 +845,7 @@ class SignalGenerator:
         signal = np.real(ifft(fft_signal))
         signal = amplitude * signal / np.std(signal)
 
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         metadata = {
             'type': 'fractal_noise',
             'hurst': hurst,
@@ -831,7 +858,7 @@ class SignalGenerator:
                     carrier_freq: float = 20.0, amplitude: float = 1.0,
                     **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate burst signal (periodic bursts of oscillation)."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         carrier = amplitude * np.sin(2 * np.pi * carrier_freq * t)
 
         # Create burst envelope
@@ -855,7 +882,7 @@ class SignalGenerator:
     def spike_train(self, length: int, spike_rate: float = 10.0, refractory_period: float = 0.002,
                    amplitude: float = 1.0, **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a neural spike train."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         dt = 1.0 / self.sampling_rate
         signal = np.zeros(length)
 
@@ -920,7 +947,7 @@ class SignalGenerator:
                           signal_freq: float = 5.0, amplitude: float = 1.0,
                           **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate an intermittent signal (randomly switches on/off)."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         base_signal = amplitude * np.sin(2 * np.pi * signal_freq * t)
 
         # Create random on/off pattern
@@ -944,7 +971,7 @@ class SignalGenerator:
                        freq1: float = 2.0, freq2: float = 8.0, amplitude: float = 1.0,
                        **kwargs) -> Tuple[np.ndarray, np.ndarray, Dict]:
         """Generate a signal that switches between two frequencies."""
-        t = np.linspace(0, length / self.sampling_rate, length)
+        t = self._create_time_array(length)
         signal = np.zeros(length)
 
         for i in range(0, length, switch_period * 2):
