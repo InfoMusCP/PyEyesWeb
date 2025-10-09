@@ -76,6 +76,48 @@ def _volume_3d_fast(points):
 
 
 @jit(nopython=True, cache=True)
+def _compute_expansion_index(metric, baseline_metric):
+    """Compute expansion index and state from metric values.
+
+    Parameters
+    ----------
+    metric : float
+        Current metric value (area or volume).
+    baseline_metric : float
+        Baseline metric for comparison.
+
+    Returns
+    -------
+    tuple of (float, int)
+        (expansion_index, state) where state is -1 (contraction),
+        0 (neutral), or 1 (expansion).
+    """
+    if baseline_metric <= 0:
+        # When baseline is zero or negative, return NaN for index
+        # as expansion/contraction ratio is undefined
+        if baseline_metric < 0:
+            # Negative baseline is invalid
+            index = np.nan
+        elif metric == 0:
+            # Both baseline and current are zero - no change
+            index = 1.0
+        else:
+            # Zero baseline but non-zero current - undefined expansion
+            index = np.nan
+        state = 0  # neutral
+    else:
+        index = metric / baseline_metric
+        if metric > baseline_metric:
+            state = 1  # expansion
+        elif metric < baseline_metric:
+            state = -1  # contraction
+        else:
+            state = 0  # neutral
+
+    return index, state
+
+
+@jit(nopython=True, cache=True)
 def _analyze_frame_2d(points, baseline_metric):
     """Analyze single 2D frame relative to baseline.
 
@@ -93,59 +135,29 @@ def _analyze_frame_2d(points, baseline_metric):
         0 (neutral), or 1 (expansion).
     """
     metric = _area_2d_fast(points)
-
-    if baseline_metric <= 0:
-        # When baseline is zero or negative, return NaN for index
-        # as expansion/contraction ratio is undefined
-        if baseline_metric < 0:
-            # Negative baseline is invalid
-            index = np.nan
-        elif metric == 0:
-            # Both baseline and current are zero - no change
-            index = 1.0
-        else:
-            # Zero baseline but non-zero current - undefined expansion
-            index = np.nan
-        state = 0  # neutral
-    else:
-        index = metric / baseline_metric
-        if metric > baseline_metric:
-            state = 1  # expansion
-        elif metric < baseline_metric:
-            state = -1  # contraction
-        else:
-            state = 0  # neutral
-    
+    index, state = _compute_expansion_index(metric, baseline_metric)
     return metric, index, state
 
 
 @jit(nopython=True, cache=True)
 def _analyze_frame_3d(points, baseline_metric):
-    """Optimized single frame analysis for 3D."""
-    metric = _volume_3d_fast(points)
+    """Analyze single 3D frame relative to baseline.
 
-    if baseline_metric <= 0:
-        # When baseline is zero or negative, return NaN for index
-        # as expansion/contraction ratio is undefined
-        if baseline_metric < 0:
-            # Negative baseline is invalid
-            index = np.nan
-        elif metric == 0:
-            # Both baseline and current are zero - no change
-            index = 1.0
-        else:
-            # Zero baseline but non-zero current - undefined expansion
-            index = np.nan
-        state = 0  # neutral
-    else:
-        index = metric / baseline_metric
-        if metric > baseline_metric:
-            state = 1  # expansion
-        elif metric < baseline_metric:
-            state = -1  # contraction
-        else:
-            state = 0  # neutral
-    
+    Parameters
+    ----------
+    points : ndarray of shape (4, 3)
+        Four 3D points to analyze.
+    baseline_metric : float
+        Baseline volume for comparison.
+
+    Returns
+    -------
+    tuple of (float, float, int)
+        (volume, expansion_index, state) where state is -1 (contraction),
+        0 (neutral), or 1 (expansion).
+    """
+    metric = _volume_3d_fast(points)
+    index, state = _compute_expansion_index(metric, baseline_metric)
     return metric, index, state
 
 

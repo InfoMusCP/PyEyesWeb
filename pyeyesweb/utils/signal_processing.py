@@ -127,6 +127,30 @@ def compute_hilbert_phases(sig):
     return phase1, phase2
 
 
+def compute_phase_synchronization(signals, filter_params=None):
+    """Compute phase synchronization between two signals.
+
+    Parameters
+    ----------
+    signals : ndarray
+        Array of shape (n_samples, 2) containing two signals
+    filter_params : tuple or None
+        Optional filter parameters (lowcut, highcut, fs)
+
+    Returns
+    -------
+    float
+        Phase Locking Value between 0 and 1
+    """
+    from pyeyesweb.utils.math_utils import center_signals, compute_phase_locking_value
+    
+    sig = bandpass_filter(signals, filter_params)
+    sig = center_signals(sig)
+    phase1, phase2 = compute_hilbert_phases(sig)
+
+    return compute_phase_locking_value(phase1, phase2)
+
+
 def apply_savgol_filter(signal, rate_hz=50.0):
     """Apply Savitzky-Golay filter if enough data is available.
 

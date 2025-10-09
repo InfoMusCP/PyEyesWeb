@@ -120,7 +120,7 @@ class Smoothness:
                          Returns NaN if insufficient data.
         """
         if len(sliding_window) < 5:
-            return {"sparc": float("nan"), "jerk_rms": float("nan")}
+            return {"sparc": np.nan, "jerk_rms": np.nan}
 
         signal, _ = sliding_window.to_array()
 
