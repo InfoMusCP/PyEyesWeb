@@ -71,13 +71,17 @@ Users are encouraged to suggest features or improvements via [GitHub Issues](htt
 Contributions to `PyEyesWeb` are welcome! Whether it's reporting bugs, adding features, improving documentation, or providing examples, your help is appreciated.  
 
 ### How to Contribute
-1. **Fork the repository** and create a branch for your feature or bug fix:  
+1. **Fork the repository**.
+
+2. **Clone the forked repository** set up the development environment
+    ```bash
+    git clone https://github.com/<YOUR_USERNAME>/PyEyesWeb.git
+    cd pyeyesweb
+    pip install -e .[dev]
+    ```
+2. Create a branch for your feature or bug fix:  
    ```bash
    git checkout -b feature/your-feature-name
-    ```
-2. Set up the development environment:
-    ```bash
-    pip install pyeyesweb[dev]
     ```
 3. Make your changes, ensuring code quality and adherence to the project's coding standards.
 4. Submit a pull request to the `main` branch, with a clear description of your changes.
