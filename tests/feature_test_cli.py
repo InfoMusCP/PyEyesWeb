@@ -545,6 +545,13 @@ Examples:
                 'equilibrium', 'contraction-expansion', 'list-signals', 'list-features'],
         help='Feature to test or action to perform'
     )
+    
+    # Source real data file
+    parser.add_argument(
+        '--use_real_data',
+        action='store_true',
+        help='Use real data from files (default: False)'
+    )
 
     # Signal configuration
     parser.add_argument(
@@ -777,11 +784,20 @@ def main():
         'drift': args.drift,
         'seed': args.seed,
         'signal2': args.signal2,
+        'use_real_data': args.use_real_data
     }
 
     # Run the test
+    if not args.use_real_data:
+        tester.print_info("Using synthetic data", "Yes")
+        source = None
+    else:
+        tester.print_info("Using real data from files", "Yes")
+        source = args.signal
+    
+    
     start_time = time.time()
-    results = tester.test(args.signal, **kwargs)
+    results = tester.test(source, **kwargs)
     elapsed_time = time.time() - start_time
 
     if results:
