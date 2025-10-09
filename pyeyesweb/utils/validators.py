@@ -212,3 +212,47 @@ def validate_filter_params_tuple(value, name='filter_params'):
         raise TypeError(f"{name} must contain only numbers")
 
     return tuple(value)
+
+
+def validate_and_normalize_filter_params(filter_params):
+    """Validate and normalize filter parameters.
+
+    Parameters
+    ----------
+    filter_params : tuple/list or None
+        Filter parameters as (lowcut, highcut, fs) or None
+
+    Returns
+    -------
+    tuple or None
+        Validated (lowcut, highcut, fs) tuple or None if input was None
+    """
+    if filter_params is None:
+        return None
+
+    # Import here to avoid circular dependency
+    from pyeyesweb.utils.signal_processing import validate_filter_params
+
+    filter_params = validate_filter_params_tuple(filter_params)
+    lowcut, highcut, fs = validate_filter_params(*filter_params)
+    return (lowcut, highcut, fs)
+
+
+def validate_window_size(value, name='window_size'):
+    """Validate window size parameter.
+
+    Standard validation for window sizes used across multiple modules.
+
+    Parameters
+    ----------
+    value : int
+        Window size value
+    name : str
+        Parameter name for error messages
+
+    Returns
+    -------
+    int
+        Validated window size
+    """
+    return validate_integer(value, name, min_val=1, max_val=10000)
