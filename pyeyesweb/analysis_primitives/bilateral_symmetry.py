@@ -18,13 +18,11 @@ Note: Specific implementation details are adapted for a real-time MoCap analysis
 
 import numpy as np
 import warnings
-import threading
-from collections import deque
 from sklearn.cross_decomposition import CCA
 
-from pyeyesweb.utils.signal_processing import compute_hilbert_phases, bandpass_filter, validate_filter_params
-from pyeyesweb.utils.math_utils import compute_phase_locking_value, center_signals
-from pyeyesweb.utils.validators import validate_integer, validate_filter_params_tuple
+from pyeyesweb.data_models.thread_safe_buffer import ThreadSafeHistoryBuffer
+from pyeyesweb.utils.signal_processing import compute_phase_synchronization
+from pyeyesweb.utils.validators import validate_window_size, validate_and_normalize_filter_params
 
 
 class BilateralSymmetryAnalyzer:
@@ -47,9 +45,9 @@ class BilateralSymmetryAnalyzer:
             filter_params: Optional tuple of (lowcut_hz, highcut_hz, sampling_rate_hz)
                           for band-pass filtering. If None, no filtering is applied.
         """
-        self.window_size = validate_integer(window_size, 'window_size', min_val=1, max_val=10000)
-        self.history = deque(maxlen=self.window_size)
-        self._history_lock = threading.Lock()
+        self.window_size = validate_window_size(window_size)
+        # Use ThreadSafeHistoryBuffer instead of deque + lock
+        self.history = ThreadSafeHistoryBuffer(maxlen=self.window_size)
         
         # Default joint pairs for standard MoCap setup
         if joint_pairs is None:
@@ -64,13 +62,8 @@ class BilateralSymmetryAnalyzer:
         else:
             self.joint_pairs = joint_pairs
 
-        # Validate and store filter_params
-        if filter_params is not None:
-            filter_params = validate_filter_params_tuple(filter_params)
-            lowcut, highcut, fs = validate_filter_params(*filter_params)
-            self.filter_params = (lowcut, highcut, fs)
-        else:
-            self.filter_params = None
+        # validate and normalize filter params
+        self.filter_params = validate_and_normalize_filter_params(filter_params)
             
     def _compute_bilateral_symmetry_index(self, left_data, right_data):
         """
@@ -105,35 +98,6 @@ class BilateralSymmetryAnalyzer:
         
         return symmetry_index
     
-    def _compute_phase_synchronization(self, left_signal, right_signal):
-        """
-        Compute phase synchronization using Hilbert Transform.
-
-        Based on general biomechanics research for bilateral coordination.
-        Reuses centralized utilities from Synchronization class pattern.
-
-        Args:
-            left_signal: 1D array of left limb signal (e.g., vertical displacement)
-            right_signal: 1D array of right limb signal
-
-        Returns:
-            float: Phase locking value (0-1, where 1 is perfect synchronization)
-        """
-        if len(left_signal) < 10:  # Need minimum samples for Hilbert Transform
-            return np.nan
-
-        try:
-            # Stack signals for processing
-            sig = np.column_stack([left_signal, right_signal])
-            sig = center_signals(sig)
-            phase1, phase2 = compute_hilbert_phases(sig)
-            plv = compute_phase_locking_value(phase1, phase2)
-
-            return plv
-
-        except Exception as e:
-            warnings.warn(f"Phase symmetry computation failed: {e}", RuntimeWarning)
-            return np.nan
 
     def _compute_cca_correlation(self, left_data, right_data):
         """
@@ -185,10 +149,8 @@ class BilateralSymmetryAnalyzer:
         Returns:
             dict: Symmetry metrics for current frame
         """
-        # Thread-safe history append (reusing pattern from Synchronization)
-        with self._history_lock:
-            self.history.append(mocap_frame)
-            history_length = len(self.history)
+        self.history.append(mocap_frame)
+        history_length = len(self.history)
 
         if history_length < 10:  # Need minimum history for analysis
             return {
@@ -198,9 +160,8 @@ class BilateralSymmetryAnalyzer:
                 'joint_symmetries': {}
             }
 
-        # Thread-safe history conversion to array for analysis
-        with self._history_lock:
-            history_array = np.array(list(self.history))  # (n_frames, n_joints, 3)
+        # ThreadSafeHistoryBuffer provides thread-safe get_array method
+        history_array = self.history.get_array()  # (n_frames, n_joints, 3)
         
         joint_symmetries = {}
         symmetry_scores = []
@@ -214,11 +175,15 @@ class BilateralSymmetryAnalyzer:
             
             # Compute multiple symmetry metrics
             bsi = self._compute_bilateral_symmetry_index(left_joint_data, right_joint_data)
-            
+
             # Use vertical movement for phase analysis (most relevant for gait)
-            phase_sync = self._compute_phase_synchronization(
-                left_joint_data[:, 2], right_joint_data[:, 2]
-            )
+            # Compute phase synchronization directly
+            try:
+                sig = np.column_stack([left_joint_data[:, 2], right_joint_data[:, 2]])
+                phase_sync = compute_phase_synchronization(sig, self.filter_params)
+            except Exception as e:
+                warnings.warn(f"Phase symmetry computation failed: {e}", RuntimeWarning)
+                phase_sync = np.nan
             
             cca_corr = self._compute_cca_correlation(left_joint_data, right_joint_data)
             
