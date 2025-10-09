@@ -101,13 +101,13 @@ def compute_sparc(signal, rate_hz=50.0):
 
     N = len(signal)
     if N < 2:
-        return float("nan")
+        return np.nan
 
     # Check if signal is constant (no movement)
     if np.allclose(signal, signal[0]):
         # For constant signals, return NaN as SPARC is undefined
         # (no movement means smoothness is not applicable)
-        return float("nan")
+        return np.nan
 
     from scipy.fft import fft, fftfreq
     yf = np.abs(fft(signal))[:N // 2]
@@ -120,13 +120,13 @@ def compute_sparc(signal, rate_hz=50.0):
     else:
         # This should not happen after the constant signal check
         # but keep as safety fallback
-        return float("nan")
+        return np.nan
 
     # Compute arc length with normalized frequency differences
     # Following Balasubramanian et al. (2015) implementation
     freq_range = xf[-1] - xf[0]
     if freq_range <= 0:
-        return float("nan")
+        return np.nan
 
     # Normalize frequency differences by the frequency range
     arc = np.sum(np.sqrt((np.diff(xf) / freq_range)**2 + np.diff(yf)**2))
@@ -158,7 +158,7 @@ def compute_jerk_rms(signal, rate_hz=50.0):
     the derivative. For position signals, this computes jerk directly.
     """
     if len(signal) < 2:
-        return float("nan")
+        return np.nan
     rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
     dt = 1.0 / rate_hz
     jerk = np.diff(signal) / dt
