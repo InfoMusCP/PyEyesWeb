@@ -24,14 +24,12 @@ References
   Physical Review Letters, 76(11), 1804.
 """
 
-from collections import deque
-import threading
 import numpy as np
 
 from pyeyesweb.data_models.sliding_window import SlidingWindow
-from pyeyesweb.utils.signal_processing import bandpass_filter, compute_hilbert_phases, validate_filter_params
-from pyeyesweb.utils.math_utils import compute_phase_locking_value, center_signals
-from pyeyesweb.utils.validators import validate_integer, validate_boolean, validate_numeric, validate_filter_params_tuple
+from pyeyesweb.data_models.thread_safe_buffer import ThreadSafeHistoryBuffer
+from pyeyesweb.utils.signal_processing import compute_phase_synchronization
+from pyeyesweb.utils.validators import validate_integer, validate_boolean, validate_numeric, validate_and_normalize_filter_params
 
 
 class Synchronization:
@@ -78,9 +76,8 @@ class Synchronization:
 
     Attributes
     ----------
-    plv_history : collections.deque
-        Rolling buffer storing recent PLV values for temporal analysis.
-        Thread safe access is ensured via internal locking.
+    plv_history : ThreadSafeHistoryBuffer
+        Thread-safe rolling buffer storing recent PLV values for temporal analysis.
     output_phase : bool
         Flag controlling phase status output.
     filter_params : tuple or None
@@ -125,14 +122,11 @@ class Synchronization:
         self.output_phase = validate_boolean(output_phase, 'output_phase')
         self.phase_threshold = validate_numeric(phase_threshold, 'phase_threshold', min_val=0, max_val=1)
 
-        if filter_params is not None:
-            filter_params = validate_filter_params_tuple(filter_params)
-            lowcut, highcut, fs = validate_filter_params(*filter_params)
-            filter_params = (lowcut, highcut, fs)
+        # validate and normalize filter params
+        self.filter_params = validate_and_normalize_filter_params(filter_params)
 
-        self.plv_history = deque(maxlen=sensitivity)
-        self._history_lock = threading.Lock()
-        self.filter_params = filter_params
+        # Use ThreadSafeHistoryBuffer instead of deque + lock
+        self.plv_history = ThreadSafeHistoryBuffer(maxlen=sensitivity)
 
 
     def compute_synchronization(self, signals: SlidingWindow):
@@ -173,23 +167,14 @@ class Synchronization:
             raise ValueError(f"Synchronization requires exactly 2 signal channels, got {signals._n_columns}")
 
         if not signals.is_full():
-            return {"plv": float("nan"), "phase_status": None}
+            return {"plv": np.nan, "phase_status": None}
 
         sig, _ = signals.to_array()
 
-        # Apply band-pass filtering if filter parameters are provided
-        sig = bandpass_filter(sig, self.filter_params)
+        # combines all phase sync steps
+        plv = compute_phase_synchronization(sig, self.filter_params)
 
-        # Remove the mean from each signal to center the data
-        sig = center_signals(sig)
-
-        # Extract the phase information from the analytic signals
-        phase1, phase2 = compute_hilbert_phases(sig)
-
-        # Compute the Phase Locking Value (PLV)
-        plv = compute_phase_locking_value(phase1, phase2)
-        with self._history_lock:
-            self.plv_history.append(plv)
+        self.plv_history.append(plv)
 
         phase_status = None
         if self.output_phase:
