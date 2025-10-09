@@ -13,34 +13,20 @@ from tests.feature_test_cli import (
 # FIXTURES FOR FEATURE TESTERS
 # ============================================================================
 
-@pytest.fixture
-def sync_tester():
-    """Fixture for SynchronizationTester with verbose=False."""
-    return SynchronizationTester(verbose=False)
+def create_tester_fixture(tester_class):
+    """Factory function to create tester fixtures."""
+    @pytest.fixture
+    def tester():
+        return tester_class(verbose=False)
+    return tester
 
 
-@pytest.fixture
-def smoothness_tester():
-    """Fixture for SmoothnessTester with verbose=False."""
-    return SmoothnessTester(verbose=False)
-
-
-@pytest.fixture
-def symmetry_tester():
-    """Fixture for BilateralSymmetryTester with verbose=False."""
-    return BilateralSymmetryTester(verbose=False)
-
-
-@pytest.fixture
-def equilibrium_tester():
-    """Fixture for EquilibriumTester with verbose=False."""
-    return EquilibriumTester(verbose=False)
-
-
-@pytest.fixture
-def contraction_tester():
-    """Fixture for ContractionExpansionTester with verbose=False."""
-    return ContractionExpansionTester(verbose=False)
+# Create fixtures using the factory function
+sync_tester = create_tester_fixture(SynchronizationTester)
+smoothness_tester = create_tester_fixture(SmoothnessTester)
+symmetry_tester = create_tester_fixture(BilateralSymmetryTester)
+equilibrium_tester = create_tester_fixture(EquilibriumTester)
+contraction_tester = create_tester_fixture(ContractionExpansionTester)
 
 
 # ============================================================================

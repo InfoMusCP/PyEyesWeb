@@ -203,8 +203,7 @@ class FeatureTester:
         """
         Generate signals for testing with optional second signal type.
 
-        This is a helper method to reduce duplication in testers that support
-        comparing two different signal types.
+        This is a helper method that supports comparing two different signal types.
 
         Args:
             signal_type: Type of first signal
