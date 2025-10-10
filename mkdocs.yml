@@ -103,7 +103,7 @@ nav:
   - User Guide:
       - Getting Started: user_guide/getting_started.md
       - Theoretical Framework:
-          - user_guide/theoretical_framework/theoretical_framework.md
+          - user_guide/theoretical_framework/index.md
           - Layer 1 - Physical Signals:
               - user_guide/theoretical_framework/physical_signals/index.md
           - Layer 2 - Low-Level Features:

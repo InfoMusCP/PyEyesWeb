@@ -12,12 +12,12 @@ It deals with the **raw data captured by physical sensors** and their preprocess
 
 ## Examples of Physical & Virtual Sensors
 
-| Virtual Sensor / Signal          | Description                                                                                                    | Implemented      |
-|----------------------------------|----------------------------------------------------------------------------------------------------------------|------------------|
-| **Trajectories**                 | Positional data (2D/3D positions of joints and barycenter) from MoCap, video, or RGB-D sensors (e.g., Kinect). | :material-close: |
-| **Bounding Space / Convex Hull** | Minimum polygon (2D) or volume (3D) surrounding a point cloud (MoCap) or a body silhouette.                    | :material-close: |
-| **Accelerations**                | Measures from accelerometers and gyroscopes.                                                                   | :material-close: |
-| **Physiological Sensors**        | EMG, EEG, ECG, and related physiological data.                                                                 | :material-close: |
-| **Respiration**                  | Signals from dedicated respiration sensors or microphones.                                                     | :material-close: |
-| **Nonverbal Vocal Utterances**   | Short vocalizations linked to movement (e.g., *kiai* in Karate, dance utterances).                             | :material-close: |
-| **Floor Feet Pressure**          | Weight distribution across feet, measured with a sensitive floor.                                              | :material-close: |
+| Virtual Sensor / Signal | Description                                     | Implemented      |
+|-------------------------|-------------------------------------------------|------------------|
+| **Kinematic**           | 3D joint positions, trajectories, barycenter    | :material-close: |
+| **Optical**             | Silhouette, RGB-D images, depth maps            | :material-close: |
+| **Inertial**            | Accelerometers, gyroscopes                      | :material-close: |
+| **Physiological**       | EMG, EEG, ECG, respiration                      | :material-close: |
+| **Pressure or Contact** | Ground reaction force, foot weight distribution | :material-close: |
+| **Acoustic**            | Breath, utterance, exhalation                   | :material-close: |
+

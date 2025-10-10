@@ -18,7 +18,7 @@ Movement Analysis Toolkit
 :material-school: **Apply in science, health, and the arts**  
 :material-handshake: **Developed with the partial support of the [EU ICT STARTS Resilence Project](https://resilence.eu/)**
 
-[:octicons-book-24: Get Started](getting_started/getting_started.md){ .md-button .md-button--primary } [:material-github: GitHub Repository](https://github.com/InfoMusCP/PyEyesWeb){ .md-button }  
+[:octicons-book-24: Get Started](user_guide/getting_started.md){ .md-button .md-button--primary } [:material-github: GitHub Repository](https://github.com/InfoMusCP/PyEyesWeb){ .md-button }  
 
 </div>
 
@@ -63,7 +63,7 @@ Originally started in 1997, EyesWeb has been adopted worldwide in scientific res
 
     ---
 
-    Integrate PyEyesWeb in real-time with [TouchDesigner](getting_started/integrations.md).
+    Integrate PyEyesWeb in real-time with [TouchDesigner](user_guide/integrations).
 
 -   :material-hospital:{ .lg .middle } **Health & Rehabilitation** 
 
@@ -115,8 +115,8 @@ funded by the European Union’s Horizon programme.
 
 ## Explore the Documentation  
 
-- 🚀 [Getting Started](getting_started/getting_started.md) – install, examples, and feature list
-- 🎭 [TouchDesigner Plugin](getting_started/integrations.md)
+- 🚀 [Getting Started](user_guide/getting_started.md) – install, examples, and feature list
+- 🎭 [TouchDesigner Plugin](https://github.com/InfoMusCP/PyEyesWebTD)
 
 ## Roadmap 
 
