@@ -7,7 +7,9 @@ from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 class Clusterability:
     """
-    Compute clusterability metrics (Hopkins statistic) for streaming or batched data.
+    Compute clusterability metric.
+
+    Clusterability measures how strongly a dataset tends to form clusters rather than being randomly distributed.
 
     Parameters
     ----------
@@ -17,9 +19,18 @@ class Clusterability:
     Notes
     -----
 
+    The Hopkins statistic is a commonly used measure of clusterability.
+    It compares the distances of points in the dataset to their nearest neighbors with distances
+    from uniformly distributed random points to their nearest neighbors in the dataset.
+
+    If points are aggregated, Clusterability approached 1, whereas a value close to 0.5 suggests randomness.
+
+    Read more in the [User Guide](/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/clusterability/)
+
     References
     ----------
-
+    Lawson, R. G., & Jurs, P. C. (1990). New index for clustering tendency and its application to chemical problems.
+    Journal of chemical information and computer sciences, 30(1), 36-41.
     """
 
     def __init__(self, n_neighbors: int) -> None:
@@ -55,24 +66,23 @@ class Clusterability:
         # Generate uniform random sample within data bounds
         mins = np.min(data, axis=0)
         maxs = np.max(data, axis=0)
-        data_norm = (data - mins) / (maxs - mins + 1e-10)
 
         # Uniform random sample
         uniform_sample = np.random.uniform(mins, maxs, size=data.shape)
 
         # Compute nearest neighbor distances
         n_neighbors = min(data.shape[0], self.n_neighbors)
-        neighbors = NearestNeighbors(n_neighbors=n_neighbors).fit(data_norm)
+        neighbors = NearestNeighbors(n_neighbors=n_neighbors).fit(data)
 
         # Distances from data points to their nearest neighbors
-        data_distances, _ = neighbors.kneighbors(data_norm)
+        data_distances, _ = neighbors.kneighbors(data)
         u = np.sum(data_distances[:, 1])  # exclude self-distance (0)
 
         # Distances from uniform sample points to their nearest neighbors
         uniform_distances, _ = neighbors.kneighbors(uniform_sample)
         w = np.sum(uniform_distances[:, 0])
 
-        hopkins_stat = u / (u + w + 1e-10)
+        hopkins_stat = w / (u + w + 1e-10)
         return float(hopkins_stat)
 
     def compute_clusterability(self, signals: SlidingWindow) -> Dict[str, float]:
