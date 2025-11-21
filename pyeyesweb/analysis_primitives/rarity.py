@@ -5,7 +5,7 @@ from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 class Rarity:
 
-    def __call__(self, sliding_window: SlidingWindow, alpha: float = 0.5) -> float:
+    def __call__(self, sliding_window: SlidingWindow, alpha: float = 0.5) -> dict:
         if not sliding_window.is_full():
             return np.nan
 
@@ -38,5 +38,4 @@ class Rarity:
         d2 = most_probable_p - last_sample_p  # probability difference
 
         rarity = d1 * d2 * alpha
-        return float(rarity)
-
+        return {"rarity": float(rarity)}
