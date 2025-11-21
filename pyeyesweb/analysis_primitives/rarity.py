@@ -15,7 +15,6 @@ class Rarity:
         # Number of bins
         n_bins = int(np.sqrt(n_samples))
         n_bins = max(n_bins, 1)
-        print(f"Using {n_bins} for {n_samples} samples.")
 
         # Histogram
         counts, bin_edges = np.histogram(samples, bins=n_bins)
