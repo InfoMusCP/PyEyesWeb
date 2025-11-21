@@ -102,7 +102,7 @@ class Clusterability:
               Returns NaN if the window is not full or computation fails.
         """
         if not signals.is_full():
-            return {"hopkins_statistic": np.nan}
+            return {"clusterability": np.nan}
 
         try:
             data, _ = signals.to_array()
@@ -111,7 +111,7 @@ class Clusterability:
             # TODO: add logging for better traceability
             hopkins_value = np.nan
 
-        return {"hopkins_statistic": hopkins_value}
+        return {"clusterability": hopkins_value}
 
     def __call__(self, sliding_window: SlidingWindow) -> Dict[str, float]:
         """
