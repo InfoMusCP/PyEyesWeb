@@ -1,7 +1,7 @@
 import numpy as np
 
+
 class KineticEnergy:
-   
 
     def __init__(self, weights=1.0, labels=None):
         """
@@ -59,7 +59,7 @@ class KineticEnergy:
 
         # Compute squared velocity components
         v_squared = v ** 2
-        
+
         # Component-wise kinetic energy: 1/2 * m_i * v^2
         Ek_components = 0.5 * w[:, None] * v_squared
 
@@ -78,7 +78,7 @@ class KineticEnergy:
                 i: {
                     "total": Ek_joint[i],
                     "components": Ek_components[i]
-                } 
+                }
                 for i in range(N)
             }
         else:
@@ -92,6 +92,6 @@ class KineticEnergy:
 
         return {
             "total_energy": Ek_total,
-            "component_energy": Ek_components_total,   # [Ex, Ey, Ez]
-            "joints": joint_energy_dict                # dict indexed by labels or id
+            "component_energy": Ek_components_total,  # [Ex, Ey, Ez]
+            "joints": joint_energy_dict  # dict indexed by labels or id
         }
