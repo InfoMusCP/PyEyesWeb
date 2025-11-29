@@ -205,13 +205,4 @@ class Synchronization:
         Prints synchronization metrics to stdout if PLV is computed successfully.
         Format depends on output_phase setting.
         """
-        result = self.compute_synchronization(sliding_window)
-        plv = result["plv"]
-        phase_status = result["phase_status"]
-
-        if not np.isnan(plv):
-            if self.output_phase:
-                print(f"Synchronization Index: {plv:.3f}, Phase Status: {phase_status}")
-            else:
-                print(f"Synchronization Index: {plv:.3f}")
-        return result
+        return self.compute_synchronization(sliding_window)
