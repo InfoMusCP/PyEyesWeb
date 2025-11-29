@@ -7,7 +7,7 @@ class Rarity:
 
     def __call__(self, sliding_window: SlidingWindow, alpha: float = 0.5) -> dict:
         if not sliding_window.is_full():
-            return np.nan
+            return {"rarity": np.nan}
 
         samples, _ = sliding_window.to_array()
         n_samples = len(samples)

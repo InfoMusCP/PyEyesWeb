@@ -35,9 +35,9 @@ class Lightness:
 
         self.sliding_window.append([1.0 - weight_index])  # ora sliding_window contiene floats
 
-        lightness = self.rarity(self.sliding_window, alpha=alpha)  # Rarity riceve una sequenza di numeri
+        lightness = self.rarity(self.sliding_window, alpha=alpha)
 
-        return {"lightness": lightness}
+        return {"lightness": lightness.get("rarity", 0)}
 
     def _filter_signal(self, signal):
         if not self.use_filter:
