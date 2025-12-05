@@ -22,7 +22,7 @@ class Lightness:
         self.rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.01, max_val=100000)
         self.use_filter = validate_boolean(use_filter, 'use_filter')
 
-        self.sliding_window = SlidingWindow(self.sliding_window_max_length, 1)
+        self.sliding_window = SlidingWindow(int(self.sliding_window_max_length), 1)
 
         # Validate signal_type
         if signal_type not in ['velocity', 'position']:
@@ -36,7 +36,7 @@ class Lightness:
         ke = self.kinetic_energy(vel)
 
         # use total energy (scalar) rather than the whole dict
-        weight_index = ke["component_energy"][1] / ke["total_energy"]
+        weight_index = ke["component_energy"][1] / (ke["total_energy"] + 1e-9)
 
         if not isinstance(weight_index, (float, np.floating)) or not np.isfinite(weight_index):
             weight_index = 0.0
@@ -45,7 +45,7 @@ class Lightness:
 
         lightness = self.rarity(self.sliding_window, alpha=alpha)
 
-        return {"lightness": lightness.get("rarity", 0)}
+        return {"lightness": lightness.get("rarity", 0), "weight_index": weight_index}
 
     def _filter_signal(self, signal):
         if not self.use_filter:
