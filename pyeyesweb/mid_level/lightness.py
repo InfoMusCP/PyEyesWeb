@@ -8,13 +8,21 @@ from pyeyesweb.utils.signal_processing import apply_savgol_filter
 
 
 class Lightness:
-    sliding_window = SlidingWindow(50, 1)  # Store velocity values
+    # sliding_window = SlidingWindow(50, 1)  # Store velocity values
     kinetic_energy = KineticEnergy()
     rarity = Rarity()
 
-    def __init__(self, rate_hz=50.0, use_filter=True, signal_type='velocity'):
+    def __init__(self, sliding_window_max_length=50.0, rate_hz=50.0, use_filter=True, signal_type='velocity'):
+        self.sliding_window_max_length = validate_numeric(
+            sliding_window_max_length,
+            'sliding_window_max_length',
+            min_val=1,
+            max_val=100000
+        )
         self.rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.01, max_val=100000)
         self.use_filter = validate_boolean(use_filter, 'use_filter')
+
+        self.sliding_window = SlidingWindow(self.sliding_window_max_length, 1)
 
         # Validate signal_type
         if signal_type not in ['velocity', 'position']:
