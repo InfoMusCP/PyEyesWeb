@@ -1,0 +1,34 @@
+{
+    "sample_0": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "LForearmOut",
+            "LForearmIn",
+            "RTriceps",
+            "LTriceps"
+        ],
+        "synchronization": true,
+        "original_mocap": "Ele0003"
+    },
+    "sample_1": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "LForearmOut",
+            "LForearmIn",
+            "RTriceps",
+            "LTriceps"
+        ],
+        "synchronization": true,
+        "original_mocap": "Ele0003"
+    }
+}

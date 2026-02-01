@@ -352,7 +352,7 @@ class TestIntegration:
 
     def test_verbose_mode(self):
         """Test that verbose mode works."""
-        from tests.feature_test_cli import SynchronizationTester
+        from tests.feature_tester import SynchronizationTester
         tester = SynchronizationTester(verbose=True)
         result = tester.test('sine', length=100)
         assert_valid_result(result, ['plv'])

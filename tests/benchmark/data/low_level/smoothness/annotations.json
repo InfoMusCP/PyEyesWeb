@@ -1,0 +1,187 @@
+{
+    "sample_0": {
+        "markers": [
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "RTriceps"
+        ],
+        "smoothness": true,
+        "original_mocap": "Ele0001"
+    },
+    "sample_1": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "LForearmIn",
+            "LForearmOut",
+            "LTriceps"
+        ],
+        "smoothness": true,
+        "original_mocap": "Ele0001"
+    },
+    "sample_2": {
+        "markers": [
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "RTriceps"
+        ],
+        "smoothness": true,
+        "original_mocap": "Ele0002"
+    },
+    "sample_3": {
+        "markers": [
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "RTriceps"
+        ],
+        "smoothness": true,
+        "original_mocap": "Ele0002"
+    },
+    "sample_4": {
+        "markers": [
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "RTriceps"
+        ],
+        "smoothness": false,
+        "original_mocap": "Ele0002"
+    },
+    "sample_5": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "LForearmOut",
+            "LForearmIn",
+            "RTriceps",
+            "LTriceps"
+        ],
+        "smoothness": true,
+        "original_mocap": "Ele0003"
+    },
+    "sample_6": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "LForearmOut",
+            "LForearmIn",
+            "RTriceps",
+            "LTriceps"
+        ],
+        "smoothness": false,
+        "original_mocap": "Ele0003"
+    },
+    "sample_7": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": true,
+        "original_mocap": "Nicola0001"
+    },
+    "sample_8": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": false,
+        "original_mocap": "Nicola0001"
+    },
+    "sample_9": {
+        "markers": [
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut"
+        ],
+        "smoothness": true,
+        "original_mocap": "Nicola0001"
+    },
+    "sample_10": {
+        "markers": [
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut"
+        ],
+        "smoothness": false,
+        "original_mocap": "Nicola0001"
+    },
+    "sample_11": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": true,
+        "original_mocap": "Nicola0005"
+    },
+    "sample_12": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "RWristIn",
+            "RWristOut",
+            "RForearmIn",
+            "RForearmOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": false,
+        "original_mocap": "Nicola0005"
+    },
+    "sample_13": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": true,
+        "original_mocap": "Nicola0006"
+    },
+    "sample_14": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": true,
+        "original_mocap": "Nicola0006"
+    },
+    "sample_15": {
+        "markers": [
+            "LWristIn",
+            "LWristOut",
+            "LForearmOut",
+            "LForearmIn"
+        ],
+        "smoothness": false,
+        "original_mocap": "Nicola0006"
+    }
+}

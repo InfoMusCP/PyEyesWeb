@@ -1,6 +1,6 @@
 """Pytest configuration and shared fixtures for tests."""
 import pytest
-from tests.feature_test_cli import (
+from tests.feature_tester import (
     SynchronizationTester,
     SmoothnessTester,
     BilateralSymmetryTester,
