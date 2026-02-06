@@ -1,8 +1,12 @@
 import numpy as np
 
 from pyeyesweb.data_models.sliding_window import SlidingWindow
-from ..low_level.direction_change import DirectionChange
-from .suddenness import Suddenness
+import os
+from pathlib import Path
+os.sys.path.append(Path(__file__).parent.parent.as_posix())
+print(os.sys.path)
+from low_level.direction_change import DirectionChange
+from suddenness import Suddenness
 
 class Impulsivity:
     """
@@ -43,7 +47,7 @@ class Impulsivity:
         self.direction_change = DirectionChange(epsilon=direction_change_epsilon)
         self.suddenness = Suddenness()
 
-    def __call__(self, positions: SlidingWindow) -> float:
+    def __call__(self, positions: SlidingWindow) -> dict:
         """
         Compute the impulsivity value for the given trajectory segment.
 
@@ -55,7 +59,7 @@ class Impulsivity:
 
         Returns
         -------
-        float
+        dict
             Calculated impulsivity index. Returns 0.0 if segments are too short.
         """
         # Direction Change returns a dict with "value" key
@@ -64,4 +68,6 @@ class Impulsivity:
         # Suddenness returns a dict with "value" key
         suddenness_result = self.suddenness(positions)
 
-        return {"value": dc_result.get("value", 0.0) * suddenness_result.get("value", 0.0)}
+        return {"suddenness": suddenness_result.get("value", 0.0), 
+                "direction_change": dc_result.get("value", 0.0), 
+                "value": dc_result.get("value", 0.0) * suddenness_result.get("value", 0.0)}

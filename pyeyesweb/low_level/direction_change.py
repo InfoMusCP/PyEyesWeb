@@ -68,7 +68,7 @@ class DirectionChange:
             Calculated direction change value between 0.0 and 1.0.
             Returns 0.0 if the segment is too short or vectors are too small.
         """
-        pos = positions.to_array()
+        pos = positions.to_array()[0]
         if pos.ndim != 2 or pos.shape[1] < 2:
             raise Exception("Input positions must be a 2D array with at least 2 columns (x,y).")
         
@@ -110,6 +110,6 @@ class DirectionChange:
         
         # Apply epsilon threshold
         if diff < self.epsilon:
-            return {"value": (1.0 - diff) / self.epsilon}
+            return {"value": (1.0 - diff / self.epsilon)}
         
         return {"value": 0.0}

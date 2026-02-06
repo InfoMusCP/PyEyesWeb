@@ -75,7 +75,7 @@ class Suddenness:
             Dictionary containing the calculated suddenness index under the key "value".
             Returns {"value": 0.0} if the distribution cannot be fit or if the segment is too short.
         """
-        pos = positions.to_array()
+        pos = positions.to_array()[0]
         if pos.ndim != 2 or pos.shape[1] < 2:
             raise Exception("Input positions must be a 2D array with at least 2 columns (x,y).")
         
@@ -98,11 +98,7 @@ class Suddenness:
         # Suddenness calculation
         # Gamma (scale) * (1 - Alpha/2)
         # Only if Beta (skewness) is non-negative
-        if beta >= 0:
-            result = gamma * (1.0 - (alpha / 2.0))
-            return {"value": result}
-        else:
-            return {"value": 0.0}
+        return {"value": gamma * (1.0 - (alpha / 2.0)) * beta >= 0.0}
         
     def _interp2d(self, tab, nu_alpha, nu_beta):
         rows, cols = tab.shape
