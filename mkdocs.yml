@@ -3,6 +3,8 @@ repo_url: https://github.com/InfoMusCP/PyEyesWeb
 site_url: https://infomuscp.github.io/PyEyesWeb/
 
 plugins:
+  - search
+  - macros
   - gen-files:
       scripts:
         - docs/scripts/gen_pages.py
@@ -38,7 +40,7 @@ markdown_extensions:
       generic: true
 
 theme:
-  name: material
+  name: readthedocs
   custom_dir: docs/overrides
   logo: assets/eyesweb-logo.png
   favicon: assets/favicon-32x32.png
@@ -86,8 +88,6 @@ extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 extra:
-  version:
-    provider: mike
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/InfoMusCP

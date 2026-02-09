@@ -4,23 +4,29 @@ title: PyEyesWeb
 
 ---
 
-![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen)
-![Platform](https://img.shields.io/badge/Platform-Python-blue)
-![Domain](https://img.shields.io/badge/Domain-Movement%20Analysis-purple)
+[//]: # (![Open Source]&#40;https://img.shields.io/badge/Open%20Source-Yes-brightgreen&#41;)
+
+[//]: # (![Platform]&#40;https://img.shields.io/badge/Platform-Python-blue&#41;)
+
+[//]: # (![Domain]&#40;https://img.shields.io/badge/Domain-Movement%20Analysis-purple&#41;)
 
 
 <div class="hero" markdown>
 
-# PyEyesWeb  
-Movement Analysis Toolkit
+# PyEyesWeb
+**Movement Analysis Toolkit**
 
-:material-rocket-launch: **Extract features** from raw human movement data  
-:material-school: **Apply in science, health, and the arts**  
-:material-handshake: **Developed with the partial support of the [EU ICT STARTS Resilence Project](https://resilence.eu/)**
+![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen)
+![Platform](https://img.shields.io/badge/Platform-Python-blue)
+![Domain](https://img.shields.io/badge/Domain-Movement%20Analysis-purple)
 
-[:octicons-book-24: Get Started](user_guide/getting_started.md){ .md-button .md-button--primary } [:material-github: GitHub Repository](https://github.com/InfoMusCP/PyEyesWeb){ .md-button }  
+---
 
-</div>
+🚀 **Extract features** from raw human movement data  
+🎓 **Apply in science, health, and the arts**  
+🤝 **Developed with the partial support of the [EU ICT STARTS Resilence Project](https://resilence.eu/)**
+
+**[📖 Get Started](user_guide/getting_started.md)** | **[GitHub Repository](https://github.com/InfoMusCP/PyEyesWeb)**
 
 ---
 
@@ -51,33 +57,17 @@ Originally started in 1997, EyesWeb has been adopted worldwide in scientific res
 
 ## Use Cases
 
-<div class="grid cards" markdown>
-
--   :material-school:{ .lg .middle } **Research & Science**  
-
-    ---
-
+* **🎓 Research & Science**
     Quantify movement expressivity and analyze biomechanics with validated methods.
 
--   :material-connection:{ .lg .middle } **Interactive Media**  
-
-    ---
-
+* **🔗 Interactive Media**
     Integrate PyEyesWeb in real-time with [TouchDesigner](user_guide/integrations).
 
--   :material-hospital:{ .lg .middle } **Health & Rehabilitation** 
-
-    ---
-
+* **🏥 Health & Rehabilitation**
     Assess movement disorders, monitor recovery, and support clinical studies.
 
--   :material-theater:{ .lg .middle } **Artistic Performance**  
-
-    ---
-
+* **🎭 Artistic Performance**
     Explore synchrony, smoothness, and expressive qualities in dance and live performance.
-
-</div>
 
 ---
 
@@ -113,16 +103,22 @@ funded by the European Union’s Horizon programme.
 </div>
 ---
 
-## Explore the Documentation  
+[//]: # (## Explore the Documentation  )
 
-- 🚀 [Getting Started](user_guide/getting_started.md) – install, examples, and feature list
-- 🎭 [TouchDesigner Plugin](https://github.com/InfoMusCP/PyEyesWebTD)
+[//]: # ()
+[//]: # (- 🚀 [Getting Started]&#40;user_guide/getting_started.md&#41; – install, examples, and feature list)
 
-## Roadmap 
+[//]: # (- 🎭 [TouchDesigner Plugin]&#40;https://github.com/InfoMusCP/PyEyesWebTD&#41;)
 
-- Expand expressive feature extraction modules for movement analysis  
-- Extend integrations with platforms like Unity and Max/MSP  
-- Develop collaborative research tools and shared datasets
+[//]: # ()
+[//]: # (## Roadmap )
+
+[//]: # ()
+[//]: # (- Expand expressive feature extraction modules for movement analysis  )
+
+[//]: # (- Extend integrations with platforms like Unity and Max/MSP  )
+
+[//]: # (- Develop collaborative research tools and shared datasets)
 
 !!! info "Community & Collaboration"
     Whether you are a **researcher, artist, or developer**, PyEyesWeb helps you bridge movement, computation, and expression.  
