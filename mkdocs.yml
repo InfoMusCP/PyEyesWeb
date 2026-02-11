@@ -87,6 +87,9 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
+extra_css:
+  - overrides/extra.css
+
 extra:
   social:
     - icon: fontawesome/brands/github
@@ -109,7 +112,7 @@ nav:
           - Layer 2 - Low-Level Features:
               - user_guide/theoretical_framework/low_level/low_level.md
               - Postural Balance: user_guide/theoretical_framework/low_level/postural_balance.md
-              - Contraction Expansion: user_guide/theoretical_framework/low_level/contraction_expansion.md
+#              - Contraction Expansion: user_guide/theoretical_framework/low_level/contraction_expansion.md
               - Smoothness: user_guide/theoretical_framework/low_level/smoothness.md
           - Layer 3 - Mid-Level Features:
               - user_guide/theoretical_framework/mid_level/mid_level.md

@@ -1,0 +1,17 @@
+/* FORCE ICON SIZE */
+/* Target SVGs directly in case the .twemoji class isn't applied */
+.wy-table-responsive svg,
+.rst-content table svg,
+.twemoji,
+span.twemoji svg {
+    height: 1.5em !important;
+    width: 1.5em !important;
+    max-width: 20px !important; /* Absolute failsafe */
+    vertical-align: middle !important;
+}
+
+.rst-content table.docutils {
+    width: 100% !important;
+    display: table !important;
+    table-layout: auto !important;
+}

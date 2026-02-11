@@ -1,3 +1,33 @@
+<style>
+  /* 1. First Column: Allow wrapping and set modest width */
+  .rst-content table.docutils td:nth-child(1) {
+      width: 25%;              /* Fixed width for the feature name */
+      white-space: normal !important; /* ALLOWS wrapping */
+      word-wrap: break-word;   /* Breaks long words if necessary */
+  }
+
+  /* 2. Second Column: Maximize width */
+  .rst-content table.docutils td:nth-child(2) {
+      white-space: normal !important;
+      word-wrap: break-word !important;
+      width: 70%;              /* Takes up the majority of the table */
+  }
+
+  /* 3. Third Column: Keep it tight (Optional but recommended) */
+  .rst-content table.docutils td:nth-child(3) {
+      width: 10%;
+      white-space: nowrap;
+      text-align: center;
+  }
+
+  /* 4. Fix the Huge Icons */
+  .rst-content .twemoji {
+      height: 1.2em !important;
+      width: 1.2em !important;
+      vertical-align: text-bottom;
+  }
+</style>
+
 # Analysis Primitives
 
 Analysis primitives are **operators applied across layers** to extract meaningful patterns from features.  

@@ -1,7 +1,7 @@
 # Layer 1 – Physical Signals
 
 Layer 1 is the **foundation of the conceptual model**.  
-It deals with the **raw data captured by physical sensors** and their preprocessing into **virtual sensors** — representations ready for higher-level analysis.
+It deals with the **raw data captured by physical sensors** and their preprocessing into **virtual sensors**.
 
 !!! note "Key Concepts"
     A **virtual sensor** is a combination of:
