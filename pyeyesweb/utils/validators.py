@@ -213,6 +213,48 @@ def validate_filter_params_tuple(value, name='filter_params'):
 
     return tuple(value)
 
+def validate_pairs(pairs):
+    """Validate joint pairs as tuples of integers.
+
+    Ensures the input is a list of tuples, where each tuple contains exactly
+    two integers representing joint indices.
+
+    Parameters
+    ----------
+    pairs : any
+        Value to validate as list of joint index pairs
+
+    Returns
+    -------
+    list of tuples
+        Validated list of joint index pairs
+
+    Raises
+    ------
+    TypeError
+        If input is not a list or contains non-tuple elements or tuples with non-integer elements
+    ValueError
+        If any tuple does not contain exactly 2 elements
+
+    Examples
+    --------
+    >>> validate_pairs([(0, 1), (4, 6), (7, 8)])
+    [(0, 1), (4, 6), (7, 8)]
+    >>> validate_pairs([(0, 1), (4, '6')])
+    TypeError: Each pair must be a tuple of two integers, got ('4',)
+    >>> validate_pairs("invalid")
+    TypeError: joint_pairs must be a list of tuples, got str
+    """
+    if not isinstance(pairs, list):
+        raise TypeError(f"joint_pairs must be a list of tuples, got {type(pairs).__name__}")
+
+    for pair in pairs:
+        if not isinstance(pair, tuple) or len(pair) != 2:
+            raise ValueError(f"Each pair must be a tuple of two elements, got {pair}")
+        if not all(isinstance(x, int) for x in pair):
+            raise TypeError(f"Each pair must contain only integers, got {pair}")
+
+    return pairs
 
 def validate_and_normalize_filter_params(filter_params):
     """Validate and normalize filter parameters.

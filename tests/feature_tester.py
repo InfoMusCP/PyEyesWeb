@@ -231,7 +231,7 @@ class BilateralSymmetryTester(FeatureTester):
 
     def test(self, signal_type: str, **kwargs) -> Optional[Dict[str, Any]]:
         """Test bilateral symmetry between left and right signals."""
-        from pyeyesweb.analysis_primitives.bilateral_symmetry import BilateralSymmetryAnalyzer
+        from pyeyesweb.analysis_primitives.geometric_symmetry import BilateralSymmetryAnalyzer
 
         self.print_header("BILATERAL SYMMETRY FEATURE TEST")
 

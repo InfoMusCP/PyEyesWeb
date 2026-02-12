@@ -27,12 +27,9 @@ Thumbs.db
 *.swp
 
 # Test data or large media files
-*.mp4
-*.avi
-*.mov
-*.csv
 *.npy
 *.h5
+*.pytest.py
 
 # Python virtualenv/poetry
 poetry.lock
@@ -45,3 +42,6 @@ dist/
 
 demos/Backup
 demos/Lib
+
+# Ignore specific files or directories
+__*

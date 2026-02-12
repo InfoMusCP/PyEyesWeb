@@ -1,3 +1,4 @@
+from typing import Literal
 import numpy as np
 
 from pyeyesweb.data_models.sliding_window import SlidingWindow
@@ -49,27 +50,17 @@ class DirectionChange:
     0.16666666666666667
     """
 
-    def __init__(self, epsilon=0.5):
+    def __init__(self, epsilon=0.5, method:Literal["cosine_similarity", "polygon_area"]="polygon_area",extra_args:dict=None):
         self.epsilon = epsilon
+        self._method = self._cosine_similarity if method == "cosine_similarity" else self._polygon_area
+        if extra_args is None:
+            extra_args = {}
+        self.num_subsamples = extra_args.get("num_subsamples", 20)
+        self.saturation_area = extra_args.get("saturation_area", 0.3)
 
-    def __call__(self, positions: SlidingWindow) -> dict:
-        """
-        Compute the direction change value for the given trajectory segment.
-
-        Parameters
-        ----------
-        positions : SlidingWindow
-            Input array of shape (N, 3) or (N, 2) representing coordinates
-            (x, y, z) or (x, y) over time.
-
-        Returns
-        -------
-        dict
-            Calculated direction change value between 0.0 and 1.0.
-            Returns 0.0 if the segment is too short or vectors are too small.
-        """
-        pos = positions.to_array()[0]
-        if pos.ndim != 2 or pos.shape[1] < 2:
+    def _cosine_similarity(self, sliding_window: SlidingWindow) -> dict:
+        pos = sliding_window.to_array(as2D=True)[0]
+        if pos.shape[-1] < 2:
             raise Exception("Input positions must be a 2D array with at least 2 columns (x,y).")
         
         n_samples = pos.shape[0]
@@ -113,3 +104,48 @@ class DirectionChange:
             return {"value": (1.0 - diff / self.epsilon)}
         
         return {"value": 0.0}
+    
+    def _polygon_area(self, sliding_window: SlidingWindow) -> dict:
+        """
+        Calculates 3D area and applies a tanh saturation filter.
+        """
+        hand_pos = sliding_window.to_array(as2D=True)[0]
+        num_points = len(hand_pos)
+        if num_points < 3:
+            return {"value": 0.0}
+        
+        # 1. Select subset and close polygon
+        indices = np.linspace(0, num_points - 1, min(self.num_subsamples, num_points)).astype(int)
+        subset = hand_pos[indices]
+        closed_polygon = np.vstack([subset, subset[0]])
+        
+        # 2. Calculate 3D Area
+        # Standard formula is 0.5 * norm(sum(cross_products))
+        cross_products = np.cross(closed_polygon[:-1], closed_polygon[1:])
+        area_vector = np.sum(cross_products, axis=0) / 2.0
+        area = np.linalg.norm(area_vector)
+        
+        # 3. Apply Tanh Saturation
+        b = 0.09
+        a = self.saturation_area / 2
+        saturated_area = ((np.tanh((area - a)/b)) + 1) / 2
+        
+        return {"value": saturated_area}
+
+    def __call__(self, positions: SlidingWindow) -> dict:
+        """
+        Compute the direction change value for the given trajectory segment.
+
+        Parameters
+        ----------
+        positions : SlidingWindow
+            Input array of shape (N, 3) or (N, 2) representing coordinates
+            (x, y, z) or (x, y) over time.
+
+        Returns
+        -------
+        dict
+            Calculated direction change value between 0.0 and 1.0.
+            Returns 0.0 if the segment is too short or vectors are too small.
+        """
+        return self._method(positions)

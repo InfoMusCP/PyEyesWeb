@@ -43,15 +43,15 @@ class Suddenness:
         [2, 1.924, 1.829, 1.745, 1.676, 1.547, 1.438, 1.318, 1.15, 0.973, 0.874, 0.769, 0.691, 0.595, 0.513]
     ])
 
-    #_beta_tab = np.array([
-    #    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #    [2.16, 1.592, 0.759, 0.482, 0.36, 0.253, 0.203, 0.165, 0.136, 0.109, 0.096, 0.082, 0.074, 0.064, 0.056],
-    #    [1, 3.39, 1.8, 1.048, 0.76, 0.518, 0.41, 0.332, 0.271, 0.216, 0.19, 0.163, 0.147, 0.128, 0.112],
-    #    [1, 1, 1, 1.694, 1.232, 0.823, 0.632, 0.499, 0.404, 0.323, 0.284, 0.243, 0.22, 0.191, 0.167],
-    #    [1, 1, 1, 1, 2.229, 1.575, 1.244, 0.943, 0.689, 0.539, 0.472, 0.412, 0.377, 0.33, 0.285],
-    #    [1, 1, 1, 1, 1, 1, 1.906, 1.56, 1.23, 0.827, 0.693, 0.601, 0.546, 0.478, 0.428],
-    #    [1, 1, 1, 1, 1, 1, 1, 1, 2.195, 1.917, 1.759, 1.596, 1.482, 1.362, 1.274]
-    #])
+    _beta_tab = np.array([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [2.16, 1.592, 0.759, 0.482, 0.36, 0.253, 0.203, 0.165, 0.136, 0.109, 0.096, 0.082, 0.074, 0.064, 0.056],
+        [1, 3.39, 1.8, 1.048, 0.76, 0.518, 0.41, 0.332, 0.271, 0.216, 0.19, 0.163, 0.147, 0.128, 0.112],
+        [1, 1, 1, 1.694, 1.232, 0.823, 0.632, 0.499, 0.404, 0.323, 0.284, 0.243, 0.22, 0.191, 0.167],
+        [1, 1, 1, 1, 2.229, 1.575, 1.244, 0.943, 0.689, 0.539, 0.472, 0.412, 0.377, 0.33, 0.285],
+        [1, 1, 1, 1, 1, 1, 1.906, 1.56, 1.23, 0.827, 0.693, 0.601, 0.546, 0.478, 0.428],
+        [1, 1, 1, 1, 1, 1, 1, 1, 2.195, 1.917, 1.759, 1.596, 1.482, 1.362, 1.274]
+    ])
 
     _a_vals = np.array([2.439, 2.5, 2.6, 2.7, 2.8, 3, 3.2, 3.5, 4, 5, 6, 8, 10, 15, 25])
     _b_vals = np.array([0.0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0])
@@ -59,7 +59,7 @@ class Suddenness:
     def __init__(self):
         pass
 
-    def __call__(self, positions: SlidingWindow) -> dict:
+    def __call__(self, positions: SlidingWindow, algo="new") -> dict:
         """
         Compute the suddenness value for the given trajectory segment.
 
@@ -76,7 +76,7 @@ class Suddenness:
             Returns {"value": 0.0} if the distribution cannot be fit or if the segment is too short.
         """
         pos = positions.to_array()[0]
-        if pos.ndim != 2 or pos.shape[1] < 2:
+        if pos.shape[-1] < 2:
             raise Exception("Input positions must be a 2D array with at least 2 columns (x,y).")
         
         n_samples = pos.shape[0]
@@ -93,7 +93,7 @@ class Suddenness:
             return {"value": np.nan}
             
         # Fit stable distribution
-        alpha, beta, gamma, _ = self._fit_stable(velocities)
+        alpha, beta, gamma, _ = self._fit_stable_constrained_bounds(velocities) if algo == "new" else self._fit_stable(velocities)
         
         # Suddenness calculation
         # Gamma (scale) * (1 - Alpha/2)
@@ -129,6 +129,53 @@ class Suddenness:
             return result
 
         return -1.0
+    
+    def _fit_stable_constrained_bounds(self, data):
+        # 1. Handle edge cases (empty data or constant values)
+        if len(data) < 5 or np.all(data == data[0]):
+            return 2.0, 0.0, 0.0, 0.0  # Return Gaussian (Normal) defaults
+
+        # 2. Compute percentiles
+        percentiles = [95, 75, 50, 25, 5]
+        # using 'midpoint' interpolation is safer for small windows than default 'linear'
+        x_percentiles = np.percentile(np.sort(data), percentiles, method='midpoint') 
+
+        x95, x75, x50, x25, x5 = x_percentiles
+
+        # 3. Check for Zero Division (Interquartile range is 0)
+        if (x75 - x25) == 0 or (x95 - x5) == 0:
+            return 2.0, 0.0, 0.0, 0.0 # Fallback to Gaussian
+
+        # 4. Calculate Quantile Measures
+        nuAlpha = (x95 - x5) / (x75 - x25)
+        nuBeta = (x95 + x5 - 2 * x50) / (x95 - x5)
+
+        # 5. CRITICAL FIX: Clamp values to the lookup table bounds!
+        # If nuAlpha < 2.439, it's Gaussian (Alpha=2). If > 25, it's Cauchy or worse.
+        nuAlpha_clamped = np.clip(nuAlpha, self._a_vals[0], self._a_vals[-1])
+        
+        # nuBeta is theoretically between -1 and 1, but your table _b goes 0.0 to 1.0
+        nuBeta_clamped = np.clip(abs(nuBeta), self._b_vals[0], self._b_vals[-1])
+
+        # 6. Interpolate
+        s = 1 if nuBeta >= 0. else -1
+        alpha = self._interp2d(self._alpha_tab, nuAlpha_clamped, nuBeta_clamped)
+        beta = s * self._interp2d(self._beta_tab, nuAlpha_clamped, nuBeta_clamped)
+        
+        # 7. Calculate Gamma and Delta
+        # Note: If alpha is close to 1, tan(pi*alpha/2) explodes. 
+        # McCulloch has a specific correction for alpha=1, but for general use:
+        # That is (x75 - x25) / (x75 - x50). This is non-standard but I will preserve it.
+        denom_gamma = (x75 - x50)
+        if denom_gamma == 0:
+            gamma = 1.0 
+        else:
+            gamma = (x75 - x25) / denom_gamma
+
+        delta = x50 - beta * gamma * np.tan(np.pi * alpha / 2) # Using x50 (median) is safer than x25
+
+        return alpha, beta, gamma, delta
+
 
     def _fit_stable(self, data):
         """Fit data to stable distribution using quantile method."""

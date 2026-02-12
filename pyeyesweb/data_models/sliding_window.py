@@ -17,8 +17,10 @@ class SlidingWindow:
     ----------
     max_length : int
         Maximum number of samples the window can hold.
-    n_columns : int
-        Number of columns (features) in each sample.
+    n_dimensions : int
+        Number of dimensions (2D, 3D, etc.) in each sample.
+    m_joints : int
+        Number of joints.
 
     Attributes
     ----------
@@ -26,10 +28,10 @@ class SlidingWindow:
         Thread lock for thread-safe operations.
     _max_length : int
         Maximum capacity of the buffer.
-    _n_columns : int
-        Number of columns per sample.
+    _n_dimensions : int
+        Number of dimensions per sample.
     _buffer : np.ndarray
-        Circular buffer storing the samples, shape (max_length, n_columns).
+        Circular buffer storing the samples, shape (max_length, m_joints, n_dimensions).
     _timestamp : np.ndarray
         Array storing timestamps for each sample, shape (max_length,).
     _start : int
@@ -39,7 +41,7 @@ class SlidingWindow:
 
     Examples
     --------
-    >>> window = SlidingWindow(max_length=100, n_columns=3)
+    >>> window = SlidingWindow(max_length=100, n_dimensions=3, m_joints=1)
     >>> window.append([1.0, 2.0, 3.0])
     >>> window.append(np.array([4.0, 5.0, 6.0]), timestamp=1234567890.0)
     >>> data, timestamps = window.to_array()
@@ -59,13 +61,14 @@ class SlidingWindow:
             self._max_length = value
             self._resize(old_max_length)
 
-    def __init__(self, max_length: int, n_columns: int):
+    def __init__(self, max_length: int, n_dimensions: int, m_joints:int = 1):
         self._max_length = validate_integer(max_length, 'max_length', min_val=1, max_val=10_000_000)
-        self._n_columns = validate_integer(n_columns, 'n_columns', min_val=1, max_val=10_000)
-
+        self._n_dimensions = validate_integer(n_dimensions, 'n_dimensions', min_val=1, max_val=10_000)
+        self._m_joints = validate_integer(m_joints, 'm_joints', min_val=1, max_val=1000)
+        
         self._lock = threading.RLock()
 
-        self._buffer = np.empty((self._max_length, self._n_columns), dtype=np.float32)
+        self._buffer = np.empty((self._max_length, self._m_joints,self._n_dimensions), dtype=np.float32)
         self._timestamp = np.empty(self._max_length, dtype=np.float64)
 
         self._start = 0
@@ -115,11 +118,11 @@ class SlidingWindow:
         old_data = self._buffer[indices].copy()
         old_timestamps = self._timestamp[indices].copy()
 
-        new_buffer = np.empty((self._max_length, self._n_columns), dtype=np.float32)
+        new_buffer = np.empty((self._max_length, self._m_joints, self._n_dimensions), dtype=np.float32)
         new_timestamps = np.empty(self._max_length, dtype=np.float64)
 
         keep = min(len(old_data), self._max_length)
-        new_buffer[:keep, :self._n_columns] = old_data[-keep:, :self._n_columns]
+        new_buffer[:keep, :self._m_joints, :self._n_dimensions] = old_data[-keep:, :self._m_joints, :self._n_dimensions]
         new_timestamps[:keep] = old_timestamps[-keep:]
 
         self._buffer = new_buffer
@@ -127,7 +130,7 @@ class SlidingWindow:
         self._start = 0
         self._size = keep
 
-    def append(self, samples: Union[np.ndarray, list], timestamp: Optional[float] = None) -> None:
+    def append(self, samples: np.ndarray, timestamp: Optional[float] = None) -> None:
         """
         Append a new sample to the sliding window.
 
@@ -136,8 +139,8 @@ class SlidingWindow:
 
         Parameters
         ----------
-        samples : np.ndarray or list
-            Sample data to append. Must have exactly n_columns elements.
+        samples : np.ndarray
+            Sample data to append. Must have exactly n_dimensions elements.
         timestamp : float, optional
             Timestamp associated with the sample. If None, uses the current
             monotonic time.
@@ -147,23 +150,24 @@ class SlidingWindow:
         TypeError
             If samples is not a numpy array or list.
         ValueError
-            If the sample shape doesn't match the expected number of columns.
+            If the sample shape doesn't match the expected number of dimensions.
 
         Examples
         --------
-        >>> window = SlidingWindow(max_length=10, n_columns=2)
+        >>> window = SlidingWindow(max_length=10, n_dimensions=2)
         >>> window.append([1.0, 2.0])
         >>> window.append(np.array([3.0, 4.0]), timestamp=1234567890.0)
         """
         with self._lock:
-            if not isinstance(samples, (np.ndarray, list)):
-                raise TypeError("Expected sample should be of type np.ndarray or list.")
 
-            value = np.asarray(samples, dtype=np.float32).reshape(-1)
-
-            if value.shape[0] != self._n_columns:
-                raise ValueError(f"Expected shape ({self._n_columns},), got {value.shape}")
-
+            if samples.shape[-1] != self._n_dimensions:
+                raise ValueError(f"Expected sample with {self._n_dimensions} dimensions, got {samples.shape[-1]}")
+            
+            value = np.atleast_2d(samples).reshape(-1, self._n_dimensions)  # Ensure shape is (m_joints, n_dimensions)
+            
+            if value.shape[0] != self._m_joints:
+                raise ValueError(f"Expected shape ({self._m_joints}, *), got {value.shape}")
+            
             if timestamp is None:
                 timestamp = time.monotonic()
 
@@ -182,7 +186,7 @@ class SlidingWindow:
             self._buffer[idx] = value
             self._timestamp[idx] = timestamp
 
-    def to_array(self) -> tuple[np.ndarray, np.ndarray]:
+    def to_array(self, as2D: bool = False) -> tuple[np.ndarray, np.ndarray]:
         """
         Return the current contents of the sliding window as arrays.
 
@@ -209,7 +213,9 @@ class SlidingWindow:
         """
         with self._lock:
             indices = (self._start + np.arange(self._size)) % self._max_length
-            return self._buffer[indices].copy(), self._timestamp[indices].copy()
+            return (self._buffer[indices].copy(), self._timestamp[indices].copy()) \
+                if not as2D else \
+                (self._buffer[indices].copy().reshape(-1, self._n_dimensions), self._timestamp[indices].copy())
 
     def reset(self) -> None:
         """
@@ -251,3 +257,35 @@ class SlidingWindow:
         """
         with self._lock:
             return self._size == self._max_length
+
+    def get_num_joints(self) -> int:
+        """
+        Get the number of joints configured for this sliding window.
+
+        Returns
+        -------
+        int
+            The number of joints (m_joints) that this sliding window is configured to handle.
+
+        Examples
+        --------
+        >>> window = SlidingWindow(max_length=10, n_columns=3, m_joints=5)
+        >>> print(window.get_num_joints())  # 5
+        """
+        return self._m_joints
+    
+    def get_num_dimensions(self) -> int:
+        """
+        Get the number of dimensions (columns) configured for this sliding window.
+
+        Returns
+        -------
+        int
+            The number of dimensions (n_columns) that this sliding window is configured to handle.
+
+        Examples
+        --------
+        >>> window = SlidingWindow(max_length=10, n_columns=3, m_joints=5)
+        >>> print(window.get_num_dimensions())  # 3
+        """
+        return self._n_dimensions

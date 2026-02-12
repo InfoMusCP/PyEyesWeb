@@ -26,6 +26,8 @@ Typical Applications
 import numpy as np
 from numba import jit
 
+from pyeyesweb.data_models.sliding_window import SlidingWindow
+
 
 @jit(nopython=True, cache=True)
 def _area_2d_fast(points):
@@ -242,14 +244,23 @@ class ContractionExpansion:
         self.mode = mode
         self.baseline_frame = baseline_frame
 
-    def __call__(self, data):
-        """Analyze movement data using the configured settings.
+
+
+    def __call__(self, sliding_windows: SlidingWindow) -> dict:
+        """Analyze body movement contraction/expansion patterns.
+
+        This function computes area (2D) or volume (3D) metrics for body point
+        configurations and tracks expansion/contraction relative to a baseline.
 
         Parameters
         ----------
         data : ndarray
             Either single frame (4, 2) or (4, 3) for 2D/3D points,
             or time series (n_frames, 4, 2) or (n_frames, 4, 3).
+        mode : {"2D", "3D", None}, optional
+            Analysis mode. If None, auto-detects from data dimensions.
+        baseline_frame : int, optional
+            Frame index to use as baseline for time series (default: 0).
 
         Returns
         -------
@@ -262,95 +273,32 @@ class ContractionExpansion:
                 - 'indices': array of expansion indices relative to baseline
                 - 'states': array of states (-1=contraction, 0=neutral, 1=expansion)
                 - 'dimension': "2D" or "3D"
+
+        Raises
+        ------
+        ValueError
+            If data shape is invalid or mode doesn't match data dimensions.
+
+        Examples
+        --------
+        >>> # Single frame 2D analysis
+        >>> points_2d = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
+        >>> result = analyze_movement(points_2d, mode="2D")
+        >>> print(result['metric'])  # Area of square
+        1.0
+
+        >>> # Time series 3D analysis
+        >>> frames = np.random.randn(100, 4, 3)
+        >>> result = analyze_movement(frames, mode="3D", baseline_frame=0)
+        >>> print(result['states'][:10])  # First 10 frame states
         """
-        return analyze_movement(data, mode=self.mode, baseline_frame=self.baseline_frame)
-
-
-def analyze_movement(data, mode=None, baseline_frame=0):
-    """Analyze body movement contraction/expansion patterns.
-
-    This function computes area (2D) or volume (3D) metrics for body point
-    configurations and tracks expansion/contraction relative to a baseline.
-
-    Parameters
-    ----------
-    data : ndarray
-        Either single frame (4, 2) or (4, 3) for 2D/3D points,
-        or time series (n_frames, 4, 2) or (n_frames, 4, 3).
-    mode : {"2D", "3D", None}, optional
-        Analysis mode. If None, auto-detects from data dimensions.
-    baseline_frame : int, optional
-        Frame index to use as baseline for time series (default: 0).
-
-    Returns
-    -------
-    dict
-        For single frame:
-            - 'metric': area or volume value
-            - 'dimension': "2D" or "3D"
-        For time series:
-            - 'metrics': array of area/volume values
-            - 'indices': array of expansion indices relative to baseline
-            - 'states': array of states (-1=contraction, 0=neutral, 1=expansion)
-            - 'dimension': "2D" or "3D"
-
-    Raises
-    ------
-    ValueError
-        If data shape is invalid or mode doesn't match data dimensions.
-
-    Examples
-    --------
-    >>> # Single frame 2D analysis
-    >>> points_2d = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
-    >>> result = analyze_movement(points_2d, mode="2D")
-    >>> print(result['metric'])  # Area of square
-    1.0
-
-    >>> # Time series 3D analysis
-    >>> frames = np.random.randn(100, 4, 3)
-    >>> result = analyze_movement(frames, mode="3D", baseline_frame=0)
-    >>> print(result['states'][:10])  # First 10 frame states
-    """
-    if data.ndim == 2:
-        dims = data.shape[1]
-        is_timeseries = False
-    elif data.ndim == 3:
-        dims = data.shape[2]
-        is_timeseries = True
-        if data.shape[1] != 4:
-            raise ValueError("Invalid shape: second dimension must be 4")
-    else:
-        raise ValueError("Invalid data dimensions")
-    
-    if mode is None:
-        mode = "2D" if dims == 2 else "3D" if dims == 3 else None
-        if mode is None:
-            raise ValueError("Invalid coordinate dimensions")
-    
-    expected_dims = 2 if mode == "2D" else 3
-    if dims != expected_dims:
-        raise ValueError(f"Mode {mode} requires {expected_dims}D data")
-    
-    if not is_timeseries:
-        if mode == "2D":
-            metric = _area_2d_fast(data)
-        else:
-            metric = _volume_3d_fast(data)
+        data = sliding_windows.to_array()[0]
+        ndim = sliding_windows.get_num_dimensions()
         
-        return {"metric": metric, "dimension": mode}
-    
-    if mode == "2D":
-        metrics, indices, states = _process_timeseries_2d(data, baseline_frame)
-    else:
-        metrics, indices, states = _process_timeseries_3d(data, baseline_frame)
-    
-    return {
-        "metrics": metrics,
-        "indices": indices, 
-        "states": states,
-        "dimension": mode
-    }
+        # Process data
+        processor = _process_timeseries_3d if ndim == 3 else _process_timeseries_2d
+        metrics, indices, states = processor(data, self.baseline_frame)
+        return {"metrics": metrics, "indices": indices, "states": states}
 
 
 def _warmup():
