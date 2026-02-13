@@ -22,293 +22,293 @@ Typical Applications
 - Sports biomechanics (body positioning)
 - Clinical movement assessment
 """
-
 import numpy as np
-from numba import jit
-
+from scipy.spatial import ConvexHull
+import itertools
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 
-@jit(nopython=True, cache=True)
-def _area_2d_fast(points):
-    """Calculate 2D area using the Shoelace formula.
-
-    Parameters
-    ----------
-    points : ndarray of shape (4, 2)
-        Four 2D points forming a quadrilateral.
-
-    Returns
-    -------
-    float
-        Absolute area of the quadrilateral.
+class BoundingBoxFilledArea:
     """
-    x = points[:, 0]
-    y = points[:, 1]
+    Computes the Contraction Index based on 3D Surface Area.
     
-    return 0.5 * abs(
-        x[0] * y[1] - x[1] * y[0] +
-        x[1] * y[2] - x[2] * y[1] +
-        x[2] * y[3] - x[3] * y[2] +
-        x[3] * y[0] - x[0] * y[3]
-    )
-
-
-@jit(nopython=True, cache=True)
-def _volume_3d_fast(points):
-    """Calculate 3D volume of a tetrahedron using determinant method.
-
-    Parameters
-    ----------
-    points : ndarray of shape (4, 3)
-        Four 3D points forming a tetrahedron.
-
-    Returns
-    -------
-    float
-        Absolute volume of the tetrahedron.
+    This version uses the Axis-Aligned Bounding Box (AABB) of the raw data 
+    (no rotation/alignment) and returns geometric data for visualization.
+    
+    Formula: CI = SurfaceArea(Hull) / SurfaceArea(AABB)
     """
-    v1x, v1y, v1z = points[1, 0] - points[0, 0], points[1, 1] - points[0, 1], points[1, 2] - points[0, 2]
-    v2x, v2y, v2z = points[2, 0] - points[0, 0], points[2, 1] - points[0, 1], points[2, 2] - points[0, 2]
-    v3x, v3y, v3z = points[3, 0] - points[0, 0], points[3, 1] - points[0, 1], points[3, 2] - points[0, 2]
     
-    det = v1x * (v2y * v3z - v2z * v3y) - v1y * (v2x * v3z - v2z * v3x) + v1z * (v2x * v3y - v2y * v3x)
-    
-    return abs(det) / 6.0
+    def __init__(self):
+        pass
 
-
-@jit(nopython=True, cache=True)
-def _compute_expansion_index(metric, baseline_metric):
-    """Compute expansion index and state from metric values.
-
-    Parameters
-    ----------
-    metric : float
-        Current metric value (area or volume).
-    baseline_metric : float
-        Baseline metric for comparison.
-
-    Returns
-    -------
-    tuple of (float, int)
-        (expansion_index, state) where state is -1 (contraction),
-        0 (neutral), or 1 (expansion).
-    """
-    if baseline_metric <= 0:
-        # When baseline is zero or negative, return NaN for index
-        # as expansion/contraction ratio is undefined
-        if baseline_metric < 0:
-            # Negative baseline is invalid
-            index = np.nan
-        elif metric == 0:
-            # Both baseline and current are zero - no change
-            index = 1.0
-        else:
-            # Zero baseline but non-zero current - undefined expansion
-            index = np.nan
-        state = 0  # neutral
-    else:
-        index = metric / baseline_metric
-        if metric > baseline_metric:
-            state = 1  # expansion
-        elif metric < baseline_metric:
-            state = -1  # contraction
-        else:
-            state = 0  # neutral
-
-    return index, state
-
-
-@jit(nopython=True, cache=True)
-def _analyze_frame_2d(points, baseline_metric):
-    """Analyze single 2D frame relative to baseline.
-
-    Parameters
-    ----------
-    points : ndarray of shape (4, 2)
-        Four 2D points to analyze.
-    baseline_metric : float
-        Baseline area for comparison.
-
-    Returns
-    -------
-    tuple of (float, float, int)
-        (area, expansion_index, state) where state is -1 (contraction),
-        0 (neutral), or 1 (expansion).
-    """
-    metric = _area_2d_fast(points)
-    index, state = _compute_expansion_index(metric, baseline_metric)
-    return metric, index, state
-
-
-@jit(nopython=True, cache=True)
-def _analyze_frame_3d(points, baseline_metric):
-    """Analyze single 3D frame relative to baseline.
-
-    Parameters
-    ----------
-    points : ndarray of shape (4, 3)
-        Four 3D points to analyze.
-    baseline_metric : float
-        Baseline volume for comparison.
-
-    Returns
-    -------
-    tuple of (float, float, int)
-        (volume, expansion_index, state) where state is -1 (contraction),
-        0 (neutral), or 1 (expansion).
-    """
-    metric = _volume_3d_fast(points)
-    index, state = _compute_expansion_index(metric, baseline_metric)
-    return metric, index, state
-
-
-@jit(nopython=True, cache=True)
-def _process_timeseries_2d(data, baseline_frame):
-    """Vectorized timeseries processing for 2D."""
-    n_frames = data.shape[0]
-    baseline_metric = _area_2d_fast(data[baseline_frame])
-    
-    metrics = np.empty(n_frames, dtype=np.float64)
-    indices = np.empty(n_frames, dtype=np.float64)
-    states = np.empty(n_frames, dtype=np.int8)
-    
-    for i in range(n_frames):
-        metrics[i], indices[i], states[i] = _analyze_frame_2d(data[i], baseline_metric)
-    
-    return metrics, indices, states
-
-
-@jit(nopython=True, cache=True)
-def _process_timeseries_3d(data, baseline_frame):
-    """Process time series of 3D configurations.
-
-    Parameters
-    ----------
-    data : ndarray of shape (n_frames, 4, 3)
-        Time series of tetrahedron configurations.
-    baseline_frame : int
-        Frame index to use as baseline.
-
-    Returns
-    -------
-    tuple of (ndarray, ndarray, ndarray)
-        (volumes, expansion_indices, states) for all frames.
-    """
-    n_frames = data.shape[0]
-    baseline_metric = _volume_3d_fast(data[baseline_frame])
-    
-    metrics = np.empty(n_frames, dtype=np.float64)
-    indices = np.empty(n_frames, dtype=np.float64)
-    states = np.empty(n_frames, dtype=np.int8)
-    
-    for i in range(n_frames):
-        metrics[i], indices[i], states[i] = _analyze_frame_3d(data[i], baseline_metric)
-    
-    return metrics, indices, states
-
-
-class ContractionExpansion:
-    """Analyze body movement contraction/expansion patterns.
-
-    This class provides a standardized API for computing area (2D) or volume (3D)
-    metrics for body point configurations and tracking expansion/contraction
-    relative to a baseline.
-
-    Parameters
-    ----------
-    mode : {"2D", "3D", None}, optional
-        Analysis mode. If None, auto-detects from data dimensions.
-    baseline_frame : int, optional
-        Frame index to use as baseline for time series (default: 0).
-
-    Examples
-    --------
-    >>> # Create analyzer
-    >>> ce = ContractionExpansion(mode="2D")
-    >>>
-    >>> # Single frame analysis
-    >>> points_2d = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
-    >>> result = ce(points_2d)
-    >>> print(result['metric'])  # Area of square
-    1.0
-
-    >>> # Time series analysis
-    >>> ce_3d = ContractionExpansion(mode="3D", baseline_frame=0)
-    >>> frames = np.random.randn(100, 4, 3)
-    >>> result = ce_3d(frames)
-    >>> print(result['states'][:10])  # First 10 frame states
-    """
-
-    def __init__(self, mode=None, baseline_frame=0):
-        self.mode = mode
-        self.baseline_frame = baseline_frame
-
-
-
-    def __call__(self, sliding_windows: SlidingWindow) -> dict:
-        """Analyze body movement contraction/expansion patterns.
-
-        This function computes area (2D) or volume (3D) metrics for body point
-        configurations and tracks expansion/contraction relative to a baseline.
-
-        Parameters
-        ----------
-        data : ndarray
-            Either single frame (4, 2) or (4, 3) for 2D/3D points,
-            or time series (n_frames, 4, 2) or (n_frames, 4, 3).
-        mode : {"2D", "3D", None}, optional
-            Analysis mode. If None, auto-detects from data dimensions.
-        baseline_frame : int, optional
-            Frame index to use as baseline for time series (default: 0).
-
-        Returns
-        -------
-        dict
-            For single frame:
-                - 'metric': area or volume value
-                - 'dimension': "2D" or "3D"
-            For time series:
-                - 'metrics': array of area/volume values
-                - 'indices': array of expansion indices relative to baseline
-                - 'states': array of states (-1=contraction, 0=neutral, 1=expansion)
-                - 'dimension': "2D" or "3D"
-
-        Raises
-        ------
-        ValueError
-            If data shape is invalid or mode doesn't match data dimensions.
-
-        Examples
-        --------
-        >>> # Single frame 2D analysis
-        >>> points_2d = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
-        >>> result = analyze_movement(points_2d, mode="2D")
-        >>> print(result['metric'])  # Area of square
-        1.0
-
-        >>> # Time series 3D analysis
-        >>> frames = np.random.randn(100, 4, 3)
-        >>> result = analyze_movement(frames, mode="3D", baseline_frame=0)
-        >>> print(result['states'][:10])  # First 10 frame states
+    def _get_hull_data(self, points: np.ndarray) -> tuple[float, np.ndarray]:
         """
-        data = sliding_windows.to_array()[0]
-        ndim = sliding_windows.get_num_dimensions()
+        Computes 3D Convex Hull surface area and vertices.
+        """
+        if len(points) < 4:
+            return 0.0, np.array([])
+            
+        try:
+            hull = ConvexHull(points)
+            # hull.vertices provides indices of points on the hull
+            hull_points = points[hull.vertices]
+            return hull.area, hull_points
+        except Exception:
+            return 0.0, np.array([])
+
+    def _get_aabb_data(self, points: np.ndarray) -> tuple[float, np.ndarray]:
+        """
+        Computes Axis-Aligned Bounding Box (AABB) surface area and corner points.
+        """
+        if len(points) == 0:
+            return 0.0, np.array([])
+
+        # 1. Find min/max coordinates
+        min_vals = np.min(points, axis=0) # [x_min, y_min, z_min]
+        max_vals = np.max(points, axis=0) # [x_max, y_max, z_max]
         
-        # Process data
-        processor = _process_timeseries_3d if ndim == 3 else _process_timeseries_2d
-        metrics, indices, states = processor(data, self.baseline_frame)
-        return {"metrics": metrics, "indices": indices, "states": states}
+        # 2. Calculate Dimensions
+        dims = max_vals - min_vals # [Length, Width, Height]
+        L, W, H = dims[0], dims[1], dims[2]
+        
+        # 3. Calculate Surface Area
+        surface_area = 2 * (L*W + L*H + W*H)
+        
+        # 4. Generate the 8 corner points of the box
+        # We use itertools.product to get all combinations of (min, max) for (x, y, z)
+        corners = list(itertools.product(
+            [min_vals[0], max_vals[0]], 
+            [min_vals[1], max_vals[1]], 
+            [min_vals[2], max_vals[2]]
+        ))
+        
+        return surface_area, np.array(corners)
 
+    def __call__(self, sliding_window:SlidingWindow) -> list[dict]:
+        """
+        Args:
+            sliding_window: SlidingWindow object.
+            
+        Returns:
+            list[dict]: A list where each element represents a frame containing:
+                - 'contraction_index': float
+                - 'hull_area': float
+                - 'bbox_area': float
+                - 'hull_points': np.ndarray (N, 3) - vertices of the hull
+                - 'bbox_points': np.ndarray (8, 3) - corners of the box
+        """
+        data = sliding_window.to_array()[0] # (t_frames, n_joints, 3)
+        t_frames = data.shape[0]
+        
+        results = []
 
-def _warmup():
-    """Warmup JIT compilation with dummy data."""
-    dummy_2d = np.array([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=np.float64)
-    dummy_3d = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]], dtype=np.float64)
+        for t in range(t_frames):
+            frame_points = data[t, :, :]
+            
+            # 1. Get Hull Data
+            hull_area, hull_points = self._get_hull_data(frame_points)
+            
+            # 2. Get AABB Data (No rotation)
+            bbox_area, bbox_points = self._get_aabb_data(frame_points)
+            
+            # 3. Compute Index
+            if bbox_area > 1e-6:
+                index = (hull_area**2 / bbox_area)
+            else:
+                index = 0.0
+            
+            results.append({
+                'contraction_index': index,
+                'hull_area': hull_area,
+                'bbox_area': bbox_area,
+            })
+            
+        return results
     
-    _area_2d_fast(dummy_2d)
-    _volume_3d_fast(dummy_3d)
-    _analyze_frame_2d(dummy_2d, 1.0)
-    _analyze_frame_3d(dummy_3d, 1.0)
 
-_warmup()
+class EllipsoidSphericity:
+    """
+    Fits an ellipsoid to skeletal joints using PCA and computes shape metrics.
+    
+    This measures how "round" the distribution of joints is.
+    
+    Metrics:
+    - Sphericity: The ratio of the smallest axis to the largest axis.
+      (1.0 = Perfect Sphere, < 0.2 = Line or Flat Plane)
+    """
+    
+    def __init__(self):
+        pass
+
+    def _fit_ellipsoid_pca(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Fits an ellipsoid to the 3D points using Principal Component Analysis.
+        
+        Args:
+            points (np.ndarray): (N, 3) array of joint coordinates.
+            
+        Returns:
+            radii (np.ndarray): The 3 lengths of the semi-axes (sorted largest to smallest).
+            rotation (np.ndarray): The 3x3 rotation matrix (eigenvectors) of the ellipsoid.
+        """
+        if len(points) < 2:
+            return np.zeros(3), np.eye(3)
+
+        # 1. Center the data
+        # We look at the distribution relative to the body's center of mass
+        centered = points - np.mean(points, axis=0)
+        
+        # 2. Compute Covariance Matrix
+        # This captures how the data spreads in X, Y, and Z
+        cov_matrix = np.cov(centered, rowvar=False)
+        
+        # 3. Compute Eigenvalues and Eigenvectors
+        # Eigenvalues represent the variance (spread) along the principal axes
+        try:
+            eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+        except np.linalg.LinAlgError:
+            return np.zeros(3), np.eye(3)
+        
+        # 4. Convert Variance to Lengths (Radii)
+        # We take the sqrt of eigenvalues to get geometric lengths (standard deviations)
+        # We use abs() to handle potential negative zeros from float precision
+        radii = np.sqrt(np.abs(eigenvalues))
+        
+        # 5. Sort by size (Largest radius first)
+        sort_indices = np.argsort(radii)[::-1]
+        radii = radii[sort_indices]
+        rotation = eigenvectors[:, sort_indices]
+        
+        return radii, rotation
+
+    def _calculate_shape_ratios(self, radii: np.ndarray) -> dict:
+        """
+        Computes geometric ratios from the ellipsoid axes.
+        
+        Args:
+            radii: Array of 3 radii [a, b, c] where a >= b >= c.
+        """
+        a, b, c = radii[0], radii[1], radii[2]
+        
+        # Avoid division by zero
+        if a < 1e-6:
+            return {'sphericity': 0.0, 'elongation': 0.0, 'flatness': 0.0}
+            
+        return {
+            # Global Sphericity: How close is the shape to a sphere? (c/a)
+            # 1.0 = Sphere, Low = Needle or Pancake
+            'sphericity': c / a,
+            
+            # Elongation: How long is the primary axis compared to the secondary? (b/a)
+            # High = Cylinder/Line, Low = Sphere
+            'elongation': 1.0 - (b / a),
+            
+            # Flatness: How flat is the shape? (c/b)
+            # High = Pancake, Low = Sphere
+            'flatness': 1.0 - (c / b) if b > 1e-6 else 0.0
+        }
+
+    def __call__(self, sliding_window:SlidingWindow) -> list[dict]:
+        """
+        Args:
+            sliding_window: SlidingWindow object.
+            
+        Returns:
+            list[dict]: A list containing the sphericity index and ellipsoid parameters per frame.
+        """
+        data = sliding_window.to_array()[0] # (t_frames, n_joints, 3)
+        t_frames = data.shape[0]
+        
+        results = []
+
+        for t in range(t_frames):
+            frame_points = data[t, :, :]
+            
+            # 1. Fit Ellipsoid
+            radii, rotation = self._fit_ellipsoid_pca(frame_points)
+            
+            # 2. Compute Ratios
+            metrics = self._calculate_shape_ratios(radii)
+            
+            # 3. Package Result
+            # We return the radii/rotation so you can visualize the ellipsoid wireframe
+            results.append({
+                'sphericity_index': metrics['sphericity'],
+                'elongation': metrics['elongation'],
+                'flatness': metrics['flatness'],
+                'radius_x': radii[0],   # Major axis
+                'radius_y': radii[1],   # Medium axis
+                'radius_z': radii[2],   # Minor axis
+            })
+            
+        return results
+
+class PointsDensity:
+    """
+    Computes the Points Density (Dispersion) for a sequence of skeletal frames.
+    
+    This measures the average distance of all joints from the skeletal center (Barycenter).
+    
+    Formula: PD = (1/n) * Σ || p_i - barycenter ||
+    
+    Interpretation:
+    - Low Value: High Contraction (e.g., Fetal tuck, hugging knees).
+    - High Value: Low Contraction (e.g., Star jump, fully extended limbs).
+    """
+    
+    def __init__(self):
+        pass
+
+    def _calculate_dispersion(self, points: np.ndarray) -> tuple[float, np.ndarray]:
+        """
+        Computes the mean distance from the barycenter.
+        
+        Args:
+            points (np.ndarray): (N, 3) array of joint coordinates.
+            
+        Returns:
+            density (float): The calculated Points Density score.
+            barycenter (np.ndarray): The (3,) coordinate of the center.
+        """
+        if len(points) == 0:
+            return 0.0, np.zeros(3)
+
+        # 1. Compute Barycenter (Center of Mass/Mean Point)
+        # Note: The prompt mentions 'median', but the formula specifies 'barycenter'.
+        # We use the Mean (Barycenter) as it is the standard center of mass.
+        barycenter = np.mean(points, axis=0)
+        
+        # 2. Compute Euclidean Distances (d_i)
+        # || p_i - barycenter || for all i
+        distances = np.linalg.norm(points - barycenter, axis=1)
+        
+        # 3. Compute Mean Distance (1/n * sum)
+        density = np.mean(distances)
+        
+        return density, barycenter
+
+    def __call__(self, sliding_window) -> list[dict]:
+        """
+        Args:
+            sliding_window: SlidingWindow object.
+            
+        Returns:
+            list[dict]: A list containing the density score and center for visualization.
+        """
+        # Extract data: (t_frames, n_joints, 3)
+        data = sliding_window.to_array()[0]
+        t_frames = data.shape[0]
+        
+        results = []
+
+        for t in range(t_frames):
+            frame_points = data[t, :, :]
+            
+            # Calculate Density
+            density, barycenter = self._calculate_dispersion(frame_points)
+            
+            results.append({
+                'points_density': density,  # The P.D. Score
+            })
+            
+        return results
