@@ -130,7 +130,7 @@ class SlidingWindow:
         self._start = 0
         self._size = keep
 
-    def append(self, samples: np.ndarray, timestamp: Optional[float] = None) -> None:
+    def append(self, samples: list, timestamp: Optional[float] = None) -> None:
         """
         Append a new sample to the sliding window.
 
@@ -139,8 +139,8 @@ class SlidingWindow:
 
         Parameters
         ----------
-        samples : np.ndarray
-            Sample data to append. Must have exactly n_dimensions elements.
+        samples : list
+            Sample data to append. Must have exactly m_joints elements.
         timestamp : float, optional
             Timestamp associated with the sample. If None, uses the current
             monotonic time.
@@ -148,9 +148,9 @@ class SlidingWindow:
         Raises
         ------
         TypeError
-            If samples is not a numpy array or list.
+            If samples is not a list.
         ValueError
-            If the sample shape doesn't match the expected number of dimensions.
+            If the sample shape doesn't match the expected number of joints.
 
         Examples
         --------
@@ -158,16 +158,18 @@ class SlidingWindow:
         >>> window.append([1.0, 2.0])
         >>> window.append(np.array([3.0, 4.0]), timestamp=1234567890.0)
         """
+        if len(samples) != self._m_joints:
+            raise ValueError(f"Expected sample with {self._m_joints} joint{'s' if self._m_joints > 1 else ''}, got {len(samples)}")
+        if isinstance(samples[0], np.ndarray) and (self._n_dimensions == 1 or samples[0].shape[0] != self._n_dimensions):
+            raise ValueError(f"Expected sample with {self._n_dimensions} dimension{'s' if self._n_dimensions > 1 else ''}, got {samples[0].shape[0]}")
+        elif isinstance(samples[0], (int, float)) and self._n_dimensions > 1 :
+            raise ValueError(f"Expected sample with {self._n_dimensions} dimensions, got 1")
+        elif not isinstance(samples[0], (int, float)) and not isinstance(samples[0], np.ndarray):
+            raise ValueError(f"Expected sample to be a list of numeric values or numpy arrays, got {type(samples[0])}")
+        samples = np.atleast_2d(samples).reshape(-1, self._n_dimensions)  # Ensure it's a numpy array with at least 2D shape
+        
         with self._lock:
-
-            if samples.shape[-1] != self._n_dimensions:
-                raise ValueError(f"Expected sample with {self._n_dimensions} dimensions, got {samples.shape[-1]}")
-            
-            value = np.atleast_2d(samples).reshape(-1, self._n_dimensions)  # Ensure shape is (m_joints, n_dimensions)
-            
-            if value.shape[0] != self._m_joints:
-                raise ValueError(f"Expected shape ({self._m_joints}, *), got {value.shape}")
-            
+                        
             if timestamp is None:
                 timestamp = time.monotonic()
 
@@ -178,12 +180,7 @@ class SlidingWindow:
                 idx = self._start
                 self._start = (self._start + 1) % self._max_length
 
-            if idx >= self._buffer.shape[0]:
-                raise RuntimeError(
-                    f"Internal error: idx={idx} but buffer length={self._buffer.shape[0]}"
-                )
-
-            self._buffer[idx] = value
+            self._buffer[idx] = samples
             self._timestamp[idx] = timestamp
 
     def to_array(self, as2D: bool = False) -> tuple[np.ndarray, np.ndarray]:

@@ -6,6 +6,8 @@ phase extraction, and smoothing operations used throughout the library.
 
 import numpy as np
 from scipy.signal import hilbert, butter, filtfilt
+from pyeyesweb.utils.math_utils import center_signals, compute_phase_locking_value
+from scipy.signal import savgol_filter
 
 
 def validate_filter_params(lowcut, highcut, fs):
@@ -142,7 +144,6 @@ def compute_phase_synchronization(signals, filter_params=None):
     float
         Phase Locking Value between 0 and 1
     """
-    from pyeyesweb.utils.math_utils import center_signals, compute_phase_locking_value
     
     sig = bandpass_filter(signals, filter_params)
     sig = center_signals(sig)
@@ -187,7 +188,6 @@ def apply_savgol_filter(signal, rate_hz=50.0):
         return np.array(signal)
 
     try:
-        from scipy.signal import savgol_filter
         return savgol_filter(signal, window_length=window_length, polyorder=polyorder)
     except Exception:
         return np.array(signal)
