@@ -19,8 +19,8 @@ class SlidingWindow:
         Maximum number of samples the window can hold.
     n_dimensions : int
         Number of dimensions (2D, 3D, etc.) in each sample.
-    m_joints : int
-        Number of joints.
+    m_signals : int
+        Number of signals (e.g., joints, features).
 
     Attributes
     ----------
@@ -31,7 +31,7 @@ class SlidingWindow:
     _n_dimensions : int
         Number of dimensions per sample.
     _buffer : np.ndarray
-        Circular buffer storing the samples, shape (max_length, m_joints, n_dimensions).
+        Circular buffer storing the samples, shape (max_length, m_signals, n_dimensions).
     _timestamp : np.ndarray
         Array storing timestamps for each sample, shape (max_length,).
     _start : int
@@ -41,11 +41,14 @@ class SlidingWindow:
 
     Examples
     --------
-    >>> window = SlidingWindow(max_length=100, n_dimensions=3, m_joints=1)
+    >>> window = SlidingWindow(max_length=100, n_dimensions=3, m_signals=1)
     >>> window.append([1.0, 2.0, 3.0])
-    >>> window.append(np.array([4.0, 5.0, 6.0]), timestamp=1234567890.0)
+    >>> window.append([4.0, 5.0, 6.0], timestamp=1234567890.0)
     >>> data, timestamps = window.to_array()
-    >>> print(f"Buffer contains {len(window)} samples")
+    >>> window = SlidingWindow(max_length=5, n_dimensions=2, m_signals=2)
+    >>> sig1 = np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+    >>> sig2 = np.array([[7.0, 8.0], [9.0, 10.0], [11.0, 12.0]])
+    >>> window.append([sig1, sig2]) # Append two signals at once, must be a list of two arrays of same shape
     """
 
     @property
@@ -61,14 +64,14 @@ class SlidingWindow:
             self._max_length = value
             self._resize(old_max_length)
 
-    def __init__(self, max_length: int, n_dimensions: int, m_joints:int = 1):
+    def __init__(self, max_length: int, n_dimensions: int, m_signals:int = 1):
         self._max_length = validate_integer(max_length, 'max_length', min_val=1, max_val=10_000_000)
         self._n_dimensions = validate_integer(n_dimensions, 'n_dimensions', min_val=1, max_val=10_000)
-        self._m_joints = validate_integer(m_joints, 'm_joints', min_val=1, max_val=1000)
+        self._m_signals = validate_integer(m_signals, 'm_signals', min_val=1, max_val=1000)
         
         self._lock = threading.RLock()
 
-        self._buffer = np.empty((self._max_length, self._m_joints,self._n_dimensions), dtype=np.float32)
+        self._buffer = np.empty((self._max_length, self._m_signals,self._n_dimensions), dtype=np.float32)
         self._timestamp = np.empty(self._max_length, dtype=np.float64)
 
         self._start = 0
@@ -118,11 +121,11 @@ class SlidingWindow:
         old_data = self._buffer[indices].copy()
         old_timestamps = self._timestamp[indices].copy()
 
-        new_buffer = np.empty((self._max_length, self._m_joints, self._n_dimensions), dtype=np.float32)
+        new_buffer = np.empty((self._max_length, self._m_signals,self._n_dimensions), dtype=np.float32)
         new_timestamps = np.empty(self._max_length, dtype=np.float64)
 
         keep = min(len(old_data), self._max_length)
-        new_buffer[:keep, :self._m_joints, :self._n_dimensions] = old_data[-keep:, :self._m_joints, :self._n_dimensions]
+        new_buffer[:keep, :self._m_signals, :self._n_dimensions] = old_data[-keep:, :self._m_signals, :self._n_dimensions]
         new_timestamps[:keep] = old_timestamps[-keep:]
 
         self._buffer = new_buffer
@@ -140,7 +143,7 @@ class SlidingWindow:
         Parameters
         ----------
         samples : list
-            Sample data to append. Must have exactly m_joints elements.
+            Sample data to append. Must have exactly m_signals elements.
         timestamp : float, optional
             Timestamp associated with the sample. If None, uses the current
             monotonic time.
@@ -150,7 +153,7 @@ class SlidingWindow:
         TypeError
             If samples is not a list.
         ValueError
-            If the sample shape doesn't match the expected number of joints.
+            If the sample shape doesn't match the expected number of signals.
 
         Examples
         --------
@@ -158,8 +161,8 @@ class SlidingWindow:
         >>> window.append([1.0, 2.0])
         >>> window.append(np.array([3.0, 4.0]), timestamp=1234567890.0)
         """
-        if len(samples) != self._m_joints:
-            raise ValueError(f"Expected sample with {self._m_joints} joint{'s' if self._m_joints > 1 else ''}, got {len(samples)}")
+        if len(samples) != self._m_signals:
+            raise ValueError(f"Expected sample with {self._m_signals} signal{'s' if self._m_signals > 1 else ''}, got {len(samples)}")
         if isinstance(samples[0], np.ndarray) and (self._n_dimensions == 1 or samples[0].shape[0] != self._n_dimensions):
             raise ValueError(f"Expected sample with {self._n_dimensions} dimension{'s' if self._n_dimensions > 1 else ''}, got {samples[0].shape[0]}")
         elif isinstance(samples[0], (int, float)) and self._n_dimensions > 1 :
@@ -193,7 +196,7 @@ class SlidingWindow:
         Returns
         -------
         samples : np.ndarray
-            Array of shape (current_size, n_columns) containing all samples
+            Array of shape (current_size, n_dimensions) containing all samples
             in the buffer in chronological order.
         timestamps : np.ndarray
             Array of shape (current_size,) containing timestamps corresponding
@@ -201,7 +204,7 @@ class SlidingWindow:
 
         Examples
         --------
-        >>> window = SlidingWindow(max_length=5, n_columns=2)
+        >>> window = SlidingWindow(max_length=5, n_dimensions=2)
         >>> window.append([1.0, 2.0])
         >>> window.append([3.0, 4.0])
         >>> samples, timestamps = window.to_array()
@@ -223,7 +226,7 @@ class SlidingWindow:
 
         Examples
         --------
-        >>> window = SlidingWindow(max_length=10, n_columns=2)
+        >>> window = SlidingWindow(max_length=10, n_dimensions=2)
         >>> window.append([1.0, 2.0])
         >>> print(len(window))  # 1
         >>> window.reset()
@@ -246,7 +249,7 @@ class SlidingWindow:
 
         Examples
         --------
-        >>> window = SlidingWindow(max_length=2, n_columns=1)
+        >>> window = SlidingWindow(max_length=2, n_dimensions=1)
         >>> print(window.is_full())  # False
         >>> window.append([1.0])
         >>> window.append([2.0])
@@ -255,34 +258,34 @@ class SlidingWindow:
         with self._lock:
             return self._size == self._max_length
 
-    def get_num_joints(self) -> int:
+    def get_num_signals(self) -> int:
         """
-        Get the number of joints configured for this sliding window.
+        Get the number of signals configured for this sliding window.
 
         Returns
         -------
         int
-            The number of joints (m_joints) that this sliding window is configured to handle.
+            The number of signals (m_signals) that this sliding window is configured to handle.
 
         Examples
         --------
-        >>> window = SlidingWindow(max_length=10, n_columns=3, m_joints=5)
-        >>> print(window.get_num_joints())  # 5
+        >>> window = SlidingWindow(max_length=10, n_columns=3, m_signals=5)
+        >>> print(window.get_num_signals())  # 5
         """
-        return self._m_joints
+        return self._m_signals
     
     def get_num_dimensions(self) -> int:
         """
-        Get the number of dimensions (columns) configured for this sliding window.
+        Get the number of dimensions (columns) configured for each signal.
 
         Returns
         -------
         int
-            The number of dimensions (n_columns) that this sliding window is configured to handle.
+            The number of dimensions (n_dimensions) that this sliding window is configured to handle.
 
         Examples
         --------
-        >>> window = SlidingWindow(max_length=10, n_columns=3, m_joints=5)
+        >>> window = SlidingWindow(max_length=10, n_dimensions=3, m_signals=5)
         >>> print(window.get_num_dimensions())  # 3
         """
         return self._n_dimensions

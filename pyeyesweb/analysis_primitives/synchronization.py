@@ -136,7 +136,7 @@ class Synchronization:
         Prints synchronization metrics to stdout if PLV is computed successfully.
         Format depends on output_phase setting.
         """
-        if sliding_window.get_num_joints() < 2:
+        if sliding_window.get_num_signals() < 2:
             raise ValueError("Synchronization analysis requires at least 2 signals (columns) in the sliding window.")
         values = sliding_window.to_array()[0]
         plv = compute_phase_synchronization(values, self.filter_params)

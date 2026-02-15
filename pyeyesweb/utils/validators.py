@@ -298,3 +298,40 @@ def validate_window_size(value, name='window_size'):
         Validated window size
     """
     return validate_integer(value, name, min_val=1, max_val=10000)
+
+def validate_string(value, names: list[str]):
+    """Validate that a string value is one of the allowed options.
+
+    Parameters
+    ----------
+    value : str
+        String value to validate
+    names : list of str
+        List of allowed string options
+
+    Returns
+    -------
+    str
+        Validated string value
+
+    Raises
+    ------
+    TypeError
+        If value is not a string
+    ValueError
+        If value is not in the list of allowed options
+
+    Examples
+    --------
+    >>> validate_string("mean", ["mean", "std_dev", "skewness"])
+    'mean'
+    >>> validate_string("invalid", ["mean", "std_dev", "skewness"])
+    ValueError: Invalid method: invalid. Must be one of ['mean', 'std_dev', 'skewness'].
+    """
+    if not isinstance(value, str):
+        raise TypeError(f"Value must be a string, got {type(value).__name__}")
+    
+    if value not in names:
+        raise ValueError(f"Invalid method: {value}. Must be one of {names}.")
+    
+    return value

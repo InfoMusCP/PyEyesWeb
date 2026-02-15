@@ -46,7 +46,7 @@ class Clusterability:
         """
         self.n_neighbors = n_neighbors
 
-    def compute_hopkins_statistic(self, data: np.ndarray) -> float:
+    def _compute_hopkins_statistic(self, data: np.ndarray) -> float:
         """
         Compute the Hopkins statistic for a given dataset.
 
@@ -85,7 +85,7 @@ class Clusterability:
         hopkins_stat = w / (u + w + 1e-10)
         return float(hopkins_stat)
 
-    def compute_clusterability(self, signals: SlidingWindow) -> Dict[str, float]:
+    def _compute_clusterability(self, signals: SlidingWindow) -> Dict[str, float]:
         """
         Compute the clusterability of a sliding window of signals using the Hopkins statistic.
 
@@ -98,7 +98,7 @@ class Clusterability:
         -------
         dict
             Dictionary containing:
-            - 'hopkins_statistic' (float): Computed Hopkins statistic.
+            - 'clusterability' (float): Computed clusterability value.
               Returns NaN if the window is not full or computation fails.
         """
         if not signals.is_full():
@@ -106,7 +106,7 @@ class Clusterability:
 
         try:
             data, _ = signals.to_array()
-            hopkins_value = self.compute_hopkins_statistic(data)
+            hopkins_value = self._compute_hopkins_statistic(data)
         except Exception:
             # TODO: add logging for better traceability
             hopkins_value = np.nan
@@ -125,6 +125,6 @@ class Clusterability:
         Returns
         -------
         dict
-            Output of `compute_clusterability`.
+            Output of `_compute_clusterability`.
         """
-        return self.compute_clusterability(sliding_window)
+        return self._compute_clusterability(sliding_window)

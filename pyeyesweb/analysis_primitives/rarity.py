@@ -1,11 +1,15 @@
 import numpy as np
 
 from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.utils.validators import validate_numeric
 
 
 class Rarity:
+    
+    def __init__(self, alpha=0.5):
+        self._alpha = validate_numeric(alpha)
 
-    def __call__(self, sliding_window: SlidingWindow, alpha: float = 0.5) -> dict:
+    def __call__(self, sliding_window: SlidingWindow) -> dict:
         if not sliding_window.is_full():
             return {"rarity": np.nan}
 
@@ -36,5 +40,5 @@ class Rarity:
         d1 = abs(most_probable_bin_index - last_sample_bin_index)  # distance in bin space
         d2 = most_probable_p - last_sample_p  # probability difference
 
-        rarity = d1 * d2 * alpha
+        rarity = d1 * d2 * self._alpha
         return {"rarity": float(rarity)}

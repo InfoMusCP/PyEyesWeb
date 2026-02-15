@@ -23,9 +23,11 @@ References
 2. Fisher, R. A. (1925). Statistical Methods for Research Workers.
 """
 
+from typing import Literal
 import numpy as np
 from scipy import stats
 from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.utils.validators import validate_string
 
 
 class StatisticalMoment:
@@ -35,75 +37,78 @@ class StatisticalMoment:
     skewness, kurtosis) from sliding window data to characterize signal
     distributions and properties.
     """
+    _ALLOWED_METHODS = ["mean", "std_dev", "skewness", "kurtosis"]
+    _MIN_SAMPLES = {"mean": 1, "std_dev": 2, "skewness": 3, "kurtosis": 4}
 
-    def __init__(self):
-        # No parameters in constructor as per comments
-        pass
+    def __init__(
+        self,
+        methods: list[Literal["mean", "std_dev", "skewness", "kurtosis"]] = ["mean"],
+    ):
+        """Initialize the statistical moment analyzer.
 
-    def compute_statistics(self, signals: SlidingWindow, methods: list) -> dict:
+        Parameters
+        ----------
+        methods : list of str
+            List of statistical methods to compute. Available options:
+            'mean', 'std_dev', 'skewness', 'kurtosis'
+        """
+        self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in methods]
+
+    def _compute_statistics(self, data: np.ndarray, methods: list[str]) -> dict:
         """Compute statistical analysis for multivariate signals.
 
         Parameters
         ----------
-        signals : SlidingWindow
-            Sliding window buffer containing multivariate signal data.
-        methods : list of str
-            List of statistical methods to compute. Available options:
-            'mean', 'std_dev', 'skewness', 'kurtosis'
+        data : np.ndarray
+            Input signal data array.
 
         Returns
         -------
         dict
             Dictionary containing statistical metrics.
         """
-        if not signals.is_full():
-            return np.nan
-
-        data, _ = signals.to_array()
-        n_samples, n_features = data.shape
-
-        if n_samples < 2:
-            return np.nan
-
         result = {}
 
-        # Compute only the requested statistical moments
         for method in methods:
-            if method == 'mean':
-                values = np.mean(data, axis=0)
-                result['mean'] = float(values[0]) if len(values) == 1 else values.tolist()
+            if method == "mean":
+                result["mean"] = np.mean(data, axis=0)
 
-            elif method == 'std_dev':
-                values = np.std(data, axis=0, ddof=1)
-                result['std'] = float(values[0]) if len(values) == 1 else values.tolist()
+            elif method == "std_dev":
+                result["std"] = np.std(data, axis=0, ddof=1)
 
-            elif method == 'skewness':
-                values = stats.skew(data, axis=0)
-                result['skewness'] = float(values[0]) if len(values) == 1 else values.tolist()
+            elif method == "skewness":
+                result["skewness"] = stats.skew(data, axis=0)
 
-            elif method == 'kurtosis':
-                values = stats.kurtosis(data, axis=0)
-                result['kurtosis'] = float(values[0]) if len(values) == 1 else values.tolist()
-
-            else:
-                # Skip invalid methods silently
-                continue
+            elif method == "kurtosis":
+                result["kurtosis"] = stats.kurtosis(data, axis=0)
 
         return result
 
-    def __call__(self, sliding_window: SlidingWindow, methods: list) -> dict:
+    def __call__(self, signal: SlidingWindow) -> dict:
         """Compute statistical metrics.
 
         Parameters
         ----------
-        sliding_window : SlidingWindow
+        signal : SlidingWindow
             Buffer containing multivariate data to analyze.
-        methods : list of str
-            List of statistical methods to compute.
 
         Returns
         -------
         dict
             Dictionary containing statistical metrics.
         """
-        return self.compute_statistics(sliding_window, methods)
+        if signal.get_num_signals() != 1:
+            raise ValueError("Number of signals must be exactly one.")
+        data, _ = signal.to_array(as2D=True)
+        n_samples, n_features = data.shape
+        methods = self._methods
+        
+        results = {}
+        if n_samples < max(self._MIN_SAMPLES[method] for method in methods):
+            for method in reversed(methods):
+                if n_samples < self._MIN_SAMPLES[method]:
+                    results[method] = np.nan
+                    methods.remove(method)
+
+        results.update(self._compute_statistics(data, methods))
+        return results
