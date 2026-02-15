@@ -274,7 +274,6 @@ class PointsDensity:
             return 0.0, np.zeros(3)
 
         # 1. Compute Barycenter (Center of Mass/Mean Point)
-        # Note: The prompt mentions 'median', but the formula specifies 'barycenter'.
         # We use the Mean (Barycenter) as it is the standard center of mass.
         barycenter = np.mean(points, axis=0)
         
@@ -295,7 +294,7 @@ class PointsDensity:
         Returns:
             list[dict]: A list containing the density score and center for visualization.
         """
-        # Extract data: (t_frames, n_joints, 3)
+        # Extract data: (t_frames, n_joints, 2/3)
         data = sliding_window.to_array()[0]
         t_frames = data.shape[0]
         

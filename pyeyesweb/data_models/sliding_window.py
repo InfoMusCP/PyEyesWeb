@@ -164,7 +164,7 @@ class SlidingWindow:
             raise ValueError(f"Expected sample with {self._n_dimensions} dimension{'s' if self._n_dimensions > 1 else ''}, got {samples[0].shape[0]}")
         elif isinstance(samples[0], (int, float)) and self._n_dimensions > 1 :
             raise ValueError(f"Expected sample with {self._n_dimensions} dimensions, got 1")
-        elif not isinstance(samples[0], (int, float)) and not isinstance(samples[0], np.ndarray):
+        elif not isinstance(samples[0], (int, float, np.int32, np.int64, np.float32, np.float64)) and not isinstance(samples[0], np.ndarray):
             raise ValueError(f"Expected sample to be a list of numeric values or numpy arrays, got {type(samples[0])}")
         samples = np.atleast_2d(samples).reshape(-1, self._n_dimensions)  # Ensure it's a numpy array with at least 2D shape
         
