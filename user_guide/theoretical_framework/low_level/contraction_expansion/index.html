@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/user_guide/theoretical_framework/low_level/contraction_expansion/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Contraction-Expansion Analysis Module - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Contraction-Expansion Analysis Module";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/low_level/contraction_expansion.md";
+        var mkdocs_page_url = "/PyEyesWeb/user_guide/theoretical_framework/low_level/contraction_expansion/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../low_level/">Layer 2 - Low-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../analysis_primitives/analysis_primitives/">Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/thread_safe_buffer/">Thread Safe Buffer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_generators/">Signal Generators</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Contraction-Expansion Analysis Module</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/low_level/contraction_expansion.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="contraction-expansion-analysis-module">Contraction-Expansion Analysis Module</h1>
+<p>The Contraction-Expansion module quantifies spatial dynamics of movement patterns by analyzing how trajectories expand and contract in space over time.</p>
+<p>Spatial movement analysis examines how body segments or markers change their relative positions during movement.
+The module provides:</p>
+<ul>
+<li><strong>2D/3D area calculations</strong>: geometric area enclosed by trajectory points</li>
+<li><strong>Volume analysis</strong>: 3D spatial volume changes</li>
+<li><strong>Expansion-contraction rates</strong>: temporal derivatives of spatial measures</li>
+</ul>
+<h2 id="algorithms-details">Algorithms Details</h2>
+<h3 id="2d-area-computation">2D Area computation</h3>
+<p>The 2D implementation uses the Shoelace formula <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> for polygon area computation:</p>
+<div class="arithmatex">\[
+A = \tfrac{1}{2} \Bigg| \sum_i \big( x_i y_{i+1} - x_{i+1} y_i \big) \Bigg|
+\]</div>
+<h3 id="3d-volume-computation">3D Volume computation</h3>
+<p>Calculates 3D volume using tetrahedron volume decomposition:</p>
+<ol>
+<li>
+<p><strong>Divide the 3D shape into tetrahedra</strong><br />
+   For a polyhedron defined by vertices <span class="arithmatex">\( \{p_i\}_{i=0}^n \)</span>, partition it into a set of tetrahedra <span class="arithmatex">\(\mathcal{T} = \{ (p_0, p_{i}, p_{j}, p_{k}) \}\)</span>.</p>
+</li>
+<li>
+<p><strong>Calculate each tetrahedron volume using the scalar triple product</strong><br />
+   For tetrahedron with vertices <span class="arithmatex">\(p_0, p_1, p_2, p_3 \in \mathbb{R}^3\)</span>  </p>
+</li>
+</ol>
+<div class="arithmatex">\[
+V_{\text{tetra}} = \frac{1}{6} \; \det 
+\begin{bmatrix}
+x_1 - x_0 &amp; x_2 - x_0 &amp; x_3 - x_0 \\
+y_1 - y_0 &amp; y_2 - y_0 &amp; y_3 - y_0 \\
+z_1 - z_0 &amp; z_2 - z_0 &amp; z_3 - z_0
+\end{bmatrix}
+\]</div>
+<p>or equivalently:</p>
+<div class="arithmatex">\[
+V_{\text{tetra}} = \tfrac{1}{6} \, \big( (p_1 - p_0) \cdot \big( (p_2 - p_0) \times (p_3 - p_0) \big) \big)
+\]</div>
+<ol start="3">
+<li>
+<strong>Sum volumes with appropriate signs</strong>  
+<br>The total polyhedron volume is obtained as:
+</li>
+</ol>
+
+<div class="arithmatex">\[
+V = \sum_{k} V_{\text{tetra},k}
+\]</div>
+<p>where the sign of each <span class="arithmatex">\(V_{\text{tetra},k}\)</span> depends on the orientation of the vertices.</p>
+<h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="numba-jit-compilation">Numba JIT Compilation</h3>
+<p>The module uses Numba's Just-In-Time compilation for performance.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Numba introduces <strong>compilation time</strong> on first use, but caches compiled functions for subsequent calls.<br />
+This approach grants 10-100x speedups over pure Python, avoiding overhead in critical loops.</p>
+</div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">_area_2d_fast</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="c1"># Ultra-fast computation with compiled code</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">pass</span>
+</span></code></pre></div>
+<h3 id="memory-efficiency">Memory Efficiency</h3>
+<p>The implementation is optimized for memory efficiency by using in-place calculations, minimizing temporary arrays, and leveraging efficient array operations.</p>
+<div class="admonition warning">
+<p class="admonition-title">Limitations &amp; Considerations</p>
+<ul>
+<li>Assumes meaningful geometric shapes from selected points.  </li>
+<li>Requires consistent <strong>point topology</strong> across frames.  </li>
+<li>May not capture the <strong>full spatial complexity</strong> of movement.</li>
+<li>Performance depends on <strong>point selection strategy</strong>.</li>
+<li>Always consider the <strong>movement context</strong> when interpreting results.  </li>
+<li>Normalize for <strong>subject/task differences</strong> when appropriate.  </li>
+</ul>
+</div>
+<h2 id="references">References</h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>TODO&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
