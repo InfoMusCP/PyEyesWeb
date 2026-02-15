@@ -133,36 +133,56 @@ def compute_sparc(signal, rate_hz=50.0):
     return -arc
 
 
-def compute_jerk_rms(signal, rate_hz=50.0):
-    """Compute RMS of jerk (third derivative) from a signal.
+def compute_jerk_rms(signal, rate_hz=50.0, signal_type='velocity'):
+    """Compute RMS of jerk (rate of change of acceleration) from a signal.
 
-    Jerk is the rate of change of acceleration. Lower RMS jerk values
-    indicate smoother movement.
+    Jerk is the third derivative of position or the first derivative of acceleration. Lower RMS jerk values indicate smoother movement.
 
     Parameters
     ----------
     signal : ndarray
-        1D movement signal (position or velocity).
+        1D movement signal.
     rate_hz : float, optional
         Sampling rate in Hz (default: 50.0).
+    signal_type : str, optional
+        Type of input signal: 'position' or 'velocity' (default: 'velocity').
+        - 'position': Computes third derivative to get jerk
+        - 'velocity': Computes second derivative to get jerk
 
     Returns
     -------
     float
         Root mean square of jerk.
-        Returns NaN if signal has less than 2 samples.
+        Returns NaN if signal has insufficient samples for the required derivatives.
 
     Notes
     -----
-    This implementation uses first-order finite differences to approximate
-    the derivative. For position signals, this computes jerk directly.
+    Uses numpy.gradient for smooth derivative approximation with central differences
+    where possible, providing better accuracy than forward differences.
     """
-    if len(signal) < 2:
-        return np.nan
     rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
-    dt = 1.0 / rate_hz
-    jerk = np.diff(signal) / dt
-    return np.sqrt(np.mean(jerk ** 2))
+
+    # Define derivative orders needed for each signal type
+    derivative_orders = {
+        'velocity': 2,  # if signal type is velocity we can get velocity -> acceleration -> jerk
+        'position': 3   # if signal type is position we can get position -> velocity -> acceleration -> jerk
+    }
+
+    if signal_type not in derivative_orders:
+        raise ValueError(f"signal_type must be 'position' or 'velocity', got '{signal_type}'")
+
+    n_derivatives = derivative_orders[signal_type]
+    min_samples = n_derivatives + 1
+
+    if len(signal) < min_samples:
+        return np.nan
+
+    # Apply derivatives using numpy.gradient for better accuracy
+    result = np.asarray(signal)
+    for _ in range(n_derivatives):
+        result = np.gradient(result, 1.0/rate_hz)
+
+    return np.sqrt(np.mean(result ** 2))
 
 
 def normalize_signal(signal):
@@ -184,3 +204,54 @@ def normalize_signal(signal):
     """
     max_val = np.max(np.abs(signal))
     return signal / max_val if max_val != 0 else signal
+
+
+def extract_velocity_from_position(position, rate_hz=50.0):
+    """Extract velocity from position data.
+
+    Computes velocity magnitude from position data of any dimensionality.
+    For 1D position, returns absolute velocity. For multi-dimensional position,
+    returns the Euclidean norm of the velocity vector.
+
+    Parameters
+    ----------
+    position : ndarray
+        Position data. Can be:
+        - 1D array: single position coordinate
+        - 2D array with shape (n_samples, n_dims): multi-dimensional positions
+    rate_hz : float, optional
+        Sampling rate in Hz (default: 50.0).
+
+    Returns
+    -------
+    ndarray
+        1D array of velocity magnitudes.
+
+    Examples
+    --------
+    >>> # 1D position data
+    >>> position_1d = np.array([0, 1, 2, 3, 4])
+    >>> velocity = extract_velocity_from_position(position_1d, rate_hz=100)
+
+    >>> # 2D position data (x, y coordinates)
+    >>> position_2d = np.array([[0, 0], [1, 0], [1, 1], [2, 1]])
+    >>> velocity = extract_velocity_from_position(position_2d, rate_hz=100)
+    """
+    rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
+    dt = 1.0 / rate_hz
+
+    position = np.asarray(position)
+
+    # Handle 1D position
+    if position.ndim == 1 or (position.ndim == 2 and position.shape[1] == 1):
+        signal_1d = position.squeeze()
+        return np.abs(np.gradient(signal_1d, dt))
+
+    # Handle multi-dimensional position
+    if position.ndim == 2:
+        # Compute derivatives along time axis (axis=0)
+        derivatives = np.gradient(position, dt, axis=0)
+        # Return Euclidean norm of velocity vector
+        return np.linalg.norm(derivatives, axis=1)
+
+    raise ValueError(f"Position must be 1D or 2D array, got shape {position.shape}")

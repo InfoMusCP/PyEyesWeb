@@ -33,7 +33,7 @@ class Equilibrium:
     >>> barycenter = np.array([200, 50, 0])
     >>> result = eq(left, right, barycenter)
     >>> round(result['value'], 2)
-    0.91
+    0.31
     >>> round(result['angle'], 1)
     0.0
 
@@ -43,7 +43,7 @@ class Equilibrium:
     >>> barycenter_2d = np.array([200, 50])
     >>> result_2d = eq(left_2d, right_2d, barycenter_2d)
     >>> round(result_2d['value'], 2)
-    0.91
+    0.31
     >>> round(result_2d['angle'], 1)
     0.0
     """

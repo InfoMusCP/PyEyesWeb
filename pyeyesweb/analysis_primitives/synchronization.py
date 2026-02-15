@@ -141,27 +141,3 @@ class Synchronization:
         values = sliding_window.to_array()[0]
         plv = compute_phase_synchronization(values, self.filter_params)
         return {"value": plv}
-
-
-if __name__ == "__main__":
-    import numpy as np
-    from pythonosc.dispatcher import Dispatcher
-    from pythonosc.osc_server import BlockingOSCUDPServer
-    from pythonosc.udp_client import SimpleUDPClient
-    from pyeyesweb.data_models.sliding_window import SlidingWindow
-    from pyeyesweb.analysis_primitives.synchronization import Synchronization
-
-    # Initialize Synchronization analyzer
-    sync = Synchronization(filter_params=None, phase_threshold=0.8)
-    max_len = 200
-    window = SlidingWindow(max_length=max_len, n_dimensions=2, m_joints=2)
-    sig1 = np.sin(2 * np.pi * 5 * np.linspace(0, 1, max_len*100))  # 5 Hz sine wave
-    sig2 = np.sin(2 * np.pi * 5 * np.linspace(0, 1, max_len*100) + np.pi / 4)  # Same frequency, phase shifted
-    
-    sig3 = np.array(list(zip(sig1, sig2)))
-    sig4 = np.array(list(zip(sig2, sig1)))
-    for i in range(max_len*100):
-        window.append([sig3[i], sig3[i]])
-        if window.is_full():
-            result = sync(window)
-            print(f"PLV: {result['value']:.3f}")

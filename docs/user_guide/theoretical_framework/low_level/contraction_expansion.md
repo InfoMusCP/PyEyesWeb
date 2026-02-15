@@ -9,9 +9,7 @@ The module provides:
 - **Volume analysis**: 3D spatial volume changes
 - **Expansion-contraction rates**: temporal derivatives of spatial measures
 
-<span style="color:#d32f2f; font-weight:bold;">
-These metrics have been used for... **ADD PAPERS**
-</span>
+
 ## Algorithms Details
 
 ### 2D Area computation
@@ -79,135 +77,233 @@ def _area_2d_fast(points):
 
 The implementation is optimized for memory efficiency by using in-place calculations, minimizing temporary arrays, and leveraging efficient array operations.
 
-## Usage Examples
+[//]: # (## Usage Examples)
 
-### Basic Area Analysis
+[//]: # ()
+[//]: # (### Basic Area Analysis)
 
-```python
-import numpy as np
-from pyeyesweb.low_level.contraction_expansion import _area_2d_fast
+[//]: # ()
+[//]: # (```python)
 
-# Define four corner points of a movement trajectory
-trajectory_points = np.array([
-    [0.0, 0.0],  # Point 1
-    [1.0, 0.0],  # Point 2
-    [1.0, 1.0],  # Point 3
-    [0.0, 1.0]  # Point 4
-])
+[//]: # (import numpy as np)
 
-area = _area_2d_fast(trajectory_points)
-print(f"Enclosed area: {area:.3f}")
-```
+[//]: # (from pyeyesweb.low_level.contraction_expansion import _area_2d_fast)
 
-### Real-Time Expansion Analysis
+[//]: # ()
+[//]: # (# Define four corner points of a movement trajectory)
 
-```python
-from collections import deque
-import numpy as np
+[//]: # (trajectory_points = np.array&#40;[)
 
-class MovementExpansionTracker:
-    def __init__(self, history_length=10):
-        self.area_history = deque(maxlen=history_length)
-        
-    def update_movement(self, corner_points):
-        current_area = _area_2d_fast(corner_points)
-        self.area_history.append(current_area)
-        
-        if len(self.area_history) >= 2:
-            expansion_rate = (
-                self.area_history[-1] - self.area_history[-2]
-            )
-            return {
-                'current_area': current_area,
-                'expansion_rate': expansion_rate,
-                'is_expanding': expansion_rate > 0
-            }
-        return {'current_area': current_area}
+[//]: # (    [0.0, 0.0],  # Point 1)
 
-# Usage
-tracker = MovementExpansionTracker()
+[//]: # (    [1.0, 0.0],  # Point 2)
 
-for frame in motion_data:
-    # Extract four key points from current frame
-    corners = extract_movement_corners(frame)
-    metrics = tracker.update_movement(corners)
-    
-    if 'expansion_rate' in metrics:
-        if metrics['is_expanding']:
-            print(f"Movement expanding at rate: {metrics['expansion_rate']:.3f}")
-        else:
-            print(f"Movement contracting at rate: {metrics['expansion_rate']:.3f}")
-```
+[//]: # (    [1.0, 1.0],  # Point 3)
 
-### 3D Movement Analysis
+[//]: # (    [0.0, 1.0]  # Point 4)
 
-```python
-from pyeyesweb.low_level.contraction_expansion import _volume_3d_fast
+[//]: # (]&#41;)
 
+[//]: # ()
+[//]: # (area = _area_2d_fast&#40;trajectory_points&#41;)
 
-# Analyze 3D movement volume changes
-def analyze_3d_movement_volume(trajectory_data):
-    volume_timeline = []
+[//]: # (print&#40;f"Enclosed area: {area:.3f}"&#41;)
 
-    for frame in trajectory_data:
-        # Extract key 3D points
-        key_points = extract_key_3d_points(frame)
+[//]: # (```)
 
-        if len(key_points) >= 4:  # Minimum for volume calculation
-            volume = _volume_3d_fast(key_points)
-            volume_timeline.append(volume)
+[//]: # ()
+[//]: # (### Real-Time Expansion Analysis)
 
-    # Calculate expansion/contraction phases
-    expansion_phases = []
-    for i in range(1, len(volume_timeline)):
-        if volume_timeline[i] > volume_timeline[i - 1]:
-            expansion_phases.append(i)
+[//]: # ()
+[//]: # (```python)
 
-    return {
-        'volume_timeline': volume_timeline,
-        'expansion_frames': expansion_phases,
-        'max_volume': max(volume_timeline),
-        'min_volume': min(volume_timeline)
-    }
-```
+[//]: # (from collections import deque)
 
-### Integration with Other Modules
-Consider combining with **other metrics** for a more detailed analysis.  
+[//]: # (import numpy as np)
 
-#### Smoothness Analysis
-Combine spatial dynamics with movement smoothness:
+[//]: # ()
+[//]: # (class MovementExpansionTracker:)
 
-```python
-from pyeyesweb import Smoothness
-from pyeyesweb.low_level.contraction_expansion import _area_2d_fast
+[//]: # (    def __init__&#40;self, history_length=10&#41;:)
 
-smoothness_analyzer = Smoothness()
-spatial_areas = []
+[//]: # (        self.area_history = deque&#40;maxlen=history_length&#41;)
 
-for frame in motion_data:
-    # Calculate spatial measure
-    area = _area_2d_fast(extract_corners(frame))
-    spatial_areas.append(area)
+[//]: # (        )
+[//]: # (    def update_movement&#40;self, corner_points&#41;:)
 
-    # Analyze spatial smoothness
-    if len(spatial_areas) >= smoothness_analyzer.min_length:
-        spatial_smoothness = smoothness_analyzer(spatial_areas)
-```
+[//]: # (        current_area = _area_2d_fast&#40;corner_points&#41;)
 
-#### Bilateral Symmetry
-Compare left-right spatial patterns:
+[//]: # (        self.area_history.append&#40;current_area&#41;)
 
-```python
-left_areas = [_area_2d_fast(left_points[i]) for i in frames]
-right_areas = [_area_2d_fast(right_points[i]) for i in frames]
+[//]: # (        )
+[//]: # (        if len&#40;self.area_history&#41; >= 2:)
 
-symmetry_analyzer = BilateralSymmetryAnalyzer()
-spatial_symmetry = symmetry_analyzer.calculate_symmetry_index(
-    left_areas, right_areas
-)
-```
+[//]: # (            expansion_rate = &#40;)
 
----
+[//]: # (                self.area_history[-1] - self.area_history[-2])
+
+[//]: # (            &#41;)
+
+[//]: # (            return {)
+
+[//]: # (                'current_area': current_area,)
+
+[//]: # (                'expansion_rate': expansion_rate,)
+
+[//]: # (                'is_expanding': expansion_rate > 0)
+
+[//]: # (            })
+
+[//]: # (        return {'current_area': current_area})
+
+[//]: # ()
+[//]: # (# Usage)
+
+[//]: # (tracker = MovementExpansionTracker&#40;&#41;)
+
+[//]: # ()
+[//]: # (for frame in motion_data:)
+
+[//]: # (    # Extract four key points from current frame)
+
+[//]: # (    corners = extract_movement_corners&#40;frame&#41;)
+
+[//]: # (    metrics = tracker.update_movement&#40;corners&#41;)
+
+[//]: # (    )
+[//]: # (    if 'expansion_rate' in metrics:)
+
+[//]: # (        if metrics['is_expanding']:)
+
+[//]: # (            print&#40;f"Movement expanding at rate: {metrics['expansion_rate']:.3f}"&#41;)
+
+[//]: # (        else:)
+
+[//]: # (            print&#40;f"Movement contracting at rate: {metrics['expansion_rate']:.3f}"&#41;)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (### 3D Movement Analysis)
+
+[//]: # ()
+[//]: # (```python)
+
+[//]: # (from pyeyesweb.low_level.contraction_expansion import _volume_3d_fast)
+
+[//]: # ()
+[//]: # ()
+[//]: # (# Analyze 3D movement volume changes)
+
+[//]: # (def analyze_3d_movement_volume&#40;trajectory_data&#41;:)
+
+[//]: # (    volume_timeline = [])
+
+[//]: # ()
+[//]: # (    for frame in trajectory_data:)
+
+[//]: # (        # Extract key 3D points)
+
+[//]: # (        key_points = extract_key_3d_points&#40;frame&#41;)
+
+[//]: # ()
+[//]: # (        if len&#40;key_points&#41; >= 4:  # Minimum for volume calculation)
+
+[//]: # (            volume = _volume_3d_fast&#40;key_points&#41;)
+
+[//]: # (            volume_timeline.append&#40;volume&#41;)
+
+[//]: # ()
+[//]: # (    # Calculate expansion/contraction phases)
+
+[//]: # (    expansion_phases = [])
+
+[//]: # (    for i in range&#40;1, len&#40;volume_timeline&#41;&#41;:)
+
+[//]: # (        if volume_timeline[i] > volume_timeline[i - 1]:)
+
+[//]: # (            expansion_phases.append&#40;i&#41;)
+
+[//]: # ()
+[//]: # (    return {)
+
+[//]: # (        'volume_timeline': volume_timeline,)
+
+[//]: # (        'expansion_frames': expansion_phases,)
+
+[//]: # (        'max_volume': max&#40;volume_timeline&#41;,)
+
+[//]: # (        'min_volume': min&#40;volume_timeline&#41;)
+
+[//]: # (    })
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (### Integration with Other Modules)
+
+[//]: # (Consider combining with **other metrics** for a more comprehensive analysis.  )
+
+[//]: # ()
+[//]: # (#### Smoothness Analysis)
+
+[//]: # (Combine spatial dynamics with movement smoothness:)
+
+[//]: # ()
+[//]: # (```python)
+
+[//]: # (from pyeyesweb import Smoothness)
+
+[//]: # (from pyeyesweb.low_level.contraction_expansion import _area_2d_fast)
+
+[//]: # ()
+[//]: # (smoothness_analyzer = Smoothness&#40;&#41;)
+
+[//]: # (spatial_areas = [])
+
+[//]: # ()
+[//]: # (for frame in motion_data:)
+
+[//]: # (    # Calculate spatial measure)
+
+[//]: # (    area = _area_2d_fast&#40;extract_corners&#40;frame&#41;&#41;)
+
+[//]: # (    spatial_areas.append&#40;area&#41;)
+
+[//]: # ()
+[//]: # (    # Analyze spatial smoothness)
+
+[//]: # (    if len&#40;spatial_areas&#41; >= smoothness_analyzer.min_length:)
+
+[//]: # (        spatial_smoothness = smoothness_analyzer&#40;spatial_areas&#41;)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (#### Bilateral Symmetry)
+
+[//]: # (Compare left-right spatial patterns:)
+
+[//]: # ()
+[//]: # (```python)
+
+[//]: # (left_areas = [_area_2d_fast&#40;left_points[i]&#41; for i in frames])
+
+[//]: # (right_areas = [_area_2d_fast&#40;right_points[i]&#41; for i in frames])
+
+[//]: # ()
+[//]: # (symmetry_analyzer = BilateralSymmetryAnalyzer&#40;&#41;)
+
+[//]: # (spatial_symmetry = symmetry_analyzer.calculate_symmetry_index&#40;)
+
+[//]: # (    left_areas, right_areas)
+
+[//]: # (&#41;)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (---)
 
 !!! warning "Limitations & Considerations"
     - Assumes meaningful geometric shapes from selected points.  

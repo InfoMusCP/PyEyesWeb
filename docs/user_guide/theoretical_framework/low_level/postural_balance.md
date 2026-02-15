@@ -6,13 +6,9 @@ region defined by the two feet.
 The metric produces a normalized **equilibrium value** in \([0, 1]\) indicating whether the barycenter lies within the
 ellipse, and the **ellipse orientation angle** in degrees.
 
-<span style="color:#d32f2f; font-weight:bold;">
-This metric has been used for... **ADD PAPERS**  
-</span>
-
 ---
 
-## Algorithm Details
+## Algorithms Details
 
 ### Ellipse Construction
 
@@ -114,26 +110,41 @@ $$
     - **Value = 0**: barycenter outside ellipse (loss of balance).  
     - Values in between indicate proximity to the center.
 
----
+[//]: # (---)
 
-## Usage Examples
+[//]: # ()
+[//]: # (## Usage Examples)
 
-### Basic Equilibrium Evaluation
+[//]: # ()
+[//]: # (### Basic Equilibrium Evaluation)
 
-```python
-import numpy as np
-from pyeyesweb.low_level import Equilibrium
+[//]: # ()
+[//]: # (```python)
 
-# Initialize analyzer
-eq = Equilibrium(margin_mm=120, y_weight=0.6)
+[//]: # (import numpy as np)
 
-# Define foot positions and barycenter
-left = np.array([0, 0, 0])
-right = np.array([400, 0, 0])
-barycenter = np.array([200, 50, 0])
+[//]: # (from pyeyesweb.low_level import Equilibrium)
 
-value, angle = eq(left, right, barycenter)
+[//]: # ()
+[//]: # (# Initialize analyzer)
 
-print(f"Equilibrium value: {value:.2f}")
-print(f"Ellipse angle: {angle:.1f}°")
-```
+[//]: # (eq = Equilibrium&#40;margin_mm=120, y_weight=0.6&#41;)
+
+[//]: # ()
+[//]: # (# Define foot positions and barycenter)
+
+[//]: # (left = np.array&#40;[0, 0, 0]&#41;)
+
+[//]: # (right = np.array&#40;[400, 0, 0]&#41;)
+
+[//]: # (barycenter = np.array&#40;[200, 50, 0]&#41;)
+
+[//]: # ()
+[//]: # (value, angle = eq&#40;left, right, barycenter&#41;)
+
+[//]: # ()
+[//]: # (print&#40;f"Equilibrium value: {value:.2f}"&#41;)
+
+[//]: # (print&#40;f"Ellipse angle: {angle:.1f}°"&#41;)
+
+[//]: # (```)

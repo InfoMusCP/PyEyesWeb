@@ -5,7 +5,14 @@ and grounds on the multi-layered computational framework of qualities in movemen
 
 # Conceptual Model
 
-![conceptual_model.png](../../assets/conceptual_model.png)
+!!! warning
+    This is the result of an open field of research.
+    As such, certain aspects of the model may be provisional or subject to refinement.
+    Some concepts are open to interpretation, and current limitations are actively being addressed in the ongoing work. 
+
+<div align="center">
+  <img src="../../../assets/ConceptualModel.png" alt="Conceptual Model" />
+</div>
 
 The framework describes how raw sensor data can be progressively transformed into meaningful descriptions of expressive movement qualities and is organized into four layers.  
 The layers represent a conceptual model and **not a strict processing pipeline**.  
@@ -14,61 +21,39 @@ The layers represent a conceptual model and **not a strict processing pipeline**
 
 !!! example "Attention!"
     The concept of **timescale** is crucial in this framework, and each layer operates at different temporal scales.  
-    As an example, a key distinction from Layers 2 and 3 is moving from instantaneous or short-window features (~0.5s)
-    to longer windows (0.5-3s) or movement units (e.g., a specific sport gesture, a choreographic phase).  
+    As an example, a key distinction from Layers 2 and 3 is moving from instantaneous or short-window features (~0.5s) to longer windows (0.5-3s) or movement units (e.g., a specific sport gesture, a choreographic phase).  
     One same feature **can occur at different layers** and yield **different interpretations** depending on the timescale of analysis.
 
-<div class="grid cards" markdown>
-
--   **Layer 1 – Physical Signals**  
-
-     Raw data captured by **virtual sensors**, i.e., physical devices (motion capture, accelerometers, video, RGB-D cameras, physiological sensors, etc.) enriched with preprocessing (denoising, filtering, extraction of trajectories, silhouettes, respiration, etc.).  
-
-    _Foundation for all higher layers._  
+**Layer 1 – Physical Signals**
+:   raw data captured by **virtual sensors**, i.e., physical devices (motion capture, accelerometers, video, RGB-D cameras, physiological sensors, etc.)
+enriched with preprocessing (denoising, filtering, extraction of trajectories, silhouettes, respiration, etc.).
     
-    [→ Learn more](physical_signals/index.md)
+*Foundation for all higher layers.* [→ Learn more](physical_signals/physical_signals.md)
 
--   **Layer 2 – Low-Level Features**  
-
-    Instantaneous or short-window (0.5s) descriptors computed from physical signals.  
-    Includes: velocity, acceleration, kinetic energy, Quantity of Motion (QoM), postural contraction, balance, smoothness, etc.  
+**Layer 2 – Low-Level Features**
+:   instantaneous or short-window (0.5s) descriptors computed from physical signals.
+Examples are velocity, acceleration, kinetic energy, balance, smoothness, etc.
     
-    _Represented as time-series._  
+*Represented as time-series.* [→ Learn more](low_level/low_level.md)
 
-    [→ Learn more](low_level/index.md)
-
--   **Layer 3 – Mid-Level Features**  
-
-    Operates on **movement units or longer windows**, producing structural descriptors in multidimensional spaces.  
-    Examples: contraction/expansion, symmetry, directness, lightness, suddenness, fluidity, repetitiveness, coordination, cohesion.  
+**Layer 3 – Mid-Level Features**
+:   operates on **movement units or longer windows**. 
+Examples are directness, lightness, suddenness, fluidity, repetitiveness.
     
-    _Introduce amodal descriptors across modalities._
+*Introduce amodal descriptors across modalities.* [→ Learn more](mid_level/mid_level.md)
 
-    [→ Learn more](mid_level/index.md)
-
--   **Layer 4 – Expressive Qualities**  
-
-    Focuses on **what an observer perceives** from movement: emotional expression, social signals, saliency, attraction/repulsion, groove, hesitation, predictability.  
-    Involves **memory and context**, influencing how movement is interpreted (expectancy, contrast, sensitivity).  
+**Layer 4 – Expressive Qualities**
+:   focuses on **what an observer perceives** from movement: emotional expression, saliency, attraction/repulsion, hesitation, predictability.
+Involves **memory and context**, influencing how movement is interpreted.
     
-    _Requires context and ML mappings._
+*Requires context and ML mappings.* [→ Learn more](high_level/high_level.md)
 
-    [→ Learn more](high_level/index.md)
+---
 
-
-</div>
-
-<div class="grid cards" markdown style="justify-content: center;">
-
--   **Analysis Primitives**  
-    Core computational tools applied across all layers.  
-    Includes: statistical moments, entropy, shape descriptors (peaks, slopes), synchronization, time-frequency transforms, predictive and physical models (e.g., mass–spring).  
+**Analysis Primitives**
+:   Core computational tools applied across all layers. Includes: statistical moments, entropy, shape descriptors (peaks, slopes), synchronization, time-frequency transforms, predictive and physical models (e.g., mass–spring).
     
-    _Provide the building blocks for extracting meaningful features._  
-    
-    [→ Learn more](analysis_primitives/index.md)
-
-</div>
+*Provide the building blocks for extracting meaningful features.* [→ Learn more](analysis_primitives/analysis_primitives.md)
 
 ## References
 

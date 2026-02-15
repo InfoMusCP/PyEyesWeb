@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyeyesweb"
-version = "0.0.1a4"
+version = "0.0.1a5"
 requires-python = ">=3.8"
 authors = [
     {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
@@ -70,7 +70,8 @@ dev = [
     "mkdocstrings-python==1.18.2",
     "mkdocs-gen-files==0.5.0",
     "mkdocs-literate-nav==0.6.2",
-    "mkdocs-section-index==0.3.10"
+    "mkdocs-section-index==0.3.10",
+    "mkdocs-macros-plugin==1.5.0"
 ]
 
 touchdesigner = [

@@ -3,6 +3,8 @@ repo_url: https://github.com/InfoMusCP/PyEyesWeb
 site_url: https://infomuscp.github.io/PyEyesWeb/
 
 plugins:
+  - search
+  - macros
   - gen-files:
       scripts:
         - docs/scripts/gen_pages.py
@@ -38,7 +40,7 @@ markdown_extensions:
       generic: true
 
 theme:
-  name: material
+  name: readthedocs
   custom_dir: docs/overrides
   logo: assets/eyesweb-logo.png
   favicon: assets/favicon-32x32.png
@@ -85,9 +87,10 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
+extra_css:
+  - overrides/extra.css
+
 extra:
-  version:
-    provider: mike
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/InfoMusCP
@@ -105,18 +108,18 @@ nav:
       - Theoretical Framework:
           - user_guide/theoretical_framework/theoretical_framework.md
           - Layer 1 - Physical Signals:
-              - user_guide/theoretical_framework/physical_signals/index.md
+              - user_guide/theoretical_framework/physical_signals/physical_signals.md
           - Layer 2 - Low-Level Features:
-              - user_guide/theoretical_framework/low_level/index.md
+              - user_guide/theoretical_framework/low_level/low_level.md
               - Postural Balance: user_guide/theoretical_framework/low_level/postural_balance.md
-              - Contraction Expansion: user_guide/theoretical_framework/low_level/contraction_expansion.md
+#              - Contraction Expansion: user_guide/theoretical_framework/low_level/contraction_expansion.md
               - Smoothness: user_guide/theoretical_framework/low_level/smoothness.md
           - Layer 3 - Mid-Level Features:
-              - user_guide/theoretical_framework/mid_level/index.md
+              - user_guide/theoretical_framework/mid_level/mid_level.md
           - Layer 4 - High-Level Features:
-              - user_guide/theoretical_framework/high_level/index.md
+              - user_guide/theoretical_framework/high_level/high_level.md
           - Analysis Primitives:
-              - user_guide/theoretical_framework/analysis_primitives/index.md
+              - user_guide/theoretical_framework/analysis_primitives/analysis_primitives.md
               - Bilateral Symmetry: user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry.md
               - Synchronization: user_guide/theoretical_framework/analysis_primitives/synchronization.md
       - Integrations: user_guide/integrations.md
