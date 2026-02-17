@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>PyEyesWeb</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="overrides/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/PyEyesWeb/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".">
+          <img src="assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#why-pyeyesweb">Why PyEyesWeb?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#methodological-foundation">Methodological Foundation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-context">Project Context</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="user_guide/getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user_guide/theoretical_framework/theoretical_framework/">Theoretical Framework</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="user_guide/theoretical_framework/physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="user_guide/theoretical_framework/low_level/low_level/">Layer 2 - Low-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="user_guide/theoretical_framework/low_level/postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="user_guide/theoretical_framework/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="user_guide/theoretical_framework/mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="user_guide/theoretical_framework/high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="user_guide/theoretical_framework/analysis_primitives/analysis_primitives/">Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="user_guide/theoretical_framework/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user_guide/integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="API/analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/data_models/thread_safe_buffer/">Thread Safe Buffer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="API/mid_level/lightness/">Lightness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/utils/signal_generators/">Signal Generators</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <div class="hero">
+<h1 id="pyeyesweb">PyEyesWeb</h1>
+<p><strong>Movement Analysis Toolkit</strong></p>
+<p><img alt="Open Source" src="https://img.shields.io/badge/Open%20Source-Yes-brightgreen" />
+<img alt="Platform" src="https://img.shields.io/badge/Platform-Python-blue" />
+<img alt="Domain" src="https://img.shields.io/badge/Domain-Movement%20Analysis-purple" /></p>
+<hr />
+<p>🚀 <strong>Extract features</strong> from raw human movement data<br />
+🎓 <strong>Apply in science, health, and the arts</strong><br />
+🤝 <strong>Developed with the partial support of the <a href="https://resilence.eu/">EU ICT STARTS Resilence Project</a></strong></p>
+<p><strong><a href="user_guide/getting_started/">📖 Get Started</a></strong> | <strong><a href="https://github.com/InfoMusCP/PyEyesWeb">GitHub Repository</a></strong></p>
+<hr />
+<h2 id="why-pyeyesweb">Why PyEyesWeb?</h2>
+<p>PyEyesWeb builds on the <strong>Expressive Gesture Analysis</strong> library of <a href="https://casapaganini.unige.it/eyesweb_bp" target="_blank">EyesWeb</a>, 
+bringing expressive movement analysis into <strong>Python</strong> as a core aim of the project,
+creating a modern, modular, and accessible toolkit for research, health, and artistic applications.  </p>
+<p>PyEyesWeb is designed to facilitate adoption in <strong>artificial intelligence and machine learning pipelines</strong>,
+while also enabling seamless integration with <strong>creative and interactive platforms</strong>
+(e.g., <strong>TouchDesigner, Unity, and Max/MSP</strong> among others), supporting innovative,
+cross-disciplinary projects at the intersection of science and the arts.</p>
+<details>
+<summary>Learn more about EyesWeb</summary>
+
+<a href="https://casapaganini.unige.it/eyesweb_bp" target="_blank">EyesWeb</a> is an open software research platform for the design and development of <b>real-time multimodal systems and interfaces</b>.  
+It supports a wide variety of inputs, including motion capture, cameras, game controllers (Kinect, Wii), multichannel audio, and physiological signals.  
+<br><br>
+Outputs include multichannel audio, video, analog devices, and robotic platforms. EyesWeb provides libraries such as <b>Non-Verbal Expressive Gesture Analysis</b> and <b>Non-Verbal Social Signals Analysis</b>, and a visual programming environment that enables users to develop <b>real-time, networked applications</b>.  
+<br><br>
+Originally started in 1997, EyesWeb has been adopted worldwide in scientific research, education, and industry, including EU projects and collaborations with organizations such as INTEL and NYU.  
+
+</details>
+<hr />
+<h2 id="use-cases">Use Cases</h2>
+<ul>
+<li>
+<p><strong>🎓 Research &amp; Science</strong>
+    Quantify movement expressivity and analyze biomechanics with validated methods.</p>
+</li>
+<li>
+<p><strong>🔗 Interactive Media</strong>
+    Integrate PyEyesWeb in real-time with <a href="user_guide/integrations">TouchDesigner</a>.</p>
+</li>
+<li>
+<p><strong>🏥 Health &amp; Rehabilitation</strong>
+    Assess movement disorders, monitor recovery, and support clinical studies.</p>
+</li>
+<li>
+<p><strong>🎭 Artistic Performance</strong>
+    Explore synchrony, smoothness, and expressive qualities in dance and live performance.</p>
+</li>
+</ul>
+<hr />
+<h2 id="methodological-foundation">Methodological Foundation</h2>
+<p>PyEyesWeb is informed by decades of research at the intersection of <strong>movement science, computational modeling, and expressive gesture analysis</strong>.  </p>
+<p>A key methodological foundation of PyEyesWeb is the layered conceptual framework for analyzing expressive qualities of movement developed by <a href="http://www.casapaganini.org/index_eng.php" target="_blank"><strong>InfoMus Lab – Casa Paganini</strong></a> [1].
+This framework models an observer of a dance performance through four interconnected layers: from the physical signals captured by sensors, to the higher-level expressive qualities conveyed by movement (such as emotions).</p>
+<div class="admonition references">
+<p class="admonition-title">References</p>
+<p>[1] Camurri, A., Volpe, G., Piana, S., Mancini, M., Niewiadomski, R., Ferrari, N., &amp; Canepa, C. (2016, July). The dancer in the eye: towards a multi-layered computational framework of qualities in movement. In Proceedings of the 3rd International Symposium on Movement and Computing (pp. 1-7).</p>
+</div>
+<hr />
+<h2 id="project-context">Project Context</h2>
+<div class="admonition info">
+<p class="admonition-title">About the Authors</p>
+<p>PyEyesWeb is developed by <a href="http://www.casapaganini.org/index_eng.php" target="_blank"><strong>InfoMus Lab – Casa Paganini</strong></a>, University of Genoa, as partners of the Resilence EU Project.  </p>
+<p><div align="center">
+<img alt="InfoMus Lab Logo" src="assets/cp-logo.png" width="512" />
+</p>
+</div>
+</div>
+<p>PyEyesWeb is developed with the partial support of the <a href="https://resilence.eu/">EU ICT STARTS Resilence Project</a>,
+funded by the European Union’s Horizon programme.  </p>
+<div align="center">
+
+<img src="assets/resilence-logo.png" alt="Resilence Project Logo" width="200" style="margin:15px"/>
+<img src="assets/eu-logo.png" alt="EU Logo" width="100" style="margin:15px"/>
+
+</div>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Community &amp; Collaboration</p>
+<p>Whether you are a <strong>researcher, artist, or developer</strong>, PyEyesWeb helps you bridge movement, computation, and expression.<br />
+It is designed to be <strong>modular, accessible, and integrable</strong>, supporting a variety of use cases from scientific analysis to interactive artistic performances.</p>
+<p>💡 We welcome contributions, collaborations, and use cases from the community.<br />
+Check out our <a href="https://github.com/InfoMusCP/PyEyesWeb">GitHub repository</a> to report issues, suggest features, or contribute code.</p>
+</div>
+<hr />
+<p>MIT Licensed · Open for collaboration  </p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="user_guide/getting_started/" class="btn btn-neutral float-right" title="Getting Started">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="user_guide/getting_started/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-02-17 17:53:03.037775+00:00
+-->
