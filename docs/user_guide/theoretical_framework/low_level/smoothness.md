@@ -157,4 +157,4 @@ $$
 
 ## References
 
-[^1]: TODO
+[^1]: Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015). On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1), 112.
