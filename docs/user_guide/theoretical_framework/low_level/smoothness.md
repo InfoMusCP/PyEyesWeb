@@ -3,7 +3,7 @@
 The Smoothness module quantifies control using established motor control metrics.
 Smooth movements are characterized by continuous, coordinated trajectories with minimal abrupt changes.
 
-The module implements two primary metrics validated in motor control research [^1]:
+The module implements two primary metrics validated in motor control research [^1][^2]:
 
 - **Spectral Arc Length (SPARC)**: frequency domain smoothness measure.
 - **Jerk Root Mean Square (RMS)**: time domain measure based on movement derivatives.
@@ -158,3 +158,4 @@ $$
 ## References
 
 [^1]: Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015). On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1), 112.
+[^2]: Melendez-Calderon, A., Shirota, C., & Balasubramanian, S. (2021). Estimating movement smoothness from inertial measurement units. Frontiers in bioengineering and biotechnology, 8, 558771.
