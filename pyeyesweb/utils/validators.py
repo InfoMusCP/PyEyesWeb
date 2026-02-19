@@ -52,7 +52,7 @@ def validate_numeric(value, name, min_val=None, max_val=None):
     return value
 
 
-def validate_integer(value, name, min_val=None, max_val=None):
+def validate_integer(value, name:str, min_val:int|None=None, max_val:int|None=None):
     """Validate integer parameter with optional bounds checking.
 
     Parameters
