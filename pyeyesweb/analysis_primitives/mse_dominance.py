@@ -56,8 +56,8 @@ class MultiScaleEntropyDominance:
         
         self._m = validate_integer(m, min_val=1)                            # Embedding dimension for sample entropy
         self._r = validate_numeric(r, min_val=0.0001, max_val=0.9999)       # Tolerance parameter (15% of standard deviation)
-        self._max_scale = validate_integer(max_scale, min_val=1)            # Maximum scale factor for coarse-graining
-        self._min_points = validate_integer(min_points, min_val=1)          # Minimum data points required per scale
+        self._max_scale = validate_integer(max_scale, "max_scale", min_val=1)            # Maximum scale factor for coarse-graining
+        self._min_points = validate_integer(min_points, "min_points", min_val=1)          # Minimum data points required per scale
         self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in methods]
 
     def _coarse_grain(self, data: np.ndarray, scale: int) -> np.ndarray:
