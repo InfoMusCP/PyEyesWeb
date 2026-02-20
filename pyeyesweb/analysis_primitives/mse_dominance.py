@@ -210,13 +210,14 @@ class MultiScaleEntropyDominance:
             Dictionary containing dominance analysis results.
         """
         if not signals.is_full():
-            return {}
+            return {method: np.nan for method in self._methods}
 
-        data, _ = signals.to_array()
+        data, _ = signals.to_array(as2D=True)
         n_samples, n_features = data.shape
+        print(f"MultiScaleEntropyDominance: Processing {n_samples} samples with {n_features} features.")
 
         if n_samples < int(self._min_points):
-            return {}
+            return {method: np.nan for method in self._methods}
 
         complexity_indices = []
         for i in range(n_features):
