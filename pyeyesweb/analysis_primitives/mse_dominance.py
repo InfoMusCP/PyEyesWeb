@@ -214,7 +214,6 @@ class MultiScaleEntropyDominance:
 
         data, _ = signals.to_array(as2D=True)
         n_samples, n_features = data.shape
-        print(f"MultiScaleEntropyDominance: Processing {n_samples} samples with {n_features} features.")
 
         if n_samples < int(self._min_points):
             return {method: np.nan for method in self._methods}
