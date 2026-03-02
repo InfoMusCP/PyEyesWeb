@@ -3,8 +3,8 @@ import numpy as np
 
 from pyeyesweb.low_level.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
-from pyeyesweb.utils.validators import validate_numeric, validate_and_normalize_filter_params
-from pyeyesweb.utils.signal_processing import compute_phase_synchronization
+from pyeyesweb.utils.validators import validate_numeric
+from pyeyesweb.utils.signal_processing import compute_phase_synchronization, validate_and_normalize_filter_params
 
 
 @dataclass(slots=True)
