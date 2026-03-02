@@ -6,6 +6,9 @@
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+> [!NOTE]
+> This library is currently being refactored. Expect breaking API changes and frequent updates in the short term. Please use with caution and report any issues.
+
 `PyEyesWeb` is a research toolkit for extracting quantitative features from human movement data.  
 It builds on the **Expressive Gesture Analysis** library of [EyesWeb](https://casapaganini.unige.it/eyesweb_bp), bringing expressive movement analysis into Python as a core aim of the project.
 The library provides computational methods to analyze different qualities of movement, supporting applications in **research, health, and the arts**.  
