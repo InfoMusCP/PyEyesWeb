@@ -6,7 +6,7 @@
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-> [!NOTE]
+> [!WARNING]
 > This library is currently being refactored. Expect breaking API changes and frequent updates in the short term. Please use with caution and report any issues.
 
 `PyEyesWeb` is a research toolkit for extracting quantitative features from human movement data.  
