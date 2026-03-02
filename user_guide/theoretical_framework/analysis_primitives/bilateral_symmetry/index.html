@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Bilateral Symmetry - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Bilateral Symmetry";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry.md";
+        var mkdocs_page_url = "/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../low_level/low_level/">Layer 2 - Low-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="../analysis_primitives/">Analysis Primitives</a>
+    <ul class="current">
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Bilateral Symmetry</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#bilateral-symmetry-index-bsi">Bilateral Symmetry Index (BSI)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#phase-synchronization-analytic-signal-approach">Phase Synchronization (Analytic Signal Approach)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#canonical-correlation-analysis-cca">Canonical Correlation Analysis (CCA)</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/thread_safe_buffer/">Thread Safe Buffer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_generators/">Signal Generators</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item"><a href="../../theoretical_framework/">Theoretical Framework</a></li>
+          <li class="breadcrumb-item"><a href="../analysis_primitives/">Analysis Primitives</a></li>
+      <li class="breadcrumb-item active">Bilateral Symmetry</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/analysis_primitives/bilateral_symmetry.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="bilateral-symmetry-analysis-module">Bilateral Symmetry Analysis Module</h1>
+<p>Bilateral symmetry assessment is crucial for understanding movement disorders, rehabilitation progress, and motor control strategies.<br />
+This module analyzes coordination patterns using <strong>three complementary methods</strong>:</p>
+<ul>
+<li><strong>Bilateral Symmetry Index (BSI)</strong> — spatial mirror-symmetry measure.</li>
+<li><strong>Phase Synchronization (PLV)</strong> — temporal coordination of left–right movement.</li>
+<li><strong>Canonical Correlation Analysis (CCA)</strong> — multivariate correlation of trajectories.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These methods assume approximately Gaussian noise and sufficient frame history.</p>
+</div>
+<hr />
+<h2 id="bilateral-symmetry-index-bsi">Bilateral Symmetry Index (BSI)</h2>
+<p>The <strong>BSI</strong> quantifies spatial symmetry between left and right trajectories by comparing mirrored movements across the sagittal plane.</p>
+<p><strong>Input:</strong><br />
+- Left and right 3D joint trajectories $$ L, R \in \mathbb{R}^{n \times 3} $$</p>
+<p><strong>Procedure:</strong></p>
+<ol>
+<li><strong>Mirror right trajectory</strong> across sagittal plane:  </li>
+</ol>
+<div class="arithmatex">\[ 
+R' = [-R_x, R_y, R_z] 
+\]</div>
+<ol start="2">
+<li>
+<strong>Compute absolute difference:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[
+D = |L - R'| 
+\]</div>
+<ol start="3">
+<li>
+<strong>Normalize by total magnitude:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[ 
+S = |L| + |R'| 
+\]</div>
+<ol start="4">
+<li>
+<strong>Relative asymmetry percentage:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[ 
+A = \frac{1}{n} \sum_i \frac{D_i}{S_i} \times 100 
+\]</div>
+<ol start="5">
+<li>
+<strong>Symmetry index:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[ 
+\text{BSI} = 1 - \frac{A}{100} 
+\]</div>
+<p><strong>Output:</strong>  </p>
+<div class="arithmatex">\[ 
+\text{BSI} \in [0, 1]
+\]</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Higher BSI indicates more symmetric posture and movement.</p>
+</div>
+<hr />
+<h2 id="phase-synchronization-analytic-signal-approach">Phase Synchronization (Analytic Signal Approach)</h2>
+<p>Phase synchronization quantifies the temporal relationship between left and right signals by analysing the constancy of their phase difference.<br />
+It is computed via <strong>Hilbert transform</strong> and expressed as <strong>Phase Locking Value (PLV)</strong>.</p>
+<p><strong>Input:</strong><br />
+Two 1D limb displacement signals $$ x(t), y(t) $$.</p>
+<p><strong>Procedure:</strong></p>
+<ol>
+<li>Compute analytic signals:  </li>
+</ol>
+<div class="arithmatex">\[ 
+z_x(t) = x(t) + iH[x(t)],  
+\]</div>
+<div class="arithmatex">\[
+z_y(t) = y(t) + iH[y(t)] 
+\]</div>
+<ol start="2">
+<li>
+<strong>Extract instantaneous phases:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[ 
+\phi_x(t), \phi_y(t) 
+\]</div>
+<ol start="3">
+<li>
+<strong>Compute phase difference:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[
+\Delta \phi(t) = \phi_x(t) - \phi_y(t) 
+\]</div>
+<ol start="4">
+<li>
+<strong>Compute Phase Locking Value (PLV):</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[
+\text{PLV} = \left| \frac{1}{N} \sum_t e^{i \Delta \phi(t)} \right| 
+\]</div>
+<p><strong>Output:</strong> </p>
+<div class="arithmatex">\[
+\text{PLV} \in [0, 1] 
+\]</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>PLV &gt; 0.7 → strong coupling<br />
+PLV 0.4–0.7 → moderate<br />
+PLV &lt; 0.4 → weak coupling</p>
+</div>
+<hr />
+<h2 id="canonical-correlation-analysis-cca">Canonical Correlation Analysis (CCA)</h2>
+<p>CCA measures <strong>multivariate correspondence</strong> between left and right 3D trajectories.<br />
+It finds linear combinations that maximize correlation, revealing shared coordination structure.</p>
+<p><strong>Input:</strong>  </p>
+<div class="arithmatex">\[
+L, R \in \mathbb{R}^{n \times 3} 
+\]</div>
+<p><strong>Procedure:</strong></p>
+<ol>
+<li>Flatten coordinates into features.  </li>
+<li>Apply one-component CCA:  </li>
+</ol>
+<div class="arithmatex">\[
+(U, V) = \text{CCA}(L, R) 
+\]</div>
+<ol start="3">
+<li>
+<strong>Compute canonical correlation:</strong>  
+</li>
+</ol>
+
+<div class="arithmatex">\[
+\rho = \text{corr}(U, V) 
+\]</div>
+<p><strong>Output:</strong> </p>
+<div class="arithmatex">\[
+\rho \in [0, 1] 
+\]</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<ul>
+<li>1.0–0.8: excellent coordination  </li>
+<li>0.8–0.6: good  </li>
+<li>0.6–0.4: moderate  </li>
+<li>&lt;0.4: poor</li>
+</ul>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../analysis_primitives/" class="btn btn-neutral float-left" title="Analysis Primitives"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../synchronization/" class="btn btn-neutral float-right" title="Synchronization">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../analysis_primitives/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../synchronization/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
