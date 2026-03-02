@@ -15,7 +15,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pyeyesweb.analysis_primitives.geometric_symmetry import BilateralSymmetryAnalyzer
+from pyeyesweb.low_level.geometric_symmetry import BilateralSymmetryAnalyzer
 
 
 class RealisticHumanGait:

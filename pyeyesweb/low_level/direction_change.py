@@ -1,151 +1,125 @@
-from typing import Literal
+from dataclasses import dataclass
+from typing import Literal, List, Optional
 import numpy as np
 
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.results import FeatureResult
+from pyeyesweb.utils.validators import validate_string
 
-class DirectionChange:
-    """
-    Direction Change evaluation based on the angle between movement vectors.
 
-    This class computes a single direction change index for a given trajectory
-    segment. It samples three points from the trajectory (start, middle, end)
-    to form two vectors and calculates the angle between them.
+@dataclass(slots=True)
+class DirectionChangeResult(FeatureResult):
+    """Output contract for Direction Change."""
+    cosine: Optional[float] = None
+    polygon: Optional[float] = None
 
-    The algorithm detects changes in direction that are approximately perpendicular
-    (around 90 degrees).
 
-    Parameters
-    ----------
-    epsilon : float, optional
-        Tolerance factor (default: 0.5). Between 0.001 and 0.5. Defines how close the angle needs to
-        be to 90 degrees (pi/2) to register a value and rescales the value with the threshold. 
-        Values closer to 0 will yield to lower sensitivity, while values closer to 0.5 will give a smoother experience.
+class DirectionChange(DynamicFeature):
+    """Direction Change evaluation based on movement vectors."""
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> dc = DirectionChange(epsilon=0.5)
-    >>> points = np.array([[0,0], [1,0], [2,0]]) # Straight line
-    >>> result = dc(points)
-    >>> result["value"]
-    0.0
-    >>> points = np.array([[0,0], [1,0], [1,1]]) # 90 degree turn
-    >>> result = dc(points)["value"]
-    1.0
-    >>> points = np.array([[0,0], [1,0], [2,1]]) # 45 degree turn
-    >>> result = dc(points)["value"]
-    0.5
-    >>> points = np.array([[0,0], [1,0], [0,0]]) # 180 degree turn
-    >>> result = dc(points)["value"]
-    0.0
-    >>> dc = DirectionChange(epsilon=0.3)
-    >>>> points = np.array([[0,0], [1,0], [2,0]]) # Straight line
-    >>> result = dc(points)["value"]
-    0.0
-    >>> points = np.array([[0,0], [1,0], [1,1]]) # 90 degree turn
-    >>> result = dc(points)["value"]
-    1.0
-    >>> points = np.array([[0,0], [1,0], [2,1]]) # 45 degree turn
-    >>> result = dc(points)["value"]
-    0.16666666666666667
-    """
+    _ALLOWED_METRICS = ["cosine", "polygon"]
 
-    def __init__(self, epsilon=0.5, method:Literal["cosine_similarity", "polygon_area"]="polygon_area",extra_args:dict=None):
+    def __init__(
+            self,
+            epsilon: float = 0.5,
+            num_subsamples: int = 20,
+            saturation_area: float = 0.3,
+            saturation_slope: float = 0.09,
+            metrics: List[Literal["cosine", "polygon"]] = None
+    ):
+        super().__init__()
         self.epsilon = epsilon
-        self._method = self._cosine_similarity if method == "cosine_similarity" else self._polygon_area
-        if extra_args is None:
-            extra_args = {}
-        self.num_subsamples = extra_args.get("num_subsamples", 20)
-        self.saturation_area = extra_args.get("saturation_area", 0.3)
+        self.num_subsamples = num_subsamples
+        self.saturation_area = saturation_area
+        self.saturation_slope = saturation_slope
 
-    def _cosine_similarity(self, sliding_window: SlidingWindow) -> dict:
-        pos = sliding_window.to_array(as2D=True)[0]
+        # If None, compute everything. If passed, validate against allowed.
+        target_metrics = metrics if metrics is not None else self._ALLOWED_METRICS
+        self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
+
+    def _cosine_similarity(self, pos: np.ndarray) -> float:
         if pos.shape[-1] < 2:
-            raise Exception("Input positions must be a 2D array with at least 2 columns (x,y).")
-        
+            raise ValueError("Input positions must be at least 2D (x,y).")
+
         n_samples = pos.shape[0]
-
         if n_samples < 3:
-            return {"value": np.nan}
+            raise ValueError("Not enough samples")
 
-        # Sample 3 points: start, middle, end
-        p0 = pos[-1]          # End point
-        p1 = pos[n_samples // 2]  # Middle point
-        p2 = pos[0]           # Start point
+        # Extract Start, Mid, and End points of the trajectory
+        p0 = pos[-1]
+        p1 = pos[n_samples // 2]
+        p2 = pos[0]
 
-        # Vectors L0 = p0 - p1 (second half), L1 = p1 - p2 (first half)
         L0 = p0 - p1
         L1 = p1 - p2
 
-        # Norms
         norm0 = np.linalg.norm(L0)
         norm1 = np.linalg.norm(L1)
 
-        # Avoid division by zero
         if norm0 < 1e-6 or norm1 < 1e-6:
-            return {"value": 0.0}
+            return 0.0
 
-        # Dot product
         dot = np.dot(L0, L1)
-        
-        # Cosine theta (clipped for numerical stability)
         cos_theta = np.clip(dot / (norm0 * norm1), -1.0, 1.0)
-        
-        # Angle in radians
         theta = np.arccos(cos_theta)
-        
-        # Normalization and scoring logic
+
         angle_norm = theta / np.pi
         a = 1.0 - angle_norm
         diff = np.abs(a - 0.5)
-        
-        # Apply epsilon threshold
+
         if diff < self.epsilon:
-            return {"value": (1.0 - diff / self.epsilon)}
-        
-        return {"value": 0.0}
-    
-    def _polygon_area(self, sliding_window: SlidingWindow) -> dict:
-        """
-        Calculates 3D area and applies a tanh saturation filter.
-        """
-        hand_pos = sliding_window.to_array(as2D=True)[0]
-        num_points = len(hand_pos)
+            return float(1.0 - diff / self.epsilon)
+
+        return 0.0
+
+    def _polygon_area(self, pos: np.ndarray) -> float:
+        num_points = len(pos)
         if num_points < 3:
-            return {"value": 0.0}
-        
-        # 1. Select subset and close polygon
-        indices = np.linspace(0, num_points - 1, min(self.num_subsamples, num_points)).astype(int)
-        subset = hand_pos[indices]
+            raise ValueError("Not enough samples")
+
+        # Subsample the trajectory securely
+        indices = np.linspace(0, num_points - 1, min(self.num_subsamples, num_points))
+        subset = pos[np.round(indices).astype(int)]
+
+        # Close the loop
         closed_polygon = np.vstack([subset, subset[0]])
-        
-        # 2. Calculate 3D Area
-        # Standard formula is 0.5 * norm(sum(cross_products))
+
+        # Shoelace-style cross product area computation
         cross_products = np.cross(closed_polygon[:-1], closed_polygon[1:])
         area_vector = np.sum(cross_products, axis=0) / 2.0
-        area = np.linalg.norm(area_vector)
-        
-        # 3. Apply Tanh Saturation
-        b = 0.09
-        a = self.saturation_area / 2
-        saturated_area = ((np.tanh((area - a)/b)) + 1) / 2
-        
-        return {"value": saturated_area}
 
-    def __call__(self, positions: SlidingWindow) -> dict:
-        """
-        Compute the direction change value for the given trajectory segment.
+        # Handle both 2D (scalar return) and 3D (vector return) area magnitudes
+        area = np.linalg.norm(area_vector) if np.ndim(area_vector) > 0 else np.abs(area_vector)
 
-        Parameters
-        ----------
-        positions : SlidingWindow
-            Input array of shape (N, 3) or (N, 2) representing coordinates
-            (x, y, z) or (x, y) over time.
+        # Apply soft saturation (tanh)
+        a = self.saturation_area / 2.0
+        saturated_area = ((np.tanh((area - a) / self.saturation_slope)) + 1.0) / 2.0
 
-        Returns
-        -------
-        dict
-            Calculated direction change value between 0.0 and 1.0.
-            Returns 0.0 if the segment is too short or vectors are too small.
-        """
-        return self._method(positions)
+        return float(saturated_area)
+
+    def _compute_window(self, window_data: np.ndarray) -> DirectionChangeResult:
+        if window_data.shape[0] < 3:
+            return DirectionChangeResult(is_valid=False)
+
+        # 1. Shared Preprocessing
+        trajectory = np.mean(window_data, axis=1)
+
+        # 2. Selective Execution
+        val_cosine = None
+        val_polygon = None
+
+        try:
+            if "cosine" in self._metrics:
+                val_cosine = self._cosine_similarity(trajectory)
+
+            if "polygon" in self._metrics:
+                val_polygon = self._polygon_area(trajectory)
+
+        except ValueError:
+            return DirectionChangeResult(is_valid=False)
+
+        return DirectionChangeResult(
+            is_valid=True,
+            cosine=val_cosine,
+            polygon=val_polygon
+        )

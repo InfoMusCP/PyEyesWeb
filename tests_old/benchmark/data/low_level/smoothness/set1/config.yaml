@@ -1,0 +1,73 @@
+# ================================================================
+#  CONFIGURATION FILE FOR PY-EYES TEST PIPELINE
+# ================================================================
+
+# -----------------------
+# Global Parameters
+# -----------------------
+general:
+  folder: "set_danzarte_madonna_bambino"          # File containing list of test .tsv files
+  rate_hz: 100              # Sampling frequency (Hz)
+  source: "trajectories"    # Either "trajectories" or "accelerations"
+
+# -----------------------
+# Test Definitions
+# -----------------------
+# Each test specifies which features to compute and which markers to use per feature.
+# Different features may require a different number of target markers.
+tests:
+  - file_name: "test1"
+    description: "Right leg movement sequence"
+    features:
+      smoothness:
+        target_markers: ["RLegOut"]
+        result: true
+      synchronization:
+        target_markers: ["RLegOut", "LArmOut"]
+      bilateral-symmetry:
+        target_markers: ["RLegOut", "LLegOut"]
+
+  - name: "test2"
+    description: "Right arm movement sequence"
+    features:
+      smoothness:
+        target_markers: ["RArmOut"]
+      synchronization:
+        target_markers: ["RArmOut", "LArmOut"]
+
+  - name: "test3"
+    description: "Left arm movement sequence"
+    features:
+      smoothness:
+        target_markers: ["LArmOut"]
+      synchronization:
+        target_markers: ["LArmOut", "RArmOut"]
+
+  - name: "test4"
+    description: "Full body coordination test"
+    features:
+      smoothness:
+        target_markers: ["RLegOut", "LArmOut", "RArmOut"]
+      synchronization:
+        target_markers:
+          - ["RArmOut", "LArmOut"]
+          - ["RLegOut", "LLegOut"]
+      bilateral-symmetry:
+        target_markers:
+          - ["RArmOut", "LArmOut"]
+          - ["RLegOut", "LLegOut"]
+      equilibrium:
+        target_markers: ["CenterMass"]
+      contraction-expansion:
+        target_markers: ["Torso"]
+
+# -----------------------
+# Available Features
+# -----------------------
+# List of features known to the pipeline, with documentation.
+features:
+  - name: "synchronization"          # Test phase synchronization between signals
+  - name: "smoothness"               # Analyze signal smoothness using various metrics
+  - name: "bilateral-symmetry"       # Test bilateral symmetry between left/right signals
+  - name: "equilibrium"              # Analyze equilibrium and stability of signals
+  - name: "contraction-expansion"    # Test contraction-expansion dynamics

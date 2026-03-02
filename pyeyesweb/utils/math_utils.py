@@ -54,83 +54,162 @@ def center_signals(sig):
     return sig - np.mean(sig, axis=0, keepdims=True)
 
 
-def compute_sparc(signal, rate_hz=50.0):
-    """Compute SPARC (Spectral Arc Length) from a signal.
+def compute_sparc(signal, rate_hz=50.0, pad_factor=4, f_max=20.0, amplitude_threshold=0.05):
+    """Compute SPARC (Spectral Arc Length) from a 1D speed profile.
 
-    SPARC is a dimensionless smoothness metric that quantifies movement
-    smoothness independent of movement amplitude and duration. More negative
-    values indicate smoother movement.
-
-    This implementation is based on the original algorithm by Balasubramanian et al. (2015).
-    SPARC values are typically negative, with values closer to 0 indicating less smooth
-    (more complex) movements. For healthy reaching movements, values around -1.4 to -1.6
-    are common. Pathological or very unsmooth movements may have values ranging from
-    -3 to -10 or lower, depending on the degree of movement fragmentation.
+    This implementation strictly follows Balasubramanian et al. (2015), including:
+    1. Zero-padding the FFT for high frequency resolution.
+    2. Adaptive frequency cutoff to ignore high-frequency sensor noise.
 
     Parameters
     ----------
     signal : ndarray
-        1D movement signal.
+        1D movement speed profile.
     rate_hz : float, optional
         Sampling rate in Hz (default: 50.0).
+    pad_factor : int, optional
+        Multiplier for zero-padding to increase FFT resolution (default: 4).
+    f_max : float, optional
+        Maximum frequency to consider for human movement in Hz (default: 20.0).
+    amplitude_threshold : float, optional
+        Threshold to determine the adaptive cutoff frequency (default: 0.05).
 
     Returns
     -------
     float
-        SPARC value (negative, more negative = smoother).
-        Returns NaN if signal has less than 2 samples.
-
-    References
-    ----------
-    Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015).
-    On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,
-    12(1), 1-11.
+        SPARC value (negative, closer to 0 = smoother).
     """
     rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
 
-    # Ensure signal is 1D
-    signal = np.asarray(signal)
-    if signal.ndim > 1:
-        # If 2D, check if it's a single column/row
-        if signal.shape[0] == 1:
-            signal = signal.flatten()
-        elif signal.shape[1] == 1:
-            signal = signal.flatten()
-        else:
-            raise ValueError(f"Signal must be 1D, got shape {signal.shape}")
+    # Pythonic 1D enforcement using squeeze
+    signal = np.asarray(signal).squeeze()
+    if signal.ndim != 1:
+        raise ValueError(f"Signal must be 1D, got shape {signal.shape}")
 
-    N = len(signal)
-    if N < 2:
+    if len(signal) < 2 or np.allclose(signal, signal[0]):
         return np.nan
 
-    # Check if signal is constant (no movement)
-    if np.allclose(signal, signal[0]):
-        # For constant signals, return NaN as SPARC is undefined
-        # (no movement means smoothness is not applicable)
+    # 1. Zero-pad the signal for high-resolution FFT
+    # Using next power of 2 multiplied by pad_factor for smooth arc length integration
+    n_fft = int(2 ** np.ceil(np.log2(len(signal))) * pad_factor)
+
+    # Use rfft since our speed profile is purely real numbers
+    magnitude_spectrum = np.abs(np.fft.rfft(signal, n=n_fft))
+    frequencies = np.fft.rfftfreq(n_fft, d=1.0 / rate_hz)
+
+    # Normalize spectrum
+    max_mag = np.max(magnitude_spectrum)
+    if max_mag == 0:
         return np.nan
+    normalized_spectrum = magnitude_spectrum / max_mag
 
-    from scipy.fft import fft, fftfreq
-    yf = np.abs(fft(signal))[:N // 2]
-    xf = fftfreq(N, 1.0 / rate_hz)[:N // 2]
+    # 2. Find Adaptive Cutoff Frequency (fc)
+    # Find indices where frequency is <= f_max
+    valid_freq_mask = frequencies <= f_max
 
-    # Normalize magnitude by maximum value
-    max_yf = np.max(yf)
-    if max_yf > 0:
-        yf /= max_yf
+    # Find the last frequency index within f_max where magnitude > threshold
+    above_thresh = np.where((normalized_spectrum > amplitude_threshold) & valid_freq_mask)[0]
+
+    if len(above_thresh) == 0:
+        # Fallback if the whole spectrum is tiny
+        fc_idx = np.where(valid_freq_mask)[0][-1]
     else:
-        # This should not happen after the constant signal check
-        # but keep as safety fallback
+        fc_idx = above_thresh[-1]
+
+    # 3. Truncate spectrum to the cutoff
+    f_trunc = frequencies[:fc_idx + 1]
+    mag_trunc = normalized_spectrum[:fc_idx + 1]
+
+    fc = f_trunc[-1]
+    if fc <= 0:
         return np.nan
 
-    # Compute arc length with normalized frequency differences
-    # Following Balasubramanian et al. (2015) implementation
-    freq_range = xf[-1] - xf[0]
-    if freq_range <= 0:
-        return np.nan
+    # 4. Compute Spectral Arc Length
+    # Normalize frequency spacing by fc
+    df = np.diff(f_trunc) / fc
+    dmag = np.diff(mag_trunc)
 
-    # Normalize frequency differences by the frequency range
-    arc = np.sum(np.sqrt((np.diff(xf) / freq_range)**2 + np.diff(yf)**2))
-    return -arc
+    arc_length = np.sum(np.sqrt(df ** 2 + dmag ** 2))
+
+    return float(-arc_length)
+
+# def compute_sparc(signal, rate_hz=50.0):
+#     """Compute SPARC (Spectral Arc Length) from a signal.
+#
+#     SPARC is a dimensionless smoothness metric that quantifies movement
+#     smoothness independent of movement amplitude and duration. More negative
+#     values indicate smoother movement.
+#
+#     This implementation is based on the original algorithm by Balasubramanian et al. (2015).
+#     SPARC values are typically negative, with values closer to 0 indicating less smooth
+#     (more complex) movements. For healthy reaching movements, values around -1.4 to -1.6
+#     are common. Pathological or very unsmooth movements may have values ranging from
+#     -3 to -10 or lower, depending on the degree of movement fragmentation.
+#
+#     Parameters
+#     ----------
+#     signal : ndarray
+#         1D movement signal.
+#     rate_hz : float, optional
+#         Sampling rate in Hz (default: 50.0).
+#
+#     Returns
+#     -------
+#     float
+#         SPARC value (negative, more negative = smoother).
+#         Returns NaN if signal has less than 2 samples.
+#
+#     References
+#     ----------
+#     Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015).
+#     On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,
+#     12(1), 1-11.
+#     """
+#     rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
+#
+#     # Ensure signal is 1D
+#     signal = np.asarray(signal)
+#     if signal.ndim > 1:
+#         # If 2D, check if it's a single column/row
+#         if signal.shape[0] == 1:
+#             signal = signal.flatten()
+#         elif signal.shape[1] == 1:
+#             signal = signal.flatten()
+#         else:
+#             raise ValueError(f"Signal must be 1D, got shape {signal.shape}")
+#
+#     N = len(signal)
+#     if N < 2:
+#         return np.nan
+#
+#     # Check if signal is constant (no movement)
+#     if np.allclose(signal, signal[0]):
+#         # For constant signals, return NaN as SPARC is undefined
+#         # (no movement means smoothness is not applicable)
+#         return np.nan
+#
+#     from scipy.fft import fft, fftfreq
+#     yf = np.abs(fft(signal))[:N // 2]
+#     xf = fftfreq(N, 1.0 / rate_hz)[:N // 2]
+#
+#     # Normalize magnitude by maximum value
+#     max_yf = np.max(yf)
+#     if max_yf > 0:
+#         yf /= max_yf
+#     else:
+#         # This should not happen after the constant signal check
+#         # but keep as safety fallback
+#         return np.nan
+#
+#     # Compute arc length with normalized frequency differences
+#     # Following Balasubramanian et al. (2015) implementation
+#     freq_range = xf[-1] - xf[0]
+#     if freq_range <= 0:
+#         return np.nan
+#
+#     # Normalize frequency differences by the frequency range
+#     arc = np.sum(np.sqrt((np.diff(xf) / freq_range)**2 + np.diff(yf)**2))
+#     return -arc
 
 
 def compute_jerk_rms(signal, rate_hz=50.0, signal_type='velocity'):

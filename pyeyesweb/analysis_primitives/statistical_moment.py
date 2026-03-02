@@ -1,114 +1,135 @@
-"""Statistical moments analysis module for signal processing.
-
-This module provides tools for computing various statistical moments from
-multivariate signal data. Statistical moments characterize the shape and
-properties of probability distributions and are fundamental in signal analysis.
-
-The available statistical moments include:
-1. Mean - Central tendency of the data
-2. Standard Deviation - Dispersion around the mean
-3. Skewness - Asymmetry of the distribution
-4. Kurtosis - Tailedness of the distribution
-
-Typical use cases include:
-1. Signal characterization and feature extraction
-2. Quality assessment of sensor data
-3. Motion pattern analysis in movement data
-4. Anomaly detection in time series data
-5. Distribution analysis in multivariate signals
-
-References
-----------
-1. Pearson, K. (1895). Contributions to the Mathematical Theory of Evolution.
-2. Fisher, R. A. (1925). Statistical Methods for Research Workers.
-"""
-
-from typing import Literal
+from dataclasses import dataclass
+from typing import Literal, List, Dict, Optional
 import numpy as np
 from scipy import stats
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+
+from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.results import FeatureResult
 from pyeyesweb.utils.validators import validate_string
 
 
-class StatisticalMoment:
-    """Real time statistical moments analyzer for signal data.
+@dataclass(slots=True)
+class StatisticalMomentResult(FeatureResult):
+    """Output contract for Statistical Moments."""
+    mean: Optional[List[float]] = None
+    std_dev: Optional[List[float]] = None
+    skewness: Optional[List[float]] = None
+    kurtosis: Optional[List[float]] = None
 
-    This class computes various statistical moments (mean, standard deviation,
-    skewness, kurtosis) from sliding window data to characterize signal
-    distributions and properties.
-    """
+    def to_flat_dict(self, prefix: str = "") -> Dict[str, float]:
+        """Dynamically unrolls list metrics into scalars (e.g., mean_0, mean_1)."""
+        # Note: FeatureResult.to_flat_dict bypasses the super() bug!
+        from dataclasses import dataclass
+        from typing import Literal, List, Dict, Optional
+        import numpy as np
+        from scipy import stats
+
+        from pyeyesweb.low_level.base import DynamicFeature
+        from pyeyesweb.data_models.results import FeatureResult
+        from pyeyesweb.utils.validators import validate_string
+
+        @dataclass(slots=True)
+        class StatisticalMomentResult(FeatureResult):
+            """Output contract for Statistical Moments."""
+            mean: Optional[List[float]] = None
+            std_dev: Optional[List[float]] = None
+            skewness: Optional[List[float]] = None
+            kurtosis: Optional[List[float]] = None
+
+            def to_flat_dict(self, prefix: str = "") -> Dict[str, float]:
+                flat = FeatureResult.to_flat_dict(self, prefix)
+
+                def make_key(base: str, idx: int) -> str:
+                    return f"{prefix}_{base}_{idx}" if prefix else f"{base}_{idx}"
+
+                for metric in ["mean", "std_dev", "skewness", "kurtosis"]:
+                    key = f"{prefix}_{metric}" if prefix else metric
+                    vals = flat.pop(key, None)
+                    if vals is not None:
+                        for i, val in enumerate(vals):
+                            flat[make_key(metric, i)] = float(val)
+
+                return flat
+
+        class StatisticalMoment(DynamicFeature):
+            """Real time statistical moments analyzer for signal data."""
+
+            _ALLOWED_METRICS = ["mean", "std_dev", "skewness", "kurtosis"]
+            _MIN_SAMPLES = {"mean": 1, "std_dev": 2, "skewness": 3, "kurtosis": 4}
+
+            def __init__(self, metrics: List[Literal["mean", "std_dev", "skewness", "kurtosis"]] = None):
+                super().__init__()
+
+                # If None, compute everything
+                target_metrics = metrics if metrics is not None else self._ALLOWED_METRICS
+                self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
+
+            def _compute_window(self, window_data: np.ndarray) -> StatisticalMomentResult:
+                data = window_data.reshape(window_data.shape[0], -1)
+                n_samples = data.shape[0]
+
+                results = {}
+                for metric in self._metrics:
+                    if n_samples >= self._MIN_SAMPLES[metric]:
+                        if metric == "mean":
+                            results["mean"] = np.mean(data, axis=0).tolist()
+                        elif metric == "std_dev":
+                            results["std_dev"] = np.std(data, axis=0, ddof=1).tolist()
+                        elif metric == "skewness":
+                            results["skewness"] = stats.skew(data, axis=0).tolist()
+                        elif metric == "kurtosis":
+                            results["kurtosis"] = stats.kurtosis(data, axis=0).tolist()
+
+                if not results:
+                    return StatisticalMomentResult(is_valid=False)
+
+                return StatisticalMomentResult(is_valid=True, **results)
+
+        flat = FeatureResult.to_flat_dict(self, prefix)
+
+        def make_key(base: str, idx: int) -> str:
+            return f"{prefix}_{base}_{idx}" if prefix else f"{base}_{idx}"
+
+        # Unroll list properties
+        for metric in ["mean", "std_dev", "skewness", "kurtosis"]:
+            key = f"{prefix}_{metric}" if prefix else metric
+            vals = flat.pop(key, None)
+            if vals is not None:
+                for i, val in enumerate(vals):
+                    flat[make_key(metric, i)] = float(val)
+
+        return flat
+
+
+class StatisticalMoment(DynamicFeature):
+    """Real time statistical moments analyzer for signal data."""
+
     _ALLOWED_METHODS = ["mean", "std_dev", "skewness", "kurtosis"]
     _MIN_SAMPLES = {"mean": 1, "std_dev": 2, "skewness": 3, "kurtosis": 4}
 
-    def __init__(
-        self,
-        methods: list[Literal["mean", "std_dev", "skewness", "kurtosis"]] = ["mean"],
-    ):
-        """Initialize the statistical moment analyzer.
+    def __init__(self, methods: List[Literal["mean", "std_dev", "skewness", "kurtosis"]] = None):
+        super().__init__()
+        methods = methods or ["mean"]
+        self._methods = [validate_string(m, self._ALLOWED_METHODS) for m in methods]
 
-        Parameters
-        ----------
-        methods : list of str
-            List of statistical methods to compute. Available options:
-            'mean', 'std_dev', 'skewness', 'kurtosis'
-        """
-        self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in methods]
-
-    def _compute_statistics(self, data: np.ndarray, methods: list[str]) -> dict:
-        """Compute statistical analysis for multivariate signals.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input signal data array.
-
-        Returns
-        -------
-        dict
-            Dictionary containing statistical metrics.
-        """
-        result = {}
-
-        for method in methods:
-            if method == "mean":
-                result["mean"] = np.mean(data, axis=0)
-
-            elif method == "std_dev":
-                result["std"] = np.std(data, axis=0, ddof=1)
-
-            elif method == "skewness":
-                result["skewness"] = stats.skew(data, axis=0)
-
-            elif method == "kurtosis":
-                result["kurtosis"] = stats.kurtosis(data, axis=0)
-
-        return result
-
-    def __call__(self, signal: SlidingWindow) -> dict:
-        """Compute statistical metrics.
-
-        Parameters
-        ----------
-        signal : SlidingWindow
-            Buffer containing multivariate data to analyze.
-
-        Returns
-        -------
-        dict
-            Dictionary containing statistical metrics.
-        """
-        if signal.get_num_signals() != 1:
-            raise ValueError("Number of signals must be exactly one.")
-        data, _ = signal.to_array(as2D=True)
-        n_samples, n_features = data.shape
-        methods = self._methods
+    def _compute_window(self, window_data: np.ndarray) -> StatisticalMomentResult:
+        # Reshape to (Time, Features)
+        data = window_data.reshape(window_data.shape[0], -1)
+        n_samples = data.shape[0]
         
         results = {}
-        if n_samples < max(self._MIN_SAMPLES[method] for method in methods):
-            for method in reversed(methods):
-                if n_samples < self._MIN_SAMPLES[method]:
-                    results[method] = np.nan
-                    methods.remove(method)
+        for method in self._methods:
+            if n_samples >= self._MIN_SAMPLES[method]:
+                if method == "mean":
+                    results["mean"] = np.mean(data, axis=0).tolist()
+                elif method == "std_dev":
+                    results["std_dev"] = np.std(data, axis=0, ddof=1).tolist()
+                elif method == "skewness":
+                    results["skewness"] = stats.skew(data, axis=0).tolist()
+                elif method == "kurtosis":
+                    results["kurtosis"] = stats.kurtosis(data, axis=0).tolist()
+        
+        if not results:
+            return StatisticalMomentResult(is_valid=False)
 
-        results.update(self._compute_statistics(data, methods))
-        return results
+        return StatisticalMomentResult(is_valid=True, **results)
