@@ -4,7 +4,6 @@ This module provides common validation functions used across multiple
 PyEyesWeb modules to ensure consistent error handling.
 """
 
-
 def validate_numeric(value, name, min_val=None, max_val=None):
     """Validate numeric parameter with optional bounds checking.
 
@@ -213,6 +212,7 @@ def validate_filter_params_tuple(value, name='filter_params'):
 
     return tuple(value)
 
+
 def validate_pairs(pairs):
     """Validate joint pairs as tuples of integers.
 
@@ -256,29 +256,6 @@ def validate_pairs(pairs):
 
     return pairs
 
-def validate_and_normalize_filter_params(filter_params):
-    """Validate and normalize filter parameters.
-
-    Parameters
-    ----------
-    filter_params : tuple/list or None
-        Filter parameters as (lowcut, highcut, fs) or None
-
-    Returns
-    -------
-    tuple or None
-        Validated (lowcut, highcut, fs) tuple or None if input was None
-    """
-    if filter_params is None:
-        return None
-
-    # Import here to avoid circular dependency
-    from pyeyesweb.utils.signal_processing import validate_filter_params
-
-    filter_params = validate_filter_params_tuple(filter_params)
-    lowcut, highcut, fs = validate_filter_params(*filter_params)
-    return (lowcut, highcut, fs)
-
 
 def validate_window_size(value, name='window_size'):
     """Validate window size parameter.
@@ -298,6 +275,7 @@ def validate_window_size(value, name='window_size'):
         Validated window size
     """
     return validate_integer(value, name, min_val=1, max_val=10000)
+
 
 def validate_string(value, names: list[str]):
     """Validate that a string value is one of the allowed options.
