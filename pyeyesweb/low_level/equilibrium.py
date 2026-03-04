@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 
-from pyeyesweb.low_level.base import StaticFeature
+from pyeyesweb.data_models.base import StaticFeature
 from pyeyesweb.data_models.results import FeatureResult
 
 
@@ -32,7 +32,7 @@ class Equilibrium(StaticFeature):
         self.margin = margin_mm
         self.y_weight = y_weight
 
-    def _compute_frame(self, frame_data: np.ndarray) -> EquilibriumResult:
+    def compute(self, frame_data: np.ndarray) -> EquilibriumResult:
         # 1. Robustness: Ensure we have enough joints in the frame
         max_idx = max(self.left_foot_idx, self.right_foot_idx, self.barycenter_idx)
         if len(frame_data) <= max_idx:

@@ -46,7 +46,7 @@ def test_rarity():
 
 def test_statistical_moment_unrolling():
     # Updated to use 'metrics' parameter to match new API
-    feature = StatisticalMoment(methods=["mean", "std_dev"])
+    feature = StatisticalMoment(metrics=["mean", "std_dev"])
     # 1 signal, 2 dimensions (X, Y)
     window = SlidingWindow(max_length=5, n_signals=1, n_dims=2)
 
@@ -76,7 +76,7 @@ def test_statistical_moment_unrolling():
 
 def test_statistical_moment_selective_metrics():
     """Verify that unrequested metrics are omitted from the flat dictionary."""
-    feature = StatisticalMoment(methods=["mean"])
+    feature = StatisticalMoment(metrics=["mean"])
     window = SlidingWindow(max_length=5, n_signals=1, n_dims=2)
 
     for i in range(5):

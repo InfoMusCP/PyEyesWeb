@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional, List, Tuple
 import numpy as np
 
-from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
 from pyeyesweb.utils.validators import validate_pairs
 
@@ -66,7 +66,7 @@ class GeometricSymmetry(DynamicFeature):
         if self._center_idx != -1:
             self._max_required_idx = max(self._max_required_idx, self._center_idx)
 
-    def _compute_window(self, window_data: np.ndarray) -> GeometricSymmetryResult:
+    def compute(self, window_data: np.ndarray) -> GeometricSymmetryResult:
         """
         Expects window_data as a 3D tensor: (Time, N_signals, N_dims).
         """

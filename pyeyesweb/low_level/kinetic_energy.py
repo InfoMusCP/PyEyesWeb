@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Union, List, Dict, Any, Optional
 import numpy as np
 
-from pyeyesweb.low_level.base import StaticFeature
+from pyeyesweb.data_models.base import StaticFeature
 from pyeyesweb.data_models.results import FeatureResult
 
 
@@ -75,7 +75,7 @@ class KineticEnergy(StaticFeature):
 
         return mass_array[:, np.newaxis]
 
-    def _compute_frame(self, frame_data: np.ndarray) -> KineticEnergyResult:
+    def compute(self, frame_data: np.ndarray) -> KineticEnergyResult:
         velocities = np.asarray(frame_data, dtype=float)
 
         if velocities.ndim == 1:

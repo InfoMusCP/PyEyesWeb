@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Literal, List, Optional
 import numpy as np
 
-from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
 from pyeyesweb.utils.validators import validate_string
 
@@ -97,7 +97,7 @@ class DirectionChange(DynamicFeature):
 
         return float(saturated_area)
 
-    def _compute_window(self, window_data: np.ndarray) -> DirectionChangeResult:
+    def compute(self, window_data: np.ndarray) -> DirectionChangeResult:
         if window_data.shape[0] < 3:
             return DirectionChangeResult(is_valid=False)
 

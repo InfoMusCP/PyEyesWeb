@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
-from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
 
 
@@ -19,7 +19,7 @@ class Clusterability(DynamicFeature):
         super().__init__()
         self.n_neighbors = n_neighbors
 
-    def _compute_window(self, window_data: np.ndarray) -> ClusterabilityResult:
+    def compute(self, window_data: np.ndarray) -> ClusterabilityResult:
         # Flatten (Time, Signals, Dims) -> (Time, Features)
         data = window_data.reshape(window_data.shape[0], -1)
 

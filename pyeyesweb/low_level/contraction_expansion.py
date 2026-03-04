@@ -13,7 +13,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 from scipy.spatial import QhullError
 
-from pyeyesweb.low_level.base import StaticFeature
+from pyeyesweb.data_models.base import StaticFeature
 from pyeyesweb.data_models.results import FeatureResult
 
 
@@ -58,7 +58,7 @@ class BoundingBoxFilledArea(StaticFeature):
         )))
         return surface_area, corners
 
-    def _compute_frame(self, frame_data: np.ndarray) -> ContractionExpansionResult:
+    def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
         hull_area, hull_points = self._get_hull_data(frame_data)
         bbox_area, bbox_points = self._get_aabb_data(frame_data)
 
@@ -90,7 +90,7 @@ class EllipsoidSphericity(StaticFeature):
 
         return radii[sort_indices], eigenvectors[:, sort_indices]
 
-    def _compute_frame(self, frame_data: np.ndarray) -> ContractionExpansionResult:
+    def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
         radii, rotation = self._fit_ellipsoid_pca(frame_data)
         a, b, c = radii[0], radii[1], radii[2]
 
@@ -103,7 +103,7 @@ class EllipsoidSphericity(StaticFeature):
 class PointsDensity(StaticFeature):
     """Computes the Points Density (Dispersion) for a sequence of skeletal frames."""
 
-    def _compute_frame(self, frame_data: np.ndarray) -> ContractionExpansionResult:
+    def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
         if len(frame_data) == 0:
             return ContractionExpansionResult(points_density=0.0)
 

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Literal, List, Optional
 import numpy as np
 
-from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
 from pyeyesweb.utils.signal_processing import apply_savgol_filter
 from pyeyesweb.utils.math_utils import compute_sparc, compute_jerk_rms, normalize_signal
@@ -39,7 +39,7 @@ class Smoothness(DynamicFeature):
             return signal
         return apply_savgol_filter(signal, self.rate_hz)
 
-    def _compute_window(self, window_data: np.ndarray) -> SmoothnessResult:
+    def compute(self, window_data: np.ndarray) -> SmoothnessResult:
         if window_data.size != window_data.shape[0]:
             raise ValueError("Smoothness expects a 1D speed profile.")
 

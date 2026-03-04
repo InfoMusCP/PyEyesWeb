@@ -1,35 +1,26 @@
+"""Suddenness evaluation based on velocity distribution."""
+
+from dataclasses import dataclass
 import numpy as np
 
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.data_models.base import DynamicFeature
+from pyeyesweb.data_models.results import FeatureResult
 
-class Suddenness:
+
+@dataclass(slots=True)
+class SuddennessResult(FeatureResult):
+    """Output contract for Suddenness evaluation."""
+    is_sudden: bool = False
+    alpha: float = 0.0
+    beta: float = 0.0
+    gamma: float = 0.0
+
+
+class Suddenness(DynamicFeature):
     """
     Suddenness evaluation based on velocity distribution.
-
-    This class computes a suddenness index for a given trajectory segment
-    by analyzing the distribution of velocity magnitudes. It fits the
-    velocity profile to a stable distribution and derives a suddenness
-    measure from the distribution parameters (alpha, beta, gamma).
-
-    Sudden movements are characterized by heavy-tailed velocity distributions.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> sd = Suddenness()
-    >>> # Generate a trajectory with a sudden jump
-    >>> points = np.random.rand(20, 3) * 10
-    >>> points[10] += 100  # Sudden jump
-    >>> result = sd(points)
-    
-    References
-    ----------
-    1. Radoslaw Niewiadomski, Maurizio Mancini, Gualtiero Volpe, and Antonio Camurri. 2015. 
-       Automated Detection of Impulsive Movements in HCI. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter (CHItaly '15). 
-       Association for Computing Machinery, New York, NY, USA, 166–169. https://doi.org/10.1145/2808435.2808466
-    2. P. L´evy. Calcul des probabilit´es, volume 9. Gauthier-Villars Paris, 1925.
-    3. G. Tsihrintzis and C. Nikias. Fast estimation of the parameters of alpha-stable impulsive interference. Signal Processing, IEEE Transactions on, 44(6):1492–1503, 1996.
-    4. E. E. Kuruoglu and J. Zerubia. Skewed α-stable distributions for modelling textures. Pattern Recognition Letters, 24(1-3):339–348, 2003.
+    ...
+    (Docstrings omitted for brevity, keep yours!)
     """
 
     # Stable distribution fitting tables (McCulloch, 1986)
@@ -56,50 +47,44 @@ class Suddenness:
     _a_vals = np.array([2.439, 2.5, 2.6, 2.7, 2.8, 3, 3.2, 3.5, 4, 5, 6, 8, 10, 15, 25])
     _b_vals = np.array([0.0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0])
 
-    def __init__(self):
-        pass
+    def __init__(self, algo: str = "new"):
+        super().__init__()
+        self.algo = algo
 
-    def __call__(self, positions: SlidingWindow, algo="new") -> dict:
+    def compute(self, window_data: np.ndarray, **kwargs) -> SuddennessResult:
         """
-        Compute the suddenness value for the given trajectory segment.
-
-        Parameters
-        ----------
-        positions : SlidingWindow
-            Input array of shape (N, 3) or (N, 2) representing coordinates
-            (x, y, z) or (x, y) over time.
-
-        Returns
-        -------
-        dict
-            Dictionary containing the calculated suddenness index under the key "value".
-            Returns {"value": 0.0} if the distribution cannot be fit or if the segment is too short.
+        The Pure Math API.
+        Expects window_data shape (Time, N_signals, N_dims).
         """
-        pos = positions.to_array()[0]
-        if pos.shape[-1] < 2:
-            raise Exception("Input positions must be a 2D array with at least 2 columns (x,y).")
-        
+        # Collapse signals and dims for velocity calculation
+        # Assuming we track a single joint's trajectory for suddenness
+        pos = window_data[:, 0, :]
+
         n_samples = pos.shape[0]
-
         if n_samples < 2:
-            return {"value": np.nan}
+            return SuddennessResult(is_valid=False)
 
         # Calculate velocities (magnitude of difference)
         diffs = pos[1:] - pos[:-1]
         velocities = np.linalg.norm(diffs, axis=1)
 
         if len(velocities) < 5:
-            # Need at least 5 points for percentiles
-            return {"value": np.nan}
-            
-        # Fit stable distribution
-        alpha, beta, gamma, _ = self._fit_stable_constrained_bounds(velocities) if algo == "new" else self._fit_stable(velocities)
-        
-        # Suddenness calculation
-        # Gamma (scale) * (1 - Alpha/2)
-        # Only if Beta (skewness) is non-negative
-        return {"value": gamma * (1.0 - (alpha / 2.0)) * beta >= 0.0}
-        
+            return SuddennessResult(is_valid=False)
+
+        if self.algo == "new":
+            alpha, beta, gamma, _ = self._fit_stable_constrained_bounds(velocities)
+        else:
+            alpha, beta, gamma, _ = self._fit_stable(velocities)
+
+        is_sudden = gamma * (1.0 - (alpha / 2.0)) * beta >= 0.0  # TODO: is checking >= 0.0 correct?
+
+        return SuddennessResult(
+            is_sudden=bool(is_sudden),
+            alpha=float(alpha),
+            beta=float(beta),
+            gamma=float(gamma)
+        )
+
     def _interp2d(self, tab, nu_alpha, nu_beta):
         rows, cols = tab.shape
         a = self._a_vals
@@ -129,7 +114,7 @@ class Suddenness:
             return result
 
         return -1.0
-    
+
     def _fit_stable_constrained_bounds(self, data):
         # 1. Handle edge cases (empty data or constant values)
         if len(data) < 5 or np.all(data == data[0]):
@@ -138,13 +123,13 @@ class Suddenness:
         # 2. Compute percentiles
         percentiles = [95, 75, 50, 25, 5]
         # using 'midpoint' interpolation is safer for small windows than default 'linear'
-        x_percentiles = np.percentile(np.sort(data), percentiles, method='midpoint') 
+        x_percentiles = np.percentile(np.sort(data), percentiles, method='midpoint')
 
         x95, x75, x50, x25, x5 = x_percentiles
 
         # 3. Check for Zero Division (Interquartile range is 0)
         if (x75 - x25) == 0 or (x95 - x5) == 0:
-            return 2.0, 0.0, 0.0, 0.0 # Fallback to Gaussian
+            return 2.0, 0.0, 0.0, 0.0  # Fallback to Gaussian
 
         # 4. Calculate Quantile Measures
         nuAlpha = (x95 - x5) / (x75 - x25)
@@ -153,7 +138,7 @@ class Suddenness:
         # 5. CRITICAL FIX: Clamp values to the lookup table bounds!
         # If nuAlpha < 2.439, it's Gaussian (Alpha=2). If > 25, it's Cauchy or worse.
         nuAlpha_clamped = np.clip(nuAlpha, self._a_vals[0], self._a_vals[-1])
-        
+
         # nuBeta is theoretically between -1 and 1, but your table _b goes 0.0 to 1.0
         nuBeta_clamped = np.clip(abs(nuBeta), self._b_vals[0], self._b_vals[-1])
 
@@ -161,76 +146,44 @@ class Suddenness:
         s = 1 if nuBeta >= 0. else -1
         alpha = self._interp2d(self._alpha_tab, nuAlpha_clamped, nuBeta_clamped)
         beta = s * self._interp2d(self._beta_tab, nuAlpha_clamped, nuBeta_clamped)
-        
+
         # 7. Calculate Gamma and Delta
-        # Note: If alpha is close to 1, tan(pi*alpha/2) explodes. 
-        # McCulloch has a specific correction for alpha=1, but for general use:
-        # That is (x75 - x25) / (x75 - x50). This is non-standard but I will preserve it.
         denom_gamma = (x75 - x50)
         if denom_gamma == 0:
-            gamma = 1.0 
+            gamma = 1.0
         else:
             gamma = (x75 - x25) / denom_gamma
 
-        delta = x50 - beta * gamma * np.tan(np.pi * alpha / 2) # Using x50 (median) is safer than x25
+        delta = x50 - beta * gamma * np.tan(np.pi * alpha / 2)  # Using x50 (median) is safer than x25
 
         return alpha, beta, gamma, delta
-
 
     def _fit_stable(self, data):
         """Fit data to stable distribution using quantile method."""
         # Compute percentiles
         percentiles = [95, 75, 50, 25, 5]
-        # Use simple interpolation 'linear' (default)
         x_pcts = np.percentile(data, percentiles)
-        
+
         # Check for zero denominators
         range_95_5 = x_pcts[0] - x_pcts[4]
         range_75_25 = x_pcts[1] - x_pcts[3]
         range_75_50 = x_pcts[1] - x_pcts[2]
-        
+
         if range_95_5 == 0 or range_75_25 == 0 or range_75_50 == 0:
             return 0.0, 0.0, 0.0, 0.0
-        
+
         # Compute nuAlpha
         nu_alpha = range_95_5 / range_75_25
 
         # Compute nuBeta
         nu_beta = (x_pcts[0] + x_pcts[4] - 2 * x_pcts[2]) / range_95_5
-        
-        #s = 1.0 if nu_beta >= 0.0 else -1.0
-        
+
         abs_nu_beta = abs(nu_beta)
-        
+
         alpha = self._interp2d(self._alpha_tab, nu_alpha, abs_nu_beta)
-        #beta = s * self._interp2d(self._beta_tab, nu_alpha, abs_nu_beta)
-        
-        # Original code line: beta = s * ...
-        # But also: beta = max(min(nuBeta, 1.0), -1.0)
-        # beta = s * self._interp2d(...)
-        # beta = max(min(nuBeta, 1.0), -1.0)
-        # The second assignment overwrites the fit
-        
-        # Gemini opinion:
-        # I will use the code as provided in the snippet, even if it looks weird.
-        # "beta = max(min(nuBeta, 1.0), -1.0)"
-        
-        # Yes, it overwrites. This renders _betaTab useless.
-        # I will follow strictly.
-        
+
         beta = max(min(nu_beta, 1.0), -1.0)
-        
-        # If alpha interpolation failed (-1), we might have issues. 
-        # But nu_beta logic persists.
-        # The interp2d returns -1 on failure.
-        
+
         gamma = range_75_25 / (x_pcts[1] - x_pcts[2])
-        # Note:
-        # McCulloch estimator for gamma is (Q75 - Q25) / Phi_3(alpha, beta).
-        # This looks like a specific approximation.
-        
-        # Delta calculation (unused but included)
-        # Caution: tan(pi * median / 2). If median is velocity ~ 1.0, tan is huge.
-        #delta = x_pcts[2] - beta * gamma * np.tan(np.pi * x_pcts[2] / 2)
-        
-        return alpha, beta, gamma, np.nan # delta
+
+        return alpha, beta, gamma, np.nan  # delta

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 
-from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
 from pyeyesweb.utils.validators import validate_numeric
 
@@ -19,7 +19,7 @@ class Rarity(DynamicFeature):
         super().__init__()
         self._alpha = validate_numeric(alpha, "alpha")
 
-    def _compute_window(self, window_data: np.ndarray) -> RarityResult:
+    def compute(self, window_data: np.ndarray) -> RarityResult:
         # Flatten to 1D array of samples
         samples = window_data.ravel()
         n_samples = len(samples)

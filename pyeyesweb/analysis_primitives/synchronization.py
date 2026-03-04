@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 
-from pyeyesweb.low_level.base import DynamicFeature
+from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
 from pyeyesweb.utils.validators import validate_numeric
 from pyeyesweb.utils.signal_processing import compute_phase_synchronization, validate_and_normalize_filter_params
@@ -21,7 +21,7 @@ class Synchronization(DynamicFeature):
         self.phase_threshold = validate_numeric(phase_threshold, 'phase_threshold', min_val=0, max_val=1)
         self.filter_params = validate_and_normalize_filter_params(filter_params)
 
-    def _compute_window(self, window_data: np.ndarray) -> SynchronizationResult:
+    def compute(self, window_data: np.ndarray) -> SynchronizationResult:
         # Flatten to (Time, Signals)
         data = window_data.reshape(window_data.shape[0], -1)
 
