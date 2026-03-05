@@ -1,134 +1,151 @@
+from abc import ABC, abstractmethod
 from io import StringIO
 import pandas as pd
 import numpy as np
 from scipy.signal import savgol_filter
 import ast
 
-def load_smoothed_benchmark_data(
-        tsv_path: str,
-        bones_path: str = None,
-        fps: float = 100.0,
-        rolling_window: int = 5,
-        savgol_len: int = 70,
-        savgol_poly: int = 3
-):
-    """Loads, cleans, and applies Savitzky-Golay smoothing (designed for Kinect data)."""
-    print(f"Reading file: {tsv_path}")
 
-    # Read the data, skipping the 4 header rows based on your notebook
-    df = pd.read_csv(tsv_path, skiprows=4, sep='\t')
+class BaseMocapLoader(ABC):
+    """Abstract base class defining the standard loading pipeline for any MoCap sensor."""
 
-    # Filter columns to keep only coordinates, ignoring speed/dist metrics
-    cols_to_keep = [col for col in df.columns if (col.endswith("x") or col.endswith("y") or col.endswith("z"))
-                    and not "speed" in col and not "dist" in col][2:]
-    df = df[cols_to_keep].drop_duplicates()
+    def load(self, tsv_path: str, bones_path: str = None, fps: float = 100.0):
+        """The Master Pipeline. This dictates the order of operations."""
+        print(f"Reading file: {tsv_path}")
+        df = self._read_file(tsv_path)
 
-    print("Cleaning missing values...")
-    df.replace(0, np.nan, inplace=True)
-    df.interpolate(method='linear', inplace=True)
-    df.ffill(inplace=True)
-    df.bfill(inplace=True)
+        print("Cleaning missing values...")
+        df = self._clean_missing_values(df)
 
-    # Extract axes
-    markersPosTableX = df.iloc[:, 0::3]
-    markersPosTableY = df.iloc[:, 1::3]  # Based on your notebook mapping
-    markersPosTableZ = df.iloc[:, 2::3]
+        print("Extracting and sorting marker axes...")
+        dfX, dfY, dfZ, marker_names = self._extract_markers(df)
 
-    # Clean names by removing "out" and sort alphabetically
-    clean_name = lambda name: name.replace("out", "")
-    markersPosTableX = markersPosTableX.rename(columns={c: clean_name(c) for c in markersPosTableX.columns})
-    markersPosTableY = markersPosTableY.rename(columns={c: clean_name(c) for c in markersPosTableY.columns})
-    markersPosTableZ = markersPosTableZ.rename(columns={c: clean_name(c) for c in markersPosTableZ.columns})
+        print("Building position tensor...")
+        pos_tensor = self._build_position_tensor(dfX, dfY, dfZ)
 
-    markersPosTableX = markersPosTableX.reindex(sorted(markersPosTableX.columns), axis=1)
-    markersPosTableY = markersPosTableY.reindex(sorted(markersPosTableY.columns), axis=1)
-    markersPosTableZ = markersPosTableZ.reindex(sorted(markersPosTableZ.columns), axis=1)
+        print("Computing Kinematics (Velocity)...")
+        vel_tensor = self._compute_velocity(pos_tensor, fps)
 
-    marker_names = [col[:-1] for col in markersPosTableX.columns]
+        print("Parsing skeleton bones...")
+        bones_edges = self._parse_bones(bones_path, marker_names)
 
-    print(f"Applying Savitzky-Golay smoothing (window={savgol_len}, poly={savgol_poly})...")
-    markersPosX = savgol_filter(
-        markersPosTableX.rolling(window=rolling_window, min_periods=1, center=True).mean().values,
-        window_length=savgol_len, polyorder=savgol_poly, axis=0)
-    markersPosY = savgol_filter(
-        markersPosTableY.rolling(window=rolling_window, min_periods=1, center=True).mean().values,
-        window_length=savgol_len, polyorder=savgol_poly, axis=0)
-    markersPosZ = savgol_filter(
-        markersPosTableZ.rolling(window=rolling_window, min_periods=1, center=True).mean().values,
-        window_length=savgol_len, polyorder=savgol_poly, axis=0)
+        return pos_tensor, vel_tensor, marker_names, bones_edges
 
-    # Create Master Tensors
-    pos_tensor = np.stack([markersPosX, markersPosY, markersPosZ], axis=-1)
+    # ==========================================
+    # ABSTRACT METHODS (To be defined by subclasses)
+    # ==========================================
+    @abstractmethod
+    def _read_file(self, path: str) -> pd.DataFrame:
+        pass
 
-    vel_tensor = np.zeros_like(pos_tensor)
-    vel_tensor[1:] = (pos_tensor[1:] - pos_tensor[:-1]) * fps
+    @abstractmethod
+    def _extract_markers(self, df: pd.DataFrame) -> tuple:
+        pass
 
-    # Parse Bones
-    bones_edges = []
-    if bones_path:
-        try:
-            with open(bones_path, "r") as f:
-                bones_names = [ast.literal_eval(l.strip()) for l in f.readlines() if l.strip()]
-            bones_edges = [[marker_names.index(b[0]), marker_names.index(b[1])]
-                           for b in bones_names if b[0] in marker_names and b[1] in marker_names]
-        except Exception as e:
-            print(f"Warning: Skeleton not mapped properly. {e}")
+    @abstractmethod
+    def _build_position_tensor(self, dfX: pd.DataFrame, dfY: pd.DataFrame, dfZ: pd.DataFrame) -> np.ndarray:
+        pass
 
-    return pos_tensor, vel_tensor, marker_names, np.array(bones_edges)
+    # ==========================================
+    # SHARED METHODS (Write once, use everywhere)
+    # ==========================================
+    def _clean_missing_values(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df.copy()
+        df.replace(0, np.nan, inplace=True)
+        df.interpolate(method='linear', inplace=True)
+        df.ffill(inplace=True)
+        df.bfill(inplace=True)
+        return df
+
+    def _extract_and_sort_axes(self, df: pd.DataFrame, name_cleaner_func) -> tuple:
+        dfX = df.iloc[:, 0::3].rename(columns=name_cleaner_func)
+        dfY = df.iloc[:, 1::3].rename(columns=name_cleaner_func)
+        dfZ = df.iloc[:, 2::3].rename(columns=name_cleaner_func)
+
+        dfX = dfX.reindex(sorted(dfX.columns), axis=1)
+        dfY = dfY.reindex(sorted(dfY.columns), axis=1)
+        dfZ = dfZ.reindex(sorted(dfZ.columns), axis=1)
+
+        marker_names = list(dfX.columns)
+        return dfX, dfY, dfZ, marker_names
+
+    def _compute_velocity(self, pos_tensor: np.ndarray, fps: float) -> np.ndarray:
+        vel_tensor = np.zeros_like(pos_tensor)
+        vel_tensor[1:] = (pos_tensor[1:] - pos_tensor[:-1]) * fps
+        return vel_tensor
+
+    def _parse_bones(self, bones_path: str, marker_names: list) -> np.ndarray:
+        bones_edges = []
+        if bones_path:
+            try:
+                with open(bones_path, "r") as f:
+                    bones_names = [ast.literal_eval(l.strip()) for l in f.readlines() if l.strip()]
+                bones_edges = [[marker_names.index(b[0]), marker_names.index(b[1])]
+                               for b in bones_names if b[0] in marker_names and b[1] in marker_names]
+            except Exception as e:
+                print(f"Warning: Skeleton not mapped properly. {e}")
+        return np.array(bones_edges)
 
 
-def load_benchmark_data(tsv_path: str, bones_path: str = None, fps: float = 100.0):
-    """Loads and cleans Qualisys TSV data and bone hierarchies for benchmarking."""
-    print(f"Reading file: {tsv_path}")
-    with open(tsv_path, 'r') as f:
-        lines = f.readlines()
+# ==========================================
+# SENSOR-SPECIFIC IMPLEMENTATIONS
+# ==========================================
 
-    data_start_idx = next(i for i, line in enumerate(lines) if line.startswith("Frame"))
-    header = lines[data_start_idx].strip().split('\t')
-    data_lines = lines[data_start_idx + 1:]
+class KinectLoader(BaseMocapLoader):
+    """Loader specifically designed for Kinect TSV exports with smoothing and axis-swapping."""
 
-    df = pd.read_csv(StringIO(''.join(data_lines)), sep='\t', names=header)
-    df = df.iloc[:, 3:]
+    def __init__(self, rolling_window: int = 5, savgol_len: int = 70, savgol_poly: int = 3):
+        self.rolling_window = rolling_window
+        self.savgol_len = savgol_len
+        self.savgol_poly = savgol_poly
 
-    print("Cleaning data...")
-    df.replace(0, np.nan, inplace=True)
-    df.interpolate(method='linear', inplace=True)
-    df.ffill(inplace=True)
-    df.bfill(inplace=True)
+    def _read_file(self, path: str) -> pd.DataFrame:
+        # Kinect specific reading logic
+        df = pd.read_csv(path, skiprows=4, sep='\t')
+        cols_to_keep = [col for col in df.columns if (col.endswith("x") or col.endswith("y") or col.endswith("z"))
+                        and "speed" not in col and "dist" not in col][2:]
+        return df[cols_to_keep].drop_duplicates()
 
-    # Extract marker position tables
-    markersPosTableX = df.iloc[:, 0::3]
-    markersPosTableY = df.iloc[:, 1::3]
-    markersPosTableZ = df.iloc[:, 2::3]
+    def _extract_markers(self, df: pd.DataFrame) -> tuple:
+        clean_func = lambda name: name.replace("out", "")[:-1]
+        return self._extract_and_sort_axes(df, clean_func)
 
-    # Sort columns alphabetically by marker name
-    markersPosTableX = markersPosTableX.reindex(sorted(markersPosTableX.columns), axis=1)
-    markersPosTableY = markersPosTableY.reindex(sorted(markersPosTableY.columns), axis=1)
-    markersPosTableZ = markersPosTableZ.reindex(sorted(markersPosTableZ.columns), axis=1)
+    def _build_position_tensor(self, dfX, dfY, dfZ) -> np.ndarray:
+        print(f"Applying Savitzky-Golay smoothing (window={self.savgol_len}, poly={self.savgol_poly})...")
 
-    # Clean names
-    clean_name = lambda name: name[:-2].strip()
-    markersPosTableX = markersPosTableX.rename(columns={c: clean_name(c) for c in markersPosTableX})
+        def smooth(df_axis):
+            return savgol_filter(
+                df_axis.rolling(window=self.rolling_window, min_periods=1, center=True).mean().values,
+                window_length=self.savgol_len, polyorder=self.savgol_poly, axis=0
+            )
 
-    marker_names = list(markersPosTableX.columns)
+        posX = smooth(dfX)
+        posY = smooth(dfY)
+        posZ = smooth(dfZ)
 
-    # Create Master Position Tensor
-    pos_tensor = np.stack([markersPosTableX.values, markersPosTableY.values, markersPosTableZ.values], axis=-1)
+        # Invert depth and swap axes for Kinect
+        return np.stack([posX, -posZ, posY], axis=-1)
 
-    # Calculate Velocity
-    print("Computing Kinematics (Velocity)...")
-    vel_tensor = np.zeros_like(pos_tensor)
-    vel_tensor[1:] = (pos_tensor[1:] - pos_tensor[:-1]) * fps
 
-    # Parse Bones
-    bones_edges = []
-    if bones_path:
-        try:
-            with open(bones_path, "r") as f:
-                bones_names = [ast.literal_eval(l.strip()) for l in f.readlines() if l.strip()]
-            bones_edges = [[marker_names.index(b[0]), marker_names.index(b[1])]
-                           for b in bones_names if b[0] in marker_names and b[1] in marker_names]
-        except FileNotFoundError:
-            print(f"Warning: {bones_path} not found. Using empty skeleton.")
+class QualisysLoader(BaseMocapLoader):
+    """Loader specifically designed for raw Qualisys TSV exports."""
 
-    return pos_tensor, vel_tensor, marker_names, np.array(bones_edges)
+    def _read_file(self, path: str) -> pd.DataFrame:
+        # EXACT Qualisys reading logic
+        with open(path, 'r') as f:
+            lines = f.readlines()
+
+        data_start_idx = next(i for i, line in enumerate(lines) if line.startswith("Frame"))
+        header = lines[data_start_idx].strip().split('\t')
+        data_lines = lines[data_start_idx + 1:]
+
+        df = pd.read_csv(StringIO(''.join(data_lines)), sep='\t', names=header)
+        return df.iloc[:, 3:]
+
+    def _extract_markers(self, df: pd.DataFrame) -> tuple:
+        clean_func = lambda name: name[:-2].strip()
+        return self._extract_and_sort_axes(df, clean_func)
+
+    def _build_position_tensor(self, dfX, dfY, dfZ) -> np.ndarray:
+        # Qualisys does not need smoothing or axis swapping.
+        return np.stack([dfX.values, dfY.values, dfZ.values], axis=-1)

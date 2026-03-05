@@ -3,7 +3,7 @@ from tqdm import tqdm
 from pathlib import Path
 
 # Loaders and Animator
-from utils.data_loader import load_benchmark_data, load_smoothed_benchmark_data
+from utils.data_loader import QualisysLoader, KinectLoader
 from utils.animator import BenchmarkAnimator
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 
@@ -14,7 +14,7 @@ from pyeyesweb.low_level.direction_change import DirectionChange
 # 1. SETUP & CONFIGURATION
 # ==========================================
 data_type = "kinect"  # Using Kinect data
-tsv_file = "data/trial00005.txt"
+tsv_file = "data/trial00007.txt"
 bones_file = "data/bones_from_names.txt"
 
 # Parameters to tune!
@@ -27,11 +27,16 @@ sat_slope = 0.09
 # 2. LOAD DATA
 # ==========================================
 if data_type == "qualisys":
-    pos_tensor, _, marker_names, bones_edges = load_benchmark_data(tsv_file, bones_file)
+    loader = QualisysLoader()
 else:
-    pos_tensor, _, marker_names, bones_edges = load_smoothed_benchmark_data(tsv_file, bones_file)
+    # You can even override smoothing parameters cleanly!
+    loader = KinectLoader(rolling_window=5, savgol_len=70)
 
-N_frames, N_joints, N_dims = pos_tensor.shape
+pos_tensor, vel_tensor, marker_names, bones_edges = loader.load(tsv_file, bones_file, fps=30.0)
+
+N_frames = pos_tensor.shape[0]
+N_joints = pos_tensor.shape[1]
+N_dims = pos_tensor.shape[2]
 
 # ==========================================
 # 3. INITIALIZE FEATURE & WINDOW
@@ -89,7 +94,7 @@ file_stem = Path(tsv_file).stem
 output_filename = f"result_{file_stem}_DirectionChange_{data_type}.mp4"
 
 # Use the new save_video method which includes the tqdm progress bar!
-animator.save_video(save_path=output_filename, video_fps=30)
+animator.save_video(save_path=f"results/{output_filename}", video_fps=30)
 
 # Optional: If you also want to interact with it live after saving, uncomment the line below:
 # animator.show()

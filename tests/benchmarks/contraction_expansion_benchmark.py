@@ -3,7 +3,7 @@ from tqdm import tqdm
 from pathlib import Path
 
 # Import both loaders
-from utils.data_loader import load_benchmark_data, load_smoothed_benchmark_data
+from utils.data_loader import QualisysLoader, KinectLoader
 from utils.animator import BenchmarkAnimator
 from pyeyesweb.low_level.contraction_expansion import (
     BoundingBoxFilledArea,
@@ -13,15 +13,17 @@ from pyeyesweb.low_level.contraction_expansion import (
 
 # 1. Configuration
 data_type = "kinect"  # Set to "kinect" to use the smoothed loader
-tsv_file = "data/trial00005.txt" # Or .txt depending on your Kinect file
+tsv_file = "data/trial00007.txt" # Or .txt depending on your Kinect file
 bones_file = "data/bones_from_names.txt"
 
 # 2. Load Data using the chosen pipeline
 if data_type == "qualisys":
-    pos_tensor, _, marker_names, bones_edges = load_benchmark_data(tsv_file, bones_file)
+    loader = QualisysLoader()
 else:
-    pos_tensor, _, marker_names, bones_edges = load_smoothed_benchmark_data(tsv_file, bones_file)
+    # You can even override smoothing parameters cleanly!
+    loader = KinectLoader(rolling_window=5, savgol_len=70)
 
+pos_tensor, vel_tensor, marker_names, bones_edges = loader.load(tsv_file, bones_file, fps=30.0)
 N_frames = pos_tensor.shape[0]
 
 # 3. Setup Features
@@ -71,4 +73,4 @@ output_filename = f"result_{file_stem}_Contraction_{data_type}.mp4"
 
 # Pass the save path into the show method to render the video
 print(f"Starting animation save to: {output_filename}")
-animator.save_video(save_path=output_filename, video_fps=30)
+animator.save_video(save_path=f"results/{output_filename}", video_fps=30)

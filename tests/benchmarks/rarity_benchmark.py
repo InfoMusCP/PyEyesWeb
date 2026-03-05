@@ -3,30 +3,41 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
-# Import both loaders
-from utils.data_loader import load_benchmark_data, load_smoothed_benchmark_data
+# Import loaders and animator
+from utils.data_loader import QualisysLoader, KinectLoader
 from utils.animator import BenchmarkAnimator
 from pyeyesweb.data_models.sliding_window import SlidingWindow
+
+# The Feature
 from pyeyesweb.analysis_primitives.rarity import Rarity
 
-# 1. Configuration
-data_type = "qualisys"  # Change to "kinect" to use the smoothed loader
-tsv_file = "data/trial0001_impulsive.tsv"
+# ==========================================
+# 1. SETUP & CONFIGURATION
+# ==========================================
+data_type = "qualisys"  # Change to "qualisys" to use the raw motion capture loader
+tsv_file = "data/trial0003_impulsive.tsv"  # Adjust extension based on your data (.tsv or .txt)
 bones_file = "data/bones_from_names.txt"
 window_lengths = [50, 100, 150]
 
 # Adjust joint names depending on your tracking system
 joint_names = ["HAND_RIGHT", "HAND_LEFT"] if data_type == "qualisys" else ["Rightwrist", "Leftwrist"]
 
-# 2. Load Data using the chosen pipeline
+# ==========================================
+# 2. LOAD DATA
+# ==========================================
 if data_type == "qualisys":
-    pos_tensor, vel_tensor, marker_names, bones_edges = load_benchmark_data(tsv_file, bones_file)
+    loader = QualisysLoader()
 else:
-    pos_tensor, vel_tensor, marker_names, bones_edges = load_smoothed_benchmark_data(tsv_file, bones_file)
+    # You can cleanly override smoothing parameters here
+    loader = KinectLoader(rolling_window=5, savgol_len=70)
+
+pos_tensor, vel_tensor, marker_names, bones_edges = loader.load(tsv_file, bones_file, fps=100.0)
 
 N_frames = pos_tensor.shape[0]
 
-# 3. Compute Features
+# ==========================================
+# 3. INITIALIZE FEATURE & COMPUTE
+# ==========================================
 print("Computing Rarity features...")
 rarity_feature = Rarity(alpha=0.5)
 
@@ -43,20 +54,26 @@ for w in window_lengths:
             continue
 
         joint_idx = marker_names.index(joint)
+
+        # 1D Sliding window for speed (magnitude of velocity)
         sw_speed = SlidingWindow(max_length=w, n_signals=1, n_dims=1)
         results = np.zeros(N_frames)
 
         for frame in tqdm(range(N_frames), desc=f"Processing {joint} (w={w})"):
+            # Extract speed for this specific joint
             speed = np.linalg.norm(vel_tensor[frame, joint_idx, :])
             sw_speed.append([[speed]])
 
-            # Using the streaming __call__ API
+            # Compute using the streaming __call__ API
             res = rarity_feature(sw_speed)
             results[frame] = res.rarity if res.is_valid else 0.0
 
+        # Store the computed array in the dictionary for the animator
         feature_dict[subplot_title][joint] = results
 
-# 4. Animate & Save!
+# ==========================================
+# 4. RENDER & SAVE ANIMATION
+# ==========================================
 animator = BenchmarkAnimator(
     pos_tensor=pos_tensor,
     feature_dict=feature_dict,
@@ -65,9 +82,12 @@ animator = BenchmarkAnimator(
     title=f"Speed Rarity Analysis ({data_type.capitalize()})"
 )
 
-# Dynamically generate a clean save path (e.g., "result_trial0001_impulsive_Rarity.mp4")
+# Dynamically generate a clean save path (e.g., "result_trial00005_Rarity_kinect.mp4")
 file_stem = Path(tsv_file).stem
 output_filename = f"result_{file_stem}_Rarity_{data_type}.mp4"
 
-# Pass the save path into the show method
-animator.show(save_path=output_filename)
+# Use the upgraded save_video method with the built-in progress bar!
+animator.save_video(save_path=f"results/{output_filename}", video_fps=30)
+
+# Optional: If you want to interact live after the video renders:
+# animator.show()
