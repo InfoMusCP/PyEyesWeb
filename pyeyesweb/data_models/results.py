@@ -6,11 +6,10 @@ from typing import Optional, Dict, Any
 class FeatureResult:
     """Standardized base output contract for all PyEyesWeb features."""
     is_valid: bool = True
-    index: Optional[float] = None
 
     def to_flat_dict(self, prefix: str = "") -> Dict[str, Any]:
         """Flattens the dataclass, ignoring uncalculated (None) metrics."""
-        raw_dict = asdict(self)
+        raw_dict = asdict(self)  # type: ignore
         flat = {}
         for key, value in raw_dict.items():
             if value is None:
