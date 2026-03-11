@@ -1,10 +1,10 @@
 from .sliding_window import SlidingWindow
-from .base import BaseLowLevelFeature, StaticFeature, DynamicFeature
+from .base import BaseFeature, StaticFeature, DynamicFeature
 from .results import FeatureResult
 
 __all__ = [
     "SlidingWindow",
-    "BaseLowLevelFeature",
+    "BaseFeature",
     "StaticFeature",
     "DynamicFeature",
     "FeatureResult",

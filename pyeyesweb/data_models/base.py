@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from pyeyesweb.data_models.results import FeatureResult
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+from .results import FeatureResult
+from .sliding_window import SlidingWindow
 
 
-class BaseLowLevelFeature(ABC):
+class BaseFeature(ABC):
     """The root class for all low-level features."""
 
     def __init__(self):
@@ -30,13 +30,13 @@ class BaseLowLevelFeature(ABC):
         pass
 
 
-class StaticFeature(BaseLowLevelFeature):
+class StaticFeature(BaseFeature):
     """
     Base class for features computed on a single frame (e.g., Posture, Density).
     """
 
     @abstractmethod
-    def compute(self, frame_data: np.ndarray) -> FeatureResult:
+    def compute(self, data: np.ndarray) -> FeatureResult:
         """
         The actual mathematical logic.
         Expects a 2D array of shape (N_nodes, N_dims).
@@ -60,13 +60,13 @@ class StaticFeature(BaseLowLevelFeature):
         return self.compute(frame_data)
 
 
-class DynamicFeature(BaseLowLevelFeature):
+class DynamicFeature(BaseFeature):
     """
     Base class for features that require a time series (e.g., Smoothness, DirectionChange).
     """
 
     @abstractmethod
-    def compute(self, window_data: np.ndarray) -> FeatureResult:
+    def compute(self, data: np.ndarray) -> FeatureResult:
         """
         The actual mathematical logic.
         Expects a 3D tensor of shape (Time, N_nodes, N_dims).
