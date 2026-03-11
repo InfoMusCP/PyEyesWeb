@@ -126,21 +126,127 @@ class KinectLoader(BaseMocapLoader):
         # Invert depth and swap axes for Kinect
         return np.stack([posX, -posZ, posY], axis=-1)
 
+class KinectV2Loader(BaseMocapLoader):
+    """Loader for base_geometric_labelled_set_3d_double mocap format."""
+
+    def __init__(self, rolling_window: int = 5, savgol_len: int = 70, savgol_poly: int = 3):
+        self.rolling_window = rolling_window
+        self.savgol_len = savgol_len
+        self.savgol_poly = savgol_poly
+
+    def _read_file(self, path: str):
+
+        frames = []
+        marker_names = None
+
+        with open(path, "r") as f:
+            lines = f.readlines()
+
+        # skip first 3 header lines
+        for line in lines[3:]:
+            tokens = line.strip().split()
+
+            n_markers = int(tokens[4])
+            idx = 5
+
+            frame_dict = {}
+            names = []
+
+            for _ in range(n_markers):
+
+                label = tokens[idx]
+                typ = tokens[idx + 1]
+
+                x = float(tokens[idx + 2])
+                y = float(tokens[idx + 3])
+                z = float(tokens[idx + 4])
+
+                # rotations (ignored here but parsed)
+                rx = float(tokens[idx + 5])
+                ry = float(tokens[idx + 6])
+                rz = float(tokens[idx + 7])
+
+                idx += 8
+
+                frame_dict[label + "_x"] = x
+                frame_dict[label + "_y"] = y
+                frame_dict[label + "_z"] = z
+
+                names.append(label)
+
+            if marker_names is None:
+                marker_names = names
+
+            frames.append(frame_dict)
+
+        self.marker_names = marker_names
+
+        return pd.DataFrame(frames)
+
+    def _extract_markers(self, df: pd.DataFrame):
+
+        dfX = df[[c for c in df.columns if c.endswith("_x")]]
+        dfY = df[[c for c in df.columns if c.endswith("_y")]]
+        dfZ = df[[c for c in df.columns if c.endswith("_z")]]
+
+        # remove suffix
+        dfX.columns = [c[:-2] for c in dfX.columns]
+        dfY.columns = [c[:-2] for c in dfY.columns]
+        dfZ.columns = [c[:-2] for c in dfZ.columns]
+
+        marker_names = list(dfX.columns)
+
+        return dfX, dfY, dfZ, marker_names
+
+    def _build_position_tensor(self, dfX, dfY, dfZ) -> np.ndarray:
+
+        print(f"Applying Savitzky-Golay smoothing (window={self.savgol_len}, poly={self.savgol_poly})...")
+
+        def smooth(df_axis):
+            return savgol_filter(
+                df_axis.rolling(window=self.rolling_window, min_periods=1, center=True).mean().values,
+                window_length=self.savgol_len,
+                polyorder=self.savgol_poly,
+                axis=0
+            )
+
+        posX = smooth(dfX)
+        posY = smooth(dfY)
+        posZ = smooth(dfZ)
+
+        # Kinect style axis swap
+        return np.stack([posX, -posZ, posY], axis=-1)
+
 
 class QualisysLoader(BaseMocapLoader):
     """Loader specifically designed for raw Qualisys TSV exports."""
 
     def _read_file(self, path: str) -> pd.DataFrame:
-        # EXACT Qualisys reading logic
+        # Lettura file Qualisys TSV
         with open(path, 'r') as f:
             lines = f.readlines()
 
+        # Trova la riga dell'header (quella che inizia con "Frame")
         data_start_idx = next(i for i, line in enumerate(lines) if line.startswith("Frame"))
         header = lines[data_start_idx].strip().split('\t')
         data_lines = lines[data_start_idx + 1:]
 
+        # Carica il DataFrame
         df = pd.read_csv(StringIO(''.join(data_lines)), sep='\t', names=header)
-        return df.iloc[:, 3:]
+
+        # Elenco delle colonne "speciali" da escludere
+        exclude_cols = ['Frame', 'Time', 'SMPTE', 'Measured']
+        
+        # Filtra: tieni solo le colonne che NON sono nell'elenco exclude_cols
+        # Questo approccio è molto più robusto di iloc[:, 3:]
+        # 2. Creiamo la lista finale filtrando per nome esatto E per la parola "Type"
+        # .casefold() rende il controllo non sensibile alle maiuscole (es. 'type', 'Type', 'TYPE')
+        cols_to_keep = [
+            c for c in df.columns 
+            if c not in exclude_cols and 'type' not in c.casefold()
+        ]
+        
+        return df[cols_to_keep]
 
     def _extract_markers(self, df: pd.DataFrame) -> tuple:
         clean_func = lambda name: name[:-2].strip()
