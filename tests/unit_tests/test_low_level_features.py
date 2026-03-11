@@ -3,32 +3,45 @@ import numpy as np
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 # Import your features
-from pyeyesweb.low_level.contraction_expansion import BoundingBoxFilledArea, EllipsoidSphericity, PointsDensity
-from pyeyesweb.low_level.kinetic_energy import KineticEnergy
-from pyeyesweb.low_level.smoothness import Smoothness
-from pyeyesweb.low_level.direction_change import DirectionChange
-from pyeyesweb.low_level.equilibrium import Equilibrium
-from pyeyesweb.low_level.geometric_symmetry import GeometricSymmetry
+from pyeyesweb.low_level import (
+    BoundingBoxFilledArea,
+    EllipsoidSphericity,
+    PointsDensity,
+    KineticEnergy,
+    Smoothness,
+    DirectionChange,
+    Equilibrium,
+    GeometricSymmetry,
+)
 
 
 # ==========================================
 # 1. STATIC FEATURES (Frame-by-Frame)
 # ==========================================
 
+
 def test_bounding_box_filled_area():
     feature = BoundingBoxFilledArea()
     window = SlidingWindow(max_length=1, n_signals=8, n_dims=3)
 
-    cube_points = np.array([
-        [0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0],
-        [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]
-    ])
+    cube_points = np.array(
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [1, 1, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [1, 0, 1],
+            [1, 1, 1],
+            [0, 1, 1],
+        ]
+    )
     window.append(cube_points)
 
     result = feature(window)
 
     assert result.is_valid is True
-    assert hasattr(result, 'contraction_index')
+    assert hasattr(result, "contraction_index")
     assert np.isclose(result.contraction_index, 6.0)
 
 
@@ -36,11 +49,9 @@ def test_ellipsoid_sphericity():
     feature = EllipsoidSphericity()
     window = SlidingWindow(max_length=1, n_signals=6, n_dims=3)
 
-    points = np.array([
-        [1, 0, 0], [-1, 0, 0],
-        [0, 1, 0], [0, -1, 0],
-        [0, 0, 1], [0, 0, -1]
-    ])
+    points = np.array(
+        [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]
+    )
     window.append(points)
 
     result = feature(window)
@@ -53,10 +64,7 @@ def test_points_density():
     feature = PointsDensity()
     window = SlidingWindow(max_length=1, n_signals=4, n_dims=3)
 
-    points = np.array([
-        [2, 0, 0], [-2, 0, 0],
-        [0, 2, 0], [0, -2, 0]
-    ])
+    points = np.array([[2, 0, 0], [-2, 0, 0], [0, 2, 0], [0, -2, 0]])
     window.append(points)
 
     result = feature(window)
@@ -69,18 +77,14 @@ def test_equilibrium():
     feature = Equilibrium(left_foot_idx=0, right_foot_idx=1, barycenter_idx=2)
     window = SlidingWindow(max_length=1, n_signals=3, n_dims=3)
 
-    frame = np.array([
-        [-100, 0, 0],
-        [100, 0, 0],
-        [0, 0, 0]
-    ])
+    frame = np.array([[-100, 0, 0], [100, 0, 0], [0, 0, 0]])
     window.append(frame)
 
     result = feature(window)
 
     assert result.is_valid is True
-    assert hasattr(result, 'value')
-    assert hasattr(result, 'angle')
+    assert hasattr(result, "value")
+    assert hasattr(result, "angle")
     assert np.isclose(result.value, 1.0)
 
 
@@ -88,10 +92,7 @@ def test_kinetic_energy():
     feature = KineticEnergy(weights=2.0)
     window = SlidingWindow(max_length=1, n_signals=2, n_dims=3)
 
-    velocities = np.array([
-        [3, 0, 0],
-        [3, 0, 0]
-    ])
+    velocities = np.array([[3, 0, 0], [3, 0, 0]])
     window.append(velocities)
 
     result = feature(window)
@@ -104,6 +105,7 @@ def test_kinetic_energy():
 # ==========================================
 # 2. DYNAMIC FEATURES (Time-Series)
 # ==========================================
+
 
 def test_direction_change_all_metrics():
     # Testing Strategy 2 API where both metrics are computed
@@ -157,8 +159,8 @@ def test_smoothness_api():
     result = feature(window)
 
     assert result.is_valid is True
-    assert hasattr(result, 'sparc')
-    assert hasattr(result, 'jerk_rms')
+    assert hasattr(result, "sparc")
+    assert hasattr(result, "jerk_rms")
     assert not np.isnan(result.sparc)
 
 
@@ -188,16 +190,20 @@ def test_geometric_symmetry_unrolling():
     feature = GeometricSymmetry(joint_pairs=[(0, 1)], center_of_symmetry=2)
     window = SlidingWindow(max_length=2, n_signals=3, n_dims=3)
 
-    frame1 = np.array([
-        [-5, 2, 0],  # Left
-        [5, 2, 0],  # Right
-        [0, 2, 0]  # Center
-    ])
-    frame2 = np.array([
-        [-6, 3, 1],  # Left
-        [6, 3, 1],  # Right
-        [0, 3, 1]  # Center
-    ])
+    frame1 = np.array(
+        [
+            [-5, 2, 0],  # Left
+            [5, 2, 0],  # Right
+            [0, 2, 0],  # Center
+        ]
+    )
+    frame2 = np.array(
+        [
+            [-6, 3, 1],  # Left
+            [6, 3, 1],  # Right
+            [0, 3, 1],  # Center
+        ]
+    )
 
     window.append(frame1)
     window.append(frame2)
@@ -212,6 +218,7 @@ def test_geometric_symmetry_unrolling():
 # ==========================================
 # 3. ARCHITECTURE & BEHAVIOR TESTS
 # ==========================================
+
 
 def test_static_feature_extracts_newest_frame():
     feature = PointsDensity()

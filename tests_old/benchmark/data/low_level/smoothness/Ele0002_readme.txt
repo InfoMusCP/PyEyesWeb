@@ -1,1 +1,0 @@
-Il no smooth non mi sembra abbia molto senso come no smooth

@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+from pyeyesweb.data_models import SlidingWindow
 
 
 def test_initialization_and_properties():

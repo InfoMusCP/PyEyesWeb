@@ -1,16 +1,19 @@
 import pytest
 import numpy as np
 
-from pyeyesweb.data_models.sliding_window import SlidingWindow
-from pyeyesweb.analysis_primitives.clusterability import Clusterability
-from pyeyesweb.analysis_primitives.rarity import Rarity
-from pyeyesweb.analysis_primitives.statistical_moment import StatisticalMoment
-from pyeyesweb.analysis_primitives.synchronization import Synchronization
+from pyeyesweb.data_models import SlidingWindow
+from pyeyesweb.analysis_primitives import (
+    Clusterability,
+    Rarity,
+    StatisticalMoment,
+    Synchronization,
+)
 
 
 # ==========================================
 # ANALYSIS PRIMITIVES TESTS
 # ==========================================
+
 
 def test_clusterability():
     feature = Clusterability(n_neighbors=2)
@@ -23,7 +26,7 @@ def test_clusterability():
     result = feature(window)
 
     assert result.is_valid is True
-    assert hasattr(result, 'clusterability')
+    assert hasattr(result, "clusterability")
     assert not np.isnan(result.clusterability)
 
 
@@ -50,13 +53,9 @@ def test_statistical_moment_unrolling():
     # 1 signal, 2 dimensions (X, Y)
     window = SlidingWindow(max_length=5, n_signals=1, n_dims=2)
 
-    data = np.array([
-        [[1.0, 2.0]],
-        [[3.0, 4.0]],
-        [[5.0, 6.0]],
-        [[7.0, 8.0]],
-        [[9.0, 10.0]]
-    ])
+    data = np.array(
+        [[[1.0, 2.0]], [[3.0, 4.0]], [[5.0, 6.0]], [[7.0, 8.0]], [[9.0, 10.0]]]
+    )
 
     for frame in data:
         window.append(frame)
@@ -109,4 +108,4 @@ def test_synchronization_api():
 
     # We just ensure it doesn't crash and returns the correct contract
     # (Actual PLV math is tested in your signal_processing unit tests)
-    assert hasattr(result, 'plv')
+    assert hasattr(result, "plv")
