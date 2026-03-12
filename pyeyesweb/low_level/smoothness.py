@@ -33,16 +33,65 @@ class Smoothness(DynamicFeature):
             sparc_max_fc: float = 20.0
     ):
         super().__init__()
-        # Standard parameter validation
-        self.rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.01, max_val=100000)
-        self.use_filter = validate_boolean(use_filter, 'use_filter')
+        # Initializing through setters natively routes the values to the validators
+        self.rate_hz = rate_hz
+        self.use_filter = use_filter
+        
+        self.sparc_min_fc = sparc_min_fc
+        self.sparc_max_fc = sparc_max_fc
+        self.sparc_threshold = sparc_amplitude_threshold
 
-        # SPARC parameters initialization
-        self.sparc_threshold = validate_numeric(sparc_amplitude_threshold, 'sparc_threshold', min_val=0.0, max_val=1.0)
-        self.sparc_min_fc = validate_numeric(sparc_min_fc, 'sparc_min_fc', min_val=0.1)
-        self.sparc_max_fc = validate_numeric(sparc_max_fc, 'sparc_max_fc', min_val=self.sparc_min_fc)
+        self.metrics = metrics
 
-        target_metrics = metrics if metrics is not None else self._ALLOWED_METRICS
+    @property
+    def rate_hz(self) -> float:
+        return self._rate_hz
+
+    @rate_hz.setter
+    def rate_hz(self, value: float):
+        self._rate_hz = validate_numeric(value, 'rate_hz', min_val=0.01, max_val=100000)
+
+    @property
+    def use_filter(self) -> bool:
+        return self._use_filter
+
+    @use_filter.setter
+    def use_filter(self, value: bool):
+        self._use_filter = validate_boolean(value, 'use_filter')
+
+    @property
+    def sparc_threshold(self) -> float:
+        return self._sparc_threshold
+
+    @sparc_threshold.setter
+    def sparc_threshold(self, value: float):
+        self._sparc_threshold = validate_numeric(value, 'sparc_threshold', min_val=0.0, max_val=1.0)
+
+    @property
+    def sparc_min_fc(self) -> float:
+        return self._sparc_min_fc
+
+    @sparc_min_fc.setter
+    def sparc_min_fc(self, value: float):
+        self._sparc_min_fc = validate_numeric(value, 'sparc_min_fc', min_val=0.1)
+
+    @property
+    def sparc_max_fc(self) -> float:
+        return self._sparc_max_fc
+
+    @sparc_max_fc.setter
+    def sparc_max_fc(self, value: float):
+        # We ensure that this validator uses the dynamic minimum
+        min_fc = getattr(self, '_sparc_min_fc', 0.1)
+        self._sparc_max_fc = validate_numeric(value, 'sparc_max_fc', min_val=min_fc)
+
+    @property
+    def metrics(self) -> List[str]:
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, value: Optional[List[str]]):
+        target_metrics = value if value is not None else self._ALLOWED_METRICS
         self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
 
     def _filter_signal(self, signal: np.ndarray) -> np.ndarray:
@@ -69,7 +118,7 @@ class Smoothness(DynamicFeature):
         sparc_val = None
         jerk_val = None
 
-        if "sparc" in self._metrics:
+        if "sparc" in self.metrics:
             # Pass custom parameters to the function in math_utils
             sparc_val = float(compute_sparc(
                 filtered_speed, 
@@ -79,7 +128,7 @@ class Smoothness(DynamicFeature):
                 max_fc=self.sparc_max_fc
             ))
 
-        if "jerk_rms" in self._metrics:
+        if "jerk_rms" in self.metrics:
             # Standard Jerk RMS calculation from velocity
             jerk_val = float(compute_jerk_rms(filtered_speed, self.rate_hz, signal_type='velocity'))
 

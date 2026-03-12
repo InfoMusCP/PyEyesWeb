@@ -5,6 +5,7 @@ library for signal processing, phase analysis, and movement metrics.
 """
 
 import numpy as np
+from scipy.fft import fft, fftfreq
 from pyeyesweb.utils.validators import validate_numeric
 
 def compute_phase_locking_value(phase1, phase2):
@@ -98,8 +99,7 @@ def compute_sparc(
     On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,
     12(1), 1-11.
     """
-    import numpy as np
-    from scipy.fft import fft, fftfreq
+
 
     # Validate sampling rate and convert signal to array
     rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
