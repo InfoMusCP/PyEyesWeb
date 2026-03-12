@@ -24,11 +24,19 @@ class Lightness(DynamicFeature):
 
     def __init__(self, alpha: float = 0.5):
         super().__init__()
-        self.alpha = alpha
-
         # Instantiate sub-features
         self._kinetic_energy = KineticEnergy()
-        self._rarity = Rarity(alpha=self.alpha)
+        self._rarity = Rarity()
+
+        self.alpha = alpha
+
+    @property
+    def alpha(self) -> float:
+        return self._rarity.alpha
+
+    @alpha.setter
+    def alpha(self, value: float):
+        self._rarity.alpha = value
 
     def compute(self, window_data: np.ndarray, **kwargs) -> LightnessResult:
         """

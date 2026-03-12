@@ -19,6 +19,14 @@ class Clusterability(DynamicFeature):
         super().__init__()
         self.n_neighbors = n_neighbors
 
+    @property
+    def n_neighbors(self) -> int:
+        return self._n_neighbors
+
+    @n_neighbors.setter
+    def n_neighbors(self, value: int):
+        self._n_neighbors = int(value)
+
     def compute(self, window_data: np.ndarray) -> ClusterabilityResult:
         # Flatten (Time, Signals, Dims) -> (Time, Features)
         data = window_data.reshape(window_data.shape[0], -1)

@@ -32,6 +32,46 @@ class Equilibrium(StaticFeature):
         self.margin = margin_mm
         self.y_weight = y_weight
 
+    @property
+    def left_foot_idx(self) -> int:
+        return self._left_foot_idx
+
+    @left_foot_idx.setter
+    def left_foot_idx(self, value: int):
+        self._left_foot_idx = int(value)
+
+    @property
+    def right_foot_idx(self) -> int:
+        return self._right_foot_idx
+
+    @right_foot_idx.setter
+    def right_foot_idx(self, value: int):
+        self._right_foot_idx = int(value)
+
+    @property
+    def barycenter_idx(self) -> int:
+        return self._barycenter_idx
+
+    @barycenter_idx.setter
+    def barycenter_idx(self, value: int):
+        self._barycenter_idx = int(value)
+
+    @property
+    def margin(self) -> float:
+        return self._margin
+
+    @margin.setter
+    def margin(self, value: float):
+        self._margin = float(value)
+
+    @property
+    def y_weight(self) -> float:
+        return self._y_weight
+
+    @y_weight.setter
+    def y_weight(self, value: float):
+        self._y_weight = float(value)
+
     def compute(self, frame_data: np.ndarray) -> EquilibriumResult:
         # 1. Robustness: Ensure we have enough joints in the frame
         max_idx = max(self.left_foot_idx, self.right_foot_idx, self.barycenter_idx)

@@ -25,8 +25,27 @@ class Impulsivity(DynamicFeature):
     def __init__(self, direction_change_epsilon: float = 0.5, suddenness_algo: str = "new"):
         super().__init__()
         # Initialize sub-features
-        self._direction_change = DirectionChange(metrics=["cosine"], epsilon=direction_change_epsilon)
-        self._suddenness = Suddenness(algo=suddenness_algo)
+        self._direction_change = DirectionChange(metrics=["cosine"])
+        self._suddenness = Suddenness()
+        
+        self.direction_change_epsilon = direction_change_epsilon
+        self.suddenness_algo = suddenness_algo
+
+    @property
+    def direction_change_epsilon(self) -> float:
+        return self._direction_change.epsilon
+
+    @direction_change_epsilon.setter
+    def direction_change_epsilon(self, value: float):
+        self._direction_change.epsilon = value
+
+    @property
+    def suddenness_algo(self) -> str:
+        return self._suddenness.algo
+
+    @suddenness_algo.setter
+    def suddenness_algo(self, value: str):
+        self._suddenness.algo = value
 
     def compute(self, window_data: np.ndarray, **kwargs) -> ImpulsivityResult:
         """

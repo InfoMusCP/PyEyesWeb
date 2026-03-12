@@ -32,9 +32,47 @@ class DirectionChange(DynamicFeature):
         self.num_subsamples = num_subsamples
         self.saturation_area = saturation_area
         self.saturation_slope = saturation_slope
+        self.metrics = metrics
 
-        # If None, compute everything. If passed, validate against allowed.
-        target_metrics = metrics if metrics is not None else self._ALLOWED_METRICS
+    @property
+    def epsilon(self) -> float:
+        return self._epsilon
+
+    @epsilon.setter
+    def epsilon(self, value: float):
+        self._epsilon = float(value)
+
+    @property
+    def num_subsamples(self) -> int:
+        return self._num_subsamples
+
+    @num_subsamples.setter
+    def num_subsamples(self, value: int):
+        self._num_subsamples = int(value)
+
+    @property
+    def saturation_area(self) -> float:
+        return self._saturation_area
+
+    @saturation_area.setter
+    def saturation_area(self, value: float):
+        self._saturation_area = float(value)
+
+    @property
+    def saturation_slope(self) -> float:
+        return self._saturation_slope
+
+    @saturation_slope.setter
+    def saturation_slope(self, value: float):
+        self._saturation_slope = float(value)
+
+    @property
+    def metrics(self) -> List[str]:
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, value: Optional[List[str]]):
+        target_metrics = value if value is not None else self._ALLOWED_METRICS
         self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
 
     def _cosine_similarity(self, pos: np.ndarray) -> float:
@@ -109,10 +147,10 @@ class DirectionChange(DynamicFeature):
         val_polygon = None
 
         try:
-            if "cosine" in self._metrics:
+            if "cosine" in self.metrics:
                 val_cosine = self._cosine_similarity(trajectory)
 
-            if "polygon" in self._metrics:
+            if "polygon" in self.metrics:
                 val_polygon = self._polygon_area(trajectory)
 
         except ValueError:

@@ -54,11 +54,51 @@ class MultiScaleEntropyDominance:
                  min_points=500, 
                  methods: list[Literal["complexity_index", "dominance_score", "leader_identification"]] = ["complexity_index"]):
         
-        self._m = validate_integer(m, "m", min_val=1)                            # Embedding dimension for sample entropy
-        self._r = validate_numeric(r, "r", min_val=0.0001, max_val=0.9999)       # Tolerance parameter (15% of standard deviation)
-        self._max_scale = validate_integer(max_scale, "max_scale", min_val=1)            # Maximum scale factor for coarse-graining
-        self._min_points = validate_integer(min_points, "min_points", min_val=1)          # Minimum data points required per scale
-        self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in methods]
+        self.m = m
+        self.r = r
+        self.max_scale = max_scale
+        self.min_points = min_points
+        self.methods = methods
+
+    @property
+    def m(self) -> int:
+        return self._m
+
+    @m.setter
+    def m(self, value):
+        self._m = validate_integer(value, "m", min_val=1)
+        
+    @property
+    def r(self) -> float:
+        return self._r
+
+    @r.setter
+    def r(self, value):
+        self._r = validate_numeric(value, "r", min_val=0.0001, max_val=0.9999)
+        
+    @property
+    def max_scale(self) -> int:
+        return self._max_scale
+
+    @max_scale.setter
+    def max_scale(self, value):
+        self._max_scale = validate_integer(value, "max_scale", min_val=1)
+        
+    @property
+    def min_points(self) -> int:
+        return self._min_points
+
+    @min_points.setter
+    def min_points(self, value):
+        self._min_points = validate_integer(value, "min_points", min_val=1)
+        
+    @property
+    def methods(self) -> list[str]:
+        return self._methods
+
+    @methods.setter
+    def methods(self, value):
+        self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in value]
 
     def _coarse_grain(self, data: np.ndarray, scale: int) -> np.ndarray:
         """Apply coarse-graining procedure to time series data.

@@ -17,7 +17,15 @@ class Synchronization(DynamicFeature):
 
     def __init__(self, filter_params=None):
         super().__init__()
-        self.filter_params = validate_and_normalize_filter_params(filter_params)
+        self.filter_params = filter_params
+
+    @property
+    def filter_params(self):
+        return self._filter_params
+
+    @filter_params.setter
+    def filter_params(self, value):
+        self._filter_params = validate_and_normalize_filter_params(value)
 
     def compute(self, window_data: np.ndarray) -> SynchronizationResult:
         # Flatten to (Time, Signals)

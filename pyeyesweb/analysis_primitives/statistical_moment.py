@@ -43,8 +43,15 @@ class StatisticalMoment(DynamicFeature):
 
     def __init__(self, metrics: List[Literal["mean", "std_dev", "skewness", "kurtosis"]] = None):
         super().__init__()
-        # Default to computing just the mean if nothing is requested
-        target_metrics = metrics or ["mean"]
+        self.metrics = metrics
+
+    @property
+    def metrics(self) -> List[str]:
+        return self._metrics
+
+    @metrics.setter
+    def metrics(self, value: Optional[List[str]]):
+        target_metrics = value or ["mean"]
         self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
 
     def compute(self, window_data: np.ndarray, **kwargs) -> StatisticalMomentResult:

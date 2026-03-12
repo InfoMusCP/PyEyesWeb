@@ -17,7 +17,15 @@ class Rarity(DynamicFeature):
 
     def __init__(self, alpha: float = 0.5):
         super().__init__()
-        self._alpha = validate_numeric(alpha, "alpha")
+        self.alpha = alpha
+
+    @property
+    def alpha(self) -> float:
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, value: float):
+        self._alpha = validate_numeric(value, "alpha")
 
     def compute(self, window_data: np.ndarray) -> RarityResult:
         # Flatten to 1D array of samples

@@ -59,7 +59,23 @@ class KineticEnergy(StaticFeature):
     ):
         super().__init__()
         self.labels = labels
-        self.weights = self._parse_weights(weights)
+        self.weights = weights
+
+    @property
+    def weights(self) -> Union[float, np.ndarray]:
+        return self._weights
+
+    @weights.setter
+    def weights(self, value: Union[float, List[float], np.ndarray]):
+        self._weights = self._parse_weights(value)
+
+    @property
+    def labels(self) -> Optional[List[str]]:
+        return self._labels
+
+    @labels.setter
+    def labels(self, value: Optional[List[str]]):
+        self._labels = value
 
     def _parse_weights(self, weight_input: Union[float, List[float], np.ndarray]) -> Union[float, np.ndarray]:
         """Validates mass inputs and formats them for optimal broadcasting."""

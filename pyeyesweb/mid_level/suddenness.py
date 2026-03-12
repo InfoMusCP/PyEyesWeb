@@ -51,6 +51,14 @@ class Suddenness(DynamicFeature):
         super().__init__()
         self.algo = algo
 
+    @property
+    def algo(self) -> str:
+        return self._algo
+
+    @algo.setter
+    def algo(self, value: str):
+        self._algo = str(value)
+
     def compute(self, window_data: np.ndarray, **kwargs) -> SuddennessResult:
         """
         The Pure Math API.
