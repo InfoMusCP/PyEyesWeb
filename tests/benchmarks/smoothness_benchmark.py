@@ -15,7 +15,7 @@ from pyeyesweb.low_level.smoothness import Smoothness
 # 1. SETUP & CONFIGURATION
 # ==========================================
 data_type = "qualisys"  # Change to "qualisys" to use the raw motion capture loader
-tsv_file = "D:/Lavoro/GitCP/PyEyesWeb/tests/benchmarks/data/smoothness_01.tsv"
+tsv_file = "data/smoothness_02.tsv"
 window_lengths = [200]
 
 # Adjust joint names depending on your tracking system
@@ -67,7 +67,7 @@ for w in window_lengths:
 
             # Compute using the streaming __call__ API
             res = smoothness_feature(sw_speed)
-            results[frame] = res.jerk_rms if res.is_valid else 0.0
+            results[frame] = res.sparc if res.is_valid else 0.0
 
         # Store the computed array in the dictionary for the animator
         feature_dict[subplot_title][joint] = results
