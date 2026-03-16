@@ -23,16 +23,12 @@ class DirectionChange(DynamicFeature):
             self,
             epsilon: float = 0.5,
             num_subsamples: int = 20,
-            saturation_area: float = 0.3,
-            saturation_slope: float = 0.09,
             metrics: List[Literal["cosine", "polygon"]] = None
     ):
         super().__init__()
-        self.epsilon = epsilon
-        self.num_subsamples = num_subsamples
-        self.saturation_area = saturation_area
-        self.saturation_slope = saturation_slope
-        self.metrics = metrics
+        self._epsilon = float(epsilon)
+        self._num_subsamples = int(num_subsamples)
+        self._metrics = metrics if metrics is not None else self._ALLOWED_METRICS
 
     @property
     def epsilon(self) -> float:
@@ -49,22 +45,6 @@ class DirectionChange(DynamicFeature):
     @num_subsamples.setter
     def num_subsamples(self, value: int):
         self._num_subsamples = int(value)
-
-    @property
-    def saturation_area(self) -> float:
-        return self._saturation_area
-
-    @saturation_area.setter
-    def saturation_area(self, value: float):
-        self._saturation_area = float(value)
-
-    @property
-    def saturation_slope(self) -> float:
-        return self._saturation_slope
-
-    @saturation_slope.setter
-    def saturation_slope(self, value: float):
-        self._saturation_slope = float(value)
 
     @property
     def metrics(self) -> List[str]:
@@ -128,12 +108,8 @@ class DirectionChange(DynamicFeature):
 
         # Handle both 2D (scalar return) and 3D (vector return) area magnitudes
         area = np.linalg.norm(area_vector) if np.ndim(area_vector) > 0 else np.abs(area_vector)
-
-        # Apply soft saturation (tanh)
-        a = self.saturation_area / 2.0
-        saturated_area = ((np.tanh((area - a) / self.saturation_slope)) + 1.0) / 2.0
-
-        return float(saturated_area)
+        
+        return float(area)
 
     def compute(self, window_data: np.ndarray) -> DirectionChangeResult:
         if window_data.shape[0] < 3:
