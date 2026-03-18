@@ -1,3 +1,11 @@
+"""Circular buffer implementation for real-time motion data streaming.
+
+This module provides the [SlidingWindow][pyeyesweb.data_models.sliding_window.SlidingWindow]
+class, a thread-safe circular buffer designed for high-frequency motion
+data.  It maintains a fixed-size history of samples and supports dynamic
+resizing.
+"""
+
 import time
 import threading
 import numpy as np
@@ -6,22 +14,23 @@ from pyeyesweb.utils.validators import validate_integer
 
 
 class SlidingWindow:
-    """
-    A thread-safe sliding window buffer for storing samples with timestamps.
+    """Thread-safe sliding window buffer for storing samples with timestamps.
 
     This class implements a circular buffer that maintains a fixed-size window
     of the most recent samples. When the buffer is full, new samples overwrite
-    the oldest ones. The internal data shape is strictly maintained as a 3D tensor:
-    (Time, Nodes, Dimensions).
+    the oldest ones. The internal data shape is strictly maintained as a 3D
+    tensor: `(Time, Signals, Dimensions)`.
 
     Parameters
     ----------
     max_length : int
         Maximum number of samples (time frames) the window can hold.
     n_signals : int, optional
-        Number of entities tracked (e.g., 1 for a single signal, 17 for skeleton joints). Default is 1.
+        Number of entities tracked (e.g., 1 for a single signal, 17 for skeleton
+        joints). Default is `1`.
     n_dims : int, optional
-        Number of dimensions per node (e.g., 1 for speed, 3 for 3D coordinates). Default is 1.
+        Number of dimensions per node (e.g., 1 for speed, 3 for 3D coordinates).
+        Default is `1`.
 
     Examples
     --------
@@ -106,11 +115,18 @@ class SlidingWindow:
             self._size = keep
 
     def append(self, sample: Union[list, np.ndarray, float, int], timestamp: Optional[float] = None) -> None:
-        """
-        Append a new sample to the sliding window.
+        """Append a new sample to the sliding window.
 
         Accepts scalars, flat lists, or shaped numpy arrays, and automatically
-        reshapes them to fit the configured (n_nodes, n_dims) structure.
+        reshapes them to fit the configured `(n_signals, n_dims)` structure.
+
+        Parameters
+        ----------
+        sample : array-like
+            Movement data for the current frame.
+        timestamp : float, optional
+            Monotonic timestamp for the sample.  If `None`, `time.monotonic()`
+            is used.
         """
         sample_arr = np.asarray(sample, dtype=np.float32)
 
@@ -119,7 +135,7 @@ class SlidingWindow:
         except ValueError:
             raise ValueError(
                 f"Cannot reshape input of size {sample_arr.size} into "
-                f"expected shape ({self._n_signals} nodes, {self._n_dims} dims)."
+                f"expected shape ({self._n_signals} signals, {self._n_dims} dims)."
             )
 
         with self._lock:
@@ -137,30 +153,28 @@ class SlidingWindow:
             self._timestamp[idx] = timestamp
 
     def to_tensor(self) -> tuple[np.ndarray, np.ndarray]:
-        """
-        Return the contents as a 3D tensor of shape (Time, Nodes, Dimensions).
+        """Return the contents as a 3D tensor of shape `(Time, Signals, Dimensions)`.
 
         Returns
         -------
-        tensor : np.ndarray
-            Array of shape (current_size, n_nodes, n_dims) in chronological order.
-        timestamps : np.ndarray
-            Array of shape (current_size,) containing corresponding timestamps.
+        tensor : numpy.ndarray
+            Array of shape `(current_size, n_signals, n_dims)` in chronological order.
+        timestamps : numpy.ndarray
+            Array of shape `(current_size,)` containing corresponding timestamps.
         """
         with self._lock:
             indices = (self._start + np.arange(self._size)) % self._max_length
             return self._buffer[indices].copy(), self._timestamp[indices].copy()
 
     def to_flat_array(self) -> tuple[np.ndarray, np.ndarray]:
-        """
-        Return the contents flattened to a 2D shape of (Time, Nodes * Dimensions).
+        """Return the contents flattened to `(Time, Signals * Dimensions)`.
 
         Returns
         -------
-        flat_array : np.ndarray
-            Array of shape (current_size, n_nodes * n_dims).
-        timestamps : np.ndarray
-            Array of shape (current_size,) containing corresponding timestamps.
+        flat_array : numpy.ndarray
+            Array of shape `(current_size, n_signals * n_dims)`.
+        timestamps : numpy.ndarray
+            Array of shape `(current_size,)` containing corresponding timestamps.
         """
         tensor, timestamps = self.to_tensor()
         if tensor.size == 0:
@@ -170,7 +184,7 @@ class SlidingWindow:
         return flat_array, timestamps
 
     def reset(self) -> None:
-        """Reset the sliding window to an empty state, filling buffers with NaNs."""
+        """Clear all data from the window and reset buffers with NaNs."""
         with self._lock:
             self._start = 0
             self._size = 0

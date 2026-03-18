@@ -19,14 +19,39 @@ from pyeyesweb.data_models.results import FeatureResult
 
 @dataclass(slots=True)
 class ContractionExpansionResult(FeatureResult):
-    """Shared result contract for the contraction/expansion feature family."""
+    """Shared result contract for the contraction/expansion feature family.
+    
+    Attributes
+    ----------
+    contraction_index : float, optional
+        The computed contraction index based on bounding box area.
+    sphericity : float, optional
+        The computed sphericity based on PCA ellipsoid fitting.
+    points_density : float, optional
+        The computed points density.
+    """
     contraction_index: Optional[float] = None  # TODO rename to something related to BoundingBoxFilledArea for clarity?
     sphericity: Optional[float] = None
     points_density: Optional[float] = None
 
 
 class BoundingBoxFilledArea(StaticFeature):
-    """Computes the Contraction Index based on 3D Surface Area."""
+    r"""Computes the Contraction Index based on 3D Surface Area.
+
+    Mathematical formulation involves computing the ratio:
+    
+    $$ 
+    Index = \frac{Area_{hull}^2}{Area_{bbox}}
+    $$
+
+    where $Area_{hull}$ is the surface area of the 3D convex hull enclosing the points,
+    and $Area_{bbox}$ is the surface area of the axis-aligned bounding box.
+
+    !!! note
+        This feature uses the Convex Hull area and the Axis-Aligned Bounding Box (AABB) area.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
+    """
 
     EPSILON = 1e-6
 
@@ -59,6 +84,18 @@ class BoundingBoxFilledArea(StaticFeature):
         return surface_area, corners
 
     def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
+        """Compute the Contraction Index for a single frame.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray
+            The motion data for a single frame.
+
+        Returns
+        -------
+        ContractionExpansionResult
+            The computed contraction index.
+        """
         hull_area, hull_points = self._get_hull_data(frame_data)
         bbox_area, bbox_points = self._get_aabb_data(frame_data)
 
@@ -68,7 +105,22 @@ class BoundingBoxFilledArea(StaticFeature):
 
 
 class EllipsoidSphericity(StaticFeature):
-    """Fits an ellipsoid to skeletal joints using PCA and computes shape metrics."""
+    r"""Fits an ellipsoid to skeletal joints using PCA and computes shape metrics.
+
+    Sphericity is defined as the ratio of the smallest to the largest radius:
+    
+    $$
+    S = \frac{c}{a}
+    $$
+
+    where $c$ is the length of the shortest semi-axis (minor radius) and
+    $a$ is the length of the longest semi-axis (major radius) of the fitted ellipsoid.
+
+    !!! tip
+        This metric is highly robust against rotation as it relies on PCA.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
+    """
 
     EPSILON = 1e-6
 
@@ -91,6 +143,18 @@ class EllipsoidSphericity(StaticFeature):
         return radii[sort_indices], eigenvectors[:, sort_indices]
 
     def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
+        """Compute the Sphericity based on fitted ellipsoid radii.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray
+            The motion data for a single frame.
+
+        Returns
+        -------
+        ContractionExpansionResult
+            The computed sphericity metric.
+        """
         radii, rotation = self._fit_ellipsoid_pca(frame_data)
         a, b, c = radii[0], radii[1], radii[2]
 
@@ -101,9 +165,31 @@ class EllipsoidSphericity(StaticFeature):
 
 
 class PointsDensity(StaticFeature):
-    """Computes the Points Density (Dispersion) for a sequence of skeletal frames."""
+    r"""Computes the Points Density (Dispersion) for a sequence of skeletal frames.
+
+    $$
+    D = \frac{1}{N} \sum_{i=1}^{N} \| X_i - \bar{X} \|
+    $$
+
+    where $N$ is the total number of points, $X_i$ is the 3D position of the $i$-th point,
+    and $\bar{X}$ is the barycenter (mean position) of all points.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
+    """
 
     def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
+        """Compute the average distance of points from their barycenter.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray
+            The motion data for a single frame.
+
+        Returns
+        -------
+        ContractionExpansionResult
+            The computed average points density.
+        """
         if len(frame_data) == 0:
             return ContractionExpansionResult(points_density=0.0)
 

@@ -1,150 +1,62 @@
-# Equilibrium Analysis Module
+# Postural Balance (Equilibrium) Analysis Module
 
-The **Equilibrium** module quantifies balance control by evaluating the barycenter position relative to an elliptical
-region defined by the two feet.
+## Overview
+The Postural Balance module provides a robust elliptical equilibrium evaluation metric. It computes how well a subject's barycenter is centered between two base-of-support points (e.g., the left and right feet) to mathematically estimate the stability of a physical posture.
 
-The metric produces a normalized **equilibrium value** in \([0, 1]\) indicating whether the barycenter lies within the
-ellipse, and the **ellipse orientation angle** in degrees.
+## Theoretical Interpretation
+- **Input Requirements**: Expects a single frame of static position data spanning multiple joints. The algorithm exclusively relies on a **2D projection** (specifically, the X and Y components) ignoring height (Z), as postural stability relative to the ground is a planar problem.
+- **Value Interpretation**: 
+    - An equilibrium value of `1.0` indicates perfect centering (the barycenter perfectly splits the base of support). 
+    - Values approaching `0.0` indicate extreme stretching, leaning, or falling, where the user's center of mass is breaching the edge of their support ellipse. 
+    - The algorithm also reports the `angle` of the base of support relative to the horizontal plane.
 
----
+!!! note "Margin Safeties"
+    The mathematical ellipse is intentionally inflated by a `margin_mm` config to account for the physical footprint size extending beyond the single theoretical "foot joint" point tracked by typical pose systems.
 
-## Algorithms Details
+## Algorithm Details & Mathematics
 
-### Ellipse Construction
+The stable base of support is modeled as a 2D ellipse drawn around the left foot ($P_{left}$) and right foot ($P_{right}$). 
 
-1. **Inputs**: 
-    - Left foot position \( p_s = (x_s, y_s) \)
-    - Right foot position \( p_d = (x_d, y_d) \)
-    - Barycenter \( b = (x_b, y_b) \)
-    - Margin \( m \) (mm)
-    - Y-axis weight \( w_y \)
-
-2. **Bounding box with margin**:
-
-$$
-\text{min} = \min(p_s, p_d) - m, \quad
-\text{max} = \max(p_s, p_d) + m
-$$
-
-<ol start="3">
-<li>
-<strong>Ellipse center</strong>:
-</li>
-</ol>
+1. **Center and Axes Formulation**
+The center point $C$ between the feet is derived as:
 
 $$
-c = \frac{\text{min} + \text{max}}{2}
+C = \frac{P_{left} + P_{right}}{2}
 $$
 
-<ol start="4">
-<li>
-<strong>Ellipse Semi-axes</strong>:  
-</li>
-</ol>
+The Euclidean distance between the feet is $d = \|P_{right} - P_{left}\|$.
+The ellipse semi-major axis ($a$) incorporates the safety margin:
 
 $$
-a = \frac{\text{max}_x - \text{min}_x}{2}, \quad
-b = \frac{\text{max}_y - \text{min}_y}{2} \cdot w_y
+a = \frac{d}{2} + margin
 $$
 
-<ol start="5">
-<li>
-<strong>Ellipse orientation</strong>  
-</li>
-</ol>
+The ellipse semi-minor axis ($b$) determines the depth of the stability stance, weighted by $y\_weight$:
 
 $$
-\theta = \arctan2(y_d - y_s, \; x_d - x_s)
+b = margin \times y\_weight
 $$
 
+2. **Rotational Alignment**
+The system computes the relative position of the barycenter to the geometric center $C$, and rotates this relative vector to align linearly with the vector bridging the two feet. Let this rotated barycenter coordinate be $B' = (x', y')$.
 
-!!! tip "Interpretation"
-    The angle \( \theta \) aligns the ellipse relative to the X-axis (the line connecting the feet).
-
-### Normalized Value Computation
-
-1.**Relative position**:
-Rotate barycenter into ellipse-aligned coordinates
+3. **Elliptical Evaluation**
+The normalized distance equation inside the ellipse is computed as:
 
 $$
-r = R(-\theta) \cdot (b - c)
+norm = \left(\frac{x'}{a}\right)^2 + \left(\frac{y'}{b}\right)^2
 $$
 
-with rotation matrix
+The final equilibrium score $Value \in [0, 1]$ is extracted inversely from the norm:
 
 $$
-R(-\theta) =
-\begin{bmatrix}
-\cos(-\theta) & -\sin(-\theta) \\
-\sin(-\theta) & \cos(-\theta)
-\end{bmatrix}
-$$
-
-<ol start="2">
-<li>
-<strong>Normalization</strong>  
-</li>
-</ol>
-
-$$
-\text{norm} = \left(\frac{r_x}{a}\right)^2 + \left(\frac{r_y}{b}\right)^2
-$$
-
-<ol start="3">
-<li>
-<strong>Equilibrium value</strong>  
-</li>
-</ol>
-
-$$
-\text{value} =
-\begin{cases}
-1 - \sqrt{\text{norm}}, & \text{if } \text{norm} \leq 1 \\
-0, & \text{otherwise}
+Value = 
+\begin{cases} 
+1.0 - \sqrt{norm} & \text{if } norm \le 1.0 \\
+0.0 & \text{otherwise}
 \end{cases}
 $$
 
+## References
 
-!!! tip "Interpretation"
-    - **Value = 1**: barycenter at ellipse center (optimal balance).  
-    - **Value = 0**: barycenter outside ellipse (loss of balance).  
-    - Values in between indicate proximity to the center.
-
-[//]: # (---)
-
-[//]: # ()
-[//]: # (## Usage Examples)
-
-[//]: # ()
-[//]: # (### Basic Equilibrium Evaluation)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (import numpy as np)
-
-[//]: # (from pyeyesweb.low_level import Equilibrium)
-
-[//]: # ()
-[//]: # (# Initialize analyzer)
-
-[//]: # (eq = Equilibrium&#40;margin_mm=120, y_weight=0.6&#41;)
-
-[//]: # ()
-[//]: # (# Define foot positions and barycenter)
-
-[//]: # (left = np.array&#40;[0, 0, 0]&#41;)
-
-[//]: # (right = np.array&#40;[400, 0, 0]&#41;)
-
-[//]: # (barycenter = np.array&#40;[200, 50, 0]&#41;)
-
-[//]: # ()
-[//]: # (value, angle = eq&#40;left, right, barycenter&#41;)
-
-[//]: # ()
-[//]: # (print&#40;f"Equilibrium value: {value:.2f}"&#41;)
-
-[//]: # (print&#40;f"Ellipse angle: {angle:.1f}°"&#41;)
-
-[//]: # (```)
+### TODO

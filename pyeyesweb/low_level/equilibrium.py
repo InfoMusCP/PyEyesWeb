@@ -1,3 +1,10 @@
+"""Barycenter and equilibrium analysis for postural snapshots.
+
+This module provides features for analysing postural balance. It computes the
+relationship between two support points (e.g. feet) and a barycenter to
+estimate the stability of a movement.
+"""
+
 from dataclasses import dataclass
 import numpy as np
 
@@ -7,13 +14,51 @@ from pyeyesweb.data_models.results import FeatureResult
 
 @dataclass(slots=True)
 class EquilibriumResult(FeatureResult):
-    """Output contract for Elliptical Equilibrium evaluation."""
+    """Output contract for Elliptical Equilibrium evaluation.
+
+    Attributes
+    ----------
+    value : float
+        Scalar equilibrium value in `[0, 1]`. `1.0` indicates perfect
+        centering; `0.0` indicates the barycenter is outside the support
+        ellipse.
+    angle : float
+        Angle of the support vector in degrees.
+    """
     value: float = 0.0
     angle: float = 0.0
 
 
 class Equilibrium(StaticFeature):
-    """Elliptical equilibrium evaluation between two feet and a barycenter."""
+    """Elliptical equilibrium evaluation between two feet and a barycenter.
+
+    Computes how well the barycenter is centered between two support points
+    using an elliptical model.
+
+    !!! note
+        This method relies on 2D projections of the 3D joints.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/postural_balance.md).
+
+    Parameters
+    ----------
+    left_foot_idx : int, optional
+        Index of the left support node. Defaults to `0`.
+    right_foot_idx : int, optional
+        Index of the right support node. Defaults to `1`.
+    barycenter_idx : int, optional
+        Index of the barycenter node. Defaults to `2`.
+    margin_mm : float, optional
+        Safety margin in millimeters added to the support ellipse.
+        Defaults to `100.0`.
+    y_weight : float, optional
+        Weighting factor for the semi-minor axis of the ellipse.
+        Defaults to `0.5`.
+
+    Examples
+    --------
+    >>> eq = Equilibrium(left_foot_idx=10, right_foot_idx=11, barycenter_idx=2)
+    """
 
     EPSILON = 1e-10
 
@@ -34,6 +79,7 @@ class Equilibrium(StaticFeature):
 
     @property
     def left_foot_idx(self) -> int:
+        """Index of the left foot node."""
         return self._left_foot_idx
 
     @left_foot_idx.setter
@@ -42,6 +88,7 @@ class Equilibrium(StaticFeature):
 
     @property
     def right_foot_idx(self) -> int:
+        """Index of the right foot node."""
         return self._right_foot_idx
 
     @right_foot_idx.setter
@@ -50,6 +97,7 @@ class Equilibrium(StaticFeature):
 
     @property
     def barycenter_idx(self) -> int:
+        """Index of the barycenter node."""
         return self._barycenter_idx
 
     @barycenter_idx.setter
@@ -58,6 +106,7 @@ class Equilibrium(StaticFeature):
 
     @property
     def margin(self) -> float:
+        """Safety margin in millimeters."""
         return self._margin
 
     @margin.setter
@@ -66,6 +115,7 @@ class Equilibrium(StaticFeature):
 
     @property
     def y_weight(self) -> float:
+        """Weighting factor for the semi-minor axis."""
         return self._y_weight
 
     @y_weight.setter
@@ -73,6 +123,18 @@ class Equilibrium(StaticFeature):
         self._y_weight = float(value)
 
     def compute(self, frame_data: np.ndarray) -> EquilibriumResult:
+        """Compute the elliptical equilibrium score.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray
+            Snapshot of joint positions of shape (N_signals, N_dims).
+
+        Returns
+        -------
+        EquilibriumResult
+            Result containing the equilibrium value and support angle.
+        """
         # 1. Robustness: Ensure we have enough joints in the frame
         max_idx = max(self.left_foot_idx, self.right_foot_idx, self.barycenter_idx)
         if len(frame_data) <= max_idx:

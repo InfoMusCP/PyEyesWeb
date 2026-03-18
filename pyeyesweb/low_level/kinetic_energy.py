@@ -8,7 +8,18 @@ from pyeyesweb.data_models.results import FeatureResult
 
 @dataclass(slots=True)
 class KineticEnergyResult(FeatureResult):
-    """Output contract for Kinetic Energy evaluation."""
+    """Output contract for Kinetic Energy evaluation.
+
+    Attributes
+    ----------
+    total_energy : float
+        Sum of kinetic energy across all joints.
+    component_energy : list of float, optional
+        Sum of kinetic energy along each axis (X, Y, Z).
+    joints : dict, optional
+        Dictionary mapping joint labels (or indices) to their individual
+        kinetic energy values and components.
+    """
     total_energy: float = 0.0
     component_energy: Optional[List[float]] = None
     joints: Optional[Dict[str, Any]] = None
@@ -47,9 +58,26 @@ class KineticEnergyResult(FeatureResult):
 
 
 class KineticEnergy(StaticFeature):
-    """Computes kinetic energy from velocity vectors.
+    r"""Compute weighted kinetic energy from joint velocities.
 
-    Expects frame_data to represent velocities, not raw positions.
+    Kinetic energy is defined here as:
+
+    $$ E_k = \frac{1}{2} \cdot \sum_{i=1}^{N} w_i \cdot \|v_i\|^2 $$
+
+    where $w_i$ is the weight (mass) of joint $i$ and $v_i$ is its velocity vector.
+
+    !!! note
+        Expects `frame_data` to represent velocities (e.g., from [extract_velocity_from_position](../utils/math_utils.md#extract_velocity_from_position)), not raw positions.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/kinetic_energy.md).
+
+    Parameters
+    ----------
+    weights : float or array_like, optional
+        Mass weights for each joint. Can be a single scalar applied to all
+        joints or an array of shape `(N_signals,)`. Defaults to `1.0`.
+    labels : list of str, optional
+        Text labels for each signal, used in the `joints` output dictionary.
     """
 
     def __init__(
@@ -78,7 +106,6 @@ class KineticEnergy(StaticFeature):
         self._labels = value
 
     def _parse_weights(self, weight_input: Union[float, List[float], np.ndarray]) -> Union[float, np.ndarray]:
-        """Validates mass inputs and formats them for optimal broadcasting."""
         if np.isscalar(weight_input):
             mass_scalar = float(weight_input)
             if mass_scalar < 0:
@@ -92,6 +119,18 @@ class KineticEnergy(StaticFeature):
         return mass_array[:, np.newaxis]
 
     def compute(self, frame_data: np.ndarray) -> KineticEnergyResult:
+        r"""Compute kinetic energy for a single frame of velocities.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray of shape (N_signals, N_dims)
+            Snapshot of joint velocities.
+
+        Returns
+        -------
+        KineticEnergyResult
+            The computed energy values.
+        """
         velocities = np.asarray(frame_data, dtype=float)
 
         if velocities.ndim == 1:

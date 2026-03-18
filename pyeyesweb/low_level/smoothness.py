@@ -11,14 +11,41 @@ from pyeyesweb.utils.validators import validate_numeric, validate_boolean, valid
 
 @dataclass(slots=True)
 class SmoothnessResult(FeatureResult):
-    """Output contract for Smoothness metrics."""
+    """Output contract for Smoothness metrics.
+    
+    Attributes
+    ----------
+    sparc : float, optional
+        The computed SPARC metric representing spectral arc length.
+    jerk_rms : float, optional
+        The compute root mean square of jerk.
+    """
     sparc: Optional[float] = None
     jerk_rms: Optional[float] = None
 
 
 class Smoothness(DynamicFeature):
-    """
-    Calculates movement smoothness metrics from a 1D speed profile.
+    """Calculates movement smoothness metrics from a 1D speed profile.
+
+    !!! tip
+        You can calculate smoothness via Spectral Arc Length (SPARC) or Jerk RMS.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/smoothness.md).
+
+    Parameters
+    ----------
+    rate_hz : float, optional
+        Sampling rate in Hz. Defaults to `50.0`.
+    use_filter : bool, optional
+        Whether to apply Savitzky-Golay filtering. Defaults to `True`.
+    metrics : list of {'sparc', 'jerk_rms'}, optional
+        Metrics to calculate. Defaults to all allowed metrics.
+    sparc_amplitude_threshold : float, optional
+        Amplitude threshold for SPARC. Defaults to `0.05`.
+    sparc_min_fc : float, optional
+        Minimum cutoff frequency for SPARC. Defaults to `2.0`.
+    sparc_max_fc : float, optional
+        Maximum cutoff frequency for SPARC. Defaults to `20.0`.
     """
 
     _ALLOWED_METRICS = ["sparc", "jerk_rms"]
@@ -101,7 +128,18 @@ class Smoothness(DynamicFeature):
         return apply_savgol_filter(signal, self.rate_hz)
 
     def compute(self, window_data: np.ndarray) -> SmoothnessResult:
-        """Executes smoothness calculation on the speed profile."""
+        """Executes smoothness calculation on the speed profile.
+
+        Parameters
+        ----------
+        window_data : numpy.ndarray
+            A 1D array representing the speed profile within the window.
+
+        Returns
+        -------
+        SmoothnessResult
+            The computed smoothness metrics.
+        """
         if window_data.size != window_data.shape[0]:
             raise ValueError("Smoothness expects a 1D speed profile.")
 

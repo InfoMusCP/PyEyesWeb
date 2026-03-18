@@ -11,15 +11,33 @@ from pyeyesweb.mid_level.suddenness import Suddenness
 
 @dataclass(slots=True)
 class ImpulsivityResult(FeatureResult):
-    """Output contract for Impulsivity evaluation."""
+    """Output contract for Impulsivity evaluation.
+    
+    Attributes
+    ----------
+    impulsivity_index : float
+        The computed impulsivity index.
+    direction_change_val : float
+        The computed direction change value.
+    is_sudden : bool
+        Whether the movement is sudden.
+    """
     impulsivity_index: float = 0.0
     direction_change_val: float = 0.0
     is_sudden: bool = False
 
 
 class Impulsivity(DynamicFeature):
-    """
-    Impulsivity evaluation based on the product of Direction Change and Suddenness.
+    """Impulsivity evaluation based on the product of Direction Change and Suddenness.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/mid_level/impulsivity.md).
+
+    Parameters
+    ----------
+    direction_change_epsilon : float, optional
+        Epsilon threshold for Direction Change. Defaults to `0.5`.
+    suddenness_algo : str, optional
+        Algorithm to use for Suddenness. Defaults to `"new"`.
     """
 
     def __init__(self, direction_change_epsilon: float = 0.5, suddenness_algo: str = "new"):
@@ -48,9 +66,19 @@ class Impulsivity(DynamicFeature):
         self._suddenness.algo = value
 
     def compute(self, window_data: np.ndarray, **kwargs) -> ImpulsivityResult:
-        """
-        The Pure Math API.
-        Expects window_data of shape (Time, N_signals, N_dims).
+        """The Pure Math API for computing impulsivity.
+        
+        Parameters
+        ----------
+        window_data : numpy.ndarray
+            A 3D tensor representing motion data over time of shape `(Time, N_signals, N_dims)`.
+        **kwargs : dict
+            Additional arguments.
+            
+        Returns
+        -------
+        ImpulsivityResult
+            The computed impulsivity metrics.
         """
         # 1. Compute sub-features by calling their public compute methods
         dc_result = self._direction_change.compute(window_data)

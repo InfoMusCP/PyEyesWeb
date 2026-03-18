@@ -11,15 +11,28 @@ from pyeyesweb.analysis_primitives.rarity import Rarity
 
 @dataclass(slots=True)
 class LightnessResult(FeatureResult):
-    """Output contract for Lightness evaluation."""
+    """Output contract for Lightness evaluation.
+    
+    Attributes
+    ----------
+    lightness : float
+        The resulting lightness value.
+    latest_weight_index : float
+        The weight index of the latest frame in the window.
+    """
     lightness: float = 0.0
     latest_weight_index: float = 0.0
 
 
 class Lightness(DynamicFeature):
-    """
-    Computes Lightness by evaluating the rarity of the Vertical Kinetic Energy
-    weight index over a time window.
+    """Computes Lightness by evaluating the rarity of the Vertical Kinetic Energy weight index over a time window.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/mid_level/lightness.md).
+
+    Parameters
+    ----------
+    alpha : float, optional
+        The alpha parameter for rarity. Defaults to `0.5`.
     """
 
     def __init__(self, alpha: float = 0.5):
@@ -39,9 +52,19 @@ class Lightness(DynamicFeature):
         self._rarity.alpha = value
 
     def compute(self, window_data: np.ndarray, **kwargs) -> LightnessResult:
-        """
-        The Pure Math API.
-        Expects window_data of shape (Time, N_signals, N_dims) representing VELOCITIES.
+        """The Pure Math API for computing lightness.
+
+        Parameters
+        ----------
+        window_data : numpy.ndarray
+            A 3D tensor representing velocities over time of shape `(Time, N_signals, N_dims)`.
+        **kwargs : dict
+            Additional arguments.
+            
+        Returns
+        -------
+        LightnessResult
+            The computed lightness metrics.
         """
         n_frames = window_data.shape[0]
         if n_frames < 2:

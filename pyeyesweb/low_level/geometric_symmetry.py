@@ -9,7 +9,13 @@ from pyeyesweb.utils.validators import validate_pairs
 
 @dataclass(slots=True)
 class GeometricSymmetryResult(FeatureResult):
-    """Output contract for Geometric Symmetry."""
+    """Output contract for Geometric Symmetry.
+    
+    Attributes
+    ----------
+    pairs : dict, optional
+        Dictionary mapping pair identifiers to their symmetric error.
+    """
     pairs: Optional[Dict[str, float]] = None
 
     def to_flat_dict(self, prefix: str = "") -> Dict[str, float]:
@@ -28,8 +34,19 @@ class GeometricSymmetryResult(FeatureResult):
 
 
 class GeometricSymmetry(StaticFeature): # Changed to StaticFeature!
-    """
-    Computes the instantaneous spatial symmetry error for a skeletal frame.
+    """Computes the instantaneous spatial symmetry error for a skeletal frame.
+
+    !!! info
+        The symmetry error is calculated as the Euclidean distance between a joint and the reflection of its corresponding paired joint.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/geometric_symmetry.md).
+
+    Parameters
+    ----------
+    joint_pairs : list of tuple
+        A list of `(left_idx, right_idx)` representing the symmetric pair indices.
+    center_of_symmetry : int, optional
+        The index of the joint to scale as the center of symmetry. If not provided, it defaults to `-1` (barycenter).
     """
 
     def __init__(self, joint_pairs: List[Tuple[int, int]], center_of_symmetry: Optional[int] = None):
@@ -45,8 +62,21 @@ class GeometricSymmetry(StaticFeature): # Changed to StaticFeature!
             self._max_required_idx = max(self._max_required_idx, self._center_idx)
 
     def compute(self, frame_data: np.ndarray, **kwargs) -> GeometricSymmetryResult:
-        """
-        Expects frame_data as a 2D tensor: (N_signals, N_dims).
+        """Compute the symmetry error frame-by-frame.
+
+        Expects `frame_data` as a 2D tensor: `(N_signals, N_dims)`.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray
+            Snapshot of joint positions.
+        **kwargs : dict
+            Additional arguments.
+
+        Returns
+        -------
+        GeometricSymmetryResult
+            The computed geometric symmetry pairs error.
         """
         m, n = frame_data.shape
 

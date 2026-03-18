@@ -9,7 +9,19 @@ from pyeyesweb.data_models.results import FeatureResult
 
 @dataclass(slots=True)
 class SuddennessResult(FeatureResult):
-    """Output contract for Suddenness evaluation."""
+    """Output contract for Suddenness evaluation.
+    
+    Attributes
+    ----------
+    is_sudden : bool
+        Whether the movement is classified as sudden.
+    alpha : float
+        The alpha parameter of the fitted stable distribution.
+    beta : float
+        The beta parameter of the fitted stable distribution.
+    gamma : float
+        The gamma parameter of the fitted stable distribution.
+    """
     is_sudden: bool = False
     alpha: float = 0.0
     beta: float = 0.0
@@ -17,10 +29,17 @@ class SuddennessResult(FeatureResult):
 
 
 class Suddenness(DynamicFeature):
-    """
-    Suddenness evaluation based on velocity distribution.
-    ...
-    (Docstrings omitted for brevity, keep yours!)
+    """Suddenness evaluation based on velocity distribution.
+    
+    !!! note
+        This method evaluates suddenness by modeling the velocity distribution as a stable distribution.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/mid_level/suddenness.md).
+
+    Parameters
+    ----------
+    algo : str, optional
+        The algorithm to use for stable distribution fitting. Defaults to `"new"`.
     """
 
     # Stable distribution fitting tables (McCulloch, 1986)
@@ -60,9 +79,19 @@ class Suddenness(DynamicFeature):
         self._algo = str(value)
 
     def compute(self, window_data: np.ndarray, **kwargs) -> SuddennessResult:
-        """
-        The Pure Math API.
-        Expects window_data shape (Time, N_signals, N_dims).
+        """The Pure Math API for computing suddenness.
+
+        Parameters
+        ----------
+        window_data : numpy.ndarray
+            A 3D tensor representing motion data over time of shape `(Time, N_signals, N_dims)`.
+        **kwargs : dict
+            Additional arguments.
+            
+        Returns
+        -------
+        SuddennessResult
+            The computed suddenness metrics.
         """
         # Collapse signals and dims for velocity calculation
         # Assuming we track a single joint's trajectory for suddenness

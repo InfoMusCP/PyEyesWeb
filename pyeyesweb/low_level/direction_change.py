@@ -9,13 +9,36 @@ from pyeyesweb.utils.validators import validate_string
 
 @dataclass(slots=True)
 class DirectionChangeResult(FeatureResult):
-    """Output contract for Direction Change."""
+    """Output contract for Direction Change.
+    
+    Attributes
+    ----------
+    cosine : float, optional
+        The direction change evaluated using cosine similarity.
+    polygon : float, optional
+        The polygon area enclosed by the trajectory.
+    """
     cosine: Optional[float] = None
     polygon: Optional[float] = None
 
 
 class DirectionChange(DynamicFeature):
-    """Direction Change evaluation based on movement vectors."""
+    """Direction Change evaluation based on movement vectors.
+
+    !!! note
+        Supports multiple metrics such as cosine similarity and polygon area.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/direction_change.md).
+
+    Parameters
+    ----------
+    epsilon : float, optional
+        Threshold parameter for the cosine metric. Defaults to `0.5`.
+    num_subsamples : int, optional
+        Number of subsamples used for polygon area calculation. Defaults to `20`.
+    metrics : list of {'cosine', 'polygon'}, optional
+        The metrics to compute. By default, computes all allowed metrics.
+    """
 
     _ALLOWED_METRICS = ["cosine", "polygon"]
 
@@ -112,6 +135,18 @@ class DirectionChange(DynamicFeature):
         return float(area)
 
     def compute(self, window_data: np.ndarray) -> DirectionChangeResult:
+        """Compute the Direction Change over a temporal window.
+
+        Parameters
+        ----------
+        window_data : numpy.ndarray
+            A 3D tensor of motion data within the sliding window.
+
+        Returns
+        -------
+        DirectionChangeResult
+            The computed direction change metrics.
+        """
         if window_data.shape[0] < 3:
             return DirectionChangeResult(is_valid=False)
 

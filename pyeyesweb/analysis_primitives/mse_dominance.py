@@ -35,13 +35,35 @@ from pyeyesweb.data_models.sliding_window import SlidingWindow
 from pyeyesweb.utils.validators import validate_integer, validate_numeric, validate_string
 
 class MultiScaleEntropyDominance:
-    """Real-time multi-scale entropy analyzer for dominance detection.
+    r"""Real-time multi-scale entropy analyzer for dominance detection.
 
-    This class implements the multi-scale entropy algorithm to analyze dominance
-    in ensemble performances by computing complexity indices of movement dynamics
-    across multiple time scales.
+    Quantifies the complexity of movement dynamics across multiple time scales
+    to identify leadership patterns in musical ensembles.
 
-    The algorithm follows the methodology described in:
+    !!! info
+        The algorithm includes coarse-graining, sample entropy calculation, and
+        complexity index computation as described in Glowinski et al. (2010).
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/analysis_primitives/mse_dominance.md).
+
+    Parameters
+    ----------
+    m : int, optional
+        Embedding dimension for sample entropy. Defaults to `2`.
+    r : float, optional
+        Tolerance threshold for template matching. Defaults to `0.15`.
+    max_scale : int, optional
+        Maximum scale factor ($\\tau$) for coarse-graining. Defaults to `6`.
+    min_points : int, optional
+        Minimum number of points required for reliable entropy estimation at
+        any given scale. Defaults to `500`.
+    methods : list of str, optional
+        Analysis components to compute. Choices: `"complexity_index"`,
+        `"dominance_score"`, `"leader_identification"`.
+        Defaults to `["complexity_index"]`.
+
+    References
+    ----------
     Glowinski et al. (2010). Multi-scale entropy analysis of dominance in
     social creative activities. ACM Multimedia, 1035-1038.
     """
@@ -101,23 +123,6 @@ class MultiScaleEntropyDominance:
         self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in value]
 
     def _coarse_grain(self, data: np.ndarray, scale: int) -> np.ndarray:
-        """Apply coarse-graining procedure to time series data.
-
-        Implements the exact equation from Costa et al. (2005):
-        y_j^(τ) = (1/τ) * Σ_{i=(j-1)τ+1}^{jτ} x_i, for j=1..floor(N/τ)
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input time series data (1D array)
-        scale : int
-            Scale factor for coarse-graining (τ in the equation)
-
-        Returns
-        -------
-        np.ndarray
-            Coarse-grained time series
-        """
         if data is None or data.size == 0:
             return np.array([], dtype=float)
 
@@ -145,18 +150,6 @@ class MultiScaleEntropyDominance:
         return coarse
 
     def _sample_entropy(self, data: np.ndarray) -> float:
-        """Calculate sample entropy (SampEn) for a time series.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input time series data (1D array)
-
-        Returns
-        -------
-        float
-            Sample entropy value, or nan if insufficient data
-        """
         x = np.asarray(data, dtype=float).reshape(-1)
         N = x.shape[0]
         m = int(self._m)
@@ -204,18 +197,6 @@ class MultiScaleEntropyDominance:
         return float(-np.log(A / B))
 
     def _calculate_complexity_index(self, data: np.ndarray) -> float:
-        """Calculate complexity index by integrating sample entropy across scales.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input time series data
-
-        Returns
-        -------
-        float
-            Complexity index value
-        """
         sampen_values = []
 
         for scale in range(1, int(self._max_scale) + 1):
@@ -239,6 +220,9 @@ class MultiScaleEntropyDominance:
     def __call__(self, signals: SlidingWindow) -> dict:
         """Compute dominance analysis for ensemble performance data.
 
+        Evaluates complexity across multiple scales for each signal in the
+        window and optionally computes dominance scores and identifies leaders.
+
         Parameters
         ----------
         signals : SlidingWindow
@@ -247,7 +231,8 @@ class MultiScaleEntropyDominance:
         Returns
         -------
         dict
-            Dictionary containing dominance analysis results.
+            Dictionary containing the requested results (e.g.,
+            `'complexity_index'`, `'dominance_score'`).
         """
         if not signals.is_full():
             return {method: np.nan for method in self._methods}
