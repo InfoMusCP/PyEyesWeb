@@ -47,11 +47,12 @@ and enabling applications in **art, therapy, rehabilitation, and HCI**
 | **Hesitation**                  | When intention behind movement is unclear to an observer.                             | :material-close: |
 | **Attraction / Repulsion**      | Degree to which an observer feels drawn to or repelled by the movement.               | :material-close: |
 | **Groove**                      | Extent to which movement elicits movement in the observer.                            | :material-close: |
-| **Saliency**                    | How a movement stands out compared to others in context.                              | :material-close: |
+| **Saliency**[^1]                    | How a movement stands out compared to others in context.                              | :material-close: |
 | **Emotion**                     | Expressive emotional content conveyed via body movement (categorical or dimensional). | :material-close: |
 
 ---
 
 ## References
-TODO 
+
+[^1]: Romano, G., Rajeev Sabharwal, S., Gnecco, G., Camurri, A. (2025). A Computational Framework for Identifying Salient Moments in Motion Capture Data. In: Nicosia, G., Ojha, V., Giesselbach, S., Pardalos, M.P., Umeton, R. (eds) Machine Learning, Optimization, and Data Science. LOD ACAIN 2024 2024. Lecture Notes in Computer Science, vol 15509. Springer, Cham. [:material-link-variant:](https://doi.org/10.1007/978-3-031-82484-5_20)
 

@@ -21,7 +21,7 @@ def format_module_name(name):
 
 
 # Generate individual module pages and build nav
-for path in sorted(SRC_DIR.rglob("*.py")):
+for path in sorted(SRC_DIR.rglob("[!.]*.py")): # Exclude files starting with . (e.g., .pytest.py) from nav
     module_path = path.relative_to(SRC_DIR).with_suffix("")
     doc_path = API_DOCS_PATH / path.relative_to(SRC_DIR).with_suffix(".md")
     module_name = ".".join(module_path.parts)

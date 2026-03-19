@@ -35,4 +35,4 @@ The algorithm returns:
 
 ## References
 
-### TODO
+[^1]: [Wikipedia: Kinetic Energy for non-relativistic velocity](https://en.wikipedia.org/wiki/Kinetic_energy#Kinetic_energy_for_non-relativistic_velocity)

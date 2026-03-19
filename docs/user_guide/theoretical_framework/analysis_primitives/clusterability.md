@@ -11,7 +11,7 @@ The Clusterability module assesses the presence of meaningful non-random structu
     - $H \approx 0.0$: Indicates regularly spaced data (e.g., a perfect grid), which is rare in human movement.
 
 ## Algorithm Details & Mathematics
-The feature employs the **Hopkins Statistic** based on Nearest Neighbor (NN) distances.
+The feature employs the **Hopkins Statistic**[^1] based on Nearest Neighbor (NN) distances.
 
 Given a dataset $X$ of size $N$, the algorithm:
 
@@ -29,4 +29,5 @@ $$
 *(Note: In some literature the numerator is $w_i$. The Python implementation uses $u_i$ in the numerator to ensure that highly clustered data (where real points are dense resulting in small $w_i$, but random points fall in empty space resulting in large $u_i$) approaches $1.0$.)*
 
 ## References
-*Lawson, R.G. and Jurs, P.C., 1990. New index for clustering tendency and its application to chemical problems. Journal of Chemical Information and Computer Sciences, 30(1), pp.36-41.*
+
+[^1]: Lawson, R.G. and Jurs, P.C., 1990. New index for clustering tendency and its application to chemical problems. Journal of Chemical Information and Computer Sciences, 30(1), pp.36-41.

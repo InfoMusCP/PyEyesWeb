@@ -37,16 +37,16 @@ They summarize, transform, or model data at various temporal and spatial scales.
 
 | Primitive Type                | Description                                                                                                  | Implemented      |
 |-------------------------------|--------------------------------------------------------------------------------------------------------------|------------------|
-| **Statistical Moments**       | Unary operators summarizing distributions (mean, variance, skewness, kurtosis).                              | :material-close: |
+| [**Statistical Moments**](statistical_moments.md)       | Unary operators summarizing distributions (mean, variance, skewness, kurtosis).                              | :material-close: |
 | **Shape Descriptors**         | Peaks, slopes, valleys in time-series; geometric descriptors of movement curves.                             | :material-close: |
-| **Entropy** [^1]              | Approximate/sample entropy, recurrence analysis; quantify predictability or irregularity.                    | :material-close: |
+| [**Entropy**](mse_dominance.md) [^1]              | Approximate/sample entropy, recurrence analysis; quantify predictability or irregularity.                    | :material-close: |
 | **Time-Frequency Transforms** | Fourier or wavelet transforms to detect rhythm, periodicity, or temporal structures.                         | :material-close: |
 | **Symmetry** [^2]             | Unary/binary operators measuring geometric or dynamic balance (e.g., left vs. right entropy or energy).      | :material-close: |
 | **Synchronization** [^3][^4]  | Binary/n-ary operators measuring alignment of signals (cross-correlation, phase-locking, group entrainment). | :material-close: |
 | **Causality** [^4]            | Directional relationships (e.g., Granger causality, transfer entropy) to detect leader–follower dynamics.    | :material-close: |
-| **Clusterability** [^5]       | Measures the tendency of data points to form clusters by means of the Hopkins statistics.                    | :material-close: |
+| [**Clusterability**](clusterability.md) [^5]       | Measures the tendency of data points to form clusters by means of the Hopkins statistics.                    | :material-close: |
 | **Predictive Models**         | Hidden Markov Models, classifiers, neural networks; used for gesture segmentation or quality inference.      | :material-close: |
-| **Saliency / Rarity** [^6]    | Detecting unusual occurrences in movement with respect to most frequent patterns.                            | :material-close: |
+| **Rarity** [^6]    | Detecting unusual occurrences in movement with respect to most frequent patterns.                            | :material-close: |
 
 
 ## References
