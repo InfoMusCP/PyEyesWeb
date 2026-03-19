@@ -59,4 +59,4 @@ $$
 
 ## References
 
-### TODO
+[^1]: Ghisio, S., Coletta, P., Piana, S., Alborno, P., Volpe, G., Camurri, A., ... & Ravaschio, A. (2015, June). An open platform for full body interactive sonification exergames. In 2015 7th International Conference on Intelligent Technologies for Interactive Entertainment (INTETAIN) (pp. 168-175). IEEE.

@@ -14,28 +14,22 @@ The Statistical Moment module provides real-time computation of foundational des
 ## Algorithm Details & Mathematics
 The module isolates each one-dimensional signal array $X = \{x_1, \dots, x_N\}$ of length $N$ inside the current window block, and continuously computes the requested moments.
 
-### 1. Mean[^1]
+### 1. Mean
 The arithmetic average defining the center point:
 
 $$ \mu = \frac{1}{N} \sum_{i=1}^{N} x_i $$
 
-### 2. Standard Deviation[^2]
+### 2. Standard Deviation
 The sample standard deviation (using $N-1$ degrees of freedom to correct for sample size bias), representing typical dispersal distance from the mean:
 
 $$ s = \sqrt{\frac{1}{N-1} \sum_{i=1}^{N} (x_i - \mu)^2}  $$
 
-### 3. Skewness[^3]
+### 3. Skewness
 The unadjusted Fisher-Pearson coefficient of skewness, tracking symmetrical distribution:
 
 $$ \gamma_1 = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^3}{\left(\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2\right)^{3/2}} $$
 
-### 4. Kurtosis[^4]
+### 4. Kurtosis
 Fisher's definition of excess kurtosis (subtracting 3), tracking the fatness of the tails relative to a Normal distribution:
 
 $$ \gamma_2 = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^4}{\left(\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2\right)^2} - 3.0 $$
-
-## References
-[^1]: [Wikipedia: Mean](https://en.wikipedia.org/wiki/Mean)
-[^2]: [Wikipedia: Standard deviation](https://en.wikipedia.org/wiki/Standard_deviation)
-[^3]: [Wikipedia: Skewness](https://en.wikipedia.org/wiki/Skewness)
-[^4]: [Wikipedia: Kurtosis](https://en.wikipedia.org/wiki/Kurtosis)

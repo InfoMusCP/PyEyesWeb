@@ -41,4 +41,4 @@ $$ R = \alpha \cdot U + (1 - \alpha) \cdot H_{norm} $$
 
 ## References
 
-### TODO
+[^1]: Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., & Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.

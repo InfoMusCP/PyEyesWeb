@@ -40,4 +40,5 @@ $$
 $$
 
 ## References
+
 [^1]: Glowinski, D., Coletta, P., Volpe, G., Camurri, A., Chiorri, C., & Schenone, A. (2010). Multi-scale entropy analysis of dominance in social creative activities. In Proceedings of the 18th ACM international conference on Multimedia (pp. 1035-1038).

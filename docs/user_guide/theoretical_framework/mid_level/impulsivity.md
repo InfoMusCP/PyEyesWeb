@@ -25,4 +25,5 @@ This ensures that high spatial curvature without temporal acceleration (e.g., sl
 
 ## References
 
-### TODO
+[^1]: Mazzarino, B., & Mancini, M. (2009). The need for impulsivity & smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications.
+[^2]: Niewiadomski, R., Mancini, M., Volpe, G., & Camurri, A. (2015). Automated detection of impulsive movements in HCI. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter (pp. 166-169).

@@ -43,8 +43,8 @@ They operate at a higher abstraction than low-level descriptors, often integrati
 | Feature                  | Description                                                              | Implemented      |
 |--------------------------|--------------------------------------------------------------------------|------------------|
 | **Directness** [^1]      | Straight vs. flexible trajectory toward a target (Laban’s Space).        | :material-close: |
-| **Lightness** [^2][^3]   | Influence of gravity on movement (vertical vs. horizontal acceleration). | :material-close: |
-| **Impulsivity** [^4][^5] | Abrupt movement without preparation by antagonist muscles.               | :material-close: |
+| [**Lightness**](lightness.md) [^2][^3]   | Influence of gravity on movement (vertical vs. horizontal acceleration). | :material-check: |
+| [**Impulsivity**](impulsivity.md) [^4][^5] | Abrupt movement without preparation by antagonist muscles.               | :material-check: |
 | **Fluidity** [^6][^7]    | Smooth, wave-like propagation of movement across joints.                 | :material-close: |
 | **Fragility** [^2][^3]   | Vulnerability and delicacy in movement.                                  | :material-close: |
 
@@ -52,7 +52,7 @@ They operate at a higher abstraction than low-level descriptors, often integrati
 ## References
 
 [^1]: Piana, S., Staglianò, A., Camurri, A., & Odone, F. (2013). A set of full-body movement features for emotion recognition to help children affected by autism spectrum condition. In IDGEI International Workshop (Vol. 23).
-[^2]: Niewiadomski, R., Mancini, M., Piana, S., Alborno, P., Volpe, G., & Camurri, A. (2017). Low-intrusive recognition of expressive movement qualities. In Proceedings of the 19th ACM international conference on multimodal interaction (pp. 230-237).)
+[^2]: Niewiadomski, R., Mancini, M., Piana, S., Alborno, P., Volpe, G., & Camurri, A. (2017). Low-intrusive recognition of expressive movement qualities. In Proceedings of the 19th ACM international conference on multimodal interaction (pp. 230-237).
 [^3]: Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., & Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.
 [^4]: Mazzarino, B., & Mancini, M. (2009). The need for impulsivity & smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications.
 [^5]: Niewiadomski, R., Mancini, M., Volpe, G., & Camurri, A. (2015). Automated detection of impulsive movements in HCI. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter (pp. 166-169).

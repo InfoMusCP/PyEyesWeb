@@ -60,4 +60,5 @@ $$
 
 ## References
 
-### TODO
+[^1]: Mazzarino, B., & Mancini, M. (2009). The need for impulsivity & smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored).
+[^2]: Melendez-Calderon, A., Shirota, C., & Balasubramanian, S. (2021). Estimating movement smoothness from inertial measurement units. Frontiers in bioengineering and biotechnology, 8, 558771.

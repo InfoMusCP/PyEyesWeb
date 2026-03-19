@@ -62,4 +62,5 @@ where $N$ is the total number of points, $X_i$ is the position of the $i$-th poi
 
 ## References
 
-### TODO
+[^1]: Glowinski, D., Dael, N., Camurri, A., Volpe, G., Mortillaro, M., & Scherer, K. (2011). Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2), 106-118.
+[^2]: Camurri, A., Lagerlöf, I., & Volpe, G. (2003). Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1-2), 213-225.

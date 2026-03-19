@@ -30,4 +30,5 @@ $$
 
 ## References
 
-[^1]: Lawson, R.G. and Jurs, P.C., 1990. New index for clustering tendency and its application to chemical problems. Journal of Chemical Information and Computer Sciences, 30(1), pp.36-41.
+[^1]: Lawson, R. G., & Jurs, P. C. (1990). New index for clustering tendency and its application to chemical problems. Journal of chemical information and computer sciences, 30(1), 36-41.
+[^2]: Corbellini, N., Ceccaldi, E., Varni, G., & Volpe, G. (2022, August). An exploratory study on group potency classification from non-verbal social behaviours. In International Conference on Pattern Recognition (pp. 240-255). Cham: Springer Nature Switzerland.

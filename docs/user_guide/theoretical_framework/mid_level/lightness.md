@@ -37,4 +37,5 @@ $$
 
 ## References
 
-### TODO
+[^1]: Niewiadomski, R., Mancini, M., Piana, S., Alborno, P., Volpe, G., & Camurri, A. (2017). Low-intrusive recognition of expressive movement qualities. In Proceedings of the 19th ACM international conference on multimodal interaction (pp. 230-237).
+[^2]: Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., & Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.
