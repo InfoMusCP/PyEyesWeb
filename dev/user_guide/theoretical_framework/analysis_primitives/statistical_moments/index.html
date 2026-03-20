@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/statistical_moments/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Statistical Moments Analysis Module - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Statistical Moments Analysis Module";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/analysis_primitives/statistical_moments.md";
+        var mkdocs_page_url = "/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/statistical_moments/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../low_level/low_level/">Layer 2 - Low-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/">Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../statistical_moment.md">Statistical Moment</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/base/">Base</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/results/">Results</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Statistical Moments Analysis Module</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/analysis_primitives/statistical_moments.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="statistical-moments-analysis-module">Statistical Moments Analysis Module</h1>
+<h2 id="overview">Overview</h2>
+<p>The Statistical Moment module provides real-time computation of foundational descriptive statistics over sliding windows of motion signals. It quantifies the shape, spread, and central tendency of continuous movement patterns.</p>
+<h2 id="theoretical-interpretation">Theoretical Interpretation</h2>
+<ul>
+<li><strong>Input Requirements</strong>: Evaluates a temporal sequence (window) of <span class="arithmatex">\(N\)</span>-dimensional data points. Computations are performed independently over every dimension or feature provided.</li>
+<li><strong>Value Interpretation</strong>:<ul>
+<li><strong>Mean (<span class="arithmatex">\(\mu\)</span>)</strong>: The central baseline or average persistent posture/velocity of the limb across the window.</li>
+<li><strong>Standard Deviation (<span class="arithmatex">\(\sigma\)</span>)</strong>: The magnitude of the movement span. High variance denotes expansive, reaching, or highly varied effort. Low variance denotes rigidity or stillness around the mean.</li>
+<li><strong>Skewness (<span class="arithmatex">\(\gamma_1\)</span>)</strong>: The asymmetry of the movement. A positive skew denotes sudden forward thrusts with slow returns; negative skew denotes slow builds with sudden snaps back to resting.</li>
+<li><strong>Kurtosis (<span class="arithmatex">\(\gamma_2\)</span>)</strong>: The presence of extreme outliers or heavy tails. High kurtosis marks sudden, jerky, erratic anomalies within an otherwise regular pattern.</li>
+</ul>
+</li>
+</ul>
+<h2 id="algorithm-details-mathematics">Algorithm Details &amp; Mathematics</h2>
+<p>The module isolates each one-dimensional signal array <span class="arithmatex">\(X = \{x_1, \dots, x_N\}\)</span> of length <span class="arithmatex">\(N\)</span> inside the current window block, and continuously computes the requested moments.</p>
+<h3 id="1-mean">1. Mean</h3>
+<p>The arithmetic average defining the center point:</p>
+<div class="arithmatex">\[ \mu = \frac{1}{N} \sum_{i=1}^{N} x_i \]</div>
+<h3 id="2-standard-deviation">2. Standard Deviation</h3>
+<p>The sample standard deviation (using <span class="arithmatex">\(N-1\)</span> degrees of freedom to correct for sample size bias), representing typical dispersal distance from the mean:</p>
+<div class="arithmatex">\[ s = \sqrt{\frac{1}{N-1} \sum_{i=1}^{N} (x_i - \mu)^2}  \]</div>
+<h3 id="3-skewness">3. Skewness</h3>
+<p>The unadjusted Fisher-Pearson coefficient of skewness, tracking symmetrical distribution:</p>
+<div class="arithmatex">\[ \gamma_1 = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^3}{\left(\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2\right)^{3/2}} \]</div>
+<h3 id="4-kurtosis">4. Kurtosis</h3>
+<p>Fisher's definition of excess kurtosis (subtracting 3), tracking the fatness of the tails relative to a Normal distribution:</p>
+<div class="arithmatex">\[ \gamma_2 = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^4}{\left(\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2\right)^2} - 3.0 \]</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
+      <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/rarity/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Rarity - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Rarity";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/analysis_primitives/rarity.md";
+        var mkdocs_page_url = "/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/rarity/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../low_level/low_level/">Layer 2 - Low-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="../analysis_primitives/">Analysis Primitives</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Rarity</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#theoretical-interpretation">Theoretical Interpretation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#algorithm-details-mathematics">Algorithm Details &amp; Mathematics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="" href="../statistical_moment.md">Statistical Moment</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/base/">Base</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/results/">Results</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item"><a href="../../theoretical_framework/">Theoretical Framework</a></li>
+          <li class="breadcrumb-item"><a href="../analysis_primitives/">Analysis Primitives</a></li>
+      <li class="breadcrumb-item active">Rarity</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/analysis_primitives/rarity.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="rarity-analysis-module">Rarity Analysis Module</h1>
+<h2 id="overview">Overview</h2>
+<p>The Rarity module quantifies the statistical novelty or anomaly of the most recent movement frame relative to the preceding history. It evaluates how unexpected a given value is by comparing it against a dynamically constructed probability distribution of the previous temporal window.</p>
+<h2 id="theoretical-interpretation">Theoretical Interpretation</h2>
+<ul>
+<li><strong>Input Requirements</strong>: Expects a single 1D array representing a temporal sequence of aggregated scalar values (for instance, the output values of a specific sub-feature like Vertical Kinetic Energy weight or distance over time).</li>
+<li><strong>Value Interpretation</strong>:<ul>
+<li><strong>High Rarity (approaching <code>1.0</code>)</strong>: The latest movement is highly anomalous or unusual compared to the immediate past.</li>
+<li><strong>Low Rarity (approaching <code>0.0</code>)</strong>: The latest movement falls squarely within the most common, frequent, and expected behavior observed inside the target window.</li>
+</ul>
+</li>
+</ul>
+<h2 id="algorithm-details-mathematics">Algorithm Details &amp; Mathematics</h2>
+<p>The Rarity <span class="arithmatex">\(R\)</span> is calculated using a convex combination of two distinct metrics derived from the probability density of the recent sequence window: </p>
+<ol>
+<li>The contextual Unlikelihood (<span class="arithmatex">\(U\)</span>) of the final point.</li>
+<li>The Normalized Shannon Entropy (<span class="arithmatex">\(H_{norm}\)</span>) of the entire context window.</li>
+</ol>
+<p>Given a sequence window <span class="arithmatex">\(S\)</span> of length <span class="arithmatex">\(N\)</span>:</p>
+<ol>
+<li><strong>Histogram Construction</strong>:
+The algorithm constructs a dynamic probability density function by segmenting the range <code>[min(S), max(S)]</code> into <span class="arithmatex">\(B\)</span> bins, where the optimal bin count dynamically scales with the available data:</li>
+</ol>
+<div class="arithmatex">\[ B = \max(\lfloor\sqrt{N}\rfloor, 1) \]</div>
+<p>The probability <span class="arithmatex">\(p_b\)</span> of any bin <span class="arithmatex">\(b\)</span> is the frequency of points falling into that bin divided by <span class="arithmatex">\(N\)</span>.</p>
+<ol>
+<li><strong>Unlikelihood (<span class="arithmatex">\(U\)</span>)</strong>:
+The unlikelihood algorithm isolates the raw probability of the specific bin containing the most recent observation (<span class="arithmatex">\(p_{current}\)</span>). A very infrequent behavior has a low probability.</li>
+</ol>
+<div class="arithmatex">\[ U = 1.0 - p_{current} \]</div>
+<ol>
+<li><strong>Normalized Entropy (<span class="arithmatex">\(H_{norm}\)</span>)</strong>:
+Standard Shannon entropy evaluates the overall diversity or chaos of the window's distribution:</li>
+</ol>
+<div class="arithmatex">\[ H_{norm} = -\frac{1}{\log(B)} \sum_{b=1}^{B} p_b \log(p_b) \]</div>
+<ol>
+<li><strong>Final Rarity Score</strong>:
+The rarity is returned as a weighted blend of the single-point unlikelihood and the holistic window unpredictability, governed by a configurable parameter <span class="arithmatex">\(\alpha \in [0, 1]\)</span>:</li>
+</ol>
+<div class="arithmatex">\[ R = \alpha \cdot U + (1 - \alpha) \cdot H_{norm} \]</div>
+<h2 id="references">References</h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., &amp; Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../mse_dominance/" class="btn btn-neutral float-left" title="MSE Dominance"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../synchronization/" class="btn btn-neutral float-right" title="Synchronization">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../mse_dominance/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../synchronization/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
+      <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
