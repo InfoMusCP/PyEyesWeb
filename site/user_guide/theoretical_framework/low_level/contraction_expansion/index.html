@@ -3,20 +3,21 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/user_guide/theoretical_framework/low_level/contraction_expansion/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/contraction_expansion/" />
       <link rel="shortcut icon" href="../../../../img/favicon.ico" />
-    <title>Contraction-Expansion Analysis Module - PyEyesWeb</title>
+    <title>Contraction Expansion - PyEyesWeb</title>
     <link rel="stylesheet" href="../../../../css/theme.css" />
     <link rel="stylesheet" href="../../../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
         <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Contraction-Expansion Analysis Module";
+        var mkdocs_page_name = "Contraction Expansion";
         var mkdocs_page_input_path = "user_guide\\theoretical_framework\\low_level\\contraction_expansion.md";
-        var mkdocs_page_url = "/PyEyesWeb/user_guide/theoretical_framework/low_level/contraction_expansion/";
+        var mkdocs_page_url = "/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/contraction_expansion/";
       </script>
     
     <!--[if lt IE 9]>
@@ -47,15 +48,35 @@
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">User Guide</span></p>
-              <ul>
+              <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theoretical_framework/">Theoretical Framework</a>
-    <ul>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul class="current">
                 <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../low_level/">Layer 2 - Low-Level Features</a>
-    <ul>
+                <li class="toctree-l2 current"><a class="reference internal current" href="../low_level/">Layer 2 - Low-Level Features</a>
+    <ul class="current">
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Contraction Expansion</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#1-bounding-box-filled-area">1. Bounding Box Filled Area</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-ellipsoid-sphericity">2. Ellipsoid Sphericity</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-points-density">3. Points Density</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../geometric_symmetry/">Geometric Symmetry</a>
+                </li>
                 <li class="toctree-l3"><a class="reference internal" href="../postural_balance/">Postural Balance</a>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../smoothness/">Smoothness</a>
@@ -63,12 +84,26 @@
     </ul>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../analysis_primitives/analysis_primitives/">Analysis Primitives</a>
     <ul>
-                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../../analysis_primitives/statistical_moment.md">Statistical Moment</a>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/synchronization/">Synchronization</a>
                 </li>
@@ -158,7 +193,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Contraction-Expansion Analysis Module</li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item"><a href="../../theoretical_framework/">Theoretical Framework</a></li>
+          <li class="breadcrumb-item"><a href="../low_level/">Layer 2 - Low-Level Features</a></li>
+      <li class="breadcrumb-item active">Contraction Expansion</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/low_level/contraction_expansion.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -169,99 +207,81 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="contraction-expansion-analysis-module">Contraction-Expansion Analysis Module</h1>
-<p>The Contraction-Expansion module quantifies spatial dynamics of movement patterns by analyzing how trajectories expand and contract in space over time.</p>
-<p>Spatial movement analysis examines how body segments or markers change their relative positions during movement.
-The module provides:</p>
-<ul>
-<li><strong>2D/3D area calculations</strong>: geometric area enclosed by trajectory points</li>
-<li><strong>Volume analysis</strong>: 3D spatial volume changes</li>
-<li><strong>Expansion-contraction rates</strong>: temporal derivatives of spatial measures</li>
-</ul>
-<h2 id="algorithms-details">Algorithms Details</h2>
-<h3 id="2d-area-computation">2D Area computation</h3>
-<p>The 2D implementation uses the Shoelace formula <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> for polygon area computation:</p>
-<div class="arithmatex">\[
-A = \tfrac{1}{2} \Bigg| \sum_i \big( x_i y_{i+1} - x_{i+1} y_i \big) \Bigg|
-\]</div>
-<h3 id="3d-volume-computation">3D Volume computation</h3>
-<p>Calculates 3D volume using tetrahedron volume decomposition:</p>
+<h2 id="overview">Overview</h2>
+<p>The Contraction-Expansion module provides three distinct low-level metrics for quantifying the spatial spread of body configurations in 3D (or 2D) space:</p>
 <ol>
-<li>
-<p><strong>Divide the 3D shape into tetrahedra</strong><br />
-   For a polyhedron defined by vertices <span class="arithmatex">\( \{p_i\}_{i=0}^n \)</span>, partition it into a set of tetrahedra <span class="arithmatex">\(\mathcal{T} = \{ (p_0, p_{i}, p_{j}, p_{k}) \}\)</span>.</p>
-</li>
-<li>
-<p><strong>Calculate each tetrahedron volume using the scalar triple product</strong><br />
-   For tetrahedron with vertices <span class="arithmatex">\(p_0, p_1, p_2, p_3 \in \mathbb{R}^3\)</span>  </p>
-</li>
+<li><strong>Bounding Box Filled Area</strong></li>
+<li><strong>Ellipsoid Sphericity</strong></li>
+<li><strong>Points Density</strong></li>
 </ol>
-<div class="arithmatex">\[
-V_{\text{tetra}} = \frac{1}{6} \; \det 
-\begin{bmatrix}
-x_1 - x_0 &amp; x_2 - x_0 &amp; x_3 - x_0 \\
-y_1 - y_0 &amp; y_2 - y_0 &amp; y_3 - y_0 \\
-z_1 - z_0 &amp; z_2 - z_0 &amp; z_3 - z_0
-\end{bmatrix}
-\]</div>
-<p>or equivalently:</p>
-<div class="arithmatex">\[
-V_{\text{tetra}} = \tfrac{1}{6} \, \big( (p_1 - p_0) \cdot \big( (p_2 - p_0) \times (p_3 - p_0) \big) \big)
-\]</div>
-<ol start="3">
-<li>
-<strong>Sum volumes with appropriate signs</strong>  
-<br>The total polyhedron volume is obtained as:
-</li>
-</ol>
-
-<div class="arithmatex">\[
-V = \sum_{k} V_{\text{tetra},k}
-\]</div>
-<p>where the sign of each <span class="arithmatex">\(V_{\text{tetra},k}\)</span> depends on the orientation of the vertices.</p>
-<h2 id="performance-optimization">Performance Optimization</h2>
-<h3 id="numba-jit-compilation">Numba JIT Compilation</h3>
-<p>The module uses Numba's Just-In-Time compilation for performance.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Numba introduces <strong>compilation time</strong> on first use, but caches compiled functions for subsequent calls.<br />
-This approach grants 10-100x speedups over pure Python, avoiding overhead in critical loops.</p>
-</div>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">_area_2d_fast</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="c1"># Ultra-fast computation with compiled code</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">pass</span>
-</span></code></pre></div>
-<h3 id="memory-efficiency">Memory Efficiency</h3>
-<p>The implementation is optimized for memory efficiency by using in-place calculations, minimizing temporary arrays, and leveraging efficient array operations.</p>
-<div class="admonition warning">
-<p class="admonition-title">Limitations &amp; Considerations</p>
+<p>These shape metrics are used to track structural changes relative to a movement baseline—for example, distinguishing a tightly curled posture from a sprawling, open posture.</p>
+<h2 id="1-bounding-box-filled-area">1. Bounding Box Filled Area</h2>
+<h3 id="theoretical-interpretation">Theoretical Interpretation</h3>
 <ul>
-<li>Assumes meaningful geometric shapes from selected points.  </li>
-<li>Requires consistent <strong>point topology</strong> across frames.  </li>
-<li>May not capture the <strong>full spatial complexity</strong> of movement.</li>
-<li>Performance depends on <strong>point selection strategy</strong>.</li>
-<li>Always consider the <strong>movement context</strong> when interpreting results.  </li>
-<li>Normalize for <strong>subject/task differences</strong> when appropriate.  </li>
+<li><strong>Input Requirements</strong>: A static frame of points in space.</li>
+<li><strong>Value Interpretation</strong>: This computes the "Contraction Index" based on surface area compactness. A value closer to <code>1.0</code> typically indicates the posture fully occupies its volumetric bounds (highly expanded and flush), whereas smaller values indicate a tightly clustered or irregular shape relative to its global bounds.</li>
+<li><strong>Robustness</strong>: Relies on Convex Hull computation which gracefully handles outlier limbs but can fail mathematically if all points form a flat plane (degeneracy). </li>
 </ul>
+<h3 id="algorithm-details-mathematics">Algorithm Details &amp; Mathematics</h3>
+<p>The index is the ratio of the squared surface area of the enclosed convex hull to the surface area of the axis-aligned bounding box (AABB).</p>
+<div class="arithmatex">\[ 
+Index = \frac{Area_{hull}^2}{Area_{bbox}}
+\]</div>
+<p>where <span class="arithmatex">\(Area_{hull}\)</span> is the internal surface area derived purely from the outermost perimeter of points, and <span class="arithmatex">\(Area_{bbox}\)</span> is the theoretical bounding rectangle/prism containing all movement.</p>
+<h2 id="2-ellipsoid-sphericity">2. Ellipsoid Sphericity</h2>
+<h3 id="theoretical-interpretation_1">Theoretical Interpretation</h3>
+<ul>
+<li><strong>Input Requirements</strong>: A static frame of spatial coordinates.</li>
+<li><strong>Value Interpretation</strong>: Sphericity quantifies how closely the current body posture resembles a perfect sphere versus an elongated line or flat disc. A perfectly spherical posture yields <code>1.0</code>, while a highly stretched limb posture approaches <code>0.0</code>.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Rotational Invariance</p>
+<p>Because this metric relies on Principal Component Analysis (PCA) to find the primary axes, it is highly robust against the subject's rotation in space.</p>
 </div>
+<h3 id="algorithm-details-mathematics_1">Algorithm Details &amp; Mathematics</h3>
+<p>The algorithm fits a 3D ellipsoid to the skeletal joints using PCA on the mean-centered point cloud. The sorted eigenvalues yield the primary radii <span class="arithmatex">\((a, b, c)\)</span> where <span class="arithmatex">\(a\)</span> is the major axis and <span class="arithmatex">\(c\)</span> is the minor axis.</p>
+<p>Sphericity <span class="arithmatex">\(S\)</span> is defined as the ratio of the smallest to the largest radius:</p>
+<div class="arithmatex">\[
+S = \frac{c}{a}
+\]</div>
+<p>where <span class="arithmatex">\(c\)</span> is the length of the shortest semi-axis and <span class="arithmatex">\(a\)</span> is the length of the longest semi-axis of the fitted ellipsoid.</p>
+<h2 id="3-points-density">3. Points Density</h2>
+<h3 id="theoretical-interpretation_2">Theoretical Interpretation</h3>
+<ul>
+<li><strong>Input Requirements</strong>: A static snippet of spatial coordinates.</li>
+<li><strong>Value Interpretation</strong>: Evaluates the dispersion of the body. Smaller values mean all points are tightly clustered near the center of mass (high density / contracted). Larger values indicate the body is widely spread out (low density / expanded).</li>
+</ul>
+<h3 id="algorithm-details-mathematics_2">Algorithm Details &amp; Mathematics</h3>
+<p>Computes the average Euclidean distance of all points from their shared barycenter.</p>
+<div class="arithmatex">\[
+D = \frac{1}{N} \sum_{i=1}^{N} \| X_i - \bar{X} \|
+\]</div>
+<p>where <span class="arithmatex">\(N\)</span> is the total number of points, <span class="arithmatex">\(X_i\)</span> is the position of the <span class="arithmatex">\(i\)</span>-th point, and <span class="arithmatex">\(\bar{X}\)</span> is the exact spatial mean of the point cloud.</p>
 <h2 id="references">References</h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>TODO&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>Glowinski, D., Dael, N., Camurri, A., Volpe, G., Mortillaro, M., &amp; Scherer, K. (2011). Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2), 106-118.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Camurri, A., Lagerlöf, I., &amp; Volpe, G. (2003). Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1-2), 213-225.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
               
             </div>
           </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../low_level/" class="btn btn-neutral float-left" title="Layer 2 - Low-Level Features"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../direction_change/" class="btn btn-neutral float-right" title="Direction Change">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
-      <p>Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.</p>
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
@@ -282,6 +302,10 @@ This approach grants 10-100x speedups over pure Python, avoiding overhead in cri
         </span>
     
     
+      <span><a href="../low_level/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../direction_change/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -291,7 +315,9 @@ This approach grants 10-100x speedups over pure Python, avoiding overhead in cri
     <script src="../../../../js/theme.js"></script>
       <script src="../../../../javascripts/mathjax.js"></script>
       <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
       <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
     <script>
         jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/analysis_primitives/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/analysis_primitives/" />
       <link rel="shortcut icon" href="../../../../img/favicon.ico" />
     <title>Analysis Primitives - PyEyesWeb</title>
     <link rel="stylesheet" href="../../../../css/theme.css" />
@@ -11,12 +11,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
         <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
     
       <script>
         // Current page data
         var mkdocs_page_name = "Analysis Primitives";
         var mkdocs_page_input_path = "user_guide\\theoretical_framework\\analysis_primitives\\analysis_primitives.md";
-        var mkdocs_page_url = "/PyEyesWeb/user_guide/theoretical_framework/analysis_primitives/analysis_primitives/";
+        var mkdocs_page_url = "/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/analysis_primitives/";
       </script>
     
     <!--[if lt IE 9]>
@@ -56,6 +57,14 @@
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../low_level/low_level/">Layer 2 - Low-Level Features</a>
     <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
                 <li class="toctree-l3"><a class="reference internal" href="../../low_level/postural_balance/">Postural Balance</a>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../../low_level/smoothness/">Smoothness</a>
@@ -63,12 +72,26 @@
     </ul>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
                 </li>
                 <li class="toctree-l2 current"><a class="reference internal current" href="#">Analysis Primitives</a>
     <ul class="current">
-                <li class="toctree-l3"><a class="reference internal" href="../bilateral_symmetry/">Bilateral Symmetry</a>
+                <li class="toctree-l3"><a class="reference internal" href="../clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../statistical_moment.md">Statistical Moment</a>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../synchronization/">Synchronization</a>
                 </li>
@@ -214,54 +237,49 @@ They summarize, transform, or model data at various temporal and spatial scales.
 </thead>
 <tbody>
 <tr>
-<td><strong>Statistical Moments</strong></td>
+<td><a href="../statistical_moments/"><strong>Statistical Moments</strong></a></td>
 <td>Unary operators summarizing distributions (mean, variance, skewness, kurtosis).</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><strong>Shape Descriptors</strong></td>
 <td>Peaks, slopes, valleys in time-series; geometric descriptors of movement curves.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-close:</td>
 </tr>
 <tr>
-<td><strong>Entropy</strong> <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><a href="../mse_dominance/"><strong>Entropy</strong></a> <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 <td>Approximate/sample entropy, recurrence analysis; quantify predictability or irregularity.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><strong>Time-Frequency Transforms</strong></td>
 <td>Fourier or wavelet transforms to detect rhythm, periodicity, or temporal structures.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-close:</td>
 </tr>
 <tr>
-<td><strong>Symmetry</strong> <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
-<td>Unary/binary operators measuring geometric or dynamic balance (e.g., left vs. right entropy or energy).</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
-</tr>
-<tr>
-<td><strong>Synchronization</strong> <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td><a href="../synchronization/"><strong>Synchronization</strong></a> <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 <td>Binary/n-ary operators measuring alignment of signals (cross-correlation, phase-locking, group entrainment).</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
-<td><strong>Causality</strong> <sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td><strong>Causality</strong> <sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 <td>Directional relationships (e.g., Granger causality, transfer entropy) to detect leader–follower dynamics.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-close:</td>
 </tr>
 <tr>
-<td><strong>Clusterability</strong> <sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+<td><a href="../clusterability/"><strong>Clusterability</strong></a> <sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
 <td>Measures the tendency of data points to form clusters by means of the Hopkins statistics.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><strong>Predictive Models</strong></td>
 <td>Hidden Markov Models, classifiers, neural networks; used for gesture segmentation or quality inference.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-close:</td>
 </tr>
 <tr>
-<td><strong>Saliency / Rarity</strong> <sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+<td><a href="../rarity/"><strong>Rarity</strong></a> <sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
 <td>Detecting unusual occurrences in movement with respect to most frequent patterns.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 </tbody>
 </table>
@@ -273,19 +291,16 @@ They summarize, transform, or model data at various temporal and spatial scales.
 <p>Glowinski, D., Mancini, M., &amp; Camurri, A. (2013, March). Studying the effect of creative joint action on musicians’ behavior. In International Conference on Arts and Technology (pp. 113-119). Berlin, Heidelberg: Springer Berlin Heidelberg.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>Glowinski, D., Dael, N., Camurri, A., Volpe, G., Mortillaro, M., &amp; Scherer, K. (2011). Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2), 106-118.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>Varni, G., Volpe, G., &amp; Camurri, A. (2010). A system for real-time multimodal analysis of nonverbal affective social interaction in user-centric media. IEEE Transactions on Multimedia, 12(6), 576-590.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>Varni, G., Volpe, G., &amp; Camurri, A. (2010). A system for real-time multimodal analysis of nonverbal affective social interaction in user-centric media. IEEE Transactions on Multimedia, 12(6), 576-590.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>Sabharwal, S. R., Varlet, M., Breaden, M., Volpe, G., Camurri, A., &amp; Keller, P. E. (2022). huSync-A model and system for the measure of synchronization in small groups: A case study on musical joint action. IEEE Access, 10, 92357-92372.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>Sabharwal, S. R., Varlet, M., Breaden, M., Volpe, G., Camurri, A., &amp; Keller, P. E. (2022). huSync-A model and system for the measure of synchronization in small groups: A case study on musical joint action. IEEE Access, 10, 92357-92372.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>Corbellini, N., Ceccaldi, E., Varni, G., &amp; Volpe, G. (2022, August). An exploratory study on group potency classification from non-verbal social behaviours. In International Conference on Pattern Recognition (pp. 240-255). Cham: Springer Nature Switzerland.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>Corbellini, N., Ceccaldi, E., Varni, G., &amp; Volpe, G. (2022, August). An exploratory study on group potency classification from non-verbal social behaviours. In International Conference on Pattern Recognition (pp. 240-255). Cham: Springer Nature Switzerland.&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
-</li>
-<li id="fn:6">
-<p>Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., &amp; Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., &amp; Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -294,14 +309,14 @@ They summarize, transform, or model data at various temporal and spatial scales.
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../../high_level/high_level/" class="btn btn-neutral float-left" title="Layer 4 - High-Level Features"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../bilateral_symmetry/" class="btn btn-neutral float-right" title="Bilateral Symmetry">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../clusterability/" class="btn btn-neutral float-right" title="Clusterability">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
-      <p>Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.</p>
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
@@ -325,7 +340,7 @@ They summarize, transform, or model data at various temporal and spatial scales.
       <span><a href="../../high_level/high_level/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../bilateral_symmetry/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../clusterability/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -335,7 +350,9 @@ They summarize, transform, or model data at various temporal and spatial scales.
     <script src="../../../../js/theme.js"></script>
       <script src="../../../../javascripts/mathjax.js"></script>
       <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
       <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
     <script>
         jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);

@@ -33,9 +33,6 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.keys
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.arithmatex:
       generic: true
 
@@ -44,60 +41,13 @@ theme:
   custom_dir: docs/overrides
   logo: assets/eyesweb-logo.png
   favicon: assets/favicon-32x32.png
-  icon:
-    repo: fontawesome/brands/github
-#  font:
-#    text: Inter
-  features:
-    - navigation.tabs
-    - navigation.tabs.sticky
-    - navigation.instant
-    - navigation.path
-    - navigation.indexes
-    - navigation.top
-    - navigation.footer
-#    - navigation.expand
-    - content.code.copy
-    - content.tabs.link
-    - content.tooltips
-    - content.code.annotate
-    - content.tables.striped
-    - search.suggest
-    - search.highlight
-    - search.share
-    - toc.follow
-    - announce.dismiss
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: red
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: black
-      accent: red
-      toggle:
-        icon: material/weather-sunny
-        name: Switch to light mode
-
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - javascripts/version-select.js
 
 extra_css:
   - overrides/extra.css
-
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/InfoMusCP
-      name: GitHub Organization
-    - icon: material/web
-      link: http://www.casapaganini.org/index_eng.php
-      name: Casa Paganini - InfoMus Website
 
 copyright: Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.
 

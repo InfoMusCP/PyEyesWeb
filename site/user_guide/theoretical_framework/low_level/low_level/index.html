@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/user_guide/theoretical_framework/low_level/low_level/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/low_level/" />
       <link rel="shortcut icon" href="../../../../img/favicon.ico" />
     <title>Layer 2 - Low-Level Features - PyEyesWeb</title>
     <link rel="stylesheet" href="../../../../css/theme.css" />
@@ -11,12 +11,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
         <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
     
       <script>
         // Current page data
         var mkdocs_page_name = "Layer 2 - Low-Level Features";
         var mkdocs_page_input_path = "user_guide\\theoretical_framework\\low_level\\low_level.md";
-        var mkdocs_page_url = "/PyEyesWeb/user_guide/theoretical_framework/low_level/low_level/";
+        var mkdocs_page_url = "/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/low_level/";
       </script>
     
     <!--[if lt IE 9]>
@@ -56,6 +57,14 @@
                 </li>
                 <li class="toctree-l2 current"><a class="reference internal current" href="#">Layer 2 - Low-Level Features</a>
     <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../geometric_symmetry/">Geometric Symmetry</a>
+                </li>
                 <li class="toctree-l3"><a class="reference internal" href="../postural_balance/">Postural Balance</a>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../smoothness/">Smoothness</a>
@@ -63,12 +72,26 @@
     </ul>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../analysis_primitives/analysis_primitives/">Analysis Primitives</a>
     <ul>
-                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/bilateral_symmetry/">Bilateral Symmetry</a>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../../analysis_primitives/statistical_moment.md">Statistical Moment</a>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/synchronization/">Synchronization</a>
                 </li>
@@ -214,29 +237,29 @@ They are typically represented as <strong>time-series</strong> with the same sam
 </thead>
 <tbody>
 <tr>
-<td><strong>Kinectic Energy / Quantity of Motion</strong> (QoM) <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td><a href="../kinetic_energy/"><strong>Kinectic Energy / Quantity of Motion</strong></a> <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td>Energy of a cloud of moving joints, weighted by their masses or area of the difference between consecutive silhouettes in consecutive frames</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><a href="../contraction_expansion/"><strong>Postural Contraction</strong></a> <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td>Extent to which body posture is close to its barycenter.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><a href="../smoothness/"><strong>Smoothness</strong></a> <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
 <td>Motion of a joint according to biomechanics laws of smoothness.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><a href="../postural_balance/"><strong>Equilibrium</strong></a> <sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
 <td>Projection of the body’s barycenter onto the floor within the support area of the feet</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span></td>
+<td>:material-check:</td>
 </tr>
 <tr>
 <td><strong>Postural Tension</strong> <sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
 <td>Vector describing angular relations between feet, hips, trunk, shoulders, and head; inspired by angles in classical painting/sculpture used to express tension.</td>
-<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></td>
+<td>:material-close:</td>
 </tr>
 </tbody>
 </table>
@@ -266,14 +289,14 @@ They are typically represented as <strong>time-series</strong> with the same sam
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../../physical_signals/physical_signals/" class="btn btn-neutral float-left" title="Layer 1 - Physical Signals"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../postural_balance/" class="btn btn-neutral float-right" title="Postural Balance">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../contraction_expansion/" class="btn btn-neutral float-right" title="Contraction Expansion">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
-      <p>Copyright &copy; 2025 InfoMus Lab - Casa Paganini, Genoa, Italy. All rights reserved.</p>
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
@@ -297,7 +320,7 @@ They are typically represented as <strong>time-series</strong> with the same sam
       <span><a href="../../physical_signals/physical_signals/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../postural_balance/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../contraction_expansion/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -307,7 +330,9 @@ They are typically represented as <strong>time-series</strong> with the same sam
     <script src="../../../../js/theme.js"></script>
       <script src="../../../../javascripts/mathjax.js"></script>
       <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
       <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
     <script>
         jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);

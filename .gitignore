@@ -45,3 +45,6 @@ demos/Lib
 
 # Ignore specific files or directories
 __*
+
+# Ignore the site directory
+site/
