@@ -29,48 +29,100 @@ Multiscale entropy analysis of biological signals.
 Physical Review E, 71(2), 021906.
 """
 
+from typing import Literal
 import numpy as np
 from pyeyesweb.data_models.sliding_window import SlidingWindow
-
+from pyeyesweb.utils.validators import validate_integer, validate_numeric, validate_string
 
 class MultiScaleEntropyDominance:
-    """Real-time multi-scale entropy analyzer for dominance detection.
+    r"""Real-time multi-scale entropy analyzer for dominance detection.
 
-    This class implements the multi-scale entropy algorithm to analyze dominance
-    in ensemble performances by computing complexity indices of movement dynamics
-    across multiple time scales.
+    Quantifies the complexity of movement dynamics across multiple time scales
+    to identify leadership patterns in musical ensembles.
 
-    The algorithm follows the methodology described in:
+    !!! info
+        The algorithm includes coarse-graining, sample entropy calculation, and
+        complexity index computation as described in Glowinski et al. (2010).
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/analysis_primitives/mse_dominance.md).
+
+    Parameters
+    ----------
+    m : int, optional
+        Embedding dimension for sample entropy. Defaults to `2`.
+    r : float, optional
+        Tolerance threshold for template matching. Defaults to `0.15`.
+    max_scale : int, optional
+        Maximum scale factor ($\\tau$) for coarse-graining. Defaults to `6`.
+    min_points : int, optional
+        Minimum number of points required for reliable entropy estimation at
+        any given scale. Defaults to `500`.
+    methods : list of str, optional
+        Analysis components to compute. Choices: `"complexity_index"`,
+        `"dominance_score"`, `"leader_identification"`.
+        Defaults to `["complexity_index"]`.
+
+    References
+    ----------
     Glowinski et al. (2010). Multi-scale entropy analysis of dominance in
     social creative activities. ACM Multimedia, 1035-1038.
     """
+    _ALLOWED_METHODS = ["complexity_index", "dominance_score", "leader_identification"]
+    
+    def __init__(self, 
+                 m=2, 
+                 r=0.15, 
+                 max_scale=6, 
+                 min_points=500, 
+                 methods: list[Literal["complexity_index", "dominance_score", "leader_identification"]] = ["complexity_index"]):
+        
+        self.m = m
+        self.r = r
+        self.max_scale = max_scale
+        self.min_points = min_points
+        self.methods = methods
 
-    def __init__(self):
-        """Initialize the multi-scale entropy analyzer with default parameters."""
-        # Algorithm parameters as per reference papers
-        self.m = 2          # Embedding dimension for sample entropy
-        self.r = 0.15       # Tolerance parameter (15% of standard deviation)
-        self.max_scale = 6  # Maximum scale factor for coarse-graining
-        self.min_points = 500  # Minimum data points required per scale
+    @property
+    def m(self) -> int:
+        return self._m
+
+    @m.setter
+    def m(self, value):
+        self._m = validate_integer(value, "m", min_val=1)
+        
+    @property
+    def r(self) -> float:
+        return self._r
+
+    @r.setter
+    def r(self, value):
+        self._r = validate_numeric(value, "r", min_val=0.0001, max_val=0.9999)
+        
+    @property
+    def max_scale(self) -> int:
+        return self._max_scale
+
+    @max_scale.setter
+    def max_scale(self, value):
+        self._max_scale = validate_integer(value, "max_scale", min_val=1)
+        
+    @property
+    def min_points(self) -> int:
+        return self._min_points
+
+    @min_points.setter
+    def min_points(self, value):
+        self._min_points = validate_integer(value, "min_points", min_val=1)
+        
+    @property
+    def methods(self) -> list[str]:
+        return self._methods
+
+    @methods.setter
+    def methods(self, value):
+        self._methods = [validate_string(method, self._ALLOWED_METHODS) for method in value]
 
     def _coarse_grain(self, data: np.ndarray, scale: int) -> np.ndarray:
-        """Apply coarse-graining procedure to time series data.
-
-        Implements the exact equation from Costa et al. (2005):
-        y_j^(τ) = (1/τ) * Σ_{i=(j-1)τ+1}^{jτ} x_i, for j=1..floor(N/τ)
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input time series data (1D array)
-        scale : int
-            Scale factor for coarse-graining (τ in the equation)
-
-        Returns
-        -------
-        np.ndarray
-            Coarse-grained time series
-        """
         if data is None or data.size == 0:
             return np.array([], dtype=float)
 
@@ -98,30 +150,18 @@ class MultiScaleEntropyDominance:
         return coarse
 
     def _sample_entropy(self, data: np.ndarray) -> float:
-        """Calculate sample entropy (SampEn) for a time series.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input time series data (1D array)
-
-        Returns
-        -------
-        float
-            Sample entropy value, or 0.0 if insufficient data
-        """
         x = np.asarray(data, dtype=float).reshape(-1)
         N = x.shape[0]
-        m = int(self.m)
-        r = float(self.r)
+        m = int(self._m)
+        r = float(self._r)
 
         if N <= m + 10:
-            return 0.0
+            return np.nan
 
         mu = float(np.mean(x))
         sd = float(np.std(x))
         if sd < 1e-10:
-            return 0.0
+            return np.nan
 
         u = (x - mu) / sd
 
@@ -157,24 +197,12 @@ class MultiScaleEntropyDominance:
         return float(-np.log(A / B))
 
     def _calculate_complexity_index(self, data: np.ndarray) -> float:
-        """Calculate complexity index by integrating sample entropy across scales.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            Input time series data
-
-        Returns
-        -------
-        float
-            Complexity index value
-        """
         sampen_values = []
 
-        for scale in range(1, int(self.max_scale) + 1):
+        for scale in range(1, int(self._max_scale) + 1):
             coarse = self._coarse_grain(data, scale)
 
-            if coarse.shape[0] < int(self.min_points):
+            if coarse.shape[0] < int(self._min_points):
                 break
 
             sampen = self._sample_entropy(coarse)
@@ -189,30 +217,31 @@ class MultiScaleEntropyDominance:
 
         return 0.0
 
-    def compute_analysis(self, signals: SlidingWindow, methods: list) -> dict:
+    def __call__(self, signals: SlidingWindow) -> dict:
         """Compute dominance analysis for ensemble performance data.
+
+        Evaluates complexity across multiple scales for each signal in the
+        window and optionally computes dominance scores and identifies leaders.
 
         Parameters
         ----------
         signals : SlidingWindow
             Sliding window buffer containing movement velocity data.
-        methods : list of str
-            List of analysis methods to compute. Available options:
-            'complexity_index', 'dominance_score', 'leader_identification'
 
         Returns
         -------
         dict
-            Dictionary containing dominance analysis results.
+            Dictionary containing the requested results (e.g.,
+            `'complexity_index'`, `'dominance_score'`).
         """
         if not signals.is_full():
-            return {}
+            return {method: np.nan for method in self._methods}
 
-        data, _ = signals.to_array()
+        data, _ = signals.to_array(as2D=True)
         n_samples, n_features = data.shape
 
-        if n_samples < int(self.min_points):
-            return {}
+        if n_samples < int(self._min_points):
+            return {method: np.nan for method in self._methods}
 
         complexity_indices = []
         for i in range(n_features):
@@ -221,7 +250,7 @@ class MultiScaleEntropyDominance:
 
         result = {}
 
-        for method in methods:
+        for method in self._methods:
             if method == 'complexity_index':
                 values = np.array(complexity_indices, dtype=float)
                 result['complexity_index'] = float(values[0]) if len(values) == 1 else values.tolist()
@@ -239,27 +268,6 @@ class MultiScaleEntropyDominance:
             elif method == 'leader_identification':
                 if complexity_indices:
                     leader_idx = np.argmin(complexity_indices)
-                    result['leader'] = int(leader_idx)
-                    result['leader_complexity'] = float(complexity_indices[leader_idx])
-
-            else:
-                continue
+                    result['leader_complexity'] = (int(leader_idx),float(complexity_indices[leader_idx]))
 
         return result
-
-    def __call__(self, sliding_window: SlidingWindow, methods: list) -> dict:
-        """Compute dominance analysis metrics.
-
-        Parameters
-        ----------
-        sliding_window : SlidingWindow
-            Buffer containing multivariate data to analyze.
-        methods : list of str
-            List of analysis methods to compute.
-
-        Returns
-        -------
-        dict
-            Dictionary containing dominance analysis metrics.
-        """
-        return self.compute_analysis(sliding_window, methods)

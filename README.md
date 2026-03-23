@@ -28,13 +28,20 @@ from pyeyesweb.data_models import SlidingWindow
 from pyeyesweb.low_level import Smoothness
 
 # Movement smoothness analysis
+# 1. Initialize the feature extractor (e.g., 50Hz sampling rate)
 smoothness = Smoothness(rate_hz=50.0)
-window = SlidingWindow(max_length=100, n_columns=1)
-window.append([motion_data]) 
-# here `motion_data` is a float representing a single sample of motion data
-# (e.g., the x coordinate of the left hand at time t).
 
-sparc, jerk = smoothness(window)
+# 2. Initialize a sliding window for speed data (1 signal, 1 dimension)
+window = SlidingWindow(max_length=60, n_signals=1, n_dims=1)
+
+# 3. Process data frame by frame (simulating a real-time loop)
+# here `speed_value` is a float representing the instantaneous speed
+window.append(speed_value) 
+
+# 4. Compute the feature (only after the window is full)
+if len(window) >= window.max_length:
+    result = smoothness(window)
+    print(f"SPARC: {result.sparc}, Jerk: {result.jerk_rms}")
 ```
 > [!TIP]
 > For more advanced and complete use cases see the [Documentation](https://infomuscp.github.io/PyEyesWeb/)

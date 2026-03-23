@@ -1,97 +1,167 @@
+from dataclasses import dataclass
+from typing import Union, List, Dict, Any, Optional
 import numpy as np
 
+from pyeyesweb.data_models.base import StaticFeature
+from pyeyesweb.data_models.results import FeatureResult
 
-class KineticEnergy:
 
-    def __init__(self, weights=1.0, labels=None):
-        """
-        weights: scalar mass or array of masses (one per joint)
-        labels: list of joint labels (optional)
-        """
+@dataclass(slots=True)
+class KineticEnergyResult(FeatureResult):
+    """Output contract for Kinetic Energy evaluation.
 
-        # Store weight(s)
-        self.setWeight(weights)
+    Attributes
+    ----------
+    total_energy : float
+        Sum of kinetic energy across all joints.
+    component_energy : list of float, optional
+        Sum of kinetic energy along each axis (X, Y, Z).
+    joints : dict, optional
+        Dictionary mapping joint labels (or indices) to their individual
+        kinetic energy values and components.
+    """
+    total_energy: float = 0.0
+    component_energy: Optional[List[float]] = None
+    joints: Optional[Dict[str, Any]] = None
 
-        # Store labels (optional, validated later)
+    def to_flat_dict(self, prefix: str = "") -> Dict[str, float]:
+        """Overrides base method to dynamically unroll lists and dicts into scalars."""
+
+        # FIX: Explicitly call the parent class method instead of using super()
+        # This prevents the Python 3.10 slots=True bug.
+        flat = FeatureResult.to_flat_dict(self, prefix)
+
+        # Helper to format keys cleanly
+        def make_key(base: str, sub: str) -> str:
+            return f"{prefix}_{base}_{sub}" if prefix else f"{base}_{sub}"
+
+        # 2. Unroll the component energies (e.g., -> energy_x, energy_y)
+        comps = flat.pop(f"{prefix}_component_energy" if prefix else "component_energy", None)
+        if comps is not None:
+            axes = ['x', 'y', 'z', 'w']
+            for i, val in enumerate(comps):
+                axis = axes[i] if i < len(axes) else str(i)
+                flat[make_key("energy", axis)] = float(val)
+
+        # 3. Unroll the joint dictionary (e.g., -> joint_0_total, joint_0_x)
+        joints_dict = flat.pop(f"{prefix}_joints" if prefix else "joints", None)
+        if joints_dict is not None:
+            for j_key, j_data in joints_dict.items():
+                j_prefix = f"joint_{j_key}"
+                flat[make_key(j_prefix, "total")] = float(j_data["total"])
+
+                for i, val in enumerate(j_data["components"]):
+                    axis = axes[i] if i < len(axes) else str(i)
+                    flat[make_key(j_prefix, axis)] = float(val)
+
+        return flat
+
+
+class KineticEnergy(StaticFeature):
+    r"""Compute weighted kinetic energy from joint velocities.
+
+    Kinetic energy is defined here as:
+
+    $$ E_k = \frac{1}{2} \cdot \sum_{i=1}^{N} w_i \cdot \|v_i\|^2 $$
+
+    where $w_i$ is the weight (mass) of joint $i$ and $v_i$ is its velocity vector.
+
+    !!! note
+        Expects `frame_data` to represent velocities (e.g., from [extract_velocity_from_position](../utils/math_utils.md#extract_velocity_from_position)), not raw positions.
+
+    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/kinetic_energy.md).
+
+    Parameters
+    ----------
+    weights : float or array_like, optional
+        Mass weights for each joint. Can be a single scalar applied to all
+        joints or an array of shape `(N_signals,)`. Defaults to `1.0`.
+    labels : list of str, optional
+        Text labels for each signal, used in the `joints` output dictionary.
+    """
+
+    def __init__(
+            self,
+            weights: Union[float, List[float], np.ndarray] = 1.0,
+            labels: List[str] = None
+    ):
+        super().__init__()
         self.labels = labels
+        self.weights = weights
 
-    def setWeight(self, w):
-        """Allow setting scalar weight or per-joint weights."""
-        if isinstance(w, (list, tuple, np.ndarray)):
-            w = np.asarray(w, dtype=float)
-            if np.any(w < 0):
-                raise ValueError("Mass values cannot be negative.")
-            self.weights = w
-        else:
-            w = float(w)
-            if w < 0:
+    @property
+    def weights(self) -> Union[float, np.ndarray]:
+        return self._weights
+
+    @weights.setter
+    def weights(self, value: Union[float, List[float], np.ndarray]):
+        self._weights = self._parse_weights(value)
+
+    @property
+    def labels(self) -> Optional[List[str]]:
+        return self._labels
+
+    @labels.setter
+    def labels(self, value: Optional[List[str]]):
+        self._labels = value
+
+    def _parse_weights(self, weight_input: Union[float, List[float], np.ndarray]) -> Union[float, np.ndarray]:
+        if np.isscalar(weight_input):
+            mass_scalar = float(weight_input)
+            if mass_scalar < 0:
                 raise ValueError("Mass cannot be negative.")
-            self.weights = w
+            return mass_scalar
 
-    def __call__(self, velocity_vectors):
+        mass_array = np.asarray(weight_input, dtype=float)
+        if np.any(mass_array < 0):
+            raise ValueError("Mass values cannot be negative.")
+
+        return mass_array[:, np.newaxis]
+
+    def compute(self, frame_data: np.ndarray) -> KineticEnergyResult:
+        r"""Compute kinetic energy for a single frame of velocities.
+
+        Parameters
+        ----------
+        frame_data : numpy.ndarray of shape (N_signals, N_dims)
+            Snapshot of joint velocities.
+
+        Returns
+        -------
+        KineticEnergyResult
+            The computed energy values.
         """
-        velocity_vectors:
-            - single vector (3,)
-            - array of shape (N,3) for multiple joints
-        """
+        velocities = np.asarray(frame_data, dtype=float)
 
-        # Convert input to array
-        v = np.asarray(velocity_vectors, dtype=float)
+        if velocities.ndim == 1:
+            velocities = velocities.reshape(1, -1)
 
-        # Normalize to shape (N,3)
-        if v.ndim == 1:
-            v = v.reshape(1, -1)
+        num_joints = velocities.shape[0]
 
-        N = v.shape[0]
+        # 1. Validation Fail-Safes
+        # Note: If these trigger, the base StaticFeature.__call__ catches the ValueError
+        # and safely returns a FeatureResult(is_valid=False).
+        if self.labels and len(self.labels) != num_joints:
+            raise ValueError(f"Number of labels ({len(self.labels)}) must match number of joints ({num_joints}).")
+        if isinstance(self.weights, np.ndarray) and self.weights.shape[0] != num_joints:
+            raise ValueError(
+                f"Weight array length ({self.weights.shape[0]}) must match number of joints ({num_joints}).")
 
-        # Validate or expand weights
-        if np.isscalar(self.weights):
-            w = np.full(N, self.weights)
-        else:
-            w = np.asarray(self.weights)
-            if w.size != N:
-                raise ValueError(f"Weight array must match number of joints ({N}).")
+        # 2. Optimized Computation
+        kinetic_energy_components = 0.5 * self.weights * (velocities ** 2)
+        kinetic_energy_per_joint = kinetic_energy_components.sum(axis=1)
 
-        # Validate labels
-        if self.labels is not None:
-            if len(self.labels) != N:
-                raise ValueError(f"Labels must match number of joints ({N}).")
-
-        # Compute squared velocity components
-        v_squared = v ** 2
-
-        # Component-wise kinetic energy: 1/2 * m_i * v^2
-        Ek_components = 0.5 * w[:, None] * v_squared
-
-        # Total KE per joint
-        Ek_joint = Ek_components.sum(axis=1)
-
-        # Total KE across all joints
-        Ek_total = Ek_joint.sum()
-
-        # Total per-axis component energy
-        Ek_components_total = Ek_components.sum(axis=0)
-
-        # Build dictionary optionally using labels
-        if self.labels is None:
-            joint_energy_dict = {
-                i: {
-                    "total": Ek_joint[i],
-                    "components": Ek_components[i]
-                }
-                for i in range(N)
-            }
-        else:
-            joint_energy_dict = {
-                self.labels[i]: {
-                    "total": Ek_joint[i],
-                    "components": Ek_components[i]
-                }
-                for i in range(N)
+        # 3. Aggregation and Dictionary Building
+        joint_energy_dict = {}
+        for i in range(num_joints):
+            key = self.labels[i] if self.labels else str(i)
+            joint_energy_dict[key] = {
+                "total": float(kinetic_energy_per_joint[i]),
+                "components": kinetic_energy_components[i].tolist()
             }
 
-        return {
-            "total_energy": Ek_total,
-            "component_energy": Ek_components_total,  # [Ex, Ey, Ez]
-            "joints": joint_energy_dict  # dict indexed by labels or id
-        }
+        return KineticEnergyResult(
+            total_energy=float(kinetic_energy_per_joint.sum()),
+            component_energy=kinetic_energy_components.sum(axis=0).tolist(),
+            joints=joint_energy_dict
+        )

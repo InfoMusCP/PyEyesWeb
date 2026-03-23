@@ -46,7 +46,7 @@ from pyeyesweb.low_level import Smoothness
 smoothness = Smoothness(rate_hz=50.0)
 
 # 2. Create a sliding window to store the last 100 frames of data
-window = SlidingWindow(max_length=100, n_columns=1)
+window = SlidingWindow(max_length=100, n_signals=1, n_dims=1)
 
 # 3. Simulate a real-time loop reading from a CSV
 with open('velocity_data.csv', 'r') as f:
@@ -57,23 +57,23 @@ with open('velocity_data.csv', 'r') as f:
         velocity_val = float(row[0])
 
         # Append the new frame to the sliding window
-        window.append([velocity_val]) #(1)!
+        window.append(velocity_val) #(1)!
 
         # Compute smoothness features on the current window
-        sparc, jerk = smoothness(window) #(2)!
+        result = smoothness(window) #(2)!
 
         # Check if a valid result was returned 
-        # (feature may return None if window has not enough samples)
-        if sparc is not None and jerk is not None:
-            print(f"SPARC: {sparc:.3f} | Jerk: {jerk:.3f}")
+        # (feature fields may be None if window has not enough samples)
+        if result.sparc is not None and result.jerk_rms is not None:
+            print(f"SPARC: {result.sparc:.3f} | Jerk: {result.jerk_rms:.3f}")
 ```
 
-1. The `SlidingWindow` expects a list of values for every frame (even if there is only 1 sample). 
+1. `SlidingWindow` automatically handles the data shape. Since we initialized it with `n_signals=1` and `n_dims=1`, we can append a scalar value directly.
 As the loop runs, new data is added to the end, and old data is automatically discarded once the max_length is reached.
 
 2. The `smoothness` callable processes the current state of the window. 
-It returns the SPARC (Spectral Arc Length) and Jerk RMS. 
-If the window does not yet contain enough data to compute the metric, it may return None.
+It returns a result object containing the SPARC (Spectral Arc Length) and Jerk RMS. 
+If the window does not yet contain enough data to compute the metric, the result fields will be `None`.
 
 ## Subpackages
 

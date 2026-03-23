@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
   build-deploy:
@@ -12,6 +13,9 @@ jobs:
       # 1. Checkout repo (code + docs)
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAGES_TOKEN || github.token }}
 
       # 2. Set up Python
       - name: Set up Python
@@ -23,19 +27,19 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install .[dev]   # installs mkdocs and all extras
+          pip install .[dev] mike
 
-      # 4. Build doc
-      - name: Build MkDocs site
+      # 4. Deploy MkDocs site with mike
+      - name: Deploy with mike 🚀
         env:
           PYTHONPATH: ${{ github.workspace }}/PyEyesWeb
-        run: mkdocs build --verbose
-
-      # 5. Push to gh-pages
-      - name: Deploy to GitHub Pages 🚀
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GH_PAGES_TOKEN }}
-          publish_dir: ./site
-          publish_branch: gh-pages
-          force_orphan: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            mike deploy --push --update-aliases main latest
+            mike set-default --push latest
+          else
+            mike deploy --push ${{ github.ref_name }}
+          fi

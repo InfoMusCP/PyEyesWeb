@@ -18,7 +18,7 @@ class TSVReader:
     Parameters
     ----------
     time_col : str, optional
-        Name of the column containing time values (default: "Time").
+        Name of the column containing time values. Defaults to `"Time"`.
     """
 
     def __init__(self, time_col="Time"):
@@ -91,7 +91,19 @@ class TSVReader:
 
         self.time_data = self.data[:, time_idx]
 
-    def __call__(self,time_value=None):
+    def __call__(self, time_value: float = None):
+        """Call the reader to fetch data based on the configured mode.
+        
+        Parameters
+        ----------
+        time_value : float, optional
+            The specific time value to read from. Overrides the mode if provided.
+            
+        Returns
+        -------
+        numpy.ndarray or generator
+            The data retrieved based on the configuration.
+        """
         if time_value is not None:
             self.time_value = time_value
             return self._get_row_by_time()
@@ -160,6 +172,7 @@ class TSVReader:
                 pass
 
     # ------------------- RESET -------------------
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the internal state of the reader to the beginning."""
         self.index = 0
         self.prev_time = None

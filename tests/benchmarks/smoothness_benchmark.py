@@ -1,0 +1,97 @@
+from pathlib import Path
+
+import numpy as np
+from tqdm import tqdm
+
+# Import loaders and animator
+from utils.data_loader import QualisysLoader, KinectLoader
+from utils.animator import BenchmarkAnimator
+from pyeyesweb.data_models.sliding_window import SlidingWindow
+
+# The Feature
+from pyeyesweb.low_level.smoothness import Smoothness
+
+# ==========================================
+# 1. SETUP & CONFIGURATION
+# ==========================================
+data_type = "qualisys"  # Change to "qualisys" to use the raw motion capture loader
+tsv_file = "data/smoothness_02.tsv"
+window_lengths = [200]
+
+# Adjust joint names depending on your tracking system
+joint_names = ["RWristOut"]
+
+# ==========================================
+# 2. LOAD DATA
+# ==========================================
+if data_type == "qualisys":
+    loader = QualisysLoader()
+else:
+    # You can cleanly override smoothing parameters here
+    loader = KinectLoader(rolling_window=5, savgol_len=70)
+
+pos_tensor, vel_tensor, marker_names, bones_edges = loader.load(
+    tsv_file, None, fps=100.0
+)
+
+N_frames = pos_tensor.shape[0]
+
+# ==========================================
+# 3. INITIALIZE FEATURE & COMPUTE
+# ==========================================
+print("Computing Smoothness features...")
+smoothness_feature = Smoothness(rate_hz=100, metrics=["sparc", "jerk_rms"],sparc_min_fc= 2.0,sparc_max_fc= 20.0)
+
+# Build feature dictionary for animator
+feature_dict = {}
+
+for w in window_lengths:
+    subplot_title = f"Smoothness (Window = {w})"
+    feature_dict[subplot_title] = {}
+
+    for joint in joint_names:
+        if joint not in marker_names:
+            print(f"Skipping {joint}, not found in marker list.")
+            continue
+
+        joint_idx = marker_names.index(joint)
+
+        # 1D Sliding window for speed (magnitude of velocity)
+        sw_speed = SlidingWindow(max_length=w, n_signals=1, n_dims=1)
+        results = np.zeros(N_frames)
+
+        for frame in tqdm(range(N_frames), desc=f"Processing {joint} (w={w})"):
+            # Extract speed for this specific joint
+            speed = np.linalg.norm(vel_tensor[frame, joint_idx, :])
+            sw_speed.append([[speed]])
+
+            # Compute using the streaming __call__ API
+            res = smoothness_feature(sw_speed)
+            results[frame] = res.sparc if res.is_valid else 0.0
+
+        # Store the computed array in the dictionary for the animator
+        feature_dict[subplot_title][joint] = results
+
+# ==========================================
+# 4. RENDER & SAVE ANIMATION
+# ==========================================
+animator = BenchmarkAnimator(
+    pos_tensor=pos_tensor,
+    feature_dict=feature_dict,
+    marker_names=marker_names,
+    bones_edges=bones_edges,
+    title=f"Smoothness Analysis ({data_type.capitalize()})",
+)
+
+# Dynamically generate a clean save path (e.g., "result_trial00005_Rarity_kinect.mp4")
+file_stem = Path(tsv_file).stem
+output_filename = f"result_{file_stem}_Smoothness_{data_type}.mp4"
+
+# Use the upgraded save_video method with the built-in progress bar!
+animator.save_video(
+    save_path=f"results/{output_filename}",
+    video_fps=30,
+)
+
+# Optional: If you want to interact live after the video renders:
+# animator.show()

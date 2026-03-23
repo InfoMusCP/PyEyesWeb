@@ -4,7 +4,6 @@ This module provides common validation functions used across multiple
 PyEyesWeb modules to ensure consistent error handling.
 """
 
-
 def validate_numeric(value, name, min_val=None, max_val=None):
     """Validate numeric parameter with optional bounds checking.
 
@@ -52,7 +51,7 @@ def validate_numeric(value, name, min_val=None, max_val=None):
     return value
 
 
-def validate_integer(value, name, min_val=None, max_val=None):
+def validate_integer(value, name:str, min_val:int|None=None, max_val:int|None=None):
     """Validate integer parameter with optional bounds checking.
 
     Parameters
@@ -214,28 +213,48 @@ def validate_filter_params_tuple(value, name='filter_params'):
     return tuple(value)
 
 
-def validate_and_normalize_filter_params(filter_params):
-    """Validate and normalize filter parameters.
+def validate_pairs(pairs):
+    """Validate joint pairs as tuples of integers.
+
+    Ensures the input is a list of tuples, where each tuple contains exactly
+    two integers representing joint indices.
 
     Parameters
     ----------
-    filter_params : tuple/list or None
-        Filter parameters as (lowcut, highcut, fs) or None
+    pairs : any
+        Value to validate as list of joint index pairs
 
     Returns
     -------
-    tuple or None
-        Validated (lowcut, highcut, fs) tuple or None if input was None
+    list of tuples
+        Validated list of joint index pairs
+
+    Raises
+    ------
+    TypeError
+        If input is not a list or contains non-tuple elements or tuples with non-integer elements
+    ValueError
+        If any tuple does not contain exactly 2 elements
+
+    Examples
+    --------
+    >>> validate_pairs([(0, 1), (4, 6), (7, 8)])
+    [(0, 1), (4, 6), (7, 8)]
+    >>> validate_pairs([(0, 1), (4, '6')])
+    TypeError: Each pair must be a tuple of two integers, got ('4',)
+    >>> validate_pairs("invalid")
+    TypeError: joint_pairs must be a list of tuples, got str
     """
-    if filter_params is None:
-        return None
+    if not isinstance(pairs, list):
+        raise TypeError(f"joint_pairs must be a list of tuples, got {type(pairs).__name__}")
 
-    # Import here to avoid circular dependency
-    from pyeyesweb.utils.signal_processing import validate_filter_params
+    for pair in pairs:
+        if not isinstance(pair, tuple) or len(pair) != 2:
+            raise ValueError(f"Each pair must be a tuple of two elements, got {pair}")
+        if not all(isinstance(x, int) for x in pair):
+            raise TypeError(f"Each pair must contain only integers, got {pair}")
 
-    filter_params = validate_filter_params_tuple(filter_params)
-    lowcut, highcut, fs = validate_filter_params(*filter_params)
-    return (lowcut, highcut, fs)
+    return pairs
 
 
 def validate_window_size(value, name='window_size'):
@@ -256,3 +275,41 @@ def validate_window_size(value, name='window_size'):
         Validated window size
     """
     return validate_integer(value, name, min_val=1, max_val=10000)
+
+
+def validate_string(value, names: list[str]):
+    """Validate that a string value is one of the allowed options.
+
+    Parameters
+    ----------
+    value : str
+        String value to validate
+    names : list of str
+        List of allowed string options
+
+    Returns
+    -------
+    str
+        Validated string value
+
+    Raises
+    ------
+    TypeError
+        If value is not a string
+    ValueError
+        If value is not in the list of allowed options
+
+    Examples
+    --------
+    >>> validate_string("mean", ["mean", "std_dev", "skewness"])
+    'mean'
+    >>> validate_string("invalid", ["mean", "std_dev", "skewness"])
+    ValueError: Invalid method: invalid. Must be one of ['mean', 'std_dev', 'skewness'].
+    """
+    if not isinstance(value, str):
+        raise TypeError(f"Value must be a string, got {type(value).__name__}")
+    
+    if value not in names:
+        raise ValueError(f"Invalid method: {value}. Must be one of {names}.")
+    
+    return value

@@ -5,6 +5,7 @@ library for signal processing, phase analysis, and movement metrics.
 """
 
 import numpy as np
+from scipy.fft import fft, fftfreq
 from pyeyesweb.utils.validators import validate_numeric
 
 def compute_phase_locking_value(phase1, phase2):
@@ -53,8 +54,13 @@ def center_signals(sig):
     """
     return sig - np.mean(sig, axis=0, keepdims=True)
 
-
-def compute_sparc(signal, rate_hz=50.0):
+def compute_sparc(
+    signal, 
+    rate_hz=50.0, 
+    amplitude_threshold=0.05, 
+    min_fc=2.0, 
+    max_fc=20.0
+):
     """Compute SPARC (Spectral Arc Length) from a signal.
 
     SPARC is a dimensionless smoothness metric that quantifies movement
@@ -70,9 +76,16 @@ def compute_sparc(signal, rate_hz=50.0):
     Parameters
     ----------
     signal : ndarray
-        1D movement signal.
-    rate_hz : float, optional
-        Sampling rate in Hz (default: 50.0).
+        1D movement speed profile.
+    rate_hz : float
+        Sampling rate in Hz.
+    amplitude_threshold : float, optional
+        Amplitude threshold for determining the cut-off frequency fc (default: 0.05).
+        Increase this value for noisier signals.
+    min_fc : float, optional
+        Minimum cut-off frequency in Hz (default: 2.0).
+    max_fc : float, optional
+        Maximum cut-off frequency in Hz (default: 20.0).
 
     Returns
     -------
@@ -86,51 +99,61 @@ def compute_sparc(signal, rate_hz=50.0):
     On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,
     12(1), 1-11.
     """
+
+
+    # Validate sampling rate and convert signal to array
     rate_hz = validate_numeric(rate_hz, 'rate_hz', min_val=0.0001)
-
-    # Ensure signal is 1D
     signal = np.asarray(signal)
-    if signal.ndim > 1:
-        # If 2D, check if it's a single column/row
-        if signal.shape[0] == 1:
-            signal = signal.flatten()
-        elif signal.shape[1] == 1:
-            signal = signal.flatten()
-        else:
-            raise ValueError(f"Signal must be 1D, got shape {signal.shape}")
-
-    N = len(signal)
-    if N < 2:
+    
+    # Check signal validity
+    if len(signal) < 2 or np.allclose(signal, signal[0]):
         return np.nan
 
-    # Check if signal is constant (no movement)
-    if np.allclose(signal, signal[0]):
-        # For constant signals, return NaN as SPARC is undefined
-        # (no movement means smoothness is not applicable)
-        return np.nan
+    # 1. FFT and magnitude spectrum calculation
+    n = len(signal)
+    # Zero-padding to 1024 or next power of 2 for improved spectral resolution
+    n_fft = max(1024, int(2**np.ceil(np.log2(n))))
+    
+    yf = np.abs(fft(signal, n=n_fft))[:n_fft // 2]
+    xf = fftfreq(n_fft, 1.0 / rate_hz)[:n_fft // 2]
 
-    from scipy.fft import fft, fftfreq
-    yf = np.abs(fft(signal))[:N // 2]
-    xf = fftfreq(N, 1.0 / rate_hz)[:N // 2]
-
-    # Normalize magnitude by maximum value
+    # 2. Amplitude normalization relative to maximum (Scale invariance)
     max_yf = np.max(yf)
     if max_yf > 0:
         yf /= max_yf
     else:
-        # This should not happen after the constant signal check
-        # but keep as safety fallback
         return np.nan
 
-    # Compute arc length with normalized frequency differences
-    # Following Balasubramanian et al. (2015) implementation
-    freq_range = xf[-1] - xf[0]
-    if freq_range <= 0:
-        return np.nan
+    # 3. Adaptive determination of fc (Cut-off frequency)
+    # Find the last index where the amplitude is above the chosen threshold
+    indices_above_thresh = np.where(yf >= amplitude_threshold)[0]
+    
+    if len(indices_above_thresh) > 0:
+        fc_estimated = xf[indices_above_thresh[-1]]
+    else:
+        fc_estimated = min_fc
 
-    # Normalize frequency differences by the frequency range
-    arc = np.sum(np.sqrt((np.diff(xf) / freq_range)**2 + np.diff(yf)**2))
-    return -arc
+    # Apply min/max constraints to the cut-off frequency
+    fc = max(min_fc, min(max_fc, fc_estimated))
+
+    # 4. Select data within the [0, fc] range
+    sel_idx = np.where(xf <= fc)[0]
+    xf_sel = xf[sel_idx]
+    yf_sel = yf[sel_idx]
+
+    # 5. Normalized arc length calculation
+    # The frequency axis is rescaled between 0 and 1 (f / fc)
+    if len(xf_sel) < 2:
+        return np.nan
+        
+    d_xf_norm = np.diff(xf_sel) / fc
+    d_yf = np.diff(yf_sel)
+    
+    # Geometric arc length in the normalized spectrum
+    arc_length = np.sum(np.sqrt(d_xf_norm**2 + d_yf**2))
+    
+    # The result is negative by convention (values closer to 0 = smoother)
+    return -arc_length
 
 
 def compute_jerk_rms(signal, rate_hz=50.0, signal_type='velocity'):

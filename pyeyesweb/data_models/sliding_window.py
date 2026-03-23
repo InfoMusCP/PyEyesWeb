@@ -1,3 +1,11 @@
+"""Circular buffer implementation for real-time motion data streaming.
+
+This module provides the [SlidingWindow][pyeyesweb.data_models.sliding_window.SlidingWindow]
+class, a thread-safe circular buffer designed for high-frequency motion
+data.  It maintains a fixed-size history of samples and supports dynamic
+resizing.
+"""
+
 import time
 import threading
 import numpy as np
@@ -6,48 +14,50 @@ from pyeyesweb.utils.validators import validate_integer
 
 
 class SlidingWindow:
-    """
-    A thread-safe sliding window buffer for storing samples with timestamps.
+    """Thread-safe sliding window buffer for storing samples with timestamps.
 
     This class implements a circular buffer that maintains a fixed-size window
     of the most recent samples. When the buffer is full, new samples overwrite
-    the oldest ones. Each sample is associated with a timestamp.
+    the oldest ones. The internal data shape is strictly maintained as a 3D
+    tensor: `(Time, Signals, Dimensions)`.
 
     Parameters
     ----------
     max_length : int
-        Maximum number of samples the window can hold.
-    n_columns : int
-        Number of columns (features) in each sample.
-
-    Attributes
-    ----------
-    _lock : threading.Lock
-        Thread lock for thread-safe operations.
-    _max_length : int
-        Maximum capacity of the buffer.
-    _n_columns : int
-        Number of columns per sample.
-    _buffer : np.ndarray
-        Circular buffer storing the samples, shape (max_length, n_columns).
-    _timestamp : np.ndarray
-        Array storing timestamps for each sample, shape (max_length,).
-    _start : int
-        Index of the oldest sample in the buffer.
-    _size : int
-        Current number of samples in the buffer.
+        Maximum number of samples (time frames) the window can hold.
+    n_signals : int, optional
+        Number of entities tracked (e.g., 1 for a single signal, 17 for skeleton
+        joints). Default is `1`.
+    n_dims : int, optional
+        Number of dimensions per node (e.g., 1 for speed, 3 for 3D coordinates).
+        Default is `1`.
 
     Examples
     --------
-    >>> window = SlidingWindow(max_length=100, n_columns=3)
+    >>> window = SlidingWindow(max_length=100, n_signals=1, n_dims=3)
     >>> window.append([1.0, 2.0, 3.0])
-    >>> window.append(np.array([4.0, 5.0, 6.0]), timestamp=1234567890.0)
-    >>> data, timestamps = window.to_array()
-    >>> print(f"Buffer contains {len(window)} samples")
+    >>> window.append([4.0, 5.0, 6.0], timestamp=1234567890.0)
+    >>> data, timestamps = window.to_tensor()
+    >>> print(window.is_full) # False
     """
 
+    def __init__(self, max_length: int, n_signals: int = 1, n_dims: int = 1):
+        self._max_length = validate_integer(max_length, 'max_length', min_val=1, max_val=10_000_000)
+        self._n_signals = validate_integer(n_signals, 'n_signals', min_val=1, max_val=1000)
+        self._n_dims = validate_integer(n_dims, 'n_dims', min_val=1, max_val=10_000)
+
+        self._lock = threading.RLock()
+
+        # Initialize with NaNs to ensure algorithms don't process garbage memory
+        self._buffer = np.full((self._max_length, self._n_signals, self._n_dims), np.nan, dtype=np.float32)
+        self._timestamp = np.full(self._max_length, np.nan, dtype=np.float64)
+
+        self._start = 0
+        self._size = 0
+
     @property
-    def max_length(self):
+    def max_length(self) -> int:
+        """Maximum capacity of the buffer."""
         return self._max_length
 
     @max_length.setter
@@ -55,115 +65,80 @@ class SlidingWindow:
         if value <= 0:
             raise ValueError("max_length must be positive.")
         if value != self._max_length:
-            old_max_length = self._max_length  # keep old value
+            old_max_length = self._max_length
             self._max_length = value
             self._resize(old_max_length)
 
-    def __init__(self, max_length: int, n_columns: int):
-        self._max_length = validate_integer(max_length, 'max_length', min_val=1, max_val=10_000_000)
-        self._n_columns = validate_integer(n_columns, 'n_columns', min_val=1, max_val=10_000)
+    @property
+    def n_signals(self) -> int:
+        """The number of entities (signals) tracked by the window."""
+        return self._n_signals
 
-        self._lock = threading.RLock()
+    @property
+    def n_dims(self) -> int:
+        """The number of dimensions per node."""
+        return self._n_dims
 
-        self._buffer = np.empty((self._max_length, self._n_columns), dtype=np.float32)
-        self._timestamp = np.empty(self._max_length, dtype=np.float64)
-
-        self._start = 0
-        self._size = 0
-
-    def __del__(self):
-        """Clean up allocated numpy arrays when the object is destroyed.
-
-        This helps ensure memory is released promptly rather than waiting
-        for Python's garbage collector.
-        """
-        # Explicitly delete numpy arrays to free memory
-        if hasattr(self, '_buffer'):
-            del self._buffer
-        if hasattr(self, '_timestamp'):
-            del self._timestamp
+    @property
+    def is_full(self) -> bool:
+        """Check if the sliding window buffer is at maximum capacity."""
+        with self._lock:
+            return self._size == self._max_length
 
     def __len__(self) -> int:
-        """
-        Return the current number of samples in the sliding window.
-
-        Returns
-        -------
-        int
-            Number of samples currently stored in the buffer.
-
-        Examples
-        --------
-        >>> window = SlidingWindow(max_length=10, n_columns=2)
-        >>> print(len(window))  # 0
-        >>> window.append([1.0, 2.0])
-        >>> print(len(window))  # 1
-        """
+        """Return the current number of samples in the sliding window."""
         with self._lock:
             return self._size
 
     def __repr__(self) -> str:
-        """
-        Return a concise representation showing max length, shape, and the samples with timestamps.
-        """
-        data, timestamps = self.to_array()
-        return f"""data=\n{data},\ntimestamps=\n{timestamps}"""
+        """Return a concise representation showing state and shape."""
+        data, _ = self.to_tensor()
+        return f"SlidingWindow(size={self._size}/{self._max_length}, shape=(T, {self._n_signals}, {self._n_dims}))\ndata=\n{data}"
 
     def _resize(self, old_max_length: int):
-        # build indices with old_max_length, not the new one
-        indices = (self._start + np.arange(self._size)) % old_max_length
-        old_data = self._buffer[indices].copy()
-        old_timestamps = self._timestamp[indices].copy()
+        with self._lock:
+            indices = (self._start + np.arange(self._size)) % old_max_length
+            old_data = self._buffer[indices].copy()
+            old_timestamps = self._timestamp[indices].copy()
 
-        new_buffer = np.empty((self._max_length, self._n_columns), dtype=np.float32)
-        new_timestamps = np.empty(self._max_length, dtype=np.float64)
+            new_buffer = np.full((self._max_length, self._n_signals, self._n_dims), np.nan, dtype=np.float32)
+            new_timestamps = np.full(self._max_length, np.nan, dtype=np.float64)
 
-        keep = min(len(old_data), self._max_length)
-        new_buffer[:keep, :self._n_columns] = old_data[-keep:, :self._n_columns]
-        new_timestamps[:keep] = old_timestamps[-keep:]
+            keep = min(len(old_data), self._max_length)
+            if keep > 0:
+                new_buffer[:keep, :, :] = old_data[-keep:, :, :]
+                new_timestamps[:keep] = old_timestamps[-keep:]
 
-        self._buffer = new_buffer
-        self._timestamp = new_timestamps
-        self._start = 0
-        self._size = keep
+            self._buffer = new_buffer
+            self._timestamp = new_timestamps
+            self._start = 0
+            self._size = keep
 
-    def append(self, samples: Union[np.ndarray, list], timestamp: Optional[float] = None) -> None:
-        """
-        Append a new sample to the sliding window.
+    def append(self, sample: Union[list, np.ndarray, float, int], timestamp: Optional[float] = None) -> None:
+        """Append a new sample to the sliding window.
 
-        If the buffer is not full, the sample is added to the next available
-        position. If the buffer is full, the oldest sample is overwritten.
+        Accepts scalars, flat lists, or shaped numpy arrays, and automatically
+        reshapes them to fit the configured `(n_signals, n_dims)` structure.
 
         Parameters
         ----------
-        samples : np.ndarray or list
-            Sample data to append. Must have exactly n_columns elements.
+        sample : array-like
+            Movement data for the current frame.
         timestamp : float, optional
-            Timestamp associated with the sample. If None, uses the current
-            monotonic time.
-
-        Raises
-        ------
-        TypeError
-            If samples is not a numpy array or list.
-        ValueError
-            If the sample shape doesn't match the expected number of columns.
-
-        Examples
-        --------
-        >>> window = SlidingWindow(max_length=10, n_columns=2)
-        >>> window.append([1.0, 2.0])
-        >>> window.append(np.array([3.0, 4.0]), timestamp=1234567890.0)
+            Monotonic timestamp for the sample.  If `None`, `time.monotonic()`
+            is used.
         """
+        sample_arr = np.asarray(sample, dtype=np.float32)
+
+        try:
+            sample_reshaped = sample_arr.reshape(self._n_signals, self._n_dims)
+        except ValueError:
+            raise ValueError(
+                f"Cannot reshape input of size {sample_arr.size} into "
+                f"expected shape ({self._n_signals} signals, {self._n_dims} dims)."
+            )
+
         with self._lock:
-            if not isinstance(samples, (np.ndarray, list)):
-                raise TypeError("Expected sample should be of type np.ndarray or list.")
-
-            value = np.asarray(samples, dtype=np.float32).reshape(-1)
-
-            if value.shape[0] != self._n_columns:
-                raise ValueError(f"Expected shape ({self._n_columns},), got {value.shape}")
-
             if timestamp is None:
                 timestamp = time.monotonic()
 
@@ -174,80 +149,44 @@ class SlidingWindow:
                 idx = self._start
                 self._start = (self._start + 1) % self._max_length
 
-            if idx >= self._buffer.shape[0]:
-                raise RuntimeError(
-                    f"Internal error: idx={idx} but buffer length={self._buffer.shape[0]}"
-                )
-
-            self._buffer[idx] = value
+            self._buffer[idx] = sample_reshaped
             self._timestamp[idx] = timestamp
 
-    def to_array(self) -> tuple[np.ndarray, np.ndarray]:
-        """
-        Return the current contents of the sliding window as arrays.
-
-        The returned arrays contain samples and timestamps in chronological
-        order, with the oldest sample first and the newest sample last.
+    def to_tensor(self) -> tuple[np.ndarray, np.ndarray]:
+        """Return the contents as a 3D tensor of shape `(Time, Signals, Dimensions)`.
 
         Returns
         -------
-        samples : np.ndarray
-            Array of shape (current_size, n_columns) containing all samples
-            in the buffer in chronological order.
-        timestamps : np.ndarray
-            Array of shape (current_size,) containing timestamps corresponding
-            to each sample in chronological order.
-
-        Examples
-        --------
-        >>> window = SlidingWindow(max_length=5, n_columns=2)
-        >>> window.append([1.0, 2.0])
-        >>> window.append([3.0, 4.0])
-        >>> samples, timestamps = window.to_array()
-        >>> print(samples.shape)  # (2, 2)
-        >>> print(timestamps.shape)  # (2,)
+        tensor : numpy.ndarray
+            Array of shape `(current_size, n_signals, n_dims)` in chronological order.
+        timestamps : numpy.ndarray
+            Array of shape `(current_size,)` containing corresponding timestamps.
         """
         with self._lock:
             indices = (self._start + np.arange(self._size)) % self._max_length
             return self._buffer[indices].copy(), self._timestamp[indices].copy()
 
+    def to_flat_array(self) -> tuple[np.ndarray, np.ndarray]:
+        """Return the contents flattened to `(Time, Signals * Dimensions)`.
+
+        Returns
+        -------
+        flat_array : numpy.ndarray
+            Array of shape `(current_size, n_signals * n_dims)`.
+        timestamps : numpy.ndarray
+            Array of shape `(current_size,)` containing corresponding timestamps.
+        """
+        tensor, timestamps = self.to_tensor()
+        if tensor.size == 0:
+            return np.empty((0, self._n_signals * self._n_dims), dtype=np.float32), timestamps
+
+        flat_array = tensor.reshape(self._size, self._n_signals * self._n_dims)
+        return flat_array, timestamps
+
     def reset(self) -> None:
-        """
-        Reset the sliding window to empty state.
-
-        Clears all samples and timestamps from the buffer and resets internal
-        counters. The buffer arrays are filled with NaN values.
-
-        Examples
-        --------
-        >>> window = SlidingWindow(max_length=10, n_columns=2)
-        >>> window.append([1.0, 2.0])
-        >>> print(len(window))  # 1
-        >>> window.reset()
-        >>> print(len(window))  # 0
-        """
+        """Clear all data from the window and reset buffers with NaNs."""
         with self._lock:
             self._start = 0
             self._size = 0
             self._buffer.fill(np.nan)
             self._timestamp.fill(np.nan)
-
-    def is_full(self) -> bool:
-        """
-        Check if the sliding window buffer is at maximum capacity.
-
-        Returns
-        -------
-        bool
-            True if the buffer contains max_length samples, False otherwise.
-
-        Examples
-        --------
-        >>> window = SlidingWindow(max_length=2, n_columns=1)
-        >>> print(window.is_full())  # False
-        >>> window.append([1.0])
-        >>> window.append([2.0])
-        >>> print(window.is_full())  # True
-        """
-        with self._lock:
-            return self._size == self._max_length

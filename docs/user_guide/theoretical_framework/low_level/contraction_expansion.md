@@ -1,318 +1,66 @@
 # Contraction-Expansion Analysis Module
 
-The Contraction-Expansion module quantifies spatial dynamics of movement patterns by analyzing how trajectories expand and contract in space over time.
+## Overview
+The Contraction-Expansion module provides three distinct low-level metrics for quantifying the spatial spread of body configurations in 3D (or 2D) space:
 
-Spatial movement analysis examines how body segments or markers change their relative positions during movement.
-The module provides:
+1. **Bounding Box Filled Area**
+2. **Ellipsoid Sphericity**
+3. **Points Density**
 
-- **2D/3D area calculations**: geometric area enclosed by trajectory points
-- **Volume analysis**: 3D spatial volume changes
-- **Expansion-contraction rates**: temporal derivatives of spatial measures
+These shape metrics are used to track structural changes relative to a movement baseline—for example, distinguishing a tightly curled posture from a sprawling, open posture.
 
+## 1. Bounding Box Filled Area
 
-## Algorithms Details
+### Theoretical Interpretation
+- **Input Requirements**: A static frame of points in space.
+- **Value Interpretation**: This computes the "Contraction Index" based on surface area compactness. A value closer to `1.0` typically indicates the posture fully occupies its volumetric bounds (highly expanded and flush), whereas smaller values indicate a tightly clustered or irregular shape relative to its global bounds.
+- **Robustness**: Relies on Convex Hull computation which gracefully handles outlier limbs but can fail mathematically if all points form a flat plane (degeneracy). 
 
-### 2D Area computation
-The 2D implementation uses the Shoelace formula [^1] for polygon area computation:
+### Algorithm Details & Mathematics
+The index is the ratio of the squared surface area of the enclosed convex hull to the surface area of the axis-aligned bounding box (AABB).
 
-$$
-A = \tfrac{1}{2} \Bigg| \sum_i \big( x_i y_{i+1} - x_{i+1} y_i \big) \Bigg|
-$$
-
-### 3D Volume computation
-Calculates 3D volume using tetrahedron volume decomposition:
-
-1. **Divide the 3D shape into tetrahedra**  
-   For a polyhedron defined by vertices \( \{p_i\}_{i=0}^n \), partition it into a set of tetrahedra \(\mathcal{T} = \{ (p_0, p_{i}, p_{j}, p_{k}) \}\).
-
-2. **Calculate each tetrahedron volume using the scalar triple product**  
-   For tetrahedron with vertices \(p_0, p_1, p_2, p_3 \in \mathbb{R}^3\)  
-
-$$
-V_{\text{tetra}} = \frac{1}{6} \; \det 
-\begin{bmatrix}
-x_1 - x_0 & x_2 - x_0 & x_3 - x_0 \\
-y_1 - y_0 & y_2 - y_0 & y_3 - y_0 \\
-z_1 - z_0 & z_2 - z_0 & z_3 - z_0
-\end{bmatrix}
+$$ 
+Index = \frac{Area_{hull}^2}{Area_{bbox}}
 $$
 
-   or equivalently:
+where $Area_{hull}$ is the internal surface area derived purely from the outermost perimeter of points, and $Area_{bbox}$ is the theoretical bounding rectangle/prism containing all movement.
+
+## 2. Ellipsoid Sphericity
+
+### Theoretical Interpretation
+- **Input Requirements**: A static frame of spatial coordinates.
+- **Value Interpretation**: Sphericity quantifies how closely the current body posture resembles a perfect sphere versus an elongated line or flat disc. A perfectly spherical posture yields `1.0`, while a highly stretched limb posture approaches `0.0`.
+
+!!! tip "Rotational Invariance"
+    Because this metric relies on Principal Component Analysis (PCA) to find the primary axes, it is highly robust against the subject's rotation in space.
+
+### Algorithm Details & Mathematics
+The algorithm fits a 3D ellipsoid to the skeletal joints using PCA on the mean-centered point cloud. The sorted eigenvalues yield the primary radii $(a, b, c)$ where $a$ is the major axis and $c$ is the minor axis.
+
+Sphericity $S$ is defined as the ratio of the smallest to the largest radius:
 
 $$
-V_{\text{tetra}} = \tfrac{1}{6} \, \big( (p_1 - p_0) \cdot \big( (p_2 - p_0) \times (p_3 - p_0) \big) \big)
+S = \frac{c}{a}
 $$
 
-<ol start="3">
-<li>
-<strong>Sum volumes with appropriate signs</strong>  
-<br>The total polyhedron volume is obtained as:
-</li>
-</ol>  
+where $c$ is the length of the shortest semi-axis and $a$ is the length of the longest semi-axis of the fitted ellipsoid.
+
+## 3. Points Density
+
+### Theoretical Interpretation
+- **Input Requirements**: A static snippet of spatial coordinates.
+- **Value Interpretation**: Evaluates the dispersion of the body. Smaller values mean all points are tightly clustered near the center of mass (high density / contracted). Larger values indicate the body is widely spread out (low density / expanded).
+
+### Algorithm Details & Mathematics
+Computes the average Euclidean distance of all points from their shared barycenter.
 
 $$
-V = \sum_{k} V_{\text{tetra},k}
+D = \frac{1}{N} \sum_{i=1}^{N} \| X_i - \bar{X} \|
 $$
 
-   where the sign of each \(V_{\text{tetra},k}\) depends on the orientation of the vertices.
-
-## Performance Optimization
-
-### Numba JIT Compilation
-
-The module uses Numba's Just-In-Time compilation for performance.
-
-!!! note
-    Numba introduces **compilation time** on first use, but caches compiled functions for subsequent calls.  
-    This approach grants 10-100x speedups over pure Python, avoiding overhead in critical loops.
-
-```python
-@jit(nopython=True, cache=True)
-def _area_2d_fast(points):
-    # Ultra-fast computation with compiled code
-    pass
-```
-
-### Memory Efficiency
-
-The implementation is optimized for memory efficiency by using in-place calculations, minimizing temporary arrays, and leveraging efficient array operations.
-
-[//]: # (## Usage Examples)
-
-[//]: # ()
-[//]: # (### Basic Area Analysis)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (import numpy as np)
-
-[//]: # (from pyeyesweb.low_level.contraction_expansion import _area_2d_fast)
-
-[//]: # ()
-[//]: # (# Define four corner points of a movement trajectory)
-
-[//]: # (trajectory_points = np.array&#40;[)
-
-[//]: # (    [0.0, 0.0],  # Point 1)
-
-[//]: # (    [1.0, 0.0],  # Point 2)
-
-[//]: # (    [1.0, 1.0],  # Point 3)
-
-[//]: # (    [0.0, 1.0]  # Point 4)
-
-[//]: # (]&#41;)
-
-[//]: # ()
-[//]: # (area = _area_2d_fast&#40;trajectory_points&#41;)
-
-[//]: # (print&#40;f"Enclosed area: {area:.3f}"&#41;)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (### Real-Time Expansion Analysis)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (from collections import deque)
-
-[//]: # (import numpy as np)
-
-[//]: # ()
-[//]: # (class MovementExpansionTracker:)
-
-[//]: # (    def __init__&#40;self, history_length=10&#41;:)
-
-[//]: # (        self.area_history = deque&#40;maxlen=history_length&#41;)
-
-[//]: # (        )
-[//]: # (    def update_movement&#40;self, corner_points&#41;:)
-
-[//]: # (        current_area = _area_2d_fast&#40;corner_points&#41;)
-
-[//]: # (        self.area_history.append&#40;current_area&#41;)
-
-[//]: # (        )
-[//]: # (        if len&#40;self.area_history&#41; >= 2:)
-
-[//]: # (            expansion_rate = &#40;)
-
-[//]: # (                self.area_history[-1] - self.area_history[-2])
-
-[//]: # (            &#41;)
-
-[//]: # (            return {)
-
-[//]: # (                'current_area': current_area,)
-
-[//]: # (                'expansion_rate': expansion_rate,)
-
-[//]: # (                'is_expanding': expansion_rate > 0)
-
-[//]: # (            })
-
-[//]: # (        return {'current_area': current_area})
-
-[//]: # ()
-[//]: # (# Usage)
-
-[//]: # (tracker = MovementExpansionTracker&#40;&#41;)
-
-[//]: # ()
-[//]: # (for frame in motion_data:)
-
-[//]: # (    # Extract four key points from current frame)
-
-[//]: # (    corners = extract_movement_corners&#40;frame&#41;)
-
-[//]: # (    metrics = tracker.update_movement&#40;corners&#41;)
-
-[//]: # (    )
-[//]: # (    if 'expansion_rate' in metrics:)
-
-[//]: # (        if metrics['is_expanding']:)
-
-[//]: # (            print&#40;f"Movement expanding at rate: {metrics['expansion_rate']:.3f}"&#41;)
-
-[//]: # (        else:)
-
-[//]: # (            print&#40;f"Movement contracting at rate: {metrics['expansion_rate']:.3f}"&#41;)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (### 3D Movement Analysis)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (from pyeyesweb.low_level.contraction_expansion import _volume_3d_fast)
-
-[//]: # ()
-[//]: # ()
-[//]: # (# Analyze 3D movement volume changes)
-
-[//]: # (def analyze_3d_movement_volume&#40;trajectory_data&#41;:)
-
-[//]: # (    volume_timeline = [])
-
-[//]: # ()
-[//]: # (    for frame in trajectory_data:)
-
-[//]: # (        # Extract key 3D points)
-
-[//]: # (        key_points = extract_key_3d_points&#40;frame&#41;)
-
-[//]: # ()
-[//]: # (        if len&#40;key_points&#41; >= 4:  # Minimum for volume calculation)
-
-[//]: # (            volume = _volume_3d_fast&#40;key_points&#41;)
-
-[//]: # (            volume_timeline.append&#40;volume&#41;)
-
-[//]: # ()
-[//]: # (    # Calculate expansion/contraction phases)
-
-[//]: # (    expansion_phases = [])
-
-[//]: # (    for i in range&#40;1, len&#40;volume_timeline&#41;&#41;:)
-
-[//]: # (        if volume_timeline[i] > volume_timeline[i - 1]:)
-
-[//]: # (            expansion_phases.append&#40;i&#41;)
-
-[//]: # ()
-[//]: # (    return {)
-
-[//]: # (        'volume_timeline': volume_timeline,)
-
-[//]: # (        'expansion_frames': expansion_phases,)
-
-[//]: # (        'max_volume': max&#40;volume_timeline&#41;,)
-
-[//]: # (        'min_volume': min&#40;volume_timeline&#41;)
-
-[//]: # (    })
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (### Integration with Other Modules)
-
-[//]: # (Consider combining with **other metrics** for a more comprehensive analysis.  )
-
-[//]: # ()
-[//]: # (#### Smoothness Analysis)
-
-[//]: # (Combine spatial dynamics with movement smoothness:)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (from pyeyesweb import Smoothness)
-
-[//]: # (from pyeyesweb.low_level.contraction_expansion import _area_2d_fast)
-
-[//]: # ()
-[//]: # (smoothness_analyzer = Smoothness&#40;&#41;)
-
-[//]: # (spatial_areas = [])
-
-[//]: # ()
-[//]: # (for frame in motion_data:)
-
-[//]: # (    # Calculate spatial measure)
-
-[//]: # (    area = _area_2d_fast&#40;extract_corners&#40;frame&#41;&#41;)
-
-[//]: # (    spatial_areas.append&#40;area&#41;)
-
-[//]: # ()
-[//]: # (    # Analyze spatial smoothness)
-
-[//]: # (    if len&#40;spatial_areas&#41; >= smoothness_analyzer.min_length:)
-
-[//]: # (        spatial_smoothness = smoothness_analyzer&#40;spatial_areas&#41;)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (#### Bilateral Symmetry)
-
-[//]: # (Compare left-right spatial patterns:)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (left_areas = [_area_2d_fast&#40;left_points[i]&#41; for i in frames])
-
-[//]: # (right_areas = [_area_2d_fast&#40;right_points[i]&#41; for i in frames])
-
-[//]: # ()
-[//]: # (symmetry_analyzer = BilateralSymmetryAnalyzer&#40;&#41;)
-
-[//]: # (spatial_symmetry = symmetry_analyzer.calculate_symmetry_index&#40;)
-
-[//]: # (    left_areas, right_areas)
-
-[//]: # (&#41;)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (---)
-
-!!! warning "Limitations & Considerations"
-    - Assumes meaningful geometric shapes from selected points.  
-    - Requires consistent **point topology** across frames.  
-    - May not capture the **full spatial complexity** of movement.
-    - Performance depends on **point selection strategy**.
-    - Always consider the **movement context** when interpreting results.  
-    - Normalize for **subject/task differences** when appropriate.  
+where $N$ is the total number of points, $X_i$ is the position of the $i$-th point, and $\bar{X}$ is the exact spatial mean of the point cloud.
 
 ## References
 
-[^1]: TODO
+[^1]: Glowinski, D., Dael, N., Camurri, A., Volpe, G., Mortillaro, M., & Scherer, K. (2011). Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2), 106-118.
+[^2]: Camurri, A., Lagerlöf, I., & Volpe, G. (2003). Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1-2), 213-225.
