@@ -2,194 +2,194 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/SUMMARY/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/analysis_primitives/clusterability/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/analysis_primitives/mse_dominance/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/analysis_primitives/rarity/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/analysis_primitives/statistical_moment/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/analysis_primitives/synchronization/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/data_models/base/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/data_models/results/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/data_models/sliding_window/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/low_level/contraction_expansion/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/low_level/direction_change/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/low_level/equilibrium/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/low_level/geometric_symmetry/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/low_level/kinetic_energy/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/low_level/smoothness/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/mid_level/impulsivity/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/mid_level/lightness/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/mid_level/suddenness/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/utils/math_utils/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/utils/signal_processing/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/utils/tsv_reader/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/API/utils/validators/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/getting_started/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/integrations/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/theoretical_framework/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/analysis_primitives/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/clusterability/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/mse_dominance/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/rarity/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/statistical_moments/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/analysis_primitives/synchronization/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/high_level/high_level/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/contraction_expansion/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/direction_change/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/geometric_symmetry/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/kinetic_energy/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/low_level/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/postural_balance/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/low_level/smoothness/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/mid_level/impulsivity/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/mid_level/lightness/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/mid_level/mid_level/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/mid_level/suddenness/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/physical_signals/physical_signals/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/utils/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://infomuscp.github.io/PyEyesWeb/dev/user_guide/theoretical_framework/utils/tsv_reader/</loc>
-         <lastmod>2026-03-20</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
 </urlset>
