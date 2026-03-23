@@ -35,6 +35,11 @@ N_frames = pos_tensor.shape[0]
 print(f"Loaded {N_frames} frames. Ready to analyze bimanual coordination!")
 ```
 
+```text
+Output:
+Loaded 1532 frames. Ready to analyze bimanual coordination!
+```
+
 ## 2. Setting up the Primitives
 We will set up specific `SlidingWindow` instances for our primitives:
 *   **Rarity & Statistics**: These evaluate a single 1-Dimensional signal (the right hand's speed), so they need a 1D window (`n_signals=1, n_dims=1`).
@@ -58,6 +63,15 @@ stats_feature = StatisticalMoment(metrics=["mean", "std_dev"])
 
 # Phase Locking Value (PLV)
 sync_feature = Synchronization(filter_params=None) 
+
+print(f"Single Signal Window Shape: {sw_single_speed.data.shape}")
+print(f"Dual Signal Window Shape: {sw_dual_speed.data.shape}")
+```
+
+```text
+Output:
+Single Signal Window Shape: (100, 1, 1)
+Dual Signal Window Shape: (100, 2, 1)
 ```
 
 ## 3. The Execution Loop
@@ -94,6 +108,10 @@ for t in tqdm(range(N_frames), desc="Processing Primitives"):
         # C. Phase Locking Synchronization
         s_val = sync_feature.extract(sw_dual_speed)
         sync_data.append(s_val["plv"])
+        
+        # Verify first output
+        if len(rarity_data) == 1:
+            print(f"Frame {t} -> Rarity: {r_val:.2f}, StdDev: {stat_val['std_dev']:.2f}, PLV: {s_val['plv']:.2f}")
 
 rarity_data = np.array(rarity_data)
 volatility_data = np.array(volatility_data)

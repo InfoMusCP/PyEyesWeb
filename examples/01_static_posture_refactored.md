@@ -26,6 +26,13 @@ pos_tensor, vel_tensor, acc_tensor, marker_names = load_motion_data("data/trial0
 
 N_frames, N_joints, N_dims = pos_tensor.shape
 print(f"Loaded {N_frames} frames tracking {N_joints} joints.")
+print(f"Position Tensor Shape: ({N_frames}, {N_joints}, {N_dims})")
+```
+
+```text
+Output:
+Loaded 1532 frames tracking 21 joints.
+Position Tensor Shape: (1532, 21, 3)
 ```
 
 ## 2. Setting up Static Features
@@ -49,6 +56,13 @@ sw_pos = SlidingWindow(max_length=1, n_signals=N_joints, n_dims=3)
 # 2. Initialize Features
 contraction_feature = BoundingBoxFilledArea()
 density_feature = PointsDensity()
+
+print(f"Initialized Static Window Shape: {sw_pos.data.shape}")
+```
+
+```text
+Output:
+Initialized Static Window Shape: (1, 21, 3)
 ```
 
 ## 3. The Execution Loop
@@ -74,6 +88,10 @@ for t in tqdm(range(N_frames), desc="Processing Geometry"):
         
         contraction_data.append(c_val)
         density_data.append(d_val)
+        
+        # Verify first output
+        if len(contraction_data) == 1:
+            print(f"Frame {t} -> Contraction: {c_val:.2f}, Density: {d_val:.2f}")
 
 # Convert to Numpy Arrays
 contraction_data = np.array(contraction_data)

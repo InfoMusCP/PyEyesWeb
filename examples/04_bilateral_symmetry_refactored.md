@@ -38,6 +38,12 @@ print(f"Tracking Symmetry for Hands ({l_hand_idx}, {r_hand_idx}) and Feet ({l_fo
 print(f"Center of Symmetry: PELVIS ({center_idx})")
 ```
 
+```text
+Output:
+Tracking Symmetry for Hands (11, 12) and Feet (19, 20)
+Center of Symmetry: PELVIS (0)
+```
+
 ## 2. Setting up the Symmetry Feature
 How does the algorithm actually calculate symmetry?
 
@@ -66,6 +72,13 @@ symmetry_feature = GeometricSymmetry(
     joint_pairs=joint_pairs,
     center_of_symmetry=center_idx
 )
+
+print(f"Initialized Window Shape: {sw_pos.data.shape}")
+```
+
+```text
+Output:
+Initialized Window Shape: (30, 21, 3)
 ```
 
 ## 3. The Execution Loop
@@ -93,6 +106,10 @@ for t in tqdm(range(pos_tensor.shape[0]), desc="Evaluating Symmetry"):
         
         hand_sym_data.append(flat_results[hand_key])
         foot_sym_data.append(flat_results[foot_key])
+        
+        # Verify first output
+        if len(hand_sym_data) == 1:
+            print(f"Frame {t} -> Hand Sym Error: {flat_results[hand_key]:.2f}, Foot Sym Error: {flat_results[foot_key]:.2f}")
 
 hand_sym_data = np.array(hand_sym_data)
 foot_sym_data = np.array(foot_sym_data)

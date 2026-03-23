@@ -88,3 +88,11 @@ where = ["."]
 pythonpath = [
   "."
 ]
+
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:project.version",
+]
+branch = "main"
+build_command = "pip install build && python -m build"
+commit_parser = "angular"

@@ -10,10 +10,24 @@
 
 Welcome to PyEyesWeb! This library is designed to extract expressive and biomechanical features from motion data in real-time. 
 
-In this quickstart, we will build a complete, unified pipeline that extracts:
-1. **A Static Feature**: Bounding Box Contraction (How folded/expanded is the body?)
-2. **A Dynamic Feature**: Kinetic Energy (How much total energy is in the movement?)
-3. **An Analysis Primitive**: Smoothness (How fluid is the right hand moving?)
+## Understanding the Architecture: Concepts vs. Implementation
+
+PyEyesWeb separates **what** we measure (the conceptual framework) from **how** it is computed (the implementation API).
+
+### 1. The Conceptual Framework (What we measure)
+*   **Low-Level Features**: Physical biomechanics, including spatial geometry (Contraction, Expansion) and raw kinematics (Kinetic Energy, Velocity).
+*   **Mid-Level Features**: Qualitative, expressive aspects of movement that represent behavior or intent (e.g., Smoothness, Directness, Rhythmicity).
+*   **Analysis Primitives**: Domain-agnostic mathematical and statistical tools (e.g., Probability/Rarity, Signal Synchronization, Volatility) that can be applied to any data stream.
+
+### 2. The Implementation API (How we compute it)
+In the code, every metric is implemented as either a **Static** or **Dynamic** feature, defined purely by its memory requirements:
+*   **Static Features**: Require only the instantaneous state of the *current frame*. For example, the spatial Contraction of a single pose, or instantaneous Kinetic Energy. They operate on a sliding window of size 1.
+*   **Dynamic Features**: Require a historical trajectory to evaluate changes *over time*. For example, checking if a movement was Smooth over the last second. They require a rolling sliding window to store past frames.
+
+In this quickstart, we will build a unified pipeline extracting three metrics that cross-reference these categories:
+1. **Contraction** (Concept: Low-Level Geometry | API: Static Feature)
+2. **Kinetic Energy** (Concept: Low-Level Kinematics | API: Static Feature)
+3. **Smoothness** (Concept: Mid-Level Expressivity | API: Dynamic Feature)
 
 ## 1. Universal Data Loading
 PyEyesWeb uses an opaque data loader that intuitively adapts to different file formats (like `.tsv` and `.txt`) to abstract away complex format parsing. It automatically infers header rows, missing values, axis groupings, and extracts the 3D Tensor kinematics.
@@ -30,10 +44,17 @@ hand_idx = marker_names.index("HAND_RIGHT")
 
 N_frames, N_joints, N_dims = pos_tensor.shape
 print(f"Loaded {N_frames} frames tracking {N_joints} joints.")
+print(f"Position Tensor Shape: ({N_frames}, {N_joints}, {N_dims})")
+```
+
+```text
+Output:
+Loaded 1532 frames tracking 21 joints.
+Position Tensor Shape: (1532, 21, 3)
 ```
 
 ## 2. Real-Time Setup using Sliding Windows
-Real-time pipelines cannot peek into the future; they only know the past and the present. PyEyesWeb simulates this using a `SlidingWindow` object.
+Real-time streaming analysis requires processing data as it arrives sequentially frame-by-frame. PyEyesWeb manages this continuous flow of data using a `SlidingWindow` object to store a brief history of recent frames.
 
 ```python
 from pyeyesweb.data_models import SlidingWindow
@@ -42,8 +63,17 @@ from pyeyesweb.data_models import SlidingWindow
 sw_pos = SlidingWindow(max_length=60, n_signals=N_joints, n_dims=3)
 
 # Initialize a Window for velocity 
-# (Energy only needs the current instant, so max_length=1 is sufficient!)
+# (Kinematic Energy only needs the instantaneous velocity of the current frame! max_length=1)
 sw_vel = SlidingWindow(max_length=1, n_signals=N_joints, n_dims=3)
+
+print(f"Initialized Position Window Shape: {sw_pos.data.shape}")
+print(f"Initialized Velocity Window Shape: {sw_vel.data.shape}")
+```
+
+```text
+Output:
+Initialized Position Window Shape: (60, 21, 3)
+Initialized Velocity Window Shape: (1, 21, 3)
 ```
 
 ## 3. Initializing the Features
@@ -81,19 +111,23 @@ for t in tqdm(range(N_frames), desc="Processing Pipeline"):
     if sw_pos.is_full():
         # --- Feature Extraction ---
         
-        # A. Static Feature (uses recent position window)
+        # 1. Contraction (Static Feature evaluating Low-Level Geometry)
         c_val = contraction_feature.extract(sw_pos)
         contraction_data.append(c_val)
         
-        # B. Dynamic Feature (uses velocity window)
+        # 2. Kinetic Energy (Static Feature evaluating Low-Level Kinematics)
         e_val = energy_feature.extract(sw_vel)
         energy_data.append(e_val)
         
-        # C. Analysis Primitive (specifically, SPARC smoothness of the right hand)
+        # 3. Smoothness (Dynamic Feature evaluating Mid-Level Expressivity)
         # Slicing the tensor: we only pass the Z-axis of the right hand to SPARC
         hand_pos_z = sw_pos.data[:, hand_idx, 2:3] # Shape: (60, 1, 1)
         s_val = smooth_feature.extract(hand_pos_z)
         smoothness_data.append(s_val["sparc"]) 
+        
+        # Print the very first result to verify transformations
+        if len(contraction_data) == 1:
+            print(f"Frame {t} -> Contraction: {c_val:.2f}, Energy: {e_val:.2f}, Smoothness: {s_val['sparc']:.2f}") 
 
 # Convert to Numpy Arrays for plotting
 contraction_data = np.array(contraction_data)

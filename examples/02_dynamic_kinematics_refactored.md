@@ -29,6 +29,13 @@ hand_idx = marker_names.index("HAND_RIGHT")
 
 N_frames, N_joints, N_dims = pos_tensor.shape
 print(f"Loaded {N_frames} frames tracking {N_joints} joints.")
+print(f"Kinematic Tensors Shape: ({N_frames}, {N_joints}, {N_dims})")
+```
+
+```text
+Output:
+Loaded 1532 frames tracking 21 joints.
+Kinematic Tensors Shape: (1532, 21, 3)
 ```
 
 ## 2. Time-Series vs. Instantaneous Windows
@@ -55,6 +62,15 @@ sw_vel = SlidingWindow(max_length=1, n_signals=N_joints, n_dims=3)
 smooth_feature = Smoothness(rate_hz=100.0, metrics=["sparc", "jerk_rms"])
 direction_feature = DirectionChange(metrics=["polygon"]) # Uses polygon area enclosed by the trajectory
 energy_feature = KineticEnergy(weights=1.0, labels=marker_names)
+
+print(f"Initialized Dynamic Window Shape: {sw_pos_traj.data.shape}")
+print(f"Initialized Static Window Shape: {sw_vel.data.shape}")
+```
+
+```text
+Output:
+Initialized Dynamic Window Shape: (60, 21, 3)
+Initialized Static Window Shape: (1, 21, 3)
 ```
 
 ## 3. The Execution Loop
@@ -89,6 +105,10 @@ for t in tqdm(range(N_frames), desc="Processing Kinematics"):
         hand_pos_z = sw_pos_traj.data[:, hand_idx, 2:3]
         s_val = smooth_feature.extract(hand_pos_z)
         sparc_data.append(s_val["sparc"])
+        
+        # Verify first output
+        if len(energy_data) == 1:
+            print(f"Frame {t} -> Energy: {e_val:.2f}, SPARC: {s_val['sparc']:.2f}, DirChange: {dir_val['polygon']:.2f}")
 
 energy_data = np.array(energy_data)
 dir_data = np.array(dir_data)
