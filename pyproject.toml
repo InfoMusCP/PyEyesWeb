@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyeyesweb"
-version = "0.0.1a5"
+version = "1.0.0b1"
 requires-python = ">=3.8"
 authors = [
     {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
@@ -88,3 +88,11 @@ where = ["."]
 pythonpath = [
   "."
 ]
+
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:project.version",
+]
+branch = "main"
+build_command = "pip install build && python -m build"
+commit_parser = "angular"
