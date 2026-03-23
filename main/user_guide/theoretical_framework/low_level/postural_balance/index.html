@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/main/user_guide/theoretical_framework/low_level/postural_balance/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Postural Balance - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Postural Balance";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/low_level/postural_balance.md";
+        var mkdocs_page_url = "/PyEyesWeb/main/user_guide/theoretical_framework/low_level/postural_balance/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="../low_level/">Layer 2 - Low-Level Features</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Postural Balance</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#theoretical-interpretation">Theoretical Interpretation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#algorithm-details-mathematics">Algorithm Details &amp; Mathematics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../analysis_primitives/analysis_primitives/">Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../../analysis_primitives/statistical_moment.md">Statistical Moment</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/base/">Base</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/results/">Results</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item"><a href="../../theoretical_framework/">Theoretical Framework</a></li>
+          <li class="breadcrumb-item"><a href="../low_level/">Layer 2 - Low-Level Features</a></li>
+      <li class="breadcrumb-item active">Postural Balance</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/low_level/postural_balance.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="postural-balance-equilibrium-analysis-module">Postural Balance (Equilibrium) Analysis Module</h1>
+<h2 id="overview">Overview</h2>
+<p>The Postural Balance module provides a robust elliptical equilibrium evaluation metric. It computes how well a subject's barycenter is centered between two base-of-support points (e.g., the left and right feet) to mathematically estimate the stability of a physical posture.</p>
+<h2 id="theoretical-interpretation">Theoretical Interpretation</h2>
+<ul>
+<li><strong>Input Requirements</strong>: Expects a single frame of static position data spanning multiple joints. The algorithm exclusively relies on a <strong>2D projection</strong> (specifically, the X and Y components) ignoring height (Z), as postural stability relative to the ground is a planar problem.</li>
+<li><strong>Value Interpretation</strong>: <ul>
+<li>An equilibrium value of <code>1.0</code> indicates perfect centering (the barycenter perfectly splits the base of support). </li>
+<li>Values approaching <code>0.0</code> indicate extreme stretching, leaning, or falling, where the user's center of mass is breaching the edge of their support ellipse. </li>
+<li>The algorithm also reports the <code>angle</code> of the base of support relative to the horizontal plane.</li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Margin Safeties</p>
+<p>The mathematical ellipse is intentionally inflated by a <code>margin_mm</code> config to account for the physical footprint size extending beyond the single theoretical "foot joint" point tracked by typical pose systems.</p>
+</div>
+<h2 id="algorithm-details-mathematics">Algorithm Details &amp; Mathematics</h2>
+<p>The stable base of support is modeled as a 2D ellipse drawn around the left foot (<span class="arithmatex">\(P_{left}\)</span>) and right foot (<span class="arithmatex">\(P_{right}\)</span>). </p>
+<ol>
+<li><strong>Center and Axes Formulation</strong>
+The center point <span class="arithmatex">\(C\)</span> between the feet is derived as:</li>
+</ol>
+<div class="arithmatex">\[
+C = \frac{P_{left} + P_{right}}{2}
+\]</div>
+<p>The Euclidean distance between the feet is <span class="arithmatex">\(d = \|P_{right} - P_{left}\|\)</span>.
+The ellipse semi-major axis (<span class="arithmatex">\(a\)</span>) incorporates the safety margin:</p>
+<div class="arithmatex">\[
+a = \frac{d}{2} + margin
+\]</div>
+<p>The ellipse semi-minor axis (<span class="arithmatex">\(b\)</span>) determines the depth of the stability stance, weighted by <span class="arithmatex">\(y\_weight\)</span>:</p>
+<div class="arithmatex">\[
+b = margin \times y\_weight
+\]</div>
+<ol>
+<li>
+<p><strong>Rotational Alignment</strong>
+The system computes the relative position of the barycenter to the geometric center <span class="arithmatex">\(C\)</span>, and rotates this relative vector to align linearly with the vector bridging the two feet. Let this rotated barycenter coordinate be <span class="arithmatex">\(B' = (x', y')\)</span>.</p>
+</li>
+<li>
+<p><strong>Elliptical Evaluation</strong>
+The normalized distance equation inside the ellipse is computed as:</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+norm = \left(\frac{x'}{a}\right)^2 + \left(\frac{y'}{b}\right)^2
+\]</div>
+<p>The final equilibrium score <span class="arithmatex">\(Value \in [0, 1]\)</span> is extracted inversely from the norm:</p>
+<div class="arithmatex">\[
+Value = 
+\begin{cases} 
+1.0 - \sqrt{norm} &amp; \text{if } norm \le 1.0 \\
+0.0 &amp; \text{otherwise}
+\end{cases}
+\]</div>
+<h2 id="references">References</h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Ghisio, S., Coletta, P., Piana, S., Alborno, P., Volpe, G., Camurri, A., ... &amp; Ravaschio, A. (2015, June). An open platform for full body interactive sonification exergames. In 2015 7th International Conference on Intelligent Technologies for Interactive Entertainment (INTETAIN) (pp. 168-175). IEEE.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../geometric_symmetry/" class="btn btn-neutral float-left" title="Geometric Symmetry"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../smoothness/" class="btn btn-neutral float-right" title="Smoothness">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../geometric_symmetry/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../smoothness/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
+      <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

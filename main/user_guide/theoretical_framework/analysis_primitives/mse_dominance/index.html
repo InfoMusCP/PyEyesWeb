@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/main/user_guide/theoretical_framework/analysis_primitives/mse_dominance/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>MSE Dominance - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "MSE Dominance";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/analysis_primitives/mse_dominance.md";
+        var mkdocs_page_url = "/PyEyesWeb/main/user_guide/theoretical_framework/analysis_primitives/mse_dominance/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../low_level/low_level/">Layer 2 - Low-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="../analysis_primitives/">Analysis Primitives</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">MSE Dominance</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#theoretical-interpretation">Theoretical Interpretation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#algorithm-details-mathematics">Algorithm Details &amp; Mathematics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../statistical_moment.md">Statistical Moment</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/base/">Base</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/results/">Results</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item"><a href="../../theoretical_framework/">Theoretical Framework</a></li>
+          <li class="breadcrumb-item"><a href="../analysis_primitives/">Analysis Primitives</a></li>
+      <li class="breadcrumb-item active">MSE Dominance</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/analysis_primitives/mse_dominance.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="multi-scale-entropy-dominance-analysis-module">Multi-Scale Entropy Dominance Analysis Module</h1>
+<h2 id="overview">Overview</h2>
+<p>The Multi-Scale Entropy (MSE) Dominance module implements a sophisticated non-linear analysis algorithm to detect leadership and dominance within ensemble performances based on movement complexity. </p>
+<h2 id="theoretical-interpretation">Theoretical Interpretation</h2>
+<ul>
+<li><strong>Input Requirements</strong>: Expects a lengthy sliding window of movement velocity data. Minimum sample threshold strongly applies (e.g., 500 samples) because entropy estimation is mathematically unstable on short sequences.</li>
+<li><strong>Value Interpretation</strong>:<ul>
+<li><strong>Complexity Index (CI)</strong>: Represents the overall irregularity and unpredictability of a signal across multiple temporal resolutions. A signal is "complex" if it retains structural unpredictability across scales (unlike white noise which loses structure when scaled, or simple sine waves which are entirely predictable).</li>
+<li><strong>Dominance Score</strong>: Computes the relative dominance within a multi-agent group. The actor with the <em>lowest</em> movement complexity (lowest CI) is typically classified as the leader, acting as a periodic anchor around which other participants exhibit higher, reactive complexity.</li>
+<li><strong>Leader Identification</strong>: A direct argmin pointer to the index of the predicted group leader.</li>
+</ul>
+</li>
+</ul>
+<h2 id="algorithm-details-mathematics">Algorithm Details &amp; Mathematics</h2>
+<p>The algorithm leverages Multi-Scale Entropy, which consists of three sequential steps:</p>
+<h3 id="1-coarse-graining">1. Coarse-Graining</h3>
+<p>The original signal <span class="arithmatex">\(x = \{x_1, x_2, \dots, x_N\}\)</span> is segmented into non-overlapping windows of length <span class="arithmatex">\(\tau\)</span> (the scale factor). The coarse-grained signal <span class="arithmatex">\(y^{(\tau)}\)</span> at scale <span class="arithmatex">\(\tau\)</span> is formed by averaging the data points within each window:
+$$ 
+y_j^{(\tau)} = \frac{1}{\tau} \sum_{i=(j-1)\tau + 1}^{j\tau} x_i 
+$$
+This is repeated for all scales from <span class="arithmatex">\(\tau = 1\)</span> to <span class="arithmatex">\(\tau = max\_scale\)</span>.</p>
+<h3 id="2-sample-entropy-sampen">2. Sample Entropy (SampEn)</h3>
+<p>For each coarse-grained signal, the Sample Entropy is computed. SampEn quantifies the conditional probability that two sequences that are similar for <span class="arithmatex">\(m\)</span> points remain similar at <span class="arithmatex">\(m+1\)</span> points, given a tolerance <span class="arithmatex">\(r\)</span>.
+$$ 
+\text{SampEn}(m, r) = -\ln\left(\frac{A}{B}\right) 
+$$
+where <span class="arithmatex">\(B\)</span> is the number of template matches of length <span class="arithmatex">\(m\)</span>, and <span class="arithmatex">\(A\)</span> is the number of strict template matches of length <span class="arithmatex">\(m+1\)</span>.</p>
+<h3 id="3-complexity-index-ci">3. Complexity Index (CI)</h3>
+<p>The final Complexity Index for an individual signal is the numerical integration (area under the curve) of the Sample Entropy values across all considered scales:
+$$ 
+CI = \int_{1}^{max_scale} \text{SampEn}(\tau) \, d\tau 
+$$</p>
+<h3 id="4-dominance-mapping">4. Dominance Mapping</h3>
+<p>In a multi-participant context, the dominant actor is identified. The dominance score scales the <span class="arithmatex">\(CI\)</span> relative to the group's maximum entropy:
+$$ 
+\text{Dominance} = 1.0 - \frac{CI_i}{\max(CI)} 
+$$</p>
+<h2 id="references">References</h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Glowinski, D., Coletta, P., Volpe, G., Camurri, A., Chiorri, C., &amp; Schenone, A. (2010). Multi-scale entropy analysis of dominance in social creative activities. In Proceedings of the 18th ACM international conference on Multimedia (pp. 1035-1038).&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../clusterability/" class="btn btn-neutral float-left" title="Clusterability"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../rarity/" class="btn btn-neutral float-right" title="Rarity">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../clusterability/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../rarity/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
+      <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

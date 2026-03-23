@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://infomuscp.github.io/PyEyesWeb/main/user_guide/theoretical_framework/low_level/direction_change/" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Direction Change - PyEyesWeb</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../../overrides/extra.css" rel="stylesheet" />
+        <link href="../../../../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Direction Change";
+        var mkdocs_page_input_path = "user_guide/theoretical_framework/low_level/direction_change.md";
+        var mkdocs_page_url = "/PyEyesWeb/main/user_guide/theoretical_framework/low_level/direction_change/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/eyesweb-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="../../theoretical_framework/">Theoretical Framework</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../physical_signals/physical_signals/">Layer 1 - Physical Signals</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="../low_level/">Layer 2 - Low-Level Features</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Direction Change</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#theoretical-interpretation">Theoretical Interpretation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#algorithm-details-mathematics">Algorithm Details &amp; Mathematics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../postural_balance/">Postural Balance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mid_level/mid_level/">Layer 3 - Mid-Level Features</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../high_level/high_level/">Layer 4 - High-Level Features</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../analysis_primitives/analysis_primitives/">Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/mse_dominance/">MSE Dominance</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l3"><a class="" href="../../analysis_primitives/statistical_moment.md">Statistical Moment</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../integrations/">Integrations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Analysis Primitives</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/clusterability/">Clusterability</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/mse_dominance/">Mse Dominance</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/rarity/">Rarity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/statistical_moment/">Statistical Moment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/analysis_primitives/synchronization/">Synchronization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Data Models</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/base/">Base</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/results/">Results</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/data_models/sliding_window/">Sliding Window</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Low Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/contraction_expansion/">Contraction Expansion</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/direction_change/">Direction Change</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/equilibrium/">Equilibrium</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/geometric_symmetry/">Geometric Symmetry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/kinetic_energy/">Kinetic Energy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/low_level/smoothness/">Smoothness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Mid Level</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/impulsivity/">Impulsivity</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/lightness/">Lightness</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/mid_level/suddenness/">Suddenness</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Utils</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/math_utils/">Math Utils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/signal_processing/">Signal Processing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/tsv_reader/">Tsv Reader</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../API/utils/validators/">Validators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">PyEyesWeb</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item"><a href="../../theoretical_framework/">Theoretical Framework</a></li>
+          <li class="breadcrumb-item"><a href="../low_level/">Layer 2 - Low-Level Features</a></li>
+      <li class="breadcrumb-item active">Direction Change</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/InfoMusCP/PyEyesWeb/edit/master/docs/user_guide/theoretical_framework/low_level/direction_change.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="direction-change-analysis-module">Direction Change Analysis Module</h1>
+<h2 id="overview">Overview</h2>
+<p>The Direction Change module evaluates the geometric trajectories of movement vectors over a temporal window. It offers metrics to identify sharp changes in movement direction (via cosine similarity) and to quantify the total spatial span enclosed by a movement trajectory (via polygon area).</p>
+<h2 id="theoretical-interpretation">Theoretical Interpretation</h2>
+<ul>
+<li><strong>Input Requirements</strong>: The algorithms expect a complete trajectory over a time window. Input is averaged across all joints in the frame to construct a single global trajectory vector, requiring at least 2D <code>(x, y)</code> positional data.</li>
+<li><strong>Value Interpretation</strong>:<ul>
+<li><strong>Cosine Metric</strong>: A value close to <code>1.0</code> indicates a sharp angle change aligned exactly with the configured <code>epsilon</code> threshold. A value of <code>0.0</code> suggests either continuous smooth movement or a direction change outside the threshold of interest.</li>
+<li><strong>Polygon Metric</strong>: Captures the geometric area contained within the movement path boundaries. Large values indicate sweeping, broad movements enclosing significant space, while small values describe narrow or linear movements.</li>
+</ul>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Metric Selection</p>
+<p>You can selectively compute just the cosine similarity, just the polygon area, or both, depending on whether you are interested in sudden sharp turns or overall spatial usage.</p>
+</div>
+<h2 id="algorithm-details-mathematics">Algorithm Details &amp; Mathematics</h2>
+<p>The module first aggregates the provided sequence of frames by taking the mean across all signal nodes to establish a single center-of-mass trajectory <span class="arithmatex">\(P(t)\)</span>.</p>
+<h3 id="1-cosine-similarity-sharp-change-detection">1. Cosine Similarity (Sharp Change Detection)</h3>
+<p>Evaluates the angle between the start, middle, and end segments of the trajectory.
+Let the target trajectory consist of <span class="arithmatex">\(N\)</span> samples. The method extracts three key points:</p>
+<ul>
+<li><span class="arithmatex">\(P_0\)</span> = <code>pos[-1]</code> (End point)</li>
+<li><span class="arithmatex">\(P_1\)</span> = <code>pos[N//2]</code> (Mid point)</li>
+<li><span class="arithmatex">\(P_2\)</span> = <code>pos[0]</code> (Start point)</li>
+</ul>
+<p>It forms two directional vectors:</p>
+<div class="arithmatex">\[ L_0 = P_0 - P_1 \]</div>
+<div class="arithmatex">\[ L_1 = P_1 - P_2 \]</div>
+<p>The angle <span class="arithmatex">\(\theta\)</span> between the vectors is calculated as:</p>
+<div class="arithmatex">\[
+\theta = \arccos\left(\frac{L_0 \cdot L_1}{\|L_0\| \|L_1\|}\right)
+\]</div>
+<p>The angle is normalized to a <span class="arithmatex">\([0, 1]\)</span> scale (<span class="arithmatex">\(\theta_{norm} = \theta / \pi\)</span>). The final score is thresholded against an <code>epsilon</code> (<span class="arithmatex">\(\epsilon\)</span>) parameter, looking for a target deviation <span class="arithmatex">\(a = 1.0 - \theta_{norm}\)</span>.
+The index <span class="arithmatex">\(D_{cos}\)</span> is given by:</p>
+<div class="arithmatex">\[
+D_{cos} = 
+\begin{cases} 
+1.0 - \frac{|a - 0.5|}{\epsilon} &amp; \text{if } |a - 0.5| &lt; \epsilon \\
+0.0 &amp; \text{otherwise}
+\end{cases}
+\]</div>
+<h3 id="2-polygon-area">2. Polygon Area</h3>
+<p>Measures the geometric area enclosed by the path.
+The continuous trajectory is first securely subsampled down to a specified <code>num_subsamples</code> to reduce noise. Let this closed polygon subset of points be <span class="arithmatex">\(\{ X_i \}\)</span>.</p>
+<p>The area is calculated using a generalized Shoelace-style cross product:</p>
+<div class="arithmatex">\[
+Area = \left\| \frac{1}{2} \sum_{i} X_i \times X_{i+1} \right\|
+\]</div>
+<h2 id="references">References</h2>
+<h3 id="todo">TODO</h3>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../contraction_expansion/" class="btn btn-neutral float-left" title="Contraction Expansion"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kinetic_energy/" class="btn btn-neutral float-right" title="Kinetic Energy">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2025 Casa Paganini - InfoMus, Genoa, Italy. All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../contraction_expansion/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../kinetic_energy/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../javascripts/version-select.js"></script>
+      <script src="../../../../search/main.js"></script>
+      <script src="../../../../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
