@@ -3,11 +3,7 @@
 ## Overview
 The Smoothness module quantifies control and fluidity of movement using established motor control metrics. Smooth movements are characterized by continuous, coordinated trajectories with minimal abrupt changes.
 
-## Theoretical Interpretation
-- **Input Requirements**: Expects a 1D scalar time-series over a temporal window. Crucially, the current implementation expects this sequence to represent a **speed profile** (magnitude of velocity).
-- **Value Interpretation**:
-    - **SPARC**: A frequency-domain measure where values are inherently negative. Values closer to `0.0` (less negative) denote smoother, more uniform movement. More negative values indicate jittery, erratic motion.
-    - **Jerk RMS**: A time-domain measure where lower positive values indicate smoother motion. It penalizes sudden, high-magnitude accelerations/decelerations across the window.
+The module implements two primary metrics validated in motor control research [^1][^2]:
 
 !!! tip "Signal Filtering"
     Raw derived speed profiles are notoriously noisy. By default, the `Smoothness` module applies a Savitzky-Golay filter to clean the kinematic sequence prior to extracting SPARC or Jerk, avoiding noise amplification during differentiation.
@@ -61,4 +57,5 @@ $$
 ## References
 
 [^1]: Mazzarino, B., & Mancini, M. (2009). The need for impulsivity & smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored).
-[^2]: Melendez-Calderon, A., Shirota, C., & Balasubramanian, S. (2021). Estimating movement smoothness from inertial measurement units. Frontiers in bioengineering and biotechnology, 8, 558771.
+[^2]: Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., & Burdet, E. (2015). On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1), 112.
+[^3]: Melendez-Calderon, A., Shirota, C., & Balasubramanian, S. (2021). Estimating movement smoothness from inertial measurement units. Frontiers in bioengineering and biotechnology, 8, 558771.
