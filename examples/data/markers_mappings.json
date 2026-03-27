@@ -1,0 +1,109 @@
+{
+  "Head": [
+    "HeadFront",
+    "HeadL",
+    "HeadR",
+    "head"
+  ],
+  "Neck": [
+    "SpineThoracic2",
+    "neck"
+  ],
+  "Spine": [
+    "Chest",
+    "SpineThoracic12",
+    "spine",
+    "spine_shoulder"
+  ],
+  "Pelvis": [
+    "WaistLFront",
+    "WaistRFront",
+    "WaistL",
+    "WaistR",
+    "WaistBack",
+    "WaistlFront",
+    "spine_base"
+  ],
+  "Left_Shoulder": [
+    "LShoulderTop",
+    "left_shoulder"
+  ],
+  "Left_Elbow": [
+    "LElbowOut",
+    "LElbowIn",
+    "LArm",
+    "left_elbow"
+  ],
+  "Left_Wrist": [
+    "LWristOut",
+    "LWristIn",
+    "left_wrist"
+  ],
+  "Left_Hand": [
+    "LHand2",
+    "left_hand",
+    "left_fingertip",
+    "left_thumb"
+  ],
+  "Right_Shoulder": [
+    "RShoulderTop",
+    "right_shoulder"
+  ],
+  "Right_Elbow": [
+    "RElbowOut",
+    "RElbowIn",
+    "RArm",
+    "right_elbow"
+  ],
+  "Right_Wrist": [
+    "RWristOut",
+    "RWristIn",
+    "right_wrist"
+  ],
+  "Right_Hand": [
+    "RHand2",
+    "right_hand",
+    "right_fingertip",
+    "right_thumb"
+  ],
+  "Left_Hip": [
+    "LThighFrontLow",
+    "left_hip"
+  ],
+  "Left_Knee": [
+    "LKneeOut",
+    "LKneeIn",
+    "left_knee"
+  ],
+  "Left_Ankle": [
+    "LAnkleOut",
+    "LHeelBack",
+    "LShinFrontHigh",
+    "left_ankle"
+  ],
+  "Left_Foot": [
+    "LForefoot2",
+    "LForefoot5",
+    "left_foot"
+  ],
+  "Right_Hip": [
+    "RThighFrontLow",
+    "right_hip"
+  ],
+  "Right_Knee": [
+    "RKneeOut",
+    "RKneeIn",
+    "right_knee"
+  ],
+  "Right_Ankle": [
+    "RAnkleOut",
+    "RHeelBack",
+    "RShinFrontHigh",
+    "right_ankle"
+  ],
+  "Right_Foot": [
+    "RForefoot2",
+    "RForefoot5",
+    "right_foot"
+  ]
+}
