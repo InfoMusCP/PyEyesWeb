@@ -25,7 +25,9 @@ from pyeyesweb.mid_level import Impulsivity, Lightness, Suddenness
 from pyeyesweb.analysis_primitives import (
     Rarity, StatisticalMoment, Synchronization
 )
-from utils.data_loader import load_qualisys_tsv
+from utils.data_loader import GestureDataLoader
+
+loader = GestureDataLoader("data")
 ```
 
 ---
@@ -66,8 +68,8 @@ Layer 1 is everything that comes out of a sensor before PyEyesWeb touches it.
 | Body-worn IMU | Linear acceleration + angular velocity | `(1, 6)` or two `(1, 3)` arrays |
 
 ```python
-pos_tensor, vel_tensor, acc_tensor, marker_names = load_qualisys_tsv(
-    "data/trial0001_impulsive.tsv"
+pos_tensor, vel_tensor, acc_tensor, marker_names = loader.load(
+    "trial10", sensor="qualisys"
 )
 N_frames, N_joints, N_dims = pos_tensor.shape
 print(f"Layer 1 data: {N_frames} frames, {N_joints} joints, {N_dims} dims")
@@ -298,9 +300,9 @@ For each gesture trial available in your dataset, compute one feature from each 
 
 ```python
 TRIALS = [
-    ("data/trial0001_impulsive.tsv", "Impulsive 1"),
-    ("data/trial0002_impulsive.tsv", "Impulsive 2"),
-    ("data/trial0003_impulsive.tsv", "Impulsive 3"),
+    ("trial10", "Impulsive 1"),
+    ("trial11", "Impulsive 2"),
+    ("trial12", "Impulsive 3"),
     # Add more trials when available
 ]
 
@@ -312,8 +314,8 @@ rar = Rarity(alpha=0.5)
 print(f"{'Trial':<25} | {'Mean Energy':>11} | {'Mean SPARC':>10} | {'% Sudden':>9} | {'Mean Rarity':>11}")
 print("-" * 75)
 
-for path, label in TRIALS:
-    pos, vel, acc, names = load_qualisys_tsv(path)
+for trial_name, label in TRIALS:
+    pos, vel, acc, names = loader.load(trial_name, sensor="qualisys")
     h_idx  = names.index("HAND_RIGHT") if "HAND_RIGHT" in names else 0
     h_spd  = np.linalg.norm(vel[:, h_idx, :], axis=1)
     T      = pos.shape[0]

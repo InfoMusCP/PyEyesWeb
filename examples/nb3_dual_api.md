@@ -17,7 +17,9 @@ from tqdm.auto import tqdm
 
 from pyeyesweb.data_models import SlidingWindow
 from pyeyesweb.low_level import KineticEnergy, BoundingBoxFilledArea, Smoothness
-from utils.data_loader import load_qualisys_tsv
+from utils.data_loader import GestureDataLoader
+
+loader = GestureDataLoader("data")
 ```
 
 ---
@@ -63,8 +65,8 @@ In this section we simulate a live streaming pipeline using a pre-recorded file.
 ### 2.1 Load data
 
 ```python
-pos_tensor, vel_tensor, acc_tensor, marker_names = load_qualisys_tsv(
-    "data/trial0001_impulsive.tsv"
+pos_tensor, vel_tensor, acc_tensor, marker_names = loader.load(
+    "trial10", sensor="qualisys"
 )
 N_frames, N_joints, N_dims = pos_tensor.shape
 hand_idx = marker_names.index("HAND_RIGHT")
@@ -240,25 +242,25 @@ A real research workflow often combines both paths: the Pure Math API for bulk f
 ```python
 # --- Offline bulk pass: extract energy for all 3 trials ---
 TRIALS = [
-    "data/trial0001_impulsive.tsv",
-    "data/trial0002_impulsive.tsv",
-    "data/trial0003_impulsive.tsv",
+    "trial10",
+    "trial11",
+    "trial12",
 ]
 
 ef = KineticEnergy()
 summary = {}
 
-for path in TRIALS:
-    pos, vel, acc, names = load_qualisys_tsv(path)
+for trial_name in TRIALS:
+    pos, vel, acc, names = loader.load(trial_name, sensor="qualisys")
     energies = np.array([
         ef.compute(vel[t, :, :]).total_energy for t in range(vel.shape[0])
     ])
-    summary[path] = {
+    summary[trial_name] = {
         "mean_energy": energies.mean(),
         "max_energy":  energies.max(),
         "n_frames":    len(energies),
     }
-    print(f"{path}: mean={energies.mean():.2f}, peak={energies.max():.2f}")
+    print(f"{trial_name}: mean={energies.mean():.2f}, peak={energies.max():.2f}")
 ```
 
 ---
@@ -268,14 +270,11 @@ for path in TRIALS:
 Once you have data from multiple sensors, use the Pure Math API to process all trials rapidly and compare features across modalities. This experiment template will work with any loader that returns `(pos, vel, acc, names)` tuples:
 
 ```python
-# Placeholder — replace with your actual loaders when data is available
-# from utils.data_loader import load_imu_data, load_kinect_data, load_qualisys_tsv
-
 # --- For each sensor type ---
 # sensor_data = {
-#     "Qualisys": load_qualisys_tsv("data/qualisys_trial01.tsv"),
-#     "Kinect":   load_kinect_data("data/kinect_trial01.???"),
-#     "IMU":      load_imu_data("data/imu_trial01.???"),
+#     "Qualisys": loader.load("trial10", sensor="qualisys"),
+#     "Kinect":   loader.load("trial10", sensor="kinect"),
+#     "IMU":      loader.load("trial10", sensor="imu"),
 # }
 
 # ef = KineticEnergy()

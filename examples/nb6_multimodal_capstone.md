@@ -37,9 +37,9 @@ from pyeyesweb.low_level import (
 from pyeyesweb.mid_level import Suddenness
 from pyeyesweb.analysis_primitives import Rarity, StatisticalMoment
 
-# Replace with your actual loaders once the 25-trial dataset is available
-# from utils.data_loader import load_qualisys_tsv, load_kinect_data, load_imu_data
-from utils.data_loader import load_qualisys_tsv
+# Use the unified loader and visualization utilities
+from utils.data_loader import GestureDataLoader
+from utils.plot_utils import plot_stick_figure_3d, display_video_notebook
 ```
 
 ---
@@ -225,14 +225,18 @@ def compute_feature_row(pos, vel, marker_names, RATE_HZ=100.0, WINDOW_FRAMES=60)
 
 ```python
 QUALISYS_TRIALS = [
-    ("data/trial0001_impulsive.tsv", "Qualisys", "Impulsive-1"),
-    ("data/trial0002_impulsive.tsv", "Qualisys", "Impulsive-2"),
-    ("data/trial0003_impulsive.tsv", "Qualisys", "Impulsive-3"),
+    ("trial10", "qualisys", "Impulsive-1"),
+    ("trial11", "qualisys", "Impulsive-2"),
+    ("trial12", "qualisys", "Impulsive-3"),
 ]
 
+# Initialize the unified loader
+loader = GestureDataLoader("data")
+
 results = []
-for path, sensor, gesture in tqdm(QUALISYS_TRIALS, desc="Processing trials"):
-    pos, vel, acc, names = load_qualisys_tsv(path)
+for trial_name, sensor, gesture in tqdm(QUALISYS_TRIALS, desc="Processing trials"):
+    # Load and explicitly standardize the markers to generic skeletal names
+    pos, vel, acc, names = loader.load(trial_name, sensor=sensor, standardize=True)
     row = compute_feature_row(pos, vel, names, RATE_HZ=100.0, WINDOW_FRAMES=60)
     row["sensor"]  = sensor
     row["gesture"] = gesture
@@ -249,31 +253,50 @@ print(df[["mean_energy", "peak_energy", "mean_sparc", "pct_sudden", "mean_contra
 Once your IMU, Kinect, and additional Qualisys trials are available, extend the pipeline using the appropriate loaders. The `compute_feature_row` function will automatically skip spatial geometry for IMU trials (where `N=1` and there is no multi-joint skeleton).
 
 ```python
-# TEMPLATE — fill in loaders and file paths when available
+# TEMPLATE — Using the unified data loader for all sensors
+
+# Initialize the loader (if not already done)
+# loader = GestureDataLoader("data")
 
 # --- Kinect trials ---
 # KINECT_TRIALS = [
-#     ("data/kinect_trial01.???", "Kinect", "Impulsive-1"),
-#     ("data/kinect_trial02.???", "Kinect", "Fluid-1"),
-#     ...
+#     ("trial10", "kinect", "Impulsive-1"),
+#     ("trial12", "kinect", "Fluid-1"),
 # ]
-# for path, sensor, gesture in KINECT_TRIALS:
-#     pos, vel, acc, names = load_kinect_data(path)  # supply RATE_HZ for Kinect (~30)
+# for trial_name, sensor, gesture in KINECT_TRIALS:
+#     pos, vel, acc, names = loader.load(trial_name, sensor=sensor, standardize=True)
 #     row = compute_feature_row(pos, vel, names, RATE_HZ=30.0, WINDOW_FRAMES=30)
 #     row["sensor"] = sensor; row["gesture"] = gesture
 #     results.append(row)
 
 # --- IMU trials ---
 # IMU_TRIALS = [
-#     ("data/imu_trial01.???", "IMU", "Impulsive-1"),
-#     ...
+#     ("trial10", "imu", "Impulsive-1"),
 # ]
-# for path, sensor, gesture in IMU_TRIALS:
-#     acc_tensor, gyro_tensor, names = load_imu_data(path)
-#     # For IMU: treat acceleration as proxy velocity input; no spatial geometry
-#     row = compute_feature_row(acc_tensor, acc_tensor, names, RATE_HZ=200.0, WINDOW_FRAMES=100)
+# for trial_name, sensor, gesture in IMU_TRIALS:
+#     # Standardizing IMU renames columns to standard sensor locations
+#     pos, vel, acc, names = loader.load(trial_name, sensor=sensor, standardize=True)
+#     # For IMU: treat acceleration directly as kinematic proxy; no spatial geometry
+#     row = compute_feature_row(acc, acc, names, RATE_HZ=200.0, WINDOW_FRAMES=100)
 #     row["sensor"] = sensor; row["gesture"] = gesture
 #     results.append(row)
+```
+
+---
+
+## 7.5 Visualizing the Data: Skeletons and Video Fallback
+
+Because we standardise the marker names (e.g., mapping Kinect's `HandTipRight` and Qualisys' `R_Hand` to `HAND_RIGHT`), we can plot standardized 3D stick figures directly inside our notebooks! You can also cross-reference with the video recordings using our IPython widget stream:
+
+```python
+# 1. Show the video for the trial
+from pathlib import Path
+video_path = Path("data/videos/trial10.avi")
+display_video_notebook(video_path)
+
+# 2. Plot the 3D stick figure at a specific frame (ensure standard=True since we loaded with standardize=True)
+pos_kinect, _, _, names_kinect = loader.load("trial10", sensor="kinect", standardize=True)
+plot_stick_figure_3d(pos_kinect, names_kinect, frame_idx=150, standard=True)
 ```
 
 ---

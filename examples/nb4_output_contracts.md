@@ -20,7 +20,9 @@ from pyeyesweb.data_models import SlidingWindow
 from pyeyesweb.low_level import KineticEnergy, BoundingBoxFilledArea, Smoothness, DirectionChange
 from pyeyesweb.mid_level import Suddenness
 from pyeyesweb.analysis_primitives import Rarity
-from utils.data_loader import load_qualisys_tsv
+from utils.data_loader import GestureDataLoader
+
+loader = GestureDataLoader("data")
 ```
 
 ---
@@ -82,7 +84,7 @@ if result.is_valid:
 ### 3.1 `KineticEnergyResult`
 
 ```python
-pos_tensor, vel_tensor, _, marker_names = load_qualisys_tsv("data/trial0001_impulsive.tsv")
+pos_tensor, vel_tensor, _, marker_names = loader.load("trial10", sensor="qualisys")
 N_frames, N_joints, N_dims = pos_tensor.shape
 
 ef = KineticEnergy(weights=1.0, labels=marker_names)

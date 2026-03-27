@@ -96,20 +96,24 @@ print(window_speed)
 ### 3.1 Appending shaped arrays (recommended)
 
 ```python
-from utils.data_loader import load_qualisys_tsv
+from utils.data_loader import GestureDataLoader
 
-pos_tensor, vel_tensor, acc_tensor, marker_names = load_qualisys_tsv(
-    "data/trial0001_impulsive.tsv"
+# Initialize the loader pointing to your data directory
+loader = GestureDataLoader("data")
+
+# Load a specific trial (the loader handles the .tsv extension automatically)
+pos_tensor, vel_tensor, acc_tensor, marker_names = loader.load(
+    trial_name="trial10", 
+    sensor="qualisys"
 )
-N_frames = pos_tensor.shape[0]
+N_frames, N_joints, N_dims = pos_tensor.shape
 print(f"Loaded {N_frames} frames | Shape: {pos_tensor.shape}")
-# → Loaded 1532 frames | Shape: (1532, 21, 3)
 
-window = SlidingWindow(max_length=60, n_signals=21, n_dims=3)
+window = SlidingWindow(max_length=60, n_signals=N_joints, n_dims=N_dims)
 
 # Simulate the live streaming loop — one frame at a time
 for t in range(N_frames):
-    frame = pos_tensor[t, :, :]       # shape (21, 3)
+    frame = pos_tensor[t, :, :]       # shape (N_joints, N_dims)
     window.append(frame)
     if t == 5:  # Peek after 6 frames
         print(f"After frame {t}: size={len(window)}/{window.max_length}")
@@ -305,8 +309,10 @@ The `SlidingWindow` parameters must match your sensor's output format. Use the t
 **Try the following with your own data:**
 
 ```python
-# Replace with one of the available trial files and the appropriate loader
-pos_tensor, vel_tensor, acc_tensor, marker_names = load_qualisys_tsv("data/YOUR_TRIAL.tsv")
+# Initialize the loader and replace with your desired trial and sensor
+from utils.data_loader import GestureDataLoader
+loader = GestureDataLoader("data")
+pos_tensor, vel_tensor, acc_tensor, marker_names = loader.load("trial10", sensor="qualisys")
 
 N_joints = pos_tensor.shape[1]
 N_dims   = pos_tensor.shape[2]

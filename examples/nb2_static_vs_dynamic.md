@@ -18,8 +18,10 @@ from tqdm.auto import tqdm
 
 from pyeyesweb.data_models import SlidingWindow
 from pyeyesweb.low_level import BoundingBoxFilledArea, KineticEnergy, Smoothness
-from utils.data_loader import load_qualisys_tsv
+from utils.data_loader import GestureDataLoader
 from utils.plot_utils import plot_feature_timeseries
+
+loader = GestureDataLoader("data")
 ```
 
 ---
@@ -58,7 +60,7 @@ This means the window size is irrelevant for Static features — they will alway
 The Contraction Index measures the ratio of the body's 3-D convex hull surface area to its bounding box surface area. It is purely geometric and needs only a single pose.
 
 ```python
-pos_tensor, _, _, marker_names = load_qualisys_tsv("data/trial0001_impulsive.tsv")
+pos_tensor, _, _, marker_names = loader.load("trial10", sensor="qualisys")
 N_frames = pos_tensor.shape[0]
 N_joints = pos_tensor.shape[1]
 
@@ -242,8 +244,8 @@ Load one **impulsive** trial and one **fluid** trial (use whichever file names m
 
 ```python
 # Adjust filenames to your actual data
-trial_A, _, _, _ = load_qualisys_tsv("data/trial0001_impulsive.tsv")
-trial_B, _, _, _ = load_qualisys_tsv("data/trial0002_impulsive.tsv")
+trial_A, _, _, _ = loader.load("trial10", sensor="qualisys")
+trial_B, _, _, _ = loader.load("trial11", sensor="qualisys")
 
 for label, data in [("Trial A", trial_A), ("Trial B", trial_B)]:
     # Static

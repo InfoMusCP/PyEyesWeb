@@ -17,7 +17,7 @@ class BaseFeature(ABC):
     """The root abstract class for all PyEyesWeb features.
 
     Defines the dual-API structure for all computational components:
-    
+
     1. **Streaming API (`__call__`)**: Evaluates a `SlidingWindow`.
     2. **Pure Math API (`compute`)**: Evaluates a raw NumPy array.
     """
