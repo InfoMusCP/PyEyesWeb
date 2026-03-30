@@ -71,11 +71,15 @@ def plot_stick_figure_3d(
     marker_names: List[str],
     frame_idx: int = 0,
     standard: bool = False,
+    y_up: bool = True,
+    elev: float = 20,
+    azim: float = -60,
     ax=None,
 ):
     """
     Plots a 3D stick figure for a specific frame.
     If standard=True, it connects the joints using generic human skeleton mappings.
+    If y_up=True, it swaps the Y and Z coordinates to match Matplotlib's Z-up system.
     """
     STANDARD_CONNECTIONS = [
         ("Head", "Neck"),
@@ -103,19 +107,31 @@ def plot_stick_figure_3d(
         fig = plt.figure(figsize=(8, 8))
         ax = fig.add_subplot(111, projection="3d")
 
+    # Set view angle
+    ax.view_init(elev=elev, azim=azim)
+
     frame_data = pos_tensor[frame_idx]
 
+    # Handle Y-up coordinate systems (common in MoCap, while Matplotlib is Z-up)
+    if y_up:
+        # Original: [X, Y, Z] -> Plot: [X, Z, Y] (so Y becomes the vertical axis)
+        plot_data = frame_data[:, [0, 2, 1]]
+        z_label = "Y (Up)"
+    else:
+        plot_data = frame_data
+        z_label = "Z"
+
     # Scatter all valid points
-    ax.scatter(frame_data[:, 0], frame_data[:, 1], frame_data[:, 2], c="blue", s=20)
+    ax.scatter(plot_data[:, 0], plot_data[:, 1], plot_data[:, 2], c="blue", s=20)
 
     if standard:
         marker_idx_map = {name: i for i, name in enumerate(marker_names)}
         for bone1, bone2 in STANDARD_CONNECTIONS:
             if bone1 in marker_idx_map and bone2 in marker_idx_map:
                 idx1, idx2 = marker_idx_map[bone1], marker_idx_map[bone2]
-                x = [frame_data[idx1, 0], frame_data[idx2, 0]]
-                y = [frame_data[idx1, 1], frame_data[idx2, 1]]
-                z = [frame_data[idx1, 2], frame_data[idx2, 2]]
+                x = [plot_data[idx1, 0], plot_data[idx2, 0]]
+                y = [plot_data[idx1, 1], plot_data[idx2, 1]]
+                z = [plot_data[idx1, 2], plot_data[idx2, 2]]
 
                 # Check for NaNs
                 if not np.isnan(x).any():
@@ -123,25 +139,25 @@ def plot_stick_figure_3d(
 
     ax.set_title(f"3D Skeleton (Frame {frame_idx})")
     ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
+    ax.set_ylabel("Z")
+    ax.set_zlabel(z_label)
 
     # Set equal aspect ratio
     max_range = (
         np.array(
             [
-                frame_data[:, 0].max() - frame_data[:, 0].min(),
-                frame_data[:, 1].max() - frame_data[:, 1].min(),
-                frame_data[:, 2].max() - frame_data[:, 2].min(),
+                plot_data[:, 0].max() - plot_data[:, 0].min(),
+                plot_data[:, 1].max() - plot_data[:, 1].min(),
+                plot_data[:, 2].max() - plot_data[:, 2].min(),
             ]
         ).max()
         / 2.0
     )
 
     if not np.isnan(max_range):
-        mid_x = (frame_data[:, 0].max() + frame_data[:, 0].min()) * 0.5
-        mid_y = (frame_data[:, 1].max() + frame_data[:, 1].min()) * 0.5
-        mid_z = (frame_data[:, 2].max() + frame_data[:, 2].min()) * 0.5
+        mid_x = (plot_data[:, 0].max() + plot_data[:, 0].min()) * 0.5
+        mid_y = (plot_data[:, 1].max() + plot_data[:, 1].min()) * 0.5
+        mid_z = (plot_data[:, 2].max() + plot_data[:, 2].min()) * 0.5
 
         ax.set_xlim(mid_x - max_range, mid_x + max_range)
         ax.set_ylim(mid_y - max_range, mid_y + max_range)

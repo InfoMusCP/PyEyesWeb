@@ -132,6 +132,37 @@ offline_energy = np.array([
 print(f"Offline energy shape: {offline_energy.shape}")
 ```
 
+### Wait, why not just use `.compute()` in a loop?
+
+You might notice that for **Static Features**, looping frame-by-frame and calling `.compute()` (the Offline API) looks almost identical to appending to a `SlidingWindow` and calling `feature(window)` (the Streaming API). If they are so similar, why bother with the window?
+
+1.  **Uniformity: One Codebase, Two Worlds**:
+    In a real research project, you often want to test your algorithms on pre-recorded files *and* run them live during an experiment. If you use `SlidingWindow`, your processing logic remains **exactly the same**. You can write a `process_frame(window)` function and call it whether the data comes from a 2GB `.tsv` file or a 100fps OSC stream.
+
+2.  **Automated State Management**:
+    While static features only need one frame, **Dynamic Features** (like Smoothness) need a history. If you use the Offline API in a loop, you have to manually slice your array: `feature.compute(full_tensor[t-60:t])`. This leads to messy code, hard-to-debug indexing errors, and complex handling of "warm-up" periods. `SlidingWindow` handles all of this automatically.
+
+3.  **Real-Time Readiness**:
+    In a live system, you literally **do not have the future frames**. You cannot index into a `vel_tensor` that hasn't been recorded yet. The `SlidingWindow` acts as the necessary bridge, accumulating incoming data until the feature has enough "memory" to produce a valid result.
+
+### Then why use `.compute()` at all?
+
+If the `SlidingWindow` is so powerful, why does the Pure Math API (`.compute()`) even exist?
+
+1.  **Performance (Bulk Vectorization)**:
+    When you have a 10,000-frame recording, running a Python loop and appending to a window 10,000 times carries significant overhead. The `.compute()` method is designed to take the **entire tensor** at once. This allows NumPy to use highly optimized vectorized operations across the whole time axis, which can be orders of magnitude faster for batch processing.
+
+2.  **Full-Trial Summaries**:
+    Often, you don't want a "sliding" value (how smooth am I *now*?), but a single "summary" value (how smooth was this *entire* gesture?). Calling `smooth_ft.compute(full_trial_tensor)` gives you one definitive value for the whole trial without any rolling-window "warm-up" artifacts.
+
+3.  **Simplicity for Batch Scripts**:
+    If your goal is to generate a feature matrix (a CSV) for 100 files, the code is much shorter with the Pure Math API. You simply load the file and pass the tensor to the feature. You don't need to manage loops, buffer filling, or state.
+
+4.  **Testing and Ground Truth**:
+    The `.compute()` method represents the "pure" mathematical definition of the feature. It’s easier to unit-test and verify because it doesn't involve the complexity of an asynchronous or streaming buffer.
+
+---
+
 ### 3.2 Offline Smoothness — process in rolling windows
 
 `Smoothness` is a `DynamicFeature`: its `.compute()` takes a 3-D tensor `(Time, 1, 1)` (or the squeezed 1-D array). We replicate the same rolling-window logic without a `SlidingWindow` object:

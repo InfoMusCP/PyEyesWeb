@@ -15,11 +15,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm.auto import tqdm
+import ipywidgets as widgets
+from ipywidgets import interact
 
 from pyeyesweb.data_models import SlidingWindow
 from pyeyesweb.low_level import BoundingBoxFilledArea, KineticEnergy, Smoothness
-from utils.data_loader import GestureDataLoader
-from utils.plot_utils import plot_feature_timeseries
+from examples.utils.data_loader import GestureDataLoader
+from examples.utils.plot_utils import plot_feature_timeseries, plot_stick_figure_3d
 
 loader = GestureDataLoader("data")
 ```
@@ -59,11 +61,23 @@ This means the window size is irrelevant for Static features — they will alway
 
 The Contraction Index measures the ratio of the body's 3-D convex hull surface area to its bounding box surface area. It is purely geometric and needs only a single pose.
 
-```python
-pos_tensor, _, _, marker_names = loader.load("trial10", sensor="qualisys")
-N_frames = pos_tensor.shape[0]
-N_joints = pos_tensor.shape[1]
+First, we load the trial data. Before processing it, let's visualize the gesture using an interactive 3D stick figure. This helps us confirm what the raw data actually looks like.
 
+```python
+# Load raw trial data (standardize=False to see original sensor coordinates)
+pos_tensor, vel_tensor, _, marker_names = loader.load("trial10", sensor="qualisys", standardize=False)
+N_frames, N_joints, _ = pos_tensor.shape
+print(f"Loaded {N_frames} frames with {N_joints} markers.")
+
+# Interactive skeleton viewer
+@interact(frame=(0, N_frames-1))
+def show_pose(frame=0):
+    plot_stick_figure_3d(pos_tensor, marker_names, frame_idx=frame, standard=False)
+```
+
+Now, let's compare how a `StaticFeature` (the Contraction Index) behaves when fed through two windows of different lengths.
+
+```python
 # For a static feature, max_length=1 is semantically correct...
 window_static = SlidingWindow(max_length=1, n_signals=N_joints, n_dims=3)
 
@@ -75,7 +89,7 @@ contraction = BoundingBoxFilledArea()
 results_small = []
 results_big   = []
 
-for t in range(N_frames):
+for t in tqdm(range(N_frames), desc="Processing"):
     frame = pos_tensor[t, :, :]
     window_static.append(frame)
     window_static_big.append(frame)

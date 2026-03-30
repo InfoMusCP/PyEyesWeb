@@ -109,6 +109,10 @@ pos_tensor, vel_tensor, acc_tensor, marker_names = loader.load(
 N_frames, N_joints, N_dims = pos_tensor.shape
 print(f"Loaded {N_frames} frames | Shape: {pos_tensor.shape}")
 
+# Let's peek at the data to see what we are manipulating
+print(f"\nTracked markers (first 3): {marker_names[:3]}... ({len(marker_names)} total)")
+print(f"Position of {marker_names[0]} at frame 0: {pos_tensor[0, 0, :]} (X, Y, Z)\n")
+
 window = SlidingWindow(max_length=60, n_signals=N_joints, n_dims=N_dims)
 
 # Simulate the live streaming loop — one frame at a time
@@ -124,6 +128,11 @@ print(f"Is full: {window.is_full}")
 
 **Expected output (approximate):**
 ```
+Loaded 3000 frames | Shape: (3000, 21, 3)
+
+Tracked markers (first 3): ['HEAD', 'SPINE_SHOULDER', 'SPINE_MID']... (21 total)
+Position of HEAD at frame 0: [  0.1  -0.5   1.8] (X, Y, Z)
+
 After frame 5: size=6/60
 Final size: 60/60
 Is full: True
