@@ -49,6 +49,8 @@ class GeometricSymmetry(StaticFeature): # Changed to StaticFeature!
         The index of the joint to scale as the center of symmetry. If not provided, it defaults to `-1` (barycenter).
     """
 
+    EPSILON = 1e-10
+
     def __init__(self, joint_pairs: List[Tuple[int, int]], center_of_symmetry: Optional[int] = None):
         super().__init__()
         self._center_idx = center_of_symmetry if center_of_symmetry is not None else -1
