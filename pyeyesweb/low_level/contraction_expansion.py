@@ -5,6 +5,7 @@ of body configurations in 3D space. It computes geometric shape metrics, includi
 bounding box areas, convex hulls, and ellipsoid approximations, to track structural
 changes relative to a movement baseline.
 """
+
 import itertools
 from dataclasses import dataclass
 from typing import Optional
@@ -20,7 +21,7 @@ from pyeyesweb.data_models.results import FeatureResult
 @dataclass(slots=True)
 class ContractionExpansionResult(FeatureResult):
     """Shared result contract for the contraction/expansion feature family.
-    
+
     Attributes
     ----------
     contraction_index : float, optional
@@ -30,7 +31,10 @@ class ContractionExpansionResult(FeatureResult):
     points_density : float, optional
         The computed points density.
     """
-    contraction_index: Optional[float] = None  # TODO rename to something related to BoundingBoxFilledArea for clarity?
+
+    contraction_index: Optional[float] = (
+        None  # TODO rename to something related to BoundingBoxFilledArea for clarity?
+    )
     sphericity: Optional[float] = None
     points_density: Optional[float] = None
 
@@ -39,8 +43,8 @@ class BoundingBoxFilledArea(StaticFeature):
     r"""Computes the Contraction Index based on 3D Surface Area.
 
     Mathematical formulation involves computing the ratio:
-    
-    $$ 
+
+    $$
     Index = \frac{Area_{hull}^2}{Area_{bbox}}
     $$
 
@@ -76,11 +80,15 @@ class BoundingBoxFilledArea(StaticFeature):
         dims = max_vals - min_vals
         surface_area = 2 * (dims[0] * dims[1] + dims[0] * dims[2] + dims[1] * dims[2])
 
-        corners = np.array(list(itertools.product(
-            [min_vals[0], max_vals[0]],
-            [min_vals[1], max_vals[1]],
-            [min_vals[2], max_vals[2]]
-        )))
+        corners = np.array(
+            list(
+                itertools.product(
+                    [min_vals[0], max_vals[0]],
+                    [min_vals[1], max_vals[1]],
+                    [min_vals[2], max_vals[2]],
+                )
+            )
+        )
         return surface_area, corners
 
     def compute(self, frame_data: np.ndarray) -> ContractionExpansionResult:
@@ -99,7 +107,7 @@ class BoundingBoxFilledArea(StaticFeature):
         hull_area, hull_points = self._get_hull_data(frame_data)
         bbox_area, bbox_points = self._get_aabb_data(frame_data)
 
-        index = (hull_area ** 2 / bbox_area) if bbox_area > self.EPSILON else 0.0
+        index = (hull_area / bbox_area) if bbox_area > self.EPSILON else 0.0
 
         return ContractionExpansionResult(contraction_index=float(index))
 
@@ -108,7 +116,7 @@ class EllipsoidSphericity(StaticFeature):
     r"""Fits an ellipsoid to skeletal joints using PCA and computes shape metrics.
 
     Sphericity is defined as the ratio of the smallest to the largest radius:
-    
+
     $$
     S = \frac{c}{a}
     $$
