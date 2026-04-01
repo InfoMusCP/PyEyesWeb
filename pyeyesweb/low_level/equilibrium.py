@@ -54,6 +54,9 @@ class Equilibrium(StaticFeature):
     y_weight : float, optional
         Weighting factor for the semi-minor axis of the ellipse.
         Defaults to `0.5`.
+    axes : tuple of int, optional
+        Indices of the axes to project onto the floor plane.
+        Defaults to `(0, 1)` (X and Y). Use `(0, 2)` for X and Z.
 
     Examples
     --------
@@ -68,7 +71,8 @@ class Equilibrium(StaticFeature):
             right_foot_idx: int = 1,
             barycenter_idx: int = 2,
             margin_mm: float = 100.0,
-            y_weight: float = 0.5
+            y_weight: float = 0.5,
+            axes: tuple[int, int] = (0, 1)
     ):
         super().__init__()  # Crucial for proper inheritance
         self.left_foot_idx = left_foot_idx
@@ -76,6 +80,7 @@ class Equilibrium(StaticFeature):
         self.barycenter_idx = barycenter_idx
         self.margin = margin_mm
         self.y_weight = y_weight
+        self.axes = axes
 
     @property
     def left_foot_idx(self) -> int:
@@ -122,6 +127,18 @@ class Equilibrium(StaticFeature):
     def y_weight(self, value: float):
         self._y_weight = float(value)
 
+    @property
+    def axes(self) -> tuple[int, int]:
+        """Indices of the axes forming the support plane."""
+        return self._axes
+
+    @axes.setter
+    def axes(self, value: tuple[int, int]):
+        if len(value) != 2:
+            raise ValueError("Axes must be a sequence of two integers.")
+        self._axes = (int(value[0]), int(value[1]))
+        self._axes_list = list(self._axes)
+
     def compute(self, frame_data: np.ndarray) -> EquilibriumResult:
         """Compute the elliptical equilibrium score.
 
@@ -142,9 +159,9 @@ class Equilibrium(StaticFeature):
             return EquilibriumResult(is_valid=False)
 
         # 2. Extract 2D positions
-        p_left = frame_data[self.left_foot_idx][:2]
-        p_right = frame_data[self.right_foot_idx][:2]
-        p_barycenter = frame_data[self.barycenter_idx][:2]
+        p_left = frame_data[self.left_foot_idx][self._axes_list]
+        p_right = frame_data[self.right_foot_idx][self._axes_list]
+        p_barycenter = frame_data[self.barycenter_idx][self._axes_list]
 
         # 3. Compute Rotation-Invariant Ellipse Geometry
         center = (p_left + p_right) / 2.0
