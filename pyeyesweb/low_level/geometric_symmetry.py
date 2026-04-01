@@ -106,7 +106,13 @@ class GeometricSymmetry(StaticFeature): # Changed to StaticFeature!
             # Calculate instantaneous Euclidean distance
             error = np.linalg.norm(left_joint - reflected_right)
 
+            # Scale-invariant normalization via Triangle Inequality:
+            # max possible distance between L and R' is ||L|| + ||R'|| = ||L|| + ||R||
+            norm_l = np.linalg.norm(left_joint)
+            norm_r = np.linalg.norm(right_joint)
+            normalized_error = error / (norm_l + norm_r + self.EPSILON)
+
             pair_key = f"{left_idx}_{right_idx}"
-            pair_errors[pair_key] = float(1.0 - error)
+            pair_errors[pair_key] = float(max(0.0, 1.0 - normalized_error))
 
         return GeometricSymmetryResult(is_valid=True, pairs=pair_errors)
