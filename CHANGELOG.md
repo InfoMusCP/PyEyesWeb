@@ -1,6 +1,27 @@
 # CHANGELOG
 
+## v1.0.1 (2026-04-07)
 
+### Features
+
+* feat: add Equilibrium class for elliptical postural balance analysis ([`15e4e63`](https://github.com/InfoMusCP/PyEyesWeb/commit/15e4e6310333141df469c15f48e882f76c2d7b4f))
+* feat: implement GeometricSymmetry feature for skeletal frame and spatial symmetry analysis ([`d6c70cd`](https://github.com/InfoMusCP/PyEyesWeb/commit/d6c70cd260955f2e267c876df85b30cbb1085b04), [`2cdec2c`](https://github.com/InfoMusCP/PyEyesWeb/commit/2cdec2cf6fa94580c2369a90a3bd4de958e288af))
+
+### Bug Fixes
+
+* fix: correct contraction index formula by removing the squared area term and updating associated tests and documentation ([`f5ccf2b`](https://github.com/InfoMusCP/PyEyesWeb/commit/f5ccf2b8040f8edd26105c10b676397d142da1d9))
+
+### Refactoring & Improvements
+
+* refactor: correct contraction index calculation and remove deprecated example notebooks ([`3c0f463`](https://github.com/InfoMusCP/PyEyesWeb/commit/3c0f463f14772b2eab4a61c04c19b776dd25113d))
+* refactor: update examples with interactive visualizations and clean up unused data files ([`ac18782`](https://github.com/InfoMusCP/PyEyesWeb/commit/ac18782371bdc8fe5f57d22121faea792edf4268))
+* refactor: Update example notebooks, restructure Qualisys data directory, and modify data loading utilities. ([`ae721bb`](https://github.com/InfoMusCP/PyEyesWeb/commit/ae721bbab842252995b19cc10e68f54ffb115a6b))
+* refactor: add data in examples and update WIP notebooks ([`ac9c4ad`](https://github.com/InfoMusCP/PyEyesWeb/commit/ac9c4adb4f05263de60f49e3d5aabdc4ba41498b), [`e59fa5b`](https://github.com/InfoMusCP/PyEyesWeb/commit/e59fa5bbbacd058ea61408b16a9cb3777df919dd))
+
+### Maintenance
+
+* bump version to 1.0.1 ([`6834c0c`](https://github.com/InfoMusCP/PyEyesWeb/commit/6834c0cf6bdcc64f59dbda48991987d2eb6f107), [`96d0124`](https://github.com/InfoMusCP/PyEyesWeb/commit/96d01246f35a52947f649927316e0c8351c059d9))
+* rollback to previous release workflow ([`845be1f`](https://github.com/InfoMusCP/PyEyesWeb/commit/845be1f333b657abe6f8e916856da3fbe2585cf3))
 ## v0.1.0 (2026-03-23)
 
 ### Bug Fixes
