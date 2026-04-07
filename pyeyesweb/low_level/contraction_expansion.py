@@ -45,7 +45,7 @@ class BoundingBoxFilledArea(StaticFeature):
     Mathematical formulation involves computing the ratio:
 
     $$
-    Index = \frac{Area_{hull}^2}{Area_{bbox}}
+    Index = \frac{Area_{hull}}{Area_{bbox}}
     $$
 
     where $Area_{hull}$ is the surface area of the 3D convex hull enclosing the points,

@@ -42,7 +42,7 @@ def test_bounding_box_filled_area():
 
     assert result.is_valid is True
     assert hasattr(result, "contraction_index")
-    assert np.isclose(result.contraction_index, 6.0)
+    assert np.isclose(result.contraction_index, 1.0)
 
 
 def test_ellipsoid_sphericity():

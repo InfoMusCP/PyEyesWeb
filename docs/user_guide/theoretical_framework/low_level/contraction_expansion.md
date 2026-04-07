@@ -17,10 +17,10 @@ These shape metrics are used to track structural changes relative to a movement 
 - **Robustness**: Relies on Convex Hull computation which gracefully handles outlier limbs but can fail mathematically if all points form a flat plane (degeneracy). 
 
 ### Algorithm Details & Mathematics
-The index is the ratio of the squared surface area of the enclosed convex hull to the surface area of the axis-aligned bounding box (AABB).
+The index is the ratio of the surface area of the enclosed convex hull to the surface area of the axis-aligned bounding box (AABB).
 
 $$ 
-Index = \frac{Area_{hull}^2}{Area_{bbox}}
+Index = \frac{Area_{hull}}{Area_{bbox}}
 $$
 
 where $Area_{hull}$ is the internal surface area derived purely from the outermost perimeter of points, and $Area_{bbox}$ is the theoretical bounding rectangle/prism containing all movement.
