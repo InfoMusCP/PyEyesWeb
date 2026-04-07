@@ -10,7 +10,56 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - name: InfoMus Lab - Casa Paganini
+  - given-names: Sanket Rajeev
+    family-names: Sabharwal
+  - given-names: Nicola
+    family-names: Corbellini
+  - given-names: Simone
+    family-names: Ghisio
+  - given-names: Paolo
+    family-names: Coletta
+  - given-names: Gabriele
+    family-names: Romano
+  - given-names: Abdullah Al
+    family-names: Foysal
+  - given-names: Gualtiero
+    family-names: Volpe
+  - given-names: Antonio
+    family-names: Camurri
 repository-code: 'https://github.com/InfoMusCP/PyEyesWeb'
 url: 'https://infomuscp.github.io/PyEyesWeb/'
 license: MIT
+preferred-citation:
+  type: conference-paper
+  authors:
+    - given-names: Sanket Rajeev
+      family-names: Sabharwal
+    - given-names: Nicola
+      family-names: Corbellini
+    - given-names: Simone
+      family-names: Ghisio
+    - given-names: Paolo
+      family-names: Coletta
+    - given-names: Gabriele
+      family-names: Romano
+    - given-names: Abdullah Al
+      family-names: Foysal
+    - given-names: Gualtiero
+      family-names: Volpe
+    - given-names: Antonio
+      family-names: Camurri
+  title: "PyEyesWeb: An open source toolkit for multimodal movement feature extraction"
+  collection-title: "MOCO '26: Proceedings of the 10th International Conference on Movement and Computing (MOCO '26)"
+  year: 2026
+  month: 4
+  start: 23
+  end: 25
+  publisher:
+    name: ACM
+    address: "New York, NY, USA"
+  doi: 10.1145/3802842.3802904
+  conference:
+    name: "MOCO '26"
+    location: "Montpellier, France"
+    date-start: 2026-04-23
+    date-end: 2026-04-25

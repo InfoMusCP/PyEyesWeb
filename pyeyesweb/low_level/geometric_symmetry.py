@@ -49,6 +49,8 @@ class GeometricSymmetry(StaticFeature): # Changed to StaticFeature!
         The index of the joint to scale as the center of symmetry. If not provided, it defaults to `-1` (barycenter).
     """
 
+    EPSILON = 1e-10
+
     def __init__(self, joint_pairs: List[Tuple[int, int]], center_of_symmetry: Optional[int] = None):
         super().__init__()
         self._center_idx = center_of_symmetry if center_of_symmetry is not None else -1
@@ -106,7 +108,13 @@ class GeometricSymmetry(StaticFeature): # Changed to StaticFeature!
             # Calculate instantaneous Euclidean distance
             error = np.linalg.norm(left_joint - reflected_right)
 
+            # Scale-invariant normalization via Triangle Inequality:
+            # max possible distance between L and R' is ||L|| + ||R'|| = ||L|| + ||R||
+            norm_l = np.linalg.norm(left_joint)
+            norm_r = np.linalg.norm(right_joint)
+            normalized_error = error / (norm_l + norm_r + self.EPSILON)
+
             pair_key = f"{left_idx}_{right_idx}"
-            pair_errors[pair_key] = float(1.0 - error)
+            pair_errors[pair_key] = float(max(0.0, 1.0 - normalized_error))
 
         return GeometricSymmetryResult(is_valid=True, pairs=pair_errors)
