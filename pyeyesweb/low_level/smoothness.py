@@ -5,7 +5,6 @@ from scipy.signal import butter, filtfilt
 
 from pyeyesweb.data_models.base import DynamicFeature
 from pyeyesweb.data_models.results import FeatureResult
-from pyeyesweb.utils.signal_processing import apply_savgol_filter
 from pyeyesweb.utils.math_utils import (
     compute_sparc, 
     compute_jerk_rms, 
@@ -109,11 +108,15 @@ class Smoothness(DynamicFeature):
         self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
 
     def _filter_signal(self, signal: np.ndarray) -> np.ndarray:
-        if not self.use_filter or len(signal) < 15:
+        if not self.use_filter:
             return signal
-        
+
         cutoff = min(10.0, (self.rate_hz / 2.0) - 1.0)
         b, a = butter(4, cutoff / (self.rate_hz / 2.0), btype='low')
+
+        # filtfilt requires the signal to be strictly longer than its default padlen
+        if len(signal) <= 3 * max(len(a), len(b)):
+            return signal
         return filtfilt(b, a, signal)
 
     def compute(self, window_data: np.ndarray) -> SmoothnessResult:
