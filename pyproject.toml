@@ -83,6 +83,7 @@ Documentation = "https://infomuscp.github.io/PyEyesWeb/"
 [tool.setuptools]
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["pyeyesweb*"]
 
 [tool.pytest.ini_options]
 pythonpath = [

@@ -126,8 +126,8 @@ class Smoothness(DynamicFeature):
             return SmoothnessResult(is_valid=False)
 
         # Zero-velocity check
-        if np.mean(speed_profile) < self.min_speed_threshold or np.max(speed_profile) < (self.min_speed_threshold * 1.5):
-            return SmoothnessResult(is_valid=False)
+        # if np.mean(speed_profile) < self.min_speed_threshold or np.max(speed_profile) < (self.min_speed_threshold * 1.5):
+        #    return SmoothnessResult(is_valid=False)
 
         filtered_speed = self._filter_signal(speed_profile)
 

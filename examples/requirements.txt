@@ -1,2 +1,5 @@
 ipywidgets
 tqdm
+matplotlib
+opencv-python
+pandas

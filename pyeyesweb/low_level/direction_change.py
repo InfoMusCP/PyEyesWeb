@@ -125,14 +125,15 @@ class DirectionChange(DynamicFeature):
         # Close the loop
         closed_polygon = np.vstack([subset, subset[0]])
 
+        # NumPy 2 only supports 3D cross products: lift 2D points to z=0
+        if closed_polygon.shape[1] == 2:
+            closed_polygon = np.pad(closed_polygon, ((0, 0), (0, 1)))
+
         # Shoelace-style cross product area computation
         cross_products = np.cross(closed_polygon[:-1], closed_polygon[1:])
         area_vector = np.sum(cross_products, axis=0) / 2.0
 
-        # Handle both 2D (scalar return) and 3D (vector return) area magnitudes
-        area = np.linalg.norm(area_vector) if np.ndim(area_vector) > 0 else np.abs(area_vector)
-        
-        return float(area)
+        return float(np.linalg.norm(area_vector))
 
     def compute(self, window_data: np.ndarray) -> DirectionChangeResult:
         """Compute the Direction Change over a temporal window.
