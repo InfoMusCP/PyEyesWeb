@@ -47,7 +47,7 @@ class EquilibriumReference(StaticFeature):
     >>> eq = Equilibrium(left_foot_idx=10, right_foot_idx=11, barycenter_idx=2)
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("equilibrium", doc="Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse."),
         Output("angle", unit="deg", doc="Angle of the foot-to-foot support vector."),
     )
@@ -145,7 +145,7 @@ class EquilibriumReference(StaticFeature):
         # 1. Robustness: Ensure we have enough joints in the frame
         max_idx = max(self.left_foot_idx, self.right_foot_idx, self.barycenter_idx)
         if len(frame_data) <= max_idx:
-            return self.no_output(Status.INVALID_INPUT, f"frame has {len(frame_data)} joints, need index {max_idx}")
+            return self._no_output(Status.INVALID_INPUT, f"frame has {len(frame_data)} joints, need index {max_idx}")
 
         # 2. Extract 2D positions
         p_left = frame_data[self.left_foot_idx][self._axes_list]
@@ -193,7 +193,7 @@ class EquilibriumReference(StaticFeature):
             if norm <= 1.0:
                 value = 1.0 - np.sqrt(norm)
 
-        return self.result(
+        return self._result(
             equilibrium=float(max(0.0, value)),
             angle=float(np.degrees(angle))
         )

@@ -29,7 +29,7 @@ class SuddennessImpulsivityReference(DynamicFeature):
         A non-OK status of the DirectionChange or Suddenness sub-feature is propagated with its reason.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("impulsivity_index", doc="Direction change times suddenness (0 when not sudden)."),
         Output("direction_change_val", doc="Cosine direction change of the window."),
         Output("is_sudden", kind=bool, doc="Whether the movement is sudden."),
@@ -82,7 +82,7 @@ class SuddennessImpulsivityReference(DynamicFeature):
         # 2. Check validity
         for name, sub in (("direction change", dc_result), ("suddenness", sud_result)):
             if not sub.ok:
-                return self.no_output(sub.status, f"{name}: {sub.reason}")
+                return self._no_output(sub.status, f"{name}: {sub.reason}")
 
         # 3. Extract metrics
         dc_val = dc_result.cosine
@@ -92,7 +92,7 @@ class SuddennessImpulsivityReference(DynamicFeature):
         # Since Suddenness is boolean/binary here, impulsivity is 0 if not sudden.
         impulsivity = dc_val * float(is_sudden)
 
-        return self.result(
+        return self._result(
             impulsivity_index=float(impulsivity),
             direction_change_val=float(dc_val),
             is_sudden=bool(is_sudden)

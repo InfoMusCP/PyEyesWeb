@@ -79,14 +79,14 @@ class _PairWindow(WindowedFeature):
     """A two-input windowed feature, to test the plumbing of several inputs."""
 
     from pyeyesweb.data_models import Input, Inputs, Output, Schema
-    OUTPUTS = Schema(Output("dot"))
+    _OUTPUTS = Schema(Output("dot"))
 
     def _inputs(self):
         return self.Inputs(self.Input("x", InputKind.SAMPLE, (1,)), self.Input("y", InputKind.SAMPLE, (2,)))
 
     def _process_window(self, first, second, *, timestamp=None):
         assert first.shape == (1, self.window) and second.shape == (2, self.window)
-        return self.result(dot=float(np.sum(first[0] * second[0] + second[1])), timestamp=math.nan if timestamp is None else timestamp)
+        return self._result(dot=float(np.sum(first[0] * second[0] + second[1])), timestamp=math.nan if timestamp is None else timestamp)
 
 
 def test_several_inputs_are_split_per_input_and_run_takes_one_array_each():

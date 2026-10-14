@@ -40,7 +40,7 @@ class ScalarPeakDetector(_ScalarStream):
         return Schema(Output("is_peak", kind=bool))
 
     def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:
-        return self.result(is_peak=raw, timestamp=timestamp)
+        return self._result(is_peak=raw, timestamp=timestamp)
 
 
 __all__ = ["ScalarPeakDetector"]

@@ -31,13 +31,13 @@ class _SpeedProfileMetric(MinimumWindow, WindowedFeature, CoreFeature):
     def _process_window(self, series, *, timestamp=None):
         profile = np.asarray(series, dtype=float)
         if reason := non_finite(profile, allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         if profile.size < self.MIN_WINDOW:
-            return self.no_output(Status.WARMING_UP, f"fewer than {self.MIN_WINDOW} samples", timestamp)
-        name = self.OUTPUTS.names[0]
+            return self._no_output(Status.WARMING_UP, f"fewer than {self.MIN_WINDOW} samples", timestamp)
+        name = self._OUTPUTS.names[0]
         value = self._block.process(np.ascontiguousarray(profile.ravel()))
         finite = np.isfinite(value)
-        return self.result(status=Status.OK if finite else Status.INVALID_INPUT,
+        return self._result(status=Status.OK if finite else Status.INVALID_INPUT,
                            reason="" if finite else f"{name} is NaN: the profile cannot support it",
                            timestamp=timestamp, **{name: value})
 
@@ -74,7 +74,7 @@ class SpectralArcLength(_SpeedProfileMetric):
         cannot support it (a constant speed, for example), `Status.WARMING_UP` below 10 samples.
     """
 
-    OUTPUTS = Schema(Output("spectral_arc_length", doc="Spectral arc length (SPARC); closer to 0 is smoother."))
+    _OUTPUTS = Schema(Output("spectral_arc_length", doc="Spectral arc length (SPARC); closer to 0 is smoother."))
     _core_class = core.motion.SpectralArcLength
 
     def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None,
@@ -115,7 +115,7 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
         `Status.INVALID_INPUT` when the profile cannot support it, `Status.WARMING_UP` below 10 samples.
     """
 
-    OUTPUTS = Schema(Output("log_dimensionless_jerk", doc="Log dimensionless jerk; closer to 0 is smoother."))
+    _OUTPUTS = Schema(Output("log_dimensionless_jerk", doc="Log dimensionless jerk; closer to 0 is smoother."))
     _core_class = core.motion.LogDimensionlessJerk
 
     def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None,
@@ -163,7 +163,7 @@ class Harmonicity(_SpeedProfileMetric):
         `harmonicity` (dimensionless, in [0, 1]; 1 is the most harmonic). `Status.WARMING_UP` below 10 samples.
     """
 
-    OUTPUTS = Schema(Output("harmonicity", doc="Harmonicity index of the speed profile, in [0, 1]."))
+    _OUTPUTS = Schema(Output("harmonicity", doc="Harmonicity index of the speed profile, in [0, 1]."))
     _core_class = core.motion.Harmonicity
 
     def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None):
@@ -197,7 +197,7 @@ class SubmovementCount(_SpeedProfileMetric):
         `submovement_count` (integer; fewer is smoother; 0 for a speed below 1e-6). `Status.WARMING_UP` below 10 samples.
     """
 
-    OUTPUTS = Schema(Output("submovement_count", kind=int, doc="Number of detected sub-movements."))
+    _OUTPUTS = Schema(Output("submovement_count", kind=int, doc="Number of detected sub-movements."))
     _core_class = core.motion.SubmovementCount
 
     def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None,
@@ -238,7 +238,7 @@ class CurvatureDispersion(_InferredDimsBlock):
         when it is not finite.
     """
 
-    OUTPUTS = Schema(Output("curvature_dispersion",
+    _OUTPUTS = Schema(Output("curvature_dispersion",
                             doc="Curvature-based smoothness index; 1 when the movement is below the threshold."))
     _core_class = core.trajectory.CurvatureDispersion
     _timed = True
@@ -259,7 +259,7 @@ class CurvatureDispersion(_InferredDimsBlock):
         dt = self._time_step(timestamp)
         vectors = [np.ascontiguousarray(vector, dtype=float) for vector in (velocity, acceleration)]
         if reason := non_finite(vectors):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         return self._to_result(self._block.process(*vectors, dt), timestamp)
 
 
@@ -346,25 +346,25 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
         return Inputs(Input("series", InputKind.SAMPLE, (None,), doc="y, (x, y) or (x, y, z) of the signal"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("smoothness"), Output("curvature", (None,), doc="curvature per sample"),
-                      Output("velocity", (None,), doc="velocity per sample"),
-                      Output("curvature_std"), Output("velocity_std"))
+        return Schema(Output("smoothness"), Output("curvature", (None,), unit="1/<length>", doc="curvature per sample"),
+                      Output("velocity", (None,), unit="<length>/s", doc="velocity per sample"),
+                      Output("curvature_std", unit="1/<length>"), Output("velocity_std", unit="<length>/s"))
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         series = np.asarray(series, dtype=float)
         if reason := non_finite(series, allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         try:
             smoothness, curvature, velocity, curvature_std, velocity_std = self._block.process(
                 series, self.sampling_rate, self.window - self.hop)
         except ValueError as exc:
-            return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
+            return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
         warming_up, self._warmed_shape = series.shape != self._warmed_shape, series.shape  # a new shape: empty history
         status, reason = Status.OK, ""
         if np.isnan(smoothness) or np.isnan(curvature_std):
             status, reason = (Status.WARMING_UP, "the filters need a previous window") if warming_up else (
                 Status.INVALID_INPUT, "the data does not support smoothness (NaN)")
-        return self.result(status=status, reason=reason, smoothness=smoothness,
+        return self._result(status=status, reason=reason, smoothness=smoothness,
                            curvature=np.asarray(curvature, dtype=float), velocity=np.asarray(velocity, dtype=float),
                            curvature_std=curvature_std, velocity_std=velocity_std, timestamp=timestamp)
 

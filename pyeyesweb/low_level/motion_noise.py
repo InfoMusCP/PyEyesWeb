@@ -58,7 +58,7 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
         return self._to_result(self._block.process(points, self._time_step(timestamp)), timestamp)
 
     def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:
-        return self.result(is_noisy=raw, timestamp=timestamp)
+        return self._result(is_noisy=raw, timestamp=timestamp)
 
 
 __all__ = ["MotionNoiseDetector"]

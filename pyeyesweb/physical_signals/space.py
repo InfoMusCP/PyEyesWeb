@@ -30,10 +30,10 @@ class HitCellDetector(FrameFeature):
     _core_class = core.space.HitCellDetector
     _core_names = {"cells_along_x": "cells_x", "cells_along_y": "cells_y"}
     _unit_params = {"x_min": 1, "x_max": 1, "y_min": 1, "y_max": 1}  # lengths of the monitored area
-    INPUTS = Inputs(points_input("points", None, "2D points to locate in the grid", dims=2))
+    _INPUTS = Inputs(points_input("points", None, "2D points to locate in the grid", dims=2))
 
     def _schema(self) -> Schema:
-        return Schema(Output("cells", (None, 2), kind=int, components=("i", "j"),
+        return Schema(Output("cells", (None, 2), kind=int, components=("i", "j"), unit="cells",
                              doc="hit cell (row from y, column from x) of each point"))
 
     def _process(self, points: Any, timestamp: Optional[float]) -> Result:
@@ -41,8 +41,8 @@ class HitCellDetector(FrameFeature):
 
     def _to_result(self, raw: Optional[np.ndarray], timestamp: float) -> Result:
         if raw is None:
-            return self.no_output(Status.INVALID_INPUT, "point out of range (clip_values is off)", timestamp)
-        return self.result(timestamp=timestamp, cells=raw)
+            return self._no_output(Status.INVALID_INPUT, "point out of range (clip_values is off)", timestamp)
+        return self._result(timestamp=timestamp, cells=raw)
 
 
 __all__ = ["HitCellDetector"]

@@ -54,7 +54,7 @@ class RecurrencePlot(_Epsilons, _SeriesBlock):
         return Schema(Output("recurrence_matrix", (None, None), doc="recurrence matrix, 1 = recurrence"))
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.result(recurrence_matrix=raw, timestamp=timestamp)
+        return self._result(recurrence_matrix=raw, timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="CrossRecurrencePlot (CrossRecurrenceMatrix)")
@@ -79,7 +79,7 @@ class CrossRecurrencePlot(_Epsilons, _SeriesBlock):
         return Schema(Output("cross_recurrence_matrix", (None, None), doc="cross-recurrence matrix, 1 = recurrence"))
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.result(cross_recurrence_matrix=raw, timestamp=timestamp)
+        return self._result(cross_recurrence_matrix=raw, timestamp=timestamp)
 
 
 __all__ = ["RecurrencePlot", "CrossRecurrencePlot"]

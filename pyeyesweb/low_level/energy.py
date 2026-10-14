@@ -63,7 +63,7 @@ class KineticEnergy(LabelGuard, FrameFeature):
         return Inputs(points_input("skeleton", self._labels, "joint positions or velocities", accepts=(dict,)))
 
     def _schema(self) -> Schema:
-        return Schema(Output("kinetic_energy", doc="weighted kinetic energy of the skeleton"))
+        return Schema(Output("kinetic_energy", unit="<length>^2/s^2", doc="weighted kinetic energy of the skeleton"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         if isinstance(frame, dict):
@@ -71,12 +71,12 @@ class KineticEnergy(LabelGuard, FrameFeature):
         else:
             points = np.asarray(frame, dtype=float)
             if reason := non_finite(points):  # an invalid frame takes no time: the next step is measured from the last valid one
-                return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+                return self._no_output(Status.INVALID_INPUT, reason, timestamp)
             raw = self._block.process_array(self._need_layout(), points, self._time_step(timestamp))
         return self._to_result(raw, timestamp)
 
     def _to_result(self, raw: float, timestamp: Optional[float]) -> Result:
-        return self.finite_result(kinetic_energy=raw, timestamp=timestamp)
+        return self._finite_result(kinetic_energy=raw, timestamp=timestamp)
 
     def run(self, data: Any, *, timestamps: Optional[Any] = None, reset: bool = True) -> Recorder:
         data = np.asarray(data, dtype=float)

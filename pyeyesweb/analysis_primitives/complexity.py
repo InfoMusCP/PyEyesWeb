@@ -74,7 +74,7 @@ class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         raw = self._block.process(np.asarray(series, dtype=float))
-        return self.result(sample_entropy=raw[0], timestamp=timestamp)
+        return self._result(sample_entropy=raw[0], timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="coarsegraining")
@@ -109,13 +109,13 @@ class CoarseGraining(MinimumWindow, WindowedFeature, CoreFeature):
         return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per channel"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("coarse_grained", (None, None), doc="coarse-grained series (channels, window // factor)"))
+        return Schema(Output("coarse_grained", (None, None), unit="<input>", doc="coarse-grained series (channels, window // factor)"))
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         raw = self._block.process(np.asarray(series, dtype=float))
         if raw is None:
-            return self.no_output(Status.NO_OUTPUT, "not recomputed on this activation", timestamp)
-        return self.result(coarse_grained=raw, timestamp=timestamp)
+            return self._no_output(Status.NO_OUTPUT, "not recomputed on this activation", timestamp)
+        return self._result(coarse_grained=raw, timestamp=timestamp)
 
 
 __all__ = ["SampleEntropy", "CoarseGraining"]

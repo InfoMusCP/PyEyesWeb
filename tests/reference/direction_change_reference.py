@@ -33,7 +33,7 @@ class DirectionChangeReference(DynamicFeature):
         `Status.WARMING_UP` below 3 samples, `Status.INVALID_INPUT` for unusable data.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("cosine", doc="Direction change from the cosine similarity of the start-mid-end vectors, in [0, 1]."),
         Output("polygon", doc="Area of the polygon enclosed by the subsampled trajectory."),
     )
@@ -41,7 +41,7 @@ class DirectionChangeReference(DynamicFeature):
     _ALLOWED_METRICS = ["cosine", "polygon"]
 
     def _schema(self) -> Schema:
-        return self.OUTPUTS.select(self.metrics)
+        return self._OUTPUTS.select(self.metrics)
 
     def __init__(
             self,
@@ -151,7 +151,7 @@ class DirectionChangeReference(DynamicFeature):
             Outputs `cosine` and `polygon`.
         """
         if window_data.shape[0] < 3:
-            return self.no_output(Status.WARMING_UP, "fewer than 3 samples")
+            return self._no_output(Status.WARMING_UP, "fewer than 3 samples")
 
         # 1. Shared Preprocessing
         trajectory = np.mean(window_data, axis=1)
@@ -167,9 +167,9 @@ class DirectionChangeReference(DynamicFeature):
                 values["polygon"] = self._polygon_area(trajectory)
 
         except ValueError as exc:
-            return self.no_output(Status.INVALID_INPUT, str(exc))
+            return self._no_output(Status.INVALID_INPUT, str(exc))
 
-        return self.result(**values)
+        return self._result(**values)
 
 
 __all__ = ["DirectionChangeReference"]

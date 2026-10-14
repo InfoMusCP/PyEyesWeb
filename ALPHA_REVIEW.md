@@ -50,7 +50,7 @@ valid frame behaves as documented; tests for repeated, decreasing and mixed time
 
 ## 2. Work package B: naming and signatures (usability): DONE on 2026-10-14
 
-Open: `parts=` instead of the bool switches (U23/U24), unit of `TrajectoryNonPlanarity` defaults (U10), `filter_order` of the PLV (core fixes order 4). See `DEVELOPMENT_SPEC.md`, "Contract changes of work package B".
+Open points decided in package C: `parts=` replaces the bool switches (U23/U24); the `TrajectoryNonPlanarity` defaults (U10), the `Kinematics` mode names and the PLV `filter_order` (the core fixes 4) are kept. See `DEVELOPMENT_SPEC.md`, "Contract changes of work packages B and C".
 
 | id | sev | finding | action | size |
 |---|---|---|---|---|
@@ -68,7 +68,9 @@ Open: `parts=` instead of the bool switches (U23/U24), unit of `TrajectoryNonPla
 | U23, U24 | low | `RecurrencePlot` default `multiple_epsilons=[0.5]*100` floods `help()`; `SilhouetteCentroids` (14), `SilhouetteBodyParts` (6) and `RegionDependingPotentials` (4) have long lists of bool switches. | `None` default meaning one epsilon per channel; optionally a `parts=` sequence instead of the switches (needs a decision). | S/M |
 | U22 | low | A 1-element array is not accepted for a `(1,)` input in the smoothness metrics. | Accept it as the declared shape says. | S |
 
-## 3. Work package C: results, recorder and discoverability (usability)
+## 3. Work package C: results, recorder and discoverability (usability): DONE on 2026-10-14
+
+See `DEVELOPMENT_SPEC.md`, "Contract changes of work package C".
 
 | id | sev | finding | action | size |
 |---|---|---|---|---|

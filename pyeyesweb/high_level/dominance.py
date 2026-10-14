@@ -40,14 +40,14 @@ class EnsembleDominance(FrameFeature):
     def _schema(self) -> Schema:
         return Schema(Output("dominance_score", (None,), doc="1 - CI / max(CI) of each participant"),
                       Output("leader_index", kind=int, doc="participant with the lowest complexity index, -1 if none"),
-                      Output("leader_complexity", doc="complexity index of the leader"))
+                      Output("leader_complexity", unit="<input>", doc="complexity index of the leader"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         indices = np.asarray(frame, dtype=float).reshape(-1)
         if np.isinf(indices).any():
-            return self.no_output(Status.INVALID_INPUT, "infinite values", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "infinite values", timestamp)
         dominance_score, leader_index, leader_complexity = self._block.process(indices)
-        return self.result(dominance_score=dominance_score, leader_index=leader_index,
+        return self._result(dominance_score=dominance_score, leader_index=leader_index,
                            leader_complexity=leader_complexity, timestamp=timestamp)
 
 

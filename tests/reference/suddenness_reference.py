@@ -28,7 +28,7 @@ class SuddennessReference(DynamicFeature):
         `Status.WARMING_UP` while fewer than 6 samples are available.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("is_sudden", kind=bool, doc="Whether the movement is classified as sudden."),
         Output("alpha", doc="Stability parameter of the fitted stable distribution."),
         Output("beta", doc="Skewness parameter of the fitted stable distribution."),
@@ -92,14 +92,14 @@ class SuddennessReference(DynamicFeature):
 
         n_samples = pos.shape[0]
         if n_samples < 2:
-            return self.no_output(Status.WARMING_UP, "fewer than 2 samples")
+            return self._no_output(Status.WARMING_UP, "fewer than 2 samples")
 
         # Calculate velocities (magnitude of difference)
         diffs = pos[1:] - pos[:-1]
         velocities = np.linalg.norm(diffs, axis=1)
 
         if len(velocities) < 5:
-            return self.no_output(Status.WARMING_UP, "fewer than 6 samples")
+            return self._no_output(Status.WARMING_UP, "fewer than 6 samples")
 
         if self.algo == "new":
             alpha, beta, gamma, _ = self._fit_stable_constrained_bounds(velocities)
@@ -108,7 +108,7 @@ class SuddennessReference(DynamicFeature):
 
         is_sudden = gamma * (1.0 - (alpha / 2.0)) * beta >= 0.0  # TODO: is checking >= 0.0 correct?
 
-        return self.result(
+        return self._result(
             is_sudden=bool(is_sudden),
             alpha=float(alpha),
             beta=float(beta),

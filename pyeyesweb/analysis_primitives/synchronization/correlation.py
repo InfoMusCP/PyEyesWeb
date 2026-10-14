@@ -56,7 +56,7 @@ class CorrelationsMatrix(_SeriesBlock):
         return self._block.process(list(args[0]))
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.finite_result(correlations_matrix=raw, timestamp=timestamp)
+        return self._finite_result(correlations_matrix=raw, timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="PARS (PartialRecurrenceSynchronizationMatrix)")
@@ -82,11 +82,11 @@ class PartialRecurrenceSynchronization(FrameFeature):
         if matrix.ndim == 2 and matrix.shape[0] != matrix.shape[1]:
             raise ValueError(f"PartialRecurrenceSynchronization: the matrix must be square, got shape {matrix.shape}")
         if reason := non_finite(matrix):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         return super()._process(matrix, timestamp)
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.result(synchronization_matrix=raw, timestamp=timestamp)
+        return self._result(synchronization_matrix=raw, timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="generalised_auto_correlation")
@@ -124,7 +124,7 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
         scalar = self._param("output_type", None) == _OutputType.SCALAR
         first = int(self._param("tau" if scalar else "tau_min", 1))  # C++ defaults
-        return self.result(recurrence_rate=raw, taus=np.arange(first, first + len(raw)), timestamp=timestamp)
+        return self._result(recurrence_rate=raw, taus=np.arange(first, first + len(raw)), timestamp=timestamp)
 
 
 __all__ = ["CorrelationsMatrix", "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation"]

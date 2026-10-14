@@ -5,11 +5,12 @@ import pytest
 
 from pyeyesweb.analysis_primitives import CorrelationsMatrix, EventSynchronization
 from pyeyesweb.data_models import Input, InputKind, Status
-from pyeyesweb.low_level import (BodyPartsFromCurvature, ConvexHull, ContourCurvature, KineticEnergy, PointsDensity)
+from pyeyesweb.low_level import (BodyPartsFromCurvature, ConvexHull, ContourCurvature, FilterContour, KineticEnergy,
+                                 PointsDensity)
 from pyeyesweb.low_level import MotionNoiseDetector
 from pyeyesweb.mid_level import (GestureSegmenter, PositionDependingPotentials,
                                  Suddenness, SuddennessImpulsivity)
-from pyeyesweb.physical_signals import FilterContour, HitCellDetector
+from pyeyesweb.physical_signals import HitCellDetector
 
 LABELS = ["a", "b", "c"]
 WEIGHTS = {label: 1.0 for label in LABELS}

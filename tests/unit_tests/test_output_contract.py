@@ -31,21 +31,21 @@ class Centroid(StaticFeature):
 
     def compute(self, frame):
         if len(frame) == 0:
-            return self.no_output(Status.INVALID_INPUT, "no points")
+            return self._no_output(Status.INVALID_INPUT, "no points")
         centre = frame.mean(axis=0)
         distances = (np.abs(frame - centre).mean(axis=0) if self.mode == "component" else np.linalg.norm(frame - centre, axis=1).mean())
-        return self.result(density=distances, centroid=centre, count=len(frame))
+        return self._result(density=distances, centroid=centre, count=len(frame))
 
 
 class Trend(DynamicFeature):
     """Dynamic: slope of the mean signal; WARMING_UP until 3 samples; the slope's validity is partial."""
-    OUTPUTS = Schema(Output("slope"), Output("n", kind=int), Output("flag", kind=bool))
+    _OUTPUTS = Schema(Output("slope"), Output("n", kind=int), Output("flag", kind=bool))
 
     def compute(self, window):
         if len(window) < 3:
-            return self.result(status=Status.WARMING_UP, reason="needs 3 samples", n=len(window))
+            return self._result(status=Status.WARMING_UP, reason="needs 3 samples", n=len(window))
         means = window.reshape(len(window), -1).mean(axis=1)
-        return self.result(slope=float(np.polyfit(np.arange(len(means)), means, 1)[0]), n=len(means), flag=True)
+        return self._result(slope=float(np.polyfit(np.arange(len(means)), means, 1)[0]), n=len(means), flag=True)
 
 
 # ------------------------------------------------------------------------------------------------------ Output
@@ -159,14 +159,14 @@ def test_a_no_output_result_has_every_output_empty_and_invalid():
 
 
 def test_none_counts_as_not_produced():
-    result = Centroid().result(density=None, centroid=[1, 2, 3], count=1)
+    result = Centroid()._result(density=None, centroid=[1, 2, 3], count=1)
     assert result.valid == {"density": False, "centroid": True, "count": True} and math.isnan(result.density)
 
 
 def test_results_are_immutable_and_do_not_alias_feature_state():
     centroid = Centroid()
     source = np.array([1.0, 2, 3])
-    result = centroid.result(centroid=source, density=1.0, count=1)
+    result = centroid._result(centroid=source, density=1.0, count=1)
     source[0] = 99
     assert result.centroid[0] == 1.0
     with pytest.raises(ValueError):
@@ -180,11 +180,11 @@ def test_results_are_immutable_and_do_not_alias_feature_state():
 def test_result_validates_names_and_shapes():
     centroid = Centroid()
     with pytest.raises(KeyError):
-        centroid.result(unknown=1.0)
+        centroid._result(unknown=1.0)
     with pytest.raises(ValueError):
-        centroid.result(centroid=[1.0, 2.0])
+        centroid._result(centroid=[1.0, 2.0])
     with pytest.raises(ValueError):
-        centroid.result(centroid=np.zeros((3, 3)))
+        centroid._result(centroid=np.zeros((3, 3)))
 
 
 def test_export_forms_agree_with_the_schema():
@@ -212,11 +212,11 @@ def test_fixed_layout_is_identical_for_valid_and_empty_results():
 
 def test_variable_and_labelled_outputs_flatten_by_their_actual_size():
     class Skeleton(StaticFeature):
-        OUTPUTS = Schema(Output("scale"), Output("curve", (None,)),
+        _OUTPUTS = Schema(Output("scale"), Output("curve", (None,)),
                          Output("joints", components=("x", "y"), labelled=True, shape=(2,)))
 
         def compute(self, frame):
-            return self.result(scale=1.0, curve=[3.0, 4.0, 5.0], joints={"head": (1, 2), "hip": (3, 4)})
+            return self._result(scale=1.0, curve=[3.0, 4.0, 5.0], joints={"head": (1, 2), "hip": (3, 4)})
 
     result = Skeleton().compute(None)
     assert result.to_array().shape == (1,)  # only the fixed output
@@ -225,16 +225,16 @@ def test_variable_and_labelled_outputs_flatten_by_their_actual_size():
                           "joints_hip_x", "joints_hip_y"]
     assert flat["joints_hip_y"] == 4.0
     with pytest.raises(ValueError):
-        Skeleton().result(joints={"head": (1, 2, 3)})
+        Skeleton()._result(joints={"head": (1, 2, 3)})
 
 
 def test_component_names_apply_to_variable_sizes_by_position():
     class Energy(StaticFeature):
-        OUTPUTS = Schema(Output("component", (None,), components=("x", "y", "z", "w")),
+        _OUTPUTS = Schema(Output("component", (None,), components=("x", "y", "z", "w")),
                          Output("joint", (None, None), components=("x", "y", "z")))
 
         def compute(self, frame):
-            return self.result(component=frame[0], joint=frame)
+            return self._result(component=frame[0], joint=frame)
 
     energy = Energy()
     flat = energy.compute(np.ones((2, 3))).to_flat_dict(meta=False)
@@ -319,10 +319,10 @@ def test_recorder_keeps_invalid_rows_aligned():
 
 def test_recorder_stores_variable_outputs_as_lists():
     class Curve(StaticFeature):
-        OUTPUTS = Schema(Output("peak"), Output("curve", (None,)))
+        _OUTPUTS = Schema(Output("peak"), Output("curve", (None,)))
 
         def compute(self, frame):
-            return self.result(peak=float(frame.max()), curve=frame)
+            return self._result(peak=float(frame.max()), curve=frame)
 
     curve = Curve()
     rec = Recorder(curve)
@@ -353,7 +353,7 @@ def test_recorder_to_frame():
     rec.append(centroid.compute(np.empty((0, 3))).with_time(2.0))
     frame = rec.to_frame()
     assert list(frame.columns) == ["status", "timestamp", *centroid.outputs.flat_names]
-    assert list(frame["status"]) == [Status.OK, Status.INVALID_INPUT]
-    assert list(frame["status"] == Status.OK) == [True, False]
+    assert list(frame["status"]) == ["OK", "INVALID_INPUT"]
+    assert list(frame["status"] == "OK") == [True, False]
     assert frame.loc[0, "centroid_x"] == 1.0 and np.isnan(frame.loc[1, "centroid_x"])
     assert list(rec.to_frame(meta=False).columns) == list(centroid.outputs.flat_names)

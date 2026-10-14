@@ -31,17 +31,17 @@ class PointListFeature(FrameFeature):
     def _process(self, points: Any, timestamp: Optional[float]) -> Result:
         points = np.asarray(points, dtype=float)
         if points.ndim != 2 or points.shape[1] not in (2, 3):
-            return self.no_output(Status.INVALID_INPUT, f"points are an (n, 2) or (n, 3) array, got shape {points.shape}",
+            return self._no_output(Status.INVALID_INPUT, f"points are an (n, 2) or (n, 3) array, got shape {points.shape}",
                                   timestamp)
         if reason := non_finite(points, allow_empty=True) or self._rejection(points):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         if reason := self._warming_up(points):
-            return self.no_output(Status.WARMING_UP, reason, timestamp)
+            return self._no_output(Status.WARMING_UP, reason, timestamp)
         try:
             raw = self._block.process(points)
         except ValueError as error:
-            return self.no_output(Status.INVALID_INPUT, str(error), timestamp)
+            return self._no_output(Status.INVALID_INPUT, str(error), timestamp)
         (name,) = self.outputs.names
         finite = bool(np.isfinite(raw))
-        return self.result(status=Status.OK if finite else Status.INVALID_INPUT,
+        return self._result(status=Status.OK if finite else Status.INVALID_INPUT,
                            reason="" if finite else "the result is not finite", timestamp=timestamp, **{name: raw})

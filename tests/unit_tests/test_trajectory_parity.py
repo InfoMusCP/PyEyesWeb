@@ -22,8 +22,8 @@ if __name__ != "__main__":
         sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
     pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from pyeyesweb.low_level import TrajectoryNonPlanarity, Kinematics  # noqa: E402
-from pyeyesweb.mid_level import Directness  # noqa: E402
+from pyeyesweb.low_level import Kinematics  # noqa: E402
+from pyeyesweb.mid_level import Directness, TrajectoryNonPlanarity  # noqa: E402
 
 
 def _walk(count, dims, seed):

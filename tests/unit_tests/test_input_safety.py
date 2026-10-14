@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 
 from pyeyesweb.data_models import Status
-from pyeyesweb.low_level import Kinematics, KineticEnergy, average_curvature_3d
+from pyeyesweb.low_level import Kinematics, KineticEnergy
+from pyeyesweb.mid_level import average_curvature_3d
 from pyeyesweb.low_level import MotionNoiseDetector
 
 LABELS = ["a", "b", "c"]

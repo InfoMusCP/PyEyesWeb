@@ -38,7 +38,7 @@ from pyeyesweb.low_level import (  # noqa: E402
 )
 from pyeyesweb.low_level import MotionNoiseDetector  # noqa: E402
 from pyeyesweb.mid_level import ContractionImpulsivity, GestureSegmenter, MotionDuration  # noqa: E402
-from pyeyesweb.physical_signals import FilterContour  # noqa: E402
+from pyeyesweb.low_level import FilterContour  # noqa: E402
 
 DTYPES = {float: np.floating, int: np.integer, bool: np.bool_}
 
@@ -144,7 +144,7 @@ def test_every_block_follows_the_contract(name):
 
 def test_outputs_and_result_are_not_shadowed_by_the_core_block():
     block = KineticEnergy(weights={"head": 1.0})
-    assert block.outputs is not block._block and callable(block.result) and callable(block.no_output)
+    assert block.outputs is not block._block and callable(block._result) and callable(block._no_output)
 
 
 # ------------------------------------------------------------------------------------------ numeric / status

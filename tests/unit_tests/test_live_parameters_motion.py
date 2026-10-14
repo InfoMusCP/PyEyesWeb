@@ -19,7 +19,7 @@ from pyeyesweb.low_level.symmetry import Symmetry
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.mid_level.segmentation import GestureSegmenter, MotionDuration
-from pyeyesweb.physical_signals.contour import FilterContour
+from pyeyesweb.low_level.shape import FilterContour
 
 _motion = core.motion
 _rng = np.random.default_rng(11)

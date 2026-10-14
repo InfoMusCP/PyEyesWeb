@@ -27,9 +27,9 @@ class _SuddennessFit(MinimumWindow):
         """The `Result` of a fit; `INVALID_INPUT` (no numbers) when `fitted_alpha` is the core's -1 sentinel, the
         QUANTILE algorithm's way to say that the window is out of the table range."""
         if fitted_alpha == -1:
-            return self.result(status=Status.INVALID_INPUT, reason="the distribution could not be fitted",
+            return self._result(status=Status.INVALID_INPUT, reason="the distribution could not be fitted",
                                timestamp=timestamp, **values)
-        return self.result(timestamp=timestamp, **values)
+        return self._result(timestamp=timestamp, **values)
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("position", InputKind.SAMPLE, (self.dims,), doc="(x, y) or (x, y, z) of the trajectory"))
@@ -81,11 +81,11 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
         `Status.WARMING_UP` while the window holds fewer than 6 frames.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("is_sudden", kind=bool, doc="Whether the movement is classified as sudden."),
         Output("alpha", doc="Stability parameter of the fitted stable distribution."),
         Output("beta", doc="Skewness parameter of the fitted stable distribution."),
-        Output("gamma", doc="Scale parameter of the fitted stable distribution."),
+        Output("gamma", unit="<length>/s", doc="Scale parameter of the fitted stable distribution."),
     )
 
     _core_class = core.motion.Suddenness

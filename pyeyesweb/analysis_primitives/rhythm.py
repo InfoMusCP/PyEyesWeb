@@ -43,8 +43,8 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     """
     _core_class = core.base.BinaryPulsesRegularity
     MIN_WINDOW = 3
-    INPUTS = Inputs(Input("signal", InputKind.SAMPLE, (1,), doc="one value per call; a non-zero value is a pulse"))
-    OUTPUTS = Schema(Output("is_regular", kind=bool, doc="the intervals between the pulses are equal within the threshold"),
+    _INPUTS = Inputs(Input("signal", InputKind.SAMPLE, (1,), doc="one value per call; a non-zero value is a pulse"))
+    _OUTPUTS = Schema(Output("is_regular", kind=bool, doc="the intervals between the pulses are equal within the threshold"),
                      Output("pulse_count", kind=int, doc="number of pulses in the window"),
                      Output("is_regularity_detected", kind=bool, doc="first regular window after a window that was not"))
 
@@ -54,9 +54,9 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         if reason := non_finite(series):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         regular, pulse_count, detected = self._block.process(np.asarray(series, dtype=float))
-        return self.result(timestamp=timestamp, is_regular=regular, pulse_count=pulse_count, is_regularity_detected=detected)
+        return self._result(timestamp=timestamp, is_regular=regular, pulse_count=pulse_count, is_regularity_detected=detected)
 
 
 __all__ = ["BinaryPulsesRegularity"]

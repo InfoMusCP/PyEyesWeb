@@ -1,6 +1,6 @@
 """The guard that keeps a feature from reading joint names its configuration cannot match."""
 
-from typing import Any, Optional, Set
+from typing import Any, Optional, Set, Tuple
 
 from pyeyesweb.data_models.results import Result, Status
 
@@ -16,6 +16,11 @@ class LabelGuard:
     """
 
     _dropouts = False
+
+    @property
+    def labels(self) -> Optional[Tuple[str, ...]]:
+        """The joint names of array input (`None`: not given)."""
+        return self._labels
 
     def _label_names(self) -> Set[str]:
         raise NotImplementedError
@@ -47,4 +52,4 @@ class LabelGuard:
         names = self._label_names()
         if not isinstance(frame, dict) or not frame or not names.isdisjoint(frame):
             return None
-        return self.no_output(Status.INVALID_INPUT, f"the keys of the frame match none of {sorted(names)}", timestamp)
+        return self._no_output(Status.INVALID_INPUT, f"the keys of the frame match none of {sorted(names)}", timestamp)

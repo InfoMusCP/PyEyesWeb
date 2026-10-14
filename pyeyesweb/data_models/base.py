@@ -1,5 +1,5 @@
 """The output contract shared by every feature: [OutputsMixin][pyeyesweb.data_models.base.OutputsMixin] gives
-`feature.outputs` and `feature.result(...)`. The call contract is in `feature.py`."""
+`feature.outputs` and `feature._result(...)`. The call contract is in `feature.py`."""
 
 import math
 from typing import Any, ClassVar, Optional
@@ -40,26 +40,26 @@ def _check_shape(output: Output, array: np.ndarray, label: Optional[str] = None)
 class OutputsMixin:
     """The output contract shared by every feature.
 
-    A feature declares its outputs once, either as the class attribute `OUTPUTS` (when they do not depend on the
+    A feature declares its outputs once, either as the class attribute `_OUTPUTS` (when they do not depend on the
     parameters) or by overriding `_schema()` (when they do, e.g. a number of joints or a global/per-axis mode).
-    It then builds every return value with `self.result(...)`:
+    It then builds every return value with `self._result(...)`:
 
         class Speed(Feature):
-            OUTPUTS = Schema(Output("speed", unit="m/s"))
+            _OUTPUTS = Schema(Output("speed", unit="m/s"))
 
             def process(self, frame, *, timestamp=None):
-                return self.result(speed=float(np.linalg.norm(frame)), timestamp=timestamp)
+                return self._result(speed=float(np.linalg.norm(frame)), timestamp=timestamp)
 
     `feature.outputs` is the [Schema][pyeyesweb.data_models.results.Schema], available before any data is seen.
     """
 
-    OUTPUTS: ClassVar[Optional[Schema]] = None
+    _OUTPUTS: ClassVar[Optional[Schema]] = None
 
     def _schema(self) -> Schema:
         """Build the outputs of this instance. Override when they depend on the parameters."""
-        if self.OUTPUTS is None:
-            raise NotImplementedError(f"{type(self).__name__} must define OUTPUTS or override _schema()")
-        return self.OUTPUTS
+        if self._OUTPUTS is None:
+            raise NotImplementedError(f"{type(self).__name__} must define _OUTPUTS or override _schema()")
+        return self._OUTPUTS
 
     @property
     def outputs(self) -> Schema:
@@ -75,7 +75,7 @@ class OutputsMixin:
         self.__dict__.pop("_inputs_cache", None)
         self.__dict__.pop("_result_type", None)
 
-    def result(self, *, status: Status = Status.OK, reason: str = "", timestamp: Optional[float] = None,
+    def _result(self, *, status: Status = Status.OK, reason: str = "", timestamp: Optional[float] = None,
                **values: Any) -> Result:
         """Build a result.
 
@@ -116,13 +116,13 @@ class OutputsMixin:
             key for key in data if values.get(key) is None)
         return result_type(schema, data, status, reason, math.nan if timestamp is None else timestamp, missing)
 
-    def finite_result(self, *, timestamp: Optional[float] = None, **values: Any) -> Result:
-        """`result(...)`, or `INVALID_INPUT` ("the result is not finite") when a computed output is NaN or infinite: an
+    def _finite_result(self, *, timestamp: Optional[float] = None, **values: Any) -> Result:
+        """`_result(...)`, or `INVALID_INPUT` ("the result is not finite") when a computed output is NaN or infinite: an
         overflow of finite data (1e300) is not an `OK` number."""
         if any(value is not None and not np.isfinite(np.asarray(value, dtype=float)).all() for value in values.values()):
-            return self.no_output(Status.INVALID_INPUT, "the result is not finite", timestamp)
-        return self.result(timestamp=timestamp, **values)
+            return self._no_output(Status.INVALID_INPUT, "the result is not finite", timestamp)
+        return self._result(timestamp=timestamp, **values)
 
-    def no_output(self, status: Status = Status.NO_OUTPUT, reason: str = "", timestamp: Optional[float] = None) -> Result:
+    def _no_output(self, status: Status = Status.NO_OUTPUT, reason: str = "", timestamp: Optional[float] = None) -> Result:
         """A result in which no output was produced."""
-        return self.result(status=status, reason=reason, timestamp=timestamp)
+        return self._result(status=status, reason=reason, timestamp=timestamp)

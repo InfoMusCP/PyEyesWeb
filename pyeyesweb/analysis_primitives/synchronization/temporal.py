@@ -32,7 +32,7 @@ class TemporalSynchronization(FrameFeature):
                       Output("efficiency_step", doc="only when progression == 1"))
 
     def _to_result(self, raw: Dict[str, Any], timestamp: float) -> Result:
-        return self.result(progression=raw["progression"], step=raw["step"], state=raw["state"],
+        return self._result(progression=raw["progression"], step=raw["step"], state=raw["state"],
                            efficiency_step=raw["efficiency_step"], timestamp=timestamp)
 
 

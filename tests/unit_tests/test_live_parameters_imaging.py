@@ -1,7 +1,7 @@
 """Live parameter changes of the imaging blocks and BinaryPulsesRegularity (checks in `tests/live_param_suite.py`).
 
 * SilhouetteBodyParts: stateless, every parameter is LIVE.
-* SilhouetteCentroids: the centroid switches, the filter switch, alpha and "add intermediate centroids" are LIVE (the filters
+* SilhouetteCentroids: the centroid `parts`, the filter switch, alpha and "add intermediate centroids" are LIVE (the filters
   are kept); the silhouette type is STRUCTURAL (EyesWeb reads it in Init()).
 * Videogram: direction and end of image mode are read by Execute(): LIVE; length and mode size the image: STRUCTURAL.
 * BinaryPulsesRegularity: the threshold is LIVE; `window` is changed through `configure` (see the windowed tests).
@@ -32,9 +32,9 @@ PULSES = [0.0] * 60 + ([1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0] * 5)[:FRAME_COUNT
 
 LIVE = [
     (lambda: SilhouetteBodyParts(), "arm_percentage", 0.6, BODIES),
-    (lambda: SilhouetteBodyParts(), "extract_head", False, BODIES),
-    (lambda: SilhouetteCentroids(), "head", False, BODIES),
-    (lambda: SilhouetteCentroids(filter_centroids=True, alpha=0.5), "right_hand", False, BODIES),
+    (lambda: SilhouetteBodyParts(), "parts", ["trunk", "left_arm", "right_arm", "left_leg", "right_leg"], BODIES),
+    (lambda: SilhouetteCentroids(), "parts", ["center_of_gravity", "left_hand"], BODIES),
+    (lambda: SilhouetteCentroids(filter_centroids=True, alpha=0.5), "parts", ["head", "left_hand"], BODIES),
     (lambda: SilhouetteCentroids(), "add_intermediate_centroids", True, BODIES),
     (lambda: BinaryPulsesRegularity(window=10, hop=2), "threshold", 1, PULSES),
 ]
@@ -47,6 +47,8 @@ INVALID = [
     (lambda: SilhouetteBodyParts(arm_percentage=0.8), "arm_percentage", float("nan"), BODIES),
     (lambda: SilhouetteCentroids(alpha=0.75), "alpha", 2.0, BODIES),
     (lambda: SilhouetteCentroids(silhouette="full"), "silhouette", "torso", BODIES),
+    (lambda: SilhouetteCentroids(), "parts", ["head", "nose"], BODIES),
+    (lambda: SilhouetteBodyParts(), "parts", ["Head", "tail"], BODIES),
     (lambda: Videogram(window=20), "window", 0, NOISE),
     (lambda: Videogram(direction="left_to_right"), "direction", "up", NOISE),
     (lambda: BinaryPulsesRegularity(window=10, threshold=0), "threshold", -1, PULSES),

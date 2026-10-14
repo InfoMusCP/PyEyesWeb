@@ -110,7 +110,7 @@ class VelocityKineticEnergyReference(StaticFeature):
 
         num_joints = velocities.shape[0]
         if velocities.size == 0:
-            return self.no_output(Status.INVALID_INPUT, "empty frame")
+            return self._no_output(Status.INVALID_INPUT, "empty frame")
 
         # 1. Validation Fail-Safes
         # Mismatches are programming errors and raise.
@@ -124,7 +124,7 @@ class VelocityKineticEnergyReference(StaticFeature):
         kinetic_energy_components = 0.5 * self.weights * (velocities ** 2)
         kinetic_energy_per_joint = kinetic_energy_components.sum(axis=1)
 
-        return self.result(
+        return self._result(
             total_energy=float(kinetic_energy_per_joint.sum()),
             component_energy=kinetic_energy_components.sum(axis=0),
             joint_energy=kinetic_energy_per_joint,

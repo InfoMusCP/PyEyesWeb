@@ -81,7 +81,7 @@ class StaticFeature(BaseFeature):
         Returns
         -------
         Result
-            Built with `self.result(...)`.
+            Built with `self._result(...)`.
         """
         pass
 
@@ -105,7 +105,7 @@ class StaticFeature(BaseFeature):
             is empty.
         """
         if len(data) == 0:
-            return self.no_output(Status.WARMING_UP, "empty window")
+            return self._no_output(Status.WARMING_UP, "empty window")
 
         # Extract the 3D tensor and grab the very last frame (the newest one)
         tensor, timestamps = data.to_tensor()
@@ -133,7 +133,7 @@ class DynamicFeature(BaseFeature):
         Returns
         -------
         Result
-            Built with `self.result(...)`; `Status.WARMING_UP` while the window is too short.
+            Built with `self._result(...)`; `Status.WARMING_UP` while the window is too short.
         """
         pass
 
@@ -156,7 +156,7 @@ class DynamicFeature(BaseFeature):
             Result for the window, stamped with the newest timestamp. `Status.WARMING_UP` if the window is empty.
         """
         if len(data) == 0:
-            return self.no_output(Status.WARMING_UP, "empty window")
+            return self._no_output(Status.WARMING_UP, "empty window")
 
         tensor, timestamps = data.to_tensor()
 

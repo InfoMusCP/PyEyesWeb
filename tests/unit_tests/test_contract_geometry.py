@@ -16,10 +16,12 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 from contract_suite import check_feature_contract  # noqa: E402
 from pyeyesweb.data_models import InputKind  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
-    BodyPartsFromCurvature, ConvexHull, ContourCurvature, TrajectoryNonPlanarity, Kinematics
+    BodyPartsFromCurvature, ConvexHull, ContourCurvature, FilterContour, Kinematics
 )
-from pyeyesweb.mid_level import Directness, PositionDependingPotentials, RegionDependingPotentials  # noqa: E402
-from pyeyesweb.physical_signals import FilterContour, HitCellDetector  # noqa: E402
+from pyeyesweb.mid_level import (  # noqa: E402
+    Directness, PositionDependingPotentials, RegionDependingPotentials, TrajectoryNonPlanarity
+)
+from pyeyesweb.physical_signals import HitCellDetector  # noqa: E402
 
 RNG = np.random.default_rng(0)
 FRAME_COUNT = 12

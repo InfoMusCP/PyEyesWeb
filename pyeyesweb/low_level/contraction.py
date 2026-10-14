@@ -6,7 +6,7 @@ bounding box areas, convex hulls and ellipsoid approximations, to track structur
 changes relative to a movement baseline.
 """
 
-from typing import Any, Optional, Sequence
+from typing import Any, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -47,8 +47,8 @@ class BoundingBoxFilledArea(FrameFeature):
     Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
     """
 
-    OUTPUTS = Schema(Output("contraction_index", doc="Ratio of convex hull area to bounding box area."))
-    INPUTS = Inputs(points_input("points", None, "points of the body configuration"))
+    _OUTPUTS = Schema(Output("contraction_index", doc="Ratio of convex hull area to bounding box area."))
+    _INPUTS = Inputs(points_input("points", None, "points of the body configuration"))
 
     EPSILON = 1e-6
 
@@ -60,7 +60,7 @@ class BoundingBoxFilledArea(FrameFeature):
     def _process(self, points: Any, timestamp: Optional[float]) -> Result:
         points = np.ascontiguousarray(points, dtype=np.float64)
         if reason := non_finite(points):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         extent = np.ptp(points, axis=0)  # the block's own test: a box of area <= epsilon gives index 0
         degenerate = 2 * (extent[0] * extent[1] + extent[0] * extent[2] + extent[1] * extent[2]) <= self._param("epsilon", self.EPSILON)
         reason = ""
@@ -73,7 +73,7 @@ class BoundingBoxFilledArea(FrameFeature):
         return self._to_result(self._block.process(points), timestamp, reason)
 
     def _to_result(self, raw: float, timestamp: Optional[float], reason: str = "") -> Result:
-        return self.result(status=Status.INVALID_INPUT if reason else Status.OK, reason=reason,
+        return self._result(status=Status.INVALID_INPUT if reason else Status.OK, reason=reason,
                            contraction_index=raw, timestamp=timestamp)
 
 
@@ -94,27 +94,32 @@ class PointsDensity(FrameFeature):
         super().__init__(**params)
         self._labels = None if labels is None else tuple(labels)
 
+    @property
+    def labels(self) -> Optional[Tuple[str, ...]]:
+        """The names of the points of array input (`None`: by index)."""
+        return self._labels
+
     def _inputs(self) -> Inputs:
         return Inputs(points_input("points", self._labels, "points whose dispersion is measured", accepts=(dict,)))
 
     def _schema(self) -> Schema:
         dim = self._param("output_dims", core.motion.PointsDensityDistanceDim.MODULE)
         if dim == core.motion.PointsDensityDistanceDim.MODULE:
-            density = Output("density", doc="dispersion around the centroid")
+            density = Output("density", unit="<length>", doc="dispersion around the centroid")
         else:
-            density = Output("density", components=XYZ, doc="per-axis dispersion around the centroid")
-        return Schema(density, Output("centroid", components=XYZ))
+            density = Output("density", components=XYZ, unit="<length>", doc="per-axis dispersion around the centroid")
+        return Schema(density, Output("centroid", components=XYZ, unit="<length>"))
 
     def _process(self, points: Any, timestamp: Optional[float]) -> Result:
         raw = self._block.process(labelled_set(points, self._labels, "PointsDensity", anonymous=True))
         if raw is None:
-            return self.no_output(Status.INVALID_INPUT, "no points", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "no points", timestamp)
         return self._to_result(raw, timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         density, centroid = np.asarray(raw[0], dtype=float), np.asarray(raw[1], dtype=float)
         finite = np.isfinite(density).all() and np.isfinite(centroid).all()
-        return self.result(status=Status.OK if finite else Status.INVALID_INPUT,
+        return self._result(status=Status.OK if finite else Status.INVALID_INPUT,
                            reason="" if finite else "NaN or infinite coordinates",
                            density=density if density.ndim else float(density), centroid=centroid, timestamp=timestamp)
 
@@ -143,7 +148,7 @@ class EllipsoidSphericity(FrameFeature):
     def _schema(self) -> Schema:
         return Schema(Output("sphericity", doc="Wadell sphericity, 1 = sphere"),
                       Output("axis_ratio", doc="minor / major radius; point-cloud input only"),
-                      Output("radii", 3, doc="fitted radii, major to minor; point-cloud input only"))
+                      Output("radii", 3, unit="<length>", doc="fitted radii, major to minor; point-cloud input only"))
 
     def _process(self, points: Any, timestamp: Optional[float]) -> Result:
         points = np.asarray(points, dtype=float)
@@ -157,13 +162,13 @@ class EllipsoidSphericity(FrameFeature):
             reason = "no extent, or NaN / infinite coordinates"
         else:
             reason = ""
-        return self.result(status=Status.INVALID_INPUT if reason else Status.OK, reason=reason,
+        return self._result(status=Status.INVALID_INPUT if reason else Status.OK, reason=reason,
                            sphericity=sphericity, axis_ratio=axis_ratio, radii=np.asarray(radii, dtype=float), timestamp=timestamp)
 
     def process_axes(self, first_axis: float, second_axis: float, third_axis: float, *, timestamp: Optional[float] = None) -> Result:
         """Sphericity of an ellipsoid of sizes `a`, `b`, `c` (the EyesWeb input); see the class documentation."""
         valid = all(np.isfinite(size) and size > 0 for size in (first_axis, second_axis, third_axis))
-        return self.result(status=Status.OK if valid else Status.INVALID_INPUT,
+        return self._result(status=Status.OK if valid else Status.INVALID_INPUT,
                            reason="" if valid else "the sizes must be positive and finite",
                            sphericity=self._block.process(first_axis, second_axis, third_axis), timestamp=timestamp)
 

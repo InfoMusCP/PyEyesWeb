@@ -39,7 +39,7 @@ class MinimumWindow:
     def _unusable(self, data: np.ndarray, timestamp: Optional[float]) -> Optional[Result]:
         """`WARMING_UP` when `data` (frames first) is shorter than the minimum, `INVALID_INPUT` when not finite."""
         if len(data) < (minimum := self._minimum_window()):
-            return self.no_output(Status.WARMING_UP, f"fewer than {minimum} frames", timestamp)
+            return self._no_output(Status.WARMING_UP, f"fewer than {minimum} frames", timestamp)
         if reason := non_finite(data, allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         return None

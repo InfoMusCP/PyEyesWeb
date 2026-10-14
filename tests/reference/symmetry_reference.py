@@ -70,7 +70,7 @@ class GeometricSymmetryReference(StaticFeature):
 
         # 1. Validation Fail-Safe
         if rows <= self._max_required_idx:
-            return self.no_output(Status.INVALID_INPUT, f"frame has {rows} joints, need index {self._max_required_idx}")
+            return self._no_output(Status.INVALID_INPUT, f"frame has {rows} joints, need index {self._max_required_idx}")
 
         # 2. Determine the Center of Symmetry (CoS)
         if self._center_idx != -1:
@@ -102,7 +102,7 @@ class GeometricSymmetryReference(StaticFeature):
 
             pair_errors.append(float(max(0.0, 1.0 - normalized_error)))
 
-        return self.result(pair_error=pair_errors)
+        return self._result(pair_error=pair_errors)
 
 
 __all__ = ["GeometricSymmetryReference"]

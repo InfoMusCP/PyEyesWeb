@@ -141,7 +141,8 @@ def _core_model(model: Any) -> Any:
         return model
     if isinstance(model, (str, os.PathLike)):
         return MassSpringModel.from_xml_file(model)._model
-    raise TypeError(f"model must be a MassSpringModel or the path of an XML model file, got {type(model).__name__}")
+    raise TypeError(f"model must be a MassSpringModel (MassSpringModel.from_xml_file(path), from_xml_string(xml), or built with "
+                    f"add_mass / add_spring) or the path of an XML model file, got {type(model).__name__}")
 
 
 def _check_rate(sampling_rate: Optional[float]) -> None:
@@ -242,13 +243,13 @@ class _ModelInput(LabelGuard):
         else:
             points = np.asarray(frame, dtype=float)
             if points.size == 0:
-                return self.no_output(Status.INVALID_INPUT, "empty frame", timestamp)
+                return self._no_output(Status.INVALID_INPUT, "empty frame", timestamp)
             rows = self._rows()
             points = np.ascontiguousarray(points if rows is None else points[rows])
         if np.isinf(points).any():
-            return self.no_output(Status.INVALID_INPUT, "infinite values", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "infinite values", timestamp)
         if np.isnan(points).all():
-            return self.no_output(Status.INVALID_INPUT, "no joint present in the frame", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "no joint present in the frame", timestamp)
         return points
 
 
@@ -470,7 +471,7 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
             raw = self._with_control(points, control, step, teleport)
         if scale != 1.0:
             raw = raw / scale
-        return self.result(joints=raw, timestamp=timestamp)
+        return self._result(joints=raw, timestamp=timestamp)
 
     def _with_control(self, points: np.ndarray, control: Any, step: float, teleport: bool) -> np.ndarray:
         joints = {name: tuple(row) for name, row in zip(HUMANOID_JOINTS, points.tolist()) if not np.isnan(row).any()}
@@ -529,7 +530,7 @@ class HumanoidOrientations(_ModelInput, FrameFeature):
         points = self._points(frame, timestamp)
         if isinstance(points, Result):
             return points
-        return self.result(directions=self._block.process_array(self._layout, points), timestamp=timestamp)
+        return self._result(directions=self._block.process_array(self._layout, points), timestamp=timestamp)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -585,6 +586,11 @@ class GenericModelOrientations(_GenericFeature, FrameFeature):
     -------
     directions : `(n_springs, 3)` array
         Bone vectors, in the unit of the data.
+
+    Examples
+    --------
+    >>> model = MassSpringModel.from_xml_file("model.xml")
+    >>> GenericModelOrientations(model).run(masses)["directions"]  # `masses`: (frames, n_masses, 3)
     """
     _core_class = _humanoid.GenericModelOrientationsExtractor
     _names_of = staticmethod(_mass_names)
@@ -594,14 +600,14 @@ class GenericModelOrientations(_GenericFeature, FrameFeature):
 
     def _schema(self) -> Schema:
         labels = self._output_labels()
-        return Schema(Output("directions", (len(labels), 3), labels=labels, components=XYZ,
+        return Schema(Output("directions", (len(labels), 3), labels=labels, components=XYZ, unit="<length>",
                              doc="vector from the first to the second mass of each spring"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         points = self._points(frame, timestamp)
         if isinstance(points, Result):
             return points
-        return self.result(directions=self._block.process_array(self._model_layout(), points), timestamp=timestamp)
+        return self._result(directions=self._block.process_array(self._model_layout(), points), timestamp=timestamp)
 
 
 class _Directions(_GenericFeature):
@@ -670,6 +676,12 @@ class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
     -------
     positions : `(n_masses, 3)` array
         Positions of the masses, in `units`.
+
+    Examples
+    --------
+    >>> model = MassSpringModel.from_xml_file("model.xml")
+    >>> simulator = GenericModelSimulator(model, units="mm", sampling_rate=100)
+    >>> simulator.process(directions).positions  # `directions`: the output of GenericModelOrientations
     """
     _core_class = _humanoid.GenericModelSimulator
 
@@ -686,7 +698,7 @@ class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
             return points
         step = self._time_step(timestamp)
         raw = self._block.process_array(self._model_layout(), points, step, reset_to_input=self._teleport())
-        return self.result(positions=raw, timestamp=timestamp)
+        return self._result(positions=raw, timestamp=timestamp)
 
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="GenericModelPredictor")
@@ -724,6 +736,12 @@ class GenericModelPredictor(_Units, _Timed, _Directions, CoreFeature):
     -------
     positions : `(n_masses, 3)` array
         Predicted positions of the masses, in `units`.
+
+    Examples
+    --------
+    >>> model = MassSpringModel.from_xml_file("model.xml")
+    >>> predictor = GenericModelPredictor(model, units="mm", sampling_rate=100, prediction_interval=0.1)
+    >>> predictor.process(directions).positions  # `directions`: the output of GenericModelOrientations
     """
     _core_class = _humanoid.GenericModelPredictor
 
@@ -738,7 +756,7 @@ class GenericModelPredictor(_Units, _Timed, _Directions, CoreFeature):
         if isinstance(points, Result):
             return points
         step = self._time_step(timestamp)
-        return self.result(positions=self._block.process_array(self._model_layout(), points, step), timestamp=timestamp)
+        return self._result(positions=self._block.process_array(self._model_layout(), points, step), timestamp=timestamp)
 
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="GenericModelEstimator")
@@ -789,6 +807,13 @@ class GenericModelEstimator(_Units, _Timed, _GenericFeature, CoreFeature):
         Simulated positions of the masses, in `units`.
     error : float
         Cost of the frame.
+
+    Examples
+    --------
+    >>> model = MassSpringModel.from_xml_file("model.xml")
+    >>> estimator = GenericModelEstimator(model, units="mm", sampling_rate=100, estimate_masses=True)
+    >>> result = estimator.process(masses)      # `masses`: one frame of mass positions
+    >>> result.error, estimator.model            # the cost of the frame, the model as estimated so far
     """
     _core_class = _humanoid.GenericModelEstimator
     _names_of = staticmethod(_mass_names)
@@ -811,7 +836,7 @@ class GenericModelEstimator(_Units, _Timed, _GenericFeature, CoreFeature):
             return points
         step = self._time_step(timestamp)
         positions, error = self._block.process_array(self._model_layout(), points, step)
-        return self.finite_result(positions=positions, error=error, timestamp=timestamp)
+        return self._finite_result(positions=positions, error=error, timestamp=timestamp)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -860,7 +885,7 @@ class PointsPredictor(FrameFeature):
 
     def _schema(self) -> Schema:
         return Schema(Output("predicted", (len(self._labels), 3), labels=self._labels, components=XYZ,
-                             doc="linear extrapolation of each point one frame ahead"))
+                             unit="<length>", doc="linear extrapolation of each point one frame ahead"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         if isinstance(frame, dict):
@@ -871,12 +896,12 @@ class PointsPredictor(FrameFeature):
         else:
             points = np.asarray(frame, dtype=float)
             if points.size == 0:
-                return self.no_output(Status.INVALID_INPUT, "empty frame", timestamp)
+                return self._no_output(Status.INVALID_INPUT, "empty frame", timestamp)
         if np.isinf(points).any():
-            return self.no_output(Status.INVALID_INPUT, "infinite values", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "infinite values", timestamp)
         if np.isnan(points).all():
-            return self.no_output(Status.INVALID_INPUT, "no point present in the frame", timestamp)
-        return self.result(predicted=self._block.process_array(self._layout, points), timestamp=timestamp)
+            return self._no_output(Status.INVALID_INPUT, "no point present in the frame", timestamp)
+        return self._result(predicted=self._block.process_array(self._layout, points), timestamp=timestamp)
 
 
 __all__ = ["HumanoidSimulator", "HumanoidOrientations", "GenericModelOrientations", "GenericModelSimulator",

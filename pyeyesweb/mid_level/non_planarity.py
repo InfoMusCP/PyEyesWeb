@@ -12,7 +12,7 @@ _trajectory = core.trajectory
 average_curvature_3d = _trajectory.average_curvature_3d
 
 
-@describe(Layer.LOW_LEVEL, eyesweb="GetAverageCurvatue (Curvature3D)")
+@describe(Layer.MID_LEVEL, eyesweb="GetAverageCurvatue (Curvature3D)")
 class TrajectoryNonPlanarity(PointListFeature):
     """EyesWeb GetAverageCurvatue (Curvature3D), the mean distance of a trajectory from local best-fit planes.
     `process(points, *, timestamp=None)`, an `(n, D)` array of points, row 0 = newest (`run` takes `(T, n, D)`).
@@ -26,7 +26,8 @@ class TrajectoryNonPlanarity(PointListFeature):
 
     def _schema(self) -> Schema:
         radius = self._param("output_type", _trajectory.CurvatureOutputType.CURVATURE_RADIUS) ==             _trajectory.CurvatureOutputType.CURVATURE_RADIUS
-        return Schema(Output("curvature_radius" if radius else "curvature"))
+        units = self._params["units"]
+        return Schema(Output("curvature_radius", unit=units) if radius else Output("curvature", unit=f"1/{units}"))
 
     def _rejection(self, points: np.ndarray) -> str:
         return "fewer than 2 points" if points.shape[1] == 3 and len(points) < 2 else ""

@@ -35,7 +35,7 @@ class BoundingBoxFilledAreaReference(StaticFeature):
     Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
     """
 
-    OUTPUTS = Schema(Output("contraction_index", doc="Ratio of convex hull area to bounding box area."))
+    _OUTPUTS = Schema(Output("contraction_index", doc="Ratio of convex hull area to bounding box area."))
 
     EPSILON = 1e-6
 
@@ -85,13 +85,13 @@ class BoundingBoxFilledAreaReference(StaticFeature):
             Output `contraction_index` (float).
         """
         if len(frame_data) == 0:
-            return self.no_output(Status.INVALID_INPUT, "empty frame")
+            return self._no_output(Status.INVALID_INPUT, "empty frame")
         hull_area, hull_points = self._get_hull_data(frame_data)
         bbox_area, bbox_points = self._get_aabb_data(frame_data)
 
         index = (hull_area / bbox_area) if bbox_area > self.EPSILON else 0.0
 
-        return self.result(contraction_index=float(index))
+        return self._result(contraction_index=float(index))
 
 
 @describe(Layer.LOW_LEVEL)
@@ -113,7 +113,7 @@ class EllipsoidFitSphericityReference(StaticFeature):
     Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
     """
 
-    OUTPUTS = Schema(Output("sphericity", doc="Ratio of the smallest to the largest ellipsoid radius."))
+    _OUTPUTS = Schema(Output("sphericity", doc="Ratio of the smallest to the largest ellipsoid radius."))
 
     EPSILON = 1e-6
 
@@ -149,14 +149,14 @@ class EllipsoidFitSphericityReference(StaticFeature):
             Output `sphericity` (float).
         """
         if len(frame_data) == 0:
-            return self.no_output(Status.INVALID_INPUT, "empty frame")
+            return self._no_output(Status.INVALID_INPUT, "empty frame")
         radii, rotation = self._fit_ellipsoid_pca(frame_data)
         major, minor = radii[0], radii[2]
 
         if major < self.EPSILON:
-            return self.result(sphericity=0.0)
+            return self._result(sphericity=0.0)
 
-        return self.result(sphericity=float(minor / major))
+        return self._result(sphericity=float(minor / major))
 
 
 __all__ = ["BoundingBoxFilledAreaReference", "EllipsoidFitSphericityReference"]

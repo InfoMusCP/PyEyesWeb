@@ -18,7 +18,7 @@ from live_param_suite import NOTE, check_invalid, check_live, check_structural, 
 
 from pyeyesweb.analysis_primitives.signal_events import ScalarPeakDetector
 from pyeyesweb.low_level.kinematics import Kinematics
-from pyeyesweb.low_level import TrajectoryNonPlanarity
+from pyeyesweb.mid_level import TrajectoryNonPlanarity
 from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials
 from pyeyesweb.physical_signals.space import HitCellDetector
 
@@ -48,7 +48,7 @@ LIVE = [
     (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4), "x_max", 2.0, HITS),
     (lambda: PositionDependingPotentials(potential_type="gaussian", **_GRID),
      "gaussian_sigma_x", 2.0, CELLS),
-    (lambda: RegionDependingPotentials(**_GRID), "output_region_values", True, CELLS),
+    (lambda: RegionDependingPotentials(**_GRID), "parts", ["potential", "region_values"], CELLS),
     (lambda: ScalarPeakDetector(window=5, threshold=0.01), "threshold", 0.5, PEAK_SIGNAL),
 ]
 STRUCTURAL = [
@@ -105,7 +105,7 @@ def test_potential_in_percentage_rescales_the_occupation_rates_and_keeps_them():
 
 
 def test_region_mask_change_keeps_the_region_values():
-    feature = RegionDependingPotentials(output_region_values=True, mask=np.zeros((4, 4), dtype=int), **_GRID)
+    feature = RegionDependingPotentials(parts=["potential", "region_values"], mask=np.zeros((4, 4), dtype=int), **_GRID)
     feed(feature, CELLS[:20])
     before = feature.process(CELLS[20]).region_values.copy()
     feature.mask = np.arange(16).reshape(4, 4) % 10

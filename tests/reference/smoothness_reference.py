@@ -28,7 +28,7 @@ class SpeedSmoothnessReference(DynamicFeature):
         `Status.WARMING_UP` when the window holds fewer than 10 samples.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("sparc", doc="Spectral arc length (SPARC); closer to 0 is smoother."),
         Output("jerk_rms", doc="Root-mean-square jerk of the speed profile."),
         Output("ldlj_v", doc="Log dimensionless jerk computed on the velocity signal."),
@@ -39,7 +39,7 @@ class SpeedSmoothnessReference(DynamicFeature):
     )
 
     def _schema(self) -> Schema:
-        return self.OUTPUTS.select(self.metrics)
+        return self._OUTPUTS.select(self.metrics)
 
     _ALLOWED_METRICS = [
         "sparc", "jerk_rms", "ldlj_v", "ldlj_a", 
@@ -137,11 +137,11 @@ class SpeedSmoothnessReference(DynamicFeature):
         speed_profile = window_data.ravel()
         
         if len(speed_profile) < 10:
-            return self.no_output(Status.WARMING_UP, "fewer than 10 samples")
+            return self._no_output(Status.WARMING_UP, "fewer than 10 samples")
 
         # Zero-velocity check
         # if np.mean(speed_profile) < self.min_speed_threshold or np.max(speed_profile) < (self.min_speed_threshold * 1.5):
-        #    return self.no_output(Status.INVALID_INPUT, "speed below threshold")
+        #    return self._no_output(Status.INVALID_INPUT, "speed below threshold")
 
         filtered_speed = self._filter_signal(speed_profile)
 
@@ -174,7 +174,7 @@ class SpeedSmoothnessReference(DynamicFeature):
         if "n_submovements" in self.metrics:
             values["n_submovements"] = int(compute_submovement_count(filtered_speed, self.rate_hz))
 
-        return self.result(**values)
+        return self._result(**values)
 
 
 __all__ = ["SpeedSmoothnessReference"]

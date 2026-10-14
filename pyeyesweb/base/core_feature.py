@@ -19,7 +19,7 @@ XYZ = ("x", "y", "z")
 XY = ("x", "y")
 
 # Names owned by the output contract; never forwarded to the C++ block.
-_CONTRACT_NAMES = frozenset({"inputs", "outputs", "result", "no_output"})
+_CONTRACT_NAMES = frozenset({"inputs", "outputs"})
 
 # Factor of one metre in the data unit, for the `units` argument of the features with unit-sensitive parameters.
 _UNIT_FACTORS = {"m": 1.0, "mm": 1000.0}
@@ -139,11 +139,14 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
     _unit_params: ClassVar[dict] = {}
     _hidden_params: ClassVar[frozenset] = frozenset()  # block parameters the wrapper replaces by a parameter of its own
     _core_names: ClassVar[dict] = {}  # public parameter name -> name in the block, for the names the library spells out
+    _parts: ClassVar[dict] = {}  # `parts=` choices -> the bool parameter of the block that switches each one on
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         """A feature backed by a block shows the parameters of its constructor: `inspect.signature(cls)` merges the
         Python parameters of its `__init__` with those of the block, read from the nanobind signature."""
         super().__init_subclass__(**kwargs)
+        if cls._parts:
+            cls._hidden_params = cls._hidden_params | frozenset(cls._parts.values())
         if cls._core_class is not None:
             cls.__signature__ = core_signature(cls, core)
             for member in vars(cls).values():  # the `from_*` constructors show the constructor's parameters but one
@@ -155,6 +158,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
             params.setdefault("units", "m")
         if self._timed:
             params.setdefault("sampling_rate", None)
+        if self._parts:
+            params.setdefault("parts", type(self).__signature__.parameters["parts"].default)
         self._params = self._coerce_choices(params)
         self._built = None
         self._state_lost_pending = False
@@ -174,6 +179,9 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         for name, (_, is_sequence) in self._core_enums().items():  # one choice given where the block takes a list
             if is_sequence and name in out and not isinstance(out[name], list):
                 out[name] = [out[name]]
+        if "parts" in out:  # the chosen parts switch on their block parameters, the others off
+            chosen = out.pop("parts")
+            out.update({flag: part in chosen for part, flag in self._parts.items()})
         factor = _UNIT_FACTORS[params.get("units", "m")]
         if factor != 1.0:
             defaults = self._unit_defaults()
@@ -257,13 +265,13 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         self._state_lost_pending = True
         self._previous_t = None
 
-    def result(self, *, reason: str = "", **values: Any) -> Result:
+    def _result(self, *, reason: str = "", **values: Any) -> Result:
         if self.__dict__.get("_untimed"):
             reason = f"{reason}; {_PER_SAMPLE_NOTE}" if reason else _PER_SAMPLE_NOTE
         if self._state_lost_pending:
             self._state_lost_pending = False
             reason = f"{_STATE_RESET_NOTE}; {reason}" if reason else _STATE_RESET_NOTE
-        return super().result(reason=reason, **values)
+        return super()._result(reason=reason, **values)
 
     @classmethod
     def _core_params(cls) -> frozenset:
@@ -293,6 +301,12 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         return enums
 
     @classmethod
+    def _default_parts(cls) -> tuple:
+        """The parts whose block parameter is on by default, in declaration order."""
+        defaults = {parameter.name: parameter.default for parameter in _nb_parameters(core, cls._core_class, cls._public_names())}
+        return tuple(part for part, flag in cls._parts.items() if defaults[flag])
+
+    @classmethod
     def _core_bools(cls) -> frozenset:
         """Names of the `bool` parameters of `_core_class`, read once per class."""
         names = cls.__dict__.get("_core_bools_cache")
@@ -316,6 +330,10 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         for name in cls._core_bools().intersection(out):
             if not isinstance(out[name], bool):
                 raise TypeError(f"{name} must be True or False, got {out[name]!r}")
+        if "parts" in out:
+            chosen = [out["parts"]] if isinstance(out["parts"], str) else out["parts"]
+            chosen = {coerce_choice(part, cls._parts, "parts") for part in chosen}
+            out["parts"] = tuple(part for part in cls._parts if part in chosen)
         for name, (enum_cls, is_sequence) in cls._core_enums().items():
             value = out.get(name)
             if value is not None:

@@ -48,7 +48,7 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
         `"quantile"` algorithm cannot fit the window, as in `Suddenness`; `WARMING_UP` below 6 frames.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("impulsivity_index", doc="Direction change times suddenness (0 when not sudden)."),
     )
 
@@ -109,7 +109,8 @@ class ContractionImpulsivity(CoreFeature):
                       Input("contraction_index", InputKind.SAMPLE, (1,), doc="contraction index"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("impulsivity_index", doc="contraction-index change per second"),
+        per = "s" if self._params["sampling_rate"] else "frame"
+        return Schema(Output("impulsivity_index", unit=f"1/{per}", doc="contraction-index change per second"),
                       Output("gesture_duration", unit="frames"))
 
     def process(self, quantity_of_motion: Any, contraction_index: Any, *, timestamp: Optional[float] = None) -> Result:
@@ -118,7 +119,7 @@ class ContractionImpulsivity(CoreFeature):
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         index, duration = raw
-        return self.result(impulsivity_index=index, gesture_duration=duration, timestamp=timestamp)
+        return self._result(impulsivity_index=index, gesture_duration=duration, timestamp=timestamp)
 
 
 __all__ = ["SuddennessImpulsivity", "ContractionImpulsivity"]

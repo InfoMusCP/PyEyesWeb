@@ -62,20 +62,20 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     series leads.
     """
     _core_class = _sync.EventSynchronization
-    INPUTS = Inputs(_train("first_signal"), _train("second_signal"))
+    _INPUTS = Inputs(_train("first_signal"), _train("second_signal"))
 
     def _schema(self) -> Schema:
         return Schema(Output("synchronization", doc="Q in [0, 1]"), Output("delay", doc="q in [-1, 1]"))
 
     def _to_result(self, raw: Tuple[float, float], timestamp: float) -> Result:
-        return self.result(synchronization=raw[0], delay=raw[1], timestamp=timestamp)
+        return self._result(synchronization=raw[0], delay=raw[1], timestamp=timestamp)
 
 
 class _MECSBlock(_NonOverlapping, _SeriesBlock):
     """A MECS block accumulates across executions."""
 
     def _to_result(self, raw: Tuple[np.ndarray, np.ndarray], timestamp: float) -> Result:
-        return self.result(synchronization=raw[0][0], events=raw[1][0], timestamp=timestamp)
+        return self._result(synchronization=raw[0][0], events=raw[1][0], timestamp=timestamp)
 
     def _call_block(self, args: Sequence[Any]) -> Any:
         return self._block.process(list(args))
@@ -117,7 +117,7 @@ class NonlinearInterdependence(_TrainPairBlock):
     Outputs `first_to_second_interdependence` = S(X|Y), `second_to_first_interdependence` = S(Y|X): nonlinear interdependence; `threshold`: the block's threshold output.
     """
     _core_class = _sync.EventSynchronizationInterdependence
-    INPUTS = Inputs(_train("first_signal", "signal"), _train("second_signal", "signal"))
+    _INPUTS = Inputs(_train("first_signal", "signal"), _train("second_signal", "signal"))
 
     def _minimum_window(self, **overrides: Any) -> int:
         params = {**self._params, **overrides}
@@ -128,7 +128,7 @@ class NonlinearInterdependence(_TrainPairBlock):
                       Output("second_to_first_interdependence", doc="S(Y|X)"), Output("threshold"))
 
     def _to_result(self, raw: Tuple[float, float, float], timestamp: float) -> Result:
-        return self.finite_result(first_to_second_interdependence=raw[0], second_to_first_interdependence=raw[1],
+        return self._finite_result(first_to_second_interdependence=raw[0], second_to_first_interdependence=raw[1],
                                   threshold=raw[2], timestamp=timestamp)
 
 
@@ -171,7 +171,7 @@ class SpikeSynchronization(_SeriesBlock):
 
     def _to_result(self, raw: Tuple[Any, float, float], timestamp: float) -> Result:
         profile, degree, distance = raw
-        return self.result(degree=degree, distance=distance, profile=None if profile is None else profile[0], timestamp=timestamp)
+        return self._result(degree=degree, distance=distance, profile=None if profile is None else profile[0], timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="SequenceDetector")
@@ -183,7 +183,7 @@ class SequenceDetector(FrameFeature):
     Outputs `is_completed` (a sequence was completed by this event) and `sequence_count` (total completed so far).
     """
     _core_class = _sync.SequenceDetector
-    INPUTS = Inputs(Input("event", InputKind.SAMPLE, (1,), doc="event id, 0 = none", integer=True))
+    _INPUTS = Inputs(Input("event", InputKind.SAMPLE, (1,), doc="event id, 0 = none", integer=True))
 
     def _schema(self) -> Schema:
         return Schema(Output("is_completed", kind=bool), Output("sequence_count", kind=int))
@@ -192,7 +192,7 @@ class SequenceDetector(FrameFeature):
         return self._to_result(self._block.process(int(train(event)[0])), timestamp)
 
     def _to_result(self, raw: bool, timestamp: float) -> Result:
-        return self.result(is_completed=raw, sequence_count=self._block.number_of_sequences, timestamp=timestamp)
+        return self._result(is_completed=raw, sequence_count=self._block.number_of_sequences, timestamp=timestamp)
 
 
 __all__ = ["EventSynchronization", "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization",

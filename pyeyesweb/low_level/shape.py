@@ -1,4 +1,4 @@
-"""Shape of contours and point clouds: curvature, convex hull, body parts from curvature.
+"""Shape of contours and point clouds: contour filter, curvature, convex hull, body parts from curvature.
 
 A contour is one frame of `(x, y)` points, an `(N, 2)` array. Every feature declares its outputs as a `Schema` (`feature.outputs`) and returns a
 `Result` (see `pyeyesweb.data_models`).
@@ -8,14 +8,46 @@ from typing import Any, Optional
 
 import numpy as np
 
-from pyeyesweb.physical_signals._contour import CONTOUR, ContourFeature
 from pyeyesweb._core import core
-from pyeyesweb.base.core_feature import XY, CoreFeature
+from pyeyesweb.base.core_feature import XY, CoreFeature, FrameFeature
+from pyeyesweb.base.inputs import non_finite, points_input
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
-from pyeyesweb.data_models.results import Output, Result, Schema
+from pyeyesweb.data_models.results import Output, Result, Schema, Status
 
 _motion = core.motion
+
+CONTOUR = points_input("contour", None, "contour points (x, y)", dims=2)
+
+
+class ContourFeature(FrameFeature):
+    """A block taking one `(N, 2)` contour per call; an empty or non-finite one is `INVALID_INPUT`."""
+    _INPUTS = Inputs(CONTOUR)
+
+    def _process(self, contour: Any, timestamp: Optional[float]) -> Result:
+        if reason := non_finite(contour):
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
+        return self._to_result(self._block.process(contour), timestamp)
+
+
+@describe(Layer.LOW_LEVEL, eyesweb="filter_contour (FilterContour)")
+class FilterContour(ContourFeature):
+    """EyesWeb FilterContour. `process(contour, *, timestamp=None)`, `contour` an `(N, 2)` array of points (`run` takes
+    `(T, N, 2)`); `timestamp` is the timestamp in seconds.
+
+    Output `contour`: `(N, 2)` smoothed contour (components x, y). `NO_OUTPUT` when the window is not shorter
+    than the contour.
+    """
+    _core_class = _motion.FilterContour
+    _core_names = {"window": "window_length", "gaussian_sigma": "sigma_value"}
+
+    def _schema(self) -> Schema:
+        return Schema(Output("contour", (None, 2), components=XY, unit="<length>", doc="smoothed contour"))
+
+    def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
+        if len(raw) == 0:
+            return self._no_output(Status.NO_OUTPUT, "contour not longer than the filter window", timestamp)
+        return self._result(timestamp=timestamp, contour=raw)
 
 
 @describe(Layer.LOW_LEVEL, eyesweb="contourstolist (CurvatureFunction)")
@@ -27,10 +59,10 @@ class ContourCurvature(ContourFeature):
     _core_class = _motion.ContourCurvature
 
     def _schema(self) -> Schema:
-        return Schema(Output("curvature", (None,), doc="curvature per contour point"))
+        return Schema(Output("curvature", (None,), unit="1/<length>", doc="curvature per contour point"))
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.result(timestamp=timestamp, curvature=raw)
+        return self._result(timestamp=timestamp, curvature=raw)
 
 
 @describe(Layer.LOW_LEVEL, eyesweb="body_parts_from_curvature")
@@ -43,11 +75,11 @@ class BodyPartsFromCurvature(CoreFeature):
     """
     _core_class = _motion.BodyPartsFromCurvature
     _core_names = {"number_of_points": "points_number"}
-    INPUTS = Inputs(Input("curvature", InputKind.SAMPLE, (None,), doc="curvature of each contour point"), CONTOUR)
+    _INPUTS = Inputs(Input("curvature", InputKind.SAMPLE, (None,), doc="curvature of each contour point"), CONTOUR)
 
     def _schema(self) -> Schema:
-        return Schema(Output("minimums", components=XY, labelled=True, doc="points at curvature minima"),
-                      Output("maximums", components=XY, labelled=True, doc="points at curvature maxima"))
+        return Schema(Output("minimums", components=XY, labelled=True, unit="<length>", doc="points at curvature minima"),
+                      Output("maximums", components=XY, labelled=True, unit="<length>", doc="points at curvature maxima"))
 
     def process(self, curvature: Any, contour: Any, *, timestamp: Optional[float] = None) -> Result:
         if len(np.atleast_1d(curvature)) != len(contour) and len(contour) and np.size(curvature):
@@ -57,7 +89,7 @@ class BodyPartsFromCurvature(CoreFeature):
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         minimums, maximums = raw
-        return self.result(timestamp=timestamp, minimums=minimums, maximums=maximums)
+        return self._result(timestamp=timestamp, minimums=minimums, maximums=maximums)
 
 
 @describe(Layer.LOW_LEVEL, eyesweb="ConvexHull")
@@ -72,10 +104,10 @@ class ConvexHull(ContourFeature):
     _core_class = _motion.ConvexHull
 
     def _schema(self) -> Schema:
-        return Schema(Output("hull", (None, 2), components=XY, doc="convex hull vertices"))
+        return Schema(Output("hull", (None, 2), components=XY, unit="<length>", doc="convex hull vertices"))
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.result(timestamp=timestamp, hull=raw)
+        return self._result(timestamp=timestamp, hull=raw)
 
 
-__all__ = ["ContourCurvature", "ConvexHull", "BodyPartsFromCurvature"]
+__all__ = ["FilterContour", "ContourCurvature", "ConvexHull", "BodyPartsFromCurvature"]

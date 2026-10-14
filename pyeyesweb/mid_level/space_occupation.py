@@ -25,7 +25,7 @@ _DEFAULT_REGIONS = 10
 
 
 def _no_input(block: CoreFeature, timestamp: float) -> Result:
-    return block.no_output(Status.NO_OUTPUT, "empty input list", timestamp)
+    return block._no_output(Status.NO_OUTPUT, "empty input list", timestamp)
 
 
 _CELLS = points_input("cells", None, "hit cells (i, j) = (row, column)", dims=2)
@@ -44,7 +44,7 @@ class PositionDependingPotentials(FrameFeature):
     _core_names = {"window": "window_size", "gaussian_sigma_x": "std_dev_x", "gaussian_sigma_y": "std_dev_y",
                    "gaussian_correlation": "rho", "use_custom_amplitude": "use_cust_ampl",
                    "custom_amplitude": "cust_ampl", "use_custom_distance": "use_cust_dist", "custom_distance": "cust_dist"}
-    INPUTS = Inputs(_CELLS)
+    _INPUTS = Inputs(_CELLS)
 
     def _schema(self) -> Schema:
         shape = (int(self._param("cells_along_y", _DEFAULT_CELLS)), int(self._param("cells_along_x", _DEFAULT_CELLS)))
@@ -54,14 +54,14 @@ class PositionDependingPotentials(FrameFeature):
         try:
             raw = self._block.process(cells)
         except ValueError as exc:
-            return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
+            return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
         return self._to_result(raw, timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         potential, error = raw
         if potential is None:
-            return self.no_output(Status.INVALID_INPUT, error, timestamp) if error else _no_input(self, timestamp)
-        return self.result(timestamp=timestamp, potential=potential)
+            return self._no_output(Status.INVALID_INPUT, error, timestamp) if error else _no_input(self, timestamp)
+        return self._result(timestamp=timestamp, potential=potential)
 
 
 @describe(Layer.MID_LEVEL, eyesweb="RegionDependingPotentials")
@@ -70,7 +70,7 @@ class RegionDependingPotentials(FrameFeature):
 
     `hits`: an `(N, 2)` array of `(i, j)` cells (`input_kind=RegionInputKind.CELLS`, default; input `cells`) or `N`
     region indexes (`HIT_REGIONS`; input `regions`, a sample of `N` channels). `run` takes one such array per sample. `mask` gives the region of each cell (default all 0), `number_of_regions` the number of regions.
-    Outputs, each declared only when its `output_*` parameter is on: `potential` `(cells_along_y, cells_along_x)`,
+    Outputs, each declared only when it is in `parts` (default `("potential",)`): `potential` `(cells_along_y, cells_along_x)`,
     `hit_regions` `(number_of_regions,)` int 0/1, `hit_region_indexes` `(n,)` int (one per input item), `region_values`
     `(number_of_regions,)`. `NO_OUTPUT` for an empty list; `INVALID_INPUT` when the compute is rejected (with region
     input, `hit_regions` / `hit_region_indexes` are still produced, as in EyesWeb, see `result.valid`).
@@ -80,9 +80,8 @@ class RegionDependingPotentials(FrameFeature):
     _core_class = _space.RegionDependingPotentials
     _core_names = {"number_of_regions": "num_of_regions", "region_initial_values": "reg_init_values"}
 
-    _OUTPUT_FLAGS = (("potential", "output_potential_matrix", True), ("hit_regions", "output_hit_regions", False),
-                     ("hit_region_indexes", "output_hit_region_indexes", False),
-                     ("region_values", "output_region_values", False))
+    _parts = {"potential": "output_potential_matrix", "hit_regions": "output_hit_regions",
+              "hit_region_indexes": "output_hit_region_indexes", "region_values": "output_region_values"}
 
     def _schema(self) -> Schema:
         rows = int(self._param("cells_along_y", _DEFAULT_CELLS))
@@ -95,7 +94,7 @@ class RegionDependingPotentials(FrameFeature):
                                          doc="region of each input item, in input order"),
             "region_values": Output("region_values", regions, doc="value of each region"),
         }
-        return Schema(*(every[name] for name, flag, default in self._OUTPUT_FLAGS if self._param(flag, default)))
+        return Schema(*(every[name] for name in self._params["parts"]))
 
     def _inputs(self) -> Inputs:
         if self._param("input_kind", _space.RegionInputKind.CELLS) == _space.RegionInputKind.CELLS:
@@ -106,7 +105,7 @@ class RegionDependingPotentials(FrameFeature):
         try:
             raw = self._block.process(hits)
         except ValueError as exc:
-            return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
+            return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
         return self._to_result(raw, timestamp)
 
     def _to_result(self, raw: Dict[str, Any], timestamp: Optional[float]) -> Result:
@@ -114,8 +113,8 @@ class RegionDependingPotentials(FrameFeature):
         if all(value is None for value in values.values()) and not raw["error"]:
             return _no_input(self, timestamp)
         if raw["error"]:
-            return self.result(status=Status.INVALID_INPUT, reason=raw["error"], timestamp=timestamp, **values)
-        return self.result(timestamp=timestamp, **values)
+            return self._result(status=Status.INVALID_INPUT, reason=raw["error"], timestamp=timestamp, **values)
+        return self._result(timestamp=timestamp, **values)
 
     def trigger_reset(self) -> None:
         """EyesWeb's Reset trigger parameter (differs from `reset()`, see the class docs)."""

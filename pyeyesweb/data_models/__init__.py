@@ -21,3 +21,7 @@ __all__ = [
     "Feature",
     "WindowedFeature",
 ]
+
+
+def __dir__():
+    return sorted(__all__)

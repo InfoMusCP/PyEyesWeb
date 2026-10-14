@@ -165,12 +165,12 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
         """
         signals = np.atleast_2d(np.asarray(series, dtype=float))
         if reason := non_finite(signals):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
 
         raw = self._block.process(np.ascontiguousarray(signals))
         if raw is None:
-            return self.no_output(Status.WARMING_UP, f"fewer than {self.minimum_points} samples", timestamp)
-        return self.result(complexity_index=raw[0], scale_entropies=raw[1], timestamp=timestamp)
+            return self._no_output(Status.WARMING_UP, f"fewer than {self.minimum_points} samples", timestamp)
+        return self._result(complexity_index=raw[0], scale_entropies=raw[1], timestamp=timestamp)
 
 
 __all__ = ['MultiScaleEntropy']

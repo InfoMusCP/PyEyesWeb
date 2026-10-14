@@ -11,13 +11,16 @@ from .smoothness import (
 )
 from .equilibrium import Equilibrium
 from .direction_change import DirectionChange
-from .shape import ContourCurvature, ConvexHull, BodyPartsFromCurvature
-from .non_planarity import TrajectoryNonPlanarity, average_curvature_3d
+from .shape import FilterContour, ContourCurvature, ConvexHull, BodyPartsFromCurvature
 from .motion_noise import MotionNoiseDetector
 
 __all__ = [
     "Kinematics", "KineticEnergy", "BoundingBoxFilledArea", "EllipsoidSphericity", "PointsDensity", "Symmetry",
     "TriangleSymmetry", "SpectralArcLength", "LogDimensionlessJerk", "Harmonicity", "SubmovementCount",
-    "CurvatureDispersion", "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange", "ContourCurvature",
-    "ConvexHull", "BodyPartsFromCurvature", "TrajectoryNonPlanarity", "average_curvature_3d", "MotionNoiseDetector"
+    "CurvatureDispersion", "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange", "FilterContour",
+    "ContourCurvature", "ConvexHull", "BodyPartsFromCurvature", "MotionNoiseDetector"
 ]
+
+
+def __dir__():
+    return sorted(__all__)

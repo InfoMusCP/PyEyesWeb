@@ -114,8 +114,7 @@ def test_region_potentials_default_schema_is_potential_only():
 
 def test_region_potentials_schema_follows_enabled_outputs():
     block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4,
-                                        output_potential_matrix=False, output_hit_regions=True,
-                                        output_hit_region_indexes=True, output_region_values=True,
+                                        parts=["Hit-Regions", "hit_region_indexes", "region values"],
                                         decrement_factor=0.5)
     assert block.outputs.names == ("hit_regions", "hit_region_indexes", "region_values")
     assert block.outputs["hit_regions"].shape == (4,) and block.outputs["hit_regions"].kind is int
@@ -126,13 +125,13 @@ def test_region_potentials_schema_follows_enabled_outputs():
     assert result.hit_regions.tolist() == [1, 0, 1, 0] and result.hit_region_indexes.tolist() == [0, 2]
     assert result.region_values.tolist() == [1, -0.5, 1, 0]  # region 3 has no cell: never updated
     with pytest.raises(ValueError):
-        RegionDependingPotentials(output_potential_matrix=False)
+        RegionDependingPotentials(parts=[])
 
 
 def test_region_potentials_region_input_and_partial_outputs_on_error():
     block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4,
-                                        input_kind="hit_regions", output_hit_regions=True,
-                                        output_hit_region_indexes=True)
+                                        input_kind="hit_regions",
+                                        parts=["potential", "hit_regions", "hit_region_indexes"])
     ok = block.process([1])
     assert ok.ok and ok.potential.tolist() == [[-1, -1, 1, -1]]
     bad = block.process([0, 9])
@@ -144,7 +143,7 @@ def test_region_potentials_region_input_and_partial_outputs_on_error():
 
 
 def test_region_potentials_reset_trigger():
-    kw = dict(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4, output_region_values=True,
+    kw = dict(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4, parts=["region_values"],
               initialization_matrix=np.array([[1.0, 2, 3, 4]]))
     block = RegionDependingPotentials(**kw)
     assert block.region_values.tolist() == [2, 3, 4, 0]
@@ -161,7 +160,7 @@ def test_region_potentials_reset_trigger():
 @pytest.mark.parametrize("ptype", [count.lower() for count in core.space.RegionPotentialType.__members__])
 def test_region_potentials_every_type_with_a_recorder(ptype):
     block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4,
-                                        potential_type=ptype, output_hit_regions=True, output_region_values=True)
+                                        potential_type=ptype, parts=["potential", "hit_regions", "region_values"])
     rec = Recorder(block)
     for cells in ([(0, 0)], [(0, 2)], [], [(0, 3), (0, 1)]):
         rec.append(block.process(cells))

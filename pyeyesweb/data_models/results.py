@@ -38,6 +38,9 @@ class Status(enum.IntEnum):
     INVALID_INPUT = 3
     """The input cannot be processed (empty, too short, degenerate); `Result.reason` says why."""
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Output:
     """Declaration of one output of a feature.
@@ -56,7 +59,9 @@ class Output:
     labels : sequence of str, optional
         Names of the entries along the first axis, e.g. joint names.
     unit : str, optional
-        Physical unit of the values, for documentation.
+        Unit of the values, for documentation, in terms of the data: `"<length>"` stands for the length unit of the data,
+        `"<input>"` for the unit of the input; a feature with `units=` writes the unit it was given (`"mm/s"`). Empty when
+        the value is dimensionless.
     doc : str, optional
         One-line description.
     labelled : bool, optional

@@ -9,6 +9,7 @@ from typing import Any, Callable, Dict, Iterable, List, Union
 
 import numpy as np
 
+from .base import _coerce
 from .results import Result, Schema, Status
 
 __all__ = ["Recorder"]
@@ -36,12 +37,14 @@ class Recorder:
     >>> rec = Recorder(feature)
     >>> for frame in frames:
     ...     rec.append(feature.process(frame))
-    >>> rec.column("centroid").shape          # (n_frames, 3)
+    >>> rec.column("centroid").shape          # (n_frames, 3); also rec["centroid"] and rec.centroid
+    >>> rec[0], rec[-5:]                      # one row as a Result, a slice as a list of Results
     >>> rec.to_frame()                        # pandas DataFrame, one column per flat name
     """
 
     def __init__(self, source: Union[Schema, Any], capacity: int = 1024):
         self.schema: Schema = source if isinstance(source, Schema) else source.outputs
+        self._feature = None if isinstance(source, Schema) else type(source).__name__
         self._signature = _signature(self.schema)
         self._flat_cache = None
         self._n = 0
@@ -57,6 +60,7 @@ class Recorder:
         self._status = np.empty(self._capacity, dtype=np.int8)
         self._timestamps = np.empty(self._capacity, dtype=np.float64)
         self._valid = np.empty((self._capacity, len(self.schema)), dtype=np.bool_)
+        self._reasons: List[str] = []
 
     @classmethod
     def from_arrays(cls, source: Union[Schema, Any], columns: Dict[str, Any], timestamps: Any = None,
@@ -84,10 +88,16 @@ class Recorder:
         rec._status = np.broadcast_to(status, (row_count,)).astype(np.int8)
         rec._timestamps = timestamps
         rec._valid = np.ones((row_count, len(names)), dtype=np.bool_)
+        rec._reasons = [""] * row_count
         return rec
 
     def __len__(self) -> int:
         return self._n
+
+    def __repr__(self) -> str:
+        counts = np.bincount(self.status, minlength=len(Status))
+        status = {Status(code).name: int(count) for code, count in enumerate(counts) if count}
+        return f"Recorder({self._feature or 'schema'}, rows={self._n}, columns={list(self.schema.names)}, status={status})"
 
     def append(self, result: Result) -> None:
         """Add one result. It must come from a feature with the same schema."""
@@ -104,6 +114,7 @@ class Recorder:
             items.append(values[name])
         self._status[row] = result.status
         self._timestamps[row] = result.timestamp
+        self._reasons.append(result.reason)
         missing = result._missing
         self._valid[row] = [name not in missing for name in self.schema.names]
         self._n += 1
@@ -158,14 +169,39 @@ class Recorder:
             return self._columns[name][:self._n]
         return self._lists[name]
 
-    def __getitem__(self, key: str) -> Union[np.ndarray, List[Any]]:
-        """`rec["centroid"]` is `column("centroid")`; `rec["centroid_x"]` is one flat column, shape `(n,)`."""
+    def __getitem__(self, key: Union[str, int, slice]) -> Any:
+        """`rec["centroid"]` is `column("centroid")`; `rec["centroid_x"]` is one flat column, shape `(n,)`; `rec[3]` is row 3 as
+        a `Result` (negative counts from the end, `IndexError` out of range); `rec[2:5]` is a list of `Result`s."""
+        if isinstance(key, slice):
+            return [self._row(row) for row in range(*key.indices(self._n))]
+        if isinstance(key, (int, np.integer)):
+            if not -self._n <= key < self._n:
+                raise IndexError(f"row {key} out of range for a recorder of {self._n} rows")
+            return self._row(int(key) % self._n)
         if key in self.schema:
             return self.column(key)
         index = self.schema.flat_index[key]
         if self._flat_cache is None or len(self._flat_cache) != self._n:
             self._flat_cache = self.to_numpy()
         return self._flat_cache[:, index]
+
+    def _row(self, row: int) -> Result:
+        """Row `row` as the `Result` that was appended."""
+        values = {output.name: _coerce(output, self.column(output.name)[row]) for output in self.schema}
+        missing = frozenset(name for name, valid in zip(self.schema.names, self._valid[row]) if not valid)
+        result_type = self.schema.result_type((self._feature or "") + "Result")
+        return result_type(self.schema, values, Status(int(self._status[row])), self._reasons[row], float(self._timestamps[row]),
+                           missing)
+
+    def __getattr__(self, name: str) -> Union[np.ndarray, List[Any]]:
+        """`rec.centroid` is `rec["centroid"]` (an output or a flat name)."""
+        if not name.startswith("_") and "schema" in self.__dict__ and (
+                name in self.schema or name in self.schema.flat_index):
+            return self[name]
+        raise AttributeError(f"{type(self).__name__} has no attribute {name!r}")
+
+    def __dir__(self) -> List[str]:
+        return sorted(set(super().__dir__()) | set(self.schema.names))
 
     def to_numpy(self) -> np.ndarray:
         """The fixed outputs as a float64 matrix `(n, schema.size)`, columns in `schema.flat_names` order."""
@@ -176,8 +212,8 @@ class Recorder:
     def to_frame(self, meta: bool = True):
         """A pandas DataFrame: one column per flat name, plus `status` and `timestamp` when `meta`.
 
-        `status` holds the integer `Status` codes, as in `Result.to_flat_dict()`, so `frame.status == Status.OK`
-        selects the rows that produced output.
+        `status` holds the `Status` names (`"OK"`, `"WARMING_UP"`, ...), so `frame.status == "OK"` selects the rows that
+        produced output.
 
         Raises `ImportError` if pandas is not installed.
         """
@@ -186,5 +222,5 @@ class Recorder:
         frame = pd.DataFrame(self.to_numpy(), columns=list(self.schema.flat_names))
         if meta:
             frame.insert(0, "timestamp", self.timestamps)
-            frame.insert(0, "status", self.status.astype(int))
+            frame.insert(0, "status", [Status(code).name for code in self.status])
         return frame

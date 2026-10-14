@@ -20,7 +20,7 @@ from suddenness_reference import SuddennessReference  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.mid_level import Suddenness  # noqa: E402
 
-OUTPUTS = ["alpha", "beta", "gamma"]
+_OUTPUTS = ["alpha", "beta", "gamma"]
 
 
 def _series(window):
@@ -52,7 +52,7 @@ def _assert_parity(window, algo):
     assert reference_result.status == new_result.status
     if reference_result.ok:
         assert reference_result.is_sudden == new_result.is_sudden
-        for name in OUTPUTS:
+        for name in _OUTPUTS:
             assert _same(getattr(reference_result, name), getattr(new_result, name)), (name, getattr(reference_result, name), getattr(new_result, name))
     return new_result
 

@@ -40,12 +40,12 @@ class Periodicity(MinimumWindow, WindowedFeature, CoreFeature):
         return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per channel"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("periods", (None, None), doc="detected periods in samples, -1 = unused"),
+        return Schema(Output("periods", (None, None), unit="samples", doc="detected periods in samples, -1 = unused"),
                       Output("powers", (None, None), doc="normalised power of each period, -1 = unused"))
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         raw = self._block.process(np.asarray(series, dtype=float), 0.0)
-        return self.result(periods=raw[0::2], powers=raw[1::2], timestamp=timestamp)
+        return self._result(periods=raw[0::2], powers=raw[1::2], timestamp=timestamp)
 
 
 __all__ = ["Periodicity"]

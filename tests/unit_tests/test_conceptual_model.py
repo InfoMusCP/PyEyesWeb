@@ -63,7 +63,9 @@ def test_layer_placements():
     assert low_level.MotionNoiseDetector.LAYER is Layer.LOW_LEVEL
     assert mid_level.Directness.LAYER is Layer.MID_LEVEL
     assert mid_level.PositionDependingPotentials.LAYER is Layer.MID_LEVEL
-    assert physical_signals.FilterContour.LAYER is Layer.PHYSICAL_SIGNALS
+    assert low_level.FilterContour.LAYER is Layer.LOW_LEVEL
+    assert mid_level.TrajectoryNonPlanarity.LAYER is Layer.MID_LEVEL
+    assert not hasattr(physical_signals, "FilterContour")
     assert ap.Periodicity.LAYER is Layer.ANALYSIS_PRIMITIVE
     assert ap.synchronization.PartialRecurrenceSynchronization.LAYER is Layer.ANALYSIS_PRIMITIVE
     assert pyeyesweb.high_level.__all__ == ["EnsembleDominance"]

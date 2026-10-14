@@ -20,3 +20,7 @@ __all__ = [
     "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization", "SequenceDetector",
     "RecurrencePlot", "CrossRecurrencePlot", "TemporalSynchronization"
 ]
+
+
+def __dir__():
+    return sorted([*__all__, "synchronization"])

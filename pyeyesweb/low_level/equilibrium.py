@@ -52,11 +52,11 @@ class Equilibrium(CoreFeature):
     >>> result = eq.process(left_foot=(-0.1, 0.0), right_foot=(0.1, 0.0), barycenter=(0.0, 0.0))
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("equilibrium", doc="Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse."),
         Output("angle", unit="deg", doc="Angle of the foot-to-foot support vector."),
     )
-    INPUTS = Inputs(*(Input(name, InputKind.SAMPLE, (2,), doc=f"{name} (x, y) on the floor plane")
+    _INPUTS = Inputs(*(Input(name, InputKind.SAMPLE, (2,), doc=f"{name} (x, y) on the floor plane")
                       for name in ("left_foot", "right_foot", "barycenter")))
     _core_class = core.motion.Equilibrium
     _lazy_block = True
@@ -99,10 +99,10 @@ class Equilibrium(CoreFeature):
         points = [np.asarray(point, dtype=float) for point in (left_foot, right_foot, barycenter)]
         for point in points:
             if reason := non_finite(point):
-                return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+                return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         result = self._block.process(*(tuple(point.tolist()) for point in points))
         coincide = bool((points[0] == points[1]).all())
-        return self.result(status=Status.INVALID_INPUT if coincide else Status.OK,
+        return self._result(status=Status.INVALID_INPUT if coincide else Status.OK,
                            reason="the feet coincide: no support vector" if coincide else "",
                            equilibrium=result.value, angle=result.angle, timestamp=timestamp)
 

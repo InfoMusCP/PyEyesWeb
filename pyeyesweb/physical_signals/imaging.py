@@ -31,7 +31,7 @@ class _ImageFeature(FrameFeature):
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         image = as_image(frame)
         if image.size == 0:
-            return self.no_output(Status.INVALID_INPUT, "empty image", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "empty image", timestamp)
         return self._from_image(image, timestamp)
 
     def _from_image(self, image: np.ndarray, timestamp: Optional[float]) -> Result:
@@ -73,8 +73,9 @@ right_hand, left_knee, left_foot, right_knee, right_foot : bool, optional
     """
     _core_class = _imaging.CentroidsCalc
     _core_names = {"center_of_gravity": "cog"}
-    INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
-    OUTPUTS = Schema(
+    _parts = {label: label for label in _CENTROIDS}
+    _INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
+    _OUTPUTS = Schema(
         Output("centroids", (len(_CENTROIDS), 2), labels=_CENTROIDS, components=XY, unit="px",
                doc="centroid coordinates in the frame; NaN where absent"),
         Output("normalized", (len(_CENTROIDS), 2), labels=_CENTROIDS, components=XY,
@@ -83,8 +84,8 @@ right_hand, left_knee, left_foot, right_knee, right_foot : bool, optional
     def _from_image(self, mask: np.ndarray, timestamp: Optional[float]) -> Result:
         found, raw = self._block.process(mask)
         if not found:
-            return self.no_output(Status.INVALID_INPUT, "no foreground pixels in the silhouette", timestamp)
-        return self.result(timestamp=timestamp, centroids=raw[:, :2], normalized=raw[:, 2:])
+            return self._no_output(Status.INVALID_INPUT, "no foreground pixels in the silhouette", timestamp)
+        return self._result(timestamp=timestamp, centroids=raw[:, :2], normalized=raw[:, 2:])
 
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="BlobSubRegions")
@@ -107,8 +108,8 @@ class SilhouetteBodyParts(_ImageFeature):
     arms_min_threshold, arms_max_threshold : float, optional
         An arm ends at the first row with fewer foreground pixels than `arms_min_threshold` times its width, and
         starts at the first row with more than `arms_max_threshold` times (defaults 0.2 and 0.5).
-    extract_head, extract_trunk, extract_left_arm, extract_right_arm, extract_left_leg, extract_right_leg : bool, optional
-        Which parts to output (default all).
+    parts : sequence of str, optional
+        Which parts to output, among `head`, `trunk`, `left_arm`, `right_arm`, `left_leg`, `right_leg` (default all).
 
     Returns
     -------
@@ -120,8 +121,9 @@ class SilhouetteBodyParts(_ImageFeature):
         foreground.
     """
     _core_class = _imaging.BlobSubRegions
-    INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
-    OUTPUTS = Schema(
+    _parts = {part: f"extract_{part}" for part in _BODY_PARTS}
+    _INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
+    _OUTPUTS = Schema(
         Output("regions", (len(_BODY_PARTS), 4), kind=int, labels=_BODY_PARTS, components=("x", "y", "width", "height"),
                unit="px", doc="bounding box of each part in the frame; zeros where not found"),
         Output("is_found", len(_BODY_PARTS), kind=bool, labels=_BODY_PARTS, doc="the part was found"),
@@ -129,7 +131,7 @@ class SilhouetteBodyParts(_ImageFeature):
 
     def _from_image(self, mask: np.ndarray, timestamp: Optional[float]) -> Result:
         if not mask.any():
-            return self.no_output(Status.INVALID_INPUT, "no foreground pixels in the silhouette", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "no foreground pixels in the silhouette", timestamp)
         regions = np.zeros((len(_BODY_PARTS), 4), dtype=int)
         found = np.zeros(len(_BODY_PARTS), dtype=bool)
         masks = {}
@@ -138,7 +140,7 @@ class SilhouetteBodyParts(_ImageFeature):
             regions[slot] = (left, top, part_mask.shape[1], part_mask.shape[0])
             found[slot] = True
             masks[label] = part_mask
-        return self.result(timestamp=timestamp, regions=regions, is_found=found, masks=masks)
+        return self._result(timestamp=timestamp, regions=regions, is_found=found, masks=masks)
 
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="video_gram (VideoGram)")
@@ -169,8 +171,8 @@ class Videogram(_ImageFeature):
     """
     _core_class = _imaging.VideoGram
     _core_names = {"window": "length"}
-    INPUTS = Inputs(image_input("frame", "grayscale or colour frame", channels=None))
-    OUTPUTS = Schema(Output("videogram", (None, None, None), kind=int, doc="the videogram image, channels last"))
+    _INPUTS = Inputs(image_input("frame", "grayscale or colour frame", channels=None))
+    _OUTPUTS = Schema(Output("videogram", (None, None, None), kind=int, doc="the videogram image, channels last"))
 
     def __init__(self, **params: Any):
         super().__init__(**params)
@@ -183,7 +185,7 @@ class Videogram(_ImageFeature):
         if restarted:
             self._block.reset()
         self._frame_shape = image.shape
-        return self.result(timestamp=timestamp, videogram=self._to_image(self._block.process(image)),
+        return self._result(timestamp=timestamp, videogram=self._to_image(self._block.process(image)),
                            reason="frame size changed: videogram restarted" if restarted else "")
 
     @staticmethod

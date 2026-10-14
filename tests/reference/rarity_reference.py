@@ -44,7 +44,7 @@ class HistogramRarityReference(DynamicFeature):
         Output `rarity` (float, $\ge 0$): higher means more atypical. `Status.WARMING_UP` below 2 samples.
     """
 
-    OUTPUTS = Schema(Output("rarity", doc="Rarity score >= 0; higher values indicate more atypical movement."))
+    _OUTPUTS = Schema(Output("rarity", doc="Rarity score >= 0; higher values indicate more atypical movement."))
 
     def __init__(self, alpha: float = 0.5):
         super().__init__()
@@ -79,7 +79,7 @@ class HistogramRarityReference(DynamicFeature):
         n_samples = len(samples)
 
         if n_samples < 2:
-            return self.no_output(Status.WARMING_UP, "fewer than 2 samples")
+            return self._no_output(Status.WARMING_UP, "fewer than 2 samples")
 
         # Number of bins
         n_bins = max(int(np.sqrt(n_samples)), 1)
@@ -99,7 +99,7 @@ class HistogramRarityReference(DynamicFeature):
         d2 = most_probable_p - last_sample_p
 
         rarity = d1 * d2 * self._alpha
-        return self.result(rarity=float(rarity))
+        return self._result(rarity=float(rarity))
 
 
 __all__ = ["HistogramRarityReference"]

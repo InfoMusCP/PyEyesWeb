@@ -30,9 +30,9 @@ The package follows the conceptual model of movement qualities (layers):
 
 | Package | Layer | Content |
 |---|---|---|
-| `pyeyesweb.physical_signals` | 1 | Physical signals and virtual sensors: contours, space, images (edges, silhouettes, videograms). |
-| `pyeyesweb.low_level` | 2 | Kinematics, energy, shape, symmetry, smoothness (up to about 0.5 s). |
-| `pyeyesweb.mid_level` | 3 | Segments, impulsivity, lightness, space occupation (0.5 to 3 s). |
+| `pyeyesweb.physical_signals` | 1 | Physical signals and virtual sensors: body models, space, images (silhouettes, videograms), stream plumbing (`TimeWindowSynchronizer`). |
+| `pyeyesweb.low_level` | 2 | Kinematics, energy, shape and filtering of contours, symmetry, smoothness (up to about 0.5 s). |
+| `pyeyesweb.mid_level` | 3 | Segments, impulsivity, suddenness, directness and non-planarity of a path, space occupation (0.5 to 3 s). |
 | `pyeyesweb.high_level` | 4 | Social and interaction-level features (3 s and above): `EnsembleDominance`. |
 | `pyeyesweb.analysis_primitives` | any | Metrics applicable to any movement feature at any layer (entropy, rarity, periodicity, `synchronization/`). |
 | `pyeyesweb.data_models` | | The contract: `Feature`, `WindowedFeature`, `Input(s)`, `Schema`, `Output`, `Result`, `Status`, `Recorder`, `SlidingWindow`, and `skeleton.py` (the `Skeleton` class). |
@@ -118,7 +118,7 @@ These are Python-layer rules, implemented once in the central call path (`Featur
   design). An input that is cast to an integer (`SequenceDetector`) says `integer=True` and also rejects values beyond the
   integer range. A feature that checks first or more specifically (an empty frame, a degenerate shape) keeps its own
   reason. A result that overflows (finite data, 1e300) is `INVALID_INPUT` "the result is not finite" through
-  `finite_result(...)`, used by the features whose arithmetic can overflow.
+  `_finite_result(...)`, used by the features whose arithmetic can overflow.
 - **Labels.** For a dict frame, a feature that reads named joints (`LabelGuard`: `KineticEnergy`, `MotionNoiseDetector`,
   `Symmetry` ratio) checks it centrally: a joint it needs that is missing gives `INVALID_INPUT` "missing joints: a, b";
   when `labels` are configured, a key that is not one of them raises `ValueError` (a wrong joint name is a
@@ -168,6 +168,43 @@ Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of fo
   `MultiScaleEntropy` defaults to `window=3000` and its minimum-window error explains `max_scale * minimum_points`;
   `Equilibrium.margin` defaults to 0.1 m (the 100 mm of the original).
 
+### Contract changes of work package C (2026-10-14)
+
+Results, recorder and discoverability.
+
+- **`parts=`.** `SilhouetteCentroids` (`center_of_gravity`, `head`, `left_shoulder`, ...), `SilhouetteBodyParts` (`head`,
+  `trunk`, `left_arm`, `right_arm`, `left_leg`, `right_leg`) and `RegionDependingPotentials` (`potential`, `hit_regions`,
+  `hit_region_indexes`, `region_values`, which are also its output names) take `parts=` instead of the bool switches
+  (14, 6 and 4). Default: the parts the switches had on (all, all, `("potential",)`), read from the block. Names are
+  case-insensitive with `-` or a space for `_`; a wrong name raises `ValueError` listing the options; the value reads back
+  as a tuple in declaration order; it is live where the switches were (`feature.parts = [...]`).
+- **Other open points of B, decided.** `TrajectoryNonPlanarity` defaults are kept; the `Kinematics` modes stay
+  `tangential` / `module` / `global`; no rate is derived from timestamps; the PLV `filter_order` is not exposed (the core fixes 4).
+- **Private helpers.** `result`, `no_output`, `finite_result`, `INPUTS` and `OUTPUTS` are now `_result`, `_no_output`,
+  `_finite_result`, `_INPUTS` and `_OUTPUTS`. `feature.parameters` is a read-only mapping of the constructor parameters
+  and their current values (as `get_params`); a parameter that is resolved at construction and not kept (`skeleton`) is not listed.
+- **`Status`.** `str(Status.OK)` is `"OK"` (also in f-strings); `int(Status.OK)` is still 0.
+- **`Recorder`.** `repr` shows the feature, rows, columns and status counts; `rec[3]` and `rec[-1]` are `Result`s (`reason`
+  and `valid` included), `rec[2:5]` is a list of them, `rec["name"]` is still a column; `rec.<output>` (or a flat name) is a
+  column; `to_frame()` has the status names in `status`. `latest` stays on `Feature`; there are no `computed()` / `held()` views.
+- **Units of the outputs.** `Output.unit` is documentation in terms of the data: `"<length>"` is the length unit of the
+  data, `"<input>"` the unit of the input, `"samples"`, `"frames"`, `"px"`, `"deg"`, `"s"`; a feature with `units=` writes the
+  unit it was given (`"mm/s"`; `Kinematics`, `TrajectoryNonPlanarity`, the humanoid features). An empty unit means dimensionless
+  and is listed with its reason in `tests/unit_tests/test_units_all_features.py` (booleans need no entry); a new feature
+  with an output that has no unit fails that test.
+- **Public names.** `dir(pyeyesweb)` lists the public modules and `Layer`, `Timescale`, `catalog`, `catalog_table`,
+  `SeriesBuffer` (loaded from the core on demand, not in `__all__`); `pyeyesweb.base` and `pyeyesweb.utils` are internal
+  and not listed; a package lists its `__all__` and not its submodules. `TimeWindowSynchronizer` and `SynchronizedWindow`
+  are public in `pyeyesweb.physical_signals` (they need the core, so not in `data_models`), next to `MassSpringModel`.
+- **Layer placement rule** (in the `catalog` docstring). Physical signals produce a signal from raw frames or a model and
+  give a signal again; low-level measures a frame or a short window the feature buffers itself; mid-level needs a whole path
+  or a gesture; high-level needs several people; an analysis primitive knows nothing of bodies or geometry. Moved:
+  `FilterContour` to `pyeyesweb.low_level` (with the other contour features, in `shape.py`), `TrajectoryNonPlanarity` and
+  `average_curvature_3d` to `pyeyesweb.mid_level` (next to `Directness`: both take a whole path as a list of points).
+  `ContourFeature` now lives in `low_level/shape.py`.
+- **`GenericModel*`.** Each docstring has an example, and the error for a wrong `model=` names
+  `MassSpringModel.from_xml_file(path)`, `from_xml_string(xml)` and `add_mass` / `add_spring`.
+
 ## 4. Parameters
 
 ### Names (**Decided**)
@@ -196,6 +233,9 @@ Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of fo
   options. The coercion is central (`base/choices.py`, `CoreFeature`); do not write per-feature parsing.
 - Do not export C++ enums into the public namespaces and do not document enum members. Core enum members passed by
   mistake are still accepted silently.
+- A group of on/off switches that select what a feature outputs (the 14 centroids of `SilhouetteCentroids`, the 6 parts of
+  `SilhouetteBodyParts`, the outputs of `RegionDependingPotentials`) is one `parts=` sequence of names, validated like any
+  choice; declared once in `_parts = {name: block switch}` (`CoreFeature`).
 - An on/off switch is a **bool** (`True`/`False` only; words such as "on" or "yes" are rejected with a `TypeError`).
   Do not model on/off as an enum, in C++ or in Python.
 - Selectors of a `VariantFeature` (`method`) are fixed at construction.
@@ -278,7 +318,7 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
    `adoptParams`, tests in `EyesWebCore/tests/<area>/`, a binding in `EyesWebCore/bindings` ending with `EW_REGISTER_BINDING(...)`, and the
    shared helpers in `EyesWebCore/bindings/convert.h`. Follow `CONVENTIONS.md`.
 2. Python class in the right layer package: `@describe(...)`, base class (`CoreFeature` / `WindowedFeature` /
-   `VariantFeature` / `FrameFeature`), `OUTPUTS` schema, `_inputs()`, `_schema()` if parameter dependent,
+   `VariantFeature` / `FrameFeature`), `_OUTPUTS` schema, `_inputs()`, `_schema()` if parameter dependent,
    `_process`/`_process_window`, a docstring with `Parameters` and `Returns` (units stated), export in the layer's
    `__init__` and `__all__`.
 3. Tests: the contract suite (`tests/contract_suite.py`, `check_feature_contract`) so `process` and `run` agree and

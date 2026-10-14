@@ -92,7 +92,7 @@ class _ModeDistanceRarity(MinimumWindow, WindowedFeature, Rarity, variant="mode_
         Scaling factor for the rarity calculation. Defaults to `0.5`.
     """
 
-    OUTPUTS = Schema(Output("rarity", doc="Rarity score >= 0; higher values indicate more atypical movement."))
+    _OUTPUTS = Schema(Output("rarity", doc="Rarity score >= 0; higher values indicate more atypical movement."))
 
     _core_class = core.motion.HistogramRarity
     _lazy_block = True
@@ -127,10 +127,10 @@ class _ModeDistanceRarity(MinimumWindow, WindowedFeature, Rarity, variant="mode_
         """
         samples = np.ascontiguousarray(series, dtype=float).ravel()
         if len(samples) < 2:
-            return self.no_output(Status.WARMING_UP, "fewer than 2 samples", timestamp)
+            return self._no_output(Status.WARMING_UP, "fewer than 2 samples", timestamp)
         if reason := non_finite(samples):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
-        return self.result(rarity=self._block.process(samples), timestamp=timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
+        return self._result(rarity=self._block.process(samples), timestamp=timestamp)
 
 
 class _InformationRarity(Rarity, FrameFeature, variant="information"):
@@ -174,11 +174,11 @@ class _InformationRarity(Rarity, FrameFeature, variant="information"):
         uses_memory = self._param("measure", core.motion.RarityType.RARITY) == core.motion.RarityType.RARITY
         self._filled += uses_memory
         if not np.all(values <= np.cumsum(self._param("bins", [0.3, 0.3, 0.4]))[-1]):  # also NaN
-            return self.result(status=Status.INVALID_INPUT, reason="value outside the bins", rarity=rarity, timestamp=timestamp)
+            return self._result(status=Status.INVALID_INPUT, reason="value outside the bins", rarity=rarity, timestamp=timestamp)
         if uses_memory and self._filled < memory:
-            return self.result(status=Status.WARMING_UP, reason=f"the memory holds {self._filled} of {memory} values",
+            return self._result(status=Status.WARMING_UP, reason=f"the memory holds {self._filled} of {memory} values",
                                rarity=rarity, timestamp=timestamp)
-        return self.result(rarity=rarity, timestamp=timestamp)
+        return self._result(rarity=rarity, timestamp=timestamp)
 
 for _variant in (_ModeDistanceRarity, _InformationRarity):
     _variant.__name__ = Rarity.__name__

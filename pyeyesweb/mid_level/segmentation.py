@@ -38,8 +38,9 @@ class MotionDuration(FrameFeature):
         return Inputs(Input("signal", InputKind.SAMPLE, (1,), doc="segmentation signal, non-zero while moving"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("motion_duration", doc="duration of the last completed motion phase"),
-                      Output("pause_duration", doc="duration of the last completed pause phase"))
+        unit = "s" if self._param("sampling_rate", None) else "frames"
+        return Schema(Output("motion_duration", unit=unit, doc="duration of the last completed motion phase"),
+                      Output("pause_duration", unit=unit, doc="duration of the last completed pause phase"))
 
     def _process(self, signal: Any, timestamp: Optional[float]) -> Result:
         return self._to_result(self._block.process(scalar(signal)), timestamp)
@@ -47,8 +48,8 @@ class MotionDuration(FrameFeature):
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         motion, pause = raw
         if motion is None and pause is None:
-            return self.no_output(Status.NO_OUTPUT, "no phase change", timestamp)
-        return self.result(motion_duration=motion, pause_duration=pause, timestamp=timestamp)
+            return self._no_output(Status.NO_OUTPUT, "no phase change", timestamp)
+        return self._result(motion_duration=motion, pause_duration=pause, timestamp=timestamp)
 
 
 @describe(Layer.MID_LEVEL, eyesweb="GestureSegmenter")
@@ -80,13 +81,13 @@ class GestureSegmenter(CoreFeature):
                       Input("noise", InputKind.SAMPLE, (1,), doc="1 while the motion is judged random (default 0)", optional=True))
 
     def _schema(self) -> Schema:
-        return Schema(Output("smoothed_intensity", doc="filtered intensity, once the window is full"),
+        return Schema(Output("smoothed_intensity", unit="<input>", doc="filtered intensity, once the window is full"),
                       Output("is_gesturing", kind=bool), Output("is_gesture_start", kind=bool),
                       Output("is_gesture_end", kind=bool))
 
     def process(self, intensity: Any, noise: Any = 0.0, *, timestamp: Optional[float] = None) -> Result:
         if reason := non_finite(intensity) or non_finite(noise):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         return self._to_result(self._block.process(scalar(intensity), bool(scalar(noise))), timestamp)
 
     def run(self, intensity: Any, noise: Optional[Any] = None, *, timestamps: Optional[Any] = None,
@@ -96,9 +97,9 @@ class GestureSegmenter(CoreFeature):
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         if raw is None:
-            return self.no_output(Status.WARMING_UP, "window filling", timestamp)
+            return self._no_output(Status.WARMING_UP, "window filling", timestamp)
         smoothed, gesturing, start, end = raw
-        return self.result(timestamp=timestamp, smoothed_intensity=smoothed, is_gesturing=gesturing,
+        return self._result(timestamp=timestamp, smoothed_intensity=smoothed, is_gesturing=gesturing,
                            is_gesture_start=start, is_gesture_end=end)
 
 

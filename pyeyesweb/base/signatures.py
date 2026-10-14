@@ -17,7 +17,7 @@ import functools
 import inspect
 import re
 import typing
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional, Sequence, Union
 
 import numpy as np
 
@@ -94,6 +94,9 @@ def core_signature(cls: Any, core: Any) -> Optional[inspect.Signature]:
     if getattr(cls, "_unit_params", None):  # lengths in metres (EyesWeb) or data in millimetres
         extra.append(inspect.Parameter("units", inspect.Parameter.KEYWORD_ONLY, default="m",
                                        annotation=Literal["m", "mm"]))
+    if getattr(cls, "_parts", None):  # the choices that replace the block's bool switches
+        extra.append(inspect.Parameter("parts", inspect.Parameter.KEYWORD_ONLY, default=cls._default_parts(),
+                                       annotation=Sequence[Literal[tuple(cls._parts)]]))
     known |= {parameter.name for parameter in extra}
     # Python-only parameters the wrapper keeps out of the block (`_python_params`); only `dims` exists so far.
     extra += [inspect.Parameter(name, inspect.Parameter.KEYWORD_ONLY, default=getattr(cls, "_DEFAULT_DIMENSION", None),

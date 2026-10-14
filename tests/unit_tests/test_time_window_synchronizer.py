@@ -1,4 +1,4 @@
-"""TimeWindowSynchronizer (EyesWeb Synchronizer), the stream utility of `pyeyesweb.utils`. Needs the compiled core
+"""TimeWindowSynchronizer (EyesWeb Synchronizer), the stream utility of `pyeyesweb.physical_signals`. Needs the compiled core
 (EYESWEB_CORE_PATH), else skipped."""
 import os
 import sys
@@ -12,7 +12,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb import catalog  # noqa: E402
-from pyeyesweb.utils.time_window_synchronizer import SynchronizedWindow, TimeWindowSynchronizer  # noqa: E402
+from pyeyesweb.physical_signals import SynchronizedWindow, TimeWindowSynchronizer  # noqa: E402
 
 
 def test_a_stream_is_cut_into_windows():

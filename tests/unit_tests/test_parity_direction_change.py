@@ -144,6 +144,11 @@ def _bits(values):
     return np.asarray(values, dtype=float).view(np.int64)
 
 
+def _frame(recorder):
+    """`to_frame()` with the status codes of the frozen file in place of the names."""
+    return recorder.to_frame().replace({"status": {status.name: int(status) for status in Status}})
+
+
 def _points(recording):
     """The one trajectory of a `(frames, signals, dims)` recording: the average of the markers, frame by frame (in
     signal order), as the feature averaged them itself before the one-point-per-frame decision of 2026-10-14."""
@@ -166,14 +171,14 @@ def test_one_point_per_frame_reproduces_the_frozen_outputs_of_the_signals_form()
             if params["window"] > len(recording):
                 continue
             key = f"{name}|{index}"
-            columns = DirectionChange(**params).run(points).to_frame()
+            columns = _frame(DirectionChange(**params).run(points))
             assert [c for c in columns.columns] == [c.split("|")[-1] for c in reference.files if c.startswith(key + "|") and not c.endswith("|stat")]
             for column in columns.columns:
                 np.testing.assert_array_equal(_bits(columns[column].to_numpy()), _bits(reference[f"{key}|{column}"]))
             feature = DirectionChange(**params)
             assert [feature.process(point).status.name for point in points] == list(reference[f"{key}|stat"])
             if recording.shape[1] == 1:  # a single signal is its own trajectory
-                np.testing.assert_array_equal(_bits(DirectionChange(**params).run(recording[:, 0, :]).to_frame().to_numpy()), _bits(columns.to_numpy()))
+                np.testing.assert_array_equal(_bits(_frame(DirectionChange(**params).run(recording[:, 0, :])).to_numpy()), _bits(columns.to_numpy()))
 
 
 def test_a_non_finite_point_is_rejected_and_not_buffered():

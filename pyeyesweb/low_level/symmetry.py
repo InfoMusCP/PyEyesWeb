@@ -115,11 +115,11 @@ class _ReflectionSymmetry(Symmetry, variant="reflection"):
         try:
             scores = self._block.process(np.asarray(frame, dtype=float))
         except ValueError as exc:
-            return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
+            return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
         return self._to_result(scores, timestamp)
 
     def _to_result(self, raw: np.ndarray, timestamp: Optional[float]) -> Result:
-        return self.result(pair_symmetry=raw.tolist(), timestamp=timestamp)
+        return self._result(pair_symmetry=raw.tolist(), timestamp=timestamp)
 
 
 class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
@@ -158,7 +158,7 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
         return self._to_result(self._block.process(labelled_set(skeleton, self._labels, "Symmetry")), timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
-        return self.finite_result(timestamp=timestamp, symmetry=np.asarray(raw, dtype=float) if isinstance(raw, tuple) else raw)
+        return self._finite_result(timestamp=timestamp, symmetry=np.asarray(raw, dtype=float) if isinstance(raw, tuple) else raw)
 
 for _variant in (_RatioSymmetry, _ReflectionSymmetry):
     _variant.__name__ = Symmetry.__name__
@@ -192,7 +192,7 @@ class TriangleSymmetry(CoreFeature):
     def process(self, upper: Any, left: Any, right: Any, *, timestamp: Optional[float] = None) -> Result:
         vertices = [np.asarray(vertex, dtype=float) for vertex in (upper, left, right)]
         if any(vertex.size != 2 for vertex in vertices) or not np.isfinite(vertices).all():
-            return self.no_output(Status.INVALID_INPUT, "empty vertex or NaN / infinite coordinates", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "empty vertex or NaN / infinite coordinates", timestamp)
         return self._to_result((vertices, self._block.process(*(tuple(vertex.tolist()) for vertex in vertices))), timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
@@ -200,7 +200,7 @@ class TriangleSymmetry(CoreFeature):
         to_left, to_right = vertices[1] - vertices[0], vertices[2] - vertices[0]
         collinear = abs(to_left[0] * to_right[1] - to_left[1] * to_right[0]) <= (
             _COLLINEAR * np.linalg.norm(to_left) * np.linalg.norm(to_right))
-        return self.result(status=Status.INVALID_INPUT if collinear else Status.OK,
+        return self._result(status=Status.INVALID_INPUT if collinear else Status.OK,
                            reason="the vertices are collinear" if collinear else "",
                            symmetry=symmetry, timestamp=timestamp)
 

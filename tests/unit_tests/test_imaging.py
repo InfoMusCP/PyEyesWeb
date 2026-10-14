@@ -117,9 +117,7 @@ def test_centroids_of_a_silhouette():
 
 
 def test_centroids_only_the_requested_ones_unless_intermediate_are_added():
-    only_hand = dict(center_of_gravity=False, head=False, left_shoulder=False, left_elbow=False, left_forearm=False, right_shoulder=False,
-                     right_elbow=False, right_forearm=False, right_hand=False, left_knee=False, left_foot=False,
-                     right_knee=False, right_foot=False)
+    only_hand = dict(parts=["left-hand"])
     result = SilhouetteCentroids(**only_hand).process(BODY)
     assert np.isfinite(result.centroids[:, 0]).tolist() == [name == "left_hand" for name in LABELS]
     chain = SilhouetteCentroids(add_intermediate_centroids=True, **only_hand).process(BODY)
@@ -136,8 +134,8 @@ def test_centroids_of_half_silhouettes_and_empty_masks():
     assert result.status is Status.INVALID_INPUT and "foreground" in result.reason and np.isnan(result.centroids).all()
     with pytest.raises(ValueError, match="silhouette"):
         SilhouetteCentroids(silhouette="torso")
-    with pytest.raises(TypeError):
-        SilhouetteCentroids(head="yes")
+    with pytest.raises(ValueError, match="parts.*'left_hand'"):
+        SilhouetteCentroids(parts=["head", "nose"])
     with pytest.raises(ValueError):
         SilhouetteCentroids(alpha=1.5)
 
@@ -162,8 +160,7 @@ def test_body_parts_of_a_silhouette():
 
 
 def test_body_parts_selection_and_missing_parts():
-    result = SilhouetteBodyParts(extract_head=False, extract_trunk=False, extract_left_arm=False, extract_right_arm=False,
-                                 extract_right_leg=False).process(BODY)
+    result = SilhouetteBodyParts(parts=["Left leg"]).process(BODY)
     assert result.is_found.tolist() == [False, True, False, False, False, False] and list(result.masks) == ["left_leg"]
     assert not result.regions[0].any()
     empty = SilhouetteBodyParts().process(np.zeros((20, 20), np.uint8))
@@ -268,3 +265,12 @@ def test_pulse_regularity_equals_the_reference_port(threshold, index):
     rows = REFERENCE["pulses"][index * len(PULSE_WINDOWS):(index + 1) * len(PULSE_WINDOWS)]
     for window, row in zip(PULSE_WINDOWS, rows):
         assert (int(row[0]), (bool(row[1]), int(row[2]), bool(row[3]))) == (threshold, block.process(window))
+
+
+def test_parts_default_to_everything_and_are_listed_in_the_signature():
+    import inspect
+    assert SilhouetteCentroids().parts == tuple(LABELS) and SilhouetteBodyParts().parts == tuple(PARTS)
+    assert inspect.signature(SilhouetteBodyParts).parameters["parts"].default == tuple(PARTS)
+    feature = SilhouetteBodyParts()
+    feature.parts = ["head"]
+    assert feature.parts == ("head",) and list(feature.process(BODY).masks) == ["head"]

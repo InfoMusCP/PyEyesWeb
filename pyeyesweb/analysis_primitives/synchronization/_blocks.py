@@ -56,7 +56,7 @@ class _SeriesBlock(MinimumWindow, WindowedFeature, CoreFeature):
         arrays = [np.ascontiguousarray(signal, dtype=float) for signal in series]
         # NaN / inf in an input would turn into NaN outputs in the core
         if self._finite_inputs and (reason := non_finite(np.concatenate([array.ravel() for array in arrays]), allow_empty=True)):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         return self._to_result(self._call_block(arrays), timestamp)
 
 

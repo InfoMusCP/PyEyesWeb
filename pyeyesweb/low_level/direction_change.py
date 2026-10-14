@@ -49,9 +49,9 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
         `Status.WARMING_UP` below 3 samples, `Status.INVALID_INPUT` for unusable data.
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("cosine", doc="Direction change from the cosine similarity of the start-mid-end vectors, in [0, 1]."),
-        Output("polygon", doc="Area of the polygon enclosed by the subsampled trajectory."),
+        Output("polygon", unit="<length>^2", doc="Area of the polygon enclosed by the subsampled trajectory."),
     )
 
     _ALLOWED_METRICS = ["cosine", "polygon"]
@@ -60,7 +60,7 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
     _lazy_block = True
 
     def _schema(self) -> Schema:
-        return self.OUTPUTS.select(self.metrics)
+        return self._OUTPUTS.select(self.metrics)
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("position", InputKind.SAMPLE, (None,), doc="(x, y) or (x, y, z) of the trajectory"))
@@ -125,9 +125,9 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
         """Direction change of one complete `(D, window)` series; see the class documentation."""
         series = np.asarray(series, dtype=float)
         if series.shape[-1] < 3:
-            return self.no_output(Status.WARMING_UP, "fewer than 3 samples", timestamp)
+            return self._no_output(Status.WARMING_UP, "fewer than 3 samples", timestamp)
         if reason := non_finite(series, allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
 
         engine = self._block
         values = {}
@@ -141,9 +141,9 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
                 values["polygon"] = engine.polygon_area(trajectory)
 
         except ValueError as exc:
-            return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
+            return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
 
-        return self.finite_result(timestamp=timestamp, **values)
+        return self._finite_result(timestamp=timestamp, **values)
 
 
 __all__ = ['DirectionChange']

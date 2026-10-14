@@ -36,7 +36,7 @@ class SynchronizationReference(DynamicFeature):
     >>> sync = Synchronization(filter_params={'low': 1.0, 'high': 10.0})
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("phase_locking_value", doc="Phase Locking Value in [0, 1]; 1 is perfect phase synchronization."),
     )
 
@@ -70,11 +70,11 @@ class SynchronizationReference(DynamicFeature):
         data = window_data.reshape(window_data.shape[0], -1)
 
         if data.shape[1] < 2:
-            return self.no_output(Status.INVALID_INPUT, "fewer than 2 signals")
+            return self._no_output(Status.INVALID_INPUT, "fewer than 2 signals")
 
         # Assumes compute_phase_synchronization expects a 2D array of (Time, N_Signals)
         plv = compute_phase_synchronization(data, self.filter_params)
-        return self.result(phase_locking_value=float(plv))
+        return self._result(phase_locking_value=float(plv))
 
 
 __all__ = ["SynchronizationReference"]

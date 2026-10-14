@@ -4,11 +4,23 @@ The conceptual model (Camurri et al.) has four layers plus the analysis primitiv
 
 | Layer | Timescale | Content |
 |---|---|---|
-| `PHYSICAL_SIGNALS` | frame, continuous | physical signals and virtual sensors: skeletons, trajectories, contours, space |
+| `PHYSICAL_SIGNALS` | frame, continuous | physical signals and virtual sensors: skeletons, images, space, body models |
 | `LOW_LEVEL` | up to ~0.5 s | kinematics, energy, shape, symmetry, smoothness |
 | `MID_LEVEL` | 0.5-3 s | amodal gesture features: segments, impulsivity, space occupation |
 | `HIGH_LEVEL` | 3 s and above | qualities communicated (social and interaction level) |
 | `ANALYSIS_PRIMITIVE` | any | metrics applicable to any movement feature at any layer |
+
+Placement rule: a feature goes to the layer of what it needs as input and gives as output, not to the layer of its
+EyesWeb block.
+
+- Physical signals: produces a signal from raw frames or a model and gives a signal again (simulating a body, extracting
+  centroids or parts from an image, locating points in a grid); stream plumbing that feeds the features belongs here too.
+- Low-level: measures one frame, or a short window the feature buffers itself, of a signal (kinematics, energy, symmetry,
+  smoothness), including the shape and the filtering of a contour.
+- Mid-level: needs a whole path or a gesture: a trajectory given as a list of points (directness, non-planarity), the
+  segmentation of gestures, impulsivity, suddenness, space occupied over time.
+- High-level: needs several people.
+- Analysis primitive: takes any scalar, vector or event signal and knows nothing of bodies, skeletons or geometry.
 
 Every feature class carries `LAYER`, `TIMESCALE` and `EYESWEB_BLOCK` (the EyesWeb block it comes from, `None` when
 it has none), set with `@describe`. `catalog()` lists them, and

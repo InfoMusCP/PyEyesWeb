@@ -26,6 +26,10 @@ __all__ = ["Skeleton", "KINECT_V2", "QUALISYS_SPORT", "MEDIAPIPE", "OPENPOSE", "
            "get_skeleton", "with_skeleton"]
 
 
+def __dir__():
+    return sorted(__all__)
+
+
 # Kinect v2 (Kinect SDK 2.0 JointType names). Weights: the EyesWeb Kinect SDK table (KineticEnergyIndex.h) through
 # the correspondence v1 -> v2: head -> Head, shoulder_center -> SpineShoulder, spine -> SpineMid,
 # hip_center -> SpineBase, the others by name. The joints without a v1 counterpart weigh 0, as an unlisted joint

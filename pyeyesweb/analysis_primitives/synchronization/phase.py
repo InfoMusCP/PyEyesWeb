@@ -52,7 +52,7 @@ class PhaseLockingValue(_TrainPairBlock):
     >>> sync = PhaseLockingValue(window=100, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)
     """
 
-    OUTPUTS = Schema(
+    _OUTPUTS = Schema(
         Output("phase_locking_value", doc="Phase Locking Value in [0, 1]; 1 is perfect phase synchronization."),
     )
 
@@ -85,7 +85,7 @@ class PhaseLockingValue(_TrainPairBlock):
         return Inputs(_train("first_signal", "one value per call"), _train("second_signal", "one value per call"))
 
     def _to_result(self, raw: float, timestamp: Optional[float]) -> Result:
-        return self.result(phase_locking_value=raw, timestamp=timestamp)
+        return self._result(phase_locking_value=raw, timestamp=timestamp)
 
 
 __all__ = ['PhaseLockingValue']

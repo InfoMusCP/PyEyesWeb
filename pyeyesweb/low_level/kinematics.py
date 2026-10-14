@@ -21,6 +21,9 @@ from pyeyesweb.base.signatures import input_mode_factory
 _trajectory = core.trajectory
 _MODES = _trajectory.KinematicsInputMode
 
+# Unit of each output type in the unit of the data (`units`); a direction is a unit vector.
+_OUTPUT_UNITS = {"smoothed": "{}", "velocity": "{}/s", "acceleration": "{}/s^2", "jerk": "{}/s^3", "curvature": "1/{}", "direction": ""}
+
 
 class _InferredDimsBlock(InferredDims, FrameFeature):
     """A block with one output whose `dims` (1, 2 or 3) is optional: taken from the first frame, the block built then."""
@@ -44,15 +47,15 @@ class _InferredDimsBlock(InferredDims, FrameFeature):
     def _build_block(self, params: Optional[dict] = None) -> Any:
         return super()._build_block({**(self._params if params is None else params), "dims": self._dims})
 
-    def _vector(self, name: str) -> Output:
+    def _vector(self, name: str, unit: str = "") -> Output:
         """The `(dims,)` output `name`, of unknown length until the dimension is."""
         dimension = self._dims
-        return Output(name, (dimension,), components=None if dimension is None else XYZ[:dimension])
+        return Output(name, (dimension,), components=None if dimension is None else XYZ[:dimension], unit=unit)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         (name,) = self.outputs.names
         finite = bool(np.isfinite(raw).all())
-        return self.result(status=Status.OK if finite else Status.INVALID_INPUT,
+        return self._result(status=Status.OK if finite else Status.INVALID_INPUT,
                            reason="" if finite else "the result is not finite", timestamp=timestamp, **{name: raw})
 
 
@@ -98,14 +101,18 @@ class Kinematics(_InferredDimsBlock):
     def _schema(self) -> Schema:
         dims = _trajectory.KinematicsOutputDimension
         components = self._param("output_dims", dims.TANGENTIAL) == dims.COMPONENTS
-        return Schema(*(self._vector(kind.name.lower()) if components or kind == _trajectory.KinematicsOutputType.DIRECTION
-                        else Output(kind.name.lower()) for kind in self._output_types()))  # a Direction output is always a vector
+        names = [(kind.name.lower(), kind) for kind in self._output_types()]
+        return Schema(*(self._vector(name, self._unit(name)) if components or kind == _trajectory.KinematicsOutputType.DIRECTION
+                        else Output(name, unit=self._unit(name)) for name, kind in names))  # a Direction output is always a vector
+
+    def _unit(self, name: str) -> str:
+        return _OUTPUT_UNITS[name].format(self._params["units"])
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         values = dict(zip(self.outputs.names, raw))
         bad = [name for name, value in values.items() if not np.isfinite(value).all()]
         reason = "the result is not finite" + (f": {', '.join(bad)}" if bad and len(values) > 1 else "")
-        return self.result(status=Status.INVALID_INPUT if bad else Status.OK, reason=reason if bad else "",
+        return self._result(status=Status.INVALID_INPUT if bad else Status.OK, reason=reason if bad else "",
                            timestamp=timestamp, **values)
 
     def _mode(self) -> Any:
@@ -129,7 +136,7 @@ class Kinematics(_InferredDimsBlock):
         dt = self._time_step(timestamp)
         values = np.asarray(data, dtype=float)
         if reason := non_finite(values):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
         push = self._block.push_point if mode == _MODES.POINT else self._block.process_series
         return self._to_result(push(values, dt), timestamp)
 

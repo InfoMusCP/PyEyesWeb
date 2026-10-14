@@ -37,7 +37,7 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 REFERENCE = np.load(DATA / "gesture_segmenter_reference.npz")
 EXCERPTS = np.load(DATA / "motion_excerpts.npz")
 SCENARIOS = json.loads(str(REFERENCE["meta"]))["scenarios"]
-OUTPUTS = ["kinetic_energy", "smoothed_kinetic_energy", "noise", "is_gesturing", "is_gesture_start", "is_gesture_end"]
+_OUTPUTS = ["kinetic_energy", "smoothed_kinetic_energy", "noise", "is_gesturing", "is_gesture_start", "is_gesture_end"]
 MM_SQUARED = 1000.0 ** 2  # the old block scaled the energy threshold by the square of the unit factor
 STATE_RESET, PER_SAMPLE = "parameters changed: state reset", "no time given: per-sample derivatives"
 

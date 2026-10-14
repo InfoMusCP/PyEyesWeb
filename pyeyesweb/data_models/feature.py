@@ -19,8 +19,10 @@ and `hop` and receive samples. A buffer shared between features is the job of `S
 """
 
 import functools
+import inspect
+import types
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Mapping, Optional
 
 import numpy as np
 
@@ -28,6 +30,9 @@ from .base import OutputsMixin
 from .inputs import Input, InputKind, Inputs
 from .recorder import Recorder
 from .results import Result, Status
+
+
+_UNSET = object()
 
 
 def _recording(series: Any, declared: Input) -> Any:
@@ -53,7 +58,7 @@ def _checked(method, window: bool):
         else:
             inputs.check(sample, type(self).__name__)
             if reason := self._input_problem(sample, kwargs.get("timestamp")):
-                return self.no_output(Status.INVALID_INPUT, reason, kwargs.get("timestamp"))
+                return self._no_output(Status.INVALID_INPUT, reason, kwargs.get("timestamp"))
         return method(self, *sample, **kwargs)
 
     wrapper._input_checked = True
@@ -88,14 +93,14 @@ def _forgetting(method):
 
 
 class Feature(OutputsMixin, ABC):
-    """Base of every feature. Subclasses declare `INPUTS` / `_inputs()` and `OUTPUTS` / `_schema()` and implement
+    """Base of every feature. Subclasses declare `_INPUTS` / `_inputs()` and `_OUTPUTS` / `_schema()` and implement
     `process`; `run` is derived from it (a feature with a batch fast path overrides `run`).
 
     A feature with several inputs (a pair of signals) takes them as positional arguments in the order of `inputs`:
     `process(first, second, timestamp=None)` and `run(first, second, timestamps=None)`. `timestamp` and `timestamps` are keyword-only.
     """
 
-    INPUTS: Optional[Inputs] = None
+    _INPUTS: Optional[Inputs] = None
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         """Every `process` (and `_process_window`) a subclass defines checks its arguments against `inputs` first.
@@ -124,10 +129,20 @@ class Feature(OutputsMixin, ABC):
         """
         return self.__dict__.get("_latest")
 
+    @property
+    def parameters(self) -> Mapping[str, Any]:
+        """The parameters of the constructor with their current values, read-only (as scikit-learn's `get_params`).
+        Change one by assigning it: `feature.window = 50`. A parameter the feature resolves at construction and does not keep
+        (`skeleton`, which becomes `labels`, `weights` and `pairs`) is not listed."""
+        names = (name for name, parameter in inspect.signature(type(self)).parameters.items()
+                 if parameter.kind not in (parameter.VAR_POSITIONAL, parameter.VAR_KEYWORD))
+        values = {name: getattr(self, name, _UNSET) for name in names}
+        return types.MappingProxyType({name: value for name, value in values.items() if value is not _UNSET})
+
     def _inputs(self) -> Inputs:
-        if self.INPUTS is None:
-            raise NotImplementedError(f"{type(self).__name__} must define INPUTS or override _inputs()")
-        return self.INPUTS
+        if self._INPUTS is None:
+            raise NotImplementedError(f"{type(self).__name__} must define _INPUTS or override _inputs()")
+        return self._INPUTS
 
     @property
     def inputs(self) -> Inputs:
@@ -257,7 +272,7 @@ class WindowedFeature(Feature):
     def process(self, *sample: Any, timestamp: Optional[float] = None) -> Result:
         samples = [np.asarray(part, dtype=float).ravel() for part in sample]
         if not samples or any(array_of_input.size == 0 for array_of_input in samples):
-            return self.no_output(Status.INVALID_INPUT, "empty sample", timestamp)
+            return self._no_output(Status.INVALID_INPUT, "empty sample", timestamp)
         sizes = tuple(array_of_input.size for array_of_input in samples)
         if self._buffer is None:
             self._open_buffer(sizes)
@@ -267,8 +282,8 @@ class WindowedFeature(Feature):
         self._pushed += 1
         if not self._buffer.push(np.concatenate(samples)):
             if self._pushed < self.window:
-                return self.no_output(Status.WARMING_UP, f"{self._pushed} of {self.window} samples", timestamp)
-            return self.no_output(Status.NO_OUTPUT, "between windows", timestamp)
+                return self._no_output(Status.WARMING_UP, f"{self._pushed} of {self.window} samples", timestamp)
+            return self._no_output(Status.NO_OUTPUT, "between windows", timestamp)
         window = self._buffer.window()
         return self._process_window(*np.split(window, np.cumsum(self._sizes)[:-1], axis=0), timestamp=timestamp)
 
