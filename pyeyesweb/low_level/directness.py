@@ -8,7 +8,7 @@ from pyeyesweb.data_models.results import Output, Schema
 _trajectory = core.trajectory
 
 
-@describe(Layer.MID_LEVEL, eyesweb="GetTrajectoryFeatures (TrajectoryBasicFeatures)")
+@describe(Layer.LOW_LEVEL, eyesweb="GetTrajectoryFeatures (TrajectoryBasicFeatures)")
 class Directness(PointListFeature):
     """Directness index of a path: straight-line distance / path length (1 = a straight line), EyesWeb
     GetTrajectoryFeatures. `process(points, *, timestamp=None)`, an `(n, D)` array of points (D = 2 or 3), row 0 = newest

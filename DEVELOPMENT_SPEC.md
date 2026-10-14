@@ -32,7 +32,7 @@ The package follows the conceptual model of movement qualities (layers):
 |---|---|---|
 | `pyeyesweb.physical_signals` | 1 | Physical signals and virtual sensors: body models, space, images (silhouettes, videograms), stream plumbing (`TimeWindowSynchronizer`). |
 | `pyeyesweb.low_level` | 2 | Kinematics, energy, shape and filtering of contours, symmetry, smoothness (up to about 0.5 s). |
-| `pyeyesweb.mid_level` | 3 | Segments, impulsivity, suddenness, directness and non-planarity of a path, space occupation (0.5 to 3 s). |
+| `pyeyesweb.mid_level` | 3 | Segments, impulsivity, suddenness, space occupation (0.5 to 3 s). |
 | `pyeyesweb.high_level` | 4 | Social and interaction-level features (3 s and above): `EnsembleDominance`. |
 | `pyeyesweb.analysis_primitives` | any | Metrics applicable to any movement feature at any layer (entropy, rarity, periodicity, `synchronization/`). |
 | `pyeyesweb.data_models` | | The contract: `Feature`, `WindowedFeature`, `Input(s)`, `Schema`, `Output`, `Result`, `Status`, `Recorder`, `SlidingWindow`, and `skeleton.py` (the `Skeleton` class). |
@@ -197,13 +197,36 @@ Results, recorder and discoverability.
   and not listed; a package lists its `__all__` and not its submodules. `TimeWindowSynchronizer` and `SynchronizedWindow`
   are public in `pyeyesweb.physical_signals` (they need the core, so not in `data_models`), next to `MassSpringModel`.
 - **Layer placement rule** (in the `catalog` docstring). Physical signals produce a signal from raw frames or a model and
-  give a signal again; low-level measures a frame or a short window the feature buffers itself; mid-level needs a whole path
-  or a gesture; high-level needs several people; an analysis primitive knows nothing of bodies or geometry. Moved:
+  give a signal again; low-level measures a frame or a short window the feature buffers itself; mid-level needs a whole gesture; high-level needs several people; an analysis primitive knows nothing of bodies or geometry. Moved:
   `FilterContour` to `pyeyesweb.low_level` (with the other contour features, in `shape.py`), `TrajectoryNonPlanarity` and
-  `average_curvature_3d` to `pyeyesweb.mid_level` (next to `Directness`: both take a whole path as a list of points).
+  `average_curvature_3d` to `pyeyesweb.mid_level` (superseded in work package D: `Directness` too moved to low-level).
   `ContourFeature` now lives in `low_level/shape.py`.
 - **`GenericModel*`.** Each docstring has an example, and the error for a wrong `model=` names
   `MassSpringModel.from_xml_file(path)`, `from_xml_string(xml)` and `add_mass` / `add_spring`.
+
+### Contract changes of work package D (2026-10-14)
+
+- **Placement.** `Directness`, `TrajectoryNonPlanarity` and `average_curvature_3d` are in `pyeyesweb.low_level` (files
+  `low_level/directness.py` and `low_level/non_planarity.py`): a path given as a list of points is low-level, mid-level is
+  a whole gesture. The `catalog` placement rule says so. `Result.to_flat_dict()` keeps integer statuses.
+- **Core version (Q9).** `eyesweb_core` has `__version__` (the CMake project version of EyesWebCore, bumped with the
+  bindings) and `__build__` (git short hash at configure time). `pyeyesweb/_core.py` requires `REQUIRED_CORE` (major.minor,
+  now 2.0) and raises `ImportError` for another version or a module without a version. `EYESWEB_CORE_PATH` is put first on
+  `sys.path` by `_core.py` itself, and the import fails when `eyesweb_core` was already loaded from another place.
+- **Signatures (Q7, Q8).** Annotations of the nanobind signature text are resolved by `typing.get_type_hints` against a
+  fixed namespace (no `eval` of module globals); the text is still parsed with `ast`, defaults with `ast.literal_eval`.
+  `from_*` constructors are descriptors (`_InputModeFactory`) that build the function per class on access, so a
+  subclass or grandchild shows and checks its own parameters; the parent's is never touched.
+- **Humanoid (Q16).** The joint and bone tables and `MassSpringModel` are in `physical_signals/_humanoid_model.py`;
+  `HUMANOID_JOINTS`, `HUMANOID_BONES` and `MassSpringModel` stay public from `pyeyesweb.physical_signals`.
+- **Tests (Q10, Q11, Q12).** Helpers are in `tests/_support/` and documented in `tests/conftest.py`. All 13 oracles of
+  `tests/reference` are still imported, so none was removed; the only regeneration code of frozen data was the `--capture`
+  option of `test_trajectory_parity.py`, now `tools/regenerate_trajectory_reference.py` (the other `.npz` files have no
+  generator in the repository). `tests/benchmarks` (animation scripts on the 1.x API, not benchmarks) moved to
+  `tools/bench`; `pytest-benchmark` is not added.
+- **Build (Q13).** Strict warnings (`/W4`, `-Wall -Wextra`) apply to the core, the tests and the bindings;
+  `-DEW_WARNINGS_AS_ERRORS=ON` turns them into errors. `.gitignore` covers `examples/scratch/` (build outputs were
+  already covered).
 
 ## 4. Parameters
 
@@ -321,8 +344,8 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
    `VariantFeature` / `FrameFeature`), `_OUTPUTS` schema, `_inputs()`, `_schema()` if parameter dependent,
    `_process`/`_process_window`, a docstring with `Parameters` and `Returns` (units stated), export in the layer's
    `__init__` and `__all__`.
-3. Tests: the contract suite (`tests/contract_suite.py`, `check_feature_contract`) so `process` and `run` agree and
-   results are well formed; the live-parameter suite (`tests/live_param_suite.py`) for every parameter, live or
+3. Tests: the contract suite (`tests/_support/contract_suite.py`, `check_feature_contract`) so `process` and `run` agree and
+   results are well formed; the live-parameter suite (`tests/_support/live_param_suite.py`) for every parameter, live or
    structural; parity against the C++ or reference implementation; error cases (wrong shape, NaN, too short).
    `tests/test_signatures.py`, `tests/unit_tests/test_choices_everywhere.py` and `test_naming.py` pick the new
    feature up automatically through `catalog()`: they must pass without changes.
@@ -346,7 +369,8 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
 
 Python 3.11 virtual environment. The C++ is built in the private EyesWebCore repository (a sibling checkout of PyEyesWeb);
 PyEyesWeb itself has nothing to compile. The compiled module is the `eyesweb_core` package when installed, or the build
-in the directory named by `EYESWEB_CORE_PATH` (and on `PYTHONPATH`) during development.
+in the directory named by `EYESWEB_CORE_PATH` (and on `PYTHONPATH`) during development. CMake option
+`-DEW_WARNINGS_AS_ERRORS=ON` makes any compiler warning an error (CI); strict warnings apply to every target.
 
 ```
 # C++ core, tests and compiled module (repository EyesWebCore, a sibling checkout)

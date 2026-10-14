@@ -1,4 +1,4 @@
-"""Live parameter changes of the motion blocks that come from the lab's Python library (checks in `tests/live_param_suite.py`).
+"""Live parameter changes of the motion blocks that come from the lab's Python library (checks in `tests/_support/live_param_suite.py`).
 
 Every block here is stateless, so all parameters are LIVE and the state of the wrapper (windows, hop counters) is
 never touched.

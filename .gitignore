@@ -56,3 +56,5 @@ __*
 
 # Ignore the site directory
 site/
+# Personal review notebooks
+examples/scratch/

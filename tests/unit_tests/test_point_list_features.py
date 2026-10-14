@@ -12,7 +12,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.data_models.results import Status  # noqa: E402
-from pyeyesweb.mid_level import Directness, TrajectoryNonPlanarity  # noqa: E402
+from pyeyesweb.low_level import Directness, TrajectoryNonPlanarity  # noqa: E402
 
 
 def line(length=4, dims=3):

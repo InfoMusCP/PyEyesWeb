@@ -1,5 +1,5 @@
 """Live parameter changes of the series and signal blocks of `analysis_primitives.synchronization` (checks in
-`tests/live_param_suite.py`).
+`tests/_support/live_param_suite.py`).
 
 * Recurrence plots, cross recurrence plots, interdependence, tau estimator, phase locking value: stateless in the
   core, every parameter is LIVE (the windows buffered by the feature are kept).

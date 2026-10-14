@@ -7,7 +7,7 @@ import numpy as np
 from pyeyesweb._core import core
 from pyeyesweb.physical_signals import HUMANOID_JOINTS
 
-REFERENCE = np.load(os.path.join(os.path.dirname(__file__), "data", "humanoid_reference.npz"))
+REFERENCE = np.load(os.path.join(os.path.dirname(__file__), "..", "data", "humanoid_reference.npz"))
 
 # A chain of three bones hanging from a heavy root: the model of the generic blocks (the one of the frozen reference).
 CHAIN_XML = """<Model><Masses>

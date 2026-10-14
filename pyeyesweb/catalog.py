@@ -16,9 +16,9 @@ EyesWeb block.
 - Physical signals: produces a signal from raw frames or a model and gives a signal again (simulating a body, extracting
   centroids or parts from an image, locating points in a grid); stream plumbing that feeds the features belongs here too.
 - Low-level: measures one frame, or a short window the feature buffers itself, of a signal (kinematics, energy, symmetry,
-  smoothness), including the shape and the filtering of a contour.
-- Mid-level: needs a whole path or a gesture: a trajectory given as a list of points (directness, non-planarity), the
-  segmentation of gestures, impulsivity, suddenness, space occupied over time.
+  smoothness), including the shape and the filtering of a contour and a path given as a list of points (directness,
+  non-planarity).
+- Mid-level: needs a whole gesture: the segmentation of gestures, impulsivity, suddenness, space occupied over time.
 - High-level: needs several people.
 - Analysis primitive: takes any scalar, vector or event signal and knows nothing of bodies, skeletons or geometry.
 

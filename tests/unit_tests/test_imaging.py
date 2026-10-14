@@ -1,5 +1,5 @@
 """Image features (EyesWeb BaseImaging): call contract, the `IMAGE` input, behaviour, and parity with the colleague's
-independent port on frozen outputs (`tests/data/imaging_reference.npz`, inputs in `tests/imaging_inputs.py`).
+independent port on frozen outputs (`tests/data/imaging_reference.npz`, inputs in `tests/_support/imaging_inputs.py`).
 Needs the compiled core (EYESWEB_CORE_PATH), else skipped."""
 import os
 import sys

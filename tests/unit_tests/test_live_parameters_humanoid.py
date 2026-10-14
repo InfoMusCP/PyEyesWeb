@@ -1,4 +1,4 @@
-"""Live parameter changes of the humanoid / mass-spring features (checks in `tests/live_param_suite.py`).
+"""Live parameter changes of the humanoid / mass-spring features (checks in `tests/_support/live_param_suite.py`).
 
 Every block of this area keeps a physical state (masses, velocities, the estimated parameters), so a changed parameter is
 compared with the raw core block that adopts the new parameters at the same frame (`adopt_params`): the numbers are the

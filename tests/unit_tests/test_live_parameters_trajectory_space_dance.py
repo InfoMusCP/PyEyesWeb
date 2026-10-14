@@ -1,4 +1,4 @@
-"""Live parameter changes of the kinematics, space and dance blocks (checks in `tests/live_param_suite.py`).
+"""Live parameter changes of the kinematics, space and dance blocks (checks in `tests/_support/live_param_suite.py`).
 
 * Kinematics: the filter, the output type (one or a list), the dimension and the input mode are STRUCTURAL; the movement threshold
   is LIVE.
@@ -18,7 +18,7 @@ from live_param_suite import NOTE, check_invalid, check_live, check_structural, 
 
 from pyeyesweb.analysis_primitives.signal_events import ScalarPeakDetector
 from pyeyesweb.low_level.kinematics import Kinematics
-from pyeyesweb.mid_level import TrajectoryNonPlanarity
+from pyeyesweb.low_level import TrajectoryNonPlanarity
 from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials
 from pyeyesweb.physical_signals.space import HitCellDetector
 

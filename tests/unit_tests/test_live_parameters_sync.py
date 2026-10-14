@@ -1,5 +1,5 @@
 """Live parameter changes of the event and sequence blocks of `analysis_primitives.synchronization.events` (checks in
-`tests/live_param_suite.py`).
+`tests/_support/live_param_suite.py`).
 
 * Event Sync: Tau and Weighted are LIVE (the queued events keep their counts); resetting every buffer is STRUCTURAL (read
   by Init()).

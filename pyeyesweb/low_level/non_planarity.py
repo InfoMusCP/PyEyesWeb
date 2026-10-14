@@ -12,7 +12,7 @@ _trajectory = core.trajectory
 average_curvature_3d = _trajectory.average_curvature_3d
 
 
-@describe(Layer.MID_LEVEL, eyesweb="GetAverageCurvatue (Curvature3D)")
+@describe(Layer.LOW_LEVEL, eyesweb="GetAverageCurvatue (Curvature3D)")
 class TrajectoryNonPlanarity(PointListFeature):
     """EyesWeb GetAverageCurvatue (Curvature3D), the mean distance of a trajectory from local best-fit planes.
     `process(points, *, timestamp=None)`, an `(n, D)` array of points, row 0 = newest (`run` takes `(T, n, D)`).

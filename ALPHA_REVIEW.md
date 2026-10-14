@@ -83,7 +83,9 @@ See `DEVELOPMENT_SPEC.md`, "Contract changes of work package C".
 | U26 | low | `GenericModel*` features: only the error explains how to get a `model`. | One example in each docstring; name `MassSpringModel.from_file` in the error. | S |
 | on `latest` | decision | Both reviewers agree: keep `latest` on `Feature` (it is state across calls; a `Result` is one immutable call). | No change. | |
 
-## 4. Work package D: base machinery and maintainability (quality)
+## 4. Work package D: base machinery and maintainability (quality): DONE on 2026-10-14
+
+See `DEVELOPMENT_SPEC.md`, "Contract changes of work package D".
 
 | id | sev | finding | action | size |
 |---|---|---|---|---|

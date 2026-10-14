@@ -1,6 +1,6 @@
 """Parameters change on a running feature without losing its state, unless they are structural.
 
-Pilot blocks; every other area keeps its table in `test_live_parameters_<area>.py` (checks in `tests/live_param_suite.py`). A row is
+Pilot blocks; every other area keeps its table in `test_live_parameters_<area>.py` (checks in `tests/_support/live_param_suite.py`). A row is
 `(factory, setter_name, new_value, recording)`; `recording` is a list of what `process` receives, one item per call.
 
 * LIVE: the parameter does not enter the state. Changing it at sample K gives, from K on, what a feature built with

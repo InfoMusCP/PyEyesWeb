@@ -2,28 +2,22 @@
 
 The reference file `tests/data/trajectory_reference.npz` holds the outputs these features gave while they ran on the
 removed Trajectory datatype; the plain-array implementations must reproduce them bit for bit (NaN equal).
-Regenerate with `python test_trajectory_parity.py --capture` ONLY when a numeric change is intended.
+Regenerate with `python tools/regenerate_trajectory_reference.py` ONLY when a numeric change is intended.
 Needs the compiled core (EYESWEB_CORE_PATH).
 """
 
 import json
-import os
-import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 REFERENCE = Path(__file__).resolve().parents[1] / "data" / "trajectory_reference.npz"
 
-if __name__ != "__main__":
-    import pytest
-
-    if os.environ.get("EYESWEB_CORE_PATH"):
-        sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
-    pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
+pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.low_level import Kinematics  # noqa: E402
-from pyeyesweb.mid_level import Directness, TrajectoryNonPlanarity  # noqa: E402
+from pyeyesweb.low_level import Directness, TrajectoryNonPlanarity  # noqa: E402
 
 
 def _walk(count, dims, seed):
@@ -136,12 +130,6 @@ def _bits(values):
     return values.view(np.uint64)
 
 
-def capture():
-    values, meta = _pack(compute())
-    np.savez_compressed(REFERENCE, meta=json.dumps(meta), values=values)
-    print(f"{len(meta)} cases, {len(values)} values, {REFERENCE.stat().st_size} bytes")
-
-
 def test_outputs_match_the_frozen_reference_bit_for_bit():
     values, meta = _pack(compute())
     with np.load(REFERENCE) as data:
@@ -152,6 +140,3 @@ def test_outputs_match_the_frozen_reference_bit_for_bit():
     different = np.flatnonzero(_bits(values) != _bits(frozen))
     assert not different.size, f"{different.size} values differ, first at {different[:10]}: {values[different[:3]]} vs {frozen[different[:3]]}"
 
-
-if __name__ == "__main__":
-    capture() if "--capture" in sys.argv else print(len(compute()), "cases")

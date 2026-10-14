@@ -10,7 +10,7 @@ from typing import Any, ClassVar, Literal, Optional, Tuple
 
 from pyeyesweb.base.choices import choice_name, coerce_choice, coerce_enum, coerce_enums
 from pyeyesweb._core import core
-from pyeyesweb.base.signatures import _nb_parameters, core_signature, factory_signature, missing_arguments, unexpected_keyword
+from pyeyesweb.base.signatures import _nb_parameters, core_signature, missing_arguments, unexpected_keyword
 from pyeyesweb.data_models.feature import Feature
 from pyeyesweb.data_models.results import Result
 
@@ -149,9 +149,6 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
             cls._hidden_params = cls._hidden_params | frozenset(cls._parts.values())
         if cls._core_class is not None:
             cls.__signature__ = core_signature(cls, core)
-            for member in vars(cls).values():  # the `from_*` constructors show the constructor's parameters but one
-                if isinstance(member, classmethod) and hasattr(member.__func__, "_input_mode_parameter"):
-                    member.__func__.__signature__ = factory_signature(cls.__signature__, member.__func__._input_mode_parameter)
 
     def __init__(self, **params: Any):
         if self._unit_params:

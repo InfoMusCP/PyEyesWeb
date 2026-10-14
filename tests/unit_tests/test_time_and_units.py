@@ -8,8 +8,8 @@ import pytest
 pytest.importorskip("pyeyesweb._core")
 
 from pyeyesweb.low_level import CurvatureDispersion, Equilibrium, Kinematics, KineticEnergy
-from pyeyesweb.low_level import MotionNoiseDetector
-from pyeyesweb.mid_level import GestureSegmenter, TrajectoryNonPlanarity
+from pyeyesweb.low_level import MotionNoiseDetector, TrajectoryNonPlanarity
+from pyeyesweb.mid_level import GestureSegmenter
 from pyeyesweb.physical_signals import HitCellDetector
 
 LABELS = ["a"]

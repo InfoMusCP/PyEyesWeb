@@ -1,4 +1,4 @@
-"""Live parameter changes of the imaging blocks and BinaryPulsesRegularity (checks in `tests/live_param_suite.py`).
+"""Live parameter changes of the imaging blocks and BinaryPulsesRegularity (checks in `tests/_support/live_param_suite.py`).
 
 * SilhouetteBodyParts: stateless, every parameter is LIVE.
 * SilhouetteCentroids: the centroid `parts`, the filter switch, alpha and "add intermediate centroids" are LIVE (the filters

@@ -11,6 +11,7 @@ pytest.importorskip("pyeyesweb._core")
 
 from pyeyesweb import catalog  # noqa: E402
 from pyeyesweb.base.core_feature import _SIGNATURE_PARAM, CoreFeature  # noqa: E402
+from pyeyesweb.base.signatures import _InputModeFactory  # noqa: E402
 
 FEATURES = [info.cls for info in catalog()]
 # A merged feature (`VariantFeature`) wraps one block per variant.
@@ -89,8 +90,7 @@ def test_a_choice_is_a_literal_of_strings_or_a_bool(cls):
         assert all(isinstance(option, str) and option == option.lower() for option in options), name
 
 
-FACTORIES = [(cls, name, member.__func__) for cls in CORE_FEATURES for name, member in vars(cls).items()
-             if isinstance(member, classmethod) and hasattr(member.__func__, "_input_mode_parameter")]
+FACTORIES = [(cls, name, member) for cls in CORE_FEATURES for name, member in vars(cls).items() if isinstance(member, _InputModeFactory)]
 FACTORY_IDS = [f"{cls.__name__}.{name}" for cls, name, _ in FACTORIES]
 
 
@@ -104,7 +104,7 @@ def test_the_input_mode_features_have_their_factories():
 def test_a_factory_shows_the_constructor_signature_without_the_input_mode(cls, name, function):
     constructor = inspect.signature(cls).parameters
     shown = inspect.signature(getattr(cls, name)).parameters
-    assert list(shown) == [parameter for parameter in constructor if parameter != function._input_mode_parameter]
+    assert list(shown) == [parameter for parameter in constructor if parameter != function.parameter]
     assert all(shown[parameter] == constructor[parameter] for parameter in shown)  # defaults and annotations included
     assert function.__doc__
 
@@ -125,3 +125,22 @@ def test_a_factory_typo_is_a_type_error_with_a_suggestion(cls, name, function):
     assert f"{cls.__name__}.{name}()" in str(error.value) and f"did you mean '{valid[0]}'" in str(error.value)
     with pytest.raises(TypeError, match="input_mode"):  # the mode is the factory's, not a keyword
         getattr(cls, name)(input_mode="point")
+
+
+def test_a_factory_follows_each_subclass_and_leaves_the_parent_alone():
+    from pyeyesweb.low_level import Kinematics
+
+    class Child(Kinematics):
+        def __init__(self, *, extra: int = 1, **params):
+            super().__init__(**params)
+
+    class Grandchild(Child):
+        pass
+
+    for cls in (Kinematics, Child, Grandchild):
+        shown = inspect.signature(cls.from_point).parameters
+        assert list(shown) == [name for name in inspect.signature(cls).parameters if name != "input_mode"]
+        assert ("extra" in shown) is (cls is not Kinematics)
+        assert type(cls.from_point(sampling_rate=50.0)) is cls
+        with pytest.raises(TypeError, match=f"{cls.__name__}.from_point"):
+            cls.from_point(extr=1)
