@@ -1,4 +1,3 @@
-from .sliding_window import SlidingWindow
 from .results import Status, Output, Schema, Result
 from .recorder import Recorder
 from .base import OutputsMixin
@@ -7,7 +6,6 @@ from .skeleton import Skeleton
 from .feature import Feature, WindowedFeature
 
 __all__ = [
-    "SlidingWindow",
     "Status",
     "Output",
     "Schema",

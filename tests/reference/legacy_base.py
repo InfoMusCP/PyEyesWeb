@@ -7,7 +7,7 @@ import numpy as np
 
 from pyeyesweb.data_models.base import OutputsMixin
 from pyeyesweb.data_models.results import Result, Status
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+SlidingWindow = object  # the removed 1.x buffer, named only in annotations
 
 
 class BaseFeature(OutputsMixin, ABC):

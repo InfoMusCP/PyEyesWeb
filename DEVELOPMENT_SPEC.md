@@ -35,7 +35,7 @@ The package follows the conceptual model of movement qualities (layers):
 | `pyeyesweb.mid_level` | 3 | Segments, impulsivity, suddenness, space occupation (0.5 to 3 s). |
 | `pyeyesweb.high_level` | 4 | Social and interaction-level features (3 s and above): `EnsembleDominance`. |
 | `pyeyesweb.analysis_primitives` | any | Metrics applicable to any movement feature at any layer (entropy, rarity, periodicity, `synchronization/`). |
-| `pyeyesweb.data_models` | | The contract: `Feature`, `WindowedFeature`, `Input(s)`, `Schema`, `Output`, `Result`, `Status`, `Recorder`, `SlidingWindow`, and `skeleton.py` (the `Skeleton` class). |
+| `pyeyesweb.data_models` | | The contract: `Feature`, `WindowedFeature`, `Input(s)`, `Schema`, `Output`, `Result`, `Status`, `Recorder`, and `skeleton.py` (the `Skeleton` class). |
 | `pyeyesweb.base` | | Machinery features are built from: `core_feature.py` (`CoreFeature`, `VariantFeature`, `FrameFeature`), `signatures.py`, `choices.py`, `inputs.py`, `minimum_window.py`, `labels.py` (`LabelGuard`). Internal. |
 | `pyeyesweb.catalog` | | `@describe(Layer, ...)` metadata and `catalog()`. |
 | `pyeyesweb.skeletons` | | The lab device presets (`KINECT_V2`, ...), `get_skeleton`, `with_skeleton`; re-exports `Skeleton` (defined in `data_models/skeleton.py`). |
@@ -222,8 +222,8 @@ Results, recorder and discoverability.
 - **Tests (Q10, Q11, Q12).** Helpers are in `tests/_support/` and documented in `tests/conftest.py`. All 13 oracles of
   `tests/reference` are still imported, so none was removed; the only regeneration code of frozen data was the `--capture`
   option of `test_trajectory_parity.py`, now `tools/regenerate_trajectory_reference.py` (the other `.npz` files have no
-  generator in the repository). `tests/benchmarks` (animation scripts on the 1.x API, not benchmarks) moved to
-  `tools/bench`; `pytest-benchmark` is not added.
+  generator in the repository). `tests/benchmarks` (animation scripts on the 1.x API, not benchmarks) deleted
+  (with `SlidingWindow`, removed on 2026-10-14); `pytest-benchmark` is not added.
 - **Build (Q13).** Strict warnings (`/W4`, `-Wall -Wextra`) apply to the core, the tests and the bindings;
   `-DEW_WARNINGS_AS_ERRORS=ON` turns them into errors. `.gitignore` covers `examples/scratch/` (build outputs were
   already covered).

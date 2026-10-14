@@ -15,7 +15,7 @@ Time is optional and in seconds: `timestamp` is the timestamp of the sample, `ti
 stamped with the wall clock.
 
 Features that work on a window of samples own their buffer (`WindowedFeature`): they are configured with `window`
-and `hop` and receive samples. A buffer shared between features is the job of `SlidingWindow`, a standalone utility.
+and `hop` and receive samples.
 """
 
 import functools

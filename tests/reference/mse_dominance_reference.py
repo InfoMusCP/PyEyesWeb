@@ -31,7 +31,7 @@ Physical Review E, 71(2), 021906.
 
 from typing import Literal
 import numpy as np
-from pyeyesweb.data_models.sliding_window import SlidingWindow
+SlidingWindow = object  # the removed 1.x buffer, named only in annotations
 from pyeyesweb.utils.validators import validate_integer, validate_numeric, validate_string
 
 class MultiScaleEntropyDominance:

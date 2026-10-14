@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "_support"))
 try:
     import pyeyesweb._core  # noqa: F401
 except ImportError:
-    _PURE = ("test_sliding_window.py", "test_output_contract.py")
+    _PURE = ("test_output_contract.py",)
 
     def pytest_ignore_collect(collection_path, config):
         name = collection_path.name
