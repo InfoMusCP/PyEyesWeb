@@ -40,7 +40,9 @@ def test_timestamps_win_over_sampling_rate():
 def test_without_time_the_result_says_so_and_with_a_rate_it_does_not():
     assert NOTE in _energy().process(LINE[0]).reason
     assert NOTE not in _energy(sampling_rate=50).process(LINE[0]).reason
-    assert NOTE not in _energy().process(LINE[0], timestamp=0.5).reason
+    first = _energy()
+    assert NOTE in first.process(LINE[0], timestamp=0.5).reason  # the first timed call has no previous timestamp: per sample
+    assert NOTE not in first.process(LINE[1], timestamp=0.52).reason
 
 
 def test_the_time_source_may_change_between_calls():

@@ -62,7 +62,7 @@ def test_information_equals_private_implementation():
     wrapped = Rarity(method="information")
     direct = _InformationRarity()
     for sample in PAIR:
-        assert np.array_equal(wrapped.process(sample).rarity, direct.process(sample).rarity)
+        assert np.array_equal(wrapped.process(sample).rarity, direct.process(sample).rarity, equal_nan=True)
 
 
 def test_mode_distance_equals_private_implementation_and_reference():
@@ -111,7 +111,7 @@ def test_information_rarity_warm_up_restarts_with_a_structural_change_not_with_a
     assert feature.process([0.1, 0.5]).status is Status.WARMING_UP
 
 
-def test_information_rarity_value_outside_the_bins_is_invalid_input_with_the_numbers():
+def test_information_rarity_value_outside_the_bins_is_invalid_input_without_numbers():
     from pyeyesweb.data_models import Status
     feature = Rarity(number_of_inputs=2, data_memory=2, bins=[0.5, 0.5])
     feature.process([0.2, 0.2])
@@ -119,7 +119,7 @@ def test_information_rarity_value_outside_the_bins_is_invalid_input_with_the_num
     assert inside.status is Status.OK
     outside = feature.process([0.9, 1.5])
     assert outside.status is Status.INVALID_INPUT and outside.reason == "value outside the bins"
-    assert np.all(np.isfinite(outside.rarity))  # the numbers are kept (the second input kept its previous bin)
+    assert np.isnan(outside.rarity).all() and not any(outside.valid.values())  # the diagnostic is the reason
     assert feature.process([np.nan, 0.2]).status is Status.INVALID_INPUT
 
 

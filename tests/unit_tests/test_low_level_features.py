@@ -169,5 +169,5 @@ def test_bounding_box_filled_area_degenerate_hull_is_invalid_input():
                            (np.outer(rng.random(5), [1, 2, 3]), "coplanar")):
         result = BoundingBoxFilledArea().process(points)  # before: OK with index 0
         assert result.status == Status.INVALID_INPUT and reason in result.reason
-        assert result.contraction_index == 0.0
+        assert np.isnan(result.contraction_index)
     assert BoundingBoxFilledArea().process(rng.random((8, 3))).ok

@@ -41,8 +41,9 @@ PERIODIC = [[float(value)] for value in np.tile([3.0, -1.0, 0.0, 2.0, -4.0], _FR
 IMPULSES = [(0.2 * (frame % 9 in (2, 3, 4)) + 0.05, float(_rng.uniform())) for frame in range(_FRAMES + 20)]
 POINT_CLOUDS = [_rng.normal(size=(6, 3)) for _ in range(_FRAMES)]
 
-SKELETONS = [{"torso": (0.0, 0.0, 0.0), "left_shoulder": (-1 - 0.1 * (frame % 9), 0.0, 0.0),
-              "right_shoulder": (1.0, 0.0, 0.0), "hand": (0.5 * frame, 1.0, 2.0)} for frame in range(_FRAMES)]
+# (no coordinate is zero on both shoulders: that is 0/0 = NaN in the block, an INVALID_INPUT result)
+SKELETONS = [{"torso": (0.0, 0.0, 0.0), "left_shoulder": (-1 - 0.1 * (frame % 9), 0.5, 0.25),
+              "right_shoulder": (1.0, 0.4, 0.25), "hand": (0.5 * frame, 1.0, 2.0)} for frame in range(_FRAMES)]
 
 # Still until sample 60, then moving at random: the thresholds do not enter the state, the gesture starts afterwards.
 _HAND = np.concatenate([np.zeros(61), np.cumsum(_rng.normal(size=_FRAMES))])

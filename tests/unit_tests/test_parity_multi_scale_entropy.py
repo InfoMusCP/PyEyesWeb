@@ -249,6 +249,16 @@ def test_split_reproduces_the_combined_block_bit_for_bit(entry, data):
     MultiScaleEntropyDominance (all three methods) gave on the same windows."""
     params = {("minimum_points" if name == "min_points" else name): value for name, value in entry["params"].items() if name != "methods"}
     feature, dominance = MultiScaleEntropy(**params), EnsembleDominance()
+    if entry["kind"] != "window" and not np.isfinite(data).all():
+        # the old block buffered a NaN sample; now it is rejected and not buffered: the rest is the stream without it
+        clean = MultiScaleEntropy(**params)
+        for step in range(data.shape[1]):
+            result = feature.process(data[:, step], timestamp=entry["dt"] * (step + 1))
+            if np.isfinite(data[:, step]).all():
+                assert np.array_equal(result.to_array(), clean.process(data[:, step]).to_array(), equal_nan=True)
+            else:
+                assert result.status is Status.INVALID_INPUT and not any(result.valid.values())
+        return
     if entry["kind"] == "window":
         results = [feature._process_window(data)]
     else:

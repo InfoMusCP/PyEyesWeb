@@ -91,13 +91,51 @@ is an image has `None` sizes in its `Output` shape (known from the first frame) 
 ### Error policy (**Decided**)
 
 - Wrong **shape or kind** of input: raise `ValueError` (central check in `Inputs`, with the feature and input name).
-- Bad **data** (NaN, infinite, empty frame, degenerate geometry): return a `Result` with `INVALID_INPUT` and a `reason`.
-  Never raise and never return a plausible-looking number.
+- Bad **data** (NaN, infinite, empty frame, a missing joint, a timestamp that goes back, degenerate geometry): return a
+  `Result` with `INVALID_INPUT` and a `reason`. Never raise and never return a plausible-looking number: an
+  `INVALID_INPUT` result holds the empty value (NaN, 0, False) in every output and `valid` is `False` for all of them;
+  the diagnostic is the `reason`. The central rules are in "Contract changes of work package A" below.
 - Not enough samples yet: `WARMING_UP`, never an exception.
 - Invalid **parameters** raise at construction, never at the first `process`. A minimum window size is validated at
   construction (`MinimumWindow`).
 - Use the shared helpers (`non_finite(...)` in `base/inputs.py` and friends) so that the same condition always has
   the same `reason` text.
+
+### Contract changes of work package A (2026-10-14)
+
+These are Python-layer rules, implemented once in the central call path (`Feature` wrapper, `Inputs`, `OutputsMixin`,
+`CoreFeature`) and tested catalog-wide (`test_invariants_all_features.py`, `test_time_rule_all_features.py`,
+`test_live_validation_all_features.py`).
+
+- **Finite check.** Before the feature sees a call, `Input.problem` looks at every numeric input (`SAMPLE`, `POINTS`,
+  `MATRIX`, scalars, the values of a dict frame; not images): NaN or infinity gives `INVALID_INPUT` "NaN or infinite
+  values" (the text of `non_finite`). The sample is not buffered and no state advances, so the next valid call behaves
+  as if the rejected one had not happened (a windowed feature does not hold it in its window, the hop counter and
+  `latest` do not move). An input says `allow_non_finite=True` when NaN is data: the feature then checks it itself. The
+  opt-outs are the humanoid and mass-spring inputs (`HumanoidSimulator`, `HumanoidOrientations`, `GenericModel*`,
+  `PointsPredictor`: a NaN joint is a dropout the model handles; an infinity or an all-NaN frame is still
+  `INVALID_INPUT`) and the input of `EnsembleDominance` (a NaN complexity index is a participant without one, ignored by
+  design). An input that is cast to an integer (`SequenceDetector`) says `integer=True` and also rejects values beyond the
+  integer range. A feature that checks first or more specifically (an empty frame, a degenerate shape) keeps its own
+  reason. A result that overflows (finite data, 1e300) is `INVALID_INPUT` "the result is not finite" through
+  `finite_result(...)`, used by the features whose arithmetic can overflow.
+- **Labels.** For a dict frame, a feature that reads named joints (`LabelGuard`: `KineticEnergy`, `MotionNoiseDetector`,
+  `Symmetry` ratio) checks it centrally: a joint it needs that is missing gives `INVALID_INPUT` "missing joints: a, b";
+  when `labels` are configured, a key that is not one of them raises `ValueError` (a wrong joint name is a
+  configuration error). The humanoid features set `_dropouts = True` and keep their dropout handling.
+- **Empty outputs.** `OutputsMixin.result` ignores every value it is given when the status is `INVALID_INPUT`: all
+  outputs are empty and `valid` is `False` for all. `WARMING_UP` and `NO_OUTPUT` are as before.
+- **Time.** After a timed call, a timestamp that is not larger than the previous one gives `INVALID_INPUT`
+  "non-increasing timestamp" and changes nothing (the previous time stays). The previous timestamp is `None`, not 0,
+  when unknown (the first call, after `reset()`, after a call without timestamp, after a state reset). A call with no
+  previous timestamp has the step `1 / sampling_rate`, else 1 s per sample with the per-sample note in `reason`,
+  whatever the absolute value of its timestamp (epoch seconds). A call without timestamp has the same step and makes
+  the previous timestamp unknown. A rejected call carries no per-sample note.
+- **Live validation.** `check_range` (`base/core_feature.py`) runs wherever parameters are set (constructor, setters,
+  `_set_param`): the parameters in `_POSITIVE_PARAMS` (rates, window sizes, widths, counts, ...) and
+  `_NON_NEGATIVE_PARAMS` (thresholds, weights, damping, fractions, seed, ...) raise `ValueError` for a negative (or
+  zero) number and leave the feature as it was. The parameters that take any sign by design are listed with the reason
+  in `ACCEPTS_NEGATIVE` of `test_live_validation_all_features.py`.
 
 ## 4. Parameters
 
@@ -149,14 +187,16 @@ A parameter must be changeable while a feature runs, as in real-time use:
 The classification is decided per parameter from the original EyesWeb source (what `Init()` reads versus
 `Execute()`); where it is uncertain the parameter is structural. In C++ every block with parameters has
 `bool adoptParams(const Block& fresh)` (see `CONVENTIONS.md`, "Changing parameters at run time"). A bad new value
-raises at the setter and leaves the feature unchanged. New features add their cases to the live-parameter tests.
+raises at the setter and leaves the feature unchanged, for the same values the constructor refuses (see "Live validation"
+below). New features add their cases to the live-parameter tests.
 
 ### Time (**Decided**)
 
 All time is in **seconds**. Features with derivatives follow one rule: the `timestamp`/`timestamps` argument if given,
 else `sampling_rate` (Hz, int or float), else per-sample derivatives (and the `reason` says so). The wrapper
 computes the time step `dt` and hands it to the core; the core never sees timestamps, ticks or time modes. Do not
-add time-mode parameters.
+add time-mode parameters. Details (the first call, a call without timestamp, a timestamp that does not increase) are
+in "Contract changes of work package A".
 
 ### Units (**Decided**)
 

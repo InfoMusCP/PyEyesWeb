@@ -141,7 +141,7 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
         except ValueError as exc:
             return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
 
-        return self.result(timestamp=timestamp, **values)
+        return self.finite_result(timestamp=timestamp, **values)
 
 
 __all__ = ['DirectionChange']

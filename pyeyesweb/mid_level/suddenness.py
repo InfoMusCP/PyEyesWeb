@@ -24,7 +24,7 @@ class _SuddennessFit(MinimumWindow):
     MIN_WINDOW = 6
 
     def _fit_result(self, fitted_alpha: float, timestamp: Optional[float], **values: Any) -> Result:
-        """The `Result` of a fit; `INVALID_INPUT` (the numbers kept) when `fitted_alpha` is the core's -1 sentinel, the
+        """The `Result` of a fit; `INVALID_INPUT` (no numbers) when `fitted_alpha` is the core's -1 sentinel, the
         QUANTILE algorithm's way to say that the window is out of the table range."""
         if fitted_alpha == -1:
             return self.result(status=Status.INVALID_INPUT, reason="the distribution could not be fitted",

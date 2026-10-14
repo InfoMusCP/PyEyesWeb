@@ -163,6 +163,9 @@ def test_the_three_point_form_reproduces_the_frozen_outputs_of_the_frame_form():
                     continue
                 assert result.status.name == reference[f"{key}|status"][frame_index]
                 assert result.reason == reference[f"{key}|reason"][frame_index]
+                if result.status is Status.INVALID_INPUT:  # the old feature kept the numbers next to INVALID_INPUT; now they are empty
+                    assert np.isnan([result.value, result.angle]).all() and np.isnan(recorded["value"][frame_index])
+                    continue
                 np.testing.assert_array_equal(np.float64([result.value, result.angle]).view(np.int64),
                                               np.float64([reference[f"{key}|value"][frame_index],
                                                           reference[f"{key}|angle"][frame_index]]).view(np.int64))

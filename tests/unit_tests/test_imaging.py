@@ -229,8 +229,9 @@ def test_binary_pulses_regularity_validation():
     with pytest.raises(ValueError):
         BinaryPulsesRegularity(window=5, threshold=-1)
     feature = BinaryPulsesRegularity(window=3)
-    assert feature.process(1).status is Status.WARMING_UP and feature.process(np.nan).status is Status.WARMING_UP
-    assert feature.process(1).status is Status.INVALID_INPUT  # NaN in the window
+    assert feature.process(1).status is Status.WARMING_UP and feature.process(np.nan).status is Status.INVALID_INPUT
+    assert feature.process(1).status is Status.WARMING_UP  # the NaN was not buffered
+    assert feature.process(1).status is Status.OK
     with pytest.raises(ValueError, match="BinaryPulsesRegularity"):
         feature.process([1, 0])
 

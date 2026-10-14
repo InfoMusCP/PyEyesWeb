@@ -48,12 +48,14 @@ def _is_degenerate(frame):
 
 def _same(frame, tol=1e-9):
     """The wrapper gives the numbers of the original; where the 3D hull is degenerate the status is INVALID_INPUT
-    (2026-10-14, issue #46 and the follow-up) and the index keeps the 0 of the original."""
+    (2026-10-14, issue #46 and the follow-up) and the index is empty (the original says 0)."""
     new, ref = _outcome(BoundingBoxFilledArea(), frame), _outcome(BoundingBoxFilledAreaReference(), frame)
     if isinstance(ref, tuple):
         assert isinstance(new, tuple), f"core raised {new}"
         assert new[0] == (Status.INVALID_INPUT if _is_degenerate(frame) else ref[0])
-        if ref[1] is not None:
+        if _is_degenerate(frame):
+            assert new[1] is None
+        elif ref[1] is not None:
             np.testing.assert_allclose(new[1], ref[1], rtol=0, atol=tol)
     else:  # the original raises: so must the wrapper, as ValueError where the original does
         assert not isinstance(new, tuple), f"original raised {ref}, wrapper returned {new}"
@@ -111,16 +113,16 @@ def test_degenerate_frames_are_zero_in_both():
     for frame in frames:
         _same(frame)
         result = BoundingBoxFilledArea().process(frame)
-        assert result["contraction_index"] == 0.0 and result.status is Status.INVALID_INPUT
+        assert np.isnan(result["contraction_index"]) and result.status is Status.INVALID_INPUT
         assert not _has_no_extent(frame) or "no extent" in result.reason
 
 
-def test_a_box_without_extent_is_invalid_input_and_keeps_the_zero():
+def test_a_box_without_extent_is_invalid_input_without_an_index():
     """#46: zero-extent frames (all points equal, a single point, collinear along one axis, below epsilon) returned OK
     with 0.0; a flat box is INVALID_INPUT too, with another reason (coplanar)."""
     for frame in (np.zeros((5, 3)), CUBE[:1], np.array([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0.0]]), CUBE * 1e-5):
         result = BoundingBoxFilledArea().process(frame)
-        assert result.status is Status.INVALID_INPUT and result.contraction_index == 0.0 and "no extent" in result.reason
+        assert result.status is Status.INVALID_INPUT and np.isnan(result.contraction_index) and "no extent" in result.reason
     assert BoundingBoxFilledArea().process(CUBE[[0, 1, 2, 4]]).status is Status.OK  # a tetrahedron has a 3D hull
     flat = BoundingBoxFilledArea().process(np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0.0]]))
     assert flat.status is Status.INVALID_INPUT and "coplanar" in flat.reason  # a flat box has an area, but no 3D hull
@@ -151,5 +153,5 @@ def test_epsilon_attribute_is_used():
         EPSILON = 1e-12
 
     frame = CUBE * 1e-5
-    assert BoundingBoxFilledArea().process(frame)["contraction_index"] == 0.0
+    assert BoundingBoxFilledArea().process(frame).status is Status.INVALID_INPUT
     np.testing.assert_allclose(Loose().process(frame)["contraction_index"], 1.0)

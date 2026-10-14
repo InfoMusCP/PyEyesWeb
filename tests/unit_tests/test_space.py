@@ -137,9 +137,8 @@ def test_region_potentials_region_input_and_partial_outputs_on_error():
     assert ok.ok and ok.potential.tolist() == [[-1, -1, 1, -1]]
     bad = block.process([0, 9])
     assert bad.status is Status.INVALID_INPUT and bad.reason
-    assert bad.valid == {"potential": False, "hit_regions": True, "hit_region_indexes": True}
-    assert bad.hit_regions.tolist() == [1, 0, 0, 0] and bad.hit_region_indexes.tolist() == [0, 9]
-    assert np.isnan(bad.potential).all()
+    assert bad.valid == {"potential": False, "hit_regions": False, "hit_region_indexes": False}  # no numbers when invalid
+    assert np.isnan(bad.potential).all() and not bad.hit_regions.any() and not bad.hit_region_indexes.size
     empty = block.process([])
     assert empty.status is Status.NO_OUTPUT and not any(empty.valid.values())
 

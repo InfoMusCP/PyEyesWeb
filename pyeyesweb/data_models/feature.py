@@ -38,7 +38,9 @@ def _recording(series: Any, declared: Input) -> Any:
 
 
 def _checked(method, window: bool):
-    """`process` / `_process_window` of a feature, preceded by the check of the call against the declared inputs."""
+    """`process` / `_process_window` of a feature, preceded by the check of the call against the declared inputs: a
+    wrong shape raises, a value that is not data (NaN, infinity, a missing joint, a time that goes back) returns
+    `INVALID_INPUT` before the feature sees the sample."""
 
     @functools.wraps(method)
     def wrapper(self, *sample, **kwargs):
@@ -46,7 +48,12 @@ def _checked(method, window: bool):
             inputs = self.inputs
         except NotImplementedError:
             return method(self, *sample, **kwargs)
-        (inputs.check_windows if window else inputs.check)(sample, type(self).__name__)
+        if window:
+            inputs.check_windows(sample, type(self).__name__)  # the samples of a window were accepted by `process`
+        else:
+            inputs.check(sample, type(self).__name__)
+            if reason := self._input_problem(sample, kwargs.get("timestamp")):
+                return self.no_output(Status.INVALID_INPUT, reason, kwargs.get("timestamp"))
         return method(self, *sample, **kwargs)
 
     wrapper._input_checked = True
@@ -94,7 +101,7 @@ class Feature(OutputsMixin, ABC):
         """Every `process` (and `_process_window`) a subclass defines checks its arguments against `inputs` first.
 
         A wrong shape raises `ValueError` naming the feature and the input; an empty frame is not a shape error and
-        goes through.
+        goes through; NaN or infinity returns `INVALID_INPUT` (`Input.problem`).
         """
         super().__init_subclass__(**kwargs)
         for name, window in (("process", False), ("_process_window", True)):
@@ -129,6 +136,11 @@ class Feature(OutputsMixin, ABC):
         if inputs is None:
             inputs = self.__dict__["_inputs_cache"] = self._inputs()
         return inputs
+
+    def _input_problem(self, sample: Any, timestamp: Optional[float]) -> str:
+        """Why this call is not data, or `""`: the central rules of the call contract (a subclass adds its own and
+        calls `super()`). Raises `ValueError` for a call that cannot be meant (a wrong shape, an unknown joint name)."""
+        return self.inputs.problem(sample)
 
     @abstractmethod
     def process(self, *sample: Any, timestamp: Optional[float] = None) -> Result:

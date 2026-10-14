@@ -3,6 +3,7 @@
 import inspect
 import math
 import re
+from numbers import Real
 from abc import ABCMeta
 from enum import Enum
 from typing import Any, ClassVar, Literal, Optional, Tuple
@@ -29,6 +30,19 @@ _PER_SAMPLE_NOTE = "no time given: per-sample derivatives"
 # Said by the next result after a parameter change that made the block forget its state.
 _STATE_RESET_NOTE = "parameters changed: state reset"
 
+# Numeric parameters whose negative (or zero) values are meaningless, by name: a parameter of one of these names means
+# the same in every feature, and the core validates only what EyesWeb validated (often only for the active mode).
+# Checked whenever parameters are set, in the constructor and live. The parameters that take any sign by design
+# (`x_min`, `rho`, `noise_threshold`...) are listed with the reason in `tests/unit_tests/test_live_validation_all_features.py`.
+_POSITIVE_PARAMS = frozenset({
+    "sampling_rate", "upper_limit", "window_size", "std_dev_x", "std_dev_y", "log_scale", "cust_dist", "time_constant",
+    "ges_dur", "frames", "points_number", "best_periods", "order"})
+_NON_NEGATIVE_PARAMS = frozenset({
+    "damping", "viscosity", "damping_factor", "viscosity_factor", "step_adaptation_factor", "seed", "arm_percentage",
+    "legs_search", "legs_offset", "arms_min_threshold", "arms_max_threshold", "movement_threshold", "velocity_threshold",
+    "standard_deviation_threshold", "y_weight", "epsilon", "minimum_distance", "direction_change_epsilon",
+    "firing_threshold", "amplitude", "cust_ampl", "max_value", "threshold", "inter_event_time", "max_steps"})
+
 # A parameter name in a nanobind signature, e.g. "(self, name: type = ...".
 _SIGNATURE_PARAM = re.compile(r"[(,]\s*(\w+)\s*:")
 
@@ -47,6 +61,16 @@ class _SealedMeta(ABCMeta):
         instance = super().__call__(*args, **kwargs)
         instance.__dict__["_sealed"] = True
         return instance
+
+
+def check_range(name: str, value: Any) -> None:
+    """Raise `ValueError` for a number that is meaningless for the parameter `name` (see `_POSITIVE_PARAMS`); anything that
+    is not a number (None, a choice, a sequence) is left to the core."""
+    if isinstance(value, Real) and not isinstance(value, bool):
+        if name in _POSITIVE_PARAMS and not value > 0:
+            raise ValueError(f"{name} must be positive, got {value!r}")
+        if name in _NON_NEGATIVE_PARAMS and not value >= 0:
+            raise ValueError(f"{name} must not be negative, got {value!r}")
 
 
 def _choice_name(value: Any) -> Any:
@@ -83,7 +107,10 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
 
     Time. A feature with `_timed = True` has derivatives or a time step and takes one rule: the timestamps `timestamp` /
     `timestamps` (seconds) when given, else `sampling_rate` (Hz), else per-sample derivatives (every result then says so in
-    its `reason`). The wrapper turns that into the time step in seconds the block takes (`_time_step`).
+    its `reason`). The wrapper turns that into the time step in seconds the block takes (`_time_step`): the difference
+    of two timestamps; `1 / sampling_rate` or 1 s when there is no previous timestamp (the first call, or after a
+    call without timestamp); a timestamp that does not increase is `INVALID_INPUT` ("non-increasing timestamp") and
+    changes nothing.
 
     Units. A feature with `_unit_params = {name: power}` takes `units="m"` (default, the EyesWeb numbers) or `"mm"`:
     the listed parameters are written in metres (as EyesWeb does) and multiplied by `1000 ** power` for data in
@@ -119,7 +146,7 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         self._params = self._coerce_choices(params)
         self._built = None
         self._state_lost_pending = False
-        self._previous_t = 0.0
+        self._previous_t = None
         if not self._lazy_block:
             self._block
 
@@ -155,18 +182,25 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         return found
 
     def _time_step(self, timestamp: Optional[float]) -> float:
-        """The time step in seconds of this call: the difference of the timestamp `timestamp` to the previous one (the first
-        previous is 0; a zero step, e.g. a first timestamp of 0, counts as 1 s instead of dividing by zero), else
-        `1 / sampling_rate`, else 1 (per sample)."""
-        rate = self._params.get("sampling_rate")
-        self._untimed = timestamp is None and rate is None
-        if timestamp is None:
-            self._previous_t = 0.0
-            return 1.0 if rate is None else 1.0 / rate
-        if not math.isfinite(timestamp):
+        """The time step in seconds of this call: the difference of the timestamp `timestamp` to the previous one, else
+        `1 / sampling_rate`, else 1 (per sample). With no previous timestamp (the first call, a call after one without
+        timestamp, after `reset()`) the step is `1 / sampling_rate` or 1: an absolute time is not a step. A timestamp
+        that does not increase never gets here (`_input_problem`)."""
+        if timestamp is not None and not math.isfinite(timestamp):
             raise ValueError(f"timestamp must be a finite number of seconds, got {timestamp!r}")
-        step, self._previous_t = timestamp - self._previous_t, timestamp
-        return step or 1.0
+        rate = self._params.get("sampling_rate")
+        previous, self._previous_t = self._previous_t, timestamp
+        self._untimed = rate is None and (timestamp is None or previous is None)
+        if timestamp is None or previous is None:
+            return 1.0 if rate is None else 1.0 / rate
+        return timestamp - previous
+
+    def _input_problem(self, sample: Any, timestamp: Optional[float]) -> str:
+        self._untimed = False  # a rejected call is not a per-sample step: the note of the previous call is stale
+        if reason := super()._input_problem(sample, timestamp):
+            return reason
+        previous = self.__dict__.get("_previous_t")
+        return "non-increasing timestamp" if self._timed and timestamp is not None and previous is not None and timestamp <= previous else ""
 
     @property
     def _block(self) -> Any:
@@ -204,7 +238,7 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
     def _state_lost(self) -> None:
         """The block forgot its state: the next result says so."""
         self._state_lost_pending = True
-        self._previous_t = 0.0
+        self._previous_t = None
 
     def result(self, *, reason: str = "", **values: Any) -> Result:
         if self.__dict__.get("_untimed"):
@@ -254,6 +288,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         """`params` with the choices given as strings turned into enum members (a list of them where the block takes
         one; a single choice stays single); a `bool` parameter must be a bool."""
         out = dict(params)
+        for name, value in out.items():
+            check_range(name, value)
         if out.get("units", "m") not in _UNIT_FACTORS:
             raise ValueError(f"units must be one of {sorted(_UNIT_FACTORS)}, got {out['units']!r}")
         for name in cls._core_bools().intersection(out):
@@ -275,7 +311,7 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
 
     def reset(self) -> None:
         """Forget the state accumulated since construction."""
-        self._previous_t = 0.0
+        self._previous_t = None
         reset = getattr(self._built, "reset", None)
         if reset is not None:
             reset()

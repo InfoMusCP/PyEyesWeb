@@ -102,7 +102,7 @@ def test_rarity_keeps_its_own_memory_until_reset():
     feature = Rarity(method="information")
     first = [feature.process(sample).rarity for sample in PAIR[:20]]
     feature.reset()
-    assert np.array_equal(first, [feature.process(sample).rarity for sample in PAIR[:20]])
+    assert np.array_equal(first, [feature.process(sample).rarity for sample in PAIR[:20]], equal_nan=True)
 
 
 def test_multi_scale_entropy_window_and_invalid_input():

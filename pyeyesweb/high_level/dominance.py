@@ -34,7 +34,8 @@ class EnsembleDominance(FrameFeature):
     _core_class = core.motion.EnsembleDominance
 
     def _inputs(self) -> Inputs:
-        return Inputs(Input("complexity_index", InputKind.SAMPLE, (None,), doc="complexity index of each participant"))
+        return Inputs(Input("complexity_index", InputKind.SAMPLE, (None,), doc="complexity index of each participant",
+                            allow_non_finite=True))  # NaN: a participant without a complexity index, ignored
 
     def _schema(self) -> Schema:
         return Schema(Output("dominance_score", (None,), doc="1 - CI / max(CI) of each participant"),

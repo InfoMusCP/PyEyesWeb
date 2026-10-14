@@ -32,7 +32,8 @@ class KineticEnergy(LabelGuard, FrameFeature):
     `input_mode` (EXTENSION, not in EyesWeb): `"position"` (default, faithful) takes positions and differentiates
     them; `"velocity"` takes velocities and applies 0.5 * w * |v|^2 directly. `KineticEnergy.from_position(...)` and
     `KineticEnergy.from_velocity(...)` build one or the other; they take the constructor's parameters.
-    Always `OK`; `timestamp` is the timestamp in seconds (`NaN` when not given).
+    `INVALID_INPUT` for NaN or infinity, an empty frame or ("missing joints: ...") a dict frame that lacks a weighted joint;
+    `timestamp` is the timestamp in seconds (`NaN` when not given).
     """
     _core_class = core.motion.KineticEnergyIndex
     _timed = True
@@ -65,8 +66,6 @@ class KineticEnergy(LabelGuard, FrameFeature):
         return Schema(Output("kinetic_energy", doc="weighted kinetic energy of the skeleton"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
-        if (problem := self._label_problem(frame, timestamp)) is not None:
-            return problem
         if isinstance(frame, dict):
             raw = self._block.process(frame, self._time_step(timestamp))
         else:
@@ -77,12 +76,14 @@ class KineticEnergy(LabelGuard, FrameFeature):
         return self._to_result(raw, timestamp)
 
     def _to_result(self, raw: float, timestamp: Optional[float]) -> Result:
-        return self.result(kinetic_energy=raw, timestamp=timestamp)
+        return self.finite_result(kinetic_energy=raw, timestamp=timestamp)
 
     def run(self, data: Any, *, timestamps: Optional[Any] = None, reset: bool = True) -> Recorder:
+        data = np.asarray(data, dtype=float)
+        if not np.isfinite(data).all() or (timestamps is not None and not (np.diff(np.asarray(timestamps, dtype=float)) > 0).all()):
+            return super().run(data, timestamps=timestamps, reset=reset)  # rows the central rules reject: the loop of `process`
         if reset:
             self.reset()
-        data = np.asarray(data, dtype=float)
         self._check_recording([data])
         stamps = [None] * len(data) if timestamps is None else np.asarray(timestamps, dtype=float)
         energy = self._block.run(self._need_layout(), data, np.array([self._time_step(timestamp) for timestamp in stamps]))

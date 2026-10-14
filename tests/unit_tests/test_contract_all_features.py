@@ -215,12 +215,16 @@ NOT_COVERED = {}
 NAMES = [info.name for info in catalog() if info.name not in NOT_COVERED]
 
 
+def factory_and_recordings(name):
+    """A factory of fresh features of the catalog feature `name` and the recordings it is driven with (one per input)."""
+    factory, data = OVERRIDES.get(name, (None, None))
+    factory = factory or next(info.cls for info in catalog() if info.name == name)
+    return factory, (data or (lambda: from_inputs(factory())))()
+
+
 @pytest.mark.parametrize("name", NAMES)
 def test_contract(name):
-    cls = next(info.cls for info in catalog() if info.name == name)
-    factory, data = OVERRIDES.get(name, (None, None))
-    factory = factory or cls
-    recordings = (data or (lambda: from_inputs(factory())))()
+    factory, recordings = factory_and_recordings(name)
     check_feature_contract(factory, *recordings)
 
 

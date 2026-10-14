@@ -180,5 +180,8 @@ def test_triangle_symmetry_is_one_minus_the_frozen_asymmetry():
     feature = TriangleSymmetry()
     for index, case in enumerate(cases):
         result = feature.process(*case)
-        assert result.status.name == reference["status"][index] and result.reason == reference["reason"][index]
-        assert np.float64(result.symmetry).view(np.int64) == (1.0 - np.float64(reference["asymmetry"][index])).view(np.int64)
+        assert result.status.name == reference["status"][index]
+        # the central finite check says it before the feature: NaN or infinity is not "empty vertex or NaN / infinite coordinates"
+        assert result.reason in (reference["reason"][index], "NaN or infinite values")
+        expected = np.float64(np.nan) if result.status is Status.INVALID_INPUT else 1.0 - np.float64(reference["asymmetry"][index])
+        assert np.float64(result.symmetry).view(np.int64) == expected.view(np.int64)  # no number when invalid

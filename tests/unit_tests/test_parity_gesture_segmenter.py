@@ -6,7 +6,12 @@ statuses and reasons included, after `reset()` and after live parameter changes.
 
 `tests/data/gesture_segmenter_reference.npz` freezes the outputs of the block before the split (Qualisys excerpts
 of `motion_excerpts.npz` and synthetic edge cases: still, NaN / infinite frames, repeated timestamps, dict frames with
-missing or unknown labels, weights that name a subset of the labels), together with the description of each scenario.
+missing labels, weights that name a subset of the labels), together with the description of each scenario.
+
+Regenerated for work package A (2026-10-14): the first timed call has no previous timestamp (1 / `sampling_rate` or 1 s,
+with the per-sample note), a repeated timestamp is `INVALID_INPUT`, a dict frame with a missing joint is `INVALID_INPUT`
+("missing joints") and one with a joint that is not among the labels raises (those two frames left the dict scenario), a
+rejected frame carries no per-sample note.
 
 Needs the compiled core: found as pyeyesweb._eyesweb_core, or as eyesweb_core in EYESWEB_CORE_PATH; else skipped.
 """

@@ -161,6 +161,7 @@ class _ModelInput(LabelGuard):
     its order); `_input_names()` gives the names the input must hold."""
 
     _labels: Optional[Tuple[str, ...]] = None
+    _dropouts = True  # missing joints and NaN rows are dropouts of the model, not bad data
     _given_map: Mapping[str, str] = {}
 
     def _input_names(self) -> Tuple[str, ...]:
@@ -224,7 +225,8 @@ class _ModelInput(LabelGuard):
 
     def _frame_input(self, name: str, doc: str) -> Input:
         names = self._input_names()
-        return points_input(name, self._labels if self._labels is not None else names, doc, accepts=(dict,))
+        return points_input(name, self._labels if self._labels is not None else names, doc, accepts=(dict,),
+                            allow_non_finite=True)
 
     def _points(self, frame: Any, timestamp: Optional[float]) -> Union[np.ndarray, Result]:
         """The frame as the `(len(names), 3)` array of the model (NaN rows for the missing points), or the
@@ -259,18 +261,6 @@ class _Timed:
         if name == "sampling_rate":
             _check_rate(value)
         super()._set_param(name, value)
-
-    def _simulation_step(self, timestamp: Optional[float]) -> Optional[float]:
-        """Seconds to simulate, or `None` for a timestamp that does not advance (the previous one is kept)."""
-        previous = self._previous_t
-        step = self._time_step(timestamp)
-        if step <= 0:
-            self._previous_t = previous
-            return None
-        return step
-
-    def _backwards(self, timestamp: Optional[float]) -> Result:
-        return self.no_output(Status.INVALID_INPUT, "timestamp does not increase", timestamp)
 
 
 class _Units:
@@ -457,7 +447,8 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
     def _inputs(self) -> Inputs:
         return Inputs(self._frame_input("skeleton", "captured joints, in `units`"),
                       Input("control", InputKind.POINTS, (len(HUMANOID_BONES), 3), HUMANOID_BONES, doc=(
-                          "bone directions relative to the parent bone (the output of HumanoidOrientations) replacing those seen in the joints"), accepts=(dict,), optional=True))
+                          "bone directions relative to the parent bone (the output of HumanoidOrientations) replacing those seen in the joints"), accepts=(dict,), optional=True,
+                            allow_non_finite=True))
 
     def _schema(self) -> Schema:
         return Schema(Output("joints", (len(HUMANOID_JOINTS), 3), labels=HUMANOID_JOINTS, components=XYZ,
@@ -467,8 +458,7 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
         points = self._points(skeleton, timestamp)
         if isinstance(points, Result):
             return points
-        if (step := self._simulation_step(timestamp)) is None:
-            return self._backwards(timestamp)
+        step = self._time_step(timestamp)
         teleport = self._teleport()
         scale = self._to_core
         if scale != 1.0:  # metres in, the core works in mm
@@ -693,8 +683,7 @@ class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
         points = self._points(directions, timestamp)
         if isinstance(points, Result):
             return points
-        if (step := self._simulation_step(timestamp)) is None:
-            return self._backwards(timestamp)
+        step = self._time_step(timestamp)
         raw = self._block.process_array(self._model_layout(), points, step, reset_to_input=self._teleport())
         return self.result(positions=raw, timestamp=timestamp)
 
@@ -747,8 +736,7 @@ class GenericModelPredictor(_Units, _Timed, _Directions, CoreFeature):
         points = self._points(directions, timestamp)
         if isinstance(points, Result):
             return points
-        if (step := self._simulation_step(timestamp)) is None:
-            return self._backwards(timestamp)
+        step = self._time_step(timestamp)
         return self.result(positions=self._block.process_array(self._model_layout(), points, step), timestamp=timestamp)
 
 
@@ -820,10 +808,9 @@ class GenericModelEstimator(_Units, _Timed, _GenericFeature, CoreFeature):
         points = self._points(skeleton, timestamp)
         if isinstance(points, Result):
             return points
-        if (step := self._simulation_step(timestamp)) is None:
-            return self._backwards(timestamp)
+        step = self._time_step(timestamp)
         positions, error = self._block.process_array(self._model_layout(), points, step)
-        return self.result(positions=positions, error=error, timestamp=timestamp)
+        return self.finite_result(positions=positions, error=error, timestamp=timestamp)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -868,7 +855,7 @@ class PointsPredictor(FrameFeature):
         return self._labels
 
     def _inputs(self) -> Inputs:
-        return Inputs(points_input("points", self._labels, "labelled points", accepts=(dict,)))
+        return Inputs(points_input("points", self._labels, "labelled points", accepts=(dict,), allow_non_finite=True))
 
     def _schema(self) -> Schema:
         return Schema(Output("predicted", (len(self._labels), 3), labels=self._labels, components=XYZ,

@@ -41,7 +41,7 @@ class BoundingBoxFilledArea(FrameFeature):
     Input: one frame per call, an `(N, 3)` array of points (other widths raise `ValueError`); stateless.
     `process(points, timestamp=None)` returns `contraction_index`; `Status.INVALID_INPUT` for a frame without points or
     whose bounding box has no extent (area at most `epsilon`, 1e-6), with fewer than 4 points or with coplanar points (the 3D
-    hull is degenerate); the index keeps the 0 of the block.
+    hull is degenerate); the index is then empty (NaN).
     `timestamp` is the timestamp in seconds (`NaN` when not given).
 
     Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).

@@ -15,8 +15,11 @@ A feature with several inputs lists them in call order.
 Every call is checked against these declarations before the feature sees it (`Input.check`, applied by `Feature`): a
 sample of the wrong size, a frame of the wrong rank, dimension or number of points raises `ValueError`. An empty
 sample or frame is not a shape error and reaches the feature, which reports `INVALID_INPUT`. An input that also takes
-another object (a dict of labelled points) lists its type in `accepts`; such a value is passed on
-unchecked.
+another object (a dict of labelled points) lists its type in `accepts`; such a value is not shape-checked.
+
+A numeric input holding NaN or infinity is not data: the call gives `INVALID_INPUT` ("NaN or infinite values") and the
+sample goes nowhere (`Input.problem`, applied by `Feature`). An input for which NaN is meaningful (a dropout) says
+`allow_non_finite=True` and checks the values itself.
 """
 
 import enum
@@ -24,6 +27,9 @@ from dataclasses import dataclass
 from typing import Any, Iterator, Optional, Tuple
 
 import numpy as np
+
+NON_FINITE = "NaN or infinite values"
+_INTEGER_LIMIT = 2 ** 31 - 1  # the largest value a block that takes an `int` accepts
 
 
 class InputKind(enum.Enum):
@@ -54,6 +60,10 @@ class Input:
         not shape-checked.
     optional : bool, optional
         The call may leave this input out (only the last inputs can be optional).
+    allow_non_finite : bool, optional
+        NaN and infinity are meaningful values of this input (dropouts): they are not rejected centrally.
+    integer : bool, optional
+        The feature turns the values into integers: values beyond the integer range are rejected too.
     """
 
     name: str
@@ -64,6 +74,8 @@ class Input:
     doc: str = ""
     accepts: Tuple[type, ...] = ()
     optional: bool = False
+    allow_non_finite: bool = False
+    integer: bool = False
 
     def check(self, value: Any, owner: str = "feature") -> None:
         """Raise `ValueError` when `value` does not fit this input; `owner` names the feature in the message.
@@ -95,6 +107,19 @@ class Input:
             return
         if array.ndim != 2 or any(expected is not None and expected != actual for expected, actual in zip(want, got)):
             self._fail(owner, got)
+
+    def problem(self, value: Any) -> str:
+        """The reason the numbers of `value` cannot be processed, or `""`: NaN or infinity (unless `allow_non_finite`),
+        or beyond the integer range for an `integer` input. Images are not checked."""
+        if self.kind is InputKind.IMAGE or self.allow_non_finite:
+            return ""
+        try:
+            array = np.asarray(list(value.values()) if isinstance(value, dict) else value, dtype=float)
+        except (TypeError, ValueError):
+            return ""
+        if not np.isfinite(array).all():
+            return NON_FINITE
+        return "value outside the integer range" if self.integer and np.abs(array).max(initial=0.0) > _INTEGER_LIMIT else ""
 
     def _check_image(self, value: Any, owner: str) -> None:
         try:
@@ -196,6 +221,10 @@ class Inputs:
         self._check_count(values, owner)
         for declared, value in zip(self._inputs, values):
             declared.check(value, owner)
+
+    def problem(self, values: Any) -> str:
+        """The first `Input.problem` of one value per input (`values` in call order), or `""`."""
+        return next((reason for declared, value in zip(self._inputs, values) if (reason := declared.problem(value))), "")
 
     def check_windows(self, windows: Any, owner: str = "feature") -> None:
         """`Input.check_window` for one window per input."""

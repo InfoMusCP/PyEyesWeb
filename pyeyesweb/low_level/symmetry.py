@@ -9,7 +9,7 @@ from pyeyesweb.base.core_feature import XYZ, CoreFeature, FrameFeature, VariantF
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
-from pyeyesweb.base.inputs import labelled_set, non_finite, points_input
+from pyeyesweb.base.inputs import labelled_set, points_input
 from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.skeletons import with_skeleton
 from pyeyesweb.utils.validators import validate_pairs
@@ -26,8 +26,8 @@ class Symmetry(VariantFeature, FrameFeature):
     `output_type`, `reference_type`, ...).
     Input: one frame, an `(N, 3)` array in the order of `labels` or a dict `label -> (x, y, z)`.
     Output `symmetry` in [0, 1] (1 = symmetric): a scalar when `output_type` is GLOBAL (default), a `(3,)` vector
-    (x, y, z) when it is COMPONENTS. `INVALID_INPUT` ("no couple of the skeleton is present in the frame", the output
-    keeps the 0 of the block) when the frame holds no complete couple.
+    (x, y, z) when it is COMPONENTS. `INVALID_INPUT` ("missing joints: ...") for a dict frame that
+    lacks a joint of a couple.
 
     `"reflection"` (mirror symmetry): the right joint of each pair is reflected across the first axis about a centre
     and its 3-D distance to the left joint gives a score per pair. Parameters: `joint_pairs` (required list of
@@ -85,11 +85,8 @@ class _ReflectionSymmetry(Symmetry, variant="reflection"):
                              doc="Symmetry score per pair in [0, 1]; 1 is perfectly symmetric."))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
-        frame = np.asarray(frame, dtype=float)
-        if reason := non_finite(frame, allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
         try:
-            scores = self._block.process(frame)
+            scores = self._block.process(np.asarray(frame, dtype=float))
         except ValueError as exc:
             return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
         return self._to_result(scores, timestamp)
@@ -106,8 +103,8 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
     `labels` are the joint names of the arrays; they are needed for array input (a dict carries its own).
 
     Output `symmetry` in [0, 1] (1 = symmetric): a scalar when `output_type` is GLOBAL (default), a `(3,)` vector
-    with components x, y, z when it is COMPONENTS. `INVALID_INPUT` ("no couple of the skeleton is present in the frame",
-    the output keeps the 0 of the block) when the frame holds no complete couple.
+    with components x, y, z when it is COMPONENTS. `INVALID_INPUT` ("missing joints: ...") for a dict frame that lacks a
+    joint of a couple.
     """
     _core_class = core.motion.SymmetryIndex3D
 
@@ -132,18 +129,10 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
         return Schema(Output("symmetry", components=XYZ, doc="per-axis indices, 1 = symmetric"))
 
     def _process(self, skeleton: Any, timestamp: Optional[float]) -> Result:
-        if (problem := self._label_problem(skeleton, timestamp)) is not None:
-            return problem
-        points = labelled_set(skeleton, self._labels, "Symmetry")
-        if reason := non_finite(list(points.values())):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
-        present = any(left in points and right in points for left, right in self._param("couples", None) or ())
-        return self._to_result(self._block.process(points), timestamp,
-                               "" if present else "no couple of the skeleton is present in the frame")
+        return self._to_result(self._block.process(labelled_set(skeleton, self._labels, "Symmetry")), timestamp)
 
-    def _to_result(self, raw: Any, timestamp: Optional[float], reason: str = "") -> Result:
-        return self.result(status=Status.INVALID_INPUT if reason else Status.OK, reason=reason, timestamp=timestamp,
-                           symmetry=np.asarray(raw, dtype=float) if isinstance(raw, tuple) else raw)
+    def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
+        return self.finite_result(timestamp=timestamp, symmetry=np.asarray(raw, dtype=float) if isinstance(raw, tuple) else raw)
 
 for _variant in (_RatioSymmetry, _ReflectionSymmetry):
     _variant.__name__ = Symmetry.__name__

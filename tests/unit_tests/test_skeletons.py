@@ -140,11 +140,14 @@ def test_names_not_among_the_labels_raise(make, key):
 
 
 def test_a_custom_configuration_with_a_foreign_frame_is_invalid_input():
+    """Without configured labels a frame without the joints is missing them (`INVALID_INPUT`); with labels, a joint name
+    that is not one of them is a configuration error (`ValueError`)."""
     frame = {"x": (0, 0, 0), "y": (1, 1, 1)}
     ke = KineticEnergy(weights={"a": 1.0, "b": 1.0})
-    assert ke.process(frame).status is Status.INVALID_INPUT
+    assert ke.process(frame).reason == "missing joints: a, b"
     detector = MotionNoiseDetector(labels=["a", "b"])
-    result = detector.process(frame, timestamp=0.0)
-    assert result.status is Status.INVALID_INPUT and result.reason
+    with pytest.raises(ValueError, match="unknown joint names"):
+        detector.process(frame, timestamp=0.0)
+    assert detector.process({"a": (0, 0, 0)}).reason == "missing joints: b"
     assert Symmetry(couples=[("a", "b")]).process(frame).status is Status.INVALID_INPUT
     assert ke.process({"a": (0, 0, 0), "b": (1, 1, 1)}).status is Status.OK

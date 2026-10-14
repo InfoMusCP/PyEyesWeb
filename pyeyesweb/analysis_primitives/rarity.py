@@ -34,8 +34,9 @@ class Rarity(VariantFeature, CoreFeature):
     $-\log(A B + 10^{-16})$; `timestamp` is the timestamp in seconds (`NaN` when not given). `reset()` clears the memory
     and the bin indices, so `run` is a pure function of the recording. Status: with `type="rarity"` the memory starts
     filled with zeros, so the outputs are `WARMING_UP` (the numbers are given, but are artefacts) until `data_memory`
-    samples have been seen; a value above the sum of the bin widths (or `NaN`) keeps the previous bin and gives
-    `INVALID_INPUT` ("value outside the bins"), with the numbers. `type="contrast"` needs at least 2 inputs and
+    samples have been seen; a value above the sum of the bin widths keeps the previous bin and gives
+    `INVALID_INPUT` ("value outside the bins"), with no numbers; `NaN` or infinity is `INVALID_INPUT` before the block sees
+    it. `type="contrast"` needs at least 2 inputs and
     `type="rarity"` a `data_memory` of at least 2: otherwise construction raises `ValueError`.
 
     `"mode_distance"`: windowed rarity of a scalar stream. Parameters `window`, `hop` (default 1) and

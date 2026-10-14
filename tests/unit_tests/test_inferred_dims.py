@@ -131,7 +131,7 @@ def test_dims_of_kinematics_is_assignable_and_validated():
     assert feature.inputs[0].shape == (2,)
     feature.process([0.0, 1.0], timestamp=0.1)
     feature.dims = 3  # structural: the block is built again
-    assert feature.process([0.0, 1.0, 2.0], timestamp=0.2).reason.endswith("state reset")
+    assert feature.process([0.0, 1.0, 2.0], timestamp=0.2).reason.startswith("parameters changed: state reset")
     with pytest.raises(ValueError):
         Kinematics(dims=4)
     with pytest.raises(ValueError, match="dims"):

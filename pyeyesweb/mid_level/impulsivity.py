@@ -44,7 +44,7 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
     Returns
     -------
     Result
-        `impulsivity_index` (float). `INVALID_INPUT` ("the distribution could not be fitted", the index kept) when the
+        `impulsivity_index` (float). `INVALID_INPUT` ("the distribution could not be fitted", no index) when the
         `"quantile"` algorithm cannot fit the window, as in `Suddenness`; `WARMING_UP` below 6 frames.
     """
 

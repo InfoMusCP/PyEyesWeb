@@ -45,10 +45,11 @@ def _assert_parity(window, algo):
     if reference_result.ok and not np.isfinite(window[:, 0]).all():  # data problem: INVALID_INPUT instead of OK with NaN
         assert new_result.status == Status.INVALID_INPUT
         return new_result
-    if reference_result.ok and reference_result.alpha == -1:  # the quantile fit failed: INVALID_INPUT, raw numbers kept
+    if reference_result.ok and reference_result.alpha == -1:  # the quantile fit failed: INVALID_INPUT, no numbers
         assert new_result.status == Status.INVALID_INPUT
-    else:
-        assert reference_result.status == new_result.status
+        assert not any(new_result.valid.values())
+        return new_result
+    assert reference_result.status == new_result.status
     if reference_result.ok:
         assert reference_result.is_sudden == new_result.is_sudden
         for name in OUTPUTS:

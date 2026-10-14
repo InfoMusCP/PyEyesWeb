@@ -2,7 +2,7 @@ from typing import Any, Literal, Optional
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.base.core_feature import CoreFeature
+from pyeyesweb.base.core_feature import CoreFeature, check_range
 from pyeyesweb.base.minimum_window import MinimumWindow
 from pyeyesweb.base.signatures import input_mode_factory
 from pyeyesweb.catalog import Layer, describe
@@ -303,6 +303,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
 
     @sampling_rate.setter
     def sampling_rate(self, value: float) -> None:
+        check_range("sampling_rate", value)
         value = float(value)
         if value != self.__dict__.get("_sampling_rate", value):
             self._restart_filters()  # the filters take the rate of the series at their first call

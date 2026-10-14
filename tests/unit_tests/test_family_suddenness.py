@@ -60,14 +60,14 @@ def test_non_finite_positions_are_invalid_input(cls, bad):
     assert cls(window=12, dims=3)._process_window(series).status == Status.INVALID_INPUT
 
 
-def test_quantile_sentinel_is_invalid_input_and_keeps_the_numbers():
+def test_quantile_sentinel_is_invalid_input_without_numbers():
     feature = Suddenness(window=12, dims=3, algorithm="quantile")
     statuses = []
     for seed in range(20):
         result = feature._process_window(_series(12, seed=seed))
         statuses.append(result.status)
-        if result.alpha == -1:
-            assert result.status == Status.INVALID_INPUT and result.reason and np.isfinite(result.gamma)
+        if result.status == Status.INVALID_INPUT:
+            assert result.reason and np.isnan(result.gamma) and not any(result.valid.values())
         else:
             assert result.ok
     assert Status.INVALID_INPUT in statuses

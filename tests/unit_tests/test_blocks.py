@@ -512,7 +512,10 @@ def test_ellipsoid_sphericity_points_parity_with_the_removed_python_class():
     for cloud in clouds:
         result = block.process(cloud)
         if len(cloud) == 0:
-            assert result["axis_ratio"] == 0.0
+            assert math.isnan(result["axis_ratio"])  # INVALID_INPUT: no number
+            continue
+        if not result.ok:  # no extent: the reference says 0, the feature says INVALID_INPUT and gives no number
+            assert old.compute(cloud)["sphericity"] == 0.0 and math.isnan(result["axis_ratio"])
             continue
         assert result["axis_ratio"] == pytest.approx(old.compute(cloud)["sphericity"], abs=1e-6)
         assert result.valid["axis_ratio"] and result["radii"].shape == (3,)

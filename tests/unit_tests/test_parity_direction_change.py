@@ -154,10 +154,14 @@ def _points(recording):
 def test_one_point_per_frame_reproduces_the_frozen_outputs_of_the_signals_form():
     """The outputs the feature gave before 2026-10-14, when it took `(signals, dims)` frames and averaged them itself
     (frozen, `dims` given), bit for bit with NaN equal: the averaged trajectory goes through `run` and `process` and
-    the numbers are the same. The file was not regenerated."""
+    the numbers are the same. The file was not regenerated; the recordings with a non-finite point are not compared
+    (the old feature kept a NaN in its window, the new one rejects the point and does not buffer it; see
+    `test_a_non_finite_point_is_rejected_and_not_buffered`)."""
     reference = np.load(REFERENCE)
     for name, recording in _recordings().items():
         points = _points(recording)
+        if not np.isfinite(points).all():
+            continue
         for index, params in enumerate(PARAMETER_SETS):
             if params["window"] > len(recording):
                 continue
@@ -170,6 +174,22 @@ def test_one_point_per_frame_reproduces_the_frozen_outputs_of_the_signals_form()
             assert [feature.process(point).status.name for point in points] == list(reference[f"{key}|stat"])
             if recording.shape[1] == 1:  # a single signal is its own trajectory
                 np.testing.assert_array_equal(_bits(DirectionChange(**params).run(recording[:, 0, :]).to_frame().to_numpy()), _bits(columns.to_numpy()))
+
+
+def test_a_non_finite_point_is_rejected_and_not_buffered():
+    points = _points(_recordings()["nan"])
+    rejected = ~np.isfinite(points).all(axis=1)
+    assert rejected.any()
+    for params in PARAMETER_SETS[:2]:
+        feature, never_saw_it = DirectionChange(**params), DirectionChange(**params)
+        for point, bad in zip(points, rejected):
+            result = feature.process(point)
+            if bad:
+                assert result.status is Status.INVALID_INPUT and not any(result.valid.values())
+            else:
+                expected = never_saw_it.process(point)
+                assert result.status == expected.status
+                assert np.array_equal(result.to_array(), expected.to_array(), equal_nan=True)
 
 
 def test_a_frame_is_one_point():

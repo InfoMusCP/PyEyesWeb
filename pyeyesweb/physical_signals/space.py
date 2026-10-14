@@ -12,7 +12,7 @@ from typing import Any, Optional
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.base.inputs import non_finite, points_input
+from pyeyesweb.base.inputs import points_input
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
@@ -36,8 +36,6 @@ class HitCellDetector(FrameFeature):
                              doc="hit cell (row from y, column from x) of each point"))
 
     def _process(self, points: Any, timestamp: Optional[float]) -> Result:
-        if reason := non_finite(points, allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
         return self._to_result(self._block.process(points), timestamp)
 
     def _to_result(self, raw: Optional[np.ndarray], timestamp: float) -> Result:

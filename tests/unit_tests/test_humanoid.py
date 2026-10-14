@@ -371,16 +371,17 @@ def test_time_is_the_timestamp_then_the_sampling_rate_then_per_sample():
     frames = forearm(20)
     mm = dict(units="mm")
     by_rate = HumanoidSimulator(sampling_rate=50.0, **mm).run(frames)["joints"]
-    by_stamp = HumanoidSimulator(**mm).run(frames, timestamps=np.arange(1, 21) * 0.02)["joints"]
+    by_stamp = HumanoidSimulator(sampling_rate=50.0, **mm).run(frames, timestamps=np.arange(1, 21) * 0.02)["joints"]
     assert not _same(by_rate, HumanoidSimulator(sampling_rate=RATE, **mm).run(frames)["joints"])
-    # the first step of a timed run is the first timestamp itself (0.02 s), then 0.02 s each: the 50 Hz recording
+    # the first step of a timed run is 1 / sampling_rate (an absolute time is not a step), then the timestamp differences
     assert _same(by_stamp, by_rate)
+    assert not _same(HumanoidSimulator(sampling_rate=50.0, **mm).run(frames, timestamps=np.arange(1, 21) * 0.04)["joints"], by_rate)
     # no time at all: the default is None, one second per call, and every result says so
     feature = HumanoidSimulator(**mm)
     assert feature.sampling_rate is None
     assert "no time given: per-sample derivatives" in feature.process(frames[0]).reason
     assert "per-sample" not in HumanoidSimulator(**MM).process(frames[0]).reason
-    assert "per-sample" not in HumanoidSimulator(**mm).process(frames[0], timestamp=0.04).reason
+    assert "per-sample" in HumanoidSimulator(**mm).process(frames[0], timestamp=0.04).reason  # the first timed step is per sample
     raw = RAW.HumanoidSimulator()
     assert _same(HumanoidSimulator(**mm).run(frames)["joints"],
                  np.stack([raw.process_array(JOINT_LAYOUT, frame, 1.0) for frame in frames]))
@@ -393,7 +394,9 @@ def test_every_time_stepped_feature_defaults_to_no_rate_and_says_so():
         assert "no time given: per-sample derivatives" in feature.process(frame).reason
     timed = GenericModelSimulator(MODEL, sampling_rate=25.0)
     assert "per-sample" not in timed.process(CHAIN_DIRECTIONS[0]).reason
-    assert "per-sample" not in GenericModelSimulator(MODEL).process(CHAIN_DIRECTIONS[0], timestamp=0.1).reason
+    untimed = GenericModelSimulator(MODEL)
+    assert "per-sample" in untimed.process(CHAIN_DIRECTIONS[0], timestamp=0.1).reason  # no previous timestamp: per sample
+    assert "per-sample" not in untimed.process(CHAIN_DIRECTIONS[1], timestamp=0.2).reason
 
 
 # --------------------------------------------------------------------------------------------------------- units
@@ -433,7 +436,7 @@ def test_a_timestamp_that_does_not_advance_is_invalid_input():
     feature = HumanoidSimulator(**MM)
     assert feature.process(tpose(), timestamp=1.0).status is Status.OK
     result = feature.process(tpose(), timestamp=0.5)
-    assert result.status is Status.INVALID_INPUT and "increase" in result.reason
+    assert result.status is Status.INVALID_INPUT and result.reason == "non-increasing timestamp"
     assert feature.process(tpose(), timestamp=1.04).status is Status.OK
 
 

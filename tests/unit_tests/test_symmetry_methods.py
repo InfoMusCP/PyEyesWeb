@@ -40,17 +40,17 @@ def test_contract_of_both_methods():
 
 
 @pytest.mark.parametrize("output_type", ["global", "components"])
-def test_a_frame_without_a_complete_couple_is_invalid_input_and_keeps_the_zero(output_type):
-    """#46: a dict frame that holds no couple of the skeleton returned OK with 0.0; it is INVALID_INPUT with the value of
-    the block kept, and a frame with one complete couple is as before."""
+def test_a_frame_with_a_missing_joint_is_invalid_input_without_numbers(output_type):
+    """A dict frame that lacks a joint of a couple is INVALID_INPUT ("missing joints", central label check) with an empty
+    index of the declared shape; a complete frame is as before."""
     feature = Symmetry(labels=["a", "b", "c", "d"], couples=[("a", "b"), ("c", "d")], reference_point="neck",
                        output_type=output_type)
-    for frame in ({"a": (1, 2, 3), "c": (0, 1, 1)}, {"a": (1, 2, 3), "d": (0, 1, 1)}):
+    for frame, missing in (({"a": (1, 2, 3), "c": (0, 1, 1)}, "b, d"), ({"a": (1, 2, 3), "b": (1, -2, 3), "c": (0, 1, 1)}, "d")):
         result = feature.process(frame)
-        assert result.status == Status.INVALID_INPUT and "no couple" in result.reason
-        assert not np.any(result.symmetry) and np.shape(result.symmetry) == feature.outputs["symmetry"].shape
-    one_couple = feature.process({"a": (1, 2, 3), "b": (1, -2, 3), "c": (0, 1, 1)})
-    assert one_couple.status == Status.OK and np.any(one_couple.symmetry > 0)
+        assert result.status == Status.INVALID_INPUT and result.reason == f"missing joints: {missing}"
+        assert np.isnan(result.symmetry).all() and np.shape(result.symmetry) == feature.outputs["symmetry"].shape
+    complete = feature.process({"a": (1, 2, 3), "b": (1, -2, 3), "c": (0, 1, 1), "d": (0, 1, 1)})
+    assert complete.status == Status.OK and np.any(complete.symmetry > 0)
 
 
 def test_schemas_differ_per_method():

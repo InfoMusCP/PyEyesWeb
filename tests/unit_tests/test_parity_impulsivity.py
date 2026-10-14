@@ -60,9 +60,10 @@ def _assert_parity(window, algo="new", epsilon=0.5):
         assert new_result.status == Status.INVALID_INPUT
         return reference_result
     if reference_result.ok and SuddennessReference(algo=algo).compute(window).alpha == -1:
-        assert new_result.status == Status.INVALID_INPUT  # the quantile fit failed (#47): INVALID_INPUT, the index kept
-    else:
-        assert reference_result.status == new_result.status
+        assert new_result.status == Status.INVALID_INPUT  # the quantile fit failed (#47): INVALID_INPUT, no index
+        assert math.isnan(new_result.impulsivity_index)
+        return reference_result
+    assert reference_result.status == new_result.status
     if reference_result.ok:
         assert _same(reference_result.impulsivity_index, new_result.impulsivity_index), (reference_result.impulsivity_index, new_result.impulsivity_index)
     return reference_result
@@ -127,18 +128,18 @@ def test_nan_and_inf_windows(algo):
             _assert_parity(broken_window, algo)
 
 
-def test_the_quantile_sentinel_is_invalid_input_and_keeps_the_index():
+def test_the_quantile_sentinel_is_invalid_input_without_an_index():
     """#47: SuddennessImpulsivity could not see the alpha = -1 sentinel of the QUANTILE fit (OK with an index); it reads the
-    alpha of the suddenness fit now and reports INVALID_INPUT like Suddenness, with the same numbers."""
+    alpha of the suddenness fit now and reports INVALID_INPUT like Suddenness, with the reason and no numbers."""
     failed = 0
     for seed in range(40):
         series = np.cumsum(np.random.default_rng(seed).standard_normal((3, 12)), axis=1)
         index = SuddennessImpulsivity(window=12, dims=3, algorithm="quantile", direction_change_epsilon=2.0)._process_window(series)
         fit = Suddenness(window=12, dims=3, algorithm="quantile")._process_window(series)
         assert index.status == fit.status
-        if fit.alpha == -1:
+        if fit.status == Status.INVALID_INPUT:
             failed += 1
-            assert index.status == Status.INVALID_INPUT and index.reason == fit.reason and np.isfinite(index.impulsivity_index)
+            assert index.status == Status.INVALID_INPUT and index.reason == fit.reason and np.isnan(index.impulsivity_index)
         else:
             assert index.ok
         assert SuddennessImpulsivity(window=12, dims=3, direction_change_epsilon=2.0)._process_window(series).ok
@@ -153,6 +154,8 @@ def test_both_components_evaluate_the_same_trajectory():
         index = SuddennessImpulsivity(window=20, dims=2, algorithm=algorithm)._process_window(series).impulsivity_index
         cosine = DirectionChange(window=20, metrics=["cosine"])._process_window(series).cosine
         sudden = Suddenness(window=20, dims=2, algorithm=algorithm)._process_window(series).is_sudden
+        if math.isnan(index):  # the quantile fit failed: no number
+            continue
         assert index == pytest.approx(cosine * float(sudden), rel=1e-12, abs=1e-15)
 
 

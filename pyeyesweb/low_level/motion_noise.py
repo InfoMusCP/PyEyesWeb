@@ -4,10 +4,10 @@ from typing import Any, Optional, Sequence, Tuple
 
 from pyeyesweb._core import core
 from pyeyesweb.base.core_feature import FrameFeature
-from pyeyesweb.base.inputs import labelled_set, non_finite, points_input
+from pyeyesweb.base.inputs import labelled_set, points_input
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Inputs
-from pyeyesweb.data_models.results import Output, Result, Schema, Status
+from pyeyesweb.data_models.results import Output, Result, Schema
 from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.skeletons import with_skeleton
 
@@ -54,11 +54,7 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
         return Schema(Output("noise", kind=bool, doc="motion judged random"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
-        if (problem := self._label_problem(frame, timestamp)) is not None:
-            return problem
         points = labelled_set(frame, self._labels, "MotionNoiseDetector")
-        if reason := non_finite(list(points.values()), allow_empty=True):
-            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
         return self._to_result(self._block.process(points, self._time_step(timestamp)), timestamp)
 
     def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:

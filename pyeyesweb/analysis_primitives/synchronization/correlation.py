@@ -55,7 +55,7 @@ class CorrelationsMatrix(_SeriesBlock):
         return self._block.process(list(args[0]))
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self.result(matrix=raw, timestamp=timestamp)
+        return self.finite_result(matrix=raw, timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="PARS (PartialRecurrenceSynchronizationMatrix)")

@@ -126,7 +126,7 @@ class NonlinearInterdependence(_TrainPairBlock):
         return Schema(Output("xy", doc="S(X|Y)"), Output("yx", doc="S(Y|X)"), Output("threshold"))
 
     def _to_result(self, raw: Tuple[float, float, float], timestamp: float) -> Result:
-        return self.result(xy=raw[0], yx=raw[1], threshold=raw[2], timestamp=timestamp)
+        return self.finite_result(xy=raw[0], yx=raw[1], threshold=raw[2], timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="SPIKE sync")
@@ -179,7 +179,7 @@ class SequenceDetector(FrameFeature):
     Outputs `completed` (a sequence was completed by this event) and `sequences` (total completed so far).
     """
     _core_class = _sync.SequenceDetector
-    INPUTS = Inputs(Input("event", InputKind.SAMPLE, (1,), doc="event id, 0 = none"))
+    INPUTS = Inputs(Input("event", InputKind.SAMPLE, (1,), doc="event id, 0 = none", integer=True))
 
     def _schema(self) -> Schema:
         return Schema(Output("completed", kind=bool), Output("sequences", kind=int))

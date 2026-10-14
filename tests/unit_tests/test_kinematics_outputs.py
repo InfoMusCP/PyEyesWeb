@@ -82,7 +82,8 @@ def test_each_output_of_several_equals_the_single_output_instance(signal, dims, 
         result = many.process(frame, timestamp=stamp)
         expected = {kind: single.process(frame, timestamp=stamp) for kind, single in singles.items()}
         for kind in TYPES:
-            assert _bits(result[kind]) == _bits(expected[kind][kind]), kind
+            if result.status is Status.OK:  # an invalid result carries no numbers
+                assert _bits(result[kind]) == _bits(expected[kind][kind]), kind
             assert (np.shape(result[kind]) == (dims,)) == (kind == "direction" or output_dims == "components")
         assert result.timestamp == pytest.approx(expected["velocity"].timestamp, nan_ok=True)
         # one status for the whole result: not finite when any single-output instance says so

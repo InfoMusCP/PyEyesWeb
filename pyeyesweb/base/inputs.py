@@ -4,16 +4,18 @@ from typing import Any, Dict, Optional, Sequence, Tuple
 
 import numpy as np
 
-from pyeyesweb.data_models.inputs import Input, InputKind
+from pyeyesweb.data_models.inputs import NON_FINITE, Input, InputKind
 
 
-def points_input(name: str, labels: Optional[Sequence[str]], doc: str, dims: int = 3, accepts: tuple = ()) -> Input:
+def points_input(name: str, labels: Optional[Sequence[str]], doc: str, dims: int = 3, accepts: tuple = (),
+                 allow_non_finite: bool = False) -> Input:
     """The declared `POINTS` input of a feature that takes one `(N, dims)` frame, labelled when `labels` is given.
 
-    `accepts`: extra types taken as they are (`dict` for a `label -> point` set).
+    `accepts`: extra types taken as they are (`dict` for a `label -> point` set). `allow_non_finite`: NaN rows are
+    dropouts the feature handles itself.
     """
     return Input(name, InputKind.POINTS, (None if labels is None else len(labels), dims), labels, doc=doc,
-                 accepts=accepts)
+                 accepts=accepts, allow_non_finite=allow_non_finite)
 
 
 def image_input(name: str, doc: str, channels: Optional[int] = 1) -> Input:
@@ -67,7 +69,7 @@ def non_finite(values: Any, allow_empty: bool = False) -> str:
     values = np.asarray(values, dtype=float)
     if values.size == 0:
         return "" if allow_empty else "empty frame"
-    return "" if np.isfinite(values).all() else "NaN or infinite values"
+    return "" if np.isfinite(values).all() else NON_FINITE
 
 
 def check_dims(dims: int) -> int:

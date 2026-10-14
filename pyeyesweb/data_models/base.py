@@ -89,7 +89,8 @@ class OutputsMixin:
             Timestamp of the input in seconds; `NaN` in the result when not given.
         **values
             The outputs produced by this call, by name. An output that is omitted (or `None`) counts as not
-            produced: it holds the empty value (`NaN`, `0` or `False`) and `result.valid[name]` is `False`.
+            produced: it holds the empty value (`NaN`, `0` or `False`) and `result.valid[name]` is `False`. With
+            `Status.INVALID_INPUT` every output is empty whatever is passed: the diagnostic belongs in `reason`.
 
         Raises
         ------
@@ -99,6 +100,8 @@ class OutputsMixin:
             For a value whose shape does not match the declaration.
         """
         schema = self.outputs
+        if status is Status.INVALID_INPUT:
+            values = dict.fromkeys(values)  # names are still checked below
         result_type = self.__dict__.get("_result_type")
         if result_type is None:
             result_type = self.__dict__["_result_type"] = schema.result_type(type(self).__name__ + "Result")
@@ -112,6 +115,13 @@ class OutputsMixin:
         missing = _NO_MISSING if produced == len(data) else frozenset(
             key for key in data if values.get(key) is None)
         return result_type(schema, data, status, reason, math.nan if timestamp is None else timestamp, missing)
+
+    def finite_result(self, *, timestamp: Optional[float] = None, **values: Any) -> Result:
+        """`result(...)`, or `INVALID_INPUT` ("the result is not finite") when a computed output is NaN or infinite: an
+        overflow of finite data (1e300) is not an `OK` number."""
+        if any(value is not None and not np.isfinite(np.asarray(value, dtype=float)).all() for value in values.values()):
+            return self.no_output(Status.INVALID_INPUT, "the result is not finite", timestamp)
+        return self.result(timestamp=timestamp, **values)
 
     def no_output(self, status: Status = Status.NO_OUTPUT, reason: str = "", timestamp: Optional[float] = None) -> Result:
         """A result in which no output was produced."""

@@ -129,6 +129,16 @@ def test_two_input_feature_reproduces_the_frozen_outputs_of_the_list_input_featu
     """Outputs, statuses and reasons that the former single-input (list of signals) feature gave on the same windows."""
     params = {name: tuple(value) if isinstance(value, list) else value for name, value in entry["params"].items()}
     feature = PhaseLockingValue(**params)
+    if entry["kind"] != "window" and not np.isfinite(data).all():
+        # the old feature buffered a NaN sample; now it is rejected and not buffered: the rest is the stream without it
+        clean = PhaseLockingValue(**params)
+        for step in range(data.shape[1]):
+            result = feature.process(data[0, step], data[1, step], timestamp=entry["dt"] * (step + 1))
+            if np.isfinite(data[:, step]).all():
+                assert np.array_equal(result.to_array(), clean.process(data[0, step], data[1, step]).to_array(), equal_nan=True)
+            else:
+                assert result.status is Status.INVALID_INPUT and not any(result.valid.values())
+        return
     if entry["kind"] == "window":
         results = [feature._process_window(data[:1], data[1:2])]
     else:
