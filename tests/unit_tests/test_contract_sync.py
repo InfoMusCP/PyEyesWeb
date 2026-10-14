@@ -35,7 +35,7 @@ MATRICES = np.stack([np.corrcoef(RNG.standard_normal((3, 10))) for _ in range(12
 # name -> (factory, recordings)
 CASES = {
     "PhaseLockingValue": (lambda: PhaseLockingValue(window=30, hop=10), (SIGNALS[:, 0], SIGNALS[:, 1])),
-    "CorrelationsMatrix": (lambda: CorrelationsMatrix(window=20, hop=5, n_inputs=3), (SIGNALS,)),
+    "CorrelationsMatrix": (lambda: CorrelationsMatrix(window=20, hop=5, number_of_inputs=3), (SIGNALS,)),
     "GeneralisedAutoCorrelation": (lambda: GeneralisedAutoCorrelation(window=20, hop=10), (SIGNALS[:, 0],)),
     "PartialRecurrenceSynchronization": (lambda: PartialRecurrenceSynchronization(), (MATRICES,)),
     "EventSynchronization": (lambda: EventSynchronization(window=20, hop=20), (EVENTS_A, EVENTS_B)),
@@ -75,24 +75,24 @@ def test_process_window_is_the_streamed_window(name):
 def test_declared_inputs():
     assert PhaseLockingValue(window=10).inputs.names == ("first_signal", "second_signal")
     assert PhaseLockingValue(window=10).inputs["first_signal"].kind is InputKind.SAMPLE
-    assert PartialRecurrenceSynchronization().inputs["cpr"].kind is InputKind.MATRIX
-    assert CorrelationsMatrix(window=10, n_inputs=5).inputs["signals"].shape == (5,)
-    assert EventSynchronization(window=10).inputs.names == ("ts1", "ts2")
-    assert EventSynchronizationMECS(window=10, time_series_number=3).inputs.names == ("series1", "series2", "series3")
-    assert SpikeSynchronization(window=10, number_of_input_trains=4).inputs["trains"].shape == (4,)
-    assert TemporalSynchronization(input_number=4).inputs["synchronisation"].shape == (4,)
-    assert CrossRecurrencePlot(window=10).inputs.names == ("series1", "series2")
+    assert PartialRecurrenceSynchronization().inputs["correlations_matrix"].kind is InputKind.MATRIX
+    assert CorrelationsMatrix(window=10, number_of_inputs=5).inputs["signals"].shape == (5,)
+    assert EventSynchronization(window=10).inputs.names == ("first_signal", "second_signal")
+    assert EventSynchronizationMECS(window=10, number_of_inputs=3).inputs.names == ("series1", "series2", "series3")
+    assert SpikeSynchronization(window=10, number_of_inputs=4).inputs["trains"].shape == (4,)
+    assert TemporalSynchronization(number_of_inputs=4).inputs["synchronization"].shape == (4,)
+    assert CrossRecurrencePlot(window=10).inputs.names == ("first_series", "second_series")
 
 
 def test_phase_locking_value_takes_two_signals():
     two = PhaseLockingValue(window=30).run(SIGNALS[:, 0], SIGNALS[:, 1])
-    assert two.status[29] == Status.OK and two["plv"][29] > 0.9
+    assert two.status[29] == Status.OK and two["phase_locking_value"][29] > 0.9
     with pytest.raises(ValueError):
         PhaseLockingValue(window=30).run(SIGNALS[:, 0])
 
 
 def test_pars_takes_the_output_of_correlations_matrix():
-    cpr = CorrelationsMatrix(window=40, hop=40, n_inputs=3).run(SIGNALS)
-    matrices = [matrix for matrix, ok in zip(cpr["matrix"], cpr.ok) if ok]
+    cpr = CorrelationsMatrix(window=40, hop=40, number_of_inputs=3).run(SIGNALS)
+    matrices = [matrix for matrix, ok in zip(cpr["correlations_matrix"], cpr.ok) if ok]
     partial = PartialRecurrenceSynchronization().run(np.stack(matrices))
     assert len(partial) == len(matrices) and partial.ok.all()

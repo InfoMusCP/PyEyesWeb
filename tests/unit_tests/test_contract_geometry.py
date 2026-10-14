@@ -36,7 +36,7 @@ TRAJECTORIES = RNG.standard_normal((FRAME_COUNT, 5, 3))
 
 FACTORIES = {
     "FilterContour": (lambda: FilterContour(), CONTOURS),
-    "HitCellDetector": (lambda: HitCellDetector(cells_x=4, cells_y=4, x_max=1.0, y_max=1.0), UNIT_POINTS),
+    "HitCellDetector": (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=1.0, y_max=1.0), UNIT_POINTS),
     "ContourCurvature": (lambda: ContourCurvature(), CONTOURS),
     "ConvexHull": (lambda: ConvexHull(), CONTOURS),
     "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), CURVATURES, CONTOURS),
@@ -46,7 +46,7 @@ FACTORIES = {
     "TrajectoryNonPlanarity": (lambda: TrajectoryNonPlanarity(), TRAJECTORIES),
     "PositionDependingPotentials": (lambda: PositionDependingPotentials(cells_along_x=3, cells_along_y=3), CELLS),
     "RegionDependingPotentials": (lambda: RegionDependingPotentials(cells_along_x=3, cells_along_y=3,
-                                                                    num_of_regions=3), CELLS),
+                                                                    number_of_regions=3), CELLS),
 }
 
 

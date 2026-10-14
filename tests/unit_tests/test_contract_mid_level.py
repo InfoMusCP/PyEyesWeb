@@ -36,13 +36,13 @@ def test_gesture_segmenter():
     segmenter = GestureSegmenter()
     assert segmenter.inputs.names == ("intensity", "noise")
     assert all(declared.kind is InputKind.SAMPLE for declared in segmenter.inputs)
-    assert segmenter.outputs.names == ("smoothed_intensity", "gesturing", "gesture_start", "gesture_end")
+    assert segmenter.outputs.names == ("smoothed_intensity", "is_gesturing", "is_gesture_start", "is_gesture_end")
 
 
 def test_gesture_segmenter_noise_input_is_optional():
     intensity = np.abs(np.sin(np.arange(60) / 4)) + (np.arange(60) > 30)
     plain, silent = GestureSegmenter(filter_window_length=5).run(intensity), GestureSegmenter(filter_window_length=5).run(intensity, np.zeros(60))
-    assert np.array_equal(plain.status, silent.status) and np.array_equal(plain["gesturing"], silent["gesturing"])
+    assert np.array_equal(plain.status, silent.status) and np.array_equal(plain["is_gesturing"], silent["is_gesturing"])
     streamed = GestureSegmenter(filter_window_length=5)
     assert [streamed.process(value).status for value in intensity] == list(plain.status)
 
@@ -51,7 +51,7 @@ def test_motion_noise_detector():
     check_feature_contract(lambda: MotionNoiseDetector(labels=LABELS), SKELETON)
     detector = MotionNoiseDetector(labels=LABELS)
     assert detector.inputs[0].kind is InputKind.POINTS and detector.inputs[0].labels == tuple(LABELS)
-    assert detector.outputs.names == ("noise",)
+    assert detector.outputs.names == ("is_noisy",)
 
 
 def test_motion_noise_detector_array_and_dict_agree_and_time_is_seconds():
@@ -61,7 +61,7 @@ def test_motion_noise_detector_array_and_dict_agree_and_time_is_seconds():
     for index, frame in enumerate(SKELETON):
         result = dicts.process(dict(zip(LABELS, map(tuple, frame))), timestamp=ts[index])
         assert result.status == by_array.status[index] and result.timestamp == pytest.approx(ts[index])
-        assert result.noise == by_array["noise"][index]
+        assert result.is_noisy == by_array["is_noisy"][index]
 
 
 def test_motion_noise_detector_array_needs_labels():
@@ -85,7 +85,7 @@ def test_motion_duration_accepts_one_channel_columns():
 
 def test_contraction_impulsivity_takes_two_inputs():
     sqom, ci = np.abs(np.sin(np.arange(60) / 5)), np.abs(np.cos(np.arange(60) / 7))
-    assert ContractionImpulsivity().inputs.names == ("sqom", "ci")
+    assert ContractionImpulsivity().inputs.names == ("quantity_of_motion", "contraction_index")
     check_feature_contract(ContractionImpulsivity, sqom, ci)
 
 

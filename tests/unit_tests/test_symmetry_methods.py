@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "reference"))
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
+from symmetry_inputs import reflection  # noqa: E402
 from symmetry_reference import GeometricSymmetryReference  # noqa: E402
 import pyeyesweb  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
@@ -24,8 +25,8 @@ RNG = np.random.default_rng(3)
 CLOUDS = RNG.standard_normal((20, 8, 3))
 SKELETONS = RNG.standard_normal((20, 3, 3))
 LABELS = ["torso", "left_hip", "right_hip"]
-RATIO = dict(couples=[("left_hip", "right_hip")], reference_point="torso")  # the default input type is custom
-PAIRS = [(0, 1), (2, 3)]
+RATIO = dict(pairs=[("left_hip", "right_hip")], reference_point="torso")  # the default input type is custom
+PAIRS = [(0, 1), (2, 3)]  # rows of CLOUDS, which `reflection` names j0, j1, ...
 
 
 def test_default_method_is_ratio():
@@ -36,15 +37,15 @@ def test_default_method_is_ratio():
 
 def test_contract_of_both_methods():
     check_feature_contract(lambda: Symmetry(**RATIO, labels=LABELS), SKELETONS)
-    check_feature_contract(lambda: Symmetry(method="reflection", joint_pairs=PAIRS), CLOUDS)
+    check_feature_contract(lambda: reflection(8, PAIRS), CLOUDS)
 
 
-@pytest.mark.parametrize("output_type", ["global", "components"])
-def test_a_frame_with_a_missing_joint_is_invalid_input_without_numbers(output_type):
+@pytest.mark.parametrize("output_dims", ["global", "components"])
+def test_a_frame_with_a_missing_joint_is_invalid_input_without_numbers(output_dims):
     """A dict frame that lacks a joint of a couple is INVALID_INPUT ("missing joints", central label check) with an empty
     index of the declared shape; a complete frame is as before."""
-    feature = Symmetry(labels=["a", "b", "c", "d"], couples=[("a", "b"), ("c", "d")], reference_point="neck",
-                       output_type=output_type)
+    feature = Symmetry(labels=["a", "b", "c", "d"], pairs=[("a", "b"), ("c", "d")], reference_point="neck",
+                       output_dims=output_dims)
     for frame, missing in (({"a": (1, 2, 3), "c": (0, 1, 1)}, "b, d"), ({"a": (1, 2, 3), "b": (1, -2, 3), "c": (0, 1, 1)}, "d")):
         result = feature.process(frame)
         assert result.status == Status.INVALID_INPUT and result.reason == f"missing joints: {missing}"
@@ -55,11 +56,11 @@ def test_a_frame_with_a_missing_joint_is_invalid_input_without_numbers(output_ty
 
 def test_schemas_differ_per_method():
     ratio = Symmetry(**RATIO, labels=LABELS)
-    reflection = Symmetry(method="reflection", joint_pairs=PAIRS)
+    mirror = reflection(8, PAIRS)
     assert list(ratio.outputs.names) == ["symmetry"]
-    assert list(reflection.outputs.names) == ["pair_symmetry"]
+    assert list(mirror.outputs.names) == ["pair_symmetry"]
     assert ratio.outputs["symmetry"].shape == ()
-    assert reflection.outputs["pair_symmetry"].shape == (2,)
+    assert mirror.outputs["pair_symmetry"].shape == (2,)
 
 
 def test_unknown_method_raises():
@@ -68,10 +69,10 @@ def test_unknown_method_raises():
 
 
 @pytest.mark.parametrize("method,params", [
-    ("ratio", {"joint_pairs": PAIRS}),
-    ("ratio", {"center_of_symmetry": 1}),
-    ("reflection", {"joint_pairs": PAIRS, "output_type": "components"}),
-    ("reflection", {"joint_pairs": PAIRS, "labels": LABELS}),
+    ("ratio", {"index_type": "no_such_index"}),
+    ("ratio", {"multiple_epsilons": [1.0]}),
+    ("reflection", {"pairs": [("j0", "j1")], "labels": ["j0", "j1"], "output_dims": "components"}),
+    ("reflection", {"pairs": [("j0", "j1")], "labels": ["j0", "j1"], "aggregation": "min"}),
     ("reflection", {}),
 ])
 def test_parameter_of_the_wrong_method_raises(method, params):
@@ -80,16 +81,17 @@ def test_parameter_of_the_wrong_method_raises(method, params):
 
 
 def test_results_equal_the_implementations():
-    ratio = Symmetry(**RATIO, labels=LABELS, output_type="components")
-    direct = module._RatioSymmetry(**RATIO, labels=LABELS, output_type="components")
+    ratio = Symmetry(**RATIO, labels=LABELS, output_dims="components")
+    direct = module._RatioSymmetry(**RATIO, labels=LABELS, output_dims="components")
     np.testing.assert_array_equal(ratio.process(SKELETONS[0]).symmetry, direct.process(SKELETONS[0]).symmetry)
-    reflection = Symmetry(method="reflection", joint_pairs=PAIRS, center_of_symmetry=4)
-    direct = module._ReflectionSymmetry(joint_pairs=PAIRS, center_of_symmetry=4)
-    np.testing.assert_array_equal(reflection.process(CLOUDS[0]).pair_symmetry, direct.process(CLOUDS[0]).pair_symmetry)
+    labels = [f"j{row}" for row in range(8)]
+    named = dict(labels=labels, pairs=[("j0", "j1"), ("j2", "j3")], reference_point="j4")
+    mirror, direct = Symmetry(method="reflection", **named), module._ReflectionSymmetry(**named)
+    np.testing.assert_array_equal(mirror.process(CLOUDS[0]).pair_symmetry, direct.process(CLOUDS[0]).pair_symmetry)
 
 
 def test_reflection_equals_the_reference():
-    new = Symmetry(method="reflection", joint_pairs=PAIRS).process(CLOUDS[0])
+    new = reflection(8, PAIRS).process(CLOUDS[0])
     ref = GeometricSymmetryReference(PAIRS).compute(CLOUDS[0])
     np.testing.assert_allclose(new.pair_symmetry, ref["pair_error"], rtol=1e-9, atol=1e-9)
 

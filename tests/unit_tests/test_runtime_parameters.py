@@ -26,7 +26,7 @@ def test_core_parameter_without_property_reaches_the_block():
 
 
 def test_parameter_setters_reach_the_block():
-    feature = SpectralArcLength(window=20)
+    feature = SpectralArcLength(window=20, sampling_rate=50.0)
     block = feature._block
     feature.sampling_rate = 100.0
     assert feature.sampling_rate == 100.0 and feature._built is block  # live: the block is kept
@@ -36,7 +36,7 @@ def test_parameter_setters_reach_the_block():
 
 
 def test_unknown_public_name_raises():
-    feature = SpectralArcLength(window=20)
+    feature = SpectralArcLength(window=20, sampling_rate=50.0)
     with pytest.raises(AttributeError, match="SpectralArcLength has no parameter 'typo'"):
         feature.typo = 1
     with pytest.raises(AttributeError, match="no parameter 'use_filter'"):
@@ -45,11 +45,11 @@ def test_unknown_public_name_raises():
 
 def test_removed_parameter():
     with pytest.raises(TypeError):
-        SpectralArcLength(window=20, use_filter=True)
+        SpectralArcLength(window=20, use_filter=True, sampling_rate=50.0)
 
 
 def test_private_names_are_normal_attributes():
-    feature = SpectralArcLength(window=20)
+    feature = SpectralArcLength(window=20, sampling_rate=50.0)
     feature._scratch = 3
     assert feature._scratch == 3
 
@@ -75,7 +75,7 @@ def test_variant_feature_writes_refresh_its_caches():
 
 # -- task 2: window and hop
 def test_window_and_hop_validate_and_keep_the_newest_samples():
-    feature = SpectralArcLength(window=20, hop=5)
+    feature = SpectralArcLength(window=20, hop=5, sampling_rate=50.0)
     results = feed(feature, SPEED[:40])
     assert results[19].status != Status.WARMING_UP
     feature.window = 30
@@ -86,7 +86,7 @@ def test_window_and_hop_validate_and_keep_the_newest_samples():
 
 
 def test_hop_validation():
-    feature = SpectralArcLength(window=20, hop=5)
+    feature = SpectralArcLength(window=20, hop=5, sampling_rate=50.0)
     with pytest.raises(ValueError, match="hop <= window"):
         feature.hop = 21
     with pytest.raises(ValueError):
@@ -95,7 +95,7 @@ def test_hop_validation():
 
 
 def test_window_smaller_than_hop_needs_configure():
-    feature = SpectralArcLength(window=30, hop=20)
+    feature = SpectralArcLength(window=30, hop=20, sampling_rate=50.0)
     with pytest.raises(ValueError, match="window=12, hop=20"):
         feature.window = 12
     assert feature.window == 30
@@ -106,17 +106,17 @@ def test_window_smaller_than_hop_needs_configure():
 
 
 def test_window_change_equals_a_new_feature_fed_the_newest_samples():
-    live = SpectralArcLength(window=20, hop=3)
+    live = SpectralArcLength(window=20, hop=3, sampling_rate=50.0)
     feed(live, SPEED[:50])
     live.configure(window=30, hop=4)
-    fresh = SpectralArcLength(window=30, hop=4)
+    fresh = SpectralArcLength(window=30, hop=4, sampling_rate=50.0)
     for live_result, fresh_result in zip(feed(live, SPEED[50:150])[9:], feed(fresh, SPEED[30:150])[29:]):
         assert live_result == fresh_result
 
 
 # -- task 4: declarations follow runtime changes
 def test_real_time_scenario():
-    feature = SpectralArcLength(window=20, hop=1)
+    feature = SpectralArcLength(window=20, hop=1, sampling_rate=50.0)
     recorder = Recorder(feature)
     for sample in SPEED[:30]:
         recorder.append(feature.process([sample]))
@@ -167,7 +167,7 @@ def test_underscore_names_are_not_forwarded():
 
 
 def test_only_core_attributes_are_forwarded():
-    feature = SpectralArcLength(window=20)
+    feature = SpectralArcLength(window=20, sampling_rate=50.0)
     assert feature._process_window is not None
     assert hasattr(feature, "maximum_cutoff_frequency")
 

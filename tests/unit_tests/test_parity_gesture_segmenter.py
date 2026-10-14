@@ -37,7 +37,7 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 REFERENCE = np.load(DATA / "gesture_segmenter_reference.npz")
 EXCERPTS = np.load(DATA / "motion_excerpts.npz")
 SCENARIOS = json.loads(str(REFERENCE["meta"]))["scenarios"]
-OUTPUTS = ["kinetic_energy", "smoothed_kinetic_energy", "noise", "gesturing", "gesture_start", "gesture_end"]
+OUTPUTS = ["kinetic_energy", "smoothed_kinetic_energy", "noise", "is_gesturing", "is_gesture_start", "is_gesture_end"]
 MM_SQUARED = 1000.0 ** 2  # the old block scaled the energy threshold by the square of the unit factor
 STATE_RESET, PER_SAMPLE = "parameters changed: state reset", "no time given: per-sample derivatives"
 
@@ -107,9 +107,9 @@ class _Composition:
         for upstream in (energy, noise):
             if upstream.status is not Status.OK:
                 return int(upstream.status), upstream.reason, values, valid
-        segmented = self.segmenter.process(energy["kinetic_energy"], noise["noise"], timestamp=timestamp)
-        values[[0, 2]], valid[[0, 2]] = (energy["kinetic_energy"], noise["noise"]), True
-        for position, name in ((1, "smoothed_intensity"), (3, "gesturing"), (4, "gesture_start"), (5, "gesture_end")):
+        segmented = self.segmenter.process(energy["kinetic_energy"], noise["is_noisy"], timestamp=timestamp)
+        values[[0, 2]], valid[[0, 2]] = (energy["kinetic_energy"], noise["is_noisy"]), True
+        for position, name in ((1, "smoothed_intensity"), (3, "is_gesturing"), (4, "is_gesture_start"), (5, "is_gesture_end")):
             values[position], valid[position] = segmented[name], segmented.valid[name]
         return int(segmented.status), _reason((segmented, energy, noise)), values, valid
 
@@ -150,7 +150,7 @@ def test_a_plain_signal_is_segmented_without_a_noise_input():
     plain = GestureSegmenter(firing_threshold=0.5, filter_window_length=5).run(signal)
     gated = GestureSegmenter(firing_threshold=0.5, filter_window_length=5).run(signal, np.zeros(len(signal)))
     noisy = GestureSegmenter(firing_threshold=0.5, filter_window_length=5).run(signal, np.ones(len(signal)))
-    assert np.array_equal(plain.status, gated.status) and np.array_equal(plain["gesture_start"], gated["gesture_start"])
-    assert plain["gesture_start"].sum() == 1 and plain["gesture_end"].sum() == 1
-    assert noisy["gesture_start"].sum() == 0  # the flag blocks every start
+    assert np.array_equal(plain.status, gated.status) and np.array_equal(plain["is_gesture_start"], gated["is_gesture_start"])
+    assert plain["is_gesture_start"].sum() == 1 and plain["is_gesture_end"].sum() == 1
+    assert noisy["is_gesture_start"].sum() == 0  # the flag blocks every start
     assert (plain.status == int(Status.WARMING_UP)).sum() == 10

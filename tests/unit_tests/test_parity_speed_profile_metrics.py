@@ -79,7 +79,7 @@ def test_random_profiles(seed):
 
 @pytest.mark.parametrize("count", [10, 11, 15, 16, 17, 30])
 def test_short_windows(count):
-    _assert_parity(np.abs(np.sin(np.arange(count) / 2.0)) * 50, sampling_rate=50.0)
+    _assert_parity(np.abs(np.sin(np.arange(count) / 2.0)) * 50)
 
 
 @pytest.mark.parametrize("signal", [
@@ -110,12 +110,12 @@ def test_warming_up_below_ten_samples(count):
 def test_window_must_hold_ten_samples():
     for build in (SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount):
         with pytest.raises(ValueError, match=">= 10"):
-            build(window=9)
+            build(window=9, sampling_rate=50.0)
 
 
 def test_one_dimensional_profile_only():
     with pytest.raises(ValueError, match="1 channels"):
-        Harmonicity()._process_window(np.ones((2, 30)))
+        Harmonicity(sampling_rate=50.0)._process_window(np.ones((2, 30)))
 
 
 @pytest.mark.parametrize("build, parameter, value", [

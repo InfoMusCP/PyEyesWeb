@@ -1,7 +1,7 @@
 """Detection of the grid cell hit by a point (EyesWeb HitCellDetector).
 
-A 2D space is divided into a grid of cells: `cells_y` (`cells_along_y`) rows from the y coordinate and `cells_x`
-(`cells_along_x`) columns from the x coordinate. A cell is `(i, j)` = (row, column). The block declares its outputs
+A 2D space is divided into a grid of cells: `cells_along_y` rows from the y coordinate and `cells_along_x`
+columns from the x coordinate. A cell is `(i, j)` = (row, column). The block declares its outputs
 as a `Schema` (`block.outputs`) and returns a `Result` (see `pyeyesweb.data_models`). Parameters, defaults and the
 exact behaviour are those of the C++ port, documented in the C++ headers (`core/include/ew/features/space/`). The potentials driven by the hit cells are in
 `pyeyesweb.mid_level.space_occupation`.
@@ -28,6 +28,7 @@ class HitCellDetector(FrameFeature):
     outside `[x_min, x_max] x [y_min, y_max]` makes the call `INVALID_INPUT` (`result.reason` says why).
     """
     _core_class = core.space.HitCellDetector
+    _core_names = {"cells_along_x": "cells_x", "cells_along_y": "cells_y"}
     _unit_params = {"x_min": 1, "x_max": 1, "y_min": 1, "y_max": 1}  # lengths of the monitored area
     INPUTS = Inputs(points_input("points", None, "2D points to locate in the grid", dims=2))
 

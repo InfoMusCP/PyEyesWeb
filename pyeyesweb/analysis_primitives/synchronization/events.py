@@ -28,8 +28,8 @@ _SpikeSyncMode = _sync.SpikeSyncMode
 
 
 def _series_inputs(feature: Any, doc: str) -> Inputs:
-    """One input per time series (`time_series_number`, default 2), each with one channel per event class."""
-    number_of_series = int(feature._param("time_series_number", 2))  # C++ default
+    """One input per time series (`number_of_inputs`, default 2), each with one channel per event class."""
+    number_of_series = int(feature._param("number_of_inputs", 2))  # C++ default
     return Inputs(*(Input(f"series{index + 1}", InputKind.SAMPLE, (None,), doc=doc) for index in range(number_of_series)))
 
 
@@ -53,8 +53,8 @@ class _NonOverlapping:
 class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     """EyesWeb Event Sync of two event trains.
 
-    Inputs: `ts1`, `ts2`, one sample each per call (non-zero = event). The feature buffers `window` samples and
-    computes every `hop` samples; `_process_window(ts1, ts2)` takes two `(1, window)` series directly. The block
+    Inputs: `first_signal`, `second_signal`, one sample each per call (non-zero = event). The feature buffers `window`
+    samples and computes every `hop` samples; `_process_window(first_signal, second_signal)` takes two `(1, window)` series directly. The block
     accumulates across windows, so they must not overlap: `hop` is `window` (the default) and any other value raises
     `ValueError`.
 
@@ -62,7 +62,7 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     series leads.
     """
     _core_class = _sync.EventSynchronization
-    INPUTS = Inputs(_train("ts1"), _train("ts2"))
+    INPUTS = Inputs(_train("first_signal"), _train("second_signal"))
 
     def _schema(self) -> Schema:
         return Schema(Output("synchronization", doc="Q in [0, 1]"), Output("delay", doc="q in [-1, 1]"))
@@ -85,20 +85,21 @@ class _MECSBlock(_NonOverlapping, _SeriesBlock):
 class EventSynchronizationMECS(_MECSBlock):
     """EyesWeb MECS Algorithm (v2), multi event class synchronisation of several event series.
 
-    Inputs: `time_series_number` inputs (constructor parameter, default 2) `series1`, `series2`, ..., each one
+    Inputs: `number_of_inputs` inputs (constructor parameter, default 2) `series1`, `series2`, ..., each one
     sample per call with one channel per event class (non-zero = event). The feature buffers `window` samples and
     computes every `hop` samples; `_process_window(*series)` takes one `(classes, window)` array per input directly.
 
     Outputs `synchronization[m]` and `events[m]` (EyesWeb "Sync vector" and "Lead vector", the latter an event
-    count), shape `(M,)`, M = `event_class_number` (default 3).
+    count), shape `(M,)`, M = `number_of_event_classes` (default 3).
     """
     _core_class = _sync.EventSynchronizationMECS
+    _core_names = {"number_of_inputs": "time_series_number", "number_of_event_classes": "event_class_number"}
 
     def _inputs(self) -> Inputs:
         return _series_inputs(self, "events of one class per channel")
 
     def _schema(self) -> Schema:
-        number_of_classes = int(self._param("event_class_number", 3))  # C++ default
+        number_of_classes = int(self._param("number_of_event_classes", 3))  # C++ default
         return Schema(Output("synchronization", number_of_classes, doc="sync index of each event class"),
                       Output("events", number_of_classes, doc="event count of each event class"))
 
@@ -110,28 +111,30 @@ class EventSynchronizationMECS(_MECSBlock):
 class NonlinearInterdependence(_TrainPairBlock):
     """EyesWeb EventSynchronization_Interdependence of two signals.
 
-    Inputs: `x`, `y`, one sample each per call. The feature buffers `window` samples and computes every `hop`
-    samples; `_process_window(x, y)` takes two `(1, window)` series directly.
+    Inputs: `first_signal`, `second_signal`, one sample each per call. The feature buffers `window` samples and computes
+    every `hop` samples; `_process_window(first_signal, second_signal)` takes two `(1, window)` series directly.
 
-    Outputs `xy` = S(X|Y), `yx` = S(Y|X): nonlinear interdependence; `threshold`: the block's threshold output.
+    Outputs `first_to_second_interdependence` = S(X|Y), `second_to_first_interdependence` = S(Y|X): nonlinear interdependence; `threshold`: the block's threshold output.
     """
     _core_class = _sync.EventSynchronizationInterdependence
-    INPUTS = Inputs(_train("x", "signal"), _train("y", "signal"))
+    INPUTS = Inputs(_train("first_signal", "signal"), _train("second_signal", "signal"))
 
     def _minimum_window(self, **overrides: Any) -> int:
         params = {**self._params, **overrides}
         return int(params.get("neighbours", 2)) + 1  # C++ default; the core wants neighbours < samples
 
     def _schema(self) -> Schema:
-        return Schema(Output("xy", doc="S(X|Y)"), Output("yx", doc="S(Y|X)"), Output("threshold"))
+        return Schema(Output("first_to_second_interdependence", doc="S(X|Y)"),
+                      Output("second_to_first_interdependence", doc="S(Y|X)"), Output("threshold"))
 
     def _to_result(self, raw: Tuple[float, float, float], timestamp: float) -> Result:
-        return self.finite_result(xy=raw[0], yx=raw[1], threshold=raw[2], timestamp=timestamp)
+        return self.finite_result(first_to_second_interdependence=raw[0], second_to_first_interdependence=raw[1],
+                                  threshold=raw[2], timestamp=timestamp)
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="SPIKE sync")
 class SpikeSynchronization(_SeriesBlock):
-    """EyesWeb SPIKE sync of `number_of_input_trains` trains (constructor parameter, default 2).
+    """EyesWeb SPIKE sync of `number_of_inputs` trains (constructor parameter, default 2).
 
     Input: `trains`, one sample per call with one channel per train (BINARY mode: -1 / +1, spike = +1; TIMINGS
     mode: spike times). The feature buffers `window` samples and computes every `hop` samples;
@@ -141,9 +144,10 @@ class SpikeSynchronization(_SeriesBlock):
     per-sample merged coincidence (-1 = no spike), valid in BINARY mode only.
     """
     _core_class = _sync.SpikeES
+    _core_names = {"number_of_inputs": "number_of_input_trains"}
 
     def _inputs(self) -> Inputs:
-        number_of_trains = int(self._param("number_of_input_trains", 2))  # C++ default
+        number_of_trains = int(self._param("number_of_inputs", 2))  # C++ default
         return Inputs(Input("trains", InputKind.SAMPLE, (number_of_trains,), doc="one value per spike train"))
 
     def _schema(self) -> Schema:
@@ -176,19 +180,19 @@ class SequenceDetector(FrameFeature):
 
     Input: `event`, the integer id of the event of this sample (the numbers of `sequence`), 0 = none.
 
-    Outputs `completed` (a sequence was completed by this event) and `sequences` (total completed so far).
+    Outputs `is_completed` (a sequence was completed by this event) and `sequence_count` (total completed so far).
     """
     _core_class = _sync.SequenceDetector
     INPUTS = Inputs(Input("event", InputKind.SAMPLE, (1,), doc="event id, 0 = none", integer=True))
 
     def _schema(self) -> Schema:
-        return Schema(Output("completed", kind=bool), Output("sequences", kind=int))
+        return Schema(Output("is_completed", kind=bool), Output("sequence_count", kind=int))
 
     def _process(self, event: Any, timestamp: Optional[float]) -> Result:
         return self._to_result(self._block.process(int(train(event)[0])), timestamp)
 
     def _to_result(self, raw: bool, timestamp: float) -> Result:
-        return self.result(completed=raw, sequences=self._block.number_of_sequences, timestamp=timestamp)
+        return self.result(is_completed=raw, sequence_count=self._block.number_of_sequences, timestamp=timestamp)
 
 
 __all__ = ["EventSynchronization", "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization",

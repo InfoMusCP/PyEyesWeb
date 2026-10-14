@@ -8,7 +8,7 @@ from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.feature import WindowedFeature
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
-from pyeyesweb.base.choices import coerce_enum
+from pyeyesweb.base.choices import choice_name, coerce_enum
 from pyeyesweb.base.inputs import InferredDims
 from pyeyesweb.base.minimum_window import MinimumWindow
 
@@ -19,7 +19,7 @@ _Algorithm = Literal["constrained", "quantile"]
 
 class _SuddennessFit(MinimumWindow):
     """What the features that fit the velocity distribution share: the minimum window, the `(dims,)` point of the
-    trajectory (`dims` = 2 or 3) and the `algorithm` parameter."""
+    trajectory (`dims` = 2 or 3) and the `method` parameter."""
 
     MIN_WINDOW = 6
 
@@ -40,12 +40,12 @@ class _SuddennessFit(MinimumWindow):
         super()._set_dims(value, inferred)
 
     @property
-    def algorithm(self) -> _Algorithm:
-        return self._params["algorithm"].name.lower()
+    def method(self) -> _Algorithm:
+        return choice_name(self._params["method"])
 
-    @algorithm.setter
-    def algorithm(self, value: Any):
-        self._set_param("algorithm", coerce_enum(value, _ALGORITHMS, "algorithm"))
+    @method.setter
+    def method(self, value: Any):
+        self._set_param("method", coerce_enum(value, _ALGORITHMS, "method"))
 
 
 @describe(Layer.MID_LEVEL)
@@ -71,8 +71,8 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
         New frames between two windows. Defaults to `1`.
     dims : int, optional
         Coordinates of the position, 2 or 3. Defaults to the size of the first position.
-    algo : str, optional
-        The algorithm to use for stable distribution fitting. Defaults to `"new"`.
+    method : {"constrained", "quantile"}, optional
+        The algorithm to use for stable distribution fitting. Defaults to `"constrained"`.
 
     Returns
     -------
@@ -89,13 +89,13 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     )
 
     _core_class = core.motion.Suddenness
+    _core_names = {"method": "algorithm"}
     _lazy_block = True
 
-    def __init__(self, window: int, hop: int = 1, dims: Optional[int] = None,
-                 algorithm: _Algorithm = "constrained"):
+    def __init__(self, window: int, hop: int = 1, *, dims: Optional[int] = None, method: _Algorithm = "constrained"):
         super().__init__(window=window, hop=hop)
         self.dims = dims
-        self.algorithm = algorithm
+        self.method = method
         self._check_window()
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:

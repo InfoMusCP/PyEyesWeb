@@ -93,7 +93,7 @@ def test_coarse_graining_no_output_semantics_are_kept():
     feature = CoarseGraining(window=4, hop=4, factor=2)
     block = [feature.process([float(index)]) for index in range(4)]
     assert [result.status for result in block[:3]] == [Status.WARMING_UP] * 3 and block[3].ok
-    assert block[3].series.shape == (1, 2)
+    assert block[3].coarse_grained.shape == (1, 2)
     again = feature._process_window(np.arange(4.0)[None])  # a second activation: the block skips it
     assert again.status is Status.NO_OUTPUT and again.reason
 

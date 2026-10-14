@@ -28,7 +28,7 @@ class LabelGuard:
         names = self._label_names()
         if not names:
             raise ValueError(f"{type(self).__name__}: no joints given; pass skeleton= (e.g. 'kinect_v2') or your "
-                             "own weights= / couples=")
+                             "own weights= / pairs=")
         if self._labels is not None and (unknown := sorted(names - set(self._labels))):
             raise ValueError(f"{type(self).__name__}: names that are not among the labels: {unknown}")
 

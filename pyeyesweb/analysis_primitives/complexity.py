@@ -84,8 +84,8 @@ class CoarseGraining(MinimumWindow, WindowedFeature, CoreFeature):
     Input: one sample of `C` values per call. `window` and `hop` as in `WindowedFeature`; `_process_window(series)`
     takes one complete `(C, window)` series. The other parameters (`factor`, ...) are those of the EyesWeb block.
 
-    Output `series`: `(channels, window // factor)` coarse-grained series (data-dependent size). `NO_OUTPUT`
-    (series not produced) on the windows where EyesWeb does not recompute it, as well as between hops.
+    Output `coarse_grained`: `(channels, window // factor)` coarse-grained series (data-dependent size). `NO_OUTPUT`
+    (`coarse_grained` not produced) on the windows where EyesWeb does not recompute it, as well as between hops.
     """
     _core_class = _motion.CoarseGraining
 
@@ -109,13 +109,13 @@ class CoarseGraining(MinimumWindow, WindowedFeature, CoreFeature):
         return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per channel"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("series", (None, None), doc="coarse-grained series (channels, window // factor)"))
+        return Schema(Output("coarse_grained", (None, None), doc="coarse-grained series (channels, window // factor)"))
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         raw = self._block.process(np.asarray(series, dtype=float))
         if raw is None:
             return self.no_output(Status.NO_OUTPUT, "not recomputed on this activation", timestamp)
-        return self.result(series=raw, timestamp=timestamp)
+        return self.result(coarse_grained=raw, timestamp=timestamp)
 
 
 __all__ = ["SampleEntropy", "CoarseGraining"]

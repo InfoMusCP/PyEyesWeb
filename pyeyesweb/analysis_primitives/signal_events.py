@@ -32,14 +32,15 @@ class _ScalarStream(FrameFeature):
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="scalar_peak_detector")
 class ScalarPeakDetector(_ScalarStream):
-    """EyesWeb scalar_peak_detector. Output `peak` (bool): a peak was detected on this sample."""
+    """EyesWeb scalar_peak_detector. Output `is_peak` (bool): a peak was detected on this sample."""
     _core_class = _dance.ScalarPeakDetector
+    _core_names = {"window": "buffer_length"}
 
     def _schema(self) -> Schema:
-        return Schema(Output("peak", kind=bool))
+        return Schema(Output("is_peak", kind=bool))
 
     def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:
-        return self.result(peak=raw, timestamp=timestamp)
+        return self.result(is_peak=raw, timestamp=timestamp)
 
 
 __all__ = ["ScalarPeakDetector"]

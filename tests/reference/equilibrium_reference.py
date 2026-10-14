@@ -48,7 +48,7 @@ class EquilibriumReference(StaticFeature):
     """
 
     OUTPUTS = Schema(
-        Output("value", doc="Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse."),
+        Output("equilibrium", doc="Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse."),
         Output("angle", unit="deg", doc="Angle of the foot-to-foot support vector."),
     )
 
@@ -139,7 +139,7 @@ class EquilibriumReference(StaticFeature):
         Returns
         -------
         Result
-            Outputs `value` (equilibrium in `[0, 1]`) and `angle` (degrees).
+            Outputs `equilibrium` (equilibrium in `[0, 1]`) and `angle` (degrees).
             `Status.INVALID_INPUT` if the frame has too few joints for the configured indices.
         """
         # 1. Robustness: Ensure we have enough joints in the frame
@@ -194,7 +194,7 @@ class EquilibriumReference(StaticFeature):
                 value = 1.0 - np.sqrt(norm)
 
         return self.result(
-            value=float(max(0.0, value)),
+            equilibrium=float(max(0.0, value)),
             angle=float(np.degrees(angle))
         )
 

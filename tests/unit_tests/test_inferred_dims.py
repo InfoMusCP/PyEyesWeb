@@ -1,4 +1,4 @@
-"""`dims` taken from the first frame and string forms of `algorithm`."""
+"""`dims` taken from the first frame and string forms of `method`."""
 import numpy as np
 import pytest
 
@@ -72,9 +72,9 @@ def test_dims_is_assignable_and_a_window_needs_it(cls):
 @pytest.mark.parametrize("cls", [Suddenness, SuddennessImpulsivity])
 def test_algorithm_as_a_string(cls):
     for name, member in (("quantile", "quantile"), ("Constrained", "constrained")):
-        assert cls(window=WINDOW, algorithm=name).algorithm == member
-    with pytest.raises(ValueError, match="algorithm"):
-        cls(window=WINDOW, algorithm="new")
+        assert cls(window=WINDOW, method=name).method == member
+    with pytest.raises(ValueError, match="method"):
+        cls(window=WINDOW, method="new")
 
 
 # ----------------------------------------------------------------------------------------------------- Kinematics

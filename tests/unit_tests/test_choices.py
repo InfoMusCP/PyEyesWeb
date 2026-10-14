@@ -77,7 +77,7 @@ def test_bool_parameter_is_live_and_takes_only_bools():
 
 @pytest.mark.parametrize("cls, method", [(Rarity, "mode-distance"), (Symmetry, "Reflection")])
 def test_method_feature_takes_a_string(cls, method):
-    kwargs = {"window": 10} if cls is Rarity else {"joint_pairs": [(0, 1)]}
+    kwargs = {"window": 10} if cls is Rarity else {"labels": ["a", "b"], "pairs": [("a", "b")]}
     assert cls(method=method, **kwargs).method == method.lower().replace("-", "_")
 
 

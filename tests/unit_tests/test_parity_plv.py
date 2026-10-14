@@ -21,10 +21,15 @@ from pyeyesweb.data_models.results import Status  # noqa: E402
 FILTERS = [None, (1.0, 10.0, 100.0), (0.5, 4.0, 25.0), (5, 20, 100), (2.0, 30.0, 200.0)]
 
 
+def _band(filter_params):
+    """The `(low, high, rate)` of the reference's `filter_params` as the keywords of the feature."""
+    return {} if filter_params is None else dict(zip(("low_frequency", "high_frequency", "sampling_rate"), filter_params))
+
+
 def _new(window, filter_params):
     """The first two signals of a (T, signals, dims) window of the reference, as the two inputs of the feature."""
     flat = window.reshape(window.shape[0], -1)
-    return PhaseLockingValue(window=max(len(window), 1), filter_params=filter_params)._process_window(flat[:, 0], flat[:, 1])
+    return PhaseLockingValue(window=max(len(window), 1), **_band(filter_params))._process_window(flat[:, 0], flat[:, 1])
 
 
 def _compare(window, filter_params, tol=1e-9):
@@ -32,8 +37,8 @@ def _compare(window, filter_params, tol=1e-9):
     ref = SynchronizationReference(filter_params=filter_params).compute(window)
     assert new.status == ref.status
     if ref.status == Status.OK:
-        np.testing.assert_allclose(new["plv"], ref["plv"], rtol=0, atol=tol)
-    return abs(new["plv"] - ref["plv"]) if ref.status == Status.OK else 0.0
+        np.testing.assert_allclose(new["phase_locking_value"], ref["phase_locking_value"], rtol=0, atol=tol)
+    return abs(new["phase_locking_value"] - ref["phase_locking_value"]) if ref.status == Status.OK else 0.0
 
 
 @pytest.mark.parametrize("filter_params", FILTERS)
@@ -63,8 +68,8 @@ def test_degenerate_windows(filter_params):
     _compare(np.zeros((60, 2, 1)), filter_params)
     signals = np.random.default_rng(3).standard_normal((60, 2, 1))
     signals[10, 0, 0] = np.nan
-    new = _new(signals, filter_params)["plv"]
-    ref = SynchronizationReference(filter_params=filter_params).compute(signals)["plv"]
+    new = _new(signals, filter_params)["phase_locking_value"]
+    ref = SynchronizationReference(filter_params=filter_params).compute(signals)["phase_locking_value"]
     assert np.isnan(new) and np.isnan(ref)
 
 
@@ -85,7 +90,7 @@ def test_short_windows():
 @pytest.mark.parametrize("bad", [(10.0, 1.0, 100.0), (1.0, 60.0, 100.0), (1.0, 10.0, 0.0), (0.0, 10.0, 100.0)])
 def test_invalid_filter_params(bad):
     with pytest.raises(ValueError):
-        PhaseLockingValue(window=60, filter_params=bad)
+        PhaseLockingValue(window=60, **_band(bad))
 
 
 # ----------------------------------------------------------------------------------------------- two declared inputs
@@ -109,7 +114,7 @@ def test_run_takes_the_two_signals_and_equals_process():
     recording = feature.run(first_signal, second_signal, timestamps=np.arange(60) * 0.01)
     feature.reset()
     streamed = [feature.process(first, second, timestamp=index * 0.01) for index, (first, second) in enumerate(zip(first_signal, second_signal))]
-    assert np.array_equal(recording["plv"], [result["plv"] for result in streamed], equal_nan=True)
+    assert np.array_equal(recording["phase_locking_value"], [result["phase_locking_value"] for result in streamed], equal_nan=True)
     assert recording.status[19] == Status.OK and recording.status[20] == Status.NO_OUTPUT
 
 
@@ -147,4 +152,4 @@ def test_two_input_feature_reproduces_the_frozen_outputs_of_the_list_input_featu
     for result, expected in zip(results, entry["records"]):
         assert (int(result.status), result.reason) == (expected["status"], expected["reason"])
         assert np.array_equal(result.timestamp, expected["timestamp"], equal_nan=True)
-        assert np.array_equal(result["plv"], expected["outputs"]["plv"], equal_nan=True)
+        assert np.array_equal(result["phase_locking_value"], expected["outputs"]["phase_locking_value"], equal_nan=True)

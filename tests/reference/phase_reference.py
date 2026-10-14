@@ -37,7 +37,7 @@ class SynchronizationReference(DynamicFeature):
     """
 
     OUTPUTS = Schema(
-        Output("plv", doc="Phase Locking Value in [0, 1]; 1 is perfect phase synchronization."),
+        Output("phase_locking_value", doc="Phase Locking Value in [0, 1]; 1 is perfect phase synchronization."),
     )
 
     def __init__(self, filter_params=None):
@@ -64,7 +64,7 @@ class SynchronizationReference(DynamicFeature):
         Returns
         -------
         Result
-            Output `plv` (float in `[0, 1]`). `Status.INVALID_INPUT` if fewer than 2 signals are present.
+            Output `phase_locking_value` (float in `[0, 1]`). `Status.INVALID_INPUT` if fewer than 2 signals are present.
         """
         # Flatten to (Time, Signals)
         data = window_data.reshape(window_data.shape[0], -1)
@@ -74,7 +74,7 @@ class SynchronizationReference(DynamicFeature):
 
         # Assumes compute_phase_synchronization expects a 2D array of (Time, N_Signals)
         plv = compute_phase_synchronization(data, self.filter_params)
-        return self.result(plv=float(plv))
+        return self.result(phase_locking_value=float(plv))
 
 
 __all__ = ["SynchronizationReference"]

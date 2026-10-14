@@ -38,7 +38,8 @@ class Equilibrium(CoreFeature):
     ----------
     margin : float, optional
         Safety margin added to the support ellipse, in the unit of the points. It is written in metres, like the
-        other lengths of the library, and multiplied by 1000 when `units="mm"`. Defaults to `100.0`.
+        other lengths of the library, and multiplied by 1000 when `units="mm"`. Defaults to `0.1` (the 100 mm of
+        the original, whose margin was in millimetres).
     y_weight : float, optional
         Weighting factor for the semi-minor axis of the ellipse (`margin * y_weight`).
         Defaults to `0.5`.
@@ -52,7 +53,7 @@ class Equilibrium(CoreFeature):
     """
 
     OUTPUTS = Schema(
-        Output("value", doc="Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse."),
+        Output("equilibrium", doc="Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse."),
         Output("angle", unit="deg", doc="Angle of the foot-to-foot support vector."),
     )
     INPUTS = Inputs(*(Input(name, InputKind.SAMPLE, (2,), doc=f"{name} (x, y) on the floor plane")
@@ -63,7 +64,8 @@ class Equilibrium(CoreFeature):
 
     def __init__(
             self,
-            margin: float = 100.0,
+            *,
+            margin: float = 0.1,
             y_weight: float = 0.5,
             units: str = "m"
     ):
@@ -90,7 +92,7 @@ class Equilibrium(CoreFeature):
         self._set_param("y_weight", float(value))
 
     def process(self, left_foot: Any, right_foot: Any, barycenter: Any, *, timestamp: Optional[float] = None) -> Result:
-        """Elliptical equilibrium of one posture: outputs `value` (in `[0, 1]`) and `angle` (degrees).
+        """Elliptical equilibrium of one posture: outputs `equilibrium` (in `[0, 1]`) and `angle` (degrees).
 
         `Status.INVALID_INPUT` for an empty or non-finite point, and when the feet coincide (no support vector).
         """
@@ -102,7 +104,7 @@ class Equilibrium(CoreFeature):
         coincide = bool((points[0] == points[1]).all())
         return self.result(status=Status.INVALID_INPUT if coincide else Status.OK,
                            reason="the feet coincide: no support vector" if coincide else "",
-                           value=result.value, angle=result.angle, timestamp=timestamp)
+                           equilibrium=result.value, angle=result.angle, timestamp=timestamp)
 
 
 __all__ = ['Equilibrium']

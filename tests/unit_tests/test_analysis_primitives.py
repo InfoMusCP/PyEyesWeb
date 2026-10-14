@@ -34,7 +34,7 @@ def test_synchronization_api():
     # We just ensure it doesn't crash and returns the correct contract
     # (Actual PLV math is tested in your signal_processing unit tests)
     assert results.status[-1] == Status.OK and results.status[0] == Status.WARMING_UP
-    assert "plv" in results.schema.names
+    assert "phase_locking_value" in results.schema.names
 
 
 

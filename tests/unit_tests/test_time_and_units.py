@@ -103,23 +103,23 @@ def _gesture(scale, units):
     steps = np.concatenate([rng.normal(0, 1e-4, (20, 3)), rng.normal(0, 0.05, (20, 3)), rng.normal(0, 1e-4, (20, 3))])
     frames = np.cumsum(steps, axis=0).reshape(60, 1, 3) * scale  # metres, or the same motion in millimetres
     energy = KineticEnergy(labels=LABELS, weights={"a": 1.0}, sampling_rate=50.0).run(frames)["kinetic_energy"]
-    noise = MotionNoiseDetector(labels=LABELS, noise_threshold=0.5, sampling_rate=50.0, units=units).run(frames)["noise"]
+    noise = MotionNoiseDetector(labels=LABELS, noise_threshold=0.5, sampling_rate=50.0, units=units).run(frames)["is_noisy"]
     squared = 1e6 if units == "mm" else 1.0  # the energy of data in millimetres is in mm^2
     segmented = GestureSegmenter(filter_window_length=5, firing_threshold=0.1 * squared).run(energy, noise)
-    return {"kinetic_energy": energy, "noise": noise, **{name: segmented[name] for name in ("gesturing", "gesture_start", "gesture_end")}}
+    return {"kinetic_energy": energy, "noise": noise, **{name: segmented[name] for name in ("is_gesturing", "is_gesture_start", "is_gesture_end")}}
 
 
 def test_gesture_segmenter_in_millimetres_gives_the_same_segmentation():
     metres, millimetres = _gesture(1.0, "m"), _gesture(1000.0, "mm")
-    assert metres["gesturing"].any() and not metres["gesturing"].all()  # the thresholds matter in this recording
-    for name in ("gesturing", "gesture_start", "gesture_end", "noise"):
+    assert metres["is_gesturing"].any() and not metres["is_gesturing"].all()  # the thresholds matter in this recording
+    for name in ("is_gesturing", "is_gesture_start", "is_gesture_end", "noise"):
         assert np.array_equal(metres[name], millimetres[name]), name
     assert np.allclose(millimetres["kinetic_energy"], 1e6 * np.asarray(metres["kinetic_energy"]))  # outputs keep the data unit
 
 
 def test_without_units_millimetre_data_does_not_segment_like_metres():
     unscaled = _gesture(1000.0, "m")
-    assert not np.array_equal(unscaled["gesturing"], _gesture(1.0, "m")["gesturing"])
+    assert not np.array_equal(unscaled["is_gesturing"], _gesture(1.0, "m")["is_gesturing"])
 
 
 def test_kinematics_threshold_in_millimetres():
@@ -155,8 +155,8 @@ def test_equilibrium_margin_in_millimetres():
     points = np.array([[-0.3, 0.0], [0.3, 0.0], [0.1, 0.05]])
     metres = Equilibrium(margin=0.4).process(*points)
     millimetres = Equilibrium(margin=0.4, units="mm").process(*(points * 1000))
-    assert 0 < metres.value < 1
-    assert millimetres.value == pytest.approx(metres.value) and millimetres.angle == pytest.approx(metres.angle)
+    assert 0 < metres.equilibrium < 1
+    assert millimetres.equilibrium == pytest.approx(metres.equilibrium) and millimetres.angle == pytest.approx(metres.angle)
 
 
 def test_average_curvature_radius_in_millimetres():

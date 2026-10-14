@@ -21,6 +21,8 @@ from typing import Any, Literal, Optional, Union
 
 import numpy as np
 
+from pyeyesweb.base.choices import choice_name
+
 _PLACEHOLDER = re.compile(r"\\(\d+)")  # nanobind writes a default as "\0", "\1"... and ships the values apart
 _CORE_TYPE = re.compile(r"eyesweb_core\.([\w.]+)")
 
@@ -31,12 +33,13 @@ def _choice(core: Any, path: str) -> Any:
     for part in path.split("."):
         target = getattr(target, part, None)
     if hasattr(target, "__members__"):
-        return Literal[tuple(name.lower() for name in target.__members__)]
+        return Literal[tuple(choice_name(member) for member in target.__members__.values())]
     return target if target is not None else Any
 
 
-def _nb_parameters(core: Any, core_class: Any) -> list:
-    """The constructor parameters of `core_class` as keyword-only `inspect.Parameter`s (empty when the binding has none)."""
+def _nb_parameters(core: Any, core_class: Any, public: Optional[dict] = None) -> list:
+    """The constructor parameters of `core_class` as keyword-only `inspect.Parameter`s (empty when the binding has none),
+    under their public names (`public`: block name -> public name)."""
     signatures = getattr(core_class.__init__, "__nb_signature__", ())
     if not signatures:
         return []
@@ -64,11 +67,12 @@ def _nb_parameters(core: Any, core_class: Any) -> list:
             node = defaulted[arg.arg]
             default = values.get(node.id, Any) if isinstance(node, ast.Name) else ast.literal_eval(node)
             if isinstance(default, enum.Enum):
-                default = default.name.lower()
+                default = choice_name(default)
             elif isinstance(default, list) and default and all(isinstance(item, enum.Enum) for item in default):
-                names = [item.name.lower() for item in default]
+                names = [choice_name(item) for item in default]
                 default = names[0] if len(names) == 1 else names
-        parameters.append(inspect.Parameter(arg.arg, inspect.Parameter.KEYWORD_ONLY, default=default, annotation=annotation))
+        parameters.append(inspect.Parameter((public or {}).get(arg.arg, arg.arg), inspect.Parameter.KEYWORD_ONLY, default=default,
+                                            annotation=annotation))
     return parameters
 
 
@@ -81,7 +85,7 @@ def core_signature(cls: Any, core: Any) -> Optional[inspect.Signature]:
         return inspect.Signature([parameter for parameter in own])
     named = [parameter for parameter in own if parameter.kind is not inspect.Parameter.VAR_KEYWORD]
     known = {parameter.name for parameter in named}
-    extra = [parameter for parameter in _nb_parameters(core, cls._core_class)
+    extra = [parameter for parameter in _nb_parameters(core, cls._core_class, cls._public_names())
              if parameter.name not in known and parameter.name not in getattr(cls, "_hidden_params", ())]
     if getattr(cls, "_timed", False):  # time is `timestamp` or `sampling_rate` (Hz, int or float), never a mode
         extra = [parameter for parameter in extra if parameter.name != "sampling_rate"]
@@ -108,6 +112,25 @@ def unexpected_keyword(cls: type, names: Any, signature: Optional[inspect.Signat
         messages.append(f"'{name}'" + (f" (did you mean '{close[0]}'?)" if close else ""))
     return TypeError(f"{label or cls.__name__}() got unexpected keyword argument(s) {', '.join(messages)}; "
                      f"valid parameters: {', '.join(valid)}")
+
+
+# What a required parameter means, for the error that names it.
+_REQUIRED_HINTS = {"window": "the number of samples in each analysis window"}
+
+
+def missing_arguments(cls: type, signature: inspect.Signature, args: Any, kwargs: Any) -> Optional[TypeError]:
+    """The `TypeError` for the required parameters a call to `cls` leaves out, naming the public class and saying what
+    `window` is (instead of Python's message about an internal `__init__`); `None` when nothing is missing."""
+    try:
+        given = signature.bind_partial(*args, **kwargs).arguments
+    except TypeError:
+        return None  # a wrong call: the constructor reports it
+    missing = [name for name, parameter in signature.parameters.items() if parameter.default is parameter.empty
+               and name not in given and parameter.kind not in (parameter.VAR_POSITIONAL, parameter.VAR_KEYWORD)]
+    if not missing:
+        return None
+    return TypeError(f"{cls.__name__}() missing required argument(s): "
+                     + ", ".join(f"{name} ({_REQUIRED_HINTS[name]})" if name in _REQUIRED_HINTS else name for name in missing))
 
 
 def input_mode_factory(value: str, parameter: str = "input_mode") -> Any:

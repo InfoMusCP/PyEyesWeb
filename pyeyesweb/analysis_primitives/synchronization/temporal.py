@@ -15,16 +15,17 @@ _sync = core.sync
 class TemporalSynchronization(FrameFeature):
     """EyesWeb TemporalSynchronization, one sample per call.
 
-    Input: `synchronisation`, one value per input (`input_number`, default 3).
+    Input: `synchronization`, one value per input (`number_of_inputs`, default 3).
 
     Outputs `progression` in [0, 1], `step` counter, `state` (number of leading inputs above threshold) and
     `efficiency_step`, valid only when the progression reaches 1.
     """
     _core_class = _sync.TemporalSynchronization
+    _core_names = {"number_of_inputs": "input_number"}
 
     def _inputs(self) -> Inputs:
-        number_of_inputs = int(self._param("input_number", 3))  # C++ default
-        return Inputs(Input("synchronisation", InputKind.SAMPLE, (number_of_inputs,), doc="one synchronisation value per input"))
+        number_of_inputs = int(self._param("number_of_inputs", 3))  # C++ default
+        return Inputs(Input("synchronization", InputKind.SAMPLE, (number_of_inputs,), doc="one synchronisation value per input"))
 
     def _schema(self) -> Schema:
         return Schema(Output("progression"), Output("step", kind=int), Output("state", kind=int),

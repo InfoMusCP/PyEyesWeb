@@ -35,18 +35,18 @@ LIVE = [
     (lambda: SampleEntropy(window=20, embedding_dimension=3), "tolerance", 0.8, SIGNAL),
     (lambda: SampleEntropy(window=20, embedding_dimension=3, tolerance=0.8), "tolerance", None, SIGNAL),
     (lambda: SampleEntropy(window=20, embedding_dimension=3), "relative_tolerance", 0.5, SIGNAL),
-    (lambda: CurvatureVelocityCorrelation(window=24, hop=12), "upper_limit", 0.5, SIGNAL),
+    (lambda: CurvatureVelocityCorrelation(window=24, hop=12, sampling_rate=25.0), "upper_limit", 0.5, SIGNAL),
 ]
 STRUCTURAL = [
     (lambda: kinetic(), "input_mode", "velocity", HAND),
-    (lambda: CurvatureVelocityCorrelation(window=24, hop=12), "filter_window_length", 7, SIGNAL),
+    (lambda: CurvatureVelocityCorrelation(window=24, hop=12, sampling_rate=25.0), "filter_window_length", 7, SIGNAL),
 ]
 INVALID = [
     (lambda: kinetic(input_mode="velocity", reference_point=""), "reference_point",
      "torso", HAND),
     (lambda: SampleEntropy(window=20, embedding_dimension=3), "embedding_dimension", 0, SIGNAL),
     (lambda: SampleEntropy(window=20, embedding_dimension=3), "relative_tolerance", 0, SIGNAL),
-    (lambda: CurvatureVelocityCorrelation(window=24, hop=12), "filter_window_length", 8, SIGNAL),
+    (lambda: CurvatureVelocityCorrelation(window=24, hop=12, sampling_rate=25.0), "filter_window_length", 8, SIGNAL),
 ]
 
 def _param(rows):
@@ -87,7 +87,7 @@ def test_hop_change_keeps_the_state():
 
 
 def test_window_change_of_smoothness_restarts_its_filters_and_says_so():
-    feature = CurvatureVelocityCorrelation(window=24, hop=12)
+    feature = CurvatureVelocityCorrelation(window=24, hop=12, sampling_rate=25.0)
     feed(feature, SIGNAL[:60])
     feature.window = 30
     assert NOTE in feature.process(SIGNAL[60]).reason

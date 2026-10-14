@@ -8,9 +8,9 @@ from abc import ABCMeta
 from enum import Enum
 from typing import Any, ClassVar, Literal, Optional, Tuple
 
-from pyeyesweb.base.choices import coerce_choice, coerce_enum, coerce_enums
+from pyeyesweb.base.choices import choice_name, coerce_choice, coerce_enum, coerce_enums
 from pyeyesweb._core import core
-from pyeyesweb.base.signatures import _nb_parameters, core_signature, factory_signature, unexpected_keyword
+from pyeyesweb.base.signatures import _nb_parameters, core_signature, factory_signature, missing_arguments, unexpected_keyword
 from pyeyesweb.data_models.feature import Feature
 from pyeyesweb.data_models.results import Result
 
@@ -33,15 +33,15 @@ _STATE_RESET_NOTE = "parameters changed: state reset"
 # Numeric parameters whose negative (or zero) values are meaningless, by name: a parameter of one of these names means
 # the same in every feature, and the core validates only what EyesWeb validated (often only for the active mode).
 # Checked whenever parameters are set, in the constructor and live. The parameters that take any sign by design
-# (`x_min`, `rho`, `noise_threshold`...) are listed with the reason in `tests/unit_tests/test_live_validation_all_features.py`.
+# (`x_min`, `gaussian_correlation`, `noise_threshold`...) are listed with the reason in `tests/unit_tests/test_live_validation_all_features.py`.
 _POSITIVE_PARAMS = frozenset({
-    "sampling_rate", "upper_limit", "window_size", "std_dev_x", "std_dev_y", "log_scale", "cust_dist", "time_constant",
-    "ges_dur", "frames", "points_number", "best_periods", "order"})
+    "sampling_rate", "upper_limit", "window", "gaussian_sigma_x", "gaussian_sigma_y", "log_scale", "custom_distance",
+    "time_constant", "gesture_duration", "number_of_points", "best_periods", "order", "low_frequency", "high_frequency"})
 _NON_NEGATIVE_PARAMS = frozenset({
     "damping", "viscosity", "damping_factor", "viscosity_factor", "step_adaptation_factor", "seed", "arm_percentage",
     "legs_search", "legs_offset", "arms_min_threshold", "arms_max_threshold", "movement_threshold", "velocity_threshold",
     "standard_deviation_threshold", "y_weight", "epsilon", "minimum_distance", "direction_change_epsilon",
-    "firing_threshold", "amplitude", "cust_ampl", "max_value", "threshold", "inter_event_time", "max_steps"})
+    "firing_threshold", "amplitude", "custom_amplitude", "max_value", "threshold", "inter_event_time", "max_steps"})
 
 # A parameter name in a nanobind signature, e.g. "(self, name: type = ...".
 _SIGNATURE_PARAM = re.compile(r"[(,]\s*(\w+)\s*:")
@@ -58,6 +58,8 @@ class _SealedMeta(ABCMeta):
                 parameter.kind is parameter.VAR_KEYWORD for parameter in signature.parameters.values()):
             if unknown := [name for name in kwargs if name not in signature.parameters]:
                 raise unexpected_keyword(cls, unknown)
+            if "_variants" not in cls.__dict__ and (error := missing_arguments(cls, signature, args, kwargs)):
+                raise error
         instance = super().__call__(*args, **kwargs)
         instance.__dict__["_sealed"] = True
         return instance
@@ -73,9 +75,15 @@ def check_range(name: str, value: Any) -> None:
             raise ValueError(f"{name} must not be negative, got {value!r}")
 
 
+def require_rate(owner: str, rate: Optional[float]) -> None:
+    """Raise `ValueError` for a feature that has no time axis of its own and so cannot go without `sampling_rate`."""
+    if rate is None:
+        raise ValueError(f"{owner} needs sampling_rate (Hz): the window it works on carries no time of its own")
+
+
 def _choice_name(value: Any) -> Any:
     """An enum member as its lower-case name, anything else unchanged."""
-    return value.name.lower() if isinstance(value, Enum) else value
+    return choice_name(value) if isinstance(value, Enum) else value
 
 
 def _scaled(value: Any, factor: float) -> Any:
@@ -116,6 +124,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
     the listed parameters are written in metres (as EyesWeb does) and multiplied by `1000 ** power` for data in
     millimetres (power 1 for a length or a speed, 2 for an area or an energy). Data and outputs are never rescaled.
 
+    `_core_names` maps the public name of a parameter to its name in the block, where the library spells out an abbreviation
+    of the core (`{"gesture_duration": "ges_dur"}`); everything public (signature, setters, `_params`) uses the public name.
     `_hidden_params` names block parameters the wrapper does not show: it keeps them at the block's default and takes a
     parameter of its own instead (`joint_map` for the joint names of the humanoid). A feature whose parameters can be changed by a property setter calls `_set_param(name, value)`. A feature that sets its parameters after `CoreFeature.__init__` runs declares
     `_lazy_block = True`, so nothing is built until first use. A block that is not just `_core_class(**params)`
@@ -125,8 +135,10 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
     _core_class: ClassVar[Any] = None
     _lazy_block: ClassVar[bool] = False
     _timed: ClassVar[bool] = False
+    _rate_required: ClassVar[bool] = False  # a feature on windows, with no time step: it takes `sampling_rate` or raises
     _unit_params: ClassVar[dict] = {}
     _hidden_params: ClassVar[frozenset] = frozenset()  # block parameters the wrapper replaces by a parameter of its own
+    _core_names: ClassVar[dict] = {}  # public parameter name -> name in the block, for the names the library spells out
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         """A feature backed by a block shows the parameters of its constructor: `inspect.signature(cls)` merges the
@@ -169,14 +181,19 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
                 value = out.get(name, defaults.get(name))  # a default is a length in metres too
                 if value is not None:
                     out[name] = _scaled(value, factor ** power)
-        return out
+        return {self._core_names.get(name, name): value for name, value in out.items()}
+
+    @classmethod
+    def _public_names(cls) -> dict:
+        """Block parameter name -> public name (the inverse of `_core_names`)."""
+        return {name: public for public, name in cls._core_names.items()}
 
     @classmethod
     def _unit_defaults(cls) -> dict:
         """The block's defaults of the unit-sensitive parameters that are plain numbers, read once per class."""
         found = cls.__dict__.get("_unit_defaults_cache")
         if found is None:
-            found = {parameter.name: parameter.default for parameter in _nb_parameters(core, cls._core_class)
+            found = {parameter.name: parameter.default for parameter in _nb_parameters(core, cls._core_class, cls._public_names())
                      if parameter.name in cls._unit_params and isinstance(parameter.default, (int, float, list, tuple))}
             cls._unit_defaults_cache = found
         return found
@@ -254,7 +271,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         names = cls.__dict__.get("_core_params_cache")
         if names is None:
             signatures = getattr(cls._core_class.__init__, "__nb_signature__", ())
-            names = frozenset(name for signature in signatures for name in _SIGNATURE_PARAM.findall(signature[0])) - cls._hidden_params
+            names = frozenset(cls._public_names().get(name, name) for signature in signatures
+                              for name in _SIGNATURE_PARAM.findall(signature[0])) - cls._hidden_params
             cls._core_params_cache = names
         return names
 
@@ -270,7 +288,7 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
                     for part in path.split("."):
                         target = getattr(target, part, None)
                     if hasattr(target, "__members__"):
-                        enums[name] = (target, bool(container))
+                        enums[cls._public_names().get(name, name)] = (target, bool(container))
             cls._core_enums_cache = enums
         return enums
 
@@ -279,7 +297,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         """Names of the `bool` parameters of `_core_class`, read once per class."""
         names = cls.__dict__.get("_core_bools_cache")
         if names is None:
-            names = frozenset(parameter.name for parameter in _nb_parameters(core, cls._core_class) if parameter.annotation is bool)
+            names = frozenset(parameter.name for parameter in _nb_parameters(core, cls._core_class, cls._public_names())
+                              if parameter.annotation is bool)
             cls._core_bools_cache = names
         return names
 
@@ -288,6 +307,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         """`params` with the choices given as strings turned into enum members (a list of them where the block takes
         one; a single choice stays single); a `bool` parameter must be a bool."""
         out = dict(params)
+        if cls._rate_required:
+            require_rate(cls.__name__, out.get("sampling_rate", 0))
         for name, value in out.items():
             check_range(name, value)
         if out.get("units", "m") not in _UNIT_FACTORS:
@@ -338,6 +359,9 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         if params and name in params:
             value = params[name]  # a choice reads back as its string
             return [_choice_name(item) for item in value] if isinstance(value, list) else _choice_name(value)
+        shown = inspect.signature(type(self)).parameters.get(name)
+        if name in self._core_params() and shown is not None and shown.default is not shown.empty:
+            return shown.default  # a parameter left at its default reads back as that default
         if hasattr(self._core_class, name):
             return getattr(self._block, name)
         raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
@@ -385,10 +409,13 @@ class VariantFeature:
             keyword, default = public._SWITCH
             merged = {keyword: inspect.Parameter(keyword, inspect.Parameter.KEYWORD_ONLY, default=default,
                                                  annotation=Literal[tuple(public._variants)])}
-            for source in public._variants.values():
+            for _, source in sorted(public._variants.items(), key=lambda entry: entry[0] != default):  # the default's first
                 for parameter in source.__signature__.parameters.values():
                     merged.setdefault(parameter.name, parameter)
-            public.__signature__ = inspect.Signature(sorted(merged.values(), key=lambda entry: entry.kind))
+            shared = set.intersection(*(set(source.__signature__.parameters) for source in public._variants.values()))
+            merged = [parameter if parameter.name in shared else parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY)
+                      for parameter in merged.values()]  # a parameter of only some of the methods is never positional
+            public.__signature__ = inspect.Signature(sorted(merged, key=lambda entry: entry.kind))
 
     def __new__(cls, *args: Any, **params: Any):
         if "_variants" in cls.__dict__:

@@ -40,7 +40,7 @@ ENUM = {"new": "constrained", "old": "quantile"}
 
 def _assert_parity(window, algo):
     ref, new = SuddennessReference(algo=algo), Suddenness(window=max(len(window), 6), dims=window.shape[2],
-                                                          algorithm=ENUM[algo])
+                                                          method=ENUM[algo])
     reference_result, new_result = ref.compute(window), new._process_window(_series(window))
     if reference_result.ok and not np.isfinite(window[:, 0]).all():  # data problem: INVALID_INPUT instead of OK with NaN
         assert new_result.status == Status.INVALID_INPUT

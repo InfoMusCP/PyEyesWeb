@@ -16,13 +16,15 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 from symmetry_reference import GeometricSymmetryReference  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level.symmetry import Symmetry  # noqa: E402
+from symmetry_inputs import reflection  # noqa: E402
 
 
 _NEW_NAME = {"pair_error": "pair_symmetry"}  # the reference keeps the legacy output name
 
 
 def _compare(frame, pairs, tol=1e-9, **params):
-    new = Symmetry(method="reflection", joint_pairs=pairs, **params).process(frame)
+    centre = params.get("center_of_symmetry", -1)  # the reference takes a row, -1 for the barycentre
+    new = reflection(len(frame), pairs, None if centre == -1 else centre).process(frame)
     ref = GeometricSymmetryReference(pairs, **params).compute(frame)
     assert new.status == ref.status
     assert new.reason == ref.reason
@@ -63,27 +65,27 @@ def test_mirrored_and_degenerate_frames(pairs, centre):
 def test_non_finite_frames_are_invalid_input(bad):
     frame = np.random.default_rng(18).standard_normal((6, 3))
     frame[1, 1] = bad
-    result = Symmetry(method="reflection", joint_pairs=[(0, 1)]).process(frame)
+    result = reflection(6, [(0, 1)]).process(frame)
     assert result.status == Status.INVALID_INPUT and result.reason
 
 
 def test_pairs_are_sorted_labelled_and_deduplicated():
     pairs = [(3, 2), (0, 1), (3, 2)]
-    new, ref = Symmetry(method="reflection", joint_pairs=pairs), GeometricSymmetryReference(pairs)
-    assert new.outputs.flat_names == tuple(name.replace("pair_error", "pair_symmetry") for name in ref.outputs.flat_names)
-    assert "pair_symmetry_0_1" in new.outputs.flat_names and "pair_symmetry_3_2" in new.outputs.flat_names
-    assert len(new.outputs.flat_names) == 2
+    new = reflection(4, pairs)
+    assert new.outputs.flat_names == ("pair_symmetry_j0_j1", "pair_symmetry_j3_j2")  # the order of the reference, by name
 
 
-def test_too_few_joints_is_invalid_input():
-    assert _compare(np.zeros((3, 3)), [(0, 1), (2, 3)]).status == Status.INVALID_INPUT
-    assert _compare(np.zeros((6, 3)), [(0, 1)], center_of_symmetry=6).status == Status.INVALID_INPUT
+def test_a_frame_of_another_size_than_the_labels_raises():
+    with pytest.raises(ValueError, match="skeleton"):
+        reflection(4, [(0, 1), (2, 3)]).process(np.zeros((3, 3)))
 
 
-def test_constructor_validation_matches_the_reference():
-    for bad in ([], "x", [(0, 1, 2)], [(0, 1.5)]):
-        with pytest.raises((TypeError, ValueError)) as new:
-            Symmetry(method="reflection", joint_pairs=bad)
-        with pytest.raises((TypeError, ValueError)) as ref:
-            GeometricSymmetryReference(bad)
-        assert type(new.value) is type(ref.value)
+def test_constructor_validation():
+    labels = ["a", "b", "c"]
+    for bad in ([], "x", [("a", "b", "c")], [("a", "z")], [(0, 1)]):
+        with pytest.raises((TypeError, ValueError)):
+            Symmetry(method="reflection", labels=labels, pairs=bad)
+    with pytest.raises(ValueError, match="labels"):
+        Symmetry(method="reflection", labels=labels, pairs=[("a", "b")], reference_point="z")
+    with pytest.raises(ValueError, match="pairs"):
+        Symmetry(method="reflection", pairs=[("a", "b")])

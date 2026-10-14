@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from symmetry_inputs import reflection
 from pyeyesweb.data_models.results import Status
 
 # Import your features
@@ -43,9 +44,9 @@ def test_equilibrium():
     result = feature.process((-100, 0), (100, 0), (0, 0))
 
     assert result.ok
-    assert hasattr(result, "value")
+    assert hasattr(result, "equilibrium")
     assert hasattr(result, "angle")
-    assert np.isclose(result.value, 1.0)
+    assert np.isclose(result.equilibrium, 1.0)
 
 
 
@@ -110,17 +111,17 @@ def test_speed_profile_metric_api():
 
 def test_log_dimensionless_jerk_input_mode_choice():
     signal = np.abs(np.sin(np.linspace(0, 3, 60))) * 40
-    velocity = LogDimensionlessJerk(window=60)
-    acceleration = LogDimensionlessJerk(window=60, input_mode="Acceleration")
+    velocity = LogDimensionlessJerk(window=60, sampling_rate=50.0)
+    acceleration = LogDimensionlessJerk(window=60, input_mode="Acceleration", sampling_rate=50.0)
     assert velocity.input_mode == "velocity" and acceleration.input_mode == "acceleration"
     assert velocity._process_window(signal).log_dimensionless_jerk != acceleration._process_window(signal).log_dimensionless_jerk
     with pytest.raises(ValueError, match="velocity"):
-        LogDimensionlessJerk(input_mode="jerk")
+        LogDimensionlessJerk(input_mode="jerk", sampling_rate=50.0)
 
 
 def test_geometric_symmetry_unrolling():
     # Left=0, Right=1, Center=2
-    feature = Symmetry(method="reflection", joint_pairs=[(0, 1)], center_of_symmetry=2)
+    feature = reflection(3, [(0, 1)], 2)
 
     frame2 = np.array(
         [
@@ -134,8 +135,8 @@ def test_geometric_symmetry_unrolling():
     flat = result.to_flat_dict(prefix="sym")
 
     assert result.ok
-    assert np.isclose(flat["sym_pair_symmetry_0_1"], 1.0)
-    assert feature.outputs.flat_names == ("pair_symmetry_0_1",)
+    assert np.isclose(flat["sym_pair_symmetry_j0_j1"], 1.0)
+    assert feature.outputs.flat_names == ("pair_symmetry_j0_j1",)
     assert result.pair_symmetry.shape == (1,)
 
 
@@ -145,7 +146,7 @@ def test_geometric_symmetry_unrolling():
 
 
 def test_frame_features_are_stateless():
-    feature = Symmetry(method="reflection", joint_pairs=[(0, 1)])
+    feature = reflection(2, [(0, 1)])
 
     older, newest = np.array([[0, 0, 0], [1, 1, 1]]), np.array([[2, 0, 0], [-2, 0, 0]])
     first = feature.process(older).pair_symmetry
@@ -158,7 +159,7 @@ def test_frame_features_are_stateless():
 
 def test_too_short_inputs_are_not_ok():
     assert Equilibrium().process((), (), ()).status == Status.INVALID_INPUT
-    assert SpectralArcLength().process(1.0).status == Status.WARMING_UP
+    assert SpectralArcLength(sampling_rate=50.0).process(1.0).status == Status.WARMING_UP
 
 
 def test_bounding_box_filled_area_degenerate_hull_is_invalid_input():

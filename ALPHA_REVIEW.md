@@ -48,7 +48,9 @@ Tests for the package: a catalog-wide parametrised test (driven by declared inpu
 is) feeding a NaN frame, an inf frame, an empty frame and a huge value: never raises, gives `INVALID_INPUT`, the next
 valid frame behaves as documented; tests for repeated, decreasing and mixed timestamps on every timed feature.
 
-## 2. Work package B: naming and signatures (usability)
+## 2. Work package B: naming and signatures (usability): DONE on 2026-10-14
+
+Open: `parts=` instead of the bool switches (U23/U24), unit of `TrajectoryNonPlanarity` defaults (U10), `filter_order` of the PLV (core fixes order 4). See `DEVELOPMENT_SPEC.md`, "Contract changes of work package B".
 
 | id | sev | finding | action | size |
 |---|---|---|---|---|

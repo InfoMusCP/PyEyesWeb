@@ -2,6 +2,15 @@
 
 from typing import Any, Iterable
 
+# Members of the core's enums that the library spells differently (the core is not touched).
+_RENAMED = {"component": "components"}
+
+
+def choice_name(member: Any) -> str:
+    """The lower-case string that names the enum member `member` in the public API."""
+    name = member.name.lower()
+    return _RENAMED.get(name, name)
+
 
 def coerce_choice(value: Any, names: Iterable[str], what: str) -> str:
     """`value` as one of the lower-case `names` (case-insensitive; `-` and spaces count as `_`).
@@ -28,5 +37,5 @@ def coerce_enum(value: Any, enum_cls: type, what: str) -> Any:
     """`value` as a member of `enum_cls`: its name as a string, or a member (which is passed through)."""
     if isinstance(value, enum_cls):
         return value
-    members = {name.lower(): member for name, member in enum_cls.__members__.items()}
+    members = {choice_name(member): member for member in enum_cls.__members__.values()}
     return members[coerce_choice(value, members, what)]

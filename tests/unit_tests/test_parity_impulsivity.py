@@ -54,7 +54,7 @@ def _same(first, second):
 def _assert_parity(window, algo="new", epsilon=0.5):
     ref = SuddennessImpulsivityReference(direction_change_epsilon=epsilon, suddenness_algo=algo)
     new = SuddennessImpulsivity(window=max(len(window), 6), dims=window.shape[2], direction_change_epsilon=epsilon,
-                                algorithm=ENUM[algo])
+                                method=ENUM[algo])
     reference_result, new_result = ref.compute(window), new._process_window(_series(window))
     if reference_result.ok and not np.isfinite(window).all():  # data problem: INVALID_INPUT instead of OK with NaN
         assert new_result.status == Status.INVALID_INPUT
@@ -134,8 +134,8 @@ def test_the_quantile_sentinel_is_invalid_input_without_an_index():
     failed = 0
     for seed in range(40):
         series = np.cumsum(np.random.default_rng(seed).standard_normal((3, 12)), axis=1)
-        index = SuddennessImpulsivity(window=12, dims=3, algorithm="quantile", direction_change_epsilon=2.0)._process_window(series)
-        fit = Suddenness(window=12, dims=3, algorithm="quantile")._process_window(series)
+        index = SuddennessImpulsivity(window=12, dims=3, method="quantile", direction_change_epsilon=2.0)._process_window(series)
+        fit = Suddenness(window=12, dims=3, method="quantile")._process_window(series)
         assert index.status == fit.status
         if fit.status == Status.INVALID_INPUT:
             failed += 1
@@ -151,20 +151,20 @@ def test_both_components_evaluate_the_same_trajectory():
     rng = np.random.default_rng(4)
     for algorithm in ("constrained", "quantile"):
         series = np.cumsum(rng.standard_normal((2, 20)), axis=1)
-        index = SuddennessImpulsivity(window=20, dims=2, algorithm=algorithm)._process_window(series).impulsivity_index
+        index = SuddennessImpulsivity(window=20, dims=2, method=algorithm)._process_window(series).impulsivity_index
         cosine = DirectionChange(window=20, metrics=["cosine"])._process_window(series).cosine
-        sudden = Suddenness(window=20, dims=2, algorithm=algorithm)._process_window(series).is_sudden
+        sudden = Suddenness(window=20, dims=2, method=algorithm)._process_window(series).is_sudden
         if math.isnan(index):  # the quantile fit failed: no number
             continue
         assert index == pytest.approx(cosine * float(sudden), rel=1e-12, abs=1e-15)
 
 
 def test_parameter_properties():
-    feature = SuddennessImpulsivity(window=15, dims=2, direction_change_epsilon=0.3, algorithm="quantile")
-    assert feature.direction_change_epsilon == 0.3 and feature.algorithm == "quantile"
+    feature = SuddennessImpulsivity(window=15, dims=2, direction_change_epsilon=0.3, method="quantile")
+    assert feature.direction_change_epsilon == 0.3 and feature.method == "quantile"
     feature.direction_change_epsilon = 2
-    feature.algorithm = "constrained"
-    assert feature.direction_change_epsilon == 2.0 and feature.algorithm == "constrained"
+    feature.method = "constrained"
+    assert feature.direction_change_epsilon == 2.0 and feature.method == "constrained"
     window = np.cumsum(np.random.default_rng(5).standard_normal((15, 1, 2)), axis=0)
     ref = SuddennessImpulsivityReference(direction_change_epsilon=2, suddenness_algo="new").compute(window)
     assert feature._process_window(_series(window)).impulsivity_index == pytest.approx(ref.impulsivity_index, rel=1e-12)
@@ -172,7 +172,8 @@ def test_parameter_properties():
 
 REFERENCE = np.load(Path(__file__).resolve().parents[1] / "data" / "impulsivity_reference.npz")
 META = json.loads(str(REFERENCE["meta"]))
-RENAMED = {"threshold": "peak_threshold"}
+# the names of the frozen scenarios (the former feature) -> the names today
+RENAMED = {"threshold": "peak_threshold", "ges_dur": "gesture_duration", "frames": "sampling_rate", "algorithm": "method"}
 
 
 def _bits(values):
@@ -196,7 +197,8 @@ def _check_against_reference(prefix, scenario, feature, samples):
 
 @pytest.mark.parametrize("scenario", META["scenarios"], ids=[scenario["name"] for scenario in META["scenarios"]])
 def test_contraction_impulsivity_reproduces_the_frozen_outputs(scenario):
-    params = {RENAMED.get(name, name): value for name, value in scenario["params"].items()}
+    params = {"sampling_rate": 25.0}  # the frame rate that was the default
+    params |= {RENAMED.get(name, name): value for name, value in scenario["params"].items()}
     samples = list(zip(REFERENCE[scenario["sqom"]], REFERENCE[scenario["ci"]]))
     _check_against_reference("imp_" + scenario["name"], scenario, ContractionImpulsivity(**params), samples)
 
@@ -204,7 +206,7 @@ def test_contraction_impulsivity_reproduces_the_frozen_outputs(scenario):
 @pytest.mark.parametrize("scenario", META["sudden"], ids=[scenario["name"] for scenario in META["sudden"]])
 def test_suddenness_impulsivity_reproduces_the_frozen_outputs(scenario):
     frames = [(frame,) for frame in REFERENCE[scenario["data"]]]
-    _check_against_reference("sud_" + scenario["name"], scenario, SuddennessImpulsivity(**scenario["params"]), frames)
+    _check_against_reference("sud_" + scenario["name"], scenario, SuddennessImpulsivity(**{RENAMED.get(name, name): value for name, value in scenario["params"].items()}), frames)
 
 
 def test_the_reference_exercises_both_features():

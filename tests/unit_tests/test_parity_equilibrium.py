@@ -94,7 +94,7 @@ def test_nan_inf_and_integer_frames(params):
 
 def test_inside_the_ellipse_gives_a_value():
     frame = np.array([[-100.0, 0, 0], [100.0, 0, 0], [30.0, 10.0, 0]])
-    assert _compare(frame)["value"] > 0
+    assert _compare(frame)["equilibrium"] > 0
 
 
 def test_setters_reach_the_core():
@@ -102,7 +102,7 @@ def test_setters_reach_the_core():
     eq.margin, eq.y_weight = 30.0, 1.5
     frame = np.random.default_rng(16).standard_normal((3, 3)) * 20
     ref = EquilibriumReference(margin_mm=30.0, y_weight=1.5, axes=(0, 2)).compute(frame)
-    np.testing.assert_allclose(eq.process(*_points(frame, axes=(0, 2)))["value"], ref["value"], rtol=1e-9, atol=1e-9)
+    np.testing.assert_allclose(eq.process(*_points(frame, axes=(0, 2)))["equilibrium"], ref["equilibrium"], rtol=1e-9, atol=1e-9)
 
 
 def test_the_removed_parameters_are_gone():
@@ -123,7 +123,8 @@ def test_a_point_is_two_floor_coordinates():
 
 # ------------------------------------------------------------------- frozen outputs of the frame-based feature
 REFERENCE = os.path.join(os.path.dirname(__file__), "..", "data", "equilibrium_reference.npz")
-FROZEN_PARAMS = [{}, {"margin": 10.0}, {"margin": 0.0}, {"y_weight": 2.0}, {"y_weight": 0.0}, {"margin": 0.0, "y_weight": 0.0},
+FROZEN_PARAMS = [{"margin": 100.0}, {"margin": 10.0}, {"margin": 0.0}, {"margin": 100.0, "y_weight": 2.0},
+                 {"margin": 100.0, "y_weight": 0.0}, {"margin": 0.0, "y_weight": 0.0},
                  {"margin": -5.0}, {"margin": 0.4, "units": "mm"}, {"margin": 100.0, "units": "mm", "y_weight": 0.3},
                  {"margin": 100.0}, {"margin": 100.0, "y_weight": 1.5}]
 
@@ -164,9 +165,9 @@ def test_the_three_point_form_reproduces_the_frozen_outputs_of_the_frame_form():
                 assert result.status.name == reference[f"{key}|status"][frame_index]
                 assert result.reason == reference[f"{key}|reason"][frame_index]
                 if result.status is Status.INVALID_INPUT:  # the old feature kept the numbers next to INVALID_INPUT; now they are empty
-                    assert np.isnan([result.value, result.angle]).all() and np.isnan(recorded["value"][frame_index])
+                    assert np.isnan([result.equilibrium, result.angle]).all() and np.isnan(recorded["equilibrium"][frame_index])
                     continue
-                np.testing.assert_array_equal(np.float64([result.value, result.angle]).view(np.int64),
-                                              np.float64([reference[f"{key}|value"][frame_index],
+                np.testing.assert_array_equal(np.float64([result.equilibrium, result.angle]).view(np.int64),
+                                              np.float64([reference[f"{key}|equilibrium"][frame_index],
                                                           reference[f"{key}|angle"][frame_index]]).view(np.int64))
-                assert recorded["value"][frame_index].view(np.int64) == np.float64(result.value).view(np.int64)
+                assert recorded["equilibrium"][frame_index].view(np.int64) == np.float64(result.equilibrium).view(np.int64)

@@ -46,7 +46,7 @@ def test_feature_contract_suite(name):
 
 
 def test_windowed_features_report_warming_up_then_no_output_between_hops():
-    feature = SpectralArcLength(window=30, hop=7)
+    feature = SpectralArcLength(window=30, hop=7, sampling_rate=50.0)
     assert isinstance(feature, WindowedFeature)
     statuses = [feature.process(value).status for value in SPEED[:50]]
     assert statuses[:29] == [Status.WARMING_UP] * 29
@@ -64,9 +64,9 @@ def test_process_window_is_the_static_analysis_of_one_segment():
 
 def test_window_and_hop_are_validated():
     with pytest.raises(ValueError):
-        SpectralArcLength(window=10, hop=11)
+        SpectralArcLength(window=10, hop=11, sampling_rate=50.0)
     with pytest.raises(ValueError):
-        SpectralArcLength(window=0)
+        SpectralArcLength(window=0, sampling_rate=50.0)
 
 
 def test_skeleton_inputs_declare_their_labels():
@@ -132,7 +132,7 @@ def test_run_with_ragged_frames_raises():
 
 
 def test_a_frame_of_another_size_raises_for_a_declared_shape():
-    feature = SpectralArcLength(window=10)
+    feature = SpectralArcLength(window=10, sampling_rate=50.0)
     feature.process(1.0)
     with pytest.raises(ValueError, match="SpectralArcLength"):
         feature.process([1.0, 2.0])
@@ -140,4 +140,4 @@ def test_a_frame_of_another_size_raises_for_a_declared_shape():
 
 def test_run_with_ragged_data_raises_early_for_a_fixed_shape():
     with pytest.raises(ValueError):
-        SpectralArcLength(window=10).run([np.ones(1)] * 3 + [np.ones(2)])
+        SpectralArcLength(window=10, sampling_rate=50.0).run([np.ones(1)] * 3 + [np.ones(2)])

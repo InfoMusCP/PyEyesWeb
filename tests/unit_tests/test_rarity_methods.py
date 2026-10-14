@@ -42,11 +42,11 @@ def test_unknown_method_and_foreign_parameters_raise():
     with pytest.raises(ValueError):
         Rarity(method="nope")
     with pytest.raises((TypeError, ValueError)):
-        Rarity(method="information", window=10)
+        Rarity(method="information", hop=5)
     with pytest.raises((TypeError, ValueError)):
         Rarity(method="mode_distance", window=10, number_of_inputs=3)
     with pytest.raises((TypeError, ValueError)):
-        Rarity(method="mode_distance", window=10, data_memory=10)
+        Rarity(method="mode_distance", window=10, measure="contrast")
 
 
 def test_inputs_and_schemas_differ_per_method():
@@ -85,7 +85,7 @@ def test_one_public_rarity_in_the_catalog():
 
 def test_information_rarity_is_warming_up_until_the_memory_is_full_and_the_numbers_do_not_change():
     from pyeyesweb.data_models import Status
-    feature = Rarity(number_of_inputs=2, data_memory=5)
+    feature = Rarity(number_of_inputs=2, window=5)
     results = [feature.process(sample) for sample in np.abs(PAIR[:8]) % 1.0]
     assert [result.status for result in results] == [Status.WARMING_UP] * 4 + [Status.OK] * 4
     assert "of 5" in results[0].reason and "1 of" in results[0].reason
@@ -94,26 +94,26 @@ def test_information_rarity_is_warming_up_until_the_memory_is_full_and_the_numbe
         assert np.array_equal(result.rarity, core_block.process(list(sample)))
     feature.reset()
     assert feature.process([0.1, 0.2]).status is Status.WARMING_UP
-    contrast = Rarity(number_of_inputs=2, type="contrast", data_memory=5)
+    contrast = Rarity(number_of_inputs=2, measure="contrast", window=5)
     assert contrast.process([0.1, 0.2]).status is Status.OK  # contrast uses no memory
 
 
 def test_information_rarity_warm_up_restarts_with_a_structural_change_not_with_a_live_one():
     from pyeyesweb.data_models import Status
-    feature = Rarity(number_of_inputs=2, data_memory=4)
+    feature = Rarity(number_of_inputs=2, window=4)
     for _ in range(6):
         feature.process([0.1, 0.5])
     assert feature.process([0.1, 0.5]).status is Status.OK
-    feature.type = "contrast"  # live
-    feature.type = "rarity"
+    feature.measure = "contrast"  # live
+    feature.measure = "rarity"
     assert feature.process([0.1, 0.5]).status is Status.OK
-    feature.data_memory = 6  # structural: the memory is emptied
+    feature.window = 6  # structural: the memory is emptied
     assert feature.process([0.1, 0.5]).status is Status.WARMING_UP
 
 
 def test_information_rarity_value_outside_the_bins_is_invalid_input_without_numbers():
     from pyeyesweb.data_models import Status
-    feature = Rarity(number_of_inputs=2, data_memory=2, bins=[0.5, 0.5])
+    feature = Rarity(number_of_inputs=2, window=2, bins=[0.5, 0.5])
     feature.process([0.2, 0.2])
     inside = feature.process([0.9, 0.9])
     assert inside.status is Status.OK
@@ -125,10 +125,10 @@ def test_information_rarity_value_outside_the_bins_is_invalid_input_without_numb
 
 def test_information_rarity_rejects_the_degenerate_combinations_at_construction():
     with pytest.raises(ValueError):
-        Rarity(number_of_inputs=1, type="contrast")
+        Rarity(number_of_inputs=1, measure="contrast")
     with pytest.raises(ValueError):
-        Rarity(number_of_inputs=2, data_memory=1)
-    feature = Rarity(number_of_inputs=1, data_memory=3)
+        Rarity(number_of_inputs=2, window=1)
+    feature = Rarity(number_of_inputs=1, window=3)
     with pytest.raises(ValueError):
-        feature.type = "contrast"
+        feature.measure = "contrast"
     assert feature.process([0.1]).status.name == "WARMING_UP"  # unchanged: still the rarity block

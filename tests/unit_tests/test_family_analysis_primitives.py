@@ -59,7 +59,7 @@ def test_sample_entropy_and_coarse_graining_revalidate_on_parameter_change():
     with pytest.raises(ValueError, match=">= 7"):
         graining.factor = 7
     graining.factor = 3
-    assert graining._process_window(RNG.standard_normal((1, 6))).series.shape == (1, 2)
+    assert graining._process_window(RNG.standard_normal((1, 6))).coarse_grained.shape == (1, 2)
 
 
 def test_rarity_method_accepts_its_name():

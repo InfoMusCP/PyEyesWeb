@@ -36,7 +36,7 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
         New frames between two windows. Defaults to `1`.
     epsilon : float, optional
         Threshold parameter for the cosine metric. Defaults to `0.5`.
-    num_subsamples : int, optional
+    number_of_subsamples : int, optional
         Number of subsamples used for polygon area calculation. Defaults to `20`.
     metrics : list of {'cosine', 'polygon'}, optional
         The metrics to compute. By default, computes all allowed metrics.
@@ -56,6 +56,7 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
 
     _ALLOWED_METRICS = ["cosine", "polygon"]
     _core_class = core.motion.DirectionChange
+    _core_names = {"number_of_subsamples": "num_subsamples"}
     _lazy_block = True
 
     def _schema(self) -> Schema:
@@ -71,14 +72,15 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
             self,
             window: int,
             hop: int = 1,
+            *,
             epsilon: float = 0.5,
-            num_subsamples: int = 20,
-            metrics: List[Literal["cosine", "polygon"]] = None
+            number_of_subsamples: int = 20,
+            metrics: Optional[List[Literal["cosine", "polygon"]]] = None
     ):
         super().__init__(window=window, hop=hop)
         self._check_window()
         self.epsilon = epsilon
-        self.num_subsamples = num_subsamples
+        self.number_of_subsamples = number_of_subsamples
         self.metrics = metrics
 
     @property
@@ -90,12 +92,12 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
         self._set_param("epsilon", float(value))
 
     @property
-    def num_subsamples(self) -> int:
-        return self._params["num_subsamples"]
+    def number_of_subsamples(self) -> int:
+        return self._params["number_of_subsamples"]
 
-    @num_subsamples.setter
-    def num_subsamples(self, value: int):
-        self._set_param("num_subsamples", int(value))
+    @number_of_subsamples.setter
+    def number_of_subsamples(self, value: int):
+        self._set_param("number_of_subsamples", int(value))
 
     @property
     def metrics(self) -> List[str]:

@@ -25,7 +25,7 @@ def check(block, result, size):
 
 @pytest.mark.parametrize("classes", [3, 2])
 def test_one_output_per_event_class(classes):
-    block = EventSynchronizationMECS(window=4, event_class_number=classes)
+    block = EventSynchronizationMECS(window=4, number_of_event_classes=classes)
     series = np.zeros((classes, 4))
     series[0, 0] = 1
     check(block, block._process_window(series, series), classes)

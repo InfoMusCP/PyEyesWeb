@@ -55,8 +55,9 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
 
     Parameters
     ----------
-    window : int
-        Samples per window. Must be at least `max_scale * minimum_points` so that every scale is used.
+    window : int, optional
+        Samples per window. Must be at least `max_scale * minimum_points` so that every scale is used. Defaults to
+        `3000`, the minimum of the default `max_scale` and `minimum_points`.
     hop : int, optional
         New samples between two windows. Defaults to `1`.
     embedding_dimension : int, optional
@@ -83,17 +84,25 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     _core_class = core.motion.MultiScaleEntropy
     _lazy_block = True
 
-    def __init__(self, window: int, hop: int = 1, embedding_dimension=2, tolerance=0.15, max_scale=6, minimum_points=500):
+    def __init__(self, window: int = 3000, hop: int = 1, *, embedding_dimension: int = 2, tolerance: float = 0.15,
+                 max_scale: int = 6, minimum_points: int = 500):
         super().__init__(window=window, hop=hop)
         self.embedding_dimension = embedding_dimension
         self.tolerance = tolerance
         self.max_scale = max_scale
         self.minimum_points = minimum_points
 
-    def _minimum_window(self, **params: int) -> int:
-        # max_scale * minimum_points keeps every scale; a parameter not set yet counts as 1 (the last one set checks all)
+    def _scales(self, params: dict) -> tuple:
+        # a parameter not set yet counts as 1 (the last one set checks all)
         values = {"max_scale": 1, "minimum_points": 1} | self._params | params
-        return values["max_scale"] * values["minimum_points"]
+        return values["max_scale"], values["minimum_points"]
+
+    def _minimum_window(self, **params: int) -> int:
+        max_scale, minimum_points = self._scales(params)
+        return max_scale * minimum_points  # keeps every scale
+
+    def _minimum_reason(self, **params: int) -> str:
+        return " (max_scale * minimum_points = {} * {}: the coarsest scale needs minimum_points samples)".format(*self._scales(params))
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per signal"))

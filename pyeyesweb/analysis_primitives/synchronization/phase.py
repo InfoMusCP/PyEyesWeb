@@ -31,8 +31,8 @@ class PhaseLockingValue(_TrainPairBlock):
     `NO_OUTPUT` between hops). `_process_window(first_signal, second_signal)` computes one complete window directly.
 
     The Hilbert phase is only meaningful for narrow-band signals: on broadband movement data the PLV stays near 1
-    whatever the coupling. Nothing is filtered unless `filter_params` is given, so band-limit the signals first (or pass
-    `filter_params`). For 2D or 3D data reduce each participant to one signal first, for example the tangential `velocity`
+    whatever the coupling. Nothing is filtered unless `low_frequency` and `high_frequency` are given, so band-limit the signals first (or pass
+    them). For 2D or 3D data reduce each participant to one signal first, for example the tangential `velocity`
     output of `Kinematics`, or the projection on the dominant axis of the movement.
 
     Parameters
@@ -41,44 +41,51 @@ class PhaseLockingValue(_TrainPairBlock):
         Samples per window.
     hop : int, optional
         New samples between two windows (default 1).
-    filter_params : dict, optional
-        Parameters for the bandpass filter applied before phase estimation (none by default).
-        See [validate_and_normalize_filter_params](../utils/signal_processing.md#validate_and_normalize_filter_params)
-        for details.
+    low_frequency, high_frequency : float, optional
+        Edges in Hz of the zero-phase band-pass (Butterworth, order 4) applied before phase estimation; both or
+        neither (no filtering by default). `0 < low_frequency < high_frequency < sampling_rate / 2`.
+    sampling_rate : float, optional
+        Sampling rate of the signals in Hz; required to filter, unused otherwise.
 
     Examples
     --------
-    >>> sync = PhaseLockingValue(window=100, filter_params={'low': 1.0, 'high': 10.0})
+    >>> sync = PhaseLockingValue(window=100, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)
     """
 
     OUTPUTS = Schema(
-        Output("plv", doc="Phase Locking Value in [0, 1]; 1 is perfect phase synchronization."),
+        Output("phase_locking_value", doc="Phase Locking Value in [0, 1]; 1 is perfect phase synchronization."),
     )
 
     _core_class = core.sync.PhaseLockingValue
     _finite_inputs = True
 
-    def __init__(self, window: int, hop: int = 1, filter_params=None):
-        super().__init__(window, hop, filter_params=validate_and_normalize_filter_params(filter_params))
+    def __init__(self, window: int, hop: int = 1, *, low_frequency: Optional[float] = None,
+                 high_frequency: Optional[float] = None, sampling_rate: Optional[float] = None):
+        if (low_frequency is None) != (high_frequency is None):
+            raise ValueError("PhaseLockingValue: low_frequency and high_frequency go together (or neither: no filtering)")
+        super().__init__(window, hop, low_frequency=low_frequency, high_frequency=high_frequency,
+                         sampling_rate=sampling_rate)
+
+    def _block_params(self, params: dict) -> dict:
+        """The band-pass as the block takes it: `filter_params=(low, high, rate)`, validated here. Without both edges
+        (a live change one edge at a time passes through that state) nothing is filtered."""
+        low, high, rate = (params.get(name) for name in ("low_frequency", "high_frequency", "sampling_rate"))
+        if low is None or high is None:
+            return {}
+        if rate is None:
+            raise ValueError("PhaseLockingValue: filtering needs sampling_rate (Hz)")
+        return {"filter_params": validate_and_normalize_filter_params((low, high, rate))}
 
     def _minimum_window(self, **overrides) -> int:
         params = {**self._params, **overrides}
-        return 28 if params.get("filter_params") else 1  # filtfilt pads 3 * filter length (27) samples
+        filtering = params.get("low_frequency") is not None and params.get("high_frequency") is not None
+        return 28 if filtering else 1  # filtfilt pads 3 * filter length (27) samples
 
     def _inputs(self) -> Inputs:
         return Inputs(_train("first_signal", "one value per call"), _train("second_signal", "one value per call"))
 
-    @property
-    def filter_params(self):
-        """Parameters for the bandpass pre-filter."""
-        return self._params["filter_params"]
-
-    @filter_params.setter
-    def filter_params(self, value):
-        self._set_param("filter_params", validate_and_normalize_filter_params(value))
-
     def _to_result(self, raw: float, timestamp: Optional[float]) -> Result:
-        return self.result(plv=raw, timestamp=timestamp)
+        return self.result(phase_locking_value=raw, timestamp=timestamp)
 
 
 __all__ = ['PhaseLockingValue']

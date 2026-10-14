@@ -52,7 +52,7 @@ def test_mecs_of_identical_series_is_one_whatever_the_number_of_events():
     for events in (1, 2, 4):
         series = np.zeros((1, 60))
         series[0, [5, 20, 40, 50][:events]] = 1
-        block = EventSynchronizationMECS(window=60, hop=60, time_series_number=2, event_class_number=1, tau=5)
+        block = EventSynchronizationMECS(window=60, hop=60, number_of_inputs=2, number_of_event_classes=1, tau=5)
         assert block._process_window(series, series.copy()).synchronization[0] == pytest.approx(1.0, abs=1e-12)
 
 
@@ -63,7 +63,7 @@ def test_mecs_pair_value_is_the_geometric_mean_normalisation_clamped_to_one():
     second[0, 10] = 1
     first[1, [5, 25]] = 1           # class 1: 2 events each, one coincident pair: S = 1 -> 1 / sqrt(4) = 0.5
     second[1, [5, 33]] = 1
-    block = EventSynchronizationMECS(window=40, hop=40, time_series_number=2, event_class_number=2, tau=3)
+    block = EventSynchronizationMECS(window=40, hop=40, number_of_inputs=2, number_of_event_classes=2, tau=3)
     assert block._process_window(first, second).synchronization == pytest.approx([1.0 / np.sqrt(2), 0.5], abs=1e-12)
 
 
@@ -95,12 +95,12 @@ def test_sequence_detector_counts_a_call_that_completes_both_directions_once(seq
     detector = SequenceDetector(sequence=sequence, any_order=True)
     for event in events:
         detector.process(event)
-    assert detector.process(0).sequences == expected  # EyesWeb: 2, 2, 4
+    assert detector.process(0).sequence_count == expected  # EyesWeb: 2, 2, 4
 
 
 def test_temporal_synchronization_with_a_zero_threshold_is_finite():
     """rho = 0 for a threshold of 0 (EyesWeb: 1 - Q / 0 = inf, a NaN progression)."""
-    block = TemporalSynchronization(input_number=2, thresholds=[0.0, 0.0], max_steps=100)
+    block = TemporalSynchronization(number_of_inputs=2, thresholds=[0.0, 0.0], max_steps=100)
     result = block.process([-0.3, 0.2])
     assert result.state == 0 and result.progression == 0.5
     assert block.process([0.2, 0.1]).progression == 1.0

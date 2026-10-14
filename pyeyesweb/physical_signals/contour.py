@@ -18,6 +18,7 @@ class FilterContour(ContourFeature):
     than the contour.
     """
     _core_class = core.motion.FilterContour
+    _core_names = {"window": "window_length", "gaussian_sigma": "sigma_value"}
 
     def _schema(self) -> Schema:
         return Schema(Output("contour", (None, 2), components=XY, doc="smoothed contour"))

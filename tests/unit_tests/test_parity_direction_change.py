@@ -40,8 +40,8 @@ def _compare(window, tol=1e-10, same_reason=True, **params):
 
 
 @pytest.mark.parametrize("metrics", METRIC_SETS)
-@pytest.mark.parametrize("params", [{}, {"epsilon": 0.2}, {"epsilon": 5.0}, {"num_subsamples": 3},
-                                    {"num_subsamples": 1}, {"num_subsamples": 200}, {"epsilon": 0.0}])
+@pytest.mark.parametrize("params", [{}, {"epsilon": 0.2}, {"epsilon": 5.0}, {"number_of_subsamples": 3},
+                                    {"number_of_subsamples": 1}, {"number_of_subsamples": 200}, {"epsilon": 0.0}])
 def test_random_windows(metrics, params):
     rng = np.random.default_rng(7)
     for length in (3, 4, 5, 7, 20, 21, 64):
@@ -98,15 +98,15 @@ def test_unsupported_dimensions_are_invalid_input():
 
 def test_negative_num_subsamples_is_invalid_input():
     window = np.random.default_rng(11).standard_normal((8, 1, 2))
-    ref = _compare(window, metrics=["polygon"], same_reason=False, num_subsamples=-1)
+    ref = _compare(window, metrics=["polygon"], same_reason=False, number_of_subsamples=-1)
     assert ref.status == Status.INVALID_INPUT
 
 
 def test_parameter_setters_reach_the_core():
     window = np.cumsum(np.random.default_rng(12).standard_normal((15, 1, 2)), axis=0)
     new, _ = _new(window)
-    new.epsilon, new.num_subsamples = 0.9, 4
-    ref = DirectionChangeReference(epsilon=0.9, num_subsamples=4)
+    new.epsilon, new.number_of_subsamples = 0.9, 4
+    ref = DirectionChangeReference(epsilon=0.9, number_of_subsamples=4)
     series = window.mean(axis=1).T
     for name in ("cosine", "polygon"):
         np.testing.assert_allclose(new._process_window(series)[name], ref.compute(window)[name], rtol=1e-10, atol=1e-10)
@@ -115,9 +115,9 @@ def test_parameter_setters_reach_the_core():
 # ------------------------------------------------- one point per frame: the mean over the markers is the user's job
 REFERENCE = os.path.join(os.path.dirname(__file__), "..", "data", "direction_change_reference.npz")
 PARAMETER_SETS = [dict(window=20, hop=1), dict(window=30, hop=7), dict(window=3, hop=1),
-                  dict(window=50, hop=50, epsilon=0.2, num_subsamples=7), dict(window=25, hop=5, metrics=["cosine"]),
-                  dict(window=25, hop=5, metrics=["polygon"], num_subsamples=1000),
-                  dict(window=12, hop=4, epsilon=1e-3, num_subsamples=3)]
+                  dict(window=50, hop=50, epsilon=0.2, number_of_subsamples=7), dict(window=25, hop=5, metrics=["cosine"]),
+                  dict(window=25, hop=5, metrics=["polygon"], number_of_subsamples=1000),
+                  dict(window=12, hop=4, epsilon=1e-3, number_of_subsamples=3)]
 
 
 def _recordings():

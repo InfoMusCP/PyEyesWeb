@@ -3,7 +3,7 @@
 The features that must know the joints (`KineticEnergy`, `MotionNoiseDetector`, `Symmetry` with
 the RATIO method) refuse to be built without them (they would silently read nothing). Give them `skeleton=` (a
 `Skeleton` or its name: `"kinect_v2"`, `"qualisys_sport"`, `"mediapipe"`, `"openpose"`) to describe the joints of
-your device, or explicit `weights=` / `couples=`:
+your device, or explicit `weights=` / `pairs=`:
 
 =====================  ==========================================================================================
 feature                fields of the skeleton it reads

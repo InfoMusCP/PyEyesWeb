@@ -71,17 +71,17 @@ def test_pars_non_finite_matrix_is_invalid_input_and_must_be_square():
 
 
 def test_warming_up_correlations_matrix_into_pars():
-    cpr, pars = CorrelationsMatrix(window=5, n_inputs=2), PartialRecurrenceSynchronization()
+    cpr, pars = CorrelationsMatrix(window=5, number_of_inputs=2), PartialRecurrenceSynchronization()
     for _ in range(5):
         row = cpr.process(RNG.standard_normal(2))
         if row.status is Status.OK:
-            assert pars.process(row.matrix).status is Status.OK
+            assert pars.process(row.correlations_matrix).status is Status.OK
         else:
-            assert pars.process(row.matrix).status is Status.INVALID_INPUT
+            assert pars.process(row.correlations_matrix).status is Status.INVALID_INPUT
 
 
 @pytest.mark.parametrize("factory, series", [
-    (lambda: CorrelationsMatrix(window=8, n_inputs=2), (2, 8)),
+    (lambda: CorrelationsMatrix(window=8, number_of_inputs=2), (2, 8)),
     (lambda: RecurrencePlot(window=8), (2, 8)),
     (lambda: GeneralisedAutoCorrelation(window=20), (1, 20)),
 ])
@@ -152,18 +152,19 @@ def test_correlations_matrix_needs_two_samples():
 
 def test_synchronization_filter_needs_a_long_enough_window():
     with pytest.raises(ValueError, match="window"):
-        PhaseLockingValue(window=27, filter_params=(1.0, 10.0, 100.0))
-    feature = PhaseLockingValue(window=28, filter_params=(1.0, 10.0, 100.0))
-    assert isinstance(feature.filter_params, tuple)
+        PhaseLockingValue(window=27, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)
+    feature = PhaseLockingValue(window=28, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)
+    assert (feature.low_frequency, feature.high_frequency, feature.sampling_rate) == (1.0, 10.0, 100.0)
     with pytest.raises(ValueError, match="window"):
         feature.window = 20
     unfiltered = PhaseLockingValue(window=10)
+    unfiltered.sampling_rate, unfiltered.high_frequency = 100.0, 10.0  # a band needs both edges: not filtering yet
     with pytest.raises(ValueError, match="window"):
-        unfiltered.filter_params = (1.0, 10.0, 100.0)
-    assert unfiltered.filter_params is None
+        unfiltered.low_frequency = 1.0
+    assert unfiltered.low_frequency is None
     unfiltered.window = 40
-    unfiltered.filter_params = [1.0, 10.0, 100.0]
-    assert unfiltered.filter_params == (1.0, 10.0, 100.0)
+    unfiltered.low_frequency = 1.0
+    assert (unfiltered.low_frequency, unfiltered.high_frequency) == (1.0, 10.0)
     assert unfiltered._process_window(*RNG.standard_normal((2, 1, 40))).status is Status.OK
 
 

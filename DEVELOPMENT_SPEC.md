@@ -137,6 +137,37 @@ These are Python-layer rules, implemented once in the central call path (`Featur
   zero) number and leave the feature as it was. The parameters that take any sign by design are listed with the reason
   in `ACCEPTS_NEGATIVE` of `test_live_validation_all_features.py`.
 
+### Contract changes of work package B (2026-10-14)
+
+Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of forbidden synonyms over the catalog.
+
+- **One spelling per concept.** `number_of_inputs` (and `number_of_event_classes`, `number_of_points`, `number_of_regions`,
+  `number_of_subsamples`); `window` for every length in samples (also `FilterContour`, `Videogram`, `ScalarPeakDetector`,
+  the `Rarity` memory, the potentials); `cells_along_x` / `cells_along_y`; `gaussian_sigma`, `gaussian_sigma_x`,
+  `gaussian_sigma_y`, `gaussian_correlation`; no EyesWeb pin abbreviations (`gesture_duration`, `quantity_of_motion`,
+  `contraction_index`, `custom_amplitude`, `center_of_gravity`, `reference_direction`, inputs `first_signal` /
+  `second_signal`, ...). Outputs have specific names and every boolean output is `is_<something>`.
+- **Core names.** A core-backed feature maps its public names to those of the block with `_core_names` (`CoreFeature`); the
+  core is not changed. Public signature, setters and `_params` use the public name. A parameter left at its default reads
+  back as the signature default.
+- **Choices.** `method=` picks an algorithm (`Suddenness`, `SuddennessImpulsivity`, `Periodicity`; `Symmetry` aggregates
+  with `aggregation=`); `output_dims` is components versus scalar (`Symmetry`, `PointsDensity`, `Kinematics`); the core
+  member `COMPONENT` is spelled `"components"` (`choice_name`).
+- **Signatures.** Keyword-only after `window, hop` and after the joint arguments; everything annotated. A missing required
+  argument raises a `TypeError` naming the public class and saying what `window` is. A variant feature shows the default
+  method's parameters first and the parameters of only some methods are keyword-only.
+- **Hop.** Default 1 everywhere. `EventSynchronization` and `EventSynchronizationMECS` accumulate across windows: `hop=None`
+  is `window` (non-overlapping) and the only valid value. `CurvatureDispersion` has no hop (a result per call).
+- **Rate.** `sampling_rate` defaults to `None` everywhere. The window metrics (`SpectralArcLength`, `LogDimensionlessJerk`,
+  `Harmonicity`, `SubmovementCount`, `CurvatureVelocityCorrelation`) have no time axis and raise at construction without it
+  (`_rate_required`). `ContractionImpulsivity.frames` is `sampling_rate`; without it the index is per frame.
+- **Symmetry.** Both methods take `labels`/`skeleton`, `pairs` (names) and `reference_point` (`None`: barycentre for
+  `"reflection"`); output labels of `"reflection"` are joint names; a frame of another size than `labels` is a shape error.
+- **Other.** `PhaseLockingValue` takes `low_frequency`, `high_frequency`, `sampling_rate` instead of `filter_params`;
+  `RecurrencePlot` / `CrossRecurrencePlot` `multiple_epsilons=None` is `epsilon` for each of the `window` samples;
+  `MultiScaleEntropy` defaults to `window=3000` and its minimum-window error explains `max_scale * minimum_points`;
+  `Equilibrium.margin` defaults to 0.1 m (the 100 mm of the original).
+
 ## 4. Parameters
 
 ### Names (**Decided**)
@@ -218,9 +249,9 @@ declares outputs ahead of data needs. A frame of another dimension later raises 
 
 ### Skeletons and joints
 
-Features that must know joints (`KineticEnergy`, `GestureSegmenter`, `Symmetry` with the RATIO method, `PointsDensity`)
+Features that must know joints (`KineticEnergy`, `GestureSegmenter`, `Symmetry` (both methods), `PointsDensity`)
 take `skeleton=`: the name of a lab preset (`"kinect_v2"`, `"qualisys_sport"`, `"mediapipe"`, `"openpose"`) or a
-`pyeyesweb.skeletons.Skeleton` you build yourself (joints, pairs, reference, weights). Explicit `weights=`, `couples=`
+`pyeyesweb.skeletons.Skeleton` you build yourself (joints, pairs, reference, weights). Explicit `weights=`, `pairs=`
 and `labels=` override it. Without any joint information they raise a clear `ValueError` at construction. Presets
 are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`. There are no legacy device modes
 (no OpenNI, no Kinect SDK v1 tables, no `input_type`/`skeleton_mode`). Do not add them back.

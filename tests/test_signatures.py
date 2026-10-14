@@ -17,8 +17,8 @@ FEATURES = [info.cls for info in catalog()]
 CORE_FEATURES = [variant for cls in FEATURES if issubclass(cls, CoreFeature) for variant in (cls._variants.values() if "_variants" in cls.__dict__ else [cls])]
 
 # A block parameter the wrapper deliberately does not take under that name: Equilibrium folds the two axis indices
-# into `axes`, BoundingBoxFilledArea fixes `epsilon`.
-WRAPPED = {"Equilibrium": {"axis_x", "axis_y"}, "BoundingBoxFilledArea": {"epsilon"}}
+# into `axes`, BoundingBoxFilledArea fixes `epsilon`, PhaseLockingValue spells its band-pass out.
+WRAPPED = {"Equilibrium": {"axis_x", "axis_y"}, "BoundingBoxFilledArea": {"epsilon"}, "PhaseLockingValue": {"filter_params"}}
 
 
 def _ids(classes):
@@ -28,7 +28,7 @@ def _ids(classes):
 def _nb_defaults(cls):
     """`name -> default` of the block's binding, straight from the nanobind signature."""
     text, _doc, defaults = cls._core_class.__init__.__nb_signature__[0][:3]
-    names = _SIGNATURE_PARAM.findall(text)
+    names = [cls._public_names().get(name, name) for name in _SIGNATURE_PARAM.findall(text)]  # as the feature spells them
     defaults = defaults or ()
     return dict(zip(names[len(names) - len(defaults):], defaults))  # a block may take required arguments (`model`) first
 
@@ -111,7 +111,8 @@ def test_a_factory_shows_the_constructor_signature_without_the_input_mode(cls, n
 
 @pytest.mark.parametrize("cls, name, function", FACTORIES, ids=FACTORY_IDS)
 def test_a_factory_builds_the_constructor_with_its_input_mode(cls, name, function):
-    feature = getattr(cls, name)(**({"skeleton": "kinect_v2"} if cls.__name__ == "KineticEnergy" else {}))
+    feature = getattr(cls, name)(**({"skeleton": "kinect_v2"} if cls.__name__ == "KineticEnergy" else {}),
+                                 **({"sampling_rate": 50.0} if cls._rate_required else {}))
     assert isinstance(feature, cls)
     assert name == f"from_{feature.input_mode}" or (cls.__name__ == "Kinematics" and feature.input_mode == "time_series")
 

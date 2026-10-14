@@ -40,7 +40,7 @@ def assert_contract(block, result):
 # ------------------------------------------------------------------------------------------ HitCellDetector
 
 def test_hit_cell_detector_contract_and_values():
-    detector = HitCellDetector(cells_x=4, cells_y=4, x_max=2.0, y_max=2.0)
+    detector = HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=2.0, y_max=2.0)
     assert detector.outputs.names == ("cells",) and detector.outputs["cells"].shape == (None, 2)
     result = detector.process([(0.1, 1.9), (1.6, 0.6), (5, 5)])
     assert_contract(detector, result)
@@ -97,7 +97,7 @@ def test_position_potentials_bounds_and_initialization():
     strict = PositionDependingPotentials(cells_along_x=2, cells_along_y=2)
     assert strict.process([(0, 2), (0, 0)]).status is Status.INVALID_INPUT
     log = dict(cells_along_x=3, cells_along_y=1, potential_type="logarithmic",
-               use_cust_dist=True, cust_dist=1.0)
+               use_custom_distance=True, custom_distance=1.0)
     potential = PositionDependingPotentials(**log).process([(0, 0), (0, 2)]).potential
     assert potential.tolist() == [[1, 0, 1]]
 
@@ -113,7 +113,7 @@ def test_region_potentials_default_schema_is_potential_only():
 
 
 def test_region_potentials_schema_follows_enabled_outputs():
-    block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, num_of_regions=4,
+    block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4,
                                         output_potential_matrix=False, output_hit_regions=True,
                                         output_hit_region_indexes=True, output_region_values=True,
                                         decrement_factor=0.5)
@@ -130,7 +130,7 @@ def test_region_potentials_schema_follows_enabled_outputs():
 
 
 def test_region_potentials_region_input_and_partial_outputs_on_error():
-    block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, num_of_regions=4,
+    block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4,
                                         input_kind="hit_regions", output_hit_regions=True,
                                         output_hit_region_indexes=True)
     ok = block.process([1])
@@ -144,7 +144,7 @@ def test_region_potentials_region_input_and_partial_outputs_on_error():
 
 
 def test_region_potentials_reset_trigger():
-    kw = dict(cells_along_x=4, cells_along_y=1, mask=MASK, num_of_regions=4, output_region_values=True,
+    kw = dict(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4, output_region_values=True,
               initialization_matrix=np.array([[1.0, 2, 3, 4]]))
     block = RegionDependingPotentials(**kw)
     assert block.region_values.tolist() == [2, 3, 4, 0]
@@ -155,12 +155,12 @@ def test_region_potentials_reset_trigger():
     block.reset()
     assert block.region_values.tolist() == [2, 3, 4, 0]
     with pytest.raises(ValueError):
-        RegionDependingPotentials(reg_init_values=[0.0] * 10, initialization_matrix=np.zeros((10, 10)))
+        RegionDependingPotentials(region_initial_values=[0.0] * 10, initialization_matrix=np.zeros((10, 10)))
 
 
 @pytest.mark.parametrize("ptype", [count.lower() for count in core.space.RegionPotentialType.__members__])
 def test_region_potentials_every_type_with_a_recorder(ptype):
-    block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, num_of_regions=4,
+    block = RegionDependingPotentials(cells_along_x=4, cells_along_y=1, mask=MASK, number_of_regions=4,
                                         potential_type=ptype, output_hit_regions=True, output_region_values=True)
     rec = Recorder(block)
     for cells in ([(0, 0)], [(0, 2)], [], [(0, 3), (0, 1)]):

@@ -20,7 +20,7 @@ class DirectionChangeReference(DynamicFeature):
     ----------
     epsilon : float, optional
         Threshold parameter for the cosine metric. Defaults to `0.5`.
-    num_subsamples : int, optional
+    number_of_subsamples : int, optional
         Number of subsamples used for polygon area calculation. Defaults to `20`.
     metrics : list of {'cosine', 'polygon'}, optional
         The metrics to compute. By default, computes all allowed metrics.
@@ -46,12 +46,12 @@ class DirectionChangeReference(DynamicFeature):
     def __init__(
             self,
             epsilon: float = 0.5,
-            num_subsamples: int = 20,
+            number_of_subsamples: int = 20,
             metrics: List[Literal["cosine", "polygon"]] = None
     ):
         super().__init__()
         self._epsilon = float(epsilon)
-        self._num_subsamples = int(num_subsamples)
+        self._number_of_subsamples = int(number_of_subsamples)
         self.metrics = metrics
 
     @property
@@ -63,12 +63,12 @@ class DirectionChangeReference(DynamicFeature):
         self._epsilon = float(value)
 
     @property
-    def num_subsamples(self) -> int:
-        return self._num_subsamples
+    def number_of_subsamples(self) -> int:
+        return self._number_of_subsamples
 
-    @num_subsamples.setter
-    def num_subsamples(self, value: int):
-        self._num_subsamples = int(value)
+    @number_of_subsamples.setter
+    def number_of_subsamples(self, value: int):
+        self._number_of_subsamples = int(value)
 
     @property
     def metrics(self) -> List[str]:
@@ -121,7 +121,7 @@ class DirectionChangeReference(DynamicFeature):
             raise ValueError("Not enough samples")
 
         # Subsample the trajectory securely
-        indices = np.linspace(0, num_points - 1, min(self.num_subsamples, num_points))
+        indices = np.linspace(0, num_points - 1, min(self.number_of_subsamples, num_points))
         subset = pos[np.round(indices).astype(int)]
 
         # Close the loop

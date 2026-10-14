@@ -15,7 +15,7 @@ from pyeyesweb.low_level.contraction import BoundingBoxFilledArea
 from pyeyesweb.low_level.direction_change import DirectionChange
 from pyeyesweb.low_level.equilibrium import Equilibrium
 from pyeyesweb.low_level.smoothness import Harmonicity, LogDimensionlessJerk, SpectralArcLength, SubmovementCount
-from pyeyesweb.low_level.symmetry import Symmetry
+from symmetry_inputs import reflection
 from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 from pyeyesweb.mid_level.suddenness import Suddenness
 
@@ -29,8 +29,8 @@ CLOUDS = [_rng.normal(size=(8, 3)) for _ in range(120)]
 FRAMES = [_rng.normal(size=(5, 3)) * 100 for _ in range(120)]
 
 
-def reflection(**params):
-    return Symmetry(method="reflection", joint_pairs=[(0, 1), (2, 3)], **params)
+def _reflection(**params):
+    return reflection(5, [(0, 1), (2, 3)], **params)
 
 
 LIVE = [
@@ -40,29 +40,29 @@ LIVE = [
     (lambda: Rarity(window=20, method="mode_distance"), "alpha", 2.0, SCALAR),
     (lambda: SuddennessImpulsivity(window=12), "direction_change_epsilon", 0.9, POINT),
     (lambda: MultiScaleEntropy(window=40, embedding_dimension=1, max_scale=2, minimum_points=10), "tolerance", 0.3, SCALAR),
-    (lambda: SpectralArcLength(window=30), "sampling_rate", 100.0, SPEED),
-    (lambda: SpectralArcLength(window=30), "amplitude_threshold", 0.2, SPEED),
-    (lambda: SpectralArcLength(window=30), "minimum_cutoff_frequency", 1.0, SPEED),
-    (lambda: SpectralArcLength(window=30), "maximum_cutoff_frequency", 10.0, SPEED),
-    (lambda: LogDimensionlessJerk(window=30), "sampling_rate", 100.0, SPEED),
-    (lambda: LogDimensionlessJerk(window=30), "input_mode", "acceleration", SPEED),
-    (lambda: Harmonicity(window=30), "sampling_rate", 100.0, SPEED),
-    (lambda: SubmovementCount(window=30), "sampling_rate", 100.0, SPEED),
-    (lambda: SubmovementCount(window=30), "prominence_factor", 0.3, SPEED),
-    (lambda: reflection(), "center_of_symmetry", 2, FRAMES),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "sampling_rate", 100.0, SPEED),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "amplitude_threshold", 0.2, SPEED),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "minimum_cutoff_frequency", 1.0, SPEED),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "maximum_cutoff_frequency", 10.0, SPEED),
+    (lambda: LogDimensionlessJerk(window=30, sampling_rate=50.0), "sampling_rate", 100.0, SPEED),
+    (lambda: LogDimensionlessJerk(window=30, sampling_rate=50.0), "input_mode", "acceleration", SPEED),
+    (lambda: Harmonicity(window=30, sampling_rate=50.0), "sampling_rate", 100.0, SPEED),
+    (lambda: SubmovementCount(window=30, sampling_rate=50.0), "sampling_rate", 100.0, SPEED),
+    (lambda: SubmovementCount(window=30, sampling_rate=50.0), "prominence_factor", 0.3, SPEED),
+    (lambda: _reflection(), "reference_point", "j2", FRAMES),
 ]
 INVALID = [
     (lambda: MultiScaleEntropy(window=40, embedding_dimension=1, max_scale=2, minimum_points=10), "embedding_dimension", 0, SCALAR),
-    (lambda: SpectralArcLength(window=30), "sampling_rate", 0.0, SPEED),
-    (lambda: SpectralArcLength(window=30), "amplitude_threshold", 1.5, SPEED),
-    (lambda: SpectralArcLength(window=30), "minimum_cutoff_frequency", 0.0, SPEED),
-    (lambda: SpectralArcLength(window=30), "maximum_cutoff_frequency", 1.0, SPEED),
-    (lambda: LogDimensionlessJerk(window=30), "sampling_rate", -1.0, SPEED),
-    (lambda: LogDimensionlessJerk(window=30), "input_mode", "jerk", SPEED),
-    (lambda: Harmonicity(window=30), "sampling_rate", 0.0, SPEED),
-    (lambda: SubmovementCount(window=30), "sampling_rate", 0.0, SPEED),
-    (lambda: SubmovementCount(window=30), "prominence_factor", -0.1, SPEED),
-    (lambda: reflection(), "center_of_symmetry", -2, FRAMES),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "sampling_rate", 0.0, SPEED),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "amplitude_threshold", 1.5, SPEED),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "minimum_cutoff_frequency", 0.0, SPEED),
+    (lambda: SpectralArcLength(window=30, sampling_rate=50.0), "maximum_cutoff_frequency", 1.0, SPEED),
+    (lambda: LogDimensionlessJerk(window=30, sampling_rate=50.0), "sampling_rate", -1.0, SPEED),
+    (lambda: LogDimensionlessJerk(window=30, sampling_rate=50.0), "input_mode", "jerk", SPEED),
+    (lambda: Harmonicity(window=30, sampling_rate=50.0), "sampling_rate", 0.0, SPEED),
+    (lambda: SubmovementCount(window=30, sampling_rate=50.0), "sampling_rate", 0.0, SPEED),
+    (lambda: SubmovementCount(window=30, sampling_rate=50.0), "prominence_factor", -0.1, SPEED),
+    (lambda: _reflection(), "reference_point", "no_such_joint", FRAMES),
 ]
 
 
@@ -83,9 +83,9 @@ def test_invalid_value_raises_and_changes_nothing(factory, attr, value, recordin
 def test_suddenness_algorithm_change_keeps_the_window():
     # the two algorithms differ in which windows they can fit, so the status sequence of check_live does not apply
     changed, fresh = Suddenness(window=12), Suddenness(window=12)
-    fresh.algorithm = "quantile"
+    fresh.method = "quantile"
     feed(changed, POINT[:CHANGE_AT])
-    changed.algorithm = "quantile"
+    changed.method = "quantile"
     actual = feed(changed, POINT[CHANGE_AT:])
     assert all(NOTE not in result.reason for result in actual)
     assert actual == feed(fresh, POINT)[CHANGE_AT:]

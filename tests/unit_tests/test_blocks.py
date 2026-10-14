@@ -48,7 +48,7 @@ SQUARE = [(0, 0), (1, 0), (1, 1), (0, 1)]
 RNG = np.random.default_rng(0)
 signal_a, signal_b = RNG.standard_normal(50), RNG.standard_normal(50)
 SKELETON = {"torso": (0, 0, 0), "left_hip": (-1, 0, 0), "right_hip": (1, 0, 0)}
-RATIO = dict(couples=[("left_hip", "right_hip")], reference_point="torso")  # the default input type is custom
+RATIO = dict(pairs=[("left_hip", "right_hip")], reference_point="torso")  # the default input type is custom
 SINE = np.sin(np.arange(60) / 3.0)
 PERIODIC = np.tile([3.0, -1, 0, 2, -4], 10)
 CIRCLE = [(math.cos(angle), math.sin(angle)) for angle in np.linspace(0, 2 * math.pi, 8, endpoint=False)]
@@ -62,7 +62,7 @@ CASES = {
     "CoarseGraining": (lambda: CoarseGraining(window=4), lambda block: block._process_window(np.array([[1.0, 3, 5, 7]]))),
     "Rarity": (lambda: Rarity(method="information"), lambda block: block.process([0.1, 0.9])),
     "SampleEntropy": (lambda: SampleEntropy(window=len(SINE), embedding_dimension=2, tolerance=0.5), lambda block: block._process_window(SINE)),
-    "CurvatureVelocityCorrelation": (lambda: CurvatureVelocityCorrelation(window=40), lambda block: block._process_window(
+    "CurvatureVelocityCorrelation": (lambda: CurvatureVelocityCorrelation(window=40, sampling_rate=25.0), lambda block: block._process_window(
         np.vstack([np.cos(np.arange(40) / 10), np.sin(np.arange(40) / 10)]))),
     "GestureSegmenter": (lambda: GestureSegmenter(filter_window_length=5), lambda block: block.process(0.5)),
     "MotionNoiseDetector": (lambda: MotionNoiseDetector(labels=["head"]),
@@ -76,7 +76,7 @@ CASES = {
     "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), lambda block: block.process(
         [1.0, -1, 1, -1, 1, -1, 1, -1], CIRCLE)),
     "Kinematics": (lambda: Kinematics(dims=2), lambda block: block.process([0.0, 1.0])),
-    "CorrelationsMatrix": (lambda: CorrelationsMatrix(window=50, n_inputs=2),
+    "CorrelationsMatrix": (lambda: CorrelationsMatrix(window=50, number_of_inputs=2),
                            lambda block: block._process_window(np.stack([signal_a, signal_b]))),
     "PartialRecurrenceSynchronization": (lambda: PartialRecurrenceSynchronization(), lambda block: block.process(np.eye(2))),
     "GeneralisedAutoCorrelation": (lambda: GeneralisedAutoCorrelation(window=50),
@@ -169,7 +169,7 @@ def test_coarse_graining_skipped_activation():
     assert cg._process_window(np.array([[1.0, 3, 5, 7]])).status is Status.OK
     skipped = cg._process_window(np.array([[1.0, 3, 5, 7]]))
     assert skipped.status is Status.NO_OUTPUT and skipped.reason
-    assert skipped.valid == {"series": False} and skipped.series.size == 0
+    assert skipped.valid == {"coarse_grained": False} and skipped.coarse_grained.size == 0
     assert skipped.to_array().shape == (0,)
 
 
@@ -204,21 +204,21 @@ def test_gesture_segmenter_warms_up_then_emits():
     results = [gs.process(0.01 * index, timestamp=index * 0.04) for index in range(11)]
     assert all(result.status is Status.WARMING_UP for result in results[:10]) and results[10].status is Status.OK
     early, late = results[0], results[10]
-    assert early.valid == {"smoothed_intensity": False, "gesturing": False, "gesture_start": False, "gesture_end": False}
-    assert math.isnan(early.smoothed_intensity) and early.gesturing is False
+    assert early.valid == {"smoothed_intensity": False, "is_gesturing": False, "is_gesture_start": False, "is_gesture_end": False}
+    assert math.isnan(early.smoothed_intensity) and early.is_gesturing is False
     assert all(late.valid.values()) and not math.isnan(late.smoothed_intensity)
     assert late.timestamp == pytest.approx(10 * 0.04)
 
 
 def test_motion_noise_detector_is_noise_until_it_has_seen_enough():
     detector = MotionNoiseDetector(labels=["head"])
-    flags = [detector.process({"head": (2.0 * (index // 2), 0, 0)}, timestamp=0.04 * (index + 1))["noise"] for index in range(16)]
+    flags = [detector.process({"head": (2.0 * (index // 2), 0, 0)}, timestamp=0.04 * (index + 1))["is_noisy"] for index in range(16)]
     assert flags[:14] == [True] * 14 and flags[14:] == [False, False]  # 14 speeds are needed, then the variance is large
 
 
 def test_filter_contour_window_not_shorter_than_contour():
     assert FilterContour().process(SQUARE).status is Status.OK
-    result = FilterContour(window_length=7).process(SQUARE)
+    result = FilterContour(window=7).process(SQUARE)
     assert result.status is Status.NO_OUTPUT and result.reason
     assert result.valid == {"contour": False} and result.contour.shape == (0, 2)
 
@@ -227,7 +227,7 @@ def test_spike_profile_only_in_binary_mode():
     trains = np.vstack([np.where(EVENTS > 0, 1.0, -1.0)] * 2)
     binary = SpikeSynchronization(window=40, mode="binary")._process_window(trains)
     assert binary.valid["profile"] and binary.profile.ndim == 1
-    timings = SpikeSynchronization(window=3, mode="timings", number_of_input_trains=2)._process_window(
+    timings = SpikeSynchronization(window=3, mode="timings", number_of_inputs=2)._process_window(
         np.array([[1.0, 5.0, 9.0], [1.0, 5.0, 9.5]]))
     assert not timings.valid["profile"] and timings.valid["degree"]
 
@@ -259,7 +259,7 @@ def test_structured_outputs_flatten_with_meaningful_keys():
 
 def test_symmetry_global_and_components():
     glob_block = Symmetry(**RATIO)
-    comp_block = Symmetry(output_type="components", **RATIO)
+    comp_block = Symmetry(output_dims="components", **RATIO)
     assert glob_block.outputs["symmetry"].shape == ()
     assert comp_block.outputs["symmetry"].shape == (3,)
     assert comp_block.outputs.flat_names == ("symmetry_x", "symmetry_y", "symmetry_z")
@@ -272,7 +272,7 @@ def test_symmetry_global_and_components():
 def test_points_density_module_and_component():
     points = {"a": (0, 0, 0), "b": (2, 0, 0)}
     module = PointsDensity()
-    component = PointsDensity(output_dims="component")
+    component = PointsDensity(output_dims="components")
     assert module.outputs["density"].shape == () and component.outputs["density"].shape == (3,)
     assert component.outputs.flat_names[:3] == ("density_x", "density_y", "density_z")
     assert component.process(points).density.shape == (3,)
@@ -317,17 +317,17 @@ def test_rarity_and_sample_entropy_and_mecs_sizes_follow_parameters():
     assert rarity.outputs["rarity"].shape == (3,) and rarity.process([0.1, 0.5, 0.9]).rarity.shape == (3,)
     entropy = SampleEntropy(window=len(SINE), embedding_dimension=4, tolerance=0.5)
     assert entropy.outputs["sample_entropy"].shape == (4,) and entropy._process_window(SINE).sample_entropy.shape == (4,)
-    mecs = EventSynchronizationMECS(window=40, hop=40, event_class_number=2)
+    mecs = EventSynchronizationMECS(window=40, hop=40, number_of_event_classes=2)
     assert mecs.outputs["events"].shape == (2,)
     out = mecs._process_window(*[np.vstack([EVENTS] * 2)] * 2)
     assert out.synchronization.shape == (2,) and out.events.shape == (2,)
-    assert CorrelationsMatrix(window=50, n_inputs=3).outputs["matrix"].shape == (3, 3)
+    assert CorrelationsMatrix(window=50, number_of_inputs=3).outputs["correlations_matrix"].shape == (3, 3)
 
 
 @pytest.mark.parametrize("name,expected", [
     ("Rarity", {"rarity": (2,)}),
     ("SampleEntropy", {"sample_entropy": (12,)}),
-    ("CorrelationsMatrix", {"matrix": (4, 4)}),
+    ("CorrelationsMatrix", {"correlations_matrix": (4, 4)}),
     ("EventSynchronizationMECS", {"synchronization": (3,), "events": (3,)}),
     ("Symmetry", {"symmetry": ()}),
     ("PointsDensity", {"density": (), "centroid": (3,)}),
@@ -348,7 +348,7 @@ def test_default_constructor_matches_declared_defaults(name, expected):
     elif name == "SampleEntropy":
         assert block._process_window(np.sin(np.arange(200) / 3.0)).sample_entropy.shape == (12,)
     elif name == "CorrelationsMatrix":
-        assert block._process_window(np.stack([signal_a, signal_b, signal_a, signal_b])).matrix.shape == (4, 4)
+        assert block._process_window(np.stack([signal_a, signal_b, signal_a, signal_b])).correlations_matrix.shape == (4, 4)
     elif name == "EventSynchronizationMECS":
         assert block._process_window(*[np.vstack([EVENTS] * 3)] * 2).events.shape == (3,)
     elif name == "Symmetry":
@@ -389,7 +389,7 @@ def test_recorder_over_a_stream_of_one_block():
     rec = Recorder(gs)
     for index in range(12):
         rec.append(gs.process(0.01 * index, timestamp=index * 0.04))
-    assert len(rec) == 12 and rec.column("gesturing").dtype == np.bool_
+    assert len(rec) == 12 and rec.column("is_gesturing").dtype == np.bool_
 
 
 def test_reset_exists_on_every_block_and_attributes_pass_through():

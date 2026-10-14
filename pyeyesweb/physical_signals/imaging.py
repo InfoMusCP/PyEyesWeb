@@ -21,7 +21,7 @@ from pyeyesweb.data_models.results import Output, Result, Schema, Status
 
 _imaging = core.imaging
 
-_CENTROIDS = tuple(_imaging.CentroidsCalc.labels)
+_CENTROIDS = tuple("center_of_gravity" if label == "cog" else label for label in _imaging.CentroidsCalc.labels)
 _BODY_PARTS = ("right_leg", "left_leg", "trunk", "right_arm", "left_arm", "head")
 
 
@@ -52,7 +52,7 @@ class SilhouetteCentroids(_ImageFeature):
     silhouette : {"full", "upper", "lower", "left", "right"}, optional
         The part of the body the mask shows (default `"full"`): the centroids of the missing half (and the head
         of a left or right half) are not computed. Changing it restarts the filters.
-    cog, head, left_shoulder, left_elbow, left_forearm, left_hand, right_shoulder, right_elbow, right_forearm, \
+    center_of_gravity, head, left_shoulder, left_elbow, left_forearm, left_hand, right_shoulder, right_elbow, right_forearm, \
 right_hand, left_knee, left_foot, right_knee, right_foot : bool, optional
         Which centroids to output (default all). A centroid is computed when it or one that depends on it is
         requested (head <- shoulders, hand <- forearm <- elbow <- shoulder, foot <- knee).
@@ -67,11 +67,12 @@ right_hand, left_knee, left_foot, right_knee, right_foot : bool, optional
     Returns
     -------
     Result
-        `centroids`: `(14, 2)` pixel coordinates `(x, y)` in the frame, one row per label (`cog`, `head`,
+        `centroids`: `(14, 2)` pixel coordinates `(x, y)` in the frame, one row per label (`center_of_gravity`, `head`,
         `left_shoulder`, ...); `normalized`: the same divided by the frame width and height. `INVALID_INPUT` for a
         mask without foreground.
     """
     _core_class = _imaging.CentroidsCalc
+    _core_names = {"center_of_gravity": "cog"}
     INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
     OUTPUTS = Schema(
         Output("centroids", (len(_CENTROIDS), 2), labels=_CENTROIDS, components=XY, unit="px",
@@ -113,7 +114,7 @@ class SilhouetteBodyParts(_ImageFeature):
     -------
     Result
         `regions`: `(6, 4)` ints `(x, y, width, height)` of each part in the frame, rows in the order
-        right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found; `found`: which
+        right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found; `is_found`: which
         parts were; `masks`: dict part -> `(height, width)` 0 / 255 mask of the parts found. A part is dropped when it
         is empty or touches the first column or row of the frame, as in EyesWeb. `INVALID_INPUT` for a mask without
         foreground.
@@ -123,7 +124,7 @@ class SilhouetteBodyParts(_ImageFeature):
     OUTPUTS = Schema(
         Output("regions", (len(_BODY_PARTS), 4), kind=int, labels=_BODY_PARTS, components=("x", "y", "width", "height"),
                unit="px", doc="bounding box of each part in the frame; zeros where not found"),
-        Output("found", len(_BODY_PARTS), kind=bool, labels=_BODY_PARTS, doc="the part was found"),
+        Output("is_found", len(_BODY_PARTS), kind=bool, labels=_BODY_PARTS, doc="the part was found"),
         Output("masks", (None, None), kind=int, labelled=True, doc="0 / 255 mask of each part found"))
 
     def _from_image(self, mask: np.ndarray, timestamp: Optional[float]) -> Result:
@@ -137,7 +138,7 @@ class SilhouetteBodyParts(_ImageFeature):
             regions[slot] = (left, top, part_mask.shape[1], part_mask.shape[0])
             found[slot] = True
             masks[label] = part_mask
-        return self.result(timestamp=timestamp, regions=regions, found=found, masks=masks)
+        return self.result(timestamp=timestamp, regions=regions, is_found=found, masks=masks)
 
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="video_gram (VideoGram)")
@@ -151,11 +152,11 @@ class Videogram(_ImageFeature):
 
     Parameters
     ----------
-    length : int, optional
+    window : int, optional
         Number of lines of the videogram, >= 1 (default 500).
     mode : {"horizontal", "vertical"}, optional
-        `"horizontal"`: each frame becomes a column (the sum of each row) of an image `length` wide and `H` high;
-        `"vertical"`: a row (the sum of each column) of an image `W` wide and `length` high. Changing it restarts.
+        `"horizontal"`: each frame becomes a column (the sum of each row) of an image `window` wide and `H` high;
+        `"vertical"`: a row (the sum of each column) of an image `W` wide and `window` high. Changing it restarts.
     direction : {"left_to_right", "right_to_left"}, optional
         Where the newest line is written; the position wraps around so the oldest line is overwritten.
     end_of_image_mode : {"loop", "scroll"}, optional
@@ -164,9 +165,10 @@ class Videogram(_ImageFeature):
     Returns
     -------
     Result
-        `videogram`: `(H, length, C)` (horizontal) or `(length, W, C)` (vertical) image; `C = 1` for a grayscale input.
+        `videogram`: `(H, window, C)` (horizontal) or `(window, W, C)` (vertical) image; `C = 1` for a grayscale input.
     """
     _core_class = _imaging.VideoGram
+    _core_names = {"window": "length"}
     INPUTS = Inputs(image_input("frame", "grayscale or colour frame", channels=None))
     OUTPUTS = Schema(Output("videogram", (None, None, None), kind=int, doc="the videogram image, channels last"))
 

@@ -93,7 +93,7 @@ def test_motion_noise_detector_with_a_skeleton(name):
     detector = MotionNoiseDetector(skeleton=name)
     assert detector.inputs[0].labels == skeleton.joints
     results = [detector.process(frame, timestamp=0.04 * (index + 1)) for index, frame in enumerate(_frames(skeleton, 12))]
-    assert all(result.status is Status.OK and result.noise is True for result in results)  # too few speeds for a verdict
+    assert all(result.status is Status.OK and result.is_noisy is True for result in results)  # too few speeds for a verdict
 
 
 @pytest.mark.parametrize("name", NAMES)
@@ -104,11 +104,12 @@ def test_symmetry_with_a_skeleton(name):
     assert np.isfinite(result.symmetry) and result.symmetry > 0
 
 
-def test_symmetry_explicit_couples_win_and_reflection_needs_nothing():
-    couples = [("LHeelBack", "RHeelBack")]
-    feature = Symmetry(skeleton="qualisys_sport", couples=couples)
+def test_symmetry_explicit_pairs_win_and_reflection_takes_the_skeleton_too():
+    pairs = [("LHeelBack", "RHeelBack")]
+    feature = Symmetry(skeleton="qualisys_sport", pairs=pairs)
     assert feature.process(_frames(QUALISYS_SPORT, 1)[0]).status is Status.OK
-    assert Symmetry(method="reflection", joint_pairs=[(0, 1)]).process(RNG.normal(size=(4, 3))).status is Status.OK
+    mirror = Symmetry(method="reflection", skeleton="qualisys_sport", pairs=pairs)
+    assert mirror.process(_frames(QUALISYS_SPORT, 1)[0]).status is Status.OK
 
 
 @pytest.mark.parametrize("name", NAMES)
@@ -132,7 +133,7 @@ def test_without_skeleton_information_the_constructor_raises(make):
 
 @pytest.mark.parametrize("make, key", [
     (lambda: KineticEnergy(labels=["a", "b"], weights={"a": 1.0, "c": 1.0}), "c"),
-    (lambda: Symmetry(labels=["a", "b"], couples=[("a", "z")]), "z"),
+    (lambda: Symmetry(labels=["a", "b"], pairs=[("a", "z")]), "z"),
 ])
 def test_names_not_among_the_labels_raise(make, key):
     with pytest.raises(ValueError, match=key):
@@ -149,5 +150,5 @@ def test_a_custom_configuration_with_a_foreign_frame_is_invalid_input():
     with pytest.raises(ValueError, match="unknown joint names"):
         detector.process(frame, timestamp=0.0)
     assert detector.process({"a": (0, 0, 0)}).reason == "missing joints: b"
-    assert Symmetry(couples=[("a", "b")]).process(frame).status is Status.INVALID_INPUT
+    assert Symmetry(pairs=[("a", "b")]).process(frame).status is Status.INVALID_INPUT
     assert ke.process({"a": (0, 0, 0), "b": (1, 1, 1)}).status is Status.OK

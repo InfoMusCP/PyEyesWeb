@@ -2,7 +2,7 @@ from typing import Any, Literal, Optional
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.base.core_feature import CoreFeature, check_range
+from pyeyesweb.base.core_feature import CoreFeature, check_range, require_rate
 from pyeyesweb.base.minimum_window import MinimumWindow
 from pyeyesweb.base.signatures import input_mode_factory
 from pyeyesweb.catalog import Layer, describe
@@ -15,9 +15,11 @@ from pyeyesweb.low_level.kinematics import _InferredDimsBlock
 
 class _SpeedProfileMetric(MinimumWindow, WindowedFeature, CoreFeature):
     """What the four metrics of a speed profile share: one value per call, a buffered window of at least 10 samples
-    (the minimum of the original), one scalar output. The maths is in the compiled core."""
+    (the minimum of the original), one scalar output, and `sampling_rate` (required: the window has no time axis of its
+    own). The maths is in the compiled core."""
 
     MIN_WINDOW = 10
+    _rate_required = True
 
     def __init__(self, window: int, hop: int, **params: Any):
         super().__init__(window=window, hop=hop, **params)
@@ -57,7 +59,7 @@ class SpectralArcLength(_SpeedProfileMetric):
     hop : int, optional
         New samples between two windows. Defaults to `1`.
     sampling_rate : float, optional
-        Sampling rate of the speed in Hz. Defaults to `50.0`.
+        Sampling rate of the speed in Hz. Required: the window carries no time of its own.
     amplitude_threshold : float, optional
         Fraction of the spectrum maximum, in [0, 1], above which a frequency counts for the cut-off. Defaults to `0.05`.
     minimum_cutoff_frequency : float, optional
@@ -75,8 +77,9 @@ class SpectralArcLength(_SpeedProfileMetric):
     OUTPUTS = Schema(Output("spectral_arc_length", doc="Spectral arc length (SPARC); closer to 0 is smoother."))
     _core_class = core.motion.SpectralArcLength
 
-    def __init__(self, window: int = 60, hop: int = 1, sampling_rate: float = 50.0, amplitude_threshold: float = 0.05,
-                 minimum_cutoff_frequency: float = 2.0, maximum_cutoff_frequency: float = 20.0):
+    def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None,
+                 amplitude_threshold: float = 0.05, minimum_cutoff_frequency: float = 2.0,
+                 maximum_cutoff_frequency: float = 20.0):
         super().__init__(window, hop, sampling_rate=sampling_rate, amplitude_threshold=amplitude_threshold,
                          minimum_cutoff_frequency=minimum_cutoff_frequency,
                          maximum_cutoff_frequency=maximum_cutoff_frequency)
@@ -100,7 +103,7 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
     hop : int, optional
         New samples between two windows. Defaults to `1`.
     sampling_rate : float, optional
-        Sampling rate of the signal in Hz. Defaults to `50.0`.
+        Sampling rate of the signal in Hz. Required: the window carries no time of its own.
     input_mode : {"velocity", "acceleration"}, optional
         What the input holds: the speed, or the acceleration magnitude (the jerk is then its first difference).
         Defaults to `"velocity"`.
@@ -115,7 +118,7 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
     OUTPUTS = Schema(Output("log_dimensionless_jerk", doc="Log dimensionless jerk; closer to 0 is smoother."))
     _core_class = core.motion.LogDimensionlessJerk
 
-    def __init__(self, window: int = 60, hop: int = 1, sampling_rate: float = 50.0,
+    def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None,
                  input_mode: Literal["velocity", "acceleration"] = "velocity"):
         super().__init__(window, hop, sampling_rate=sampling_rate, input_mode=input_mode)
 
@@ -152,7 +155,7 @@ class Harmonicity(_SpeedProfileMetric):
     hop : int, optional
         New samples between two windows. Defaults to `1`.
     sampling_rate : float, optional
-        Sampling rate of the speed in Hz. Defaults to `50.0`.
+        Sampling rate of the speed in Hz. Required: the window carries no time of its own.
 
     Returns
     -------
@@ -163,7 +166,7 @@ class Harmonicity(_SpeedProfileMetric):
     OUTPUTS = Schema(Output("harmonicity", doc="Harmonicity index of the speed profile, in [0, 1]."))
     _core_class = core.motion.Harmonicity
 
-    def __init__(self, window: int = 60, hop: int = 1, sampling_rate: float = 50.0):
+    def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None):
         super().__init__(window, hop, sampling_rate=sampling_rate)
 
 
@@ -184,7 +187,7 @@ class SubmovementCount(_SpeedProfileMetric):
     hop : int, optional
         New samples between two windows. Defaults to `1`.
     sampling_rate : float, optional
-        Sampling rate of the speed in Hz. Defaults to `50.0`.
+        Sampling rate of the speed in Hz. Required: the window carries no time of its own.
     prominence_factor : float, optional
         Minimum prominence of a peak, as a fraction of the speed maximum (not negative). Defaults to `0.1`.
 
@@ -197,7 +200,8 @@ class SubmovementCount(_SpeedProfileMetric):
     OUTPUTS = Schema(Output("submovement_count", kind=int, doc="Number of detected sub-movements."))
     _core_class = core.motion.SubmovementCount
 
-    def __init__(self, window: int = 60, hop: int = 1, sampling_rate: float = 50.0, prominence_factor: float = 0.1):
+    def __init__(self, window: int = 60, hop: int = 1, *, sampling_rate: Optional[float] = None,
+                 prominence_factor: float = 0.1):
         super().__init__(window, hop, sampling_rate=sampling_rate, prominence_factor=prominence_factor)
 
 
@@ -267,7 +271,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     and computes every `hop` samples (`WARMING_UP` while the first window fills, `NO_OUTPUT` between hops).
     `_process_window(series)` is the EyesWeb Execute on one complete `(channels, window)` series. The block keeps
     its filter histories between windows (the previous window feeds the start of the next one): consecutive windows
-    overlap by `window - hop` samples, EyesWeb's `overlapped_samples`; `hop` defaults to `window` (no overlap).
+    overlap by `window - hop` samples, EyesWeb's `overlapped_samples`; `hop=window` is no overlap.
     With `input_kind` STATIC (default) every window has the shape of the first one; with DYNAMIC a window of any
     length can be passed to `_process_window`; a window of another length or channel count rebuilds the filters with an
     empty history, so it reports `WARMING_UP` (its first curvature samples are 0 / 0) and the windows after it are valid again. `run(samples, timestamps=None)` processes a whole `(T, channels)` recording.
@@ -277,9 +281,9 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     window : int
         Samples per window.
     hop : int, optional
-        New samples between two windows. Defaults to `window`.
+        New samples between two windows. Defaults to `1`.
     sampling_rate : float, optional
-        Sampling rate of the series in Hz. Defaults to `25`.
+        Sampling rate of the series in Hz. Required: the window carries no time of its own.
     **params
         The parameters of the EyesWeb block (`filter_polyorder`, `filter_window_length`, `input_kind`, ...).
 
@@ -291,10 +295,10 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     _DEFAULT_FILTER_WINDOW_LENGTH = 9
     _warmed_shape = None  # shape of the last window processed, None while the filters have no history
 
-    def __init__(self, window: int, hop: Optional[int] = None, sampling_rate: float = 25.0, **params: Any):
-        super().__init__(window=window, hop=window if hop is None else hop, **params)
+    def __init__(self, window: int, hop: int = 1, *, sampling_rate: Optional[float] = None, **params: Any):
+        super().__init__(window=window, hop=hop, **params)
         self._check_window()
-        self.sampling_rate = float(sampling_rate)
+        self.sampling_rate = sampling_rate
 
     @property
     def sampling_rate(self) -> float:
@@ -303,6 +307,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
 
     @sampling_rate.setter
     def sampling_rate(self, value: float) -> None:
+        require_rate(type(self).__name__, value)
         check_range("sampling_rate", value)
         value = float(value)
         if value != self.__dict__.get("_sampling_rate", value):

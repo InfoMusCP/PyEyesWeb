@@ -38,20 +38,20 @@ SEQUENCE = [event for _ in range(SAMPLE_COUNT // 8) for event in (1, 0, 2, 0, 0,
 
 LIVE = [
     (lambda: EventSynchronization(window=10, hop=10, tau=5), "tau", 8, PAIRS),
-    (lambda: EventSynchronizationMECS(window=6, hop=6, tau=4, event_class_number=1), "kernel",
+    (lambda: EventSynchronizationMECS(window=6, hop=6, tau=4, number_of_event_classes=1), "kernel",
      "linear", SERIES),
     (lambda: SequenceDetector(sequence="1 2", inter_event_time=3), "inter_event_time", 4, SEQUENCE),
 ]
 STRUCTURAL = [
     (lambda: EventSynchronization(window=10, hop=10, tau=5), "reset_every_buffer", True, PAIRS),
-    (lambda: EventSynchronizationMECS(window=7, hop=7, tau=10), "event_class_number", 2, SERIES),
-    (lambda: EventSynchronizationMECS(window=6, hop=6, tau=4, event_class_number=1), "tau", 6, SERIES),
+    (lambda: EventSynchronizationMECS(window=7, hop=7, tau=10), "number_of_event_classes", 2, SERIES),
+    (lambda: EventSynchronizationMECS(window=6, hop=6, tau=4, number_of_event_classes=1), "tau", 6, SERIES),
     (lambda: SequenceDetector(sequence="1 2"), "sequence", "1 3", SEQUENCE),
 ]
 INVALID = [
     (lambda: EventSynchronization(window=10, hop=10, tau=5), "tau", -1, PAIRS),
     (lambda: EventSynchronizationMECS(window=6, hop=6, tau=10), "tau", 0, SERIES),
-    (lambda: SpikeSynchronization(window=8, hop=8, number_of_input_trains=2), "number_of_input_trains", 1, SPIKES),
+    (lambda: SpikeSynchronization(window=8, hop=8, number_of_inputs=2), "number_of_inputs", 1, SPIKES),
     (lambda: SequenceDetector(sequence="1 2"), "sequence", "1 0", SEQUENCE),
 ]
 

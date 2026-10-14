@@ -20,7 +20,7 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
     (`labels` are needed for array input). `process(frame, timestamp=None)`; `timestamp` is the frame time in seconds,
     from which the block derives its time step (see `run`, `sampling_rate`).
 
-    Output `noise`, valid on every call: the variance of the speed of each joint over its last 10 frames is averaged over
+    Output `is_noisy`, valid on every call: the variance of the speed of each joint over its last 10 frames is averaged over
     5 frames, and the motion is noise while that mean is below `noise_threshold`. EyesWeb quirks are kept: only the last
     joint in label order with a full window counts, and the flag is true until 14 speeds were seen. It feeds the second
     input of `GestureSegmenter`; the kinetic energy of the same frames, from `KineticEnergy`, feeds the first.
@@ -51,14 +51,14 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
         return Inputs(points_input("skeleton", self._labels, "joint positions", accepts=(dict,)))
 
     def _schema(self) -> Schema:
-        return Schema(Output("noise", kind=bool, doc="motion judged random"))
+        return Schema(Output("is_noisy", kind=bool, doc="motion judged random"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         points = labelled_set(frame, self._labels, "MotionNoiseDetector")
         return self._to_result(self._block.process(points, self._time_step(timestamp)), timestamp)
 
     def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:
-        return self.result(noise=raw, timestamp=timestamp)
+        return self.result(is_noisy=raw, timestamp=timestamp)
 
 
 __all__ = ["MotionNoiseDetector"]

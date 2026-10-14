@@ -44,8 +44,8 @@ WRONG = [
     (lambda: KineticEnergy(labels=LABELS, weights=WEIGHTS), [SKELETON[:, :2]], "skeleton"),
     (_suddenness, [RNG.normal(size=(2, 3))], "position"),
     (_impulsivity, [RNG.normal(size=(2, 3))], "position"),
-    (lambda: EventSynchronization(window=8), [np.array([1.0, 0.0]), 0.0], "ts1"),
-    (lambda: CorrelationsMatrix(window=8, n_inputs=3), [np.ones(4)], "signals"),
+    (lambda: EventSynchronization(window=8), [np.array([1.0, 0.0]), 0.0], "first_signal"),
+    (lambda: CorrelationsMatrix(window=8, number_of_inputs=3), [np.ones(4)], "signals"),
 ]
 
 
@@ -74,7 +74,7 @@ def test_multi_input_features_check_each_input():
     with pytest.raises(ValueError, match="'curvature'"):
         feature.process(np.zeros((40, 2)), CONTOUR)
     sync = EventSynchronization(window=8)
-    with pytest.raises(ValueError, match="'ts2'"):
+    with pytest.raises(ValueError, match="'second_signal'"):
         sync.process(1.0, np.array([1.0, 2.0]))
 
 
@@ -90,10 +90,10 @@ def test_frames_are_checked_before_the_buffer_flattens_them():
 
 def test_process_window_checks_the_channels_of_a_fixed_input():
     with pytest.raises(ValueError, match="CorrelationsMatrix"):
-        CorrelationsMatrix(window=8, n_inputs=3)._process_window(np.ones((4, 8)))
+        CorrelationsMatrix(window=8, number_of_inputs=3)._process_window(np.ones((4, 8)))
     with pytest.raises(ValueError, match="Suddenness"):
         _suddenness()._process_window(np.ones((5, 8)))   # 5 channels are not 2 coordinates
-    assert CorrelationsMatrix(window=8, n_inputs=3)._process_window(RNG.normal(size=(3, 8))).ok
+    assert CorrelationsMatrix(window=8, number_of_inputs=3)._process_window(RNG.normal(size=(3, 8))).ok
 
 
 def test_run_with_a_mis_shaped_recording_raises_before_looping():
@@ -123,7 +123,7 @@ def test_valid_inputs_of_every_kind_are_accepted():
     assert results[-1].status in (Status.OK, Status.NO_OUTPUT)
     # a scalar sample, a vector sample
     assert EventSynchronization(window=8).process(1.0, np.array([0.0])).status in (Status.OK, Status.WARMING_UP)
-    assert CorrelationsMatrix(window=4, n_inputs=3).process(np.ones(3)).status is Status.WARMING_UP
+    assert CorrelationsMatrix(window=4, number_of_inputs=3).process(np.ones(3)).status is Status.WARMING_UP
 
 
 @pytest.mark.parametrize("make", [ContourCurvature, ConvexHull, FilterContour, HitCellDetector,

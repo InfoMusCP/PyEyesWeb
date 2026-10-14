@@ -23,25 +23,25 @@ from pyeyesweb.low_level import ConvexHull  # noqa: E402
 
 def test_recurrence_plot_contract_and_values():
     block = RecurrencePlot(window=4)
-    assert isinstance(block.outputs, Schema) and block.outputs["plot"].shape == (None, None)
+    assert isinstance(block.outputs, Schema) and block.outputs["recurrence_matrix"].shape == (None, None)
     result = block._process_window(np.array([[0.0, 0.5, 1.0, 3.0]]))
-    assert isinstance(result, Result) and result.status is Status.OK and result.valid == {"plot": True}
-    assert result.plot.shape == (4, 4) and np.issubdtype(result.plot.dtype, np.floating)
-    np.testing.assert_array_equal(result.plot, np.eye(4))  # |0 - 0.5| == epsilon is not a recurrence
+    assert isinstance(result, Result) and result.status is Status.OK and result.valid == {"recurrence_matrix": True}
+    assert result.recurrence_matrix.shape == (4, 4) and np.issubdtype(result.recurrence_matrix.dtype, np.floating)
+    np.testing.assert_array_equal(result.recurrence_matrix, np.eye(4))  # |0 - 0.5| == epsilon is not a recurrence
 
 
 def test_recurrence_plot_multichannel_order():
     states = np.array([[0.0, 1.0, 3.0], [0.0, 1.0, 0.0]])  # (channels, samples)
-    euclidean = RecurrencePlot(window=3, order=2, epsilon=1.5)._process_window(states).plot
-    l1 = RecurrencePlot(window=3, order=1, epsilon=1.5)._process_window(states).plot
+    euclidean = RecurrencePlot(window=3, order=2, epsilon=1.5)._process_window(states).recurrence_matrix
+    l1 = RecurrencePlot(window=3, order=1, epsilon=1.5)._process_window(states).recurrence_matrix
     assert euclidean[0, 1] == 1 and l1[0, 1] == 0  # Euclidean 1.41 vs L1 2
-    infinity = RecurrencePlot(window=3, order=math.inf, epsilon=2.1)._process_window(states).plot
+    infinity = RecurrencePlot(window=3, order=math.inf, epsilon=2.1)._process_window(states).recurrence_matrix
     assert infinity[1, 2] == 1
 
 
 def test_recurrence_plot_multiple_epsilons():
     block = RecurrencePlot(window=3, use_multiple_epsilons=True, multiple_epsilons=[1.5, 0.0, 1.0])
-    np.testing.assert_array_equal(block._process_window(np.array([[0.0, 1.0, 2.0]])).plot,
+    np.testing.assert_array_equal(block._process_window(np.array([[0.0, 1.0, 2.0]])).recurrence_matrix,
                                   [[1, 1, 0], [0, 0, 0], [0, 0, 1]])
     with pytest.raises(ValueError):
         block._process_window(np.arange(4.0)[None])  # 3 epsilons for 4 samples
@@ -51,12 +51,12 @@ def test_recurrence_plot_multiple_epsilons():
 
 def test_cross_recurrence_plot_shapes():
     block = CrossRecurrencePlot(window=2)
-    assert block.outputs["plot"].shape == (None, None)
+    assert block.outputs["cross_recurrence_matrix"].shape == (None, None)
     first_series, second_series = np.array([[0.0, 10.0]]), np.array([[0.0, 10.0, 0.0]])  # (channels, samples); lengths may differ
     result = block._process_window(first_series, second_series)
-    assert result.status is Status.OK and result.plot.shape == (2, 3)
-    np.testing.assert_array_equal(result.plot, [[1, 0, 1], [0, 1, 0]])
-    assert CrossRecurrencePlot(window=2)._process_window(second_series, first_series).plot.shape == (3, 2)
+    assert result.status is Status.OK and result.cross_recurrence_matrix.shape == (2, 3)
+    np.testing.assert_array_equal(result.cross_recurrence_matrix, [[1, 0, 1], [0, 1, 0]])
+    assert CrossRecurrencePlot(window=2)._process_window(second_series, first_series).cross_recurrence_matrix.shape == (3, 2)
     with pytest.raises(ValueError):
         block._process_window(np.zeros((2, 3)), np.zeros((1, 3)))
 

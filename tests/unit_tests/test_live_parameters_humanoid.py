@@ -8,7 +8,7 @@ forgot its state. The classification is the core's, from the original (see the h
 * `HumanoidSimulator`, `GenericModelSimulator`, `GenericModelPredictor`: every parameter is LIVE; the topology of a
   model (names of its masses and springs, which end masses) is STRUCTURAL, the rest of a model is LIVE.
 * `GenericModelEstimator`: LIVE except `seed` and the topology of the model.
-* `HumanoidOrientations`: `ref_dir` is STRUCTURAL (the body is built from it).
+* `HumanoidOrientations`: `reference_direction` is STRUCTURAL (the body is built from it).
 """
 
 import os
@@ -40,25 +40,30 @@ SPRING_LAYOUT = core.SkeletonLayout([str(label) for label in REFERENCE["spring_l
 MASS_LAYOUT = core.SkeletonLayout([str(label) for label in REFERENCE["mass_labels"]])
 
 
+def _raw(params):
+    """The keywords of the raw block: it spells the reference direction as the core does."""
+    return {"ref_dir" if name == "reference_direction" else name: value for name, value in params.items()}
+
+
 def _positions(output):
     return output[0] if isinstance(output, tuple) else output
 
 
 # name -> (feature factory, raw factory, layout, frames); the raw factory takes the changed parameters as keywords
 BLOCKS = {
-    "HumanoidSimulator": (lambda **params: HumanoidSimulator(**RATE, **params), lambda **params: RAW.HumanoidSimulator(**params),
+    "HumanoidSimulator": (lambda **params: HumanoidSimulator(**RATE, **params), lambda **params: RAW.HumanoidSimulator(**_raw(params)),
                           JOINT_LAYOUT, FOREARM),
     "GenericModelSimulator": (lambda **params: GenericModelSimulator(MODEL, **RATE, **params),
-                              lambda **params: RAW.GenericModelSimulator(RAW_MODEL, **params), SPRING_LAYOUT, CHAIN_DIRECTIONS),
+                              lambda **params: RAW.GenericModelSimulator(RAW_MODEL, **_raw(params)), SPRING_LAYOUT, CHAIN_DIRECTIONS),
     "GenericModelPredictor": (lambda **params: GenericModelPredictor(MODEL, **RATE, **params),
-                              lambda **params: RAW.GenericModelPredictor(RAW_MODEL, **params), SPRING_LAYOUT, CHAIN_DIRECTIONS),
+                              lambda **params: RAW.GenericModelPredictor(RAW_MODEL, **_raw(params)), SPRING_LAYOUT, CHAIN_DIRECTIONS),
     "GenericModelEstimator": (lambda **params: GenericModelEstimator(MODEL, estimate_direction_springs=True, **RATE, **params),
-                              lambda **params: RAW.GenericModelEstimator(RAW_MODEL, **{"estimate_direction_springs": True, **params}),
+                              lambda **params: RAW.GenericModelEstimator(RAW_MODEL, **_raw({"estimate_direction_springs": True, **params})),
                               MASS_LAYOUT, CHAIN_POSITIONS),
 }
 
 COMMON = [("damping", 3.0), ("viscosity", 2.0), ("gravity", (0.0, -500.0, 0.0)), ("length_forces", False),
-          ("rotation_forces", False), ("integration_step", 0.002), ("ref_dir", (0.0, 0.0, 1.0)),
+          ("rotation_forces", False), ("integration_step", 0.002), ("reference_direction", (0.0, 0.0, 1.0)),
           ("floor_position", (0.0, -1.0, 0.0)), ("ground_interaction", True)]
 GENERIC = [("use_input_lengths", True)]
 CASES = (
@@ -113,7 +118,7 @@ def test_a_model_of_the_same_topology_is_live_and_another_is_structural():
 
 
 def test_the_reference_direction_of_the_orientations_is_structural():
-    check_structural(lambda: HumanoidOrientations(), "ref_dir", (0.0, 0.0, 1.0), list(FOREARM))
+    check_structural(lambda: HumanoidOrientations(), "reference_direction", (0.0, 0.0, 1.0), list(FOREARM))
 
 
 def test_the_sampling_rate_is_live():

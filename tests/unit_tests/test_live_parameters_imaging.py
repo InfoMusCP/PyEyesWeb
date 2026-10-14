@@ -40,14 +40,14 @@ LIVE = [
 ]
 STRUCTURAL = [
     (lambda: SilhouetteCentroids(filter_centroids=True), "silhouette", "upper", BODIES),
-    (lambda: Videogram(length=20), "length", 30, NOISE),
-    (lambda: Videogram(length=20), "mode", "vertical", COLOUR),
+    (lambda: Videogram(window=20), "window", 30, NOISE),
+    (lambda: Videogram(window=20), "mode", "vertical", COLOUR),
 ]
 INVALID = [
     (lambda: SilhouetteBodyParts(arm_percentage=0.8), "arm_percentage", float("nan"), BODIES),
     (lambda: SilhouetteCentroids(alpha=0.75), "alpha", 2.0, BODIES),
     (lambda: SilhouetteCentroids(silhouette="full"), "silhouette", "torso", BODIES),
-    (lambda: Videogram(length=20), "length", 0, NOISE),
+    (lambda: Videogram(window=20), "window", 0, NOISE),
     (lambda: Videogram(direction="left_to_right"), "direction", "up", NOISE),
     (lambda: BinaryPulsesRegularity(window=10, threshold=0), "threshold", -1, PULSES),
 ]
@@ -73,7 +73,7 @@ def test_an_invalid_value_raises_and_changes_nothing(factory, attr, value, recor
 
 
 def test_the_videogram_direction_is_live_and_keeps_the_lines():
-    changed, control = Videogram(length=30), Videogram(length=30)
+    changed, control = Videogram(window=30), Videogram(window=30)
     feed(changed, NOISE[:10])
     feed(control, NOISE[:10])
     changed.direction = "right_to_left"
@@ -85,7 +85,7 @@ def test_the_videogram_direction_is_live_and_keeps_the_lines():
 
 
 def test_the_videogram_end_of_image_mode_is_live():
-    feature = Videogram(length=5)
+    feature = Videogram(window=5)
     feed(feature, NOISE[:8])
     feature.end_of_image_mode = "scroll"
     result = feature.process(NOISE[8])

@@ -66,11 +66,11 @@ class GestureSegmenter(CoreFeature):
         energy, detector = KineticEnergy(skeleton=...), MotionNoiseDetector(skeleton=...)
         segmenter = GestureSegmenter(firing_threshold=...)
         result = segmenter.process(energy.process(frame, timestamp=t)["kinetic_energy"],
-                                   detector.process(frame, timestamp=t)["noise"])
+                                   detector.process(frame, timestamp=t)["is_noisy"])
 
     `firing_threshold` is in the unit of the intensity: the energy of data in millimetres is in mm^2.
 
-    `smoothed_intensity`, `gesturing`, `gesture_start` and `gesture_end` are emitted once the 10-sample window is full:
+    `smoothed_intensity`, `is_gesturing`, `is_gesture_start` and `is_gesture_end` are emitted once the 10-sample window is full:
     before that the status is `WARMING_UP` and they are not produced; afterwards `OK`.
     """
     _core_class = _motion.GestureSegmenter
@@ -81,8 +81,8 @@ class GestureSegmenter(CoreFeature):
 
     def _schema(self) -> Schema:
         return Schema(Output("smoothed_intensity", doc="filtered intensity, once the window is full"),
-                      Output("gesturing", kind=bool), Output("gesture_start", kind=bool),
-                      Output("gesture_end", kind=bool))
+                      Output("is_gesturing", kind=bool), Output("is_gesture_start", kind=bool),
+                      Output("is_gesture_end", kind=bool))
 
     def process(self, intensity: Any, noise: Any = 0.0, *, timestamp: Optional[float] = None) -> Result:
         if reason := non_finite(intensity) or non_finite(noise):
@@ -98,8 +98,8 @@ class GestureSegmenter(CoreFeature):
         if raw is None:
             return self.no_output(Status.WARMING_UP, "window filling", timestamp)
         smoothed, gesturing, start, end = raw
-        return self.result(timestamp=timestamp, smoothed_intensity=smoothed, gesturing=gesturing, gesture_start=start,
-                           gesture_end=end)
+        return self.result(timestamp=timestamp, smoothed_intensity=smoothed, is_gesturing=gesturing,
+                           is_gesture_start=start, is_gesture_end=end)
 
 
 __all__ = ["GestureSegmenter", "MotionDuration"]

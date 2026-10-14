@@ -148,7 +148,7 @@ def test_log_dimensionless_jerk_factories_and_the_renamed_parameter():
     assert acceleration._process_window(profile).log_dimensionless_jerk == \
         LogDimensionlessJerk(input_mode="acceleration", window=60, sampling_rate=100.0)._process_window(profile).log_dimensionless_jerk
     with pytest.raises(TypeError, match="'signal'.*input_mode"):
-        LogDimensionlessJerk(signal="acceleration")
+        LogDimensionlessJerk(signal="acceleration", sampling_rate=50.0)
 
 
 @pytest.mark.parametrize("window", [5, 9, 15])

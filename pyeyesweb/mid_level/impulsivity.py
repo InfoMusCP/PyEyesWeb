@@ -38,8 +38,8 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
         Coordinates of the position, 2 or 3. Defaults to the size of the first position.
     direction_change_epsilon : float, optional
         Epsilon threshold for Direction Change. Defaults to `0.5`.
-    suddenness_algo : str, optional
-        Algorithm to use for Suddenness. Defaults to `"new"`.
+    method : {"constrained", "quantile"}, optional
+        Algorithm to use for Suddenness. Defaults to `"constrained"`.
 
     Returns
     -------
@@ -53,14 +53,15 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
     )
 
     _core_class = core.motion.SuddennessImpulsivity
+    _core_names = {"method": "algorithm"}
     _lazy_block = True
 
-    def __init__(self, window: int, hop: int = 1, dims: Optional[int] = None, direction_change_epsilon: float = 0.5,
-                 algorithm: _Algorithm = "constrained"):
+    def __init__(self, window: int, hop: int = 1, *, dims: Optional[int] = None, direction_change_epsilon: float = 0.5,
+                 method: _Algorithm = "constrained"):
         super().__init__(window=window, hop=hop)
         self.dims = dims
         self.direction_change_epsilon = direction_change_epsilon
-        self.algorithm = algorithm
+        self.method = method
         self._check_window()
 
     @property
@@ -83,28 +84,37 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
 class ContractionImpulsivity(CoreFeature):
     """EyesWeb Impulsivity (ImpulsivityIndex): the change of the contraction index over a short, energetic gesture.
 
-    Two inputs, in call order: `sqom` (quantity of motion) and `ci` (contraction index), scalar samples
-    (`process(sqom, ci, timestamp=None)`, `run(sqoms, cis, timestamps=None)`). Stateful.
+    Two inputs, in call order: `quantity_of_motion` and `contraction_index`, scalar samples
+    (`process(quantity_of_motion, contraction_index, timestamp=None)`, `run(quantities_of_motion, contraction_indices,
+    timestamps=None)`). Stateful.
 
     Outputs `impulsivity_index` (contraction-index change per second) and `gesture_duration` (frames): both 0
     except on the frame that closes an impulsive gesture. Always `OK`; `timestamp` is the timestamp in seconds.
 
-    A gesture is a run of frames with `sqom` above `motion_threshold` (EyesWeb hard codes 0.01), closed by the first
-    frame at or below it; it is impulsive when it lasts at most `ges_dur` frames and its peak `sqom` reaches
-    `peak_threshold`. `frames` is the frame rate.
+    A gesture is a run of frames with `quantity_of_motion` above `motion_threshold` (EyesWeb hard codes 0.01), closed by
+    the first frame at or below it; it is impulsive when it lasts at most `gesture_duration` frames and its peak
+    `quantity_of_motion` reaches `peak_threshold`. `sampling_rate` is the frame rate in Hz; without it the index is per
+    frame (a rate of 1), not per second.
     """
     _core_class = core.motion.ImpulsivityIndex
+    _core_names = {"gesture_duration": "ges_dur", "sampling_rate": "frames"}
+    _timed = True
+
+    def _block_params(self, params: dict) -> dict:
+        rate = params.get("sampling_rate")  # no rate: per frame, not the 25 Hz of the block
+        return super()._block_params({**params, "sampling_rate": 1.0 if rate is None else rate})
 
     def _inputs(self) -> Inputs:
-        return Inputs(Input("sqom", InputKind.SAMPLE, (1,), doc="quantity of motion"),
-                      Input("ci", InputKind.SAMPLE, (1,), doc="contraction index"))
+        return Inputs(Input("quantity_of_motion", InputKind.SAMPLE, (1,), doc="quantity of motion"),
+                      Input("contraction_index", InputKind.SAMPLE, (1,), doc="contraction index"))
 
     def _schema(self) -> Schema:
         return Schema(Output("impulsivity_index", doc="contraction-index change per second"),
                       Output("gesture_duration", unit="frames"))
 
-    def process(self, sqom: Any, ci: Any, *, timestamp: Optional[float] = None) -> Result:
-        return self._to_result(self._block.process(scalar(sqom), scalar(ci)), timestamp)
+    def process(self, quantity_of_motion: Any, contraction_index: Any, *, timestamp: Optional[float] = None) -> Result:
+        self._time_step(timestamp)  # only the time rule (a timestamp that goes back is rejected): the rate is `sampling_rate`
+        return self._to_result(self._block.process(scalar(quantity_of_motion), scalar(contraction_index)), timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         index, duration = raw

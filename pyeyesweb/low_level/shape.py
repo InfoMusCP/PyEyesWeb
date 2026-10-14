@@ -42,6 +42,7 @@ class BodyPartsFromCurvature(CoreFeature):
     `label -> (x, y)`. Always `OK`.
     """
     _core_class = _motion.BodyPartsFromCurvature
+    _core_names = {"number_of_points": "points_number"}
     INPUTS = Inputs(Input("curvature", InputKind.SAMPLE, (None,), doc="curvature of each contour point"), CONTOUR)
 
     def _schema(self) -> Schema:

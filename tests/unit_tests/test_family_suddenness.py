@@ -35,15 +35,15 @@ def test_inputs_are_one_point(cls):
 @pytest.mark.parametrize("cls", FITS)
 def test_algorithm_enum_and_runtime_change(cls):
     feature = cls(window=8)
-    assert feature.algorithm == "constrained"
-    feature.algorithm = "quantile"
-    assert feature.algorithm == "quantile"
-    assert cls(window=8, algorithm="quantile").algorithm == "quantile"
+    assert feature.method == "constrained"
+    feature.method = "quantile"
+    assert feature.method == "quantile"
+    assert cls(window=8, method="quantile").method == "quantile"
     for bad in ("new", "whatever", 3):
         with pytest.raises(ValueError, match="constrained.*quantile"):
-            cls(window=8, algorithm=bad)
+            cls(window=8, method=bad)
         with pytest.raises(ValueError, match="constrained.*quantile"):
-            feature.algorithm = bad
+            feature.method = bad
 
 
 @pytest.mark.parametrize("cls", FITS)
@@ -61,7 +61,7 @@ def test_non_finite_positions_are_invalid_input(cls, bad):
 
 
 def test_quantile_sentinel_is_invalid_input_without_numbers():
-    feature = Suddenness(window=12, dims=3, algorithm="quantile")
+    feature = Suddenness(window=12, dims=3, method="quantile")
     statuses = []
     for seed in range(20):
         result = feature._process_window(_series(12, seed=seed))

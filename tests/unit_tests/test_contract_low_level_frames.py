@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
+from symmetry_inputs import reflection  # noqa: E402
 from pyeyesweb.data_models import InputKind, Status  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
     BoundingBoxFilledArea, DirectionChange, Equilibrium, EllipsoidSphericity, PointsDensity, CurvatureVelocityCorrelation, Symmetry,
@@ -25,7 +26,7 @@ RNG = np.random.default_rng(5)
 CLOUDS = RNG.standard_normal((30, 8, 3))          # (T, N, 3)
 SKELETONS = RNG.standard_normal((30, 3, 3))
 LABELS = ["torso", "left_hip", "right_hip"]
-RATIO = dict(couples=[("left_hip", "right_hip")], reference_point="torso")  # the default input type is custom
+RATIO = dict(pairs=[("left_hip", "right_hip")], reference_point="torso")  # the default input type is custom
 WALK = np.cumsum(RNG.standard_normal((60, 2, 3)), axis=0)   # (T, signals, dims)
 SERIES = np.cumsum(RNG.standard_normal((120, 2)), axis=0)   # (T, channels)
 
@@ -47,7 +48,7 @@ def test_bounding_box_filled_area_contract():
 
 def test_points_density_contract_and_input_forms():
     check_feature_contract(lambda: PointsDensity(labels=list("abcdefgh")), CLOUDS)
-    check_feature_contract(lambda: PointsDensity(output_dims="component"), CLOUDS)
+    check_feature_contract(lambda: PointsDensity(output_dims="components"), CLOUDS)
     labelled = PointsDensity(labels=list("abcdefgh"))
     assert labelled.inputs[0].labels == tuple("abcdefgh") and labelled.inputs[0].shape == (8, 3)
     as_dict = dict(zip("abcdefgh", map(tuple, CLOUDS[0])))
@@ -71,18 +72,19 @@ def test_ellipsoid_sphericity_cloud_and_axes_entry_points():
 # ------------------------------------------------------------------ symmetry
 
 def test_geometric_symmetry_contract():
-    check_feature_contract(lambda: Symmetry(method="reflection", joint_pairs=[(0, 1), (2, 3)], center_of_symmetry=4), CLOUDS)
-    assert Symmetry(method="reflection", joint_pairs=[(0, 1)]).process(CLOUDS[0][:1]).status == Status.INVALID_INPUT
+    check_feature_contract(lambda: reflection(8, [(0, 1), (2, 3)], 4), CLOUDS)
+    with pytest.raises(ValueError, match="skeleton"):  # the joint names fix the number of rows
+        reflection(8, [(0, 1)]).process(CLOUDS[0][:1])
 
 
-@pytest.mark.parametrize("output_type", ["global", "components"])
-def test_symmetry_index_3d_contract_and_input_forms(output_type):
-    check_feature_contract(lambda: Symmetry(**RATIO, labels=LABELS, output_type=output_type), SKELETONS)
-    feature = Symmetry(**RATIO, labels=LABELS, output_type=output_type)
+@pytest.mark.parametrize("output_dims", ["global", "components"])
+def test_symmetry_index_3d_contract_and_input_forms(output_dims):
+    check_feature_contract(lambda: Symmetry(**RATIO, labels=LABELS, output_dims=output_dims), SKELETONS)
+    feature = Symmetry(**RATIO, labels=LABELS, output_dims=output_dims)
     assert feature.inputs[0].labels == tuple(LABELS) and feature.inputs[0].shape == (3, 3)
     as_dict = dict(zip(LABELS, map(tuple, SKELETONS[0])))
     _same(feature.process(SKELETONS[0]), feature.process(as_dict))
-    _same(Symmetry(output_type=output_type, **RATIO).process(as_dict), feature.process(as_dict))
+    _same(Symmetry(output_dims=output_dims, **RATIO).process(as_dict), feature.process(as_dict))
 
 
 def test_symmetry_index_3d_array_needs_labels():
@@ -136,10 +138,10 @@ def test_direction_change_selective_schema_and_validation():
 # ------------------------------------------------------------------ smoothness
 
 def test_curvature_velocity_smoothness_contract_and_window():
-    check_feature_contract(lambda: CurvatureVelocityCorrelation(window=40), SERIES)
+    check_feature_contract(lambda: CurvatureVelocityCorrelation(window=40, sampling_rate=25.0), SERIES)
     check_feature_contract(lambda: CurvatureVelocityCorrelation(window=40, hop=20, sampling_rate=50.0), SERIES)
-    check_feature_contract(lambda: CurvatureVelocityCorrelation(window=40), SERIES[:, 0])
-    feature = CurvatureVelocityCorrelation(window=40, hop=20)
+    check_feature_contract(lambda: CurvatureVelocityCorrelation(window=40, sampling_rate=25.0), SERIES[:, 0])
+    feature = CurvatureVelocityCorrelation(window=40, hop=20, sampling_rate=25.0)
     assert feature.inputs[0].kind is InputKind.SAMPLE
     statuses = list(feature.run(SERIES).status)
     assert statuses[:39] == [int(Status.WARMING_UP)] * 39 and statuses[39] == int(Status.WARMING_UP)
@@ -147,15 +149,15 @@ def test_curvature_velocity_smoothness_contract_and_window():
 
 
 def test_curvature_velocity_smoothness_process_window_matches_the_streamed_first_window():
-    streamed = CurvatureVelocityCorrelation(window=40).run(SERIES[:40])
-    direct = CurvatureVelocityCorrelation(window=40)._process_window(SERIES[:40].T, timestamp=0.5)
+    streamed = CurvatureVelocityCorrelation(window=40, sampling_rate=25.0).run(SERIES[:40])
+    direct = CurvatureVelocityCorrelation(window=40, sampling_rate=25.0)._process_window(SERIES[:40].T, timestamp=0.5)
     assert direct.timestamp == 0.5
     for name in ("smoothness", "curvature", "velocity", "curvature_std", "velocity_std"):
         np.testing.assert_array_equal(direct[name], streamed[name][-1])
 
 
 def test_curvature_velocity_smoothness_reset_restores_the_filter_history():
-    feature = CurvatureVelocityCorrelation(window=40, hop=20)
+    feature = CurvatureVelocityCorrelation(window=40, hop=20, sampling_rate=25.0)
     first = feature.run(SERIES)
     again = feature.run(SERIES)
     np.testing.assert_array_equal(first["smoothness"], again["smoothness"])
@@ -163,9 +165,9 @@ def test_curvature_velocity_smoothness_reset_restores_the_filter_history():
 
 def test_curvature_velocity_smoothness_time_is_seconds_of_the_newest_sample():
     ts = np.arange(len(SERIES)) * 0.02
-    timed = CurvatureVelocityCorrelation(window=40, hop=20).run(SERIES, timestamps=ts)
+    timed = CurvatureVelocityCorrelation(window=40, hop=20, sampling_rate=25.0).run(SERIES, timestamps=ts)
     assert timed.timestamps[39] == pytest.approx(ts[39])
-    assert math.isnan(CurvatureVelocityCorrelation(window=40).run(SERIES).timestamps[39])
+    assert math.isnan(CurvatureVelocityCorrelation(window=40, sampling_rate=25.0).run(SERIES).timestamps[39])
 
 
 def test_triangle_symmetry_is_one_minus_the_frozen_asymmetry():

@@ -9,6 +9,7 @@ import pytest
 pytest.importorskip("pyeyesweb._core")
 
 from pyeyesweb import catalog  # noqa: E402
+from pyeyesweb.base.choices import choice_name  # noqa: E402
 
 
 # The parameters that pick the variant: only the public class dispatches on them.
@@ -61,6 +62,8 @@ def _build(cls, **params):
                 if parameter.default is parameter.empty and parameter.kind is parameter.POSITIONAL_OR_KEYWORD and name == "window"}
     if "skeleton" in inspect.signature(cls).parameters:  # the joint features refuse to be built without joints
         params.setdefault("skeleton", "kinect_v2")
+    if getattr(cls, "_rate_required", False):  # no default rate
+        params.setdefault("sampling_rate", 50.0)
     if "model" in inspect.signature(cls).parameters:  # the mass-spring features need a model to follow
         params.setdefault("model", _model())
     try:
@@ -99,7 +102,7 @@ def test_every_option_is_accepted_in_every_spelling(cls, name, options):
 def test_an_enum_member_is_still_taken(cls, name, options):
     enum_cls = cls._core_enums()[name][0]
     for member in enum_cls.__members__.values():
-        assert (_build(cls, **{name: member}) is None) == (_build(cls, **{name: member.name.lower()}) is None)
+        assert (_build(cls, **{name: member}) is None) == (_build(cls, **{name: choice_name(member)}) is None)
 
 
 @pytest.mark.parametrize("cls, name, options", _choice_parameters())

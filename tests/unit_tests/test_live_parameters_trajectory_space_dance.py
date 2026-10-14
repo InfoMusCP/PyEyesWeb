@@ -45,11 +45,11 @@ LIVE = [
     (lambda: kinematics(), "movement_threshold", 0.5, POINTS3),
     (lambda: kinematics(output_type=["velocity", CURVATURE]), "movement_threshold", 0.5, POINTS3),
     (lambda: TrajectoryNonPlanarity(), "radius", 50.0, TRAJECTORIES),
-    (lambda: HitCellDetector(cells_x=4, cells_y=4), "x_max", 2.0, HITS),
+    (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4), "x_max", 2.0, HITS),
     (lambda: PositionDependingPotentials(potential_type="gaussian", **_GRID),
-     "std_dev_x", 2.0, CELLS),
+     "gaussian_sigma_x", 2.0, CELLS),
     (lambda: RegionDependingPotentials(**_GRID), "output_region_values", True, CELLS),
-    (lambda: ScalarPeakDetector(buffer_length=5, threshold=0.01), "threshold", 0.5, PEAK_SIGNAL),
+    (lambda: ScalarPeakDetector(window=5, threshold=0.01), "threshold", 0.5, PEAK_SIGNAL),
 ]
 STRUCTURAL = [
     (lambda: kinematics(), "filter_polyorder", 4, POINTS3),
@@ -58,17 +58,17 @@ STRUCTURAL = [
     (lambda: PositionDependingPotentials(**_GRID), "potential_type", "gaussian", CELLS),
     (lambda: RegionDependingPotentials(**_GRID), "potential_type", "occupation_rates_linear",
      REGION_CELLS),
-    (lambda: ScalarPeakDetector(buffer_length=5), "buffer_length", 7, PEAK_SIGNAL),
+    (lambda: ScalarPeakDetector(window=5), "window", 7, PEAK_SIGNAL),
 ]
 INVALID = [
     (lambda: kinematics(), "filter_window_length", 3, POINTS3),
     (lambda: kinematics(), "output_type", ["velocity", "velocity"], POINTS3),
     (lambda: kinematics(), "output_type", ["velocity", "nonsense"], POINTS3),
     (lambda: TrajectoryNonPlanarity(radius=100.0), "radius", -1.0, TRAJECTORIES),
-    (lambda: HitCellDetector(cells_x=4, cells_y=4), "cells_x", 0, HITS),
+    (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4), "cells_along_x", 0, HITS),
     (lambda: PositionDependingPotentials(**_GRID), "cells_along_x", 0, CELLS),
-    (lambda: RegionDependingPotentials(num_of_regions=10, **_GRID), "num_of_regions", 0, CELLS),
-    (lambda: ScalarPeakDetector(buffer_length=5), "buffer_length", 0, PEAK_SIGNAL),
+    (lambda: RegionDependingPotentials(number_of_regions=10, **_GRID), "number_of_regions", 0, CELLS),
+    (lambda: ScalarPeakDetector(window=5), "window", 0, PEAK_SIGNAL),
 ]
 
 

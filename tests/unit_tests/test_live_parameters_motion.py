@@ -73,23 +73,23 @@ INTENSITY = [(float(2.0 * 0.5 * np.diff(_HAND, prepend=0.0)[frame] ** 2), float(
 
 def symmetry(**params):
     return Symmetry(reference_point="torso",
-                    couples=[("left_shoulder", "right_shoulder")], normalize_skeleton=False, **params)
+                    pairs=[("left_shoulder", "right_shoulder")], normalize_skeleton=False, **params)
 
 
 LIVE = [
     (lambda: BodyPartsFromCurvature(), "minimum_distance", 3, CURVATURES),
     (lambda: ConvexHull(integer_coordinates=True), "integer_coordinates", False, HULLS),
-    (lambda: FilterContour(window_length=5, sigma_value=2.0), "sigma_value", 1.0, CONTOURS),
+    (lambda: FilterContour(window=5, gaussian_sigma=2.0), "gaussian_sigma", 1.0, CONTOURS),
     (lambda: segmenter(), "firing_threshold", 5.0, INTENSITY),
     (lambda: detector(), "noise_threshold", 1e-9, TIMED_HAND),
-    (lambda: ContractionImpulsivity(frames=25.0), "frames", 50.0, IMPULSES),
+    (lambda: ContractionImpulsivity(sampling_rate=25.0), "sampling_rate", 50.0, IMPULSES),
     (lambda: ContractionImpulsivity(), "peak_threshold", 0.5, IMPULSES),
     (lambda: ContractionImpulsivity(), "motion_threshold", 0.1, IMPULSES),
     (lambda: MotionDuration(sampling_rate=25.0), "sampling_rate",
      50.0, SQUARE_WAVE),
     (lambda: Periodicity(window=40, hop=10, threshold=0.2), "threshold", 0.6, PERIODIC),
-    (lambda: Rarity(number_of_inputs=2, data_memory=20), "type", "contrast", SAMPLES_2),
-    (lambda: symmetry(algorithm="mean"), "algorithm", "min",
+    (lambda: Rarity(number_of_inputs=2, window=20), "measure", "contrast", SAMPLES_2),
+    (lambda: symmetry(aggregation="mean"), "aggregation", "min",
      SKELETONS),
     (lambda: PointsDensity(distance_type="mean"), "distance_type",
      "max", POINT_CLOUDS),
@@ -97,16 +97,16 @@ LIVE = [
 STRUCTURAL = [
     (lambda: segmenter(), "filter_window_length", 7, INTENSITY),
     (lambda: detector(), "labels", ["hand", "torso"], TIMED_HAND),
-    (lambda: Rarity(number_of_inputs=2, data_memory=20), "data_memory", 10, SAMPLES_2),
+    (lambda: Rarity(number_of_inputs=2, window=20), "window", 10, SAMPLES_2),
     (lambda: CoarseGraining(window=20, hop=5, factor=2), "factor", 4, PERIODIC),
 ]
 INVALID = [
-    (lambda: FilterContour(window_length=5, sigma_value=2.0), "window_length", 0, CONTOURS),
+    (lambda: FilterContour(window=5, gaussian_sigma=2.0), "window", 0, CONTOURS),
     (lambda: segmenter(), "filter_window_length", 3, INTENSITY),
     (lambda: ContractionImpulsivity(peak_threshold=0.02), "peak_threshold", 2.0, IMPULSES),
     (lambda: ContractionImpulsivity(motion_threshold=0.01), "motion_threshold", -0.1, IMPULSES),
-    (lambda: Rarity(number_of_inputs=2, data_memory=20), "data_memory", 0, SAMPLES_2),
-    (lambda: symmetry(), "couples", [("left_shoulder", "right_shoulder"), ("left_shoulder", "right_shoulder")],
+    (lambda: Rarity(number_of_inputs=2, window=20), "window", 0, SAMPLES_2),
+    (lambda: symmetry(), "pairs", [("left_shoulder", "right_shoulder"), ("left_shoulder", "right_shoulder")],
      SKELETONS),
     (lambda: CoarseGraining(window=20, hop=5, factor=2), "factor", 0, PERIODIC),
 ]

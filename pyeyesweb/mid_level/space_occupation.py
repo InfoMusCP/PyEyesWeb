@@ -41,6 +41,9 @@ class PositionDependingPotentials(FrameFeature):
     empty list, `INVALID_INPUT` for a rejected cell. `reset()` is both EyesWeb's Init() and its Reset trigger.
     """
     _core_class = _space.PositionDependingPotentials
+    _core_names = {"window": "window_size", "gaussian_sigma_x": "std_dev_x", "gaussian_sigma_y": "std_dev_y",
+                   "gaussian_correlation": "rho", "use_custom_amplitude": "use_cust_ampl",
+                   "custom_amplitude": "cust_ampl", "use_custom_distance": "use_cust_dist", "custom_distance": "cust_dist"}
     INPUTS = Inputs(_CELLS)
 
     def _schema(self) -> Schema:
@@ -66,15 +69,16 @@ class RegionDependingPotentials(FrameFeature):
     """EyesWeb RegionDependingPotentials. `process(hits, *, timestamp=None)`.
 
     `hits`: an `(N, 2)` array of `(i, j)` cells (`input_kind=RegionInputKind.CELLS`, default; input `cells`) or `N`
-    region indexes (`HIT_REGIONS`; input `regions`, a sample of `N` channels). `run` takes one such array per sample. `mask` gives the region of each cell (default all 0), `num_of_regions` the number of regions.
+    region indexes (`HIT_REGIONS`; input `regions`, a sample of `N` channels). `run` takes one such array per sample. `mask` gives the region of each cell (default all 0), `number_of_regions` the number of regions.
     Outputs, each declared only when its `output_*` parameter is on: `potential` `(cells_along_y, cells_along_x)`,
-    `hit_regions` `(num_of_regions,)` int 0/1, `hit_region_indexes` `(n,)` int (one per input item), `region_values`
-    `(num_of_regions,)`. `NO_OUTPUT` for an empty list; `INVALID_INPUT` when the compute is rejected (with region
+    `hit_regions` `(number_of_regions,)` int 0/1, `hit_region_indexes` `(n,)` int (one per input item), `region_values`
+    `(number_of_regions,)`. `NO_OUTPUT` for an empty list; `INVALID_INPUT` when the compute is rejected (with region
     input, `hit_regions` / `hit_region_indexes` are still produced, as in EyesWeb, see `result.valid`).
     `reset()` is Init(); `trigger_reset()` is EyesWeb's Reset trigger: both restore the initial region values and clear
     the occupation counters.
     """
     _core_class = _space.RegionDependingPotentials
+    _core_names = {"number_of_regions": "num_of_regions", "region_initial_values": "reg_init_values"}
 
     _OUTPUT_FLAGS = (("potential", "output_potential_matrix", True), ("hit_regions", "output_hit_regions", False),
                      ("hit_region_indexes", "output_hit_region_indexes", False),
@@ -83,7 +87,7 @@ class RegionDependingPotentials(FrameFeature):
     def _schema(self) -> Schema:
         rows = int(self._param("cells_along_y", _DEFAULT_CELLS))
         cols = int(self._param("cells_along_x", _DEFAULT_CELLS))
-        regions = int(self._param("num_of_regions", _DEFAULT_REGIONS))
+        regions = int(self._param("number_of_regions", _DEFAULT_REGIONS))
         every = {
             "potential": Output("potential", (rows, cols), doc="value of the region of each cell"),
             "hit_regions": Output("hit_regions", regions, kind=int, doc="1 for each region hit by this call"),

@@ -68,7 +68,7 @@ class MassSpringModel:
 
     Parameters
     ----------
-    ref_dir : tuple of float, optional
+    reference_direction : tuple of float, optional
         Reference direction of the rest directions of the springs (default the x axis).
     name : str, optional
         Name of the model.
@@ -90,8 +90,8 @@ class MassSpringModel:
         What the model holds.
     """
 
-    def __init__(self, ref_dir: Tuple[float, float, float] = (1.0, 0.0, 0.0), name: str = "model"):
-        self._model = _CORE_MODEL(ref_dir, name)
+    def __init__(self, reference_direction: Tuple[float, float, float] = (1.0, 0.0, 0.0), name: str = "model"):
+        self._model = _CORE_MODEL(reference_direction, name)
 
     @classmethod
     def _wrap(cls, model: Any) -> "MassSpringModel":
@@ -101,16 +101,16 @@ class MassSpringModel:
 
     @classmethod
     def from_xml_file(cls, path: Union[str, os.PathLike],
-                      ref_dir: Tuple[float, float, float] = (1.0, 0.0, 0.0)) -> "MassSpringModel":
+                      reference_direction: Tuple[float, float, float] = (1.0, 0.0, 0.0)) -> "MassSpringModel":
         """Load a model from an EyesWeb XML file. Raises `FileNotFoundError`, or `ValueError` for a malformed model."""
         if not os.path.isfile(path):
             raise FileNotFoundError(f"model file not found: {os.fspath(path)}")
-        return cls._wrap(_loaded(_CORE_MODEL.from_xml_file, os.fspath(path), ref_dir))
+        return cls._wrap(_loaded(_CORE_MODEL.from_xml_file, os.fspath(path), reference_direction))
 
     @classmethod
-    def from_xml_string(cls, xml: str, ref_dir: Tuple[float, float, float] = (1.0, 0.0, 0.0)) -> "MassSpringModel":
+    def from_xml_string(cls, xml: str, reference_direction: Tuple[float, float, float] = (1.0, 0.0, 0.0)) -> "MassSpringModel":
         """Load a model from the text of an EyesWeb XML file."""
-        return cls._wrap(_loaded(_CORE_MODEL.from_xml_string, xml, ref_dir))
+        return cls._wrap(_loaded(_CORE_MODEL.from_xml_string, xml, reference_direction))
 
     def save_xml_file(self, path: Union[str, os.PathLike]) -> None:
         """Write the model as an EyesWeb XML file."""
@@ -125,10 +125,10 @@ class MassSpringModel:
         return f"MassSpringModel({len(self._model.mass_names)} masses, {len(self._model.spring_names)} springs)"
 
 
-def _loaded(load: Any, source: str, ref_dir: Tuple[float, float, float]) -> Any:
+def _loaded(load: Any, source: str, reference_direction: Tuple[float, float, float]) -> Any:
     """A model read by the core; a malformed one is a `ValueError`."""
     try:
-        return load(source, ref_dir)
+        return load(source, reference_direction)
     except RuntimeError as error:
         raise ValueError(str(error)) from None
 
@@ -163,6 +163,7 @@ class _ModelInput(LabelGuard):
     _labels: Optional[Tuple[str, ...]] = None
     _dropouts = True  # missing joints and NaN rows are dropouts of the model, not bad data
     _given_map: Mapping[str, str] = {}
+    _core_names = {"reference_direction": "ref_dir"}
 
     def _input_names(self) -> Tuple[str, ...]:
         raise NotImplementedError
@@ -399,7 +400,7 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
     start_from_input : bool, optional
         Put the model on the first frame after construction or `reset()` instead of letting it settle from the T-pose
         (default False).
-    ref_dir : tuple of float
+    reference_direction : tuple of float
         Reference direction of the body (default the x axis).
     integration_step : float
         Integration step in seconds (default 0.001); a call of dt seconds runs `int(dt / integration_step)` steps.
@@ -434,7 +435,7 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
     _internal_mm = True
 
     def __init__(self, labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 start_from_input: bool = False, **params: Any):
+                 *, start_from_input: bool = False, **params: Any):
         _check_rate(params.get("sampling_rate"))
         self._start_from_input = _switch("start_from_input", start_from_input)
         super().__init__(**params)
@@ -497,7 +498,7 @@ class HumanoidOrientations(_ModelInput, FrameFeature):
         Names of the rows of array frames. Default: the rows are in the order of `HUMANOID_JOINTS`.
     joint_map : dict, optional
         `joint of the model -> label of your data`, see `HumanoidSimulator`.
-    ref_dir : tuple of float
+    reference_direction : tuple of float
         Reference direction of the root bones (default the x axis).
 
     Returns
@@ -646,7 +647,7 @@ class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
         Unit of the model, the data, `gravity`, `floor_position` and the outputs (default "m").
     start_from_input : bool, optional
         Move the tips of the springs onto the input at the first frame after construction or `reset()` (default False).
-    ref_dir : tuple of float
+    reference_direction : tuple of float
         Reference direction of the model (default the x axis).
     integration_step : float
         Integration step in seconds (default 0.001).
@@ -674,7 +675,7 @@ class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
 
     def __init__(self, model: Union[MassSpringModel, str, os.PathLike],
                  labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 start_from_input: bool = False, **params: Any):
+                 *, start_from_input: bool = False, **params: Any):
         _check_rate(params.get("sampling_rate"))
         self._start_from_input = _switch("start_from_input", start_from_input)
         super().__init__(model, labels, joint_map, **params)
@@ -716,7 +717,7 @@ class GenericModelPredictor(_Units, _Timed, _Directions, CoreFeature):
         How the future is computed (default `"masses_inertia"`).
     damping_factor, viscosity_factor : float
         Factors of `damping` and `viscosity` while predicting (default 1).
-    ref_dir, integration_step, gravity, damping, viscosity, length_forces, rotation_forces, ground_interaction, floor_position, use_input_lengths
+    reference_direction, integration_step, gravity, damping, viscosity, length_forces, rotation_forces, ground_interaction, floor_position, use_input_lengths
         As in `GenericModelSimulator`.
 
     Returns
@@ -779,7 +780,7 @@ class GenericModelEstimator(_Units, _Timed, _GenericFeature, CoreFeature):
         Regularisation weights of the parameters (default 0).
     seed : int
         Seed of the random draws (default 12345).
-    ref_dir, integration_step, gravity, damping, viscosity, length_forces, rotation_forces, ground_interaction, floor_position, use_input_lengths
+    reference_direction, integration_step, gravity, damping, viscosity, length_forces, rotation_forces, ground_interaction, floor_position, use_input_lengths
         As in `GenericModelSimulator`.
 
     Returns

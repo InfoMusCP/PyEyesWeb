@@ -28,16 +28,16 @@ class Rarity(VariantFeature, CoreFeature):
 
     `"information"` (default): the port of the EyesWeb `rarityindex` block. Each of `number_of_inputs`
     scalar signals is discretised into bins of user-given widths; the block keeps its own memory and computes a
-    Contrast across the inputs or a Rarity across the last values of the same input (parameter `RarityType`, see
-    the core block for the other parameters). Input: one sample of `number_of_inputs` values per call
+    Contrast across the inputs or a Rarity across the last values of the same input (parameter `measure`, with
+    the memory length `window`; see the core block for the other parameters). Input: one sample of `number_of_inputs` values per call
     (`process(*sample, timestamp=None)`). Output `rarity`, shape `(number_of_inputs,)` (default 2): one index per input,
     $-\log(A B + 10^{-16})$; `timestamp` is the timestamp in seconds (`NaN` when not given). `reset()` clears the memory
-    and the bin indices, so `run` is a pure function of the recording. Status: with `type="rarity"` the memory starts
-    filled with zeros, so the outputs are `WARMING_UP` (the numbers are given, but are artefacts) until `data_memory`
+    and the bin indices, so `run` is a pure function of the recording. Status: with `measure="rarity"` the memory starts
+    filled with zeros, so the outputs are `WARMING_UP` (the numbers are given, but are artefacts) until `window`
     samples have been seen; a value above the sum of the bin widths keeps the previous bin and gives
     `INVALID_INPUT` ("value outside the bins"), with no numbers; `NaN` or infinity is `INVALID_INPUT` before the block sees
-    it. `type="contrast"` needs at least 2 inputs and
-    `type="rarity"` a `data_memory` of at least 2: otherwise construction raises `ValueError`.
+    it. `measure="contrast"` needs at least 2 inputs and
+    `measure="rarity"` a `window` of at least 2: otherwise construction raises `ValueError`.
 
     `"mode_distance"`: windowed rarity of a scalar stream. Parameters `window`, `hop` (default 1) and
     `alpha` (default 0.5). Input: one value per call, buffered over `window` samples and computed every `hop`
@@ -97,8 +97,7 @@ class _ModeDistanceRarity(MinimumWindow, WindowedFeature, Rarity, variant="mode_
     _core_class = core.motion.HistogramRarity
     _lazy_block = True
 
-    def __init__(self, window: int, hop: int = 1, alpha: float = 0.5, *,
-                 method: str = "mode_distance"):
+    def __init__(self, window: int = 50, hop: int = 1, *, alpha: float = 0.5, method: str = "mode_distance"):
         super().__init__(window=window, hop=hop)
         self._check_window()
         self.alpha = alpha
@@ -142,10 +141,11 @@ class _InformationRarity(Rarity, FrameFeature, variant="information"):
 
     Output `rarity`, shape `(number_of_inputs,)` (constructor parameter, default 2): one index per input,
     -log(A * B + 1e-16); `timestamp` is the timestamp in seconds (`NaN` when not given). `WARMING_UP` while the memory of
-    `type="rarity"` is not full yet, `INVALID_INPUT` ("value outside the bins") for a value above the sum of the bins.
+    `measure="rarity"` is not full yet, `INVALID_INPUT` ("value outside the bins") for a value above the sum of the bins.
     """
     _core_class = core.motion.RarityIndex
-    _filled = 0  # samples written to the memory since it was last empty (type "rarity" only)
+    _core_names = {"window": "data_memory", "measure": "type"}
+    _filled = 0  # samples written to the memory since it was last empty (measure "rarity" only)
 
     def reset(self) -> None:
         super().reset()
@@ -170,8 +170,8 @@ class _InformationRarity(Rarity, FrameFeature, variant="information"):
     def _process(self, sample: Any, timestamp: Optional[float]) -> Result:
         values = np.asarray(sample, dtype=float).ravel()
         rarity = np.asarray(self._block.process(values), dtype=float)
-        memory = int(self._param("data_memory", 50))  # C++ defaults
-        uses_memory = self._param("type", core.motion.RarityType.RARITY) == core.motion.RarityType.RARITY
+        memory = int(self._param("window", 50))  # C++ defaults
+        uses_memory = self._param("measure", core.motion.RarityType.RARITY) == core.motion.RarityType.RARITY
         self._filled += uses_memory
         if not np.all(values <= np.cumsum(self._param("bins", [0.3, 0.3, 0.4]))[-1]):  # also NaN
             return self.result(status=Status.INVALID_INPUT, reason="value outside the bins", rarity=rarity, timestamp=timestamp)
