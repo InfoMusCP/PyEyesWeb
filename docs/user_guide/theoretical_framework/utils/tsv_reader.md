@@ -287,7 +287,7 @@ def complete_analysis_pipeline(tsv_file):
     data = reader.load_data()
     
     # Initialize analysis user_guide
-    smoothness = Smoothness(rate_hz=data['frame_rate'])
+    smoothness = SpeedSmoothness(rate_hz=data['frame_rate'])
     bilateral_analyzer = BilateralSymmetryAnalyzer()
     
     results = {}

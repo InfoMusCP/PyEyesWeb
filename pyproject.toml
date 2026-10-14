@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pyeyesweb"
 version = "1.1.1"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
     {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
 ]
@@ -40,8 +40,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering :: Human Machine Interfaces",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -86,6 +84,7 @@ where = ["."]
 include = ["pyeyesweb*"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 pythonpath = [
   "."
 ]

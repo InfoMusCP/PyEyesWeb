@@ -22,11 +22,11 @@ A minimal example of extracting movement features with `PyEyesWeb`
 :
 ```python
 from pyeyesweb.data_models import SlidingWindow
-from pyeyesweb.low_level import Smoothness
+from pyeyesweb.low_level import SpeedSmoothness
 
 # Movement smoothness analysis
 # 1. Initialize the feature extractor (e.g., 50Hz sampling rate)
-smoothness = Smoothness(rate_hz=50.0)
+smoothness = SpeedSmoothness(rate_hz=50.0)
 
 # 2. Initialize a sliding window for speed data (1 signal, 1 dimension)
 window = SlidingWindow(max_length=60, n_signals=1, n_dims=1)
@@ -38,7 +38,7 @@ window.append(speed_value)
 # 4. Compute the feature (only after the window is full)
 if len(window) >= window.max_length:
     result = smoothness(window)
-    print(f"SPARC: {result.sparc}, Jerk: {result.jerk_rms}")
+    print(f"SPARC: {result.sparc}, LDLJ: {result.ldlj_v}")
 ```
 > [!TIP]
 > For more advanced and complete use cases see the [Documentation](https://infomuscp.github.io/PyEyesWeb/)

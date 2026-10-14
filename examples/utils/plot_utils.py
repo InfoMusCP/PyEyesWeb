@@ -26,8 +26,8 @@ def plot_feature_timeseries(
                 f"Warning: The following metrics were not found and will be skipped: {missing}"
             )
     else:
-        # Fallback: plot everything except validity flags (can be messy!)
-        metrics = [col for col in df.columns if "is_valid" not in col]
+        # Fallback: plot everything except the meta columns (<prefix>_status, <prefix>_t)
+        metrics = [col for col in df.columns if not col.endswith(("_status", "_t"))]
 
     if not metrics:
         print("No valid metrics found to plot.")

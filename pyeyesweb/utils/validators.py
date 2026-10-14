@@ -128,45 +128,6 @@ def validate_boolean(value, name):
     return value
 
 
-def validate_range(value, name, min_val, max_val):
-    """Validate that a value is within a specific range.
-
-    Useful for parameters that must be within a specific range like
-    phase_threshold (0-1), percentages (0-100), etc.
-
-    Parameters
-    ----------
-    value : float or int
-        Value to validate
-    name : str
-        Parameter name for error messages
-    min_val : float
-        Minimum allowed value (inclusive)
-    max_val : float
-        Maximum allowed value (inclusive)
-
-    Returns
-    -------
-    float
-        Validated value
-
-    Raises
-    ------
-    ValueError
-        If value is outside the specified range
-
-    Examples
-    --------
-    >>> validate_range(0.7, 'phase_threshold', 0, 1)
-    0.7
-    >>> validate_range(1.5, 'probability', 0, 1)
-    ValueError: probability must be between 0 and 1, got 1.5
-    """
-    if not min_val <= value <= max_val:
-        raise ValueError(f"{name} must be between {min_val} and {max_val}, got {value}")
-    return value
-
-
 def validate_filter_params_tuple(value, name='filter_params'):
     """Validate filter parameters tuple structure.
 
@@ -207,7 +168,7 @@ def validate_filter_params_tuple(value, name='filter_params'):
     if len(value) != 3:
         raise ValueError(f"{name} must have 3 elements (lowcut, highcut, fs), got {len(value)}")
 
-    if not all(isinstance(x, (int, float)) for x in value):
+    if not all(isinstance(item, (int, float)) for item in value):
         raise TypeError(f"{name} must contain only numbers")
 
     return tuple(value)
@@ -251,30 +212,10 @@ def validate_pairs(pairs):
     for pair in pairs:
         if not isinstance(pair, tuple) or len(pair) != 2:
             raise ValueError(f"Each pair must be a tuple of two elements, got {pair}")
-        if not all(isinstance(x, int) for x in pair):
+        if not all(isinstance(item, int) for item in pair):
             raise TypeError(f"Each pair must contain only integers, got {pair}")
 
     return pairs
-
-
-def validate_window_size(value, name='window_size'):
-    """Validate window size parameter.
-
-    Standard validation for window sizes used across multiple modules.
-
-    Parameters
-    ----------
-    value : int
-        Window size value
-    name : str
-        Parameter name for error messages
-
-    Returns
-    -------
-    int
-        Validated window size
-    """
-    return validate_integer(value, name, min_val=1, max_val=10000)
 
 
 def validate_string(value, names: list[str]):
@@ -313,3 +254,49 @@ def validate_string(value, names: list[str]):
         raise ValueError(f"Invalid method: {value}. Must be one of {names}.")
     
     return value
+
+
+def validate_filter_params(lowcut, highcut, fs):
+    """Validate filter frequency parameters.
+
+    Centralized validation for filter parameters used in bandpass_filter
+    and PhaseLockingValue class.
+    """
+    # Validate individual parameters
+    if fs <= 0:
+        raise ValueError(f"Sampling frequency must be positive, got {fs}")
+    if lowcut <= 0:
+        raise ValueError(f"Low cutoff frequency must be positive, got {lowcut}")
+    if highcut <= 0:
+        raise ValueError(f"High cutoff frequency must be positive, got {highcut}")
+
+    # Validate relationships
+    if lowcut >= highcut:
+        raise ValueError(f"Low cutoff ({lowcut}) must be less than high cutoff ({highcut})")
+
+    nyquist = fs / 2
+    if highcut >= nyquist:
+        raise ValueError(f"High cutoff ({highcut}) must be less than Nyquist frequency ({nyquist})")
+
+    return lowcut, highcut, fs
+
+
+def validate_and_normalize_filter_params(filter_params):
+    """Validate and normalize filter parameters.
+
+    Parameters
+    ----------
+    filter_params : tuple/list or None
+        Filter parameters as (lowcut, highcut, fs) or None
+
+    Returns
+    -------
+    tuple or None
+        Validated (lowcut, highcut, fs) tuple or None if input was None
+    """
+    if filter_params is None:
+        return None
+
+    filter_params = validate_filter_params_tuple(filter_params)
+    lowcut, highcut, fs = validate_filter_params(*filter_params)
+    return lowcut, highcut, fs

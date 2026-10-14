@@ -68,8 +68,8 @@ for frame in tqdm(range(N_frames), desc="Evaluating Direction Change", unit="fra
     res_dc = feature_dc(sw_pos)
 
     # 3. Extract and store
-    arr_cosine[frame] = res_dc.cosine if res_dc.is_valid else 0.0
-    arr_polygon[frame] = res_dc.polygon if res_dc.is_valid else 0.0
+    arr_cosine[frame] = res_dc.cosine if res_dc.ok else 0.0
+    arr_polygon[frame] = res_dc.polygon if res_dc.ok else 0.0
 
 # ==========================================
 # 5. RENDER & SAVE ANIMATION

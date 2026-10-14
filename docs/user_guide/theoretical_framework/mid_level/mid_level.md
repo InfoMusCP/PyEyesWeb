@@ -58,3 +58,23 @@ They operate at a higher abstraction than low-level descriptors, often integrati
 [^5]: Niewiadomski, R., Mancini, M., Volpe, G., & Camurri, A. (2015). Automated detection of impulsive movements in HCI. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter (pp. 166-169).
 [^6]: Piana, S., Alborno, P., Niewiadomski, R., Mancini, M., Volpe, G., & Camurri, A. (2016). Movement fluidity analysis based on performance and perception. In Proceedings of the 2016 CHI conference extended abstracts on human factors in computing systems (pp. 1629-1636).
 [^7]: Alborno, P., Cera, A., Piana, S., Mancini, M., Niewiadomski, R., Canepa, C., Volpe G. & Camurri, A. (2016). Interactive sonification of movement qualities–a case study on fluidity. Proceedings of ISon, 35.
+
+<!-- catalog:start -->
+## Implemented in the library
+
+Generated from `pyeyesweb.catalog(Layer.MID_LEVEL)`; import from `pyeyesweb.mid_level`.
+
+| Feature | Timescale | EyesWeb block |
+|---|---|---|
+| `GestureSegmenter` | 0.5-3 s | GestureSegmenter |
+| `MotionDuration` | 0.5-3 s | MotionDuration (SteadyStateLength) |
+| `Suddenness` | 0.5-3 s |  |
+| `NoPreparationDetector` | 0.5-3 s | NoPreparationDetector |
+| `NoPreparationDetector2` | 0.5-3 s | NoPreparationDetector2 |
+| `SuddennessImpulsivity` | 0.5-3 s |  |
+| `Impulsivity` | 0.5-3 s | Impulsivity |
+| `Lightness` | 0.5-3 s |  |
+| `GetTrajectoryFeatures` | 0.5-3 s | GetTrajectoryFeatures (TrajectoryBasicFeatures) |
+| `PositionDependingPotentials` | 0.5-3 s | PositionDependingPotentials |
+| `RegionDependingPotentials` | 0.5-3 s | RegionDependingPotentials |
+<!-- catalog:end -->

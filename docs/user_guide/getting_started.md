@@ -40,10 +40,10 @@ Here's a simple example to get you started with PyEyesWeb. This example demonstr
 ```python
 import csv
 from pyeyesweb.data_models import SlidingWindow
-from pyeyesweb.low_level import Smoothness
+from pyeyesweb.low_level import SpeedSmoothness
 
 # 1. Initialize the Smoothness analyzer
-smoothness = Smoothness(rate_hz=50.0)
+smoothness = SpeedSmoothness(rate_hz=50.0)
 
 # 2. Create a sliding window to store the last 100 frames of data
 window = SlidingWindow(max_length=100, n_signals=1, n_dims=1)
@@ -62,18 +62,18 @@ with open('velocity_data.csv', 'r') as f:
         # Compute smoothness features on the current window
         result = smoothness(window) #(2)!
 
-        # Check if a valid result was returned 
-        # (feature fields may be None if window has not enough samples)
-        if result.sparc is not None and result.jerk_rms is not None:
-            print(f"SPARC: {result.sparc:.3f} | Jerk: {result.jerk_rms:.3f}")
+        # Check that the call produced output
+        # (result.status is WARMING_UP while the window does not have enough samples)
+        if result.ok:
+            print(f"SPARC: {result.sparc:.3f} | LDLJ: {result.ldlj_v:.3f}")
 ```
 
 1. `SlidingWindow` automatically handles the data shape. Since we initialized it with `n_signals=1` and `n_dims=1`, we can append a scalar value directly.
 As the loop runs, new data is added to the end, and old data is automatically discarded once the max_length is reached.
 
 2. The `smoothness` callable processes the current state of the window. 
-It returns a result object containing the SPARC (Spectral Arc Length) and Jerk RMS. 
-If the window does not yet contain enough data to compute the metric, the result fields will be `None`.
+It returns a result object containing the SPARC (Spectral Arc Length) and the log dimensionless jerk (`ldlj_v`). 
+If the window does not yet contain enough data to compute the metric, the result has `status=Status.WARMING_UP` (`result.ok` is `False`) and its values are `NaN`. See [Output contracts](output_contracts.md).
 
 ## Subpackages
 

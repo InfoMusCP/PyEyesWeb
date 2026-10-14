@@ -78,12 +78,12 @@ class BaseMocapLoader(ABC):
         bones_edges = []
         if bones_path:
             try:
-                with open(bones_path, "r") as f:
-                    bones_names = [ast.literal_eval(l.strip()) for l in f.readlines() if l.strip()]
-                bones_edges = [[marker_names.index(b[0]), marker_names.index(b[1])]
-                               for b in bones_names if b[0] in marker_names and b[1] in marker_names]
-            except Exception as e:
-                print(f"Warning: Skeleton not mapped properly. {e}")
+                with open(bones_path, "r") as file:
+                    bones_names = [ast.literal_eval(line.strip()) for line in file.readlines() if line.strip()]
+                bones_edges = [[marker_names.index(bone[0]), marker_names.index(bone[1])]
+                               for bone in bones_names if bone[0] in marker_names and bone[1] in marker_names]
+            except Exception as error:
+                print(f"Warning: Skeleton not mapped properly. {error}")
         return np.array(bones_edges)
 
 
@@ -139,8 +139,8 @@ class KinectV2Loader(BaseMocapLoader):
         frames = []
         marker_names = None
 
-        with open(path, "r") as f:
-            lines = f.readlines()
+        with open(path, "r") as file:
+            lines = file.readlines()
 
         # skip first 3 header lines
         for line in lines[3:]:
@@ -157,9 +157,9 @@ class KinectV2Loader(BaseMocapLoader):
                 label = tokens[idx]
                 typ = tokens[idx + 1]
 
-                x = float(tokens[idx + 2])
-                y = float(tokens[idx + 3])
-                z = float(tokens[idx + 4])
+                x_coord = float(tokens[idx + 2])
+                y_coord = float(tokens[idx + 3])
+                z_coord = float(tokens[idx + 4])
 
                 # rotations (ignored here but parsed)
                 rx = float(tokens[idx + 5])
@@ -168,9 +168,9 @@ class KinectV2Loader(BaseMocapLoader):
 
                 idx += 8
 
-                frame_dict[label + "_x"] = x
-                frame_dict[label + "_y"] = y
-                frame_dict[label + "_z"] = z
+                frame_dict[label + "_x"] = x_coord
+                frame_dict[label + "_y"] = y_coord
+                frame_dict[label + "_z"] = z_coord
 
                 names.append(label)
 
@@ -185,14 +185,14 @@ class KinectV2Loader(BaseMocapLoader):
 
     def _extract_markers(self, df: pd.DataFrame):
 
-        dfX = df[[c for c in df.columns if c.endswith("_x")]]
-        dfY = df[[c for c in df.columns if c.endswith("_y")]]
-        dfZ = df[[c for c in df.columns if c.endswith("_z")]]
+        dfX = df[[column for column in df.columns if column.endswith("_x")]]
+        dfY = df[[column for column in df.columns if column.endswith("_y")]]
+        dfZ = df[[column for column in df.columns if column.endswith("_z")]]
 
         # remove suffix
-        dfX.columns = [c[:-2] for c in dfX.columns]
-        dfY.columns = [c[:-2] for c in dfY.columns]
-        dfZ.columns = [c[:-2] for c in dfZ.columns]
+        dfX.columns = [column[:-2] for column in dfX.columns]
+        dfY.columns = [column[:-2] for column in dfY.columns]
+        dfZ.columns = [column[:-2] for column in dfZ.columns]
 
         marker_names = list(dfX.columns)
 
@@ -223,11 +223,11 @@ class QualisysLoader(BaseMocapLoader):
 
     def _read_file(self, path: str) -> pd.DataFrame:
         # Lettura file Qualisys TSV
-        with open(path, 'r') as f:
-            lines = f.readlines()
+        with open(path, 'r') as file:
+            lines = file.readlines()
 
         # Trova la riga dell'header (quella che inizia con "Frame")
-        data_start_idx = next(i for i, line in enumerate(lines) if line.startswith("Frame"))
+        data_start_idx = next(index for index, line in enumerate(lines) if line.startswith("Frame"))
         header = lines[data_start_idx].strip().split('\t')
         data_lines = lines[data_start_idx + 1:]
 
@@ -242,8 +242,8 @@ class QualisysLoader(BaseMocapLoader):
         # 2. Creiamo la lista finale filtrando per nome esatto E per la parola "Type"
         # .casefold() rende il controllo non sensibile alle maiuscole (es. 'type', 'Type', 'TYPE')
         cols_to_keep = [
-            c for c in df.columns 
-            if c not in exclude_cols and 'type' not in c.casefold()
+            column for column in df.columns 
+            if column not in exclude_cols and 'type' not in column.casefold()
         ]
         
         return df[cols_to_keep]

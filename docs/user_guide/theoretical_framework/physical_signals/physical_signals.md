@@ -21,3 +21,17 @@ It deals with the **raw data captured by physical sensors** and their preprocess
 | **Pressure or Contact** | Ground reaction force, foot weight distribution | :material-close: |
 | **Acoustic**            | Breath, utterance, exhalation                   | :material-close: |
 
+<!-- catalog:start -->
+## Implemented in the library
+
+Generated from `pyeyesweb.catalog(Layer.PHYSICAL_SIGNALS)`; import from `pyeyesweb.physical_signals`.
+
+| Feature | Timescale | EyesWeb block |
+|---|---|---|
+| `SkeletonManipulator` | frame | SkeletonManipulator3D |
+| `EmptyTrajectoryGenerator` | frame | EmptyTrajectoryGenerator |
+| `TrajectoryGeneratorFromPoints` | frame | TrajectoryFromPoints (PointsToTrajectory) |
+| `GeomLabeledSetTrajectoryGeneratorFromPoints` | frame | GeometricTrajectoryFromPoints (LabelledSetToTrajectory) |
+| `FilterContour` | frame | filter_contour (FilterContour) |
+| `HitCellDetector` | frame | HitCellDetector |
+<!-- catalog:end -->

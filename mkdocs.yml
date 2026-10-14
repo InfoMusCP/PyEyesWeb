@@ -55,6 +55,9 @@ nav:
   - Home: index.md
   - User Guide:
       - Getting Started: user_guide/getting_started.md
+      - Library Structure: user_guide/library_structure.md
+      - Input Contract: user_guide/input_contract.md
+      - Output Contracts: user_guide/output_contracts.md
       - Theoretical Framework:
           - user_guide/theoretical_framework/theoretical_framework.md
           - Layer 1 - Physical Signals:

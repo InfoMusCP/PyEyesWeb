@@ -26,7 +26,7 @@ class BenchmarkAnimator:
         num_subplots = len(self.feature_dict)
         self.gs = self.fig.add_gridspec(nrows=num_subplots, ncols=2, width_ratios=[1, 1.2])
         self.ax_3d = self.fig.add_subplot(self.gs[:, 0], projection='3d')
-        self.axes_2d = [self.fig.add_subplot(self.gs[i, 1]) for i in range(num_subplots)]
+        self.axes_2d = [self.fig.add_subplot(self.gs[index, 1]) for index in range(num_subplots)]
 
         for ax in self.axes_2d[:-1]:
             ax.set_xticklabels([])
@@ -64,8 +64,8 @@ class BenchmarkAnimator:
         for ax, (subplot_title, lines_dict) in zip(self.axes_2d, self.feature_dict.items()):
             ax.set_title(subplot_title)
             ax.grid(True, linestyle="--", alpha=0.6)
-            for i, (line_label, data_array) in enumerate(lines_dict.items()):
-                color = colors[i % len(colors)]
+            for index, (line_label, data_array) in enumerate(lines_dict.items()):
+                color = colors[index % len(colors)]
                 ax.plot(data_array, label=line_label, color=color, linewidth=1.5)
                 cursor, = ax.plot(0, data_array[0], 'ko', markersize=6)
                 self.cursors.append((cursor, data_array))
@@ -84,8 +84,8 @@ class BenchmarkAnimator:
         frame = int(val)
         self.scatter._offsets3d = (self.pos_tensor[frame, :, 0], self.pos_tensor[frame, :, 1],
                                    self.pos_tensor[frame, :, 2])
-        for i, edge in enumerate(self.bones_edges):
-            self.lines[i].set_data_3d([self.pos_tensor[frame, edge[0], 0], self.pos_tensor[frame, edge[1], 0]],
+        for index, edge in enumerate(self.bones_edges):
+            self.lines[index].set_data_3d([self.pos_tensor[frame, edge[0], 0], self.pos_tensor[frame, edge[1], 0]],
                                       [self.pos_tensor[frame, edge[0], 1], self.pos_tensor[frame, edge[1], 1]],
                                       [self.pos_tensor[frame, edge[0], 2], self.pos_tensor[frame, edge[1], 2]])
 

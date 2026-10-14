@@ -43,8 +43,8 @@ for frame in tqdm(range(N_frames), desc="Evaluating Geometry"):
     # Bypass SlidingWindow entirely for raw array processing!
     res_eq = feat_eq.compute(frame_data)
 
-    arr_eq[frame] = res_eq.value if res_eq.is_valid else 0.0
-    arr_an[frame] = res_eq.angle if res_eq.is_valid else 0.0
+    arr_eq[frame] = res_eq.value if res_eq.ok else 0.0
+    arr_an[frame] = res_eq.angle if res_eq.ok else 0.0
 
 # 5. Format for Animator
 # We create 3 separate subplots, each tracking the "Whole Body"

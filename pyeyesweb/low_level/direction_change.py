@@ -1,73 +1,101 @@
-from dataclasses import dataclass
-from typing import Literal, List, Optional
+from typing import Any, Literal, List, Optional
 import numpy as np
 
-from pyeyesweb.data_models.base import DynamicFeature
-from pyeyesweb.data_models.results import FeatureResult
+from pyeyesweb.catalog import Layer, describe
+from pyeyesweb.data_models.feature import WindowedFeature
+from pyeyesweb.base.inputs import non_finite
+from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
+from pyeyesweb.data_models.results import Output, Result, Schema, Status
+from pyeyesweb._core import core
+from pyeyesweb.base.core_feature import CoreFeature
+from pyeyesweb.base.minimum_window import MinimumWindow
 from pyeyesweb.utils.validators import validate_string
 
 
-@dataclass(slots=True)
-class DirectionChangeResult(FeatureResult):
-    """Output contract for Direction Change.
-    
-    Attributes
-    ----------
-    cosine : float, optional
-        The direction change evaluated using cosine similarity.
-    polygon : float, optional
-        The polygon area enclosed by the trajectory.
-    """
-    cosine: Optional[float] = None
-    polygon: Optional[float] = None
-
-
-class DirectionChange(DynamicFeature):
-    """Direction Change evaluation based on movement vectors.
+@describe(Layer.LOW_LEVEL)
+class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
+    """Direction Change evaluation based on movement vectors (maths in the compiled core).
 
     !!! note
         Supports multiple metrics such as cosine similarity and polygon area.
 
     Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/direction_change.md).
 
+    Input: one position per call, the `(D,)` point of a trajectory with `D` = 2 or 3 coordinates (any other `D`
+    raises `ValueError`); `run` takes a `(T, D)` recording. A `(signals, D)` frame or a dict is rejected: average the
+    markers before the call if one trajectory is wanted. The feature buffers `window` positions and computes every
+    `hop` frames (`WARMING_UP` while the first window fills, `NO_OUTPUT` between hops); the buffer holds the `D`
+    coordinates and `_process_window(series)` takes one complete `(D, window)` series. `timestamp` and `timestamps`
+    are in seconds.
+
     Parameters
     ----------
+    window : int
+        Frames per window (at least 3).
+    hop : int, optional
+        New frames between two windows. Defaults to `1`.
     epsilon : float, optional
         Threshold parameter for the cosine metric. Defaults to `0.5`.
     num_subsamples : int, optional
         Number of subsamples used for polygon area calculation. Defaults to `20`.
     metrics : list of {'cosine', 'polygon'}, optional
         The metrics to compute. By default, computes all allowed metrics.
+
+    Returns
+    -------
+    Result
+        One scalar output per requested metric: `cosine` (direction change by cosine similarity) and/or
+        `polygon` (area enclosed by the trajectory); `feature.outputs` lists exactly the requested ones.
+        `Status.WARMING_UP` below 3 samples, `Status.INVALID_INPUT` for unusable data.
     """
 
+    OUTPUTS = Schema(
+        Output("cosine", doc="Direction change from the cosine similarity of the start-mid-end vectors, in [0, 1]."),
+        Output("polygon", doc="Area of the polygon enclosed by the subsampled trajectory."),
+    )
+
     _ALLOWED_METRICS = ["cosine", "polygon"]
+    _core_class = core.motion.DirectionChange
+    _lazy_block = True
+
+    def _schema(self) -> Schema:
+        return self.OUTPUTS.select(self.metrics)
+
+    def _inputs(self) -> Inputs:
+        return Inputs(Input("position", InputKind.SAMPLE, (None,), doc="(x, y) or (x, y, z) of the trajectory"))
+
+    def _minimum_window(self) -> int:
+        return 3
 
     def __init__(
             self,
+            window: int,
+            hop: int = 1,
             epsilon: float = 0.5,
             num_subsamples: int = 20,
             metrics: List[Literal["cosine", "polygon"]] = None
     ):
-        super().__init__()
-        self._epsilon = float(epsilon)
-        self._num_subsamples = int(num_subsamples)
-        self._metrics = metrics if metrics is not None else self._ALLOWED_METRICS
+        super().__init__(window=window, hop=hop)
+        self._check_window()
+        self.epsilon = epsilon
+        self.num_subsamples = num_subsamples
+        self.metrics = metrics
 
     @property
     def epsilon(self) -> float:
-        return self._epsilon
+        return self._params["epsilon"]
 
     @epsilon.setter
     def epsilon(self, value: float):
-        self._epsilon = float(value)
+        self._set_param("epsilon", float(value))
 
     @property
     def num_subsamples(self) -> int:
-        return self._num_subsamples
+        return self._params["num_subsamples"]
 
     @num_subsamples.setter
     def num_subsamples(self, value: int):
-        self._num_subsamples = int(value)
+        self._set_param("num_subsamples", int(value))
 
     @property
     def metrics(self) -> List[str]:
@@ -76,100 +104,44 @@ class DirectionChange(DynamicFeature):
     @metrics.setter
     def metrics(self, value: Optional[List[str]]):
         target_metrics = value if value is not None else self._ALLOWED_METRICS
-        self._metrics = [validate_string(m, self._ALLOWED_METRICS) for m in target_metrics]
+        self._metrics = [validate_string(metric, self._ALLOWED_METRICS) for metric in target_metrics]
 
-    def _cosine_similarity(self, pos: np.ndarray) -> float:
-        if pos.shape[-1] < 2:
-            raise ValueError("Input positions must be at least 2D (x,y).")
+    def _check_dimension(self, position: Any) -> None:
+        if (size := np.size(position)) not in (0, 2, 3):
+            raise ValueError(f"DirectionChange: a position has 2 or 3 coordinates, got {size}")
 
-        n_samples = pos.shape[0]
-        if n_samples < 3:
-            raise ValueError("Not enough samples")
+    def process(self, position: Any, *, timestamp: Optional[float] = None) -> Result:
+        self._check_dimension(position)
+        return super().process(position, timestamp=timestamp)
 
-        # Extract Start, Mid, and End points of the trajectory
-        p0 = pos[-1]
-        p1 = pos[n_samples // 2]
-        p2 = pos[0]
+    def _check_recording(self, arrays: Any) -> None:
+        super()._check_recording(arrays)
+        if len(arrays[0]):
+            self._check_dimension(arrays[0][0])
 
-        L0 = p0 - p1
-        L1 = p1 - p2
+    def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
+        """Direction change of one complete `(D, window)` series; see the class documentation."""
+        series = np.asarray(series, dtype=float)
+        if series.shape[-1] < 3:
+            return self.no_output(Status.WARMING_UP, "fewer than 3 samples", timestamp)
+        if reason := non_finite(series, allow_empty=True):
+            return self.no_output(Status.INVALID_INPUT, reason, timestamp)
 
-        norm0 = np.linalg.norm(L0)
-        norm1 = np.linalg.norm(L1)
-
-        if norm0 < 1e-6 or norm1 < 1e-6:
-            return 0.0
-
-        dot = np.dot(L0, L1)
-        cos_theta = np.clip(dot / (norm0 * norm1), -1.0, 1.0)
-        theta = np.arccos(cos_theta)
-
-        angle_norm = theta / np.pi
-        a = 1.0 - angle_norm
-        diff = np.abs(a - 0.5)
-
-        if diff < self.epsilon:
-            return float(1.0 - diff / self.epsilon)
-
-        return 0.0
-
-    def _polygon_area(self, pos: np.ndarray) -> float:
-        num_points = len(pos)
-        if num_points < 3:
-            raise ValueError("Not enough samples")
-
-        # Subsample the trajectory securely
-        indices = np.linspace(0, num_points - 1, min(self.num_subsamples, num_points))
-        subset = pos[np.round(indices).astype(int)]
-
-        # Close the loop
-        closed_polygon = np.vstack([subset, subset[0]])
-
-        # NumPy 2 only supports 3D cross products: lift 2D points to z=0
-        if closed_polygon.shape[1] == 2:
-            closed_polygon = np.pad(closed_polygon, ((0, 0), (0, 1)))
-
-        # Shoelace-style cross product area computation
-        cross_products = np.cross(closed_polygon[:-1], closed_polygon[1:])
-        area_vector = np.sum(cross_products, axis=0) / 2.0
-
-        return float(np.linalg.norm(area_vector))
-
-    def compute(self, window_data: np.ndarray) -> DirectionChangeResult:
-        """Compute the Direction Change over a temporal window.
-
-        Parameters
-        ----------
-        window_data : numpy.ndarray
-            A 3D tensor of motion data within the sliding window.
-
-        Returns
-        -------
-        DirectionChangeResult
-            The computed direction change metrics.
-        """
-        if window_data.shape[0] < 3:
-            return DirectionChangeResult(is_valid=False)
-
-        # 1. Shared Preprocessing
-        trajectory = np.mean(window_data, axis=1)
-
-        # 2. Selective Execution
-        val_cosine = None
-        val_polygon = None
+        engine = self._block
+        values = {}
 
         try:
+            trajectory = np.ascontiguousarray(series.T)
             if "cosine" in self.metrics:
-                val_cosine = self._cosine_similarity(trajectory)
+                values["cosine"] = engine.cosine(trajectory)
 
             if "polygon" in self.metrics:
-                val_polygon = self._polygon_area(trajectory)
+                values["polygon"] = engine.polygon_area(trajectory)
 
-        except ValueError:
-            return DirectionChangeResult(is_valid=False)
+        except ValueError as exc:
+            return self.no_output(Status.INVALID_INPUT, str(exc), timestamp)
 
-        return DirectionChangeResult(
-            is_valid=True,
-            cosine=val_cosine,
-            polygon=val_polygon
-        )
+        return self.result(timestamp=timestamp, **values)
+
+
+__all__ = ['DirectionChange']

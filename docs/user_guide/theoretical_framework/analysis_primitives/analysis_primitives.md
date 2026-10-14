@@ -55,3 +55,39 @@ They summarize, transform, or model data at various temporal and spatial scales.
 [^3]: Sabharwal, S. R., Varlet, M., Breaden, M., Volpe, G., Camurri, A., & Keller, P. E. (2022). huSync-A model and system for the measure of synchronization in small groups: A case study on musical joint action. IEEE Access, 10, 92357-92372.
 [^4]: Corbellini, N., Ceccaldi, E., Varni, G., & Volpe, G. (2022, August). An exploratory study on group potency classification from non-verbal social behaviours. In International Conference on Pattern Recognition (pp. 240-255). Cham: Springer Nature Switzerland.
 [^5]: Niewiadomski, R., Mancini, M., Cera, A., Piana, S., Canepa, C., & Camurri, A. (2019). Does embodied training improve the recognition of mid-level expressive movement qualities sonification?. Journal on Multimodal User Interfaces, 13, 191-203.
+
+<!-- catalog:start -->
+## Implemented in the library
+
+Generated from `pyeyesweb.catalog(Layer.ANALYSIS_PRIMITIVE)`; import from `pyeyesweb.analysis_primitives`.
+
+| Feature | Timescale | EyesWeb block |
+|---|---|---|
+| `StatisticalMoment` | any |  |
+| `SampleEntropy` | any | sampleentropy |
+| `CoarseGraining` | any | coarsegraining |
+| `HistogramRarity` | any |  |
+| `Rarity` | any | rarityindex (Rarity) |
+| `MultiScaleEntropyDominance` | any |  |
+| `Clusterability` | any |  |
+| `Periodicity` | any | PeriodicityIndex (Periodicity) |
+| `ScalarPeakDetector` | any | scalar_peak_detector |
+| `ZeroCross` | any | ZeroCross |
+| `CorrelationsMatrix` | any | CorrelationsMatrix (CPRMatrix) |
+| `CrossRecurrencePlot` | any | CrossRecurrencePlot (CrossRecurrenceMatrix) |
+| `EventSynchronization` | any | Event Sync |
+| `EventSynchronizationInterdependence` | any | EventSynchronization_Interdependence |
+| `EventSynchronizationMECS` | any | MECS Algorithm (v1) |
+| `EventSynchronizationMECSv2` | any | MECS Algorithm v2 |
+| `EventSynchronizationRealTime` | any | Event Sync Real Time |
+| `GeneralisedAutoCorrelation` | any | generalised_auto_correlation |
+| `PARS` | any | PARS (PartialRecurrenceSynchronizationMatrix) |
+| `RecurrencePlot` | any | RecurrencePlot (RecurrenceMatrix) |
+| `ScalarBinarySyncDetector` | any | scalar_binary_sync_detector |
+| `SequenceDetector` | any | SequenceDetector |
+| `SpikeES` | any | SPIKE sync |
+| `SpikyES` | any | SPIKE sync (SpikyES) |
+| `Synchronization` | any |  |
+| `TauEstimator` | any | TauEstimator |
+| `TemporalSynchronization` | any | TemporalSynchronization |
+<!-- catalog:end -->

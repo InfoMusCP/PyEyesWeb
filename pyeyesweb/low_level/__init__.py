@@ -1,28 +1,23 @@
-from .equilibrium import Equilibrium, EquilibriumResult
-from .contraction_expansion import (
-    BoundingBoxFilledArea,
-    EllipsoidSphericity,
-    PointsDensity,
-    ContractionExpansionResult,
+"""Layer 2, low-level features: quantities of a movement over up to about 0.5 s (kinematics, energy, shape,
+symmetry, smoothness)."""
+
+from .kinematics import Kinematics
+from .energy import KineticEnergy
+from .contraction import BoundingBoxFilledArea, EllipsoidSphericity, PointsDensity
+from .symmetry import Symmetry, TriangleSymmetry
+from .smoothness import (
+    SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount, CurvatureDispersion,
+    CurvatureVelocityCorrelation
 )
-from .smoothness import Smoothness, SmoothnessResult
-from .direction_change import DirectionChange, DirectionChangeResult
-from .geometric_symmetry import GeometricSymmetry, GeometricSymmetryResult
-from .kinetic_energy import KineticEnergy, KineticEnergyResult
+from .equilibrium import Equilibrium
+from .direction_change import DirectionChange
+from .shape import ContourCurvature, ConvexHull, BodyPartsFromCurvature
+from .non_planarity import TrajectoryNonPlanarity, average_curvature_3d
+from .motion_noise import MotionNoiseDetector
 
 __all__ = [
-    "Equilibrium",
-    "EquilibriumResult",
-    "BoundingBoxFilledArea",
-    "EllipsoidSphericity",
-    "PointsDensity",
-    "ContractionExpansionResult",
-    "Smoothness",
-    "SmoothnessResult",
-    "DirectionChange",
-    "DirectionChangeResult",
-    "GeometricSymmetry",
-    "GeometricSymmetryResult",
-    "KineticEnergy",
-    "KineticEnergyResult",
+    "Kinematics", "KineticEnergy", "BoundingBoxFilledArea", "EllipsoidSphericity", "PointsDensity", "Symmetry",
+    "TriangleSymmetry", "SpectralArcLength", "LogDimensionlessJerk", "Harmonicity", "SubmovementCount",
+    "CurvatureDispersion", "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange", "ContourCurvature",
+    "ConvexHull", "BodyPartsFromCurvature", "TrajectoryNonPlanarity", "average_curvature_3d", "MotionNoiseDetector"
 ]

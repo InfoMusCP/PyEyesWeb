@@ -5,11 +5,7 @@ from pathlib import Path
 # Import both loaders
 from utils.data_loader import QualisysLoader, KinectLoader
 from utils.animator import BenchmarkAnimator
-from pyeyesweb.low_level.contraction_expansion import (
-    BoundingBoxFilledArea,
-    EllipsoidSphericity,
-    PointsDensity
-)
+from pyeyesweb.low_level import BoundingBoxFilledArea, EllipsoidSphericity
 
 # 1. Configuration
 data_type = "kinect"  # Set to "kinect" to use the smoothed loader
@@ -30,12 +26,10 @@ N_frames = pos_tensor.shape[0]
 print("Computing Static Posture features...")
 feat_bb = BoundingBoxFilledArea()
 feat_sph = EllipsoidSphericity()
-feat_den = PointsDensity()
 
 # Arrays to hold results
 arr_bb = np.zeros(N_frames)
 arr_sph = np.zeros(N_frames)
-arr_den = np.zeros(N_frames)
 
 # 4. Compute Loop (Using the ultra-fast Pure Math API)
 for frame in tqdm(range(N_frames), desc="Evaluating Geometry"):
@@ -43,19 +37,16 @@ for frame in tqdm(range(N_frames), desc="Evaluating Geometry"):
 
     # Bypass SlidingWindow entirely for raw array processing!
     res_bb = feat_bb.compute(frame_data)
-    res_sph = feat_sph.compute(frame_data)
-    res_den = feat_den.compute(frame_data)
+    res_sph = feat_sph.process_points(frame_data)
 
-    arr_bb[frame] = res_bb.contraction_index if res_bb.is_valid else 0.0
-    arr_sph[frame] = res_sph.sphericity if res_sph.is_valid else 0.0
-    arr_den[frame] = res_den.points_density if res_den.is_valid else 0.0
+    arr_bb[frame] = res_bb.contraction_index if res_bb.ok else 0.0
+    arr_sph[frame] = res_sph.axis_ratio if res_sph.ok else 0.0
 
 # 5. Format for Animator
 # We create 3 separate subplots, each tracking the "Whole Body"
 feature_dict = {
     "Contraction Index (Convex Hull / AABB)": {"Whole Body": arr_bb},
-    "Ellipsoid Sphericity": {"Whole Body": arr_sph},
-    "Points Density (Dispersion)": {"Whole Body": arr_den}
+    "Ellipsoid Axis Ratio (minor / major radius)": {"Whole Body": arr_sph},
 }
 
 # 6. Animate & Save!

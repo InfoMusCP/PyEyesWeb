@@ -52,4 +52,28 @@ They are typically represented as **time-series** with the same sampling rate as
 [^4]: Ghisio, S., Coletta, P., Piana, S., Alborno, P., Volpe, G., Camurri, A., ... & Ravaschio, A. (2015, June). An open platform for full body interactive sonification exergames. In 2015 7th International Conference on Intelligent Technologies for Interactive Entertainment (INTETAIN) (pp. 168-175). IEEE.
 [^5]: Camurri, Volpe, Piana, Mancini, Alborno, Ghisio (2018) The Energy Lift: automated measurement of postural tension and energy transmission. Proc. MOCO 2018
 
+<!-- catalog:start -->
+## Implemented in the library
 
+Generated from `pyeyesweb.catalog(Layer.LOW_LEVEL)`; import from `pyeyesweb.low_level`.
+
+| Feature | Timescale | EyesWeb block |
+|---|---|---|
+| `Kinematics` | up to ~0.5 s | TrajectoryFeatures-1D/2D/3D (Kinematics1D/2D/3D) |
+| `GetKinematicalFeatures` | up to ~0.5 s | GetKinematicalFeatures (TrajectoryKinematics) |
+| `KineticEnergy` | up to ~0.5 s | KineticEnergyIndex (KineticEnergy) |
+| `BoundingBoxFilledArea` | up to ~0.5 s |  |
+| `EllipsoidSphericity` | up to ~0.5 s | EllipsoidSphericity (EllipsoidSphericity3D) |
+| `PointsDensity` | up to ~0.5 s | PointsDensity3D |
+| `GeometricSymmetry` | up to ~0.5 s |  |
+| `SymmetryIndex3D` | up to ~0.5 s | SymmetryIndex-3D (SymmetrySkeleton3D) |
+| `TriangleSymmetry` | up to ~0.5 s | trianglesymmetryindex (SymmetryTriangle3D) |
+| `SpeedSmoothness` | up to ~0.5 s |  |
+| `Smoothness` | up to ~0.5 s | smoothnessindex (Smoothness) |
+| `Equilibrium` | up to ~0.5 s |  |
+| `DirectionChange` | up to ~0.5 s |  |
+| `Curvature` | up to ~0.5 s | contourstolist (CurvatureFunction) |
+| `ConvexHull` | up to ~0.5 s | ConvexHull |
+| `BodyPartsFromCurvature` | up to ~0.5 s | body_parts_from_curvature |
+| `GetAverageCurvature` | up to ~0.5 s | GetAverageCurvatue (Curvature3D) |
+<!-- catalog:end -->

@@ -37,6 +37,13 @@ poetry.lock
 
 # Build artifacts
 build/
+build_*/
+*.pyd
+*.dll
+*.obj
+*.exp
+*.lib
+Testing/
 dist/
 *.egg
 
@@ -45,6 +52,7 @@ demos/Lib
 
 # Ignore specific files or directories
 __*
+!__init__.py
 
 # Ignore the site directory
 site/

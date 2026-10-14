@@ -9,7 +9,7 @@ from utils.animator import BenchmarkAnimator
 from pyeyesweb.data_models.sliding_window import SlidingWindow
 
 # The Feature
-from pyeyesweb.analysis_primitives.rarity import Rarity
+from pyeyesweb.analysis_primitives.rarity import HistogramRarity
 
 # ==========================================
 # 1. SETUP & CONFIGURATION
@@ -39,13 +39,13 @@ N_frames = pos_tensor.shape[0]
 # 3. INITIALIZE FEATURE & COMPUTE
 # ==========================================
 print("Computing Rarity features...")
-rarity_feature = Rarity(alpha=0.5)
+rarity_feature = HistogramRarity(alpha=0.5)
 
 # Build feature dictionary for animator
 feature_dict = {}
 
-for w in window_lengths:
-    subplot_title = f"Rarity (Window = {w})"
+for window_length in window_lengths:
+    subplot_title = f"Rarity (Window = {window_length})"
     feature_dict[subplot_title] = {}
 
     for joint in joint_names:
@@ -56,17 +56,17 @@ for w in window_lengths:
         joint_idx = marker_names.index(joint)
 
         # 1D Sliding window for speed (magnitude of velocity)
-        sw_speed = SlidingWindow(max_length=w, n_signals=1, n_dims=1)
+        sw_speed = SlidingWindow(max_length=window_length, n_signals=1, n_dims=1)
         results = np.zeros(N_frames)
 
-        for frame in tqdm(range(N_frames), desc=f"Processing {joint} (w={w})"):
+        for frame in tqdm(range(N_frames), desc=f"Processing {joint} (w={window_length})"):
             # Extract speed for this specific joint
             speed = np.linalg.norm(vel_tensor[frame, joint_idx, :])
             sw_speed.append([[speed]])
 
             # Compute using the streaming __call__ API
             res = rarity_feature(sw_speed)
-            results[frame] = res.rarity if res.is_valid else 0.0
+            results[frame] = res.rarity if res.ok else 0.0
 
         # Store the computed array in the dictionary for the animator
         feature_dict[subplot_title][joint] = results

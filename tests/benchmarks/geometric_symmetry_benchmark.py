@@ -7,7 +7,7 @@ from utils.data_loader import QualisysLoader, KinectLoader
 from utils.animator import BenchmarkAnimator
 
 # The Feature
-from pyeyesweb.low_level.geometric_symmetry import GeometricSymmetry
+from pyeyesweb.low_level.symmetry import GeometricSymmetry
 
 # ==========================================
 # 1. SETUP & CONFIGURATION
@@ -42,7 +42,7 @@ center_idx = marker_names.index(center_name) if center_name in marker_names else
 feature_sym = GeometricSymmetry(joint_pairs=joint_pairs, center_of_symmetry=center_idx)
 
 # Dictionaries to store the continuous results for each pair
-results_dict = {f"{l}_{r}": np.zeros(N_frames) for l, r in joint_pairs}
+results_dict = {f"{left_joint}_{right_joint}": np.zeros(N_frames) for left_joint, right_joint in joint_pairs}
 
 # ==========================================
 # 3. FAST COMPUTATION LOOP (No Sliding Window!)
@@ -52,9 +52,9 @@ for frame in tqdm(range(N_frames), desc="Evaluating Symmetry", unit="frames"):
     # Pass the raw 2D array directly to the Pure Math API
     res_sym = feature_sym.compute(pos_tensor[frame])
 
-    if res_sym.is_valid and res_sym.pairs is not None:
+    if res_sym.ok:
         for pair_key in results_dict.keys():
-            results_dict[pair_key][frame] = res_sym.pairs.get(pair_key, 0.0)
+            results_dict[pair_key][frame] = res_sym[f"pair_error_{pair_key}"]
 
 # ==========================================
 # 4. RENDER & SAVE ANIMATION
@@ -62,8 +62,8 @@ for frame in tqdm(range(N_frames), desc="Evaluating Symmetry", unit="frames"):
 feature_dict = {}
 plot_titles = ["Shoulders Symmetry", "Elbows Symmetry", "Wrists Symmetry"]
 
-for i, (l_idx, r_idx) in enumerate(joint_pairs):
-    title = plot_titles[i] if i < len(plot_titles) else f"Pair {l_idx}-{r_idx}"
+for index, (l_idx, r_idx) in enumerate(joint_pairs):
+    title = plot_titles[index] if index < len(plot_titles) else f"Pair {l_idx}-{r_idx}"
     feature_dict[title] = {f"{marker_names[l_idx]} vs {marker_names[r_idx]}": results_dict[f"{l_idx}_{r_idx}"]}
 
 animator = BenchmarkAnimator(

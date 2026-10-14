@@ -1,12 +1,12 @@
-from .suddenness import Suddenness, SuddennessResult
-from .lightness import Lightness, LightnessResult
-from .impulsivity import Impulsivity, ImpulsivityResult
+"""Layer 3, mid-level features: amodal features of a gesture over 0.5-3 s (segments, suddenness, impulsivity, directness, space occupation)."""
+
+from .segmentation import GestureSegmenter, MotionDuration
+from .suddenness import Suddenness
+from .impulsivity import SuddennessImpulsivity, ContractionImpulsivity
+from .directness import Directness
+from .space_occupation import PositionDependingPotentials, RegionDependingPotentials
 
 __all__ = [
-    "Suddenness",
-    "SuddennessResult",
-    "Lightness",
-    "LightnessResult",
-    "Impulsivity",
-    "ImpulsivityResult",
+    "GestureSegmenter", "MotionDuration", "Suddenness", "SuddennessImpulsivity", "ContractionImpulsivity",
+    "Directness", "PositionDependingPotentials", "RegionDependingPotentials"
 ]

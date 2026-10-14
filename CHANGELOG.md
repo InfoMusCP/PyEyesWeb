@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## 2.0.0 (unreleased)
+
+### Breaking Changes
+
+* feat!: new output contract shared by all features. A feature declares its outputs as a `Schema` (`feature.outputs`, with `names`, `flat_names`, `size`, `describe()`) and every call returns an immutable `Result` with the same attributes each time. See `docs/user_guide/output_contracts.md`.
+* `FeatureResult` and the per-feature result dataclasses are removed. `Result` carries `status` (`Status.OK`, `WARMING_UP`, `NO_OUTPUT`, `INVALID_INPUT`), `ok`, `reason`, `t` and a per-output `valid` mask; `Result.is_valid` remains only as an alias of `ok`.
+* Missing values are `NaN` (`0` for integer outputs, `False` for boolean outputs) instead of `None`, and array shapes no longer change between calls.
+* `KineticEnergy`: the `joints` dict is replaced by the arrays `joint_energy` and `joint_component_energy`, and `component_energy` is now an array.
+* `GeometricSymmetry`: the `pairs` dict is replaced by the array `pair_error` (flat names `pair_error_<left>_<right>`).
+* Contraction features and `KineticEnergy` return `Status.INVALID_INPUT` for an empty frame instead of `0.0`.
+* `Smoothness`, `DirectionChange` and `StatisticalMoment` declare only the outputs named in `metrics`; an unrequested metric is no longer an attribute (previously `None`).
+* The minimum supported Python version is now 3.10 (`dataclass(slots=True)` was already required).
+
+* The package follows the layers of the conceptual model: `pyeyesweb.physical_signals`, `low_level`, `mid_level`, `high_level` (reserved) and `analysis_primitives`. Modules were renamed (`low_level.kinetic_energy` -> `energy`, `contraction_expansion` -> `contraction`, `geometric_symmetry` -> `symmetry`; `analysis_primitives.synchronization` is now a package).
+* EyesWeb ports take the simple names `KineticEnergy`, `Smoothness`, `Impulsivity`, `Rarity`, `EllipsoidSphericity`, `PointsDensity`. The previous Python implementations, which compute different things, are kept as `VelocityKineticEnergy`, `SpeedSmoothness`, `SuddennessImpulsivity`, `HistogramRarity` and `EllipsoidFitSphericity`. The Python `PointsDensity` is replaced by the EyesWeb one (a superset).
+* `pyeyesweb.Smoothness` and `pyeyesweb.Synchronization` are no longer exported at the top level.
+* The native Python features (`StatisticalMoment`, `DirectionChange`, `Equilibrium`, `GeometricSymmetry`, `BoundingBoxFilledArea`, `Clusterability`, `SpeedSmoothness`, `Synchronization`, `Suddenness`, `SuddennessImpulsivity`, `HistogramRarity`, `Lightness`, `MultiScaleEntropyDominance`) now run in C++ (`core.native`) and keep their public API; they need the compiled core. The original Python implementations are kept under `tests/reference/` for parity tests.
+* Removed `VelocityKineticEnergy` (use `KineticEnergy(input_mode=KineticEnergyInputMode.VELOCITY)`, which returns the total only) and `EllipsoidFitSphericity` (use `EllipsoidSphericity().process_points(points)`; `axis_ratio` is the former value).
+* `SpeedSmoothness` metrics are now `sparc`, `ldlj_v`, `ldlj_a`, `harmonicity`, `n_submovements`; `jerk_rms` and `samp_en` are removed (use `Kinematics` and `SampleEntropy`).
+* `MultiScaleEntropyDominance` is a proper feature: a `Schema` of array outputs (`complexity_index`, `dominance_score`, `leader_index`, `leader_complexity`) and `Status` values instead of a dict; sample entropy now comes from the EyesWeb block, so values differ from 1.x by O(1/N).
+* Negative joint indices and axes (`Equilibrium`, `GeometricSymmetry`) are rejected instead of wrapping around.
+* New call contract for every feature (`docs/user_guide/input_contract.md`): `feature.inputs` declares what a call receives, `process(*x, t=None)` handles one sample or frame per input, `run(*X, ts=None, reset=True)` a whole recording (fresh state by default) and returns a `Recorder`, `reset()` clears state. Time is in seconds, keyword-only, `NaN` in the result when absent; `creation_time` in 100 ns ticks is gone. Windowed features own their buffer (`window`, `hop`, `process_window(series)`); `compute(...)`, `__call__(SlidingWindow)`, `push_*` and list/series-style `process(...)` entry points are removed (`SlidingWindow` remains as a standalone utility). Per family:
+  * Frame features: `BoundingBoxFilledArea`, `GeometricSymmetry`, `Equilibrium`, `PointsDensity`, `SymmetryIndex3D`, `SkeletonManipulator`, `GestureSegmenter` and the contour / trajectory-generator blocks take `(N, D)` frames (`labels=` at construction for labelled ones, dicts still accepted); `EllipsoidSphericity.process(points)` fits a cloud and `process_axes(a, b, c)` is the former `process(a, b, c)`; `TriangleSymmetry` takes `(upper, left, right)`; `Impulsivity` takes `(sqom, ci)` and `NoPreparationDetector2` `(angle, distance)`; `RegionDependingPotentials.process(hits)`.
+  * Windowed features now take `window` and `hop` (and `dims` for those whose frames are `(signals, dims)`): `Suddenness`, `SuddennessImpulsivity`, `Lightness`, `DirectionChange`, `StatisticalMoment`, `HistogramRarity`, `Clusterability` (`n_neighbors` keyword-only), `MultiScaleEntropyDominance`, `SampleEntropy`, `CoarseGraining`, `Smoothness` (`hop` defaults to `window`; `process_window(series)` replaces `process(series, sampling_rate, overlapped_samples)`), `Synchronization`, `CorrelationsMatrix`, `GeneralisedAutoCorrelation`, `RecurrencePlot`, `CrossRecurrencePlot`, the event-synchronization blocks (MECS v1/v2, `SpikeES`, `EventSynchronization`, `TauEstimator`, `EventSynchronizationInterdependence`). MECS v2 derives its `overlap` from `window - hop`; `StatisticalMoment`'s `metrics` is now the third parameter.
+  * `Kinematics`: `process(point)`, `process_window(series)` (was `process_series`) and `process_trajectory(trajectory)` (was `push_trajectory`); the trajectory feature blocks also take plain arrays.
+  * `Rarity`, `ScalarPeakDetector`, `ZeroCross` now report `t` and have `reset()`.
+* The temporary package `pyeyesweb.eyesweb` is dissolved: every feature class is defined in its layer module and re-exported by the layer package, with no distinction between ports and native features. The EyesWeb-name aliases `KineticEnergyIndex`, `PeriodicityIndex`, `ImpulsivityIndex`, `RarityIndex`, `SmoothnessIndex`, `TriangleSymmetryIndex` and `TrajectoryFeatures` (of `Kinematics`) are removed. The layer packages import the compiled core directly (no lazy re-exports); `TICKS_PER_SECOND`, `TimeMode` and `SeriesBuffer` are available from the top-level package once the core is installed.
+* The feature metadata no longer distinguishes ports from native features: `ORIGIN` and `catalog(origin=...)` are removed; `EYESWEB_BLOCK` names the EyesWeb block a feature comes from, when it has one.
+
+### Features
+
+* feat: `KineticEnergy(input_mode=VELOCITY)` and `EllipsoidSphericity.process_points` (PCA fit, with `axis_ratio` and `radii`), extensions of the EyesWeb blocks; the default behaviour stays faithful.
+* feat: discovery metadata (`LAYER`, `TIMESCALE`, `ORIGIN`, `EYESWEB_BLOCK`) on every feature class, `pyeyesweb.catalog()` and `catalog_table()`; `tools/update_catalog_docs.py` generates the "Implemented" tables of the documentation.
+* feat: `KineticEnergy(labels=[...])` accepts `(N, 3)` arrays instead of dicts and has `run(frames)` for whole `(T, N, 3)` recordings (a C++ loop returning a `Recorder`); `Recorder.from_arrays` builds a recorder from whole-recording columns. Pilot of the array / batch input contract.
+* feat: `Result.to_array()`, `to_dict()` and `to_flat_dict(prefix, meta=True)` (adds `<prefix>_status` and `<prefix>_t`), and `Recorder` to log many frames into preallocated columns or a Pandas DataFrame.
+* feat: the EyesWeb block ports (motion, trajectory, space, sync and dance blocks), following the same contract, in the layer packages.
+
+### Refactoring & Improvements
+
+* refactor: benchmarks, example notebooks (notebook 4 rewritten around the new contract) and documentation migrated to the new contract.
+
 ## v1.0.1 (2026-04-07)
 
 ### Features

@@ -37,13 +37,13 @@ where $Area_{hull}$ is the internal surface area derived purely from the outermo
 ### Algorithm Details & Mathematics
 The algorithm fits a 3D ellipsoid to the skeletal joints using PCA on the mean-centered point cloud. The sorted eigenvalues yield the primary radii $(a, b, c)$ where $a$ is the major axis and $c$ is the minor axis.
 
-Sphericity $S$ is defined as the ratio of the smallest to the largest radius:
+The ratio of the smallest to the largest radius (the `axis_ratio` output of `EllipsoidSphericity`) is:
 
 $$
 S = \frac{c}{a}
 $$
 
-where $c$ is the length of the shortest semi-axis and $a$ is the length of the longest semi-axis of the fitted ellipsoid.
+where $c$ is the length of the shortest semi-axis and $a$ is the length of the longest semi-axis of the fitted ellipsoid. The `sphericity` output of `EllipsoidSphericity` is Wadell's sphericity of the fitted ellipsoid, a related but different index; `radii` returns $(a, b, c)$.
 
 ## 3. Points Density
 

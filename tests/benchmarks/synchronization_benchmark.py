@@ -56,15 +56,15 @@ synchronization_feature = Synchronization()
 # Build feature dictionary for animator
 feature_dict = {}
 
-for w in window_lengths:
-    subplot_title = f"Synchronization (Window = {w})"
+for window_length in window_lengths:
+    subplot_title = f"Synchronization (Window = {window_length})"
     feature_dict[subplot_title] = {}
 
     # We configure the window to expect exactly 2 signals of 1 dimension each (speed)
-    sw = SlidingWindow(max_length=w, n_signals=2, n_dims=1)
+    sw = SlidingWindow(max_length=window_length, n_signals=2, n_dims=1)
     results = np.zeros(N_frames)
 
-    for frame in tqdm(range(N_frames), desc=f"Processing Window={w}"):
+    for frame in tqdm(range(N_frames), desc=f"Processing Window={window_length}"):
         # Extract the 1D speed (velocity magnitude) for both wrists
         speed_l = np.linalg.norm(vel_tensor[frame, idx_l, :])
         speed_r = np.linalg.norm(vel_tensor[frame, idx_r, :])
@@ -77,7 +77,7 @@ for w in window_lengths:
         res = synchronization_feature(sw)
 
         # Safely extract the Phase Locking Value (PLV)
-        results[frame] = res.plv if res.is_valid else 0.0
+        results[frame] = res.plv if res.ok else 0.0
 
     # Store the computed array in the dictionary for the animator
     feature_dict[subplot_title][f"{joint_l} vs {joint_r} (PLV)"] = results

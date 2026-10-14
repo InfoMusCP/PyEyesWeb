@@ -1,7 +1,23 @@
-from .low_level.smoothness import Smoothness
-from .analysis_primitives.synchronization import Synchronization
+"""PyEyesWeb: movement analysis organised by the layers of the conceptual model.
 
-__all__ = [
-    "Smoothness",
-    "Synchronization",
-]
+    pyeyesweb.physical_signals     Layer 1: physical signals and virtual sensors
+    pyeyesweb.low_level            Layer 2: low-level features
+    pyeyesweb.mid_level            Layer 3: mid-level features
+    pyeyesweb.high_level           Layer 4: qualities communication (social and interaction-level features)
+    pyeyesweb.analysis_primitives  metrics applicable at any layer
+
+`pyeyesweb.catalog()` lists every feature with its layer, timescale and origin. The layers need the compiled
+EyesWeb core; `import pyeyesweb` itself, the data models (`pyeyesweb.data_models`) and the catalog types do not.
+`SeriesBuffer` of the core is available here once it is installed.
+"""
+
+from .catalog import Layer, Timescale, catalog, catalog_table
+
+__all__ = ["Layer", "Timescale", "catalog", "catalog_table"]
+
+
+def __getattr__(name: str):
+    if name == "SeriesBuffer":
+        from ._core import core
+        return getattr(core, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

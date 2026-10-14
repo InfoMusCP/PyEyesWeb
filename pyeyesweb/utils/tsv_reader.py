@@ -71,10 +71,10 @@ class TSVReader:
 
         Expects a TSV file with a header line starting with 'Frame'.
         """
-        with open(self.filename, "r") as f:
-            for i, line in enumerate(f):
+        with open(self.filename, "r") as file:
+            for line_number, line in enumerate(file):
                 if line.startswith("Frame"):
-                    header_idx = i
+                    header_idx = line_number
                     self.headers = line.strip().split("\t")
                     break
             else:

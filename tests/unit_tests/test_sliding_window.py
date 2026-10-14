@@ -54,8 +54,8 @@ def test_circular_buffer_logic():
     window = SlidingWindow(max_length=3, n_signals=1, n_dims=1)
 
     # Append 5 items to a window of size 3
-    for i in range(5):
-        window.append(i, timestamp=float(i))
+    for index in range(5):
+        window.append(index, timestamp=float(index))
 
     assert window.is_full is True
     assert len(window) == 3
@@ -94,8 +94,8 @@ def test_to_tensor_and_to_flat_array():
 def test_dynamic_resize_shrink():
     """Test shrinking the window retains the most recent data."""
     window = SlidingWindow(max_length=5, n_signals=1, n_dims=1)
-    for i in range(5):
-        window.append(i)  # [0, 1, 2, 3, 4]
+    for index in range(5):
+        window.append(index)  # [0, 1, 2, 3, 4]
 
     window.max_length = 3
     assert window.max_length == 3
