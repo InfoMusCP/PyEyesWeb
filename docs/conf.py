@@ -154,7 +154,7 @@ _EXAMPLES = Path(os.path.abspath("../examples"))
 # examples/GALLERY_HEADER.rst plus a table of contents of the layer galleries.
 _TUTORIAL_FOLDERS = sorted(folder.name for folder in _EXAMPLES.iterdir()
                            if re.fullmatch(r"\d\d_\w+", folder.name) and (folder / "GALLERY_HEADER.rst").is_file()
-                           and any(folder.glob("plot_[0-9][0-9]_*.py")))
+                           and any(folder.glob("plot_[0-9][0-9]*_*.py")))
 
 
 def _write_tutorials_overview(app, config):
@@ -178,7 +178,7 @@ suppress_warnings = ["config.cache"]
 sphinx_gallery_conf = {
     "examples_dirs": [f"../examples/{name}" for name in _TUTORIAL_FOLDERS],  # one gallery per layer folder (see above)
     "gallery_dirs": [f"tutorials/{name}" for name in _TUTORIAL_FOLDERS],  # generated and git-ignored, like tutorials/index.rst
-    "filename_pattern": r"[/\\]plot_\d\d_",  # only the numbered tutorials run: plot_01_first_feature.py, ...
+    "filename_pattern": r"[/\\]plot_\d\d[ab]?_",  # only the numbered tutorials run: plot_01_first_feature.py, ...
     "ignore_pattern": r"^(?!plot_)",  # a file that is not a numbered tutorial is not a tutorial (helpers.py, ...)
     "within_subsection_order": "FileNameSortKey",
     "backreferences_dir": "api/generated/backreferences",  # "Examples using X" on the generated API pages (feature_pages.py)
