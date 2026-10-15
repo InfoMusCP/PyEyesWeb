@@ -4,6 +4,7 @@
 #   MSYS_NO_PATHCONV=1 PYTHONPATH="C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release;C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb" EYESWEB_CORE_PATH=C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release C:/Users/Nicola/Desktop/CP/EwbTD/.venv/Scripts/python.exe -m sphinx -b html -W --keep-going docs docs/_build/html
 # In CI the core comes from the eyesweb-core wheel (`pip install .[docs]`), no path variables are needed.
 
+import doctest
 import os
 import sys
 from datetime import date
@@ -45,6 +46,8 @@ extensions = [
     "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
+    "sphinx.ext.doctest",  # {doctest} blocks of the prose pages are executed and their output checked (see below)
+    "matplotlib.sphinxext.plot_directive",  # {plot} blocks: figures of the prose pages rendered from code at build time
     "sphinx.ext.viewcode",  # Python source only (the repository is public Python)
     "sphinx.ext.githubpages",
     "sphinxcontrib.bibtex",
@@ -63,6 +66,24 @@ autosummary_generate = True
 autodoc_typehints = "none"
 numpydoc_show_class_members = False  # member tables come from autosummary templates (WP3)
 numpydoc_class_members_toctree = False
+
+# --- executed code in the prose pages (DOCS_PLAN WP5) ----------------------------------------------------------------------
+# Text: {doctest} blocks, checked with `python -m sphinx -b doctest docs docs/_build/doctest`. Figures: {plot} blocks,
+# executed by the HTML build (a failing figure script is a warning, so -W fails). No other code block is Python.
+doctest_global_setup = """
+import numpy as np
+"""
+doctest_default_flags = doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE
+# The `>>>` examples of the docstrings (shown on the API pages) are run by `pytest --doctest-modules pyeyesweb`, which gives
+# them the globals of their module; the Sphinx builder must not run them again: only the {doctest} directives are tested.
+doctest_test_doctest_blocks = ""
+plot_include_source = True
+plot_apply_rcparams = True
+plot_html_show_source_link = False
+plot_html_show_formats = False
+plot_formats = [("png", 110)]
+plot_rcparams = {"figure.figsize": (6.4, 3.0), "axes.spines.top": False, "axes.spines.right": False, "font.size": 9,
+                 "figure.dpi": 110, "savefig.bbox": "tight"}
 # nitpicky = True  # TODO(WP9): once the page set is stable (DOCS_PLAN 4.1)
 
 intersphinx_mapping = {

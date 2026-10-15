@@ -14,8 +14,11 @@ the private core repository and maintainer remarks: **move it to the private `de
 (WP8), like the other internal plans.
 ```
 
-State checked: branch `feature/v2-eyesweb-core` at `bc896e1` (docs work not committed), `eyesweb_core` 2.0.0 build `dbaf21c`,
-Python 3.11 venv (numpy 2.4.6), `pytest -q` from the repository root: **2633 passed, 12 skipped** (about 40 s).
+State checked: branch `feature/v2-eyesweb-core`, `eyesweb_core` 2.0.0 build `dbaf21c`, Python 3.11 venv (numpy 2.4.6).
+Written at `bc896e1` (`pytest -q`: 2633 passed, 12 skipped) and **updated in WP5 (2026-10-15) for the work packages H and I** at `a8402dd`
+(`pytest -q`: 2925 passed, 12 skipped): all 35 snippets were re-run, 4 outputs changed and are pasted below (`i04_recorder`, `i08c_unit_strings`,
+`i17_core_version`, `x3_symmetry_ratio_reference`), the statements that depended on them were edited, and section 21 lists the changes that
+had no snippet yet.
 Counts, names and messages below are from running the code on that state, not copied from the plans.
 
 How to read an item: **Statement** (what pages may say), **Evidence** (`file:line` in `pyeyesweb/`; `DEV` is
@@ -36,20 +39,21 @@ EYESWEB_CORE_PATH=C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release C:/
 | 1 | Call contract | verified; corrected: `process` returns a feature-specific `Result` subclass, `latest` is `None` before the first `OK` result |
 | 2 | `Result` | verified (`is_valid`, `ok`, `with_time`, `to_dict`, `to_array` also exist) |
 | 3 | `Status` | corrected: warm-up `reason` is a sample count; "state unchanged" does not hold for an overflow |
-| 4 | `Recorder` | corrected: `to_numpy()`, not `to_array()`; images excluded from `to_numpy()` and `to_frame()` (verified) |
-| 5 | Errors | verified; additions (timestamp that is not finite, when a wrong joint name raises) |
-| 6 | Time rule | corrected: the timestamp checks belong to 9 "timed" classes, the window metrics ignore `timestamp`; first timed call; reason texts |
+| 4 | `Recorder` | corrected: `to_numpy()`, not `to_array()`; images excluded from `to_numpy()` and `to_frame()` (verified); every `run` gives `Recorder(<Feature>, ...)` with `<Feature>Result` rows (H) |
+| 5 | Errors | verified; additions (a timestamp that is not finite is `INVALID_INPUT` in every feature since H, when a wrong joint name raises) |
+| 6 | Time rule | corrected: the "non-increasing" check belongs to 9 "timed" classes, the "non-finite" check is central (H), the window metrics ignore the order of `timestamp`; first timed call; reason texts |
 | 7 | Windows | corrected: 22 windowed classes; `window` has a default in 5 of them; six more classes have a `window` parameter |
 | 8 | Units | corrected: `units` exists in exactly 10 classes; humanoid claim verified; unit text follows the parameters |
 | 9 | Choices | verified; corrected: `parts=` reads back in the block's order; `output_dims` differs per feature |
 | 10 | `from_*` constructors | corrected: exactly three classes, six constructors |
 | 11 | Skeletons | corrected: `joint_map` on 6 classes only, `skeleton=` on 5, `GestureSegmenter` takes none |
 | 12 | `dims` | corrected: `dims=None` in 4 classes only |
-| 13 | Layers and catalog | corrected: layer counts 11 / 22 / 7 / 1 / 19; synchronization has 12 classes |
+| 13 | Layers and catalog | corrected: 60 features, 11 / 22 / 7 / 1 / 19; four layers plus the analysis primitives (five groups, not "five layers"); synchronization has 12 classes |
 | 14 | Live and structural parameters | verified (per-parameter table generated from the test tables) |
 | 15 | Removed features | complete list, absence verified by import |
 | 16 | Fidelity policy | verified (no flags in any signature); the list of corrections lives in the private repository |
-| 17 | Install and core | corrected: the wheel dependency is **not yet true** (packaging pending); import errors verified |
+| 17 | Install and core | corrected: `pip install pyeyesweb` gives the 1.x series today (packaging pending); `_core.py` describes the core as part of the wheel; import error texts re-verified (WP5) |
+| 21 | Changes after the sheet (H and I) | `is_noisy` flipped, `gamma` dimensionless, per-second velocity of `CurvatureVelocityCorrelation`, `SpikeSynchronization(mode="timings")`, XML round trip, `Symmetry.reference_type` |
 
 ---
 
@@ -443,8 +447,8 @@ Output:
 
 ```text
 public members of Recorder: ['append', 'column', 'extend', 'from_arrays', 'ok', 'run', 'status', 'timestamps', 'to_frame', 'to_numpy', 'valid']
-Recorder(schema, rows=6, columns=['kinetic_energy'], status={'OK': 6}) 6
-Result Result list 3
+Recorder(KineticEnergy, rows=6, columns=['kinetic_energy'], status={'OK': 6}) 6
+KineticEnergyResult KineticEnergyResult list 3
 (6,) (6,) True
 [0.   0.01 0.02 0.03 0.04 0.05] [0 0 0 0 0 0] [ True  True  True  True  True  True]
   status  timestamp  kinetic_energy
@@ -615,8 +619,9 @@ joint is `INVALID_INPUT`; a frame array of the wrong number of rows raises.
 `"no time given: per-sample derivatives"`.
 
 - `sampling_rate` is a parameter of 16 classes; **its default is `None` in every one** (no hidden rate).
-- This step logic, the check "timestamp must increase" (`INVALID_INPUT`, `"non-increasing timestamp"`, previous time kept) and the
-  check "timestamp must be finite" (`ValueError`) belong to the **9 classes with `_timed = True`**: `HumanoidSimulator`,
+- This step logic and the check "timestamp must increase" (`INVALID_INPUT`, `"non-increasing timestamp"`, previous time kept) belong to
+  the **9 classes with `_timed = True`**. The check "timestamp must be finite" is central since H (re-verified in WP5): `INVALID_INPUT`,
+  `"non-finite timestamp"`, empty outputs, nothing changed, in every feature (it was a `ValueError` in the 9 classes). The 9 classes are `HumanoidSimulator`,
   `GenericModelSimulator`, `GenericModelPredictor`, `GenericModelEstimator`, `Kinematics`, `KineticEnergy`, `CurvatureDispersion`,
   `MotionNoiseDetector`, `ContractionImpulsivity`.
 - **First timed call.** With no previous timestamp (first call, after `reset()`, after a call without timestamp, after a state reset) the
@@ -983,12 +988,12 @@ for feature in (MotionDuration(), MotionDuration(sampling_rate=100.0), Contracti
 Output:
 
 ```text
-''                       HumanoidOrientations.directions, GenericModelEstimator.error, SilhouetteCentroids.normalized, SilhouetteBodyParts.is_found, SilhouetteBodyParts.masks, Videogram.videogram, ... (63 outputs)
+''                       HumanoidOrientations.directions, GenericModelEstimator.error, SilhouetteCentroids.normalized, SilhouetteBodyParts.is_found, SilhouetteBodyParts.masks, Videogram.videogram, ... (64 outputs)
 '1/<length>'             CurvatureVelocityCorrelation.curvature, CurvatureVelocityCorrelation.curvature_std, ContourCurvature.curvature
 '1/frame'                ContractionImpulsivity.impulsivity_index
 '<input>'                GestureSegmenter.smoothed_intensity, EnsembleDominance.leader_complexity, CoarseGraining.coarse_grained
 '<length>'               GenericModelOrientations.directions, PointsPredictor.predicted, EllipsoidSphericity.radii, PointsDensity.density, PointsDensity.centroid, FilterContour.contour, ... (9 outputs)
-'<length>/s'             CurvatureVelocityCorrelation.velocity, CurvatureVelocityCorrelation.velocity_std, Suddenness.gamma
+'<length>/s'             CurvatureVelocityCorrelation.velocity, CurvatureVelocityCorrelation.velocity_std
 '<length>^2'             DirectionChange.polygon
 '<length>^2/s^2'         KineticEnergy.kinetic_energy
 'cells'                  HitCellDetector.cells
@@ -1185,7 +1190,7 @@ LogDimensionlessJerk acceleration | Inputs(signal: sample (1) [units/s or units/
 - **Incomplete presets stay documented as incomplete** (decided). Only the ratio symmetry raises (below). A missing `weights` silently becomes **uniform weights of 1.0**
   (so kinetic-energy values on `qualisys_sport`, `mediapipe` and `openpose` are not comparable with `kinect_v2` and are not the EyesWeb numbers); a missing
   `reference` means: `Symmetry(method="reflection")` uses the barycentre (`reference_point=None`); `Symmetry(method="ratio")` raises
-  `ValueError` at construction naming the preset and asking for `reference_point=` (S4, fixed in H; an explicit `reference_point=` works, so does `reference_type="barycenter"`). The `TODO(fill)` markers are at
+  `ValueError` at construction naming the preset and asking for `reference_point=` (S4, fixed in H; an explicit `reference_point=` works; since I-a `reference_type` accepts only `"label"`, `"barycenter"` and `"point"` raise `ValueError`, see section 21). The `TODO(fill)` markers are at
   `skeletons.py:71,72,89,90,103`; re-check when the maintainer fills them. Naming is inconsistent across presets (`L*/R*`, `*Left/*Right`,
   `left_*/right_*`; `RelbowOut` keeps the TSV spelling): document, do not normalise.
 - A dict frame must use the preset joint names (unknown key: `ValueError`; missing weighted joint: `INVALID_INPUT` "missing joints: ..."); an array frame
@@ -1336,6 +1341,9 @@ an image, locating points in a grid; stream plumbing that feeds the features). L
 (kinematics, energy, symmetry, smoothness), including the shape and filtering of a contour and a path given as a list of points (directness, non-planarity).
 Mid-level needs a whole gesture. High-level needs several people. An analysis primitive takes any scalar, vector or event signal and knows nothing of bodies,
 skeletons or geometry. `FilterContour`, `Directness`, `TrajectoryNonPlanarity` are **low-level**.
+
+**Layer count (WP5).** The conceptual model has **four layers** (physical signals, low-level, mid-level, high-level: "Layer 1" to "Layer 4" in `Layer.title`); the analysis primitives are a fifth *group*, not a layer
+(`Layer.ANALYSIS_PRIMITIVE.title` has no number). Pages say "four layers and the analysis primitives" or "five groups"; the wording "five layers" (`index.md`, `api/overview.md`) is inaccurate.
 
 The synchronization package (`pyeyesweb.analysis_primitives.synchronization`) has **12** classes (the plan said 11): 12 of the 19 analysis primitives; the other 7
 are `SampleEntropy`, `CoarseGraining`, `Rarity`, `BinaryPulsesRegularity`, `MultiScaleEntropy`, `Periodicity`, `ScalarPeakDetector`.
@@ -1673,15 +1681,17 @@ scale 500: [2.14014154 2.12606486 2.21995283] | finite: True
 
 **Statement.**
 
-- The compiled core is the module `eyesweb_core` (binary wheel built in the private repository; the C++ is closed source and never described or quoted). `pyeyesweb._core`
+- The compiled core is the module `eyesweb_core` (a binary build; the C++ is closed source and never described or quoted). The docstring of `pyeyesweb/_core.py` says it is part of the
+  `pyeyesweb` wheel (module `pyeyesweb._eyesweb_core`) and installed with `pip install pyeyesweb` (WP5: the earlier statement of a separate `eyesweb-core` wheel dependency is not what the code says;
+  maintainer to confirm). **PyPI today (checked 2026-10-15): `pyeyesweb` 1.1.1 is the latest release (the 1.x API, no core); there is no `eyesweb-core` project.** `pyeyesweb._core`
   loads it (`from pyeyesweb import _eyesweb_core`, else `eyesweb_core`; during development the folder `EYESWEB_CORE_PATH` is put first on `sys.path`, and the
   import fails if `eyesweb_core` was already loaded from somewhere else).
 - `REQUIRED_CORE = (2, 0)` (major, minor of `eyesweb_core.__version__`). Another version, or a module without a version, raises `ImportError`: *"pyeyesweb needs eyesweb_core 2.0.x, but
   <file> is version 1.9.3 (build abc1234). Rebuild or reinstall the core."*, or for a module without a version *"... is a module without a version (a stale or foreign build). Rebuild
-  or reinstall the core."* No core at all: *"pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install a pyeyesweb wheel that includes it, or set
-  EYESWEB_CORE_PATH to a development build of eyesweb_core."* Runs here: core 2.0.0, build `dbaf21c`.
+  or reinstall the core."* No core at all: *"pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a
+  local build of eyesweb_core."* (text changed after the first version of the sheet). A development path that conflicts with an already loaded core: *"EYESWEB_CORE_PATH is <path>, but eyesweb_core was already loaded from <file>."* Runs here: core 2.0.0, build `dbaf21c`.
 - `import pyeyesweb`, `pyeyesweb.data_models`, `Layer`/`Timescale` need **no core**; `catalog()` and every layer package (`low_level`, ...) do.
-- **Not yet true (packaging, work package E, is last): `pip install pyeyesweb` does not pull `eyesweb-core`.** `pyproject.toml` still says version `1.1.1`, a setuptools build, and dependencies
+- **Not yet true (packaging, work package E, is last): `pip install pyeyesweb` does not give a 2.0 install.** `pyproject.toml` still says version `1.1.1`, a setuptools build whose metadata the setuptools of the venv rejects (`project.license` as a string: `pip install -e .` fails in WP5, so the development install is `PYTHONPATH` + `EYESWEB_CORE_PATH`), and dependencies
   `numpy`, `scipy`, `scikit-learn`, `tqdm` (lines 7 and 49-54); the library itself imports only numpy (no scipy, sklearn or tqdm import in `pyeyesweb/`; pandas only inside
   `Recorder.to_frame`). Install pages must say what is decided (wheel `eyesweb-core`, first release `2.0.0a1`) and be flagged until WP E lands; today's working install is a development
   build plus `EYESWEB_CORE_PATH`.
@@ -1723,19 +1733,19 @@ Output:
 
 ```text
 core with version 1.9.3 (REQUIRED_CORE is 2.0):
-  ImportError: pyeyesweb needs eyesweb_core 2.0.x, but C:/Users/Nicola/AppData/Local/Temp/claude/c--Users-Nicola-Desktop-CP-EwbTD/bde37e7c-ccef-4b5f-9557-b1ab2469d10a/scratchpad/wp2/fake_old/eyesweb_core/__init__.py is version 1.9.3 (build abc1234). Rebuild or reinstall the core.
+  ImportError: pyeyesweb needs eyesweb_core 2.0.x, but <scratch>/fake_old/eyesweb_core/__init__.py is version 1.9.3 (build abc1234). Rebuild or reinstall the core.
 module without __version__:
-  ImportError: pyeyesweb needs eyesweb_core 2.0.x, but C:/Users/Nicola/AppData/Local/Temp/claude/c--Users-Nicola-Desktop-CP-EwbTD/bde37e7c-ccef-4b5f-9557-b1ab2469d10a/scratchpad/wp2/fake_noversion/eyesweb_core/__init__.py is a module without a version (a stale or foreign build). Rebuild or reinstall the core.
+  ImportError: pyeyesweb needs eyesweb_core 2.0.x, but <scratch>/fake_noversion/eyesweb_core/__init__.py is a module without a version (a stale or foreign build). Rebuild or reinstall the core.
 EYESWEB_CORE_PATH without any core:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install a pyeyesweb wheel that includes it, or set EYESWEB_CORE_PATH to a development build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 no core anywhere:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install a pyeyesweb wheel that includes it, or set EYESWEB_CORE_PATH to a development build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 import pyeyesweb, data_models, Layer without any core:
   (imported without error)
 catalog() without any core:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install a pyeyesweb wheel that includes it, or set EYESWEB_CORE_PATH to a development build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 import pyeyesweb.low_level without any core:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install a pyeyesweb wheel that includes it, or set EYESWEB_CORE_PATH to a development build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 required: (2, 0) | loaded: 2.0.0 | build: dbaf21c | module: eyesweb_core
 ```
 
@@ -2071,7 +2081,7 @@ item is listed only because a page writer will stumble over it.
 | S1 | **Fixed in H.** `KineticEnergy.run` now builds its `Recorder` from the feature (`Recorder.from_arrays(self, ...)`): `Recorder(KineticEnergy, ...)` with `KineticEnergyResult` rows, as every other `run` (catalog-wide test). Was: `Recorder(schema, ...)` and plain `Result` rows. | `low_level/energy.py:90`; `data_models/recorder.py:47,97`; run `x1_recorder_repr` |
 | S2 | **Fixed in H.** `Result` docstring says seconds. | `data_models/results.py:300` |
 | S3 | **Fixed in H.** `HumanoidSimulator.process` docstring says the unit of `units`. | `physical_signals/humanoid.py:289` |
-| S4 | **Fixed in H.** `Symmetry(method="ratio", skeleton=...)` with a preset that defines no reference joint (`mediapipe`, `qualisys_sport`) raises `ValueError` at construction naming the preset and asking for `reference_point=` (or `reference_type="barycenter"`); the presets are not filled. The core skips the translation when the label is absent, which is what used to happen silently. An explicit `reference_point=` works. | `x3_symmetry_ratio_reference` |
+| S4 | **Fixed in H.** `Symmetry(method="ratio", skeleton=...)` with a preset that defines no reference joint (`mediapipe`, `qualisys_sport`) raises `ValueError` at construction naming the preset and asking for `reference_point=` (the alternative `reference_type="barycenter"` of the first fix was removed in I-a); the presets are not filled. The core skips the translation when the label is absent, which is what used to happen silently. An explicit `reference_point=` works. | `x3_symmetry_ratio_reference` |
 | S5 | **Fixed in H.** `KineticEnergy(weights=[1.0])` raises `ValueError` ("weights has 1 value, the skeleton has 3 joints"; without labels: "weights must be a mapping ... or a sequence with one weight per label"); a sequence of the right length is accepted as one weight per label. No other feature takes `weights`; `MotionNoiseDetector`, `PointsDensity`, `PointsPredictor` take `labels` only. (A malformed `pairs` of `Symmetry` still shows the raw core error: not in scope.) | run `x2_weights_list` |
 | S6 | **By design, documented in H.** An overflow `INVALID_INPUT` is detected after the block advanced and the core cannot undo it, so the next valid call can be `INVALID_INPUT` too (`KineticEnergy` position mode, windowed features until the sample leaves the window). The other rejections change nothing. Pinned by `test_an_overflow_has_advanced_the_state_of_the_block`; run `i03c_overflow_state` still shows it. | run `i03c_overflow_state` |
 | S7 | **Fixed in H.** A NaN or infinite `timestamp` is `INVALID_INPUT` "non-finite timestamp" in every feature (one check in `Feature._input_problem`), nothing changes; was `ValueError` in the 9 timed classes and unchecked elsewhere. A decreasing timestamp is still checked only by the 9 timed classes (the window metrics ignore `timestamp`). | runs `i06_time`, `i06c_window_timestamps` |
@@ -2157,9 +2167,9 @@ Output:
 kinect_v2       reflection {'reference_point': 'SpineShoulder'} -> OK
 kinect_v2       ratio      {'reference_point': 'SpineShoulder', 'reference_type': 'label'} -> OK
 mediapipe       reflection {'reference_point': None} -> OK
-mediapipe       ratio      ValueError: Symmetry(method='ratio'): the skeleton 'mediapipe' defines no reference joint; pass reference_point= (a joint of the skeleton) or reference_type='barycenter'
+mediapipe       ratio      ValueError: Symmetry(method='ratio'): the skeleton 'mediapipe' defines no reference joint; pass reference_point= (a joint of the skeleton)
 qualisys_sport  reflection {'reference_point': None} -> OK
-qualisys_sport  ratio      ValueError: Symmetry(method='ratio'): the skeleton 'qualisys_sport' defines no reference joint; pass reference_point= (a joint of the skeleton) or reference_type='barycenter'
+qualisys_sport  ratio      ValueError: Symmetry(method='ratio'): the skeleton 'qualisys_sport' defines no reference joint; pass reference_point= (a joint of the skeleton)
 openpose        reflection {'reference_point': 'Neck'} -> OK
 openpose        ratio      {'reference_point': 'Neck', 'reference_type': 'label'} -> OK
 mediapipe ratio with reference_point='nose': nose
@@ -2186,8 +2196,169 @@ Schema(Output('curvature_radius', unit='m')) 100.0
 
 ---
 
+## 21. Changes after the first version of the sheet (work packages H and I), verified in WP5
+
+Each row was checked against the code on 2026-10-15 (state `a8402dd`). Items of H that touch items 4 to 6, 11 and 17 were edited in place above.
+
+| # | Change | Verified by |
+|---|---|---|
+| C1 | `MotionNoiseDetector.is_noisy`: `True` means noisy (random, jumpy motion); `False` for a still body, uniform motion and the first 14 frames. `GestureSegmenter`'s `noise` input still means *blocked*, so a pipeline feeds it `not is_noisy`. | `c1_noisy` |
+| C2 | `Suddenness.gamma` has no unit (dimensionless). `CurvatureVelocityCorrelation.velocity` and `velocity_std` are per second in both modes (`differentiate` False and True give the same values; unit `<length>/s`). | `c2_gamma_velocity`, `i08c_unit_strings` |
+| C3 | `SpikeSynchronization(mode="timings")` is public: input `spike_times`, a matrix `(number_of_inputs, window)` (`window` = spikes per train), one result per matrix (`OK`, no warm-up); times must be > 0 and increasing within a train (`INVALID_INPUT` otherwise); another shape is a `ValueError`. `run` takes `(T, number_of_inputs, window)`. | `c3_spikes` |
+| C4 | `MassSpringModel.to_xml()` round trip: `from_xml_string(model.to_xml()).to_xml()` equals the first text. | `c4_xml_symmetry` |
+| C5 | `Symmetry(method="ratio")`: `reference_type` accepts only `"label"` (`"barycenter"` and `"point"` raise `ValueError` at construction); a preset without a reference joint asks for `reference_point=` only. | `c4_xml_symmetry`, `x3_symmetry_ratio_reference` |
+| C6 | `KineticEnergy(weights=<sequence>)` is one weight per label; `run` gives `Recorder(<Feature>, ...)` for every feature; a non-finite timestamp is `INVALID_INPUT` everywhere. | `c4_xml_symmetry`, `x2_weights_list`, `i04_recorder`, `i06_time` |
+| C7 | `SlidingWindow` and `pyeyesweb.utils.tsv_reader` are gone; layer placement and counts (`Directness`, `TrajectoryNonPlanarity` low-level; 11/22/7/1/19). | `c4_xml_symmetry`, `i13_catalog` |
+
+### C1
+
+`is_noisy` and the `noise` input of the segmenter.
+
+Run `c1_noisy`:
+
+```python
+import numpy as np
+from pyeyesweb.low_level import MotionNoiseDetector
+from pyeyesweb.mid_level import GestureSegmenter
+
+rng = np.random.default_rng(0)
+def flags(frames):
+    detector = MotionNoiseDetector(labels=["a", "b"], sampling_rate=100.0)
+    return [bool(detector.process({"a": f[0], "b": f[1]}).is_noisy) for f in frames][-3:]
+
+still = np.zeros((40, 2, 3))
+uniform = np.cumsum(np.full((40, 2, 3), 0.001), axis=0)
+jumpy = rng.normal(scale=0.05, size=(40, 2, 3))
+print("still:", flags(still), "| uniform motion:", flags(uniform), "| random jumps:", flags(jumpy))
+print("GestureSegmenter inputs:", GestureSegmenter().inputs.names)
+```
+
+Output:
+
+```text
+still: [False, False, False] | uniform motion: [False, False, False] | random jumps: [True, True, True]
+GestureSegmenter inputs: ('intensity', 'noise')
+```
+
+### C2
+
+`gamma` and the velocity of the curvature-velocity correlation.
+
+Run `c2_gamma_velocity`:
+
+```python
+import numpy as np
+from pyeyesweb.mid_level import Suddenness
+from pyeyesweb.low_level import CurvatureVelocityCorrelation
+
+print("Suddenness gamma unit:", repr(Suddenness(window=20).outputs["gamma"].unit), "(dimensionless)")
+
+t = np.linspace(0, 2 * np.pi, 100, endpoint=False)
+ellipse = np.c_[np.cos(t), 0.5 * np.sin(t)]
+for differentiate in (False, True):
+    feature = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, differentiate=differentiate)
+    velocity = feature.run(ellipse)[99].velocity
+    print(f"differentiate={differentiate}: velocity[[0, 50, 99]] = {np.round(velocity[[0, 50, 99]], 3)}, unit {feature.outputs['velocity'].unit}")
+```
+
+Output:
+
+```text
+Suddenness gamma unit: '' (dimensionless)
+differentiate=False: velocity[[0, 50, 99]] = [0.    3.563 3.726], unit <length>/s
+differentiate=True: velocity[[0, 50, 99]] = [0.    3.563 3.726], unit <length>/s
+```
+
+### C3
+
+The `timings` mode of `SpikeSynchronization`.
+
+Run `c3_spikes`:
+
+```python
+import numpy as np
+from pyeyesweb.analysis_primitives import SpikeSynchronization
+
+feature = SpikeSynchronization(mode="timings", number_of_inputs=3, window=4)
+print(feature.inputs)
+trains = np.array([[0.1, 0.5, 0.9, 1.3], [0.12, 0.52, 0.88, 1.33], [0.2, 0.6, 1.0, 1.4]])
+result = feature.process(trains)
+print(result.status.name, result.reason == "", {name: np.round(value, 3).tolist() for name, value in result.to_dict().items()})
+print(feature.run(np.stack([trains, trains])))
+try:
+    feature.process(trains[:, :3])
+except ValueError as error:
+    print("ValueError:", error)
+bad = trains.copy(); bad[0, 1] = 0.05
+print(feature.process(bad).status.name, repr(feature.process(bad).reason))
+```
+
+Output:
+
+```text
+Inputs(spike_times: matrix (3, 4) - spike times, one row per train, increasing and > 0)
+OK True {'degree': 1.0, 'distance': 0.0, 'profile': []}
+Recorder(SpikeSynchronization, rows=2, columns=['degree', 'distance', 'profile'], status={'OK': 2})
+ValueError: SpikeSynchronization: input 'spike_times' expects matrix of shape (3, 4), got shape (3, 3)
+INVALID_INPUT 'spike times must increase within each train'
+```
+
+### C4 to C7
+
+XML round trip, `reference_type`, weights as a sequence, removed names.
+
+Run `c4_xml_symmetry`:
+
+```python
+import re
+from pyeyesweb.physical_signals import MassSpringModel
+from pyeyesweb.low_level import Symmetry, KineticEnergy
+
+model = MassSpringModel(name="rod")
+model.add_mass("root", 1e10)
+model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
+model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0, 0.5, 0.25)
+first = model.to_xml()
+second = MassSpringModel.from_xml_string(first).to_xml()
+print("round trip identical:", first == second)
+print(re.findall(r'[Dd]amping\w*="[^"]*"', first))
+
+for kwargs in ({"reference_type": "barycenter"}, {"reference_type": "point"}, {"reference_type": "label"}):
+    try:
+        feature = Symmetry(skeleton="kinect_v2", method="ratio", **kwargs)
+        print(kwargs, "->", feature.parameters["reference_type"], feature.parameters["reference_point"])
+    except ValueError as error:
+        print(kwargs, "-> ValueError:", error)
+print("weights as a sequence:", dict(KineticEnergy(labels=["a", "b"], weights=[1.0, 2.0]).parameters["weights"]))
+
+import importlib
+for name in ("pyeyesweb.data_models.SlidingWindow", "pyeyesweb.utils.tsv_reader", "pyeyesweb.data_models.sliding_window"):
+    module, _, attribute = name.rpartition(".")
+    try:
+        target = importlib.import_module(module)
+        print(name, "->", "present" if hasattr(target, attribute) else "absent")
+    except ImportError:
+        print(name, "-> absent (no such module)")
+```
+
+Output:
+
+```text
+round trip identical: True
+['Damping="0.5"', 'Damping="0.25"']
+{'reference_type': 'barycenter'} -> ValueError: Symmetry(method='ratio'): reference_type='barycenter' is not supported: the core does not translate the frame for it (the original block did nothing); only 'label' is
+{'reference_type': 'point'} -> ValueError: Symmetry(method='ratio'): reference_type='point' is not supported: the core does not translate the frame for it (the original block did nothing); only 'label' is
+{'reference_type': 'label'} -> label SpineShoulder
+weights as a sequence: {'a': 1.0, 'b': 2.0}
+pyeyesweb.data_models.SlidingWindow -> absent
+pyeyesweb.utils.tsv_reader -> absent
+pyeyesweb.data_models.sliding_window -> absent
+```
+
+---
+
 ## Appendix: how this sheet was produced
 
-Every snippet was run with the environment of the header; the generating script (kept outside the repository) substituted the real output. The script, the snippets and the
+Every snippet was run with the environment of the header (WP5 re-ran all of them with a small script that extracts the `Run` blocks of this file and compares the pasted output; the snippets of section 21 were added then); the generating script (kept outside the repository) substituted the real output. The script, the snippets and the
 raw outputs are in the session scratchpad; the sheet is the record. After any change to a feature contract, re-run the snippets and update this file in the same commit; where
 a page and this sheet disagree, the page is fixed (the sheet follows the code).
