@@ -1,3 +1,5 @@
 # Changelog
 
-To be written (WP8).
+```{include} ../CHANGELOG.md
+:start-after: "# CHANGELOG"
+```

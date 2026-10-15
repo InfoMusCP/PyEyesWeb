@@ -1,103 +1,96 @@
-# PyEyesWeb  
-## Expressive movement analysis toolkit
-*A modern, modular, and accessible Python library for expressive movement analysis — bridging research, health, and the arts*  
+# PyEyesWeb
 
-[![PyPI version](https://img.shields.io/pypi/v/pyeyesweb.svg)](https://pypi.org/project/pyeyesweb/)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://infomuscp.github.io/PyEyesWeb/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 
-`PyEyesWeb` is a research toolkit for extracting quantitative features from human movement data.  
-It builds on the **Expressive Gesture Analysis** library of [EyesWeb](https://casapaganini.unige.it/eyesweb_bp), bringing expressive movement analysis into Python as a core aim of the project.
-The library provides computational methods to analyze different qualities of movement, supporting applications in **research, health, and the arts**.  
-It is designed to facilitate adoption in **artificial intelligence and machine learning pipelines**, while also enabling seamless integration with creative and interactive platforms such as **TouchDesigner, Unity, and Max/MSP**.  
+PyEyesWeb is a research toolkit for the quantitative analysis of expressive movement. It is a Python layer over a port of the
+Expressive Gesture Analysis library of [EyesWeb](https://casapaganini.unige.it/eyesweb_bp), with features organised in layers
+that follow a conceptual model of movement: from physical signals, through low-level and mid-level features, to the
+analysis of several people together. Every feature obeys one call contract and one result type, so the same code runs on a
+live stream and on a recorded file.
 
 ## Installation
+
+PyEyesWeb 2.0 is a **pre-release** and is **not on PyPI yet**: the latest release on PyPI is 1.x, which has a different API
+(see [Migrating from 1.x](https://infomuscp.github.io/PyEyesWeb/migration.html)). At release the installation will be
 
 ```bash
 pip install pyeyesweb
 ```
 
-## Usage
-A minimal example of extracting movement features with `PyEyesWeb`
-:
-```python
-from pyeyesweb.data_models import SlidingWindow
-from pyeyesweb.low_level import SpeedSmoothness
+which also installs the compiled core, the separate `eyesweb-core` wheel (Python 3.10 or later).
+Until then, build the core from its sources and install PyEyesWeb from a clone, pointing `EYESWEB_CORE_PATH` at the folder
+that contains the built `eyesweb_core` module:
 
-# Movement smoothness analysis
-# 1. Initialize the feature extractor (e.g., 50Hz sampling rate)
-smoothness = SpeedSmoothness(rate_hz=50.0)
-
-# 2. Initialize a sliding window for speed data (1 signal, 1 dimension)
-window = SlidingWindow(max_length=60, n_signals=1, n_dims=1)
-
-# 3. Process data frame by frame (simulating a real-time loop)
-# here `speed_value` is a float representing the instantaneous speed
-window.append(speed_value) 
-
-# 4. Compute the feature (only after the window is full)
-if len(window) >= window.max_length:
-    result = smoothness(window)
-    print(f"SPARC: {result.sparc}, LDLJ: {result.ldlj_v}")
+```bash
+git clone https://github.com/InfoMusCP/PyEyesWeb.git
+cd PyEyesWeb
+pip install -e .[dev]
+export EYESWEB_CORE_PATH=/path/to/eyesweb_core/build   # PowerShell: $env:EYESWEB_CORE_PATH = "..."
 ```
-> [!TIP]
-> For more advanced and complete use cases see the [Documentation](https://infomuscp.github.io/PyEyesWeb/)
-> and the [examples](examples) folder.
+
+## Example
+
+Synthetic data only; the output in the comments is the output of this script.
+
+```python
+import numpy as np
+from pyeyesweb.low_level import SpectralArcLength
+
+rate = 100.0                                              # samples per second
+time = np.arange(300) / rate                              # seconds
+speed = 0.6 * np.exp(-0.5 * ((time - 1.5) / 0.4) ** 2)    # one smooth reach, m/s
+
+feature = SpectralArcLength(window=100, sampling_rate=rate)
+recording = feature.run(speed, timestamps=time)           # a whole recording gives a Recorder
+print(recording)
+# Recorder(SpectralArcLength, rows=300, columns=['spectral_arc_length'], status={'OK': 201, 'WARMING_UP': 99})
+print(recording[-1])                                      # a row is a Result
+# SpectralArcLengthResult(status=OK, spectral_arc_length=-1.63417)
+feature.reset()                                           # streaming: one sample per call
+print(feature.process(speed[0], timestamp=time[0]))
+# SpectralArcLengthResult(status=WARMING_UP, reason='1 of 100 samples', spectral_arc_length=nan)
+```
 
 ## Documentation
 
-Documentation for `PyEyesWeb` is available online and includes tutorials, API references, and the theoretical and scientific background of the implemented metrics:
+The [documentation](https://infomuscp.github.io/PyEyesWeb/) has a quickstart, the concepts (layers, inputs, results, time and
+units), the theory of each family of features with references, a user guide per layer and the API reference.
+The [gallery of tutorials](https://infomuscp.github.io/PyEyesWeb/tutorials/index.html) is a set of executed examples, each
+downloadable as a notebook. The [catalog](https://infomuscp.github.io/PyEyesWeb/api/catalog.html) lists every feature with its
+layer, inputs, outputs and parameters.
 
-- [Getting Started](https://infomuscp.github.io/PyEyesWeb/getting_started): step-by-step guide to installation and basic usage.
-- [API Reference](https://infomuscp.github.io/PyEyesWeb/api_reference): technical descriptions of modules, classes, and functions.  
-- [Theoretical Foundation](https://infomuscp.github.io/PyEyesWeb/user_guide): background on the scientific principles and research behind the metrics. 
+## Layers
 
-## Support
+`pyeyesweb.catalog()` returns the 60 features of this release:
 
-If you encounter issues or have questions about `PyEyesWeb`, you can get help through the following channels:
+| Layer | Package | Features |
+|---|---|---|
+| Physical signals | `pyeyesweb.physical_signals` | 11 |
+| Low-level features | `pyeyesweb.low_level` | 22 |
+| Mid-level features | `pyeyesweb.mid_level` | 7 |
+| High-level features | `pyeyesweb.high_level` | 1 |
+| Analysis primitives | `pyeyesweb.analysis_primitives` | 19 |
 
-- **GitHub Issues:** report bugs, request features, or ask technical questions on the [PyEyesWeb GitHub Issues page](https://github.com/infomuscp/PyEyesWeb/issues).  
-- **Discussions / Q&A:** participate in conversations or seek advice in [GitHub Discussions](https://github.com/infomuscp/PyEyesWeb/discussions).  
-- **Email:** Reach out to the maintainers at `cp.infomus@gmail.com` for direct support or collaboration inquiries.  
+## Support and contributing
 
-Please provide clear descriptions, minimal reproducible examples, and version information when submitting issues—it helps us respond faster.
+Report bugs and ask questions on [GitHub Issues](https://github.com/infomuscp/PyEyesWeb/issues) or
+[Discussions](https://github.com/infomuscp/PyEyesWeb/discussions), or write to `cp.infomus@gmail.com`. Contributions are
+welcome: see [CONTRIBUTING](.github/CONTRIBUTING.md) and the development specification (`DEVELOPMENT_SPEC.md`).
 
-## Roadmap
+## Citation
 
-`PyEyesWeb` is under active development, and several features are planned for upcoming releases:  
+If you use PyEyesWeb, please cite (the metadata is in [`CITATION.cff`](CITATION.cff)):
 
-- **Expanded feature extraction:** addition of more movement expressivity metrics (you can find an example of which features to expect in related [conceptual layer guide]().  
-- **Improved examples and tutorials:** more interactive Jupyter notebooks and example datasets to facilitate learning and adoption.  
-- **Cross-platform compatibility:** streamlined integration with creative and interactive platforms (e.g., [TouchDesigner plugin](https://github.com/InfoMusCP/PyEyesWebTD), Unity, Max/MSP).  
+> S. R. Sabharwal, N. Corbellini, S. Ghisio, P. Coletta, G. Romano, A. Al Foysal, G. Volpe and A. Camurri.
+> PyEyesWeb: An open source toolkit for multimodal movement feature extraction. In *MOCO '26: Proceedings of the 10th
+> International Conference on Movement and Computing*, Montpellier, France, 23-25 April 2026. ACM, New York, NY, USA.
+> doi:[10.1145/3802842.3802904](https://doi.org/10.1145/3802842.3802904)
 
-Future development priorities may evolve based on user feedback and research needs.
-Users are encouraged to suggest features or improvements via [GitHub Issues](https://github.com/infomuscp/PyEyesWeb/issues).
+## Authors and acknowledgments
 
-## Contributing
-
-Contributions to `PyEyesWeb` are welcome! Whether it's reporting bugs, adding features, improving documentation, or providing examples, your help is appreciated.  
-
-### How to Contribute
-1. **Fork the repository**.
-
-2. **Clone the forked repository** set up the development environment
-    ```bash
-    git clone https://github.com/<YOUR_USERNAME>/PyEyesWeb.git
-    cd pyeyesweb
-    pip install -e .[dev]
-    ```
-2. Create a branch for your feature or bug fix:  
-   ```bash
-   git checkout -b feature/your-feature-name
-    ```
-3. Make your changes, ensuring code quality and adherence to the project's coding standards.
-4. Submit a pull request to the `main` branch, with a clear description of your changes.
-5. Engage in code reviews and address any feedback provided by maintainers.
-
-## Authors & Acknowledgments
-
-`PyEyesWeb` is developed by [**InfoMus Lab – Casa Paganini**](http://www.casapaganini.org/index_eng.php), University of Genoa, with the partial support of the **[EU ICT STARTS Resilence Project](https://www.resilence.eu/)**.  
-  
+PyEyesWeb is developed by [InfoMus Lab - Casa Paganini](http://www.casapaganini.org/index_eng.php), University of Genoa, with the
+partial support of the [EU ICT STARTS Resilence Project](https://www.resilence.eu/).
 
 <div align="center">
 <img src="docs/assets/cp-logo.png" alt="InfoMus Lab Logo" width="512" style="margin:15px"/>
@@ -107,11 +100,6 @@ Contributions to `PyEyesWeb` are welcome! Whether it's reporting bugs, adding fe
 <img src="docs/assets/eu-logo.png" alt="EU Logo" width="100" style="margin:15px"/>
 </div>
 
-### Maintainers & Contributors  
-<a href="https://github.com/InfoMusCP/PyEyesWeb/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=InfoMusCP/PyEyesWeb" />
-</a>
-
 ## License
 
-MIT License
+MIT License, see [LICENSE.txt](LICENSE.txt).

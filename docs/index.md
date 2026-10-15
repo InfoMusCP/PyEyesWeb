@@ -174,5 +174,6 @@ developer/building_the_docs
 :maxdepth: 1
 
 changelog
+migration
 references
 ```
