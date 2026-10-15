@@ -57,7 +57,7 @@ extensions = [
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 root_doc = "index"
-exclude_patterns = ["_build", "_legacy", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "_legacy", "_snippets", "Thumbs.db", ".DS_Store"]  # _snippets: internal fact sheet (docs/_snippets/facts.md), never published
 
 autosummary_generate = True
 autodoc_typehints = "none"
