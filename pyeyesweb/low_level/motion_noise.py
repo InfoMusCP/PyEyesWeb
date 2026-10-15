@@ -14,16 +14,17 @@ from pyeyesweb.skeletons import with_skeleton
 
 @describe(Layer.LOW_LEVEL, eyesweb="GestureSegmenter (IsUserMotionRandomic2)")
 class MotionNoiseDetector(LabelGuard, FrameFeature):
-    r"""Noise test of the skeleton motion: is the variation of the joint speeds too small to be a gesture?
+    r"""Noise test of the skeleton motion: is the motion random, with jumpy speeds?
 
-    The detector tells noise (a still body, sensor jitter, a uniform drift) from movement with a structure. For every
-    watched joint it keeps the last 10 speeds and computes their variance; this variance is averaged over 5 frames and
-    the motion is flagged as noise while that mean stays below ``noise_threshold``. A body that moves with changing
-    speed, as in a gesture, has a large speed variance and is not flagged. It is the noise input of the gesture
-    segmentation: the kinetic energy of the same frames, from ``KineticEnergy``, is the other.
+    For every watched joint the detector keeps the last 10 speeds and computes their variance; this variance is
+    averaged over 5 frames and the motion is flagged as noisy (random, jumpy) when that mean exceeds
+    ``noise_threshold``. A still body, a uniform drift and the first frames have a small speed variance and are not
+    flagged. The flag is the reverse of the noise input of ``GestureSegmenter``, which blocks the start of a gesture
+    while its input is set: feed it ``not is_noisy`` together with the kinetic energy of the same frames, from
+    ``KineticEnergy``.
 
     Two quirks of the original are kept: only the last joint, in label order, that has a full window counts, and the
-    flag is true until 14 speeds have been seen.
+    flag is false until 14 speeds have been seen.
 
     Parameters
     ----------
@@ -34,7 +35,7 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
         A skeleton preset (``"kinect_v2"``, ...) or definition; its joints are the watched joints.
     noise_threshold : float, optional
         Threshold on the mean variance of the speed, a squared length: in m^2, scaled by ``units`` with the power 2.
-        A negative threshold never flags noise. Defaults to ``0.5``. *(live)*
+        A threshold of 0 or less flags every frame as noisy, the first ones too. Defaults to ``0.5``. *(live)*
     sampling_rate : float, optional
         Sampling rate of the frames in Hz, used when no timestamp is given. Defaults to ``None`` (one second per
         frame, and the ``reason`` says so). *(live)*
@@ -48,8 +49,9 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
     ``label -> (x, y, z)``. ``process(frame, *, timestamp=None)``; ``run(frames, *, timestamps=None)`` takes a
     ``(T, N, 3)`` recording. ``timestamp`` is in seconds, from which the time step is derived.
 
-    **Outputs.** ``is_noisy`` (bool): ``True`` while the mean speed variance is below ``noise_threshold``, that is,
-    for a still body, a uniform motion and the first frames. It is valid on every call.
+    **Outputs.** ``is_noisy`` (bool): ``True`` when the motion is noisy, that is, random or jumpy: the mean speed
+    variance exceeds ``noise_threshold``. It is ``False`` for a still body, a uniform motion and the first 14 frames.
+    It is valid on every call.
 
     **Statuses.** ``OK`` on every valid call; ``INVALID_INPUT`` for a non-finite frame, an unknown joint or a
     timestamp that does not increase.
@@ -66,7 +68,7 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
     >>> still = feature.run(np.zeros((40, 1, 3))).is_noisy[-1]
     >>> jumping = feature.run(frames).is_noisy[-1]
     >>> bool(still), bool(jumping)
-    (True, False)
+    (False, True)
     """
     _core_class = core.motion.MotionNoiseDetector
     _timed = True
@@ -94,14 +96,14 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
         return Inputs(points_input("skeleton", self._labels, "joint positions", accepts=(dict,)))
 
     def _schema(self) -> Schema:
-        return Schema(Output("is_noisy", kind=bool, doc="motion judged random"))
+        return Schema(Output("is_noisy", kind=bool, doc="True when the motion is noisy (random, jumpy)"))
 
     def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
         points = labelled_set(frame, self._labels, "MotionNoiseDetector")
         return self._to_result(self._block.process(points, self._time_step(timestamp)), timestamp)
 
     def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:
-        return self._result(is_noisy=raw, timestamp=timestamp)
+        return self._result(is_noisy=not raw, timestamp=timestamp)
 
 
 __all__ = ["MotionNoiseDetector"]

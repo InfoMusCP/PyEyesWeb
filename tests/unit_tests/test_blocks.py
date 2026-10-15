@@ -173,6 +173,17 @@ def test_coarse_graining_skipped_activation():
     assert skipped.to_array().shape == (0,)
 
 
+def test_coarse_graining_is_computed_every_factor_th_window():
+    """The EyesWeb block counts its activations modulo ``factor``: with hop 2 and factor 2, every 4th sample."""
+    feature = CoarseGraining(window=4, hop=2, factor=2)
+    results = [feature.process(float(value)) for value in range(1, 13)]
+    assert [result.status.name for result in results] == ["WARMING_UP"] * 3 + ["OK", "NO_OUTPUT", "NO_OUTPUT", "NO_OUTPUT", "OK"]         + ["NO_OUTPUT"] * 3 + ["OK"]
+    assert results[5].reason == "not recomputed on this activation" and results[4].reason == "between windows"
+    assert results[7].coarse_grained.tolist() == [[5.5, 7.5]]
+    every = CoarseGraining(window=4, hop=2, factor=1)
+    assert [every.process(float(value)).status.name for value in range(1, 8)] == ["WARMING_UP"] * 3 + ["OK", "NO_OUTPUT", "OK", "NO_OUTPUT"]
+
+
 def test_motion_duration_updates_one_output_or_none():
     md = MotionDuration()  # updates a field only on phase changes
     quiet = md.process(1.0)
@@ -210,10 +221,19 @@ def test_gesture_segmenter_warms_up_then_emits():
     assert late.timestamp == pytest.approx(10 * 0.04)
 
 
-def test_motion_noise_detector_is_noise_until_it_has_seen_enough():
+def test_motion_noise_detector_is_not_noisy_until_it_has_seen_enough():
     detector = MotionNoiseDetector(labels=["head"])
     flags = [detector.process({"head": (2.0 * (index // 2), 0, 0)}, timestamp=0.04 * (index + 1))["is_noisy"] for index in range(16)]
-    assert flags[:14] == [True] * 14 and flags[14:] == [False, False]  # 14 speeds are needed, then the variance is large
+    assert flags[:14] == [False] * 14 and flags[14:] == [True, True]  # 14 speeds are needed, then the variance is large
+
+
+def test_motion_noise_detector_flags_a_jumpy_joint_and_not_a_still_or_uniform_one():
+    rng = np.random.default_rng(0)
+    runs = {"still": np.zeros((40, 1, 3)), "uniform": np.cumsum(np.full((40, 1, 3), 0.01), axis=0),
+            "jumpy": rng.normal(scale=0.3, size=(40, 1, 3))}
+    flags = {name: MotionNoiseDetector(labels=["hand"], sampling_rate=50.0).run(frames).is_noisy for name, frames in runs.items()}
+    assert not flags["still"].any() and not flags["uniform"].any()
+    assert not flags["jumpy"][:14].any() and flags["jumpy"][-1]
 
 
 def test_filter_contour_window_not_shorter_than_contour():
@@ -227,7 +247,7 @@ def test_spike_profile_only_in_binary_mode():
     trains = np.vstack([np.where(EVENTS > 0, 1.0, -1.0)] * 2)
     binary = SpikeSynchronization(window=40, mode="binary")._process_window(trains)
     assert binary.valid["profile"] and binary.profile.ndim == 1
-    timings = SpikeSynchronization(window=3, mode="timings", number_of_inputs=2)._process_window(
+    timings = SpikeSynchronization(window=3, mode="timings", number_of_inputs=2).process(
         np.array([[1.0, 5.0, 9.0], [1.0, 5.0, 9.5]]))
     assert not timings.valid["profile"] and timings.valid["degree"]
 

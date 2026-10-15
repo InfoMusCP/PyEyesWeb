@@ -93,7 +93,7 @@ def test_motion_noise_detector_with_a_skeleton(name):
     detector = MotionNoiseDetector(skeleton=name)
     assert detector.inputs[0].labels == skeleton.joints
     results = [detector.process(frame, timestamp=0.04 * (index + 1)) for index, frame in enumerate(_frames(skeleton, 12))]
-    assert all(result.status is Status.OK and result.is_noisy is True for result in results)  # too few speeds for a verdict
+    assert all(result.status is Status.OK and result.is_noisy is False for result in results)  # too few speeds for a verdict
 
 
 @pytest.mark.parametrize("name", NAMES)

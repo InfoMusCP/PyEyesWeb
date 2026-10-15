@@ -12,7 +12,7 @@ import numpy as np
 from pyeyesweb._core import core
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
-from pyeyesweb.data_models.results import Output, Result, Schema
+from pyeyesweb.data_models.results import Output, Result, Schema, Status
 from pyeyesweb.base.core_feature import FrameFeature
 from pyeyesweb.base.inputs import train
 
@@ -288,28 +288,34 @@ class SpikeSynchronization(_SeriesBlock):
     Parameters
     ----------
     window : int
-        Samples per window (no default). Changing it keeps the newest samples. *(live)*
+        ``"binary"``: samples per window (no default). Changing it keeps the newest samples. ``"timings"``: the number
+        of spikes of each train (the core needs the same number in every train). *(live)*
     hop : int, optional
-        Samples between two results, ``1 <= hop <= window`` (default 1). *(live)*
+        Samples between two results, ``1 <= hop <= window`` (default 1); not used in ``"timings"`` mode, where every
+        call gives a result. *(live)*
     number_of_inputs : int, optional
         Number of spike trains (default 2), the number of channels of the input. *(structural)*
     mode : {"binary", "timings"}, optional
         How the trains are given (default ``"binary"``): ``"binary"`` for one channel per train sampled in time, a
-        positive value being a spike; ``"timings"`` for lists of spike times, which the sample-by-sample ``process``
-        and ``run`` cannot take (they raise ``TypeError``). *(structural)*
+        positive value being a spike; ``"timings"`` for the spike times themselves, one call per set of trains. *(structural)*
 
     Notes
     -----
-    **Inputs.** ``process(trains, *, timestamp=None)`` takes one sample with one channel per train;
-    ``run(trains, *, timestamps=None)`` takes ``(T, number_of_inputs)``.
+    **Inputs.** ``"binary"``: ``process(trains, *, timestamp=None)`` takes one sample with one channel per train;
+    ``run(trains, *, timestamps=None)`` takes ``(T, number_of_inputs)``. ``"timings"``:
+    ``process(spike_times, *, timestamp=None)`` takes one ``(number_of_inputs, window)`` matrix, one row per train
+    holding its spike times (any unit, ``> 0`` and increasing in each row), and returns the result for those trains;
+    ``run(spike_times, *, timestamps=None)`` takes ``(T, number_of_inputs, window)``, one set of trains per row of the
+    recorder, and nothing is carried from one call to the next. Spike times that are not ``> 0`` or not increasing
+    give ``INVALID_INPUT``; a matrix of another shape (trains with different numbers of spikes) raises ``ValueError``.
 
     **Outputs.** ``degree`` (dimensionless, in [0, 1]): SPIKE-synchronization; ``distance`` (dimensionless, in
     [0, 1]): ``1 - degree``; ``profile`` (dimensionless, one value per sample of the window): the coincidence
     indicator of the merged spikes at each sample, -1 where no train has a spike, available in ``"binary"`` mode
     only (empty otherwise).
 
-    **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT`` between two
-    windows when ``hop > 1``.
+    **Statuses.** ``"binary"``: ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT``
+    between two windows when ``hop > 1``. ``"timings"``: ``OK`` for every call.
 
     **Corrected in the core.** In binary mode the degree and the distance were swapped; the degree was the mean over
     the distinct spike positions instead of over all spikes (for the trains 10, 20, 30 and 10, 21, 45 it was 0.6, it is
@@ -324,13 +330,26 @@ class SpikeSynchronization(_SeriesBlock):
     >>> record = SpikeSynchronization(window=50).run(trains)
     >>> float(record.degree[-1]), float(record.distance[-1])
     (1.0, 0.0)
+
+    The same trains as spike times (here in the same order, the second train 1 sample late for its last spike):
+
+    >>> times = np.array([[5.0, 20.0, 35.0], [5.0, 21.0, 40.0]])
+    >>> result = SpikeSynchronization(window=3, mode="timings").process(times)
+    >>> float(result.degree), float(result.distance)
+    (1.0, 0.0)
     """
     _core_class = _sync.SpikeES
     _core_names = {"number_of_inputs": "number_of_input_trains"}
 
     def _inputs(self) -> Inputs:
         number_of_trains = int(self._param("number_of_inputs", 2))  # C++ default
+        if self._mode == _SpikeSyncMode.TIMINGS:
+            return Inputs(Input("spike_times", InputKind.MATRIX, (number_of_trains, self.window),
+                                doc="spike times, one row per train, increasing and > 0"))
         return Inputs(Input("trains", InputKind.SAMPLE, (number_of_trains,), doc="one value per spike train"))
+
+    def _window_changed(self) -> None:
+        self._outputs_changed()  # in "timings" mode the inputs have ``window`` columns
 
     def _schema(self) -> Schema:
         return Schema(Output("degree", doc="SPIKE-synchronization in [0, 1]"), Output("distance", doc="1 - degree"),
@@ -341,9 +360,16 @@ class SpikeSynchronization(_SeriesBlock):
         return self._param("mode", _SpikeSyncMode.BINARY)  # C++ default
 
     def process(self, *samples: Any, timestamp: Optional[float] = None) -> Result:
-        if self._mode == _SpikeSyncMode.TIMINGS:
-            raise TypeError("TIMINGS mode takes spike times, not samples: use _process_window(trains)")
-        return super().process(*samples, timestamp=timestamp)
+        if self._mode != _SpikeSyncMode.TIMINGS:
+            return super().process(*samples, timestamp=timestamp)
+        times = np.asarray(samples[0], dtype=float)
+        if times.size == 0:
+            return self._no_output(Status.INVALID_INPUT, "empty sample", timestamp)
+        if (times <= 0).any():
+            return self._no_output(Status.INVALID_INPUT, "spike times must be > 0", timestamp)
+        if (np.diff(times, axis=1) <= 0).any():
+            return self._no_output(Status.INVALID_INPUT, "spike times must increase within each train", timestamp)
+        return self._to_result(self._call_block([times]), timestamp)
 
     def _call_block(self, args: Sequence[Any]) -> Any:
         trains = args[0]

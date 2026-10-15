@@ -94,13 +94,13 @@ class GestureSegmenter(CoreFeature):
         \text{start: } \bar{I} \ge \theta \;\text{and not noise}, \qquad \text{end: } \bar{I} < \theta,
 
     where :math:`\theta` is the threshold. A gesture can start only while the optional ``noise`` flag is not set, which
-    keeps a motion that is judged random from opening a gesture; once started, it ends when the smoothed intensity falls
+    keeps a motion that is judged to be noise (no gesture) from opening a gesture; once started, it ends when the smoothed intensity falls
     below the threshold, whatever the flag. In a skeleton pipeline the intensity is the ``kinetic_energy`` output of
-    ``KineticEnergy`` and the flag the ``is_noisy`` output of ``MotionNoiseDetector`` computed on the same frames;
+    ``KineticEnergy`` and the flag the reverse of the ``is_noisy`` output of ``MotionNoiseDetector`` computed on the same frames (``not is_noisy``);
     without a flag the feature segments any one-dimensional signal. The smoothing delays the detection by a few samples.
 
     Inputs, in call order: ``intensity``, a scalar per call, and ``noise``, optional (1 or ``True`` while the motion is
-    judged random; 0 by default): ``process(intensity, noise=False, *, timestamp=None)`` and ``run(intensity,
+    judged to be noise (no gesture); 0 by default): ``process(intensity, noise=False, *, timestamp=None)`` and ``run(intensity,
     noise=None, *, timestamps=None)``.
 
     Parameters
@@ -137,7 +137,7 @@ class GestureSegmenter(CoreFeature):
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("intensity", InputKind.SAMPLE, (1,), doc="intensity of the motion, e.g. its kinetic energy"),
-                      Input("noise", InputKind.SAMPLE, (1,), doc="1 while the motion is judged random (default 0)", optional=True))
+                      Input("noise", InputKind.SAMPLE, (1,), doc="1 while the motion is judged to be noise (no gesture) (default 0)", optional=True))
 
     def _schema(self) -> Schema:
         return Schema(Output("smoothed_intensity", unit="<input>", doc="filtered intensity, once the window is full"),

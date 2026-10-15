@@ -8,6 +8,7 @@ from pyeyesweb.analysis_primitives.synchronization import (
     PartialRecurrenceSynchronization, CorrelationsMatrix, CrossRecurrencePlot, NonlinearInterdependence,
     EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, RecurrencePlot, SpikeSynchronization, PhaseLockingValue
 )
+from pyeyesweb.data_models.inputs import InputKind
 from pyeyesweb.data_models.results import Status
 
 RNG = np.random.default_rng(3)
@@ -54,11 +55,45 @@ def test_spike_binary_accepts_both_event_conventions():
     assert results[-1].degree == unsigned.degree
 
 
-def test_spike_timings_process_raises_and_process_window_works():
+def test_spike_timings_known_answers():
     feature = SpikeSynchronization(window=3, mode="timings")
-    with pytest.raises(TypeError, match="_process_window"):
-        feature.process([1.0, 2.0])
-    assert feature._process_window(np.array([[1.0, 5.0, 9.0], [1.0, 5.0, 9.5]])).valid["degree"]
+    identical = feature.process(np.array([[10.0, 20.0, 30.0], [10.0, 20.0, 30.0]]))
+    assert identical.status is Status.OK and identical.degree == 1.0 and identical.distance == 0.0
+    assert not identical.valid["profile"]
+    shifted = feature.process(np.array([[1.0, 10.0, 20.0], [5.0, 15.0, 25.0]]))
+    assert shifted.degree < 1.0 and shifted.distance == pytest.approx(1 - shifted.degree)
+    assert feature.process(np.array([[10.0, 20.0, 30.0], [10.0, 21.0, 45.0]])).degree == pytest.approx(4 / 6)  # Kreuz et al.
+    three = SpikeSynchronization(window=2, number_of_inputs=3, mode="timings")
+    assert three.process(np.array([[1.0, 9.0], [1.0, 9.0], [1.0, 9.0]])).degree == 1.0
+
+
+def test_spike_timings_declares_its_input_and_follows_window():
+    feature = SpikeSynchronization(window=3, mode="timings")
+    assert feature.inputs[0].kind is InputKind.MATRIX and feature.inputs[0].shape == (2, 3)
+    feature.configure(window=4)
+    assert feature.inputs[0].shape == (2, 4)
+    assert SpikeSynchronization(window=3).inputs[0].kind is InputKind.SAMPLE
+
+
+def test_spike_timings_run_is_a_loop_of_process_with_a_time_per_call():
+    calls = np.array([[[1.0, 5.0, 9.0], [1.0, 5.0, 9.5]], [[1.0, 10.0, 20.0], [5.0, 15.0, 25.0]]])
+    record = SpikeSynchronization(window=3, mode="timings").run(calls, timestamps=[0.0, 0.5])
+    feature = SpikeSynchronization(window=3, mode="timings")
+    assert list(record.degree) == [feature.process(call).degree for call in calls]
+    assert len(record) == 2 and set(record.status) == {int(Status.OK)} and list(record.timestamps) == [0.0, 0.5]
+
+
+def test_spike_timings_validation():
+    feature = SpikeSynchronization(window=3, mode="timings")
+    for bad, reason in ((np.array([[0.0, 5.0, 9.0], [1.0, 5.0, 9.0]]), "> 0"), (np.array([[-1.0, 5.0, 9.0], [1.0, 5.0, 9.0]]), "> 0"),
+                        (np.array([[1.0, 9.0, 5.0], [1.0, 5.0, 9.0]]), "increase"), (np.array([[1.0, 5.0, 5.0], [1.0, 5.0, 9.0]]), "increase"),
+                        (np.array([[1.0, np.nan, 9.0], [1.0, 5.0, 9.0]]), "NaN")):
+        result = feature.process(bad)
+        assert result.status is Status.INVALID_INPUT and reason in result.reason and not any(result.valid.values())
+    assert feature.process(np.ones((2, 3)), timestamp=float("nan")).reason == "non-finite timestamp"
+    for wrong in (np.ones((2, 4)), np.ones((3, 3)), [[1.0, 2.0, 3.0], [1.0, 2.0]]):  # also trains with different numbers of spikes
+        with pytest.raises(ValueError):
+            feature.process(wrong)
 
 
 def test_pars_non_finite_matrix_is_invalid_input_and_must_be_square():

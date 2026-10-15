@@ -148,6 +148,18 @@ def test_curvature_velocity_smoothness_contract_and_window():
     assert statuses[40] == int(Status.NO_OUTPUT) and statuses[59] == int(Status.OK)
 
 
+@pytest.mark.parametrize("differentiate", [False, True])
+def test_curvature_velocity_velocity_is_per_second_in_both_modes(differentiate):
+    t = np.arange(300) / 100.0
+    ellipse = np.c_[2 * np.cos(np.pi * t), np.sin(np.pi * t)]
+    result = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, differentiate=differentiate).run(ellipse)
+    speed = np.pi * np.hypot(2 * np.sin(np.pi * t[200:]), np.cos(np.pi * t[200:]))  # the exact speed, length per second
+    assert np.allclose(result.velocity[-1][15:-10], speed[10:-15], rtol=1e-2)  # the filter delays the series by 5 samples
+    assert result.velocity_std[-1] == pytest.approx(np.std(result.velocity[-1], ddof=1))
+    assert result.smoothness[-1] == pytest.approx(-0.9433871886796, abs=1e-9)
+    assert result.curvature_std[-1] == pytest.approx(0.57434934336, abs=1e-9)
+
+
 def test_curvature_velocity_smoothness_process_window_matches_the_streamed_first_window():
     streamed = CurvatureVelocityCorrelation(window=40, sampling_rate=25.0).run(SERIES[:40])
     direct = CurvatureVelocityCorrelation(window=40, sampling_rate=25.0)._process_window(SERIES[:40].T, timestamp=0.5)

@@ -511,6 +511,47 @@ def test_mass_spring_model_builds_by_hand_and_round_trips():
     assert isinstance(feature.model, MassSpringModel)
 
 
+def _damped_model(length_damping, dir_damping, tip_mass=1.0, stiffness=1000.0):
+    model = MassSpringModel(name="chain")
+    model.add_mass("root", 1e10)
+    model.add_mass("a&b", tip_mass, (1.0, 0.0, 0.0))  # a name that XML escapes
+    model.add_mass("tip", 2.5, (2.0, 0.0, 0.0))
+    model.add_spring("s1", "root", "a&b", 1.0, stiffness, (1.0, 0.0, 0.0), 300.0, length_damping, dir_damping)
+    model.add_spring("s2", "a&b", "tip", 1.0, 50.0, (0.0, 1.0, 0.0), 80.0, dir_damping, length_damping)
+    return model
+
+
+@pytest.mark.parametrize("damping", [(1.0, 1.0), (0.0, 0.0), (0.3, 2.7), (5.0, 0.01)])
+def test_a_saved_model_reloads_to_the_same_configuration(damping, tmp_path):
+    model = _damped_model(*damping)
+    model.set_parameter("spring::s2::damping", 0.37)  # an absolute coefficient set by hand
+    saved = model.export_configuration()
+    for again in (MassSpringModel.from_xml_string(model.to_xml()), _saved_and_loaded(model, tmp_path)):
+        assert again.mass_names == model.mass_names and again.spring_names == model.spring_names
+        configuration = again.export_configuration()
+        assert configuration.keys() == saved.keys()
+        assert configuration == pytest.approx(saved, rel=1e-12, abs=0.0)
+
+
+def _saved_and_loaded(model, tmp_path):
+    model.save_xml_file(tmp_path / "model.xml")
+    return MassSpringModel.from_xml_file(tmp_path / "model.xml")
+
+
+def test_a_model_without_relative_damping_is_written_as_zero():
+    model = _damped_model(1.0, 1.0, stiffness=0.0)
+    assert MassSpringModel.from_xml_string(model.to_xml()).export_configuration()["spring::s1::damping"] == 0.0
+
+
+def test_a_loaded_file_keeps_its_relative_damping():
+    xml = ('<Model><Masses><Mass name="r" mass="1" x="0" y="0" z="0"/><Mass name="t" mass="4" x="1" y="0" z="0"/></Masses>'
+           '<Springs><Spring name="s" mass1="r" mass2="t" restLength="1" lengthStiffness="100" lengthDamping="2" restDirX="1" '
+           'restDirY="0" restDirZ="0" dirStiffness="400" dirDamping="0.5"/></Springs></Model>')
+    configuration = MassSpringModel.from_xml_string(xml).export_configuration()
+    assert configuration["spring::s::damping"] == pytest.approx(0.5 * (4 * 100) ** 0.5 * 2)  # 0.5 * sqrt(mass2 * k) * relative
+    assert configuration["spring::s::dir_damping"] == pytest.approx(0.5 * (4 * 400) ** 0.5 * 0.5)
+
+
 def test_the_model_is_a_structural_parameter():
     feature = GenericModelSimulator(MODEL, **MM)
     for frame in CHAIN_DIRECTIONS[:5]:

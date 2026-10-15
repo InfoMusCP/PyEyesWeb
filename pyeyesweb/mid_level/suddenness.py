@@ -97,7 +97,7 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     Notes
     -----
     **Outputs.** ``is_sudden``: ``True`` when the window is classified as sudden. ``alpha``: stability parameter, in (0,
-    2]. ``beta``: skewness parameter, in [-1, 1]. ``gamma``: scale parameter, not negative, computed from the quantile
+    2]. ``beta``: skewness parameter, in [-1, 1]. ``gamma``: scale parameter, not negative and dimensionless, computed from the quantile
     ratio.
 
     **Statuses.** ``WARMING_UP`` until the first window of ``window`` frames is full, ``NO_OUTPUT`` between two windows,
@@ -123,7 +123,7 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
         Output("is_sudden", kind=bool, doc="Whether the movement is classified as sudden."),
         Output("alpha", doc="Stability parameter of the fitted stable distribution."),
         Output("beta", doc="Skewness parameter of the fitted stable distribution."),
-        Output("gamma", unit="<length>/s", doc="Scale parameter of the fitted stable distribution."),
+        Output("gamma", doc="Scale parameter of the fitted stable distribution."),
     )
 
     _core_class = core.motion.Suddenness

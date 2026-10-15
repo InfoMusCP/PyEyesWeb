@@ -99,7 +99,25 @@ def test_catalog_lists_one_symmetry_and_no_private_implementation():
 def test_ratio_on_a_preset_without_reference_asks_for_one(preset):
     with pytest.raises(ValueError, match=rf"'{preset}' defines no reference joint.*reference_point="):
         Symmetry(skeleton=preset)
-    Symmetry(skeleton=preset, reference_type="barycenter")  # the reference joint is not read
+
+
+@pytest.mark.parametrize("reference_type", ["barycenter", "point"])
+def test_ratio_rejects_the_reference_types_the_core_does_not_implement(reference_type):
+    match = f"reference_type='{reference_type}' is not supported"
+    with pytest.raises(ValueError, match=match):
+        Symmetry(**RATIO, reference_type=reference_type)
+    feature = Symmetry(**RATIO)
+    with pytest.raises(ValueError, match=match):
+        feature.reference_type = reference_type
+    assert feature.parameters.get("reference_type", "label") == "label"
+
+
+@pytest.mark.parametrize("reference_type", ["label"])
+def test_ratio_of_a_shifted_frame_is_the_same_for_every_accepted_reference_type(reference_type):
+    frame = {"torso": (0.1, 0.2, 0.3), "left_hip": (-0.6, -0.3, 0.1), "right_hip": (0.9, -0.1, 0.2)}
+    shifted = {name: tuple(np.add(point, (5.0, -3.0, 2.0))) for name, point in frame.items()}
+    feature = Symmetry(**RATIO, reference_type=reference_type)
+    assert feature.process(shifted).symmetry == pytest.approx(feature.process(frame).symmetry, abs=1e-12)
 
 
 @pytest.mark.parametrize("preset", ["mediapipe", "qualisys_sport"])

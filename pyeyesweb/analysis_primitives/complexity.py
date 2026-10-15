@@ -150,7 +150,11 @@ class CoarseGraining(MinimumWindow, WindowedFeature, CoreFeature):
     remainder of fewer than ``factor`` samples is dropped.
 
     **Statuses.** ``WARMING_UP`` while the first window fills; ``NO_OUTPUT`` between two hops, and on the windows
-    where the series is not recomputed (``coarse_grained`` is then not produced).
+    where the series is not recomputed (``coarse_grained`` is then not produced). As in the EyesWeb block, which
+    counts its activations modulo ``factor``, the series is computed on the first full window and then on every
+    ``factor``-th window, that is every ``factor * hop`` samples (the other windows say "not recomputed on this
+    activation"): with ``window=4, hop=2, factor=2`` the statuses of samples 1 to 8 are ``WARMING_UP`` (three times),
+    ``OK``, ``NO_OUTPUT``, ``NO_OUTPUT``, ``NO_OUTPUT``, ``OK``. With ``factor=1`` every window is computed.
 
     Examples
     --------

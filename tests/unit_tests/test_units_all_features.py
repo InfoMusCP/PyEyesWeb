@@ -16,7 +16,7 @@ EXEMPT = {
         "SpectralArcLength.spectral_arc_length LogDimensionlessJerk.log_dimensionless_jerk Harmonicity.harmonicity "
         "CurvatureDispersion.curvature_dispersion CurvatureVelocityCorrelation.smoothness Equilibrium.equilibrium "
         "DirectionChange.cosine Directness.directness_index SuddennessImpulsivity.impulsivity_index "
-        "Suddenness.alpha Suddenness.beta EnsembleDominance.dominance_score PhaseLockingValue.phase_locking_value "
+        "Suddenness.alpha Suddenness.beta Suddenness.gamma EnsembleDominance.dominance_score PhaseLockingValue.phase_locking_value "
         "CorrelationsMatrix.correlations_matrix PartialRecurrenceSynchronization.synchronization_matrix "
         "GeneralisedAutoCorrelation.recurrence_rate EventSynchronization.synchronization EventSynchronization.delay "
         "EventSynchronizationMECS.synchronization NonlinearInterdependence.first_to_second_interdependence "

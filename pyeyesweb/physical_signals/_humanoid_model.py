@@ -2,8 +2,10 @@
 :mod:`pyeyesweb.physical_signals.humanoid`.
 """
 
+import math
 import os
 from typing import Any, Tuple, Union
+from xml.etree import ElementTree
 
 from pyeyesweb._core import core
 
@@ -45,8 +47,9 @@ class MassSpringModel:
         Load a model; ``FileNotFoundError`` for a missing file, ``ValueError`` for a malformed model. The damping attributes
         of the file are relative (1 = critical damping).
     to_xml(), save_xml_file(path)
-        The XML of the model. The damping written is the absolute coefficient, as the EyesWeb estimator does, so a saved model
-        does not reload to the same dynamics.
+        The XML of the model, with the damping written relative (1 = critical damping) as the loader reads it, so a saved
+        model reloads to the same configuration (a spring with zero stiffness or tip mass has no relative damping and
+        is written as 0).
     add_mass(name, mass, position), add_spring(name, mass1, mass2, rest_length, length_stiffness, rest_direction, dir_stiffness, length_damping, dir_damping)
         Build the model by hand (``mass1`` is the hinge of a spring, ``mass2`` its tip); the two damping values are relative
         (1 = critical damping, the default).
@@ -93,9 +96,21 @@ class MassSpringModel:
         """Load a model from the text of an EyesWeb XML file."""
         return cls._wrap(_loaded(_CORE_MODEL.from_xml_string, xml, reference_direction))
 
+    def to_xml(self) -> str:
+        """The model as the text of an EyesWeb XML file, with relative damping (the core writes the absolute coefficient)."""
+        root = ElementTree.fromstring(self._model.to_xml())
+        masses = {mass.get("name"): float(mass.get("mass")) for mass in root.iter("Mass")}
+        for spring in root.iter("Spring"):
+            for damping, stiffness in (("lengthDamping", "lengthStiffness"), ("dirDamping", "dirStiffness")):
+                critical = 0.5 * math.sqrt(masses[spring.get("mass2")] * float(spring.get(stiffness)))  # the core's relative factor
+                spring.set(damping, repr(float(spring.get(damping)) / critical if critical > 0 else 0.0))
+        ElementTree.indent(root, "  ")
+        return '<?xml version="1.0" encoding="UTF-8"?>\n' + ElementTree.tostring(root, encoding="unicode") + "\n"
+
     def save_xml_file(self, path: Union[str, os.PathLike]) -> None:
-        """Write the model as an EyesWeb XML file."""
-        self._model.save_xml_file(os.fspath(path))
+        """Write the model as an EyesWeb XML file (see `to_xml`)."""
+        with open(path, "w", encoding="utf-8", newline="\n") as file:
+            file.write(self.to_xml())
 
     def __getattr__(self, name: str) -> Any:
         if name.startswith("_"):

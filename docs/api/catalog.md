@@ -12,6 +12,7 @@ Reference for the objects below (generated from the docstrings).
    Layer
    Timescale
    FeatureInfo
+   describe
    catalog
    catalog_table
 ```

@@ -104,6 +104,7 @@ def _gesture(scale, units):
     frames = np.cumsum(steps, axis=0).reshape(60, 1, 3) * scale  # metres, or the same motion in millimetres
     energy = KineticEnergy(labels=LABELS, weights={"a": 1.0}, sampling_rate=50.0).run(frames)["kinetic_energy"]
     noise = MotionNoiseDetector(labels=LABELS, noise_threshold=0.5, sampling_rate=50.0, units=units).run(frames)["is_noisy"]
+    noise = ~np.asarray(noise, dtype=bool)  # the segmenter blocks a start while its input is set
     squared = 1e6 if units == "mm" else 1.0  # the energy of data in millimetres is in mm^2
     segmented = GestureSegmenter(filter_window_length=5, firing_threshold=0.1 * squared).run(energy, noise)
     return {"kinetic_energy": energy, "noise": noise, **{name: segmented[name] for name in ("is_gesturing", "is_gesture_start", "is_gesture_end")}}

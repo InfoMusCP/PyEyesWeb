@@ -107,8 +107,9 @@ class _Composition:
         for upstream in (energy, noise):
             if upstream.status is not Status.OK:
                 return int(upstream.status), upstream.reason, values, valid
-        segmented = self.segmenter.process(energy["kinetic_energy"], noise["is_noisy"], timestamp=timestamp)
-        values[[0, 2]], valid[[0, 2]] = (energy["kinetic_energy"], noise["is_noisy"]), True
+        blocked = not noise["is_noisy"]  # the flag of the block: the reverse of is_noisy, and the input of the segmenter
+        segmented = self.segmenter.process(energy["kinetic_energy"], blocked, timestamp=timestamp)
+        values[[0, 2]], valid[[0, 2]] = (energy["kinetic_energy"], blocked), True
         for position, name in ((1, "smoothed_intensity"), (3, "is_gesturing"), (4, "is_gesture_start"), (5, "is_gesture_end")):
             values[position], valid[position] = segmented[name], segmented.valid[name]
         return int(segmented.status), _reason((segmented, energy, noise)), values, valid

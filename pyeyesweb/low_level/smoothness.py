@@ -433,11 +433,13 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     sampling_rate : float
         Sampling rate of the series in Hz. Required: the window carries no time axis of its own.
     velocity_threshold : float, optional
-        Velocity threshold of the original block, in the unit of the velocity output. Defaults to ``0.001``.
-        *(live)*
+        Velocity threshold of the original block. It has no effect: the block validates it and never reads it.
+        Defaults to ``0.001``. *(live)*
     standard_deviation_threshold : float, optional
-        Threshold of the original block on the standard deviations of the curvature and the velocity, in their
-        output units. Defaults to ``0.0001``. *(live)*
+        Threshold of the original block on the standard deviations of the curvature and the velocity, used by the
+        ``"simplified"`` index only. It acts on the quantities the filters give, so on the velocity per sample
+        (not per second) unless ``differentiate`` is set; the ``velocity`` outputs are always per second. Defaults to
+        ``0.0001``. *(live)*
     upper_limit : float, optional
         Upper bound of the index (dimensionless); the ``"simplified"`` index is capped at it. Defaults to ``100.0``.
         *(live)*
@@ -451,8 +453,10 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
         original block, at most ``upper_limit``. *(live)*
     differentiate : bool, optional
         Whether the derivatives of the filter are taken with respect to time in seconds. With the default
-        ``False`` they are taken per sample: at 100 Hz the velocity is 100 times smaller than with ``True``, while the
-        curvature and the correlation do not change. *(structural)*
+        ``False`` they are taken per sample and the velocity outputs are multiplied by ``sampling_rate``, so they
+        are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and the Pearson correlation do
+        not depend on it; the ``"simplified"`` index and ``standard_deviation_threshold`` do, because they act on the
+        velocity before that conversion. *(structural)*
     input_kind : {"static", "dynamic"}, optional
         ``"static"`` (default): every window has the shape of the first one. ``"dynamic"``: the series may change
         length from window to window; a window of another length or channel count rebuilds the filters with an empty
@@ -467,8 +471,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
 
     **Outputs.** ``smoothness`` (dimensionless; in [-1, 1] for ``"pearson"``); ``curvature``: the per-sample curvature
     of the window (``window`` values, 1/length); ``velocity``: the per-sample velocity of the window (``window``
-    values, length per sample unless ``differentiate``, length/s); ``curvature_std`` and ``velocity_std``: their
-    sample standard deviations of the window.
+    values, length/s); ``curvature_std`` and ``velocity_std``: their sample standard deviations of the window.
 
     **Statuses.** ``WARMING_UP`` while the first window fills (``"k of N samples"``) and for the first window after
     it, because the filters need a previous window (``smoothness`` is then NaN); ``NO_OUTPUT`` between two windows
@@ -561,6 +564,8 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
                 series, self.sampling_rate, self.window - self.hop)
         except ValueError as exc:
             return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
+        if not self._param("differentiate", False):  # the filters give a velocity per sample: the output is per second
+            velocity, velocity_std = np.asarray(velocity) * self.sampling_rate, velocity_std * self.sampling_rate
         warming_up, self._warmed_shape = series.shape != self._warmed_shape, series.shape  # a new shape: empty history
         status, reason = Status.OK, ""
         if np.isnan(smoothness) or np.isnan(curvature_std):

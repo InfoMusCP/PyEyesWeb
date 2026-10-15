@@ -12,6 +12,7 @@ from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
 from pyeyesweb.data_models.skeleton import Skeleton
+from pyeyesweb.base.choices import choice_name
 from pyeyesweb.base.inputs import labelled_set, points_input
 from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.skeletons import get_skeleton, with_skeleton
@@ -78,8 +79,7 @@ class Symmetry(VariantFeature, FrameFeature):
     pairs : sequence of (str, str)
         The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). *(live)*
     reference_point : str, optional
-        ``"ratio"``: the joint taken as the origin of the coordinates when ``reference_type="label"``, ``"neck"`` by
-        default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).
+        ``"ratio"``: the joint taken as the origin of the coordinates, ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).
         ``"reflection"``: the joint about which the right joint is reflected; ``None``, the default for this method, is
         the barycenter (mean position) of the frame. *(live)*
     index_type : {"symmetry", "symmetry_asymmetry"}, optional
@@ -93,10 +93,11 @@ class Symmetry(VariantFeature, FrameFeature):
         the two magnitudes of a value. Defaults to ``"mean"``. *(live)*
     normalize_skeleton : bool, optional
         ``"ratio"`` only. Divide each joint of a couple by its distance to the reference. Defaults to ``True``. *(live)*
-    reference_type : {"label", "barycenter", "point"}, optional
-        ``"ratio"`` only. ``"label"`` translates the frame so that ``reference_point`` is the origin; with
-        ``"barycenter"`` or ``"point"`` no translation is applied and the coordinates are taken as they are, so they
-        must already be relative to the centre of symmetry. Defaults to ``"label"``. *(live)*
+    reference_type : {"label"}, optional
+        ``"ratio"`` only. ``"label"`` translates the frame so that ``reference_point`` is the origin. The other two
+        values of the original block, ``"barycenter"`` and ``"point"``, did nothing there and are rejected with
+        ``ValueError``; to take the barycenter as the centre, subtract it from the frame before the call. Defaults to
+        ``"label"``. *(live)*
 
     Notes
     -----
@@ -194,12 +195,19 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
                  method: str = "ratio", **params: Any):
         labels, params = with_skeleton(skeleton, labels, params, _from_skeleton)
         super().__init__(**params)
-        reference_type = core.motion.SymmetryIndex3DReferenceType
-        if skeleton is not None and "reference_point" not in params and self._param("reference_type", reference_type.LABEL) == reference_type.LABEL:
+        if skeleton is not None and "reference_point" not in params:
             # the core translates by the reference only if the label is present: a default that is no joint would pass silently
             raise ValueError(f"Symmetry(method='ratio'): the skeleton {get_skeleton(skeleton).name!r} defines no reference joint; "
-                             "pass reference_point= (a joint of the skeleton) or reference_type='barycenter'")
+                             "pass reference_point= (a joint of the skeleton)")
         self._set_labels(labels)
+
+    @classmethod
+    def _coerce_choices(cls, params: dict) -> dict:
+        out = super()._coerce_choices(params)
+        if "reference_type" in out and out["reference_type"] != core.motion.SymmetryIndex3DReferenceType.LABEL:
+            raise ValueError(f"Symmetry(method='ratio'): reference_type={choice_name(out['reference_type'])!r} is not supported: the core "
+                             "does not translate the frame for it (the original block did nothing); only 'label' is")
+        return out
 
     def _label_names(self):
         return {name for couple in self._param("pairs", None) or () for name in couple}

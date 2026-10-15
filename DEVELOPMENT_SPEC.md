@@ -243,7 +243,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   (`KineticEnergy.run` falls back to it for such a recording).
 - **`Symmetry(method="ratio")` reference (S4).** With `skeleton=` and `reference_type="label"` (the default) the reference joint is that of the
   skeleton, else the given `reference_point`; a preset that defines none (`mediapipe`, `qualisys_sport` until their `TODO(fill)` is
-  filled) raises `ValueError` at construction naming the preset and asking for `reference_point=` (or `reference_type="barycenter"`).
+  filled) raises `ValueError` at construction naming the preset and asking for `reference_point=` (`reference_type="barycenter"` no longer exists: see work package I-a).
   Before, the core default `"neck"`, which is no joint of those presets, was kept and the core silently skipped the translation.
 - **`KineticEnergy(weights=...)` (S5).** A sequence of weights is read as one weight per label (`labels=` or `skeleton=`); another length
   raises `ValueError` ("weights has 1 value, the skeleton has 3 joints"), as does a sequence without labels or a value that is neither
@@ -256,6 +256,50 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   reach the block and change nothing. Pinned by `test_an_overflow_has_advanced_the_state_of_the_block` in `test_input_safety.py`.
 - **Wording.** `Result.timestamp` is in seconds; `HumanoidSimulator.process` outputs are in the unit of `units`; layer 4 is "qualities
   communicated" (as the catalog table says); the stale lines of the package docstring and of sections 3 and 4 were fixed.
+
+### Contract changes of work package I (2026-10-15)
+
+#### I-a
+
+- **`MotionNoiseDetector.is_noisy` flipped.** `True` now means the motion is noisy (random, jumpy: the mean speed variance exceeds
+  `noise_threshold`); it is `False` for a still body, a uniform motion and the first 14 frames (before: the reverse). Done in
+  `_to_result` (`not raw`); statuses and warm-up are unchanged; `noise_threshold <= 0` now flags every frame as noisy. `GestureSegmenter`
+  is untouched: its `noise` input still blocks the start of a gesture while set, so a pipeline passes `not is_noisy`
+  (the docstrings say so; `test_parity_gesture_segmenter.py` and `test_time_and_units.py` do it, the frozen reference is valid unchanged).
+- **`Suddenness.gamma`** has no unit (dimensionless, a ratio of quantile differences); listed in `EXEMPT` of `test_units_all_features.py`.
+  The classification of a still or constant-speed window as sudden is unchanged.
+- **`CurvatureVelocityCorrelation` velocity in seconds.** `velocity` and `velocity_std` are length/s in both modes: with the default
+  `differentiate=False` the Python layer multiplies the per-sample values of the filters by `sampling_rate` (with `True` they already are).
+  Ellipse of the docstring (window=100, hop=100, rate 100): `velocity[0, 50, 99]` was `0.03254869, 0.06225254, 0.03302909` and is
+  `3.25486865, 6.22525408, 3.30290899`, `velocity_std` `0.011044` -> `1.104400` (= the `differentiate=True` values); `smoothness`
+  (-0.94339) and `curvature_std` (0.57435) unchanged. The core reads `velocity_threshold` nowhere (dead parameter, documented as
+  without effect); `standard_deviation_threshold` and the `"simplified"` index act on the core's velocity (per sample when
+  `differentiate=False`), not converted so that their values keep their meaning (documented). With 1 channel the curvature
+  depends on the mode (`|y''| / (1 + y'^2)^1.5`).
+- **`Symmetry(method="ratio")` `reference_type`.** The core translates the frame only for `"label"`; `"barycenter"` and `"point"` are
+  unimplemented there (the original did nothing, and `"point"` has no point parameter). They raise `ValueError` at construction and on
+  assignment (`_coerce_choices`); `"label"` stays. A skeleton without reference joint now only suggests `reference_point=`.
+
+#### I-b
+
+- **`SpikeSynchronization(mode="timings")` is public.** The core takes the spike times of the trains as the rows of one matrix, all trains
+  with the same number of spikes (`SpikeES::validate`), and keeps no state between calls. So in `"timings"` mode the declared input is
+  `spike_times`, `InputKind.MATRIX` of shape `(number_of_inputs, window)` (`window` = spikes per train, live: `configure` updates
+  `feature.inputs`), `process` takes one such matrix and returns the result for it (status `OK`, no buffering, no warm-up, `hop` unused),
+  and `run` takes `(T, number_of_inputs, window)`, one row of the recorder per set of trains. Times must be `> 0` and strictly increasing
+  within a train, else `INVALID_INPUT` (the core does not check the order); NaN and a non-finite timestamp follow the central rules; a
+  matrix of another shape, including trains with different numbers of spikes, is a `ValueError`. Trains with different numbers of spikes
+  would need a core change (a ragged input in `SpikeES::process`); not done. The `TypeError` pointing at `_process_window` is gone.
+- **`MassSpringModel.to_xml()` / `save_xml_file()` write relative damping.** The core loads the damping attributes as relative (1 =
+  critical, as `CSpringImpl`) and writes the absolute coefficient (as the EyesWeb estimator does), so a saved model did not reload to
+  the same configuration. The Python wrapper now divides the damping of the core's XML by `0.5 * sqrt(mass2 * stiffness)` (the factor the
+  loader multiplies by), so `from_xml_*(m.to_xml())` has the configuration of `m` (to rounding, about 1e-16 relative); loading is unchanged and
+  existing files read as before. A spring with zero stiffness or tip mass has no relative damping and is written as 0. The core's own
+  `to_xml` still writes absolute values; making it symmetric would be a core change (not needed here).
+- **`CoarseGraining` cadence is the core's, documented.** The EyesWeb block counts its activations modulo `factor` and computes only on
+  activation 0 (`CoarseGraining::process`), so with `hop` the series is produced on the first full window and then every `factor * hop`
+  samples; the other windows are `NO_OUTPUT` "not recomputed on this activation". Not a defect: kept, described in the docstring and pinned by
+  `test_coarse_graining_is_computed_every_factor_th_window`.
 
 ## 4. Parameters
 

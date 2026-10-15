@@ -79,9 +79,9 @@ def test_spike_sync_averages_over_all_spikes_of_all_trains():
     result = SpikeSynchronization(window=60, hop=60)._process_window(spike_trains([10, 20, 30], [10, 21, 45]))
     assert result.degree == pytest.approx(4 / 6, abs=1e-12) and result.distance == pytest.approx(2 / 6, abs=1e-12)
     assert result.profile[10] == 1.0  # the profile keeps one value per sample
-    timings = SpikeSynchronization(window=3, hop=3, mode="timings")._process_window(np.array([[10.0, 20, 30], [10, 21, 45]]))
+    timings = SpikeSynchronization(window=3, hop=3, mode="timings").process(np.array([[10.0, 20, 30], [10, 21, 45]]))
     assert timings.degree == pytest.approx(4 / 6, abs=1e-12)
-    assert SpikeSynchronization(window=4, hop=4, mode="timings")._process_window(
+    assert SpikeSynchronization(window=4, hop=4, mode="timings").process(
         np.array([[1.0, 2, 3, 4], [1, 2, 3.5, 9]])).degree == pytest.approx(0.5, abs=1e-12)  # EyesWeb: 1 / 3
 
 
