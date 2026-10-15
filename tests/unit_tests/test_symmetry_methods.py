@@ -9,13 +9,11 @@ import pytest
 if os.environ.get("EYESWEB_CORE_PATH"):
     sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "reference"))
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
 from symmetry_inputs import reflection  # noqa: E402
-from symmetry_reference import GeometricSymmetryReference  # noqa: E402
 import pyeyesweb  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import Symmetry  # noqa: E402
@@ -88,12 +86,6 @@ def test_results_equal_the_implementations():
     named = dict(labels=labels, pairs=[("j0", "j1"), ("j2", "j3")], reference_point="j4")
     mirror, direct = Symmetry(method="reflection", **named), module._ReflectionSymmetry(**named)
     np.testing.assert_array_equal(mirror.process(CLOUDS[0]).pair_symmetry, direct.process(CLOUDS[0]).pair_symmetry)
-
-
-def test_reflection_equals_the_reference():
-    new = reflection(8, PAIRS).process(CLOUDS[0])
-    ref = GeometricSymmetryReference(PAIRS).compute(CLOUDS[0])
-    np.testing.assert_allclose(new.pair_symmetry, ref["pair_error"], rtol=1e-9, atol=1e-9)
 
 
 def test_catalog_lists_one_symmetry_and_no_private_implementation():

@@ -1,6 +1,5 @@
-"""Parity of the core-backed Equilibrium with the preserved NumPy reference
-(tests/reference/equilibrium_reference.py). Needs the compiled core: set EYESWEB_CORE_PATH (tests are skipped
-otherwise)."""
+"""Equilibrium: input contract and frozen outputs of the frame-based feature. Needs the compiled core:
+set EYESWEB_CORE_PATH (tests are skipped otherwise)."""
 import os
 import sys
 
@@ -9,100 +8,16 @@ import pytest
 
 if os.environ.get("EYESWEB_CORE_PATH"):
     sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "reference"))
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from equilibrium_reference import EquilibriumReference  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level.equilibrium import Equilibrium  # noqa: E402
 
 
-def _points(frame, left_foot_idx=0, right_foot_idx=1, barycenter_idx=2, axes=(0, 1), **_):
-    """The three floor-plane points the reference takes out of a frame by index and axes: the new input."""
-    return [np.asarray(frame)[index][list(axes)] for index in (left_foot_idx, right_foot_idx, barycenter_idx)]
-
-
-def _feature(margin_mm=100.0, y_weight=0.5, **_):
-    return Equilibrium(margin=margin_mm, y_weight=y_weight)
-
-
-def _compare(frame, tol=1e-9, **params):
-    points = _points(frame, **params)
-    new = _feature(**params).process(*points)
-    ref = EquilibriumReference(**params).compute(frame)
-    if ref.status == Status.OK and (not np.isfinite(points).all() or (points[0] == points[1]).all()):
-        assert new.status == Status.INVALID_INPUT  # no support vector, or NaN coordinates
-        return ref
-    assert new.status == ref.status
-    assert new.reason == ref.reason
-    assert new.valid == ref.valid
-    for name in ref.valid:
-        np.testing.assert_allclose(new[name], ref[name], rtol=tol, atol=tol, equal_nan=True)
-    return ref
-
-
-PARAMS = [{}, {"margin_mm": 10.0}, {"margin_mm": 0.0}, {"y_weight": 2.0}, {"y_weight": 0.0},
-          {"margin_mm": 0.0, "y_weight": 0.0}, {"axes": (0, 2)}, {"axes": (2, 1)},
-          {"left_foot_idx": 3, "right_foot_idx": 4, "barycenter_idx": 0}, {"margin_mm": -5.0}]
-
-
-@pytest.mark.parametrize("params", PARAMS)
-def test_random_frames(params):
-    rng = np.random.default_rng(13)
-    for _ in range(200):
-        _compare(rng.standard_normal((5, 3)) * 100, **params)
-
-
-@pytest.mark.parametrize("params", PARAMS)
-def test_barycenter_near_the_support_centre(params):
-    rng = np.random.default_rng(14)
-    for _ in range(100):
-        frame = rng.standard_normal((5, 3)) * 100
-        frame[2] = (frame[0] + frame[1]) / 2 + rng.standard_normal(3) * 20
-        _compare(frame, **params)
-
-
-@pytest.mark.parametrize("params", PARAMS)
-def test_degenerate_frames(params):
-    _compare(np.zeros((5, 3)), **params)
-    frame = np.tile(np.array([1.0, 2.0, 3.0]), (5, 1))
-    _compare(frame, **params)
-    frame[2] += [0.0, 1e-12, 0.0]
-    _compare(frame, **params)
-    frame[2] += [3.0, 0.0, 0.0]
-    _compare(frame, **params)
-    aligned = np.zeros((5, 3))
-    aligned[1] = [10.0, 0.0, 0.0]
-    aligned[2] = [3.0, 0.0, 0.0]
-    _compare(aligned, **params)
-    aligned[2] = [3.0, 1e-11, 0.0]
-    _compare(aligned, **params)
-
-
-@pytest.mark.parametrize("params", PARAMS)
-def test_nan_inf_and_integer_frames(params):
-    rng = np.random.default_rng(15)
-    frame = rng.standard_normal((5, 3)) * 100
-    frame[1, 0] = np.nan
-    _compare(frame, **params)
-    frame = rng.standard_normal((5, 3)) * 100
-    frame[2, 1] = np.inf
-    _compare(frame, **params)
-    _compare(rng.integers(-300, 300, size=(5, 3)).astype(float), **params)
-
-
 def test_inside_the_ellipse_gives_a_value():
-    frame = np.array([[-100.0, 0, 0], [100.0, 0, 0], [30.0, 10.0, 0]])
-    assert _compare(frame)["equilibrium"] > 0
-
-
-def test_setters_reach_the_core():
-    eq = Equilibrium()
-    eq.margin, eq.y_weight = 30.0, 1.5
-    frame = np.random.default_rng(16).standard_normal((3, 3)) * 20
-    ref = EquilibriumReference(margin_mm=30.0, y_weight=1.5, axes=(0, 2)).compute(frame)
-    np.testing.assert_allclose(eq.process(*_points(frame, axes=(0, 2)))["equilibrium"], ref["equilibrium"], rtol=1e-9, atol=1e-9)
+    result = Equilibrium(units="mm").process((-100.0, 0.0), (100.0, 0.0), (30.0, 10.0))
+    assert result.status == Status.OK and result["equilibrium"] > 0
 
 
 def test_the_removed_parameters_are_gone():

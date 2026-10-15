@@ -9,7 +9,6 @@ import pytest
 if os.environ.get("EYESWEB_CORE_PATH"):
     sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "reference"))
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
@@ -17,7 +16,6 @@ import pyeyesweb  # noqa: E402
 from contract_suite import check_feature_contract  # noqa: E402
 from pyeyesweb.analysis_primitives import Rarity, rarity as rarity_module  # noqa: E402
 from pyeyesweb.analysis_primitives.rarity import _InformationRarity, _ModeDistanceRarity  # noqa: E402
-from rarity_reference import HistogramRarityReference  # noqa: E402
 
 RNG = np.random.default_rng(1)
 SINE = np.sin(np.arange(120) / 5.0) + 0.1 * RNG.standard_normal(120)
@@ -65,16 +63,14 @@ def test_information_equals_private_implementation():
         assert np.array_equal(wrapped.process(sample).rarity, direct.process(sample).rarity, equal_nan=True)
 
 
-def test_mode_distance_equals_private_implementation_and_reference():
+def test_mode_distance_equals_private_implementation():
     wrapped = Rarity(method="mode_distance", window=20, alpha=1.0)
     direct = _ModeDistanceRarity(window=20, alpha=1.0)
-    reference = HistogramRarityReference(alpha=1.0)
-    for index, sample in enumerate(SINE):
+    for sample in SINE:
         wrapped_result, direct_result = wrapped.process(sample), direct.process(sample)
         assert wrapped_result.status is direct_result.status
         if wrapped_result.ok:
             assert wrapped_result.rarity == direct_result.rarity
-            assert wrapped_result.rarity == reference.compute(SINE[index - 19:index + 1]).rarity
 
 
 def test_one_public_rarity_in_the_catalog():

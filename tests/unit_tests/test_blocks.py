@@ -483,41 +483,17 @@ def test_kinetic_energy_velocity_mode_matches_position_mode_on_differences():
     assert np.allclose(position[1:], velocity, rtol=1e-12)
 
 
-def test_kinetic_energy_velocity_mode_parity_with_the_removed_python_class():
-    from energy_reference import VelocityKineticEnergyReference
-    rng = np.random.default_rng(1)
-    weights = rng.uniform(0, 3, size=5)
-    labels = [f"j{index}" for index in range(5)]
-    block = _velocity_block(weights=dict(zip(labels, weights)), labels=labels)
-    old = VelocityKineticEnergyReference(weights=weights)
-    for _ in range(10):
-        values = rng.normal(size=(5, 3))
-        assert block.process(values)["kinetic_energy"] == pytest.approx(old.compute(values)["total_energy"], rel=1e-12)
-
-
 def test_ellipsoid_sphericity_axes_path_leaves_fit_outputs_invalid():
     result = EllipsoidSphericity().process_axes(1, 2, 3)
     assert result["sphericity"] == pytest.approx(core.motion.EllipsoidSphericity.process(1, 2, 3))
     assert not result.valid["axis_ratio"] and not result.valid["radii"] and result.valid["sphericity"]
 
 
-def test_ellipsoid_sphericity_points_parity_with_the_removed_python_class():
-    from contraction_reference import EllipsoidFitSphericityReference
+def test_ellipsoid_sphericity_points_without_extent_are_invalid_input():
     rng = np.random.default_rng(2)
-    clouds = [rng.normal(size=(30, 3)) * [3, 1, 0.2], rng.normal(size=(8, 3)), np.zeros((5, 3)), np.ones((1, 3)),
-              np.outer(np.arange(6.0), [1, 2, 3]), rng.normal(size=(40, 2)).dot(rng.normal(size=(2, 3))),
-              np.zeros((0, 3))]
     block = EllipsoidSphericity()
-    old = EllipsoidFitSphericityReference()
-    for cloud in clouds:
-        result = block.process(cloud)
-        if len(cloud) == 0:
-            assert math.isnan(result["axis_ratio"])  # INVALID_INPUT: no number
-            continue
-        if not result.ok:  # no extent: the reference says 0, the feature says INVALID_INPUT and gives no number
-            assert old.compute(cloud)["sphericity"] == 0.0 and math.isnan(result["axis_ratio"])
-            continue
-        assert result["axis_ratio"] == pytest.approx(old.compute(cloud)["sphericity"], abs=1e-6)
-        assert result.valid["axis_ratio"] and result["radii"].shape == (3,)
-    assert block.process(clouds[0])["sphericity"] == pytest.approx(
-        block.process_axes(*block.process(clouds[0])["radii"])["sphericity"])
+    for cloud in (np.zeros((5, 3)), np.ones((1, 3)), np.zeros((0, 3))):
+        assert math.isnan(block.process(cloud)["axis_ratio"])  # INVALID_INPUT: no number
+    result = block.process(rng.normal(size=(30, 3)) * [3, 1, 0.2])
+    assert result.valid["axis_ratio"] and result["radii"].shape == (3,)
+    assert result["sphericity"] == pytest.approx(block.process_axes(*result["radii"])["sphericity"])

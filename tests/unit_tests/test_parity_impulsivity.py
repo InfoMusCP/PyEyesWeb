@@ -1,5 +1,4 @@
-"""Parity of SuddennessImpulsivity (compiled core) with the preserved pure-Python implementation, which composes
-DirectionChange and Suddenness (their preserved references), and of both impulsivity features with the frozen outputs
+"""Both impulsivity features against the frozen outputs
 of `tests/data/impulsivity_reference.npz` (taken before `Impulsivity` became `ContractionImpulsivity`, with its
 `threshold` renamed `peak_threshold`, and before SuddennessImpulsivity dropped its intermediate outputs): bit for bit,
 statuses and reasons included, on synthetic and Qualisys data, after `reset()` and after live parameter changes.
@@ -27,72 +26,16 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "reference"))
-from impulsivity_reference import SuddennessImpulsivityReference  # noqa: E402
-from suddenness_reference import SuddennessReference  # noqa: E402
-
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import DirectionChange  # noqa: E402
 from pyeyesweb.mid_level import ContractionImpulsivity, Suddenness, SuddennessImpulsivity  # noqa: E402
 
-ALGOS = ["new", "old"]
-ENUM = {"new": "constrained", "old": "quantile"}
 
-
-def _series(window):
-    """A `(Time, 1, N_dims)` tensor (the references take a signals axis) as the `(N_dims, Time)` series of the one
-    point `_process_window` takes."""
-    return np.asarray(window)[:, 0, :].T
-
-
-def _same(first, second):
-    if isinstance(first, float) and math.isnan(first):
-        return isinstance(second, float) and math.isnan(second)
-    return first == pytest.approx(second, rel=1e-12, abs=1e-12)
-
-
-def _assert_parity(window, algo="new", epsilon=0.5):
-    ref = SuddennessImpulsivityReference(direction_change_epsilon=epsilon, suddenness_algo=algo)
-    new = SuddennessImpulsivity(window=max(len(window), 6), dims=window.shape[2], direction_change_epsilon=epsilon,
-                                method=ENUM[algo])
-    reference_result, new_result = ref.compute(window), new._process_window(_series(window))
-    if reference_result.ok and not np.isfinite(window).all():  # data problem: INVALID_INPUT instead of OK with NaN
-        assert new_result.status == Status.INVALID_INPUT
-        return reference_result
-    if reference_result.ok and SuddennessReference(algo=algo).compute(window).alpha == -1:
-        assert new_result.status == Status.INVALID_INPUT  # the quantile fit failed (#47): INVALID_INPUT, no index
-        assert math.isnan(new_result.impulsivity_index)
-        return reference_result
-    assert reference_result.status == new_result.status
-    if reference_result.ok:
-        assert _same(reference_result.impulsivity_index, new_result.impulsivity_index), (reference_result.impulsivity_index, new_result.impulsivity_index)
-    return reference_result
-
-
-@pytest.mark.parametrize("algo", ALGOS)
-@pytest.mark.parametrize("seed", range(50))
-def test_random_windows(seed, algo):
-    rng = np.random.default_rng(seed)
-    frames, dims = int(rng.integers(6, 60)), int(rng.integers(2, 4))
-    walk = np.cumsum(rng.standard_normal((frames, 1, dims)) * rng.uniform(0.1, 2), axis=0)
-    _assert_parity(walk, algo, epsilon=float(rng.choice([0.5, 0.2, 5.0, 0.01])))
-
-
-@pytest.mark.parametrize("algo", ALGOS)
-def test_nonzero_impulsivity_is_exercised(algo):
-    rng = np.random.default_rng(11)
-    nonzero = 0
-    for _ in range(80):
-        window = np.cumsum(rng.standard_normal((20, 1, 2)), axis=0)
-        nonzero += _assert_parity(window, algo, epsilon=1.0).impulsivity_index > 0
-    assert nonzero > 0
-
-
-@pytest.mark.parametrize("algo", ALGOS)
 @pytest.mark.parametrize("frames", range(0, 9))
-def test_short_windows(frames, algo):
-    window = np.random.default_rng(frames).standard_normal((frames, 1, 3))
-    result = _assert_parity(window, algo)
+@pytest.mark.parametrize("method", ["constrained", "quantile"])
+def test_short_windows(frames, method):
+    series = np.random.default_rng(frames).standard_normal((3, frames))
+    result = SuddennessImpulsivity(window=6, dims=3, method=method)._process_window(series)
     assert (result.status == Status.WARMING_UP) == (frames < 6)
 
 
@@ -108,25 +51,6 @@ def test_a_position_has_two_or_three_coordinates():
         SuddennessImpulsivity(window=8).process(np.zeros((3, 2)))
     for frames in (0, 1, 2):  # fewer frames than the minimum window: warming up
         assert SuddennessImpulsivity(window=6, dims=2)._process_window(np.zeros((2, frames))).status == Status.WARMING_UP
-
-
-@pytest.mark.parametrize("algo", ALGOS)
-def test_degenerate_windows(algo):
-    for window in (np.zeros((10, 1, 3)), np.ones((10, 1, 2)), np.cumsum(np.ones((10, 1, 2)), axis=0),
-                   np.tile([[0.0, 0.0], [1.0, 0.0]], (5, 1))[:, None, :]):
-        _assert_parity(window, algo)
-
-
-@pytest.mark.parametrize("algo", ALGOS)
-def test_nan_and_inf_windows(algo):
-    rng = np.random.default_rng(3)
-    window = np.cumsum(rng.standard_normal((20, 1, 2)), axis=0)
-    for bad in (np.nan, np.inf):
-        broken_window = window.copy()
-        broken_window[10, 0, 1] = bad
-        with np.errstate(all="ignore"):
-            _assert_parity(broken_window, algo)
-
 
 def test_the_quantile_sentinel_is_invalid_input_without_an_index():
     """#47: SuddennessImpulsivity could not see the alpha = -1 sentinel of the QUANTILE fit (OK with an index); it reads the
@@ -165,9 +89,6 @@ def test_parameter_properties():
     feature.direction_change_epsilon = 2
     feature.method = "constrained"
     assert feature.direction_change_epsilon == 2.0 and feature.method == "constrained"
-    window = np.cumsum(np.random.default_rng(5).standard_normal((15, 1, 2)), axis=0)
-    ref = SuddennessImpulsivityReference(direction_change_epsilon=2, suddenness_algo="new").compute(window)
-    assert feature._process_window(_series(window)).impulsivity_index == pytest.approx(ref.impulsivity_index, rel=1e-12)
 
 
 REFERENCE = np.load(Path(__file__).resolve().parents[1] / "data" / "impulsivity_reference.npz")

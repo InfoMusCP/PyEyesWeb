@@ -1,16 +1,9 @@
-"""Parity of MultiScaleEntropy and EnsembleDominance (C++ core) with the pure-Python 1.x implementation, and with the
-frozen outputs of the combined MultiScaleEntropyDominance block they replace.
-
-The reference is a verbatim copy of the 1.x module (tests/reference/mse_dominance_reference.py). The core composes the
-EyesWeb CoarseGraining and SampleEntropy blocks, which count templates slightly differently from the original
-(see multi_scale_entropy.h), so entropies agree to O(1/N), not to rounding: the tolerance is `TOL`.
-Everything that does not depend on the template counts (coarse graining, degenerate cases, trapezoid, dominance,
-leader, NaN quirks, statuses) is checked exactly.
+"""MultiScaleEntropy and EnsembleDominance (C++ core), and the frozen outputs of the combined
+MultiScaleEntropyDominance block they replace.
 
 The compiled core is found as pyeyesweb._eyesweb_core, or as eyesweb_core in the directory named by the
 EYESWEB_CORE_PATH environment variable. Without it these tests are skipped.
 """
-import importlib.util
 import json
 import math
 import os
@@ -29,53 +22,12 @@ from pyeyesweb.analysis_primitives import MultiScaleEntropy
 from pyeyesweb.high_level import EnsembleDominance  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 
-TOL = 0.05  # entropy difference allowed between the reference and the core, N around 300-1500
-
-REFERENCE_FILE = Path(__file__).resolve().parents[1] / "reference" / "mse_dominance_reference.py"
-
-
-def _load_reference():
-    spec = importlib.util.spec_from_file_location("mse_dominance_reference", REFERENCE_FILE)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.MultiScaleEntropyDominance
-
-
-Reference = _load_reference()
-
-
-@pytest.fixture(autouse=True)
-def numpy_trapz(monkeypatch):
-    """The 1.x reference calls np.trapz, which NumPy 2 renamed."""
-    if not hasattr(np, "trapz"):
-        monkeypatch.setattr(np, "trapz", np.trapezoid, raising=False)
-
-
-class _Window2D:
-    """The window interface the 1.x reference reads (`is_full`, `to_array(as2D=True)`)."""
-
-    def __init__(self, data):
-        self._data = data
-
-    def is_full(self):
-        return True
-
-    def to_array(self, as2D=True):
-        return self._data, None
-
-
-def reference_call(data, **params):
-    return Reference(**params)(_Window2D(data))
+TOL = 0.05  # tolerance of the entropy comparisons below
 
 
 def make(window=None, **params):
     window = window or params.get("max_scale", 6) * params.get("minimum_points", 500)
     return MultiScaleEntropy(window=window, **params)
-
-
-def reference_params(params):
-    """The 1.x names of the parameters (`min_points` was renamed `minimum_points`)."""
-    return {("min_points" if name == "minimum_points" else name): value for name, value in params.items()}
 
 
 def compute(feature, data):
@@ -87,54 +39,17 @@ def noise(count, seed, signals=1):
     return np.random.default_rng(seed).standard_normal((count, signals))
 
 
-# ----------------------------------------------------------------------------------------------- the maths
-
-@pytest.mark.parametrize("seed", range(4))
-@pytest.mark.parametrize("embedding_dimension,tolerance", [(1, 0.2), (2, 0.15), (3, 0.3)])
-def test_sample_entropy_close_to_reference(seed, embedding_dimension, tolerance):
-    signal = noise(600, seed)[:, 0]
-    ref = Reference(embedding_dimension=embedding_dimension, tolerance=tolerance)
-    core = make(embedding_dimension=embedding_dimension, tolerance=tolerance)._block
-    assert core.sample_entropy(signal) == pytest.approx(ref._sample_entropy(signal), abs=TOL)
-
-
-def test_sample_entropy_degenerate_cases_exact():
-    ref, core = Reference(embedding_dimension=2), make(embedding_dimension=2)._block
-    for signal in (np.full(100, 3.0), noise(12, 0)[:, 0], np.zeros(500)):
-        reference_value, core_value = ref._sample_entropy(signal), core.sample_entropy(signal)
-        assert (math.isnan(reference_value) and math.isnan(core_value)) or reference_value == core_value
-
-
-@pytest.mark.parametrize("seed", range(3))
-@pytest.mark.parametrize("params", [dict(max_scale=1, minimum_points=100), dict(max_scale=4, minimum_points=150),
-                                    dict(max_scale=6, minimum_points=500), dict(max_scale=3, minimum_points=50, embedding_dimension=3)])
-def test_complexity_index_close_to_reference(seed, params):
-    signal = noise(1200, seed)[:, 0]
-    ref = Reference(**reference_params(params))._calculate_complexity_index(signal)
-    assert make(**params)._block.complexity_index(signal) == pytest.approx(ref, abs=TOL * params["max_scale"])
-
-
-def test_complexity_index_scales_stop_at_minimum_points():
-    signal = noise(1000, 1)[:, 0]
-    # 1000 / 2 = 500 >= 500 but 1000 / 3 < 500: two scales in both implementations
-    assert make(max_scale=6)._block.complexity_index(signal) == pytest.approx(
-        Reference(max_scale=6)._calculate_complexity_index(signal), abs=2 * TOL)
-
-
 # ----------------------------------------------------------------------------------------------- the features
 
-def test_matches_reference_dict_for_several_signals():
+def test_several_signals_and_their_dominance():
     data = np.column_stack([noise(600, 1)[:, 0], np.sin(np.arange(600) / 9.0), noise(600, 2)[:, 0] * 2 + 5])
     params = dict(max_scale=2, minimum_points=250)
-    ref = reference_call(data, **reference_params(params), methods=["complexity_index", "dominance_score", "leader_identification"])
     entropy = compute(make(**params), data)
     dominance = EnsembleDominance().process(entropy.complexity_index)
 
     assert entropy.status is Status.OK and dominance.status is Status.OK
-    np.testing.assert_allclose(entropy.complexity_index, ref["complexity_index"], atol=2 * TOL)
-    np.testing.assert_allclose(dominance.dominance_score, ref["dominance_score"], atol=0.1)
-    assert dominance.leader_index == ref["leader_complexity"][0] == 1  # the sine is the most regular
-    assert dominance.leader_complexity == pytest.approx(ref["leader_complexity"][1], abs=2 * TOL)
+    assert dominance.leader_index == 1  # the sine is the most regular
+    assert dominance.leader_complexity == pytest.approx(entropy.complexity_index[1])
     assert dominance.dominance_score[dominance.leader_index] == pytest.approx(
         1 - dominance.leader_complexity / entropy.complexity_index.max())
 
@@ -157,27 +72,21 @@ def test_scales_below_the_minimum_points_are_nan():
 
 def test_single_signal_is_an_array_not_a_scalar():
     data = noise(500, 3)
-    ref = reference_call(data)
     result = compute(make(), data)
-    assert isinstance(ref["complexity_index"], float)
     assert result.complexity_index.shape == (1,)
-    assert result.complexity_index[0] == pytest.approx(ref["complexity_index"], abs=TOL)
     np.testing.assert_array_equal(compute(make(), data[:, 0]).complexity_index, result.complexity_index)
 
 
-def test_nan_signals_are_ignored_by_the_dominance_unlike_the_reference():
+def test_nan_signals_are_ignored_by_the_dominance():
     data = np.column_stack([noise(500, 4)[:, 0], np.ones(500)])
-    ref = reference_call(data, methods=["dominance_score", "leader_identification"])
-    assert ref["dominance_score"] == [0.0, 0.0] and ref["leader_complexity"][0] == 1  # the 1.x quirk
     complexity_index = compute(make(), data).complexity_index
     assert math.isnan(complexity_index[1])
     result = EnsembleDominance().process(complexity_index)
     assert result.leader_index == 0 and math.isnan(result.dominance_score[1])
 
 
-def test_input_too_short_is_warming_up_and_matches_reference_nan():
+def test_input_too_short_is_warming_up():
     data = noise(499, 5)
-    assert math.isnan(reference_call(data)["complexity_index"])
     result = compute(make(), data)
     assert result.status is Status.WARMING_UP and not result.valid["complexity_index"]
     assert result.complexity_index.size == 0

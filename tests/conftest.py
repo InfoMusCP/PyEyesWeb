@@ -1,14 +1,13 @@
-"""Makes the compiled EyesWeb core (a development build), the reference implementations and the shared test helpers
+"""Makes the compiled EyesWeb core (a development build) and the shared test helpers
 importable for every test.
 
 Layout of `tests/`:
-- `unit_tests/`: the tests. `test_parity_*.py` compare a feature with a reference implementation or frozen data;
+- `unit_tests/`: the tests. `test_parity_*.py` compare a feature with frozen data or check its input rules;
   `test_contract_*.py` run the shared contract check on features; `test_live_parameters*.py` check which parameters
   can change between calls; the rest test one feature or one rule.
 - `_support/`: helpers, not tests. `contract_suite.py` (`check_feature_contract`: schema, statuses, `run` against
   `process`, reset), `live_param_suite.py` (live and structural parameter checks), and the input builders
   `humanoid_inputs.py`, `imaging_inputs.py`, `symmetry_inputs.py`.
-- `reference/`: independent implementations (the legacy library) that the parity tests import as oracles.
 - `data/`: frozen outputs and recordings; `tools/regenerate_trajectory_reference.py` regenerates `trajectory_reference.npz`.
 
 EYESWEB_CORE_PATH: directory holding `eyesweb_core*.pyd` (the CMake build output of the private EyesWebCore repository: `EyesWebCore/build/Release`). It is put on `sys.path` before any
@@ -20,7 +19,6 @@ import sys
 
 if os.environ.get("EYESWEB_CORE_PATH"):
     sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "reference"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "_support"))
 
 # The features are backed by the compiled core, so without it only the tests of the pure-Python data model can run.

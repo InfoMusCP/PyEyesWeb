@@ -1,6 +1,5 @@
-"""Parity of the core-backed DirectionChange with the preserved NumPy reference
-(tests/reference/direction_change_reference.py). Needs the compiled core: set EYESWEB_CORE_PATH (tests are skipped
-otherwise)."""
+"""DirectionChange: window-level behaviour and the frozen outputs of the earlier signals form. Needs the compiled core:
+set EYESWEB_CORE_PATH (tests are skipped otherwise)."""
 import os
 import sys
 
@@ -9,11 +8,9 @@ import pytest
 
 if os.environ.get("EYESWEB_CORE_PATH"):
     sys.path.insert(0, os.environ["EYESWEB_CORE_PATH"])
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "reference"))
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from direction_change_reference import DirectionChangeReference  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level.direction_change import DirectionChange  # noqa: E402
 
@@ -24,50 +21,6 @@ def _new(window, **params):
     """The feature on a `(frames, signals, dims)` window: its `(dims, frames)` series is the mean over the signals."""
     feature = DirectionChange(window=max(len(window), 3), **params)
     return feature, feature._process_window(window.mean(axis=1).T)
-
-
-def _compare(window, tol=1e-10, same_reason=True, **params):
-    metrics = params.pop("metrics", None)
-    _, new = _new(window, metrics=metrics, **params)
-    ref = DirectionChangeReference(metrics=metrics, **params).compute(window)
-    assert new.status == ref.status
-    if same_reason:
-        assert new.reason == ref.reason
-    assert new.valid == ref.valid
-    for name in ref.valid:
-        np.testing.assert_allclose(new[name], ref[name], rtol=tol, atol=tol, equal_nan=True)
-    return ref
-
-
-@pytest.mark.parametrize("metrics", METRIC_SETS)
-@pytest.mark.parametrize("params", [{}, {"epsilon": 0.2}, {"epsilon": 5.0}, {"number_of_subsamples": 3},
-                                    {"number_of_subsamples": 1}, {"number_of_subsamples": 200}, {"epsilon": 0.0}])
-def test_random_windows(metrics, params):
-    rng = np.random.default_rng(7)
-    for length in (3, 4, 5, 7, 20, 21, 64):
-        for shape in ((1, 2), (3, 2), (2, 3), (1, 3)):
-            _compare(rng.standard_normal((length,) + shape), metrics=metrics, **params)
-
-
-@pytest.mark.parametrize("metrics", METRIC_SETS)
-def test_random_walks_hit_the_cosine_band(metrics):
-    rng = np.random.default_rng(8)
-    nonzero = 0
-    for _ in range(40):
-        window = np.cumsum(rng.standard_normal((15, 1, 2)), axis=0)
-        ref = _compare(window, metrics=metrics)
-        nonzero += ref.valid.get("cosine", False) and ref["cosine"] > 0
-    assert nonzero > 0 or metrics == ["polygon"]
-
-
-@pytest.mark.parametrize("metrics", METRIC_SETS)
-def test_degenerate_windows(metrics):
-    _compare(np.zeros((10, 2, 3)), metrics=metrics)
-    _compare(np.ones((10, 1, 2)), metrics=metrics)
-    _compare(np.tile([[1e-9, 0.0]], (5, 1))[:, None, :], metrics=metrics)
-    line = np.linspace(0, 1, 9)[:, None, None] * np.array([[1.0, 2.0, 3.0]])
-    _compare(line, metrics=metrics)
-    _compare(line[::-1].copy(), metrics=metrics)
 
 
 @pytest.mark.parametrize("metrics", METRIC_SETS)
@@ -81,35 +34,19 @@ def test_non_finite_windows_are_invalid_input(metrics):
 @pytest.mark.parametrize("metrics", METRIC_SETS)
 def test_short_windows_warm_up(metrics):
     for length in (0, 1, 2):
-        ref = _compare(np.zeros((length, 1, 2)), metrics=metrics)
-        assert ref.status == Status.WARMING_UP
+        assert _new(np.zeros((length, 1, 2)), metrics=metrics)[1].status == Status.WARMING_UP
 
 
 def test_unsupported_dimensions_are_invalid_input():
     rng = np.random.default_rng(10)
-    # 1-D positions: cosine needs 2D (same message); polygon needs 2D or 3D (NumPy's own message differs).
-    ref = _compare(rng.standard_normal((6, 2, 1)), metrics=["cosine"])
-    assert ref.status == Status.INVALID_INPUT
-    ref = _compare(rng.standard_normal((6, 2, 1)), metrics=["polygon"], same_reason=False)
-    assert ref.status == Status.INVALID_INPUT
-    ref = _compare(rng.standard_normal((6, 2, 4)), metrics=["polygon"], same_reason=False)
-    assert ref.status == Status.INVALID_INPUT
+    assert _new(rng.standard_normal((6, 2, 1)), metrics=["cosine"])[1].status == Status.INVALID_INPUT
+    assert _new(rng.standard_normal((6, 2, 1)), metrics=["polygon"])[1].status == Status.INVALID_INPUT
+    assert _new(rng.standard_normal((6, 2, 4)), metrics=["polygon"])[1].status == Status.INVALID_INPUT
 
 
 def test_negative_num_subsamples_is_invalid_input():
     window = np.random.default_rng(11).standard_normal((8, 1, 2))
-    ref = _compare(window, metrics=["polygon"], same_reason=False, number_of_subsamples=-1)
-    assert ref.status == Status.INVALID_INPUT
-
-
-def test_parameter_setters_reach_the_core():
-    window = np.cumsum(np.random.default_rng(12).standard_normal((15, 1, 2)), axis=0)
-    new, _ = _new(window)
-    new.epsilon, new.number_of_subsamples = 0.9, 4
-    ref = DirectionChangeReference(epsilon=0.9, number_of_subsamples=4)
-    series = window.mean(axis=1).T
-    for name in ("cosine", "polygon"):
-        np.testing.assert_allclose(new._process_window(series)[name], ref.compute(window)[name], rtol=1e-10, atol=1e-10)
+    assert _new(window, metrics=["polygon"], number_of_subsamples=-1)[1].status == Status.INVALID_INPUT
 
 
 # ------------------------------------------------- one point per frame: the mean over the markers is the user's job

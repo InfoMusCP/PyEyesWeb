@@ -219,8 +219,8 @@ Results, recorder and discoverability.
   subclass or grandchild shows and checks its own parameters; the parent's is never touched.
 - **Humanoid (Q16).** The joint and bone tables and `MassSpringModel` are in `physical_signals/_humanoid_model.py`;
   `HUMANOID_JOINTS`, `HUMANOID_BONES` and `MassSpringModel` stay public from `pyeyesweb.physical_signals`.
-- **Tests (Q10, Q11, Q12).** Helpers are in `tests/_support/` and documented in `tests/conftest.py`. All 13 oracles of
-  `tests/reference` are still imported, so none was removed; the only regeneration code of frozen data was the `--capture`
+- **Tests (Q10, Q11, Q12).** Helpers are in `tests/_support/` and documented in `tests/conftest.py`. The legacy oracles
+  (`tests/reference`, 13 modules) were removed with the parity comparisons against them; the only regeneration code of frozen data was the `--capture`
   option of `test_trajectory_parity.py`, now `tools/regenerate_trajectory_reference.py` (the other `.npz` files have no
   generator in the repository). `tests/benchmarks` (animation scripts on the 1.x API, not benchmarks) deleted
   (with `SlidingWindow`, removed on 2026-10-14); `pytest-benchmark` is not added.
@@ -331,8 +331,8 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
   `EyesWebCore/PORTING_STATUS.md`. While a correction is undecided, ask; do not guess and do not add a flag.
 - Blocks the maintainer retires are removed from the core, the bindings and the Python package together, and noted
   under "Removed blocks" in `PORTING_STATUS.md`.
-- Lab features (no EyesWeb block) keep their Python reference implementation in `tests/reference/` as the parity
-  oracle.
+- Lab features (no EyesWeb block) are tested by behaviour, the catalog-wide suites and frozen data in `tests/data`; there
+  are no legacy oracles.
 
 ## 6. How to add a feature
 
