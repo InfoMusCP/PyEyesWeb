@@ -92,7 +92,7 @@ Decision:
 | 10 | `10_capstone` | real-time loop with `process` + live parameter change; batch features → table → simple plot/classifier | all | qualisys | mix | 30 min |
 
 Coverage rule: every `catalog()` name appears in at least one script **as a linked class role and in code** (checked by the docs-build check through back-references; the tables above are provisional, re-derive from `catalog()` in T0 because layers changed).
-Exercises: 2-3 per script in a final "Try it" section; **decided: solutions are executed code inside a sphinx-design dropdown**. A reST text block cannot hold executed code, so T1 must verify how to wrap a gallery code cell in a dropdown (a `.. dropdown::` block with a `.. code-block:: python` solution plus an executed check cell, or sphinx-design/CSS wrapping of the cell); acceptance: every solution executes.
+Exercises: 2-3 per script in a final "Try it" section; solutions are ordinary executed cells under a "Solutions" heading at the end of the script (maintainer: the dropdown is skipped because it is awkward in sphinx-gallery); acceptance: every solution executes.
 Figures: as in §1.
 
 ## 4. Conventions
@@ -155,7 +155,7 @@ Taken by the maintainer (see also DOCS_PLAN §9):
 5. Public repository layout: DOCS_PLAN §9 (`examples/`: layer folders, `helpers.py`, `requirements.txt`, trimmed `data/`).
 6. TSV reader removed from the library; data ships in `examples/`; incomplete skeleton presets stay documented as incomplete.
 7. Data (videos, kinect, imu): stay in the repository for now and feed examples and educational material; licensing/consent parked ("to be discussed") but on the release checklist (no big data in wheel/sdist).
-8. Exercise solutions: executed code in a sphinx-design dropdown.
+8. Exercise solutions: plain executed cells under "Solutions" (dropdown skipped, maintainer 2026-10-15).
 9. Features that did not separate conditions: documented as if they work; OPEN_POINTS §4 stays an internal to-do.
 10. Creatives site: separate repository, much later.
 
@@ -164,5 +164,4 @@ Taken by the maintainer (see also DOCS_PLAN §9):
 **Remaining open**:
 - Confirm the proposals above.
 - Which trials, trimming rule and host (Zenodo/OSF) for the downloadable data; data licence and consent text (parked).
-- Final feasibility of an executed solution inside a dropdown with sphinx-gallery (check in T1; fallback: solution cell directly after the dropdown-closed text).
 - Fate of `examples/scratch/` after conversion.

@@ -161,7 +161,7 @@ Acceptance of this mechanism is a test: the number of generated pages equals `le
 
 ### 4.3 References
 `docs/references.bib` with all literature; each metric docstring has a numpydoc "References" section using `:cite:` keys.
-**Citation style: ACM (decided).** Checked 2026-10-15: sphinxcontrib-bibtex has no ACM style built in (`alpha`, `plain`, `unsrt`, `unsrtalpha`; no CSL support) and no maintained pybtex ACM plugin was found. Proposal: a small pybtex style in `docs/_ext/acm_style.py` (subclass of `pybtex.style.formatting.unsrt.Style`, ACM Reference Format ordering: authors, year, title, venue, volume(issue), pages, DOI), registered with `pybtex.plugin.register_plugin("pybtex.style.formatting", "acm", ...)`, `bibtex_default_style = "acm"`, numeric labels (`bibtex_reference_style = "label"`). **First step of the references task: mine the citations already present** in `docs/` (theory pages) and in the `pyeyesweb` docstrings (grep for years, `et al.`, `doi`, `TODO(ref)`) into `docs/references.bib`, then fill the gaps (OPEN_POINTS §3). Known: SpectralArcLength → Balasubramanian, Melendez-Calderon, Roby-Brami, Burdet (2015), "On the analysis of movement smoothness", J NeuroEng Rehabil 12:112. The rest are supplied by the maintainer (OPEN_POINTS §3); until then the key `TODO` is **allowed only in a draft build** and the final gate (WP9) fails on it. Add the Camurri et al. papers for the conceptual model and the EyesWeb reference.
+**Citation style: not strict (maintainer, 2026-10-15): any supported format.** sphinxcontrib-bibtex ships `alpha`, `plain`, `unsrt`, `unsrtalpha` (no CSL, no ACM). Start with `unsrt` and numeric labels (`bibtex_reference_style = "label"`, the scikit-learn/SciPy look), zero maintenance; in WP4 check whether a maintained APA/ACM pybtex plugin exists and switch only if it costs nothing. No custom `acm_style.py`. **First step of the references task: mine the citations already present** in `docs/` (theory pages) and in the `pyeyesweb` docstrings (grep for years, `et al.`, `doi`, `TODO(ref)`) into `docs/references.bib`, then fill the gaps (OPEN_POINTS §3). Known: SpectralArcLength → Balasubramanian, Melendez-Calderon, Roby-Brami, Burdet (2015), "On the analysis of movement smoothness", J NeuroEng Rehabil 12:112. The rest are supplied by the maintainer (OPEN_POINTS §3); until then the key `TODO` is **allowed only in a draft build** and the final gate (WP9) fails on it. Add the Camurri et al. papers for the conceptual model and the EyesWeb reference.
 
 ### 4.4 Identity and landing page
 - Logo inventory (`docs/assets/`): `eyesweb-logo.png` (main mark: header logo, light and dark variants under `html_theme_options["logo"]`; if the PNG suits only one background, an inverted copy is needed for the other theme), `favicon-32x32.png` (favicon), `cp-logo.png` and `cp-logo-squared.png` (Casa Paganini; footer, the squared one for narrow layouts), `eu-logo.png` and `resilence-logo.png` (footer, funding text), `ConceptualModel.png` (theory figure, not a logo). PNG is acceptable now; **SVG versions of the EyesWeb logo and favicon would be better** (sharp in both themes, recolourable): ask the maintainer for the sources. Palette derived from the EyesWeb logo (sample its dominant colours, check contrast), set through `_static/custom.css` + pydata CSS variables, light and dark.
@@ -173,7 +173,7 @@ Acceptance of this mechanism is a test: the number of generated pages equals `le
 
 **Proposals to confirm** (the maintainer has no preference; these are defaults):
 - Runner: GitHub Actions `ubuntu-latest` (free for public repositories, 4 vCPU / 16 GB) for the docs job, Python 3.11.
-- Tests: matrix ubuntu / windows / macos x Python 3.10-3.13 (`pyproject.toml` has `requires-python >=3.10` and classifiers 3.10-3.12 only: add 3.13 to the classifiers when its wheel exists).
+- Tests: matrix ubuntu / windows / macos x Python 3.10-3.13 (confirmed: build for multiple OS and Python versions) (`pyproject.toml` has `requires-python >=3.10` and classifiers 3.10-3.12 only: add 3.13 to the classifiers when its wheel exists).
 - Budgets: each gallery script < 60 s, whole gallery < 10 min, docs job `timeout-minutes: 30`.
 - sphinx-gallery cache of executed outputs keyed on the script hash.
 - `sphinx-build -W --keep-going` (warnings are errors).
@@ -230,7 +230,7 @@ A **second, separate site** for artists and creatives, documenting the TouchDesi
 Taken by the maintainer:
 1. **Core wheel**: public binary wheel `eyesweb-core` on PyPI (cibuildwheel: Linux manylinux, Windows, macOS; first release `2.0.0a1`); sources private; docs CI installs from PyPI/TestPyPI; WP E is a prerequisite of docs CI, docs are built locally until then (§4.5).
 2. **Formats**: prose pages in MyST Markdown, docstrings numpydoc (`numpydoc` extension), API pages generated, gallery text blocks RST (no MyST option in sphinx-gallery; §0).
-3. **Citation style ACM** (custom pybtex style, §4.3); first step: mine existing citations from `docs/` and docstrings into `references.bib`.
+3. **Citation style**: not strict, `unsrt` numeric to start (§4.3); first step: mine existing citations from `docs/` and docstrings into `references.bib`.
 4. **Internal agentic-development documents** move to the private repository (`EyesWebCore/dev-notes/`) before release; `DEVELOPMENT_SPEC.md` is kept and published as "Contributing / development spec" after a pass removing private repository names and C++ internals.
 5. **Logos** are in `docs/assets/` (inventory and use in §4.4); palette derived from the logo; SVG wanted.
 6. **Public repository layout** (below).
@@ -238,7 +238,7 @@ Taken by the maintainer:
 8. **Creatives site**: its own repository, much later (after docs, PyPI release and the TouchDesigner wrapper).
 9. **Gallery details** (proposals, no maintainer preference; TEACHING_PLAN §1, §5): layout by layer, no Binder/JupyterLite, `pyeyesweb.datasets` helper with `pooch`, `examples/helpers.py`.
 10. **Data** (videos, kinect, imu): stay in the repository for now and feed examples and educational material; the licensing/consent question is **parked ("to be discussed")**, not blocking, but a release-checklist item (below).
-11. **Exercise solutions**: executed code in a `sphinx-design` dropdown.
+11. **Exercise solutions**: executed code in a dropdown was the wish, but it is awkward in sphinx-gallery: **skipped** (maintainer: if awkward, skip); exercises are plain "Try it" sections.
 12. **Features that did not separate the example conditions** are documented as if they work (no caveat pages); the OPEN_POINTS §4 analysis remains an internal to-do.
 13. **Budgets and CI class**: no preference from the maintainer; proposals in §4.5.
 
@@ -247,7 +247,7 @@ Taken by the maintainer:
 pyeyesweb/              library (pure Python)
 tests/                  unit tests + small reference data
 docs/                   conf.py, index.md, requirements.txt, Makefile, make.bat, references.bib
-  _ext/                 feature_pages.py, acm_style.py
+  _ext/                 feature_pages.py
   _data/                families.yaml
   _static/              custom.css, logos (SVG when available)
   assets/               current logos and figures
