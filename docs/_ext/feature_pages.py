@@ -160,7 +160,11 @@ def render_page(info, family_key, families, feature):
         lines += ["Alternative constructors", "------------------------", ""]
         lines += [f".. automethod:: {info.name}.{n}\n" for n in names]
     lines += ["Description", "-----------", "", f".. autoclass:: {info.name}", "   :no-members:", "   :no-special-members:", "",
-              "..", "   TODO(WP7): gallery back-references (sphinx-gallery) go here.", ""]
+              "", "..", "   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the",
+              "   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the",
+              "   include below never fails.", "",
+              f".. include:: /{GENERATED}/backreferences/{layer.package}.{info.name}.examples", "",
+              ".. raw:: html", "", '   <div class="clearer"></div>', ""]
     return "\n".join(lines)
 
 

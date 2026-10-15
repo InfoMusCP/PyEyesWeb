@@ -39,6 +39,7 @@ The package follows the conceptual model of movement qualities (layers):
 | `pyeyesweb.base` | | Machinery features are built from: `core_feature.py` (`CoreFeature`, `VariantFeature`, `FrameFeature`), `signatures.py`, `choices.py`, `inputs.py`, `minimum_window.py`, `labels.py` (`LabelGuard`). Internal. |
 | `pyeyesweb.catalog` | | `@describe(Layer, ...)` metadata and `catalog()`. |
 | `pyeyesweb.skeletons` | | The lab device presets (`KINECT_V2`, ...), `get_skeleton`, `with_skeleton`; re-exports `Skeleton` (defined in `data_models/skeleton.py`). |
+| `pyeyesweb.datasets` | | The example recordings of the gallery: `load_qualisys_trial` (returns a `QualisysTrial`: positions in mm, labels, sampling rate, units), `fetch_data_file`, `cache_dir`, `available_trials`. Needs no core. Files are looked up in `PYEYESWEB_DATA`, then `examples/data` of a checkout, then downloaded with the optional `pooch` (`BASE_URL` is `None` until a host is chosen; SHA-256 sums in `_datasets_registry.py`, written by `tools/trim_example_data.py`). Data access only: plotting and derived signals live in `examples/helpers.py`. |
 | `pyeyesweb._core` | | The only place that imports the compiled module (the `eyesweb_core` package, a binary wheel built from the private EyesWebCore repository; in development the build found through `EYESWEB_CORE_PATH`). |
 
 Where a new feature goes: the layer whose timescale and meaning fit it; if it applies to any signal at any layer it is
@@ -194,7 +195,7 @@ Results, recorder and discoverability.
   unit it was given (`"mm/s"`; `Kinematics`, `TrajectoryNonPlanarity`, the humanoid features). An empty unit means dimensionless
   and is listed with its reason in `tests/unit_tests/test_units_all_features.py` (booleans need no entry); a new feature
   with an output that has no unit fails that test.
-- **Public names.** `dir(pyeyesweb)` lists the public modules and `Layer`, `Timescale`, `catalog`, `catalog_table`,
+- **Public names.** `dir(pyeyesweb)` lists the public modules (`datasets` included) and `Layer`, `Timescale`, `catalog`, `catalog_table`,
   `SeriesBuffer` (loaded from the core on demand, not in `__all__`); `pyeyesweb.base` and `pyeyesweb.utils` are internal
   and not listed; a package lists its `__all__` and not its submodules. `TimeWindowSynchronizer` and `SynchronizedWindow`
   are public in `pyeyesweb.physical_signals` (they need the core, so not in `data_models`), next to `MassSpringModel`.
@@ -266,8 +267,9 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
 - **`MotionNoiseDetector.is_noisy` flipped.** `True` now means the motion is noisy (random, jumpy: the mean speed variance exceeds
   `noise_threshold`); it is `False` for a still body, a uniform motion and the first 14 frames (before: the reverse). Done in
   `_to_result` (`not raw`); statuses and warm-up are unchanged; `noise_threshold <= 0` now flags every frame as noisy. `GestureSegmenter`
-  is untouched: its `noise` input still blocks the start of a gesture while set, so a pipeline passes `not is_noisy`
-  (the docstrings say so; `test_parity_gesture_segmenter.py` and `test_time_and_units.py` do it, the frozen reference is valid unchanged).
+  is untouched: its `noise` input blocks the start of a gesture while set (`True` = judged to be noise), so a pipeline passes `is_noisy`
+  directly (the docstrings, `test_parity_gesture_segmenter.py` and `test_time_and_units.py` do it; the first version of this note asked for
+  `not is_noisy`, which blocked every smooth gesture; `tests/data/gesture_segmenter_reference.npz` was regenerated with the direct wiring).
 - **`Suddenness.gamma`** has no unit (dimensionless, a ratio of quantile differences); listed in `EXEMPT` of `test_units_all_features.py`.
   The classification of a still or constant-speed window as sudden is unchanged.
 - **`CurvatureVelocityCorrelation` velocity in seconds.** `velocity` and `velocity_std` are length/s in both modes: with the default

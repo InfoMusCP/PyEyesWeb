@@ -2202,7 +2202,7 @@ Each row was checked against the code on 2026-10-15 (state `a8402dd`). Items of 
 
 | # | Change | Verified by |
 |---|---|---|
-| C1 | `MotionNoiseDetector.is_noisy`: `True` means noisy (random, jumpy motion); `False` for a still body, uniform motion and the first 14 frames. `GestureSegmenter`'s `noise` input still means *blocked*, so a pipeline feeds it `not is_noisy`. | `c1_noisy` |
+| C1 | `MotionNoiseDetector.is_noisy`: `True` means noisy (random, jumpy motion); `False` for a still body, uniform motion and the first 14 frames. `GestureSegmenter`'s `noise` input means *judged to be noise* (blocks a start), so a pipeline feeds it `is_noisy` directly. | `c1_noisy` |
 | C2 | `Suddenness.gamma` has no unit (dimensionless). `CurvatureVelocityCorrelation.velocity` and `velocity_std` are per second in both modes (`differentiate` False and True give the same values; unit `<length>/s`). | `c2_gamma_velocity`, `i08c_unit_strings` |
 | C3 | `SpikeSynchronization(mode="timings")` is public: input `spike_times`, a matrix `(number_of_inputs, window)` (`window` = spikes per train), one result per matrix (`OK`, no warm-up); times must be > 0 and increasing within a train (`INVALID_INPUT` otherwise); another shape is a `ValueError`. `run` takes `(T, number_of_inputs, window)`. | `c3_spikes` |
 | C4 | `MassSpringModel.to_xml()` round trip: `from_xml_string(model.to_xml()).to_xml()` equals the first text. | `c4_xml_symmetry` |

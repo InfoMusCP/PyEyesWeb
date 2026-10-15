@@ -1,5 +1,4 @@
-ipywidgets
-tqdm
+pyeyesweb
 matplotlib
-opencv-python
 pandas
+pooch

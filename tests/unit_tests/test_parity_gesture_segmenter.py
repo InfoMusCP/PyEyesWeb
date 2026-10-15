@@ -4,9 +4,13 @@ The block embedded the kinetic energy, the noise test and the segmentation. `Kin
 `GestureSegmenter` (see its docstring), run frame by frame, must give for every frame what the block gave: bit for bit,
 statuses and reasons included, after `reset()` and after live parameter changes.
 
-`tests/data/gesture_segmenter_reference.npz` freezes the outputs of the block before the split (Qualisys excerpts
+`tests/data/gesture_segmenter_reference.npz` freezes the outputs of the three features composed as in the block (before the split (Qualisys excerpts
 of `motion_excerpts.npz` and synthetic edge cases: still, NaN / infinite frames, repeated timestamps, dict frames with
-missing labels, weights that name a subset of the labels), together with the description of each scenario.
+missing labels, weights that name a subset of the labels), together with the description of each scenario. Since I-a the
+numbers are those of the current composition, not of the block (see below).
+
+Regenerated for work package I-a (2026-10-15): `is_noisy` is fed directly to the `noise` input (it used to be negated, which
+blocked every smooth gesture); the reference was rebuilt with `tools/regenerate_gesture_segmenter_reference.py`.
 
 Regenerated for work package A (2026-10-14): the first timed call has no previous timestamp (1 / `sampling_rate` or 1 s,
 with the per-sample note), a repeated timestamp is `INVALID_INPUT`, a dict frame with a missing joint is `INVALID_INPUT`
@@ -107,12 +111,25 @@ class _Composition:
         for upstream in (energy, noise):
             if upstream.status is not Status.OK:
                 return int(upstream.status), upstream.reason, values, valid
-        blocked = not noise["is_noisy"]  # the flag of the block: the reverse of is_noisy, and the input of the segmenter
+        blocked = bool(noise["is_noisy"])  # is_noisy goes straight to the noise input of the segmenter
         segmented = self.segmenter.process(energy["kinetic_energy"], blocked, timestamp=timestamp)
         values[[0, 2]], valid[[0, 2]] = (energy["kinetic_energy"], blocked), True
         for position, name in ((1, "smoothed_intensity"), (3, "is_gesturing"), (4, "is_gesture_start"), (5, "is_gesture_end")):
             values[position], valid[position] = segmented[name], segmented.valid[name]
         return int(segmented.status), _reason((segmented, energy, noise)), values, valid
+
+
+def compute(scenario):
+    """(status, reason, values, valid) of every frame of a scenario, as the reference stores them."""
+    frames, timestamps = _inputs(scenario)
+    composition = _Composition(scenario)
+    events = {int(key): value for key, value in scenario.get("events", {}).items()}
+    rows = []
+    for index, frame in enumerate(frames):
+        for event in events.get(index, []):
+            composition.apply(event)
+        rows.append(composition.process(frame, None if timestamps is None else float(timestamps[index])))
+    return rows
 
 
 def _bits(values):
@@ -141,9 +158,41 @@ def test_the_reference_exercises_the_block():
     """The scenarios reach every state: starts and ends, noise on and off, warm-up, invalid frames."""
     values = np.concatenate([REFERENCE[scenario["name"] + "_values"] for scenario in SCENARIOS])
     status = np.concatenate([REFERENCE[scenario["name"] + "_status"] for scenario in SCENARIOS])
-    assert np.nansum(values[:, 4]) > 20 and np.nansum(values[:, 5]) > 20
+    assert np.nansum(values[:, 4]) >= 5 and np.nansum(values[:, 5]) >= 3
     assert (values[:, 2] == 0).any() and (values[:, 2] == 1).any()
     assert {int(Status.OK), int(Status.WARMING_UP), int(Status.INVALID_INPUT)} <= set(status.tolist())
+
+
+def test_a_jumpy_joint_blocks_the_segmenter_and_a_smooth_one_does_not():
+    """Wiring: is_noisy goes directly to the noise input; the jumpy joint (the last one) blocks the starts while it jumps."""
+    rng = np.random.default_rng(1)
+    time = np.arange(120) / 50.0
+    smooth = np.zeros((120, 2, 3))
+    smooth[30:, 0, 0] = 0.5 * (1 - np.cos(2 * np.pi * (time[30:] - time[30]) / (time[-1] - time[30])))  # a smooth reach of "a"
+    jumpy = smooth.copy()
+    jumpy[30:60, 1] = rng.normal(scale=0.3, size=(30, 3))  # "b" jumps about for 30 frames
+    ran = {}
+    for name, frames in (("smooth", smooth), ("jumpy", jumpy)):
+        energy = KineticEnergy(labels=["a", "b"], weights={"a": 1.0, "b": 1.0}, sampling_rate=50.0).run(frames)["kinetic_energy"]
+        noise = np.asarray(MotionNoiseDetector(labels=["a", "b"], sampling_rate=50.0).run(frames)["is_noisy"], dtype=bool)
+        starts = GestureSegmenter(firing_threshold=0.01, filter_window_length=5).run(energy, noise)["is_gesture_start"]
+        ran[name] = (noise, np.flatnonzero(starts))
+    assert not ran["smooth"][0].any() and len(ran["smooth"][1]) >= 1  # smooth motion is never noise: the gesture opens
+    noise, starts = ran["jumpy"]
+    assert noise[30:60].any() and not noise[:14].any()
+    assert not noise[starts].any()  # no gesture starts while the motion is judged noise
+    assert len(starts) >= 1 and starts[0] > ran["smooth"][1][0]  # blocked while jumpy, opens once the jumps are over
+
+
+def test_only_the_last_joint_decides_the_noise_flag():
+    """Quirk of the original, kept: with several joints only the last one (in label order) counts, so the flag of a jumpy
+    joint is lost when it is not the last; a single joint is judged on its own."""
+    jumps = np.random.default_rng(0).normal(scale=0.3, size=(60, 1, 3))
+    still = np.zeros((60, 1, 3))
+    flag = lambda labels, frames: np.asarray(MotionNoiseDetector(labels=labels, sampling_rate=50.0).run(frames)["is_noisy"])
+    assert flag(["hand"], jumps)[-1]
+    assert flag(["a", "b"], np.concatenate([jumps, still], axis=1))[-1] == False  # noqa: E712  jumpy "a", still "b"
+    assert flag(["a", "b"], np.concatenate([still, jumps], axis=1))[-1]
 
 
 def test_a_plain_signal_is_segmented_without_a_noise_input():

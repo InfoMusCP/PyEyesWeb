@@ -6,8 +6,10 @@
 
 import doctest
 import os
+import re
 import sys
 from datetime import date
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(".."))  # repository root: the library is imported, not installed
 sys.path.insert(0, os.path.abspath("_ext"))
@@ -54,7 +56,7 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "myst_parser",
-    # "sphinx_gallery.gen_gallery",  # TODO(WP7): enable together with sphinx_gallery_conf below
+    "sphinx_gallery.gen_gallery",  # the tutorials: examples/*/plot_NN_*.py (settings in sphinx_gallery_conf below)
     "feature_pages",  # docs/_ext/feature_pages.py: one page per catalog feature (DOCS_PLAN 4.2)
 ]
 
@@ -137,10 +139,74 @@ html_sidebars = {"index": []}
 html_context = {"core_version": core_version, "core_build": core_build}
 templates_path = ["_templates"]
 
-# --- sphinx-gallery (TODO(WP7)): examples/ has no gallery scripts yet. Enable with the settings of TEACHING_PLAN.md section 1:
-# sphinx_gallery_conf = {
-#     "examples_dirs": "../examples", "gallery_dirs": "tutorials",
-#     "filename_pattern": r"/\d\d_", "ignore_pattern": r"helpers\.py|build\.py",
-#     "backreferences_dir": "api/generated/backreferences", "doc_module": ("pyeyesweb",),
-#     "abort_on_example_error": True, "download_all_examples": True, "remove_config_comments": True,
-# }
+# --- sphinx-gallery: the tutorials (TEACHING_PLAN.md; conventions: DOCS_PLAN.md, "WP7 stage 1 conventions") --------------------
+# The scripts of examples/ are run on every build; an error fails the build (abort_on_example_error). `import helpers` works
+# because examples/ is put on sys.path here (a downloaded notebook fetches helpers.py, see first_notebook_cell).
+sys.path.insert(0, os.path.abspath("../examples"))
+from tutorial_reset import reset_tutorial_state  # noqa: E402  (docs/_ext)
+_HELPERS_URL = "https://raw.githubusercontent.com/InfoMusCP/PyEyesWeb/main/examples/helpers.py"  # TODO(release): pin to the tag
+
+
+_EXAMPLES = Path(os.path.abspath("../examples"))
+# One sphinx-gallery per layer folder (examples/NN_name/ with a GALLERY_HEADER.rst and at least one plot_NN_*.py), not one
+# gallery with sub-sections: sphinx-gallery would also pick up any other folder of examples/ that has a README (the
+# git-ignored reviewer folder examples/scratch has one). tutorials/index.rst, the overview, is written below from
+# examples/GALLERY_HEADER.rst plus a table of contents of the layer galleries.
+_TUTORIAL_FOLDERS = sorted(folder.name for folder in _EXAMPLES.iterdir()
+                           if re.fullmatch(r"\d\d_\w+", folder.name) and (folder / "GALLERY_HEADER.rst").is_file()
+                           and any(folder.glob("plot_[0-9][0-9]_*.py")))
+
+
+def _write_tutorials_overview(app, config):
+    """tutorials/index.rst (generated, git-ignored): the text of examples/GALLERY_HEADER.rst and the list of the galleries."""
+    target = Path(app.srcdir) / "tutorials"
+    target.mkdir(exist_ok=True)
+    text = (_EXAMPLES / "GALLERY_HEADER.rst").read_text(encoding="utf-8")
+    contents = "".join(f"   {name}/index\n" for name in _TUTORIAL_FOLDERS)
+    page = f".. _tutorials:\n\n{text}\n\n.. toctree::\n   :maxdepth: 1\n\n{contents}"
+    (target / "index.rst").write_text(page, encoding="utf-8")
+
+
+def setup(app):
+    app.connect("config-inited", _write_tutorials_overview)
+
+
+# sphinx-gallery replaces entries of its configuration by functions and classes while the build runs, which Sphinx cannot pickle
+# for its config cache (only used to detect a changed configuration between two builds): the warning is of no use here.
+suppress_warnings = ["config.cache"]
+
+sphinx_gallery_conf = {
+    "examples_dirs": [f"../examples/{name}" for name in _TUTORIAL_FOLDERS],  # one gallery per layer folder (see above)
+    "gallery_dirs": [f"tutorials/{name}" for name in _TUTORIAL_FOLDERS],  # generated and git-ignored, like tutorials/index.rst
+    "filename_pattern": r"[/\\]plot_\d\d_",  # only the numbered tutorials run: plot_01_first_feature.py, ...
+    "ignore_pattern": r"^(?!plot_)",  # a file that is not a numbered tutorial is not a tutorial (helpers.py, ...)
+    "within_subsection_order": "FileNameSortKey",
+    "backreferences_dir": "api/generated/backreferences",  # "Examples using X" on the generated API pages (feature_pages.py)
+    "doc_module": ("pyeyesweb",),
+    "reference_url": {"pyeyesweb": None},  # links to the pages of this documentation
+    "abort_on_example_error": True,
+    "plot_gallery": True,
+    "download_all_examples": True,
+    "remove_config_comments": True,
+    "capture_repr": ("_repr_html_", "__repr__"),
+    "image_scrapers": ("matplotlib",),
+    "thumbnail_size": (320, 240),
+    "min_reported_time": 5,  # seconds: slower tutorials are listed in the build output
+    "show_memory": False,
+    "reset_modules": ("matplotlib", reset_tutorial_state),  # matplotlib's own reset, then ours (dpi, seed, print options)
+    "reset_modules_order": "both",
+    "expected_failing_examples": [],
+    "run_stale_examples": False,
+    "junit": "sphinx-gallery/junit-results.xml",  # under the HTML output folder: run time of each script, checked in CI
+    "default_thumb_file": os.path.abspath("assets/eyesweb-logo.png"),  # card of a tutorial whose figures give no thumbnail
+    # Only the downloaded notebook gets this first cell (never the HTML page): installation, inline figures, helpers.py.
+    "first_notebook_cell": (
+        "%pip install --quiet pyeyesweb[datasets] matplotlib pandas\n"
+        "%matplotlib inline\n"
+        "# helpers.py (the plotting functions of the tutorials) is fetched once, next to this notebook\n"
+        "from pathlib import Path\n"
+        "if not Path('helpers.py').exists():\n"
+        "    import urllib.request\n"
+        f"    urllib.request.urlretrieve('{_HELPERS_URL}', 'helpers.py')"
+    ),
+}

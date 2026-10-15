@@ -269,3 +269,77 @@ Leave the public tree: `site/`, `mkdocs.yml`, `main.py`, `docs/javascripts|overr
 - Doctests inside Sphinx or only `pytest --doctest-modules` (default: only pytest).
 - Git for the PyEyesWeb tree.
 - Data licence and consent (parked).
+
+## 10. WP7 stage 1 conventions (2026-10-15; infrastructure and two pilot tutorials built, the other eight tutorials follow)
+
+**Built**: `docs/conf.py` (gallery, below), `docs/_ext/tutorial_reset.py`, `docs/_ext/feature_pages.py` (back-references include), `docs/index.md` (Tutorials in the toctree, card fixed), `examples/` (layer folders, `GALLERY_HEADER.rst` per folder, `helpers.py`, `requirements.txt`), `pyeyesweb/datasets.py` (+ `_datasets_registry.py`, `docs/api/datasets.md`, `tests/unit_tests/test_datasets.py`), `tools/trim_example_data.py`, pilots `examples/01_getting_started/plot_01_first_feature.py` and `plot_02_the_contract.py`.
+
+**Layout and names.** `examples/NN_<layer>/plot_NN_<name>.py`; folders `01_getting_started`, `02_physical_signals`, `03_low_level`, `04_mid_level`, `05_analysis_primitives`, `06_capstone`; the script number is global (01..10, TEACHING_PLAN section 3) and the file must start with `plot_` followed by two digits (the build only treats `plot_NN_*.py` as tutorials; any other `.py`, such as `helpers.py`, is ignored). Planned files and the trials each needs (trimmed ranges in `tools/trim_example_data.py`; keep a script inside them):
+`02_physical_signals/plot_03_points.py` (trials 3, 10, 18 with raw markers, 7), `plot_04_images.py` (synthetic only), `03_low_level/plot_05_motion.py` (11, 12, 13, 14, 21, 25), `plot_06_shape.py` (3-8, 10, 13, 14, 17, 18, 19), `04_mid_level/plot_07_gestures.py` (20-25), `05_analysis_primitives/plot_08_primitives.py` (7, 11, 12, 20, 21, 24), `plot_09_synchronization.py` (3-8), `06_capstone/plot_10_capstone.py` (7, 21 and a few from the others).
+
+**How the gallery is wired.** One sphinx-gallery per layer folder (`sphinx_gallery_conf["examples_dirs"]` is the list of the folders that have a `GALLERY_HEADER.rst` and at least one `plot_NN_*.py`, found by `docs/conf.py`; the folder name is also the folder under `docs/tutorials/`). Not one gallery with sub-sections: sphinx-gallery takes every folder of `examples/` with a README as a section, including the git-ignored `examples/scratch/`. `docs/tutorials/index.rst` (the overview) is written at configuration time from `examples/GALLERY_HEADER.rst` plus a toctree of the layer galleries; everything under `docs/tutorials/` is generated and git-ignored. A folder appears in the docs when its first script is added: nothing else to edit. Labels for `:ref:` between tutorials: `sphx_glr_tutorials_<folder>_<file>.py` (for example `sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`); the pilots do not link to tutorial 03 yet (add the link when it exists).
+Settings worth knowing: `abort_on_example_error=True`, `filename_pattern` `plot_NN_`, `ignore_pattern` `^(?!plot_)`, thumbnails 320x240 with `# sphinx_gallery_thumbnail_number = N` per script, `reset_modules` (matplotlib reset, dpi 90, `numpy.random.seed(0)`, print options: `docs/_ext/tutorial_reset.py`), `junit` at `<html>/sphinx-gallery/junit-results.xml` (run time per script), `min_reported_time=5`, `first_notebook_cell` (only in the downloaded `.ipynb`: `%pip install pyeyesweb[datasets] matplotlib pandas`, `%matplotlib inline`, and a download of `helpers.py` from the raw GitHub URL, TODO: pin to the release tag), `suppress_warnings=["config.cache"]` (sphinx-gallery mutates its configuration, which Sphinx cannot pickle). Executed results are cached by script hash in `docs/tutorials/`; a clean build (delete `docs/tutorials`) re-runs everything.
+
+**Back-references.** sphinx-gallery records which documented objects a script uses (the `from pyeyesweb.x import Class` of the code cells, and the roles of the text) and writes `docs/api/generated/backreferences/<module>.<Class>.examples`; `feature_pages.py` includes that file at the end of every generated feature page ("Examples using ..." with thumbnails). sphinx-gallery touches an empty file for every documented class, so a class without examples gets an empty section. Consequence: to make a feature appear on its page, **import it by name in a code cell and use it**; a class only named in prose is not recorded. The catalog coverage check of section 4.6 reads the same files.
+
+**Script template** (`plot_01_first_feature.py` is a worked example):
+
+```python
+"""
+Title of the tutorial
+=====================
+
+One-paragraph abstract: it is the text of the gallery card.
+
+:Goals: ...
+:Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
+:Data: trial N of the example session (task), seconds A to B.
+:Time: about 30 minutes.
+"""
+
+# %%
+# Section title
+# -------------
+# Why and what, in reStructuredText (roles: :class:`~pyeyesweb.low_level.Kinematics`, :doc:`/theory/smoothness`,
+# :func:`~pyeyesweb.datasets.load_qualisys_trial`; literals with double backquotes; maths with :math:`...`).
+
+from helpers import plot_recorder                      # import a name where it is first needed
+from pyeyesweb.datasets import load_qualisys_trial
+from pyeyesweb.low_level import Kinematics             # this import is what feeds the back-references
+
+trial = load_qualisys_trial(7, start=4, stop=19)       # minimal code
+...
+fig = plot_recorder(recorder, t=trial.timestamps)      # one figure per concept (assign it: a bare Figure prints its repr)
+
+# %%
+# **Takeaway.** One sentence.
+
+# ... one section per concept: text, code, figure, takeaway ...
+
+# %%
+# Try it
+# ------
+# 1. ...   (2-3 exercises, numbered)
+
+# %%
+# Solutions
+# ---------
+# Exercise 1. One line of explanation.
+
+solution_code()                                        # plain executed cells, no dropdown
+
+# %%
+# Next steps
+# ----------
+# * :doc:`/concepts/results`: links to concept, theory and API pages, then the next tutorial (a :ref: as above).
+```
+
+Rules: the first block is the module docstring (title underlined with `=`); every text block is RST (`# %%` then `# ` lines; sections are `# Title` + `# -----`); a header field list (`:Goals:`, `:Prerequisites:`, `:Data:`, `:Time:`); one concept per section: text, minimal code, figure, one-sentence takeaway (`# **Takeaway.** ...`; do not put emphasis around literals, RST cannot nest them); a role for every class named in prose and the class imported and used in a code cell; only public names (no identifier or attribute starting with `_`, nothing from `pyeyesweb.base` or `utils`, no `_process_window`); no reviewer notes, no resolved-issue talk, no faithful-versus-corrected debates (at most one sentence "Corrected in the core"); features that did not separate conditions are presented as working (choose a condition where they respond); state the units (Qualisys positions are mm: `trial.to_units("m")` or `units="mm"`) and give time in seconds; exercises whose solutions execute; `# sphinx_gallery_thumbnail_number = N` on the figure that should be the card (figures are counted in order, solutions included); no timing cells.
+
+**How to add a script.** (1) Create the folder with a `GALLERY_HEADER.rst` if it is missing (the headers of all six exist); (2) write `plot_NN_name.py` from the template; read data only with `pyeyesweb.datasets.load_qualisys_trial(n, start=, stop=)` inside the trimmed range of `tools/trim_example_data.py` (edit `PLAN` there and re-run it if a script needs more); (3) plot only through `helpers.py`; a new generic helper goes there (limit 250 lines, documented, public API only), a helper used by one script stays in that script; (4) run it alone with the core, the repository and `examples/` on `PYTHONPATH`; (5) build the docs with `-W --keep-going` and check the page and the back-references of its classes; (6) the grep for `\._[a-z]` over its code is empty and `pyflakes` is clean; (7) the run time is in `junit-results.xml`.
+
+**Runtime and data rules.** Each script under 60 s (measured: the pilots take 2.4 s and 0.6 s; the whole docs build with the gallery 26 s), the whole gallery under 10 min; a script over budget is fixed by slicing the data, never by dropping the plot. Figures: matplotlib only, 8 inches wide, dpi 90, labelled axes with units, time axis in seconds, status shading by `shade_status`/`plot_recorder`. Synthetic data: `numpy.random.default_rng(seed)`. Data: `pyeyesweb.datasets` looks in `PYEYESWEB_DATA`, then `examples/data` of the checkout, then downloads (optional `pooch`; `BASE_URL` is `None` until the maintainer chooses a host: without a local copy the error says "not available online yet"). `PYEYESWEB_DATA=examples/data_trimmed` makes the scripts read the trimmed `.tsv.gz` copies (14.9 MB) written by `tools/trim_example_data.py`; the docs build currently uses the full files of `examples/data`. Trimmed files keep the original time column, so `start=`/`stop=` mean the same in both.
+
+**What is in `pyeyesweb.datasets` and what is not.** In the library: finding, downloading (checksums) and reading a recording, the unit (`to_units`), the 20-joint `skeleton`, the task/condition table, `joint`, `window`. In `examples/helpers.py`: everything that plots or derives a signal for a figure (`plot_recorder`, `shade_status`, `draw_skeleton`, `show_frames`, `speed`, `synthetic_silhouette`, the style).
+
+**Open points of stage 1**: host and licence of the data; the raw GitHub URL of `helpers.py` in the notebook cell (pin to a tag); whether the trimmed files replace `examples/data` in the repository; the `TODO(WP7): gallery link` lines of the five `docs/user_guide/*.md` pages and the placeholder `docs/howto/load_data.md` (to point to the tutorials and `pyeyesweb.datasets` in the next stage); the `datasets` extra (`pooch`) added to `pyproject.toml` is outside the docs-only rule for that file and awaits the packaging work package.

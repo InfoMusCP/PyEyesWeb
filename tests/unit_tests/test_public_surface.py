@@ -5,17 +5,17 @@ import pytest
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 import pyeyesweb  # noqa: E402
-from pyeyesweb import analysis_primitives, data_models, high_level, low_level, mid_level, physical_signals, skeletons  # noqa: E402
+from pyeyesweb import analysis_primitives, data_models, datasets, high_level, low_level, mid_level, physical_signals, skeletons  # noqa: E402
 from pyeyesweb.physical_signals import GenericModelSimulator  # noqa: E402
 
 
 def test_the_package_lists_its_public_modules_and_names_only():
     shown = dir(pyeyesweb)
     assert not {"_core", "base", "utils"} & set(shown)
-    assert {"catalog", "Layer", "SeriesBuffer", "low_level", "data_models", "skeletons"} <= set(shown)
+    assert {"catalog", "Layer", "SeriesBuffer", "low_level", "data_models", "skeletons", "datasets"} <= set(shown)
 
 
-@pytest.mark.parametrize("package", [physical_signals, low_level, mid_level, high_level, data_models, skeletons])
+@pytest.mark.parametrize("package", [physical_signals, low_level, mid_level, high_level, data_models, skeletons, datasets])
 def test_a_package_lists_its_exports_not_its_submodules_or_imports(package):
     assert dir(package) == sorted(package.__all__)
 

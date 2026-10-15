@@ -63,10 +63,10 @@ The catalog holds {{ n_features }} features, organised in five layers, from phys
 :::
 
 :::{grid-item-card} Tutorials
-:link: howto/load_data
+:link: tutorials/index
 :link-type: doc
 
-TODO(WP7): link to the gallery.
+Executed tutorials, from the first feature to a real-time loop, each downloadable as a notebook.
 :::
 
 :::{grid-item-card} API reference
@@ -139,6 +139,7 @@ user_guide/analysis_primitives
 api/overview
 api/data_models
 api/skeletons
+api/datasets
 api/catalog
 ```
 
@@ -147,6 +148,7 @@ api/catalog
 :caption: Tutorials and how-tos
 :maxdepth: 1
 
+tutorials/index
 howto/load_data
 howto/map_skeleton
 howto/realtime_live_parameters

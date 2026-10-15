@@ -100,11 +100,12 @@ def test_a_first_timestamp_of_zero_is_like_any_start_time(start):
 # ----------------------------------------------------------------------------------------------------- units "mm"
 def _gesture(scale, units):
     rng = np.random.default_rng(5)
-    steps = np.concatenate([rng.normal(0, 1e-4, (20, 3)), rng.normal(0, 0.05, (20, 3)), rng.normal(0, 1e-4, (20, 3))])
+    reach = 0.02 * np.sin(np.linspace(0, np.pi, 20))[:, None] * np.ones(3)  # a smooth reach: steps of up to 2 cm
+    steps = np.concatenate([rng.normal(0, 1e-4, (20, 3)), reach, rng.normal(0, 1e-4, (20, 3))])
     frames = np.cumsum(steps, axis=0).reshape(60, 1, 3) * scale  # metres, or the same motion in millimetres
     energy = KineticEnergy(labels=LABELS, weights={"a": 1.0}, sampling_rate=50.0).run(frames)["kinetic_energy"]
     noise = MotionNoiseDetector(labels=LABELS, noise_threshold=0.5, sampling_rate=50.0, units=units).run(frames)["is_noisy"]
-    noise = ~np.asarray(noise, dtype=bool)  # the segmenter blocks a start while its input is set
+    noise = np.asarray(noise, dtype=bool)  # is_noisy goes straight to the noise input: the segmenter blocks a start while it is set
     squared = 1e6 if units == "mm" else 1.0  # the energy of data in millimetres is in mm^2
     segmented = GestureSegmenter(filter_window_length=5, firing_threshold=0.1 * squared).run(energy, noise)
     return {"kinetic_energy": energy, "noise": noise, **{name: segmented[name] for name in ("is_gesturing", "is_gesture_start", "is_gesture_end")}}

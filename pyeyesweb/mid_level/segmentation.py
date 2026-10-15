@@ -96,7 +96,7 @@ class GestureSegmenter(CoreFeature):
     where :math:`\theta` is the threshold. A gesture can start only while the optional ``noise`` flag is not set, which
     keeps a motion that is judged to be noise (no gesture) from opening a gesture; once started, it ends when the smoothed intensity falls
     below the threshold, whatever the flag. In a skeleton pipeline the intensity is the ``kinetic_energy`` output of
-    ``KineticEnergy`` and the flag the reverse of the ``is_noisy`` output of ``MotionNoiseDetector`` computed on the same frames (``not is_noisy``);
+    ``KineticEnergy`` and the flag the ``is_noisy`` output of ``MotionNoiseDetector`` computed on the same frames, passed as it is (``True`` = noise, no gesture can start);
     without a flag the feature segments any one-dimensional signal. The smoothing delays the detection by a few samples.
 
     Inputs, in call order: ``intensity``, a scalar per call, and ``noise``, optional (1 or ``True`` while the motion is

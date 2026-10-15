@@ -19,12 +19,13 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
     For every watched joint the detector keeps the last 10 speeds and computes their variance; this variance is
     averaged over 5 frames and the motion is flagged as noisy (random, jumpy) when that mean exceeds
     ``noise_threshold``. A still body, a uniform drift and the first frames have a small speed variance and are not
-    flagged. The flag is the reverse of the noise input of ``GestureSegmenter``, which blocks the start of a gesture
-    while its input is set: feed it ``not is_noisy`` together with the kinetic energy of the same frames, from
-    ``KineticEnergy``.
+    flagged. The flag feeds the ``noise`` input of ``GestureSegmenter`` directly, which blocks the start of a gesture
+    while it is set (``True`` = judged to be noise): pass ``is_noisy`` together with the kinetic energy of the same
+    frames, from ``KineticEnergy``.
 
-    Two quirks of the original are kept: only the last joint, in label order, that has a full window counts, and the
-    flag is false until 14 speeds have been seen.
+    Two quirks of the original are kept: only the last joint, in label order, that has a full window counts (a jumpy
+    joint that is not the last one is not seen, a single joint is judged on its own), and the flag is false until 14
+    speeds have been seen.
 
     Parameters
     ----------

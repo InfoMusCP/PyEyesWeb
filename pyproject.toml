@@ -65,6 +65,9 @@ dev = [
     "setuptools>=61.0",
     "wheel>=0.40.0"
 ]
+datasets = [
+    "pooch>=1.8",
+]
 docs = [
     "sphinx>=8.0",
     "pydata-sphinx-theme>=0.16",
