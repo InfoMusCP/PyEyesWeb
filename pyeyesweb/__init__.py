@@ -6,11 +6,11 @@
     pyeyesweb.high_level           Layer 4: qualities communicated (social and interaction-level features)
     pyeyesweb.analysis_primitives  metrics applicable at any layer
 
-`pyeyesweb.catalog()` lists every feature with its layer and timescale. The layers need the compiled
-EyesWeb core; `import pyeyesweb` itself, the data models (`pyeyesweb.data_models`) and the catalog types do not.
-`SeriesBuffer` of the core is available here once it is installed (it is not in `__all__`: it needs the core).
-`pyeyesweb.physical_signals` also holds `MassSpringModel` and `TimeWindowSynchronizer`; `pyeyesweb.skeletons` the lab
-skeleton presets.
+``pyeyesweb.catalog()`` lists every feature with its layer and timescale. The layers need the compiled EyesWeb core
+(shipped with the ``pyeyesweb`` wheel); ``import pyeyesweb`` itself, the data models (``pyeyesweb.data_models``) and the
+catalog types do not. ``SeriesBuffer`` of the core is available here once it is installed (it is not in ``__all__``).
+``pyeyesweb.physical_signals`` also holds ``MassSpringModel`` and ``TimeWindowSynchronizer``; ``pyeyesweb.skeletons`` the
+lab skeleton presets.
 """
 
 from .catalog import Layer, Timescale, catalog, catalog_table

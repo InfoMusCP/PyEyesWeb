@@ -1,21 +1,33 @@
-"""Skeletons of the capture devices of the lab.
+"""Skeletons of the capture devices of the lab: presets of :class:`~pyeyesweb.data_models.Skeleton`.
 
-The features that must know the joints (`KineticEnergy`, `MotionNoiseDetector`, `Symmetry` with
-the RATIO method) refuse to be built without them (they would silently read nothing). Give them `skeleton=` (a
-`Skeleton` or its name: `"kinect_v2"`, `"qualisys_sport"`, `"mediapipe"`, `"openpose"`) to describe the joints of
-your device, or explicit `weights=` / `pairs=`:
+The features that must know the joints (``KineticEnergy``, ``MotionNoiseDetector``, ``Symmetry``, ``PointsDensity``,
+``PointsPredictor``) refuse to be built without joint information (they would silently read nothing). Give them
+``skeleton=`` (a ``Skeleton`` or its name: ``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``, ``"openpose"``;
+case-insensitive, ``-`` and spaces count as ``_``) to describe the joints of your device, or explicit ``labels=`` /
+``weights=`` / ``pairs=``. A parameter given explicitly always wins over the skeleton.
 
-=====================  ==========================================================================================
-feature                fields of the skeleton it reads
-=====================  ==========================================================================================
-`KineticEnergy`        `joints` (labels of array input), `weights_or_uniform()` (weight of each joint)
-`MotionNoiseDetector`  `joints`
-`Symmetry` (RATIO)     `joints`, `pairs` (the couples), `reference`
-`PointsDensity`        `joints` (names of the points; they do not enter the maths)
-=====================  ==========================================================================================
+========================  ==========================================================================================
+feature                   fields of the skeleton it reads
+========================  ==========================================================================================
+``KineticEnergy``         ``joints`` (labels of the array input), ``weights_or_uniform()`` (weight of each joint)
+``MotionNoiseDetector``   ``joints``
+``Symmetry``              ``joints``, ``pairs`` (the couples), ``reference`` (ratio method)
+``PointsDensity``         ``joints`` (names of the points; they do not enter the maths)
+``PointsPredictor``       ``joints``
+========================  ==========================================================================================
 
-A parameter given explicitly always wins over the skeleton. The fields still unknown are listed by `Skeleton.missing()` and, for all the presets, by
-`SKELETON_TODO`; the entries to fill are marked `TODO(fill)` below.
+Presets and their completeness:
+
+* ``kinect_v2``: complete (25 joints, 10 pairs, reference ``SpineShoulder``, weights).
+* ``qualisys_sport``, ``mediapipe``, ``openpose``: **incomplete**, kept as documented starting points. The fields still
+  empty are listed by ``Skeleton.missing()`` and, for every preset, by ``SKELETON_TODO``; they are marked
+  ``TODO(fill)`` in the source. Missing: ``reference`` and ``weights`` for ``qualisys_sport`` and ``mediapipe``;
+  ``weights`` for ``openpose``. A missing ``weights`` becomes uniform weights of 1.0, so kinetic-energy values on these
+  presets are not comparable with ``kinect_v2``; a missing ``reference`` means the barycentre for the reflection
+  symmetry, and the ratio symmetry raises ``ValueError`` at construction asking for ``reference_point=``.
+
+The joint names keep the spelling of each device (``L*/R*``, ``*Left/*Right``, ``left_*/right_*``; ``RelbowOut`` keeps
+the spelling of the marker files of the lab): they are not normalised.
 """
 
 from typing import Any, Dict, Tuple
@@ -110,7 +122,34 @@ SKELETON_TODO: Dict[str, Tuple[str, ...]] = {name: skeleton.missing() for name, 
 
 
 def get_skeleton(skeleton: Any) -> Skeleton:
-    """A `Skeleton`, or the preset of that name (case-insensitive; `-` and spaces count as `_`)."""
+    """A :class:`~pyeyesweb.data_models.Skeleton`, or the preset of that name.
+
+    Parameters
+    ----------
+    skeleton : Skeleton or str
+        A skeleton, returned as it is, or the name of a preset: ``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``
+        or ``"openpose"``. The name is case-insensitive; ``-`` and spaces count as ``_``.
+
+    Returns
+    -------
+    Skeleton
+
+    Raises
+    ------
+    ValueError
+        For a name that is not a preset (the message lists the valid names), or any other type.
+
+    Examples
+    --------
+    >>> from pyeyesweb.skeletons import get_skeleton
+    >>> skeleton = get_skeleton("Kinect-V2")
+    >>> skeleton.name, len(skeleton.joints), skeleton.reference
+    ('kinect_v2', 25, 'SpineShoulder')
+    >>> get_skeleton("openpose").missing()
+    ('weights',)
+    >>> get_skeleton(skeleton) is skeleton
+    True
+    """
     if isinstance(skeleton, Skeleton):
         return skeleton
     if isinstance(skeleton, str):
@@ -122,9 +161,36 @@ def get_skeleton(skeleton: Any) -> Skeleton:
 
 
 def with_skeleton(skeleton: Any, labels: Any, params: Dict[str, Any], defaults: Any = None) -> Tuple[Any, Dict[str, Any]]:
-    """`labels` and `params` of a feature built with `skeleton=`: those of the skeleton unless given explicitly.
+    """Resolve the ``skeleton=`` parameter of a feature into its ``labels`` and parameters.
 
-    `defaults(skeleton)`, if any, gives the block parameters the skeleton fills. Without a skeleton, nothing changes.
+    Used by the features that accept a skeleton; a parameter given explicitly always wins over the skeleton.
+
+    Parameters
+    ----------
+    skeleton : Skeleton or str or None
+        The skeleton or the name of a preset; ``None`` leaves ``labels`` and ``params`` unchanged.
+    labels : sequence of str or None
+        The labels given explicitly, if any.
+    params : dict
+        The parameters given explicitly.
+    defaults : callable, optional
+        ``defaults(skeleton)`` returns the parameters the skeleton fills (``weights``, ``pairs``, ...).
+
+    Returns
+    -------
+    labels : sequence of str or None
+        ``labels``, or the joints of the skeleton when ``labels`` is ``None``.
+    params : dict
+        The parameters of the skeleton, updated with ``params``.
+
+    Examples
+    --------
+    >>> from pyeyesweb.skeletons import with_skeleton
+    >>> labels, params = with_skeleton("kinect_v2", None, {"pairs": ()}, lambda skeleton: {"pairs": skeleton.pairs})
+    >>> len(labels), params
+    (25, {'pairs': ()})
+    >>> with_skeleton(None, ("a", "b"), {"pairs": ()})
+    (('a', 'b'), {'pairs': ()})
     """
     if skeleton is None:
         return labels, params

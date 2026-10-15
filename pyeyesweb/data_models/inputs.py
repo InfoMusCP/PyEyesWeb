@@ -1,25 +1,32 @@
-"""Declared inputs of a feature, the counterpart of the declared outputs (`Schema`).
+"""Declared inputs of a feature, the counterpart of the declared outputs (:class:`~pyeyesweb.data_models.Schema`).
 
-A feature states once what one call to `process` receives: `feature.inputs`. It is available before any data
+A feature states once what one call to ``process`` receives: ``feature.inputs``. It is available before any data
 arrives, so channels, joint lists and recordings can be validated and shaped without trial and error.
 
-| Kind | One call receives | `run` receives |
-|---|---|---|
-| `SAMPLE` | a vector of `C` channel values (a scalar signal has `C = 1`); an event train is a sample stream in which a non-zero value is an event | `(T, C)` or `(T,)` |
-| `POINTS` | one frame of `N` labelled points of dimension `D`: an `(N, D)` array | `(T, N, D)` |
-| `MATRIX` | one `(R, C)` matrix, e.g. the output of another feature | `(T, R, C)` |
-| `IMAGE` | one 8-bit image: `(H, W)`, or `(H, W, C)`; a `bool` array is a 0 / 1 mask | `(T, H, W)` or `(T, H, W, C)`, or a list of images |
+=============  =======================================================  ============================================
+Kind           One call receives                                        ``run`` receives
+=============  =======================================================  ============================================
+``SAMPLE``     a vector of ``C`` channel values (a scalar signal has    ``(T, C)`` or ``(T,)``
+               ``C = 1``); an event train is a sample stream in which
+               a non-zero value is an event
+``POINTS``     one frame of ``N`` labelled points of dimension ``D``:   ``(T, N, D)``
+               an ``(N, D)`` array
+``MATRIX``     one ``(R, C)`` matrix, e.g. the output of another        ``(T, R, C)``
+               feature
+``IMAGE``      one 8-bit image: ``(H, W)``, or ``(H, W, C)``; a         ``(T, H, W)`` or ``(T, H, W, C)``, or a list
+               ``bool`` array is a 0 / 1 mask                           of images
+=============  =======================================================  ============================================
 
 A feature with several inputs lists them in call order.
 
-Every call is checked against these declarations before the feature sees it (`Input.check`, applied by `Feature`): a
-sample of the wrong size, a frame of the wrong rank, dimension or number of points raises `ValueError`. An empty
-sample or frame is not a shape error and reaches the feature, which reports `INVALID_INPUT`. An input that also takes
-another object (a dict of labelled points) lists its type in `accepts`; such a value is not shape-checked.
+Every call is checked against these declarations before the feature sees it: a sample of the wrong size, a frame of
+the wrong rank, dimension or number of points raises ``ValueError``. An empty sample or frame is not a shape error and
+reaches the feature, which reports ``INVALID_INPUT``. An input that also takes another object (a dict of labelled
+points) lists its type in ``accepts``; such a value is not shape-checked.
 
-A numeric input holding NaN or infinity is not data: the call gives `INVALID_INPUT` ("NaN or infinite values") and the
-sample goes nowhere (`Input.problem`, applied by `Feature`). An input for which NaN is meaningful (a dropout) says
-`allow_non_finite=True` and checks the values itself.
+A numeric input holding NaN or infinity is not data: the call gives ``INVALID_INPUT`` ("NaN or infinite values") and the
+sample goes nowhere. An input for which NaN is meaningful (a dropout) says ``allow_non_finite=True`` and checks the
+values itself.
 """
 
 import enum
@@ -29,10 +36,32 @@ from typing import Any, Iterator, Optional, Tuple
 import numpy as np
 
 NON_FINITE = "NaN or infinite values"
-_INTEGER_LIMIT = 2 ** 31 - 1  # the largest value a block that takes an `int` accepts
+_INTEGER_LIMIT = 2 ** 31 - 1  # the largest value a block that takes an ``int`` accepts
 
 
 class InputKind(enum.Enum):
+    """What one call to ``process`` receives for an input.
+
+    Attributes
+    ----------
+    SAMPLE : ``"sample"``
+        A vector of channel values (a scalar signal is one channel; an event train is a sample stream).
+    POINTS : ``"points"``
+        One frame of labelled points, an ``(N, D)`` array.
+    MATRIX : ``"matrix"``
+        One ``(R, C)`` matrix.
+    IMAGE : ``"image"``
+        One 8-bit image, ``(H, W)`` or ``(H, W, C)``.
+
+    Examples
+    --------
+    >>> from pyeyesweb.data_models import InputKind
+    >>> [kind.name for kind in InputKind]
+    ['SAMPLE', 'POINTS', 'MATRIX', 'IMAGE']
+    >>> InputKind("points") is InputKind.POINTS
+    True
+    """
+
     SAMPLE = "sample"
     POINTS = "points"
     MATRIX = "matrix"
@@ -46,17 +75,17 @@ class Input:
     Parameters
     ----------
     name : str
-        What the input is (`"speed"`, `"skeleton"`).
+        What the input is (``"speed"``, ``"skeleton"``).
     kind : InputKind
         What one call receives.
     shape : tuple of int or None
-        Shape of one call's data; `None` for an entry means "set by the constructor parameters or the data".
+        Shape of one call's data; ``None`` for an entry means "set by the constructor parameters or the data".
     labels : sequence of str, optional
         Names of the joints / channels, in the order of the arrays, when the feature was given them.
     unit, doc : str, optional
         Unit and description.
     accepts : tuple of type, optional
-        Extra types the feature takes as they are (e.g. `dict` for a labelled set of points); they are
+        Extra types the feature takes as they are (e.g. ``dict`` for a labelled set of points); they are
         not shape-checked.
     optional : bool, optional
         The call may leave this input out (only the last inputs can be optional).
@@ -64,6 +93,26 @@ class Input:
         NaN and infinity are meaningful values of this input (dropouts): they are not rejected centrally.
     integer : bool, optional
         The feature turns the values into integers: values beyond the integer range are rejected too.
+
+    Notes
+    -----
+    An ``Input`` is immutable. The declarations of a feature are read with ``feature.inputs``; a shape entry of
+    ``None`` is free, and the shape and the labels follow the constructor parameters of the feature (``labels=``,
+    ``skeleton=``, ``dims=``).
+
+    Examples
+    --------
+    >>> from pyeyesweb.data_models import Input, InputKind
+    >>> frame = Input("skeleton", InputKind.POINTS, shape=(None, 3), labels=("head", "hand"), unit="m")
+    >>> frame.describe()
+    'skeleton: points (?, 3) [m]'
+    >>> frame.check([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
+    >>> frame.problem([[0.0, 0.0, 0.0], [float("nan"), 0.0, 0.0]])
+    'NaN or infinite values'
+    >>> frame.check([[0.0, 0.0], [1.0, 0.0]])
+    Traceback (most recent call last):
+    ...
+    ValueError: feature: input 'skeleton' expects points of shape (2, 3), one row per label (2 labels), got shape (2, 2)
     """
 
     name: str
@@ -78,14 +127,14 @@ class Input:
     integer: bool = False
 
     def check(self, value: Any, owner: str = "feature") -> None:
-        """Raise `ValueError` when `value` does not fit this input; `owner` names the feature in the message.
+        """Raise ``ValueError`` when ``value`` does not fit this input; ``owner`` names the feature in the message.
 
-        `SAMPLE`: a scalar or a 1-D vector of `shape[0]` values. `POINTS` and `MATRIX`: a 2-D array whose axes match
-        the declared ints (and `len(labels)` rows when labelled). `IMAGE`: a 2-D `(H, W)` or 3-D `(H, W, C)` array of
-        pixel values 0-255 (any numeric dtype holding whole numbers in that range, or `bool`); `shape` is the declared
-        `(H, W)` or `(H, W, C)`, where a 2-D declaration means one channel and a 2-D array counts as one channel.
-        `None` in `shape` is free. Anything with no element is let through: an empty frame is a data problem, reported
-        by the feature as `INVALID_INPUT`.
+        ``SAMPLE``: a scalar or a 1-D vector of ``shape[0]`` values. ``POINTS`` and ``MATRIX``: a 2-D array whose axes
+        match the declared ints (and ``len(labels)`` rows when labelled). ``IMAGE``: a 2-D ``(H, W)`` or 3-D
+        ``(H, W, C)`` array of pixel values 0-255 (any numeric dtype holding whole numbers in that range, or ``bool``);
+        ``shape`` is the declared ``(H, W)`` or ``(H, W, C)``, where a 2-D declaration means one channel and a 2-D
+        array counts as one channel. ``None`` in ``shape`` is free. Anything with no element is let through: an empty
+        frame is a data problem, reported by the feature as ``INVALID_INPUT``.
         """
         if self.accepts and isinstance(value, self.accepts):
             return
@@ -109,8 +158,11 @@ class Input:
             self._fail(owner, got)
 
     def problem(self, value: Any) -> str:
-        """The reason the numbers of `value` cannot be processed, or `""`: NaN or infinity (unless `allow_non_finite`),
-        or beyond the integer range for an `integer` input. Images are not checked."""
+        """The reason the numbers of ``value`` cannot be processed, or ``""``.
+
+        NaN or infinity (unless ``allow_non_finite``), or beyond the integer range for an ``integer`` input. Images are
+        not checked.
+        """
         if self.kind is InputKind.IMAGE or self.allow_non_finite:
             return ""
         try:
@@ -142,10 +194,10 @@ class Input:
                              f"got {array.dtype} values from {array.min()} to {array.max()}")
 
     def check_window(self, series: Any, owner: str = "feature") -> None:
-        """Raise `ValueError` when a complete window `(channels, window)` cannot hold this input.
+        """Raise ``ValueError`` when a complete window ``(channels, window)`` cannot hold this input.
 
-        `SAMPLE`: `shape[0]` channels. `POINTS` / `MATRIX`: frames are flattened row-major, so the channels are
-        `rows * shape[1]` (a multiple of `shape[1]` when the number of rows is free).
+        ``SAMPLE``: ``shape[0]`` channels. ``POINTS`` / ``MATRIX``: frames are flattened row-major, so the channels are
+        ``rows * shape[1]`` (a multiple of ``shape[1]`` when the number of rows is free).
         """
         array = np.asarray(series, dtype=float)
         want = self._wanted()
@@ -181,13 +233,34 @@ class Input:
         raise ValueError(f"{owner}: input '{self.name}' expects {self._expected()}, got shape {got}")
 
     def describe(self) -> str:
+        """One line: name, kind, shape (``?`` for a free size), unit and description."""
         shape = "(" + ", ".join("?" if size is None else str(size) for size in self.shape) + ")"
         unit = f" [{self.unit}]" if self.unit else ""
         return f"{self.name}: {self.kind.value} {shape}{unit}" + (f" - {self.doc}" if self.doc else "")
 
 
 class Inputs:
-    """The inputs of a feature, in call order. Iterable, indexable by position or name."""
+    """The inputs of a feature, in call order. Iterable, indexable by position or name.
+
+    Parameters
+    ----------
+    *inputs : Input
+        The declarations, in the order of the positional arguments of ``process``.
+
+    Attributes
+    ----------
+    names : tuple of str
+        The input names, in call order.
+
+    Examples
+    --------
+    >>> from pyeyesweb.data_models import Input, InputKind, Inputs
+    >>> inputs = Inputs(Input("left", InputKind.SAMPLE, shape=(1,)), Input("right", InputKind.SAMPLE, shape=(1,)))
+    >>> len(inputs), inputs.names, inputs["right"].kind.name, inputs[0].name
+    (2, ('left', 'right'), 'SAMPLE', 'left')
+    >>> inputs.problem([1.0, float("inf")])
+    'NaN or infinite values'
+    """
 
     def __init__(self, *inputs: Input):
         self._inputs = tuple(inputs)
@@ -208,6 +281,7 @@ class Inputs:
 
     @property
     def names(self) -> Tuple[str, ...]:
+        """The input names, in call order."""
         return tuple(spec.name for spec in self._inputs)
 
     def _check_count(self, values: Any, owner: str) -> None:
@@ -217,22 +291,23 @@ class Inputs:
                              f"input(s) ({', '.join(self.names)}), got {len(values)}")
 
     def check(self, values: Any, owner: str = "feature") -> None:
-        """Check one value per input (`values` in call order)."""
+        """Check one value per input (``values`` in call order); ``ValueError`` for a wrong count or shape."""
         self._check_count(values, owner)
         for declared, value in zip(self._inputs, values):
             declared.check(value, owner)
 
     def problem(self, values: Any) -> str:
-        """The first `Input.problem` of one value per input (`values` in call order), or `""`."""
+        """The first :meth:`Input.problem` of one value per input (``values`` in call order), or ``""``."""
         return next((reason for declared, value in zip(self._inputs, values) if (reason := declared.problem(value))), "")
 
     def check_windows(self, windows: Any, owner: str = "feature") -> None:
-        """`Input.check_window` for one window per input."""
+        """:meth:`Input.check_window` for one window per input."""
         self._check_count(windows, owner)
         for declared, window in zip(self._inputs, windows):
             declared.check_window(window, owner)
 
     def describe(self) -> str:
+        """One line per input (see :meth:`Input.describe`)."""
         return "\n".join(spec.describe() for spec in self._inputs)
 
     def __repr__(self) -> str:

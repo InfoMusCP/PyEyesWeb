@@ -7,9 +7,7 @@ The multi-scale entropy algorithm (Glowinski et al., 2010; Costa et al., 2005) h
 2. [EnsembleDominance][pyeyesweb.high_level.dominance.EnsembleDominance]: dominance scores and the
    leader of an ensemble from the complexity indices of its participants.
 
-The maths runs in the C++ core (`core.motion.MultiScaleEntropy` composes the EyesWeb `CoarseGraining` and
-`SampleEntropy` blocks; its entropies agree with the pure-Python implementation of 1.x to O(1/N), not to rounding:
-the differences are listed in `multi_scale_entropy.h`).
+The entropies agree with the pure-Python implementation of 1.x to O(1/N), not to rounding.
 
 References
 ----------
@@ -41,45 +39,73 @@ from pyeyesweb.utils.validators import validate_integer, validate_numeric
 class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     r"""Multi-scale entropy curve and complexity index of one or several signals.
 
-    Each signal is coarse-grained at the scales $\tau = 1 \dots$ `max_scale`, the sample entropy of every scale is
-    computed (on the series normalised to unit standard deviation, tolerance `tolerance` of it) and the
-    complexity index is the area under that curve (trapezoid rule), as in Glowinski et al. (2010). A scale is used while
-    its coarse-grained series has at least `minimum_points` samples. A constant signal has no entropy: `NaN`.
+    Multi-scale entropy measures how irregular a signal is across time scales: a signal that stays irregular when it
+    is observed more slowly (white noise excepted) is more complex than one whose irregularity vanishes at the
+    slower scales. In the study of social creative activities the complexity index of the movement of each member of
+    a group is the input of the dominance analysis (see ``EnsembleDominance``) :cite:`glowinski2010mse`.
 
-    Read more in the [User Guide](../../user_guide/theoretical_framework/analysis_primitives/mse_dominance.md).
+    Each signal is normalised to unit standard deviation and coarse-grained at the scales
+    :math:`\tau = 1 \dots` ``max_scale`` (means of non-overlapping groups of :math:`\tau` samples, as in
+    ``CoarseGraining``) :cite:`costa2005multiscale`. The sample entropy of every scale (as in ``SampleEntropy``, for
+    the template length ``embedding_dimension`` and a matching tolerance of ``tolerance`` times the standard deviation
+    of the normalised series) forms the entropy curve :math:`E(\tau)`. The complexity index is the area under that
+    curve, by the trapezoid rule over the scales used,
 
-    Input: one sample per call, with one value per signal (a `(signals, dims)` frame is flattened: every value is one
-    signal). The feature buffers `window` samples and computes every `hop` samples (`process` returns `WARMING_UP`
-    while the first window fills and `NO_OUTPUT` between hops); `_process_window(series)` takes one complete
-    `(signals, window)` window. `timestamp` is the timestamp (seconds) of the newest sample.
+    .. math::
+
+        \mathrm{CI} = \sum_{\tau=1}^{\tau_{\max}-1} \frac{E(\tau) + E(\tau + 1)}{2},
+
+    where a scale is used while its coarse-grained series has at least ``minimum_points`` samples.
 
     Parameters
     ----------
     window : int, optional
-        Samples per window. Must be at least `max_scale * minimum_points` so that every scale is used. Defaults to
-        `3000`, the minimum of the default `max_scale` and `minimum_points`.
+        Samples per window. Must be at least ``max_scale * minimum_points`` so that every scale is used (the
+        constructor raises ``ValueError`` otherwise). Defaults to ``3000``, the minimum of the default ``max_scale``
+        and ``minimum_points``. Changing it on a running feature keeps the newest samples.
     hop : int, optional
-        New samples between two windows. Defaults to `1`.
+        New samples between two windows. Defaults to ``1``.
     embedding_dimension : int, optional
-        Embedding dimension for sample entropy. Defaults to `2`.
+        Template length of the sample entropy, at least 1. Defaults to ``2``. *(structural)*
     tolerance : float, optional
-        Tolerance threshold for template matching, in standard deviations. Defaults to `0.15`.
+        Matching tolerance of the sample entropy, in standard deviations of the (normalised) series, dimensionless,
+        in ``[0.0001, 0.9999]``. Defaults to ``0.15``. *(live)*
     max_scale : int, optional
-        Maximum scale factor ($\tau$) for coarse-graining. Defaults to `6`.
+        Largest scale :math:`\tau` of the coarse graining, at least 1. Defaults to ``6``. *(structural)*
     minimum_points : int, optional
-        Minimum number of points required for reliable entropy estimation at any given scale. Defaults to `500`.
+        Minimum number of samples a coarse-grained series must have for its scale to be used, at least 1. Defaults
+        to ``500``. *(structural)*
 
-    Returns
-    -------
-    Result
-        `complexity_index`, shape `(signals,)`, and `scale_entropies`, shape `(signals, max_scale)` (`NaN` for a scale
-        not used). `Status.WARMING_UP` while the window has fewer than `minimum_points` samples, `Status.INVALID_INPUT`
-        for empty or non-finite input. The dominance of several signals is `EnsembleDominance` on the complexity indices.
+    Notes
+    -----
+    **Inputs.** One sample per call, with one value per signal. A ``(signals, dims)`` frame is flattened: every value
+    is one signal. ``run`` takes a recording of shape ``(samples, signals)``.
+
+    **Outputs.** ``complexity_index``, shape ``(signals,)``: the area under the entropy curve, non-negative;
+    ``NaN`` for a constant signal, which has no entropy. ``scale_entropies``, shape ``(signals, max_scale)``: the
+    sample entropy :math:`E(\tau)` of each signal at the scales 1 to ``max_scale`` (nats; ``NaN`` for a scale not
+    used). ``timestamp`` is the timestamp (seconds) of the newest sample. The dominance of several signals is
+    ``EnsembleDominance`` applied to the complexity indices.
+
+    **Statuses.** ``WARMING_UP`` while the first window fills (``"k of window samples"``), ``NO_OUTPUT`` between two
+    hops, ``INVALID_INPUT`` for a window that holds a ``NaN`` or an infinite value.
+
+    The entropies are computed with the sample entropy of the core (see ``SampleEntropy``); they differ from the
+    pure-Python implementation of the 1.x releases by O(1/N), not by rounding.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.analysis_primitives import MultiScaleEntropy
+    >>> x = np.random.default_rng(1).normal(size=1200)
+    >>> feature = MultiScaleEntropy(window=1200, max_scale=2, minimum_points=600)
+    >>> result = feature.run(x)[-1]
+    >>> result.complexity_index.round(1), result.scale_entropies.round(1)
+    (array([2.5]), array([[2.5, 2.4]]))
 
     References
     ----------
-    Glowinski et al. (2010). Multi-scale entropy analysis of dominance in
-    social creative activities. ACM Multimedia, 1035-1038.
+    :cite:`glowinski2010mse`, :cite:`costa2005multiscale`
     """
     _core_class = core.motion.MultiScaleEntropy
     _lazy_block = True

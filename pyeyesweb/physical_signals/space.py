@@ -1,10 +1,9 @@
 """Detection of the grid cell hit by a point (EyesWeb HitCellDetector).
 
-A 2D space is divided into a grid of cells: `cells_along_y` rows from the y coordinate and `cells_along_x`
-columns from the x coordinate. A cell is `(i, j)` = (row, column). The block declares its outputs
-as a `Schema` (`block.outputs`) and returns a `Result` (see `pyeyesweb.data_models`). Parameters, defaults and the
-exact behaviour are those of the C++ port, documented in the C++ headers (`core/include/ew/features/space/`). The potentials driven by the hit cells are in
-`pyeyesweb.mid_level.space_occupation`.
+A 2D area is divided into a grid of ``cells_along_y`` rows (from the y coordinate) and ``cells_along_x`` columns (from the
+x coordinate); a cell is ``(i, j)`` = (row, column). The feature declares its outputs as a
+:class:`~pyeyesweb.data_models.Schema` (``feature.outputs``) and returns a :class:`~pyeyesweb.data_models.Result`. The
+potentials driven by the hit cells are in :mod:`pyeyesweb.mid_level.space_occupation`.
 """
 
 from typing import Any, Optional
@@ -21,11 +20,53 @@ from pyeyesweb.base.core_feature import FrameFeature
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="HitCellDetector")
 class HitCellDetector(FrameFeature):
-    """EyesWeb HitCellDetector: the grid cells hit by a list of 2D points. `process(points, *, timestamp=None)`.
+    r"""The grid cells hit by a list of 2D points.
 
-    `points`: an `(N, 2)` array of `(x, y)` (`run` takes `(T, N, 2)`); `timestamp` is the timestamp in seconds. Output `cells`: `(n, 2)` int array of `(i, j)`, one per point in input order
-    (an empty input gives an empty array, as EyesWeb outputs an empty list). With `clip_values=False` a point
-    outside `[x_min, x_max] x [y_min, y_max]` makes the call `INVALID_INPUT` (`result.reason` says why).
+    A rectangular area of the plane, :math:`[x_{min}, x_{max}] \times [y_{min}, y_{max}]`, is divided into a grid of
+    ``cells_along_y`` rows (along the y coordinate) and ``cells_along_x`` columns (along the x coordinate). Each point is
+    located in the grid: a cell is the pair ``(i, j)`` = (row, column),
+
+    .. math::
+
+        i = \left\lfloor \frac{y - y_{min}}{y_{max} - y_{min}}\, n_y \right\rfloor, \qquad
+        j = \left\lfloor \frac{x - x_{min}}{x_{max} - x_{min}}\, n_x \right\rfloor,
+
+    with the upper edge of the area belonging to the last cell. It is the first step of the space-occupation features, which
+    turn the hit cells into potentials (:mod:`pyeyesweb.mid_level.space_occupation`).
+
+    ``process(points, *, timestamp=None)`` takes an ``(N, 2)`` array of ``(x, y)`` (``run`` takes ``(T, N, 2)``); the
+    feature is stateless and has no time axis: ``timestamp`` is only copied into ``result.timestamp``.
+
+    Parameters
+    ----------
+    cells_along_x : int, default 10
+        Number of columns of the grid (``n_x``), >= 1 *(live)*.
+    cells_along_y : int, default 10
+        Number of rows of the grid (``n_y``), >= 1 *(live)*.
+    x_min, x_max : float, default 0.0 and 1.0
+        Extent of the monitored area along x, in metres *(live)*; ``units`` says in what unit your points are given and
+        the parameter is converted, never the data.
+    y_min, y_max : float, default 0.0 and 1.0
+        Extent of the monitored area along y, in metres *(live)*, as for x.
+    clip_values : bool, default True
+        A point outside the area is moved to the nearest cell *(live)*. Off, such a point makes the call
+        ``INVALID_INPUT``.
+    units : {"m", "mm"}, default "m"
+        Unit of your points *(live)*; the area parameters are always written in metres.
+
+    Notes
+    -----
+    **Outputs.** ``cells``: ``(n, 2)`` integer array of ``(i, j)`` (row from y, column from x), dimensionless indices
+    counted from 0 in the order of the input points; an empty input gives an empty array, as EyesWeb outputs an empty list.
+    The result is ``OK`` for every valid call. With ``clip_values=False`` a point outside the area makes the call
+    ``INVALID_INPUT`` with the reason ``"point out of range (clip_values is off)"``.
+
+    Examples
+    --------
+    >>> from pyeyesweb.physical_signals import HitCellDetector
+    >>> detector = HitCellDetector(cells_along_x=4, cells_along_y=2)
+    >>> detector.process([[0.1, 0.1], [0.9, 0.6], [1.5, -1.0]]).cells.tolist()    # the last point is clipped
+    [[0, 0], [1, 3], [0, 3]]
     """
     _core_class = core.space.HitCellDetector
     _core_names = {"cells_along_x": "cells_x", "cells_along_y": "cells_y"}

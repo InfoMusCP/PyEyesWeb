@@ -1,11 +1,11 @@
 """Image features (EyesWeb BaseImaging): the centroids and the parts of a silhouette, the videogram.
 
-An image is one 8-bit array per call: `(H, W)` for a grayscale image or a silhouette mask, `(H, W, C)` for colour
-(`run` takes `(T, H, W[, C])` or a list of images). A `bool` array is a 0 / 1 mask; any other numeric array must hold whole
-numbers in 0-255. A silhouette is a mask in which every non-zero pixel is foreground; the blob the EyesWeb blocks
-take (the mask cropped to its bounding box, with its origin and the frame size) is built from it, so coordinates
-come back in the frame of the mask. An empty image is `INVALID_INPUT`. Outputs that are images have a shape known
-only from the first frame (`None` sizes in the schema) and hold the pixel values as integers.
+An image is one 8-bit array per call: ``(H, W)`` for a grayscale image or a silhouette mask, ``(H, W, C)`` for colour
+(``run`` takes ``(T, H, W[, C])`` or a list of images). A ``bool`` array is a 0 / 1 mask; any other numeric array must
+hold whole numbers in 0-255. A silhouette is a mask in which every non-zero pixel is foreground; the region the
+EyesWeb blocks work on (the mask cropped to its bounding box, with its origin and the frame size) is built from it, so
+coordinates come back in the frame of the mask. An empty image is ``INVALID_INPUT``. Outputs that are images have a
+shape known only from the first frame (``None`` sizes in the schema) and hold the pixel values as integers.
 """
 
 from typing import Any, Optional
@@ -40,36 +40,61 @@ class _ImageFeature(FrameFeature):
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="centroids_calc (Centroids Calc)")
 class SilhouetteCentroids(_ImageFeature):
-    """Hierarchical centroids of a human silhouette (EyesWeb Centroids Calc): centre of gravity, head, shoulders,
-    elbows, forearms, hands, knees and feet.
+    r"""Hierarchical centroids of a human silhouette: centre of gravity, head, shoulders, limbs.
 
-    `process(silhouette, *, timestamp=None)`, `silhouette` a `(H, W)` mask (non-zero = body). The silhouette is split
-    recursively into rectangles around its centre of gravity and the centre of gravity of each is taken; "left" and
-    "right" are the image's (left = smaller x). A centroid that cannot be found (empty region, missing parent) is NaN.
+    The silhouette of a person, a binary mask, is described by the centres of gravity of its parts, a cheap body model that
+    needs no skeleton. The centre of gravity of the whole mask,
+
+    .. math::
+
+        \mathbf{c} = \left(\frac{1}{N}\sum_k x_k,\ \frac{1}{N}\sum_k y_k\right),
+
+    where the sum runs over the :math:`N` foreground pixels (the result is truncated to whole pixels), is the root. The
+    silhouette is then split recursively into rectangles around the centre of gravity, and the centre of gravity of the
+    foreground of each rectangle is taken, which yields the head and the shoulders, then the elbows, the forearms and the
+    hands, and the knees and the feet, each computed from the one it depends on. "Left" and "right" are those of the
+    image: left means the smaller x.
+
+    ``process(silhouette, *, timestamp=None)`` takes one ``(H, W)`` mask (non-zero is body; see the module description for the
+    image types); the frame is the frame of the mask, so the coordinates are in it. A centroid that cannot be found (empty
+    region, missing parent) is NaN.
 
     Parameters
     ----------
-    silhouette : {"full", "upper", "lower", "left", "right"}, optional
-        The part of the body the mask shows (default `"full"`): the centroids of the missing half (and the head
-        of a left or right half) are not computed. Changing it restarts the filters.
-    center_of_gravity, head, left_shoulder, left_elbow, left_forearm, left_hand, right_shoulder, right_elbow, right_forearm, \
-right_hand, left_knee, left_foot, right_knee, right_foot : bool, optional
-        Which centroids to output (default all). A centroid is computed when it or one that depends on it is
-        requested (head <- shoulders, hand <- forearm <- elbow <- shoulder, foot <- knee).
-    filter_centroids : bool, optional
-        Smooth every centroid over time, `filtered += alpha * (new - filtered)` (default `False`). As in EyesWeb the
-        filter works on the position inside the silhouette's bounding box, not on the movement of the box.
-    alpha : float, optional
-        Filter coefficient in [0, 1] (default 0.75): 1 does not filter, 0 keeps the first value.
-    add_intermediate_centroids : bool, optional
-        Also output the centroids that were computed only because another one needs them (default `False`).
+    silhouette : {"full", "upper", "lower", "left", "right"}, default "full"
+        The part of the body the mask shows *(structural)*: the centroids of the missing half (and the head of a left or
+        right half) are not computed. Changing it restarts the filters.
+    filter_centroids : bool, default False
+        Smooth every centroid over time, ``filtered += alpha * (new - filtered)`` *(live)*. As in EyesWeb the filter
+        works on the position inside the bounding box of the silhouette, not on the movement of the box.
+    alpha : float, default 0.75
+        Coefficient of the filter, in [0, 1], dimensionless *(live)*: 1 does not filter, 0 keeps the first value.
+    add_intermediate_centroids : bool, default False
+        Also output the centroids that were computed only because another one needs them *(live)*.
+    parts : sequence of str, default all fourteen
+        Which centroids to output *(live)*, among ``"center_of_gravity"``, ``"head"``, ``"left_shoulder"``,
+        ``"left_elbow"``, ``"left_forearm"``, ``"left_hand"``, ``"right_shoulder"``, ``"right_elbow"``,
+        ``"right_forearm"``, ``"right_hand"``, ``"left_knee"``, ``"left_foot"``, ``"right_knee"`` and ``"right_foot"``.
+        A centroid is computed when it or one that depends on it is requested (head after the shoulders, hand after
+        forearm after elbow after shoulder, foot after knee).
 
-    Returns
-    -------
-    Result
-        `centroids`: `(14, 2)` pixel coordinates `(x, y)` in the frame, one row per label (`center_of_gravity`, `head`,
-        `left_shoulder`, ...); `normalized`: the same divided by the frame width and height. `INVALID_INPUT` for a
-        mask without foreground.
+    Notes
+    -----
+    **Outputs.** ``centroids``: ``(14, 2)`` array of ``(x, y)`` in pixels of the frame, one row per label in the order above
+    (whole-pixel values); the rows of the parts that were not requested are NaN. ``normalized``: the same coordinates divided
+    by the width and the height of the frame, dimensionless, in [0, 1]. A mask without foreground is ``INVALID_INPUT``
+    (``"no foreground pixels in the silhouette"``); an empty image too (``"empty image"``). The result is otherwise ``OK``
+    (no warm-up).
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.physical_signals import SilhouetteCentroids
+    >>> mask = np.zeros((20, 20), dtype=np.uint8)
+    >>> mask[2:18, 8:12] = 255                                    # a vertical bar, 16 high and 4 wide
+    >>> result = SilhouetteCentroids(parts=["center_of_gravity"]).process(mask)
+    >>> result.centroids[0].tolist()                              # (x, y) of the centre of gravity, whole pixels
+    [9.0, 9.0]
     """
     _core_class = _imaging.CentroidsCalc
     _core_names = {"center_of_gravity": "cog"}
@@ -90,35 +115,65 @@ right_hand, left_knee, left_foot, right_knee, right_foot : bool, optional
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="BlobSubRegions")
 class SilhouetteBodyParts(_ImageFeature):
-    """Head, trunk, arms and legs of a human silhouette (EyesWeb BlobSubRegions), from its projection histograms.
+    """Head, trunk, arms and legs of a human silhouette, from its projection histograms.
 
-    `process(silhouette, *, timestamp=None)`, `silhouette` a `(H, W)` mask (non-zero = body). The columns holding
-    the arms are found by accumulating the area from each side, the legs by the horizontal extent of the lower rows,
-    the neck by the first row, going up from the barycentre, where the body narrows, and each arm by the rows where
-    it holds many pixels. "Right" and "left" are the image's: the right arm and leg are on the smaller x.
+    The silhouette of a person, a binary mask, is divided into six body parts, each with its bounding box and mask, for the
+    analysis of the movement of single parts (the arms, the head) from a plain image. The columns holding the arms are
+    found by accumulating the area from each side (``arm_percentage``), the legs by the horizontal extent of the lower rows, the neck by the first row, going up from the
+    barycentre, where the body narrows, and each arm by the rows where it holds many pixels. "Right" and "left" are the
+    image's: the right arm and the right leg are on the smaller x.
+
+    ``process(silhouette, *, timestamp=None)`` takes one ``(H, W)`` mask (non-zero is body; see the module description for the
+    image types); the boxes are in the frame of the mask.
 
     Parameters
     ----------
-    arm_percentage : float, optional
-        Fraction of the silhouette area that is not arm (default 0.8).
-    legs_search : float, optional
-        Fraction of the distance between the barycentre and the feet where the search for the legs starts (0.5).
-    legs_offset : float, optional
-        Minimal distance between the barycentre and the top of the legs, as a fraction of the same distance (0.2).
-    arms_min_threshold, arms_max_threshold : float, optional
-        An arm ends at the first row with fewer foreground pixels than `arms_min_threshold` times its width, and
-        starts at the first row with more than `arms_max_threshold` times (defaults 0.2 and 0.5).
-    parts : sequence of str, optional
-        Which parts to output, among `head`, `trunk`, `left_arm`, `right_arm`, `left_leg`, `right_leg` (default all).
+    arm_percentage : float, default 0.8
+        Fraction of the silhouette area that is not arm, in [0, 1], dimensionless *(live)*.
+    legs_search : float, default 0.5
+        Fraction of the distance between the barycentre and the feet where the search for the legs starts, dimensionless
+        *(live)*.
+    legs_offset : float, default 0.2
+        Minimal distance between the barycentre and the top of the legs, as a fraction of the same distance, dimensionless
+        *(live)*.
+    arms_min_threshold : float, default 0.2
+        An arm ends at the first row with fewer foreground pixels than this fraction of its width *(live)*.
+    arms_max_threshold : float, default 0.5
+        An arm starts at the first row with more foreground pixels than this fraction of its width *(live)*.
+    parts : sequence of str, default all six
+        Which parts to output *(live)*, among ``"right_leg"``, ``"left_leg"``, ``"trunk"``, ``"right_arm"``, ``"left_arm"``
+        and ``"head"``.
 
-    Returns
-    -------
-    Result
-        `regions`: `(6, 4)` ints `(x, y, width, height)` of each part in the frame, rows in the order
-        right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found; `is_found`: which
-        parts were; `masks`: dict part -> `(height, width)` 0 / 255 mask of the parts found. A part is dropped when it
-        is empty or touches the first column or row of the frame, as in EyesWeb. `INVALID_INPUT` for a mask without
-        foreground.
+    Notes
+    -----
+    **Outputs.** ``regions``: ``(6, 4)`` integer array of ``(x, y, width, height)`` in pixels of the frame, rows in the order
+    right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found. ``is_found``: ``(6,)``
+    booleans, which parts were found. ``masks``: dict ``part -> (height, width)`` array of 0 and 255 holding the mask of
+    each part found. A part is dropped when it is empty or touches the first column or the first row of the frame, as in
+    EyesWeb. A mask without foreground is ``INVALID_INPUT`` (``"no foreground pixels in the silhouette"``); an empty image
+    too (``"empty image"``). The result is otherwise ``OK`` (no warm-up).
+
+    **Known limitation.** The tests of the original read pixels outside the mask or the region of interest (the neck test
+    and the walk over the arm columns, in particular when ``arm_percentage`` is above 1); such pixels count as background.
+
+    **Differences from EyesWeb.** Every output region carries the name of its body part.
+
+    **Corrected in the core.** The barycentre is the centroid of the mask, truncated to whole pixels (the original took the
+    normalised centroid of the blob times its width, which is only right for a blob as large as its frame).
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.physical_signals import SilhouetteBodyParts
+    >>> rows, columns = np.mgrid[:240, :320]
+    >>> body = (abs(columns - 160) <= 28) & (rows >= 60) & (rows <= 140)             # trunk
+    >>> body |= ((columns - 160) ** 2 / 18 ** 2 + (rows - 40) ** 2 / 22 ** 2 <= 1)   # head
+    >>> body |= (abs(rows - 75) <= 7) & (columns >= 80) & (columns <= 240)           # arms, a horizontal bar
+    >>> body |= (abs(columns - 147) <= 9) & (rows > 140) & (rows <= 225)             # legs
+    >>> body |= (abs(columns - 173) <= 9) & (rows > 140) & (rows <= 225)
+    >>> result = SilhouetteBodyParts().process(body.astype(np.uint8) * 255)
+    >>> result.is_found.tolist()
+    [True, True, True, True, True, True]
     """
     _core_class = _imaging.BlobSubRegions
     _parts = {part: f"extract_{part}" for part in _BODY_PARTS}
@@ -145,29 +200,59 @@ class SilhouetteBodyParts(_ImageFeature):
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="video_gram (VideoGram)")
 class Videogram(_ImageFeature):
-    """Videogram or motiongram (EyesWeb VideoGram): each frame collapsed to one line, the lines stacked over time.
+    r"""Videogram or motiongram: each frame collapsed to one line, the lines stacked over time.
 
-    `process(frame, *, timestamp=None)`, `frame` a `(H, W)` or `(H, W, C)` image with 1, 3 or 4 channels. The frame is
-    summed along one axis (per channel) and the line is scaled by its maximum to 0-255. With a motion image (a frame
-    difference) it is a motiongram (Jensenius, 2006). The first frame fixes the size; a frame of another size
-    restarts the videogram (the result says so in `reason`).
+    A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line (a column
+    or a row) and the lines of successive frames are placed side by side, so that a movement becomes a visible trace. With a
+    motion image (a frame difference) it is a motiongram (Jensenius, 2006). For a grayscale frame :math:`I(h, w)` and the
+    mode ``"horizontal"`` the line of a frame is the sum of each row, scaled by its maximum to 0-255,
+
+    .. math::
+
+        v(h) = 255\, \frac{\sum_w I(h, w)}{\max_h \sum_w I(h, w)},
+
+    each channel of a colour frame being summed and scaled on its own; the mode ``"vertical"`` sums the columns instead.
+
+    ``process(frame, *, timestamp=None)`` takes one ``(H, W)`` or ``(H, W, C)`` image with 1, 3 or 4 channels (see the module
+    description for the image types). The first frame fixes the size; a frame of another size restarts the videogram (the
+    result says so in ``reason``).
 
     Parameters
     ----------
-    window : int, optional
-        Number of lines of the videogram, >= 1 (default 500).
-    mode : {"horizontal", "vertical"}, optional
-        `"horizontal"`: each frame becomes a column (the sum of each row) of an image `window` wide and `H` high;
-        `"vertical"`: a row (the sum of each column) of an image `W` wide and `window` high. Changing it restarts.
-    direction : {"left_to_right", "right_to_left"}, optional
-        Where the newest line is written; the position wraps around so the oldest line is overwritten.
-    end_of_image_mode : {"loop", "scroll"}, optional
-        `"loop"`: the image as it is; `"scroll"`: once it has been filled, rotated so that the oldest line comes first.
+    window : int, default 500
+        Number of lines of the videogram, >= 1 *(structural)*; changing it restarts the image.
+    mode : {"horizontal", "vertical"}, default "horizontal"
+        ``"horizontal"``: each frame becomes a column (the sum of each row) of an image ``window`` wide and ``H`` high;
+        ``"vertical"``: a row (the sum of each column) of an image ``W`` wide and ``window`` high *(structural)*. Changing
+        it restarts the image.
+    direction : {"left_to_right", "right_to_left"}, default "left_to_right"
+        Where the newest line is written *(live)*; the position wraps around so that the oldest line is overwritten.
+    end_of_image_mode : {"loop", "scroll"}, default "loop"
+        ``"loop"``: the image as it is; ``"scroll"``: once it has been filled, the image is rotated so that the oldest line
+        comes first *(live)*.
 
-    Returns
-    -------
-    Result
-        `videogram`: `(H, window, C)` (horizontal) or `(window, W, C)` (vertical) image; `C = 1` for a grayscale input.
+    Notes
+    -----
+    **Outputs.** ``videogram``: integer image in 0-255, channels last, of shape ``(H, window, C)`` (``"horizontal"``) or
+    ``(window, W, C)`` (``"vertical"``); ``C = 1`` for a grayscale input. The lines not written yet are 0. A line of an
+    entirely black frame is 0. The result is ``OK`` on every valid call. An empty image is ``INVALID_INPUT``. The output
+    is an image: ``result.to_frame()`` and the recorder have no value columns for it.
+
+    **Corrected in the core.** The channel sums are independent: in the original the accumulators of the channels aliased each
+    other, so with one channel the next pixel was added to channel 0 (and a byte past the end of the row was read), and with
+    three channels the first byte of the next pixel was.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.physical_signals import Videogram
+    >>> videogram = Videogram(window=4)
+    >>> frame = np.zeros((3, 2), dtype=np.uint8)
+    >>> frame[1] = (10, 30)                                       # only the middle row holds signal
+    >>> videogram.process(frame).videogram[:, 0, 0].tolist()      # the first line: its row sums, scaled to 255
+    [0, 255, 0]
+    >>> videogram.process(frame * 2).videogram.shape              # a second line is written next to it
+    (3, 4, 1)
     """
     _core_class = _imaging.VideoGram
     _core_names = {"window": "length"}

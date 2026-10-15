@@ -1,7 +1,7 @@
-"""Kinetic energy (EyesWeb KineticEnergy).
+"""Kinetic energy of a skeleton: the weighted sum of the squared speeds of its joints.
 
-Skeletons are dicts `label -> (x, y, z)`. The feature declares its outputs as a `Schema` (`feature.outputs`) and
-returns a `Result` (see `pyeyesweb.data_models`). Timestamps are optional and in seconds.
+Skeleton frames are ``(N, 3)`` arrays or dicts ``label -> (x, y, z)``. The feature declares its outputs as a ``Schema``
+(``feature.outputs``) and returns a ``Result`` (see ``pyeyesweb.data_models``). Timestamps are optional and in seconds.
 """
 
 from typing import Any, Mapping, Optional, Sequence
@@ -33,19 +33,76 @@ def _weights_by_label(weights: Any, labels: Optional[Sequence[str]]) -> dict:
 
 @describe(Layer.LOW_LEVEL, eyesweb="KineticEnergyIndex (KineticEnergy)")
 class KineticEnergy(LabelGuard, FrameFeature):
-    """Kinetic energy of labelled 3D points (EyesWeb KineticEnergy).
+    r"""Weighted kinetic energy of a set of labelled 3D points, such as the joints of a skeleton.
 
-    Input: one skeleton frame per call, an `(N, 3)` array in the order of `labels`, or a dict `label -> (x, y, z)`.
-    `process(frame, timestamp=None)` returns `kinetic_energy`, the weighted kinetic energy of the skeleton (0 on the first
-    frame in `POSITION` mode). `run(frames, timestamps=None)` processes a whole `(T, N, 3)` recording in C++.
+    The kinetic energy of the body is the amount of motion it carries, with fast and heavy segments counting more.
+    In ``"position"`` mode (default) the speed :math:`\mathbf{v}_i` of joint :math:`i` is the displacement between
+    two consecutive frames divided by the time step; in ``"velocity"`` mode the frames already hold the velocities.
+    With :math:`w_i` the weight of the joint (an approximation of its mass),
 
-    `labels` are the joint names of the arrays; they are needed for array input (a dict carries its own). `weights` is a
-    mapping `joint -> weight`, or a sequence with one weight per label; any other length raises `ValueError`.
-    `input_mode` (EXTENSION, not in EyesWeb): `"position"` (default, faithful) takes positions and differentiates
-    them; `"velocity"` takes velocities and applies ``0.5 * w * |v|^2`` directly. `KineticEnergy.from_position(...)` and
-    `KineticEnergy.from_velocity(...)` build one or the other; they take the constructor's parameters.
-    `INVALID_INPUT` for NaN or infinity, an empty frame or ("missing joints: ...") a dict frame that lacks a weighted joint;
-    `timestamp` is the timestamp in seconds (`NaN` when not given).
+    .. math::
+
+        E = \frac{1}{2} \sum_{i} w_i \, \lVert \mathbf{v}_i \rVert^2 .
+
+    Only the joints listed in ``weights`` contribute. If ``reference_point`` names a joint, the positions are taken
+    relative to it (position mode), so that the translation of the whole body does not count. The time step of a call
+    is the difference to the previous ``timestamp`` if given, else ``1 / sampling_rate``, else one second per frame.
+
+    Parameters
+    ----------
+    labels : sequence of str, optional
+        Joint names, in the order of the rows of an array frame. Needed for array input; a dict frame carries its own
+        names. Taken from ``skeleton`` when that is given.
+    skeleton : str or Skeleton, optional
+        A skeleton preset (``"kinect_v2"``, ...) or definition. It sets ``labels`` and ``weights`` (the preset
+        weights, or 1.0 for every joint where a preset defines none).
+    input_mode : {"position", "velocity"}, optional
+        ``"position"`` (default): the frames hold positions and the feature differentiates them; the first frame gives
+        0. ``"velocity"``: the frames hold velocities and the feature applies the formula directly (no time step, no
+        ``reference_point``). This mode is an extension: EyesWeb takes positions only.
+        ``KineticEnergy.from_position(...)`` and ``KineticEnergy.from_velocity(...)`` build one or the other.
+        *(structural)*
+    weights : mapping of str to float or sequence of float, optional
+        Weight :math:`w_i` of each joint (dimensionless, or a mass in the unit of your choice; the energy is in that
+        unit times the squared speed). A mapping ``joint -> weight`` or a sequence with one weight per label (a
+        different length raises ``ValueError``). Needed unless ``skeleton`` is given. *(live)*
+    reference_point : str, optional
+        Joint the positions are taken relative to, in position mode. Defaults to ``""`` (none). *(live)*
+    sampling_rate : float, optional
+        Sampling rate of the frames in Hz, used when no timestamp is given. Defaults to ``None`` (one second per
+        frame, and the ``reason`` says so). *(live)*
+
+    Notes
+    -----
+    **Inputs.** One skeleton frame per call: an ``(N, 3)`` array in the order of ``labels`` or a dict
+    ``label -> (x, y, z)``. ``process(frame, *, timestamp=None)``; ``run(frames, *, timestamps=None)`` takes a
+    ``(T, N, 3)`` recording. ``timestamp`` is in seconds.
+
+    **Outputs.** ``kinetic_energy``: non-negative scalar, in ``weights`` times (length/s)^2 (length per frame in
+    position mode without a time).
+
+    **Statuses.** ``OK`` from the first frame (the first frame of position mode gives 0, there is no previous frame);
+    ``INVALID_INPUT`` when the frame holds NaN or infinity, is empty, is a dict that lacks a weighted joint
+    (``"missing joints: ..."``), or the timestamp does not increase. A rejected frame is not taken as the
+    previous one: the next step is measured from the last valid frame.
+
+    Limitations: the weights are a weighting of the joints, not a body model; the presets without anthropometric
+    weights (``qualisys_sport``, ``mediapipe``, ``openpose``) weight every joint by 1.0.
+
+    References
+    ----------
+    :cite:`glowinski2011minimal`, :cite:`camurri2003recognizing`
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import KineticEnergy
+    >>> frames = np.zeros((3, 2, 3))
+    >>> frames[:, 0, 0] = [0.0, 0.1, 0.2]  # joint 0 moves at 1 m/s
+    >>> frames[:, 1, 1] = [0.0, 0.2, 0.4]  # joint 1 moves at 2 m/s
+    >>> feature = KineticEnergy(labels=["hand", "elbow"], weights={"hand": 1.0, "elbow": 2.0}, sampling_rate=10.0)
+    >>> feature.run(frames).kinetic_energy.round(3)
+    array([0. , 4.5, 4.5])
     """
     _core_class = core.motion.KineticEnergyIndex
     _timed = True
@@ -60,15 +117,16 @@ class KineticEnergy(LabelGuard, FrameFeature):
 
     @input_mode_factory("position")
     def from_position(cls) -> "KineticEnergy":
-        """Kinetic energy of joint positions (the faithful mode): each frame holds the positions `(N, 3)` of the joints, or a
-        dict `label -> (x, y, z)`. Stateful: the speed is the difference to the previous frame over the time step, so
-        the first frame gives 0. Takes the parameters of `KineticEnergy` except `input_mode`."""
+        """Kinetic energy of joint positions (the EyesWeb mode): each frame holds the positions ``(N, 3)`` of the joints,
+        or a dict ``label -> (x, y, z)``. Stateful: the speed is the difference to the previous frame over the time
+        step, so the first frame gives 0. Takes the parameters of ``KineticEnergy`` except ``input_mode``."""
 
     @input_mode_factory("velocity")
     def from_velocity(cls) -> "KineticEnergy":
-        """Kinetic energy of joint velocities (EXTENSION): each frame holds the velocities `(N, 3)` of the joints, or a dict
-        `label -> (vx, vy, vz)`. Stateless: ``0.5 * w * |v|^2`` per frame from the first one on, with no time step and no
-        `reference_point`. Takes the parameters of `KineticEnergy` except `input_mode`."""
+        """Kinetic energy of joint velocities (an extension, not in EyesWeb): each frame holds the velocities ``(N, 3)``
+        of the joints, or a dict ``label -> (vx, vy, vz)``. Stateless: ``0.5 * w * |v|^2`` per frame from the first one
+        on, with no time step and no ``reference_point``. Takes the parameters of ``KineticEnergy`` except
+        ``input_mode``."""
 
     def _label_names(self):
         return set(self._param("weights", None) or ())

@@ -34,7 +34,9 @@ def validate_numeric(value, name, min_val=None, max_val=None):
     --------
     >>> validate_numeric(50.0, 'rate_hz', min_val=0.1, max_val=100000)
     50.0
-    >>> validate_numeric(-1, 'phase', min_val=0, max_val=1)
+    >>> validate_numeric(-1, 'phase', min_val=0, max_val=1)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     ValueError: phase must be >= 0, got -1
     """
     if not isinstance(value, (int, float)):
@@ -81,7 +83,9 @@ def validate_integer(value, name:str, min_val:int|None=None, max_val:int|None=No
     --------
     >>> validate_integer(100, 'sensitivity', min_val=1, max_val=10000)
     100
-    >>> validate_integer(0, 'max_length', min_val=1)
+    >>> validate_integer(0, 'max_length', min_val=1)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     ValueError: max_length must be >= 1, got 0
     """
     if not isinstance(value, int):
@@ -120,7 +124,9 @@ def validate_boolean(value, name):
     --------
     >>> validate_boolean(True, 'use_filter')
     True
-    >>> validate_boolean(1, 'output_phase')
+    >>> validate_boolean(1, 'output_phase')  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     TypeError: output_phase must be boolean, got int
     """
     if not isinstance(value, bool):
@@ -159,7 +165,9 @@ def validate_filter_params_tuple(value, name='filter_params'):
     (1.0, 10.0, 100.0)
     >>> validate_filter_params_tuple([1, 10, 100])
     (1, 10, 100)
-    >>> validate_filter_params_tuple("invalid")
+    >>> validate_filter_params_tuple("invalid")  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     TypeError: filter_params must be a tuple or list, got str
     """
     if not isinstance(value, (tuple, list)):
@@ -201,9 +209,13 @@ def validate_pairs(pairs):
     --------
     >>> validate_pairs([(0, 1), (4, 6), (7, 8)])
     [(0, 1), (4, 6), (7, 8)]
-    >>> validate_pairs([(0, 1), (4, '6')])
+    >>> validate_pairs([(0, 1), (4, '6')])  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     TypeError: Each pair must be a tuple of two integers, got ('4',)
-    >>> validate_pairs("invalid")
+    >>> validate_pairs("invalid")  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     TypeError: joint_pairs must be a list of tuples, got str
     """
     if not isinstance(pairs, list):
@@ -244,7 +256,9 @@ def validate_string(value, names: list[str]):
     --------
     >>> validate_string("mean", ["mean", "std_dev", "skewness"])
     'mean'
-    >>> validate_string("invalid", ["mean", "std_dev", "skewness"])
+    >>> validate_string("invalid", ["mean", "std_dev", "skewness"])  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
     ValueError: Invalid method: invalid. Must be one of ['mean', 'std_dev', 'skewness'].
     """
     if not isinstance(value, str):

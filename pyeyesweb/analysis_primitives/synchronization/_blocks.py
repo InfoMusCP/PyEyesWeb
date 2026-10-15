@@ -1,15 +1,13 @@
-"""Bases shared by the synchronization features that wrap a block of the compiled core.
+"""Bases shared by the synchronization features.
 
-Two kinds of block, as in EyesWeb:
+Two kinds of feature:
 
-* frame blocks (event detectors, counters, matrix transforms): the block is stateful and runs once per sample; they
-  are `FrameFeature`s (or override `process` when the sample needs converting);
-* `_SeriesBlock`: the block runs on a static series: a `WindowedFeature` that buffers `window` samples per input and
-  computes every `hop` samples; `_process_window(*series, timestamp=None)` is the EyesWeb Execute on one `(channels, window)`
-  series per input.
+* frame features (event detectors, counters, matrix transforms): stateful, run once per sample;
+* `_SeriesBlock`: a `WindowedFeature` that buffers ``window`` samples per input and computes every ``hop`` samples,
+  on one ``(channels, window)`` series per input.
 
-Subclasses implement `_to_result(raw, timestamp)` (`timestamp` is `NaN` when not given) and, where the block does not simply take
-one array per input, `_call_block(args)`.
+Subclasses implement `_to_result(raw, timestamp)` (``timestamp`` is ``NaN`` when not given) and, where the feature does
+not simply take one array per input, `_call_block(args)`.
 """
 
 from typing import Any, Optional, Sequence
@@ -29,10 +27,10 @@ def _train(name: str, doc: str = "event train, non-zero = event") -> Input:
 
 
 class _SeriesBlock(MinimumWindow, WindowedFeature, CoreFeature):
-    """A block that runs on a buffered series; `window` and `hop` are the first constructor parameters.
+    """A feature that runs on a buffered series; ``window`` and ``hop`` are the first constructor parameters.
 
-    `_finite_inputs`: NaN / inf in a window gives `INVALID_INPUT`. `_minimum_window(**params)`: the shortest window
-    the block accepts with these parameters, checked at construction and whenever `window` or a parameter changes.
+    `_finite_inputs`: NaN / inf in a window gives ``INVALID_INPUT``. `_minimum_window(**params)`: the shortest window
+    accepted with these parameters, checked at construction and whenever ``window`` or a parameter changes.
     """
 
     _finite_inputs = False

@@ -1,4 +1,5 @@
-"""Suddenness evaluation based on velocity distribution."""
+"""Suddenness of a trajectory from the distribution of its speeds.
+"""
 
 from typing import Any, Literal, Optional
 
@@ -50,35 +51,72 @@ class _SuddennessFit(MinimumWindow):
 
 @describe(Layer.MID_LEVEL)
 class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
-    """Suddenness evaluation based on velocity distribution.
+    r"""Suddenness of a trajectory from a stable-distribution fit of its speed distribution.
 
-    !!! note
-        This method evaluates suddenness by modeling the velocity distribution as a stable distribution.
+    Measures whether a movement is made of sudden starts and stops. The speed of the trajectory between consecutive
+    samples, :math:`v_t = \lVert x_{t+1} - x_t \rVert`, is taken over a window and its distribution is fitted with an
+    :math:`\alpha`-stable distribution by McCulloch's method, from the quantiles :math:`x_5, x_{25}, x_{50}, x_{75},
+    x_{95}` of the speeds:
 
-    Read more in the [User Guide](../../user_guide/theoretical_framework/mid_level/suddenness.md).
+    .. math::
 
-    Input: one position per call, the `(dims,)` point of a trajectory with `dims` = 2 or 3 coordinates (a
-    `(signals, dims)` frame is rejected: average the markers before the call if one trajectory is wanted). The feature
-    buffers `window` frames and computes every `hop` frames (`WARMING_UP` while the first window fills, `NO_OUTPUT`
-    between hops). `_process_window(series)` computes one complete window directly: `series` is `(dims, window)`.
-    `timestamp` is the timestamp, in seconds, of the newest frame.
+        \nu_\alpha = \frac{x_{95} - x_5}{x_{75} - x_{25}}, \qquad
+        \nu_\beta = \frac{x_{95} + x_5 - 2 x_{50}}{x_{95} - x_5}, \qquad
+        \gamma = \frac{x_{75} - x_{25}}{x_{75} - x_{50}},
+
+    where :math:`\alpha \in (0, 2]` (stability, thickness of the tails: 2 for a Gaussian, towards 0 for heavy tails) and
+    :math:`\beta \in [-1, 1]` (skewness) are obtained from :math:`\nu_\alpha` and :math:`\nu_\beta` by interpolation in
+    McCulloch's tables. The window is classified as sudden when
+
+    .. math::
+
+        \gamma \left(1 - \frac{\alpha}{2}\right) \beta \ge 0,
+
+    which, with :math:`\gamma > 0` and :math:`\alpha \le 2`, amounts to a non-negative skewness :math:`\beta`. Speeds
+    are differences between consecutive samples: timestamps do not enter the computation and :math:`\gamma` is a ratio
+    of quantile differences.
+
+    Input: one position per call, the ``(dims,)`` point of a trajectory with ``dims`` equal to 2 or 3 (a ``(signals,
+    dims)`` frame is rejected: average the markers before the call if one trajectory is wanted); ``process(frame, *,
+    timestamp=None)``. The feature buffers ``window`` frames and computes every ``hop`` frames; ``timestamp`` is that of
+    the newest frame.
 
     Parameters
     ----------
     window : int
-        Frames per window.
+        Frames per window, at least 6 (5 speeds are needed).
     hop : int, optional
-        New frames between two windows. Defaults to `1`.
+        New frames between two windows, between 1 and ``window``. Defaults to ``1``.
     dims : int, optional
         Coordinates of the position, 2 or 3. Defaults to the size of the first position.
     method : {"constrained", "quantile"}, optional
-        The algorithm to use for stable distribution fitting. Defaults to `"constrained"`.
+        The fit. ``"constrained"`` (default) clamps :math:`\nu_\alpha` and :math:`\nu_\beta` to the range of the tables
+        and always gives a result; ``"quantile"`` uses the unclamped values and linear percentiles, and fails when the
+        window is outside the range of the tables. *(live)*
 
-    Returns
-    -------
-    Result
-        `is_sudden` (bool) and the fitted stable-distribution parameters `alpha`, `beta`, `gamma` (float).
-        `Status.WARMING_UP` while the window holds fewer than 6 frames.
+    Notes
+    -----
+    **Outputs.** ``is_sudden``: ``True`` when the window is classified as sudden. ``alpha``: stability parameter, in (0,
+    2]. ``beta``: skewness parameter, in [-1, 1]. ``gamma``: scale parameter, not negative, computed from the quantile
+    ratio.
+
+    **Statuses.** ``WARMING_UP`` until the first window of ``window`` frames is full, ``NO_OUTPUT`` between two windows,
+    ``INVALID_INPUT`` for NaN or infinite coordinates and, with ``method="quantile"``, when the distribution could not
+    be fitted (no outputs). A window whose speeds are all equal, as for a trajectory at rest or at constant speed, gives
+    the Gaussian fallback (:math:`\alpha = 2`, :math:`\beta = 0`, :math:`\gamma = 0`) and is classified as sudden.
+
+    References
+    ----------
+    :cite:`mcculloch1986stable`, :cite:`mazzarino2009impulsivity`, :cite:`niewiadomski2015impulsive`
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.mid_level import Suddenness
+    >>> positions = np.cumsum(np.random.default_rng(0).normal(size=(40, 3)), axis=0)
+    >>> record = Suddenness(window=20, hop=10).run(positions)
+    >>> print(f"{record.alpha[19]:.2f} {record.beta[19]:.2f}", record.is_sudden[19])
+    1.53 0.53 True
     """
 
     _OUTPUTS = Schema(

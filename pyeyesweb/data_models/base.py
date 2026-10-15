@@ -1,5 +1,4 @@
-"""The output contract shared by every feature: [OutputsMixin][pyeyesweb.data_models.base.OutputsMixin] gives
-`feature.outputs` and `feature._result(...)`. The call contract is in `feature.py`."""
+"""The output contract shared by every feature: ``feature.outputs`` and the construction of results."""
 
 import math
 from typing import Any, ClassVar, Optional
@@ -13,7 +12,7 @@ _NO_MISSING: frozenset = frozenset()
 
 
 def _coerce(output: Output, value: Any) -> Any:
-    """Convert `value` to the declared type of `output`; raise `ValueError` on a shape mismatch."""
+    """Convert ``value`` to the declared type of ``output``; raise ``ValueError`` on a shape mismatch."""
     if output.labelled:
         items = {}
         for label, item in value.items():
@@ -40,17 +39,24 @@ def _check_shape(output: Output, array: np.ndarray, label: Optional[str] = None)
 class OutputsMixin:
     """The output contract shared by every feature.
 
-    A feature declares its outputs once, either as the class attribute `_OUTPUTS` (when they do not depend on the
-    parameters) or by overriding `_schema()` (when they do, e.g. a number of joints or a global/per-axis mode).
-    It then builds every return value with `self._result(...)`:
+    A feature declares its outputs once, either as the class attribute ``_OUTPUTS`` (when they do not depend on the
+    parameters) or by overriding ``_schema()`` (when they do, e.g. a number of joints or a global/per-axis mode). It
+    then builds every return value with ``self._result(...)``. The declared :class:`~pyeyesweb.data_models.Schema` is
+    available as ``feature.outputs`` before any data is seen.
 
-        class Speed(Feature):
-            _OUTPUTS = Schema(Output("speed", unit="m/s"))
+    Attributes
+    ----------
+    outputs : Schema
+        The declared outputs: names, shapes, component names, units. Fixed for the life of the feature (it is read
+        again after a parameter the outputs depend on is changed).
 
-            def process(self, frame, *, timestamp=None):
-                return self._result(speed=float(np.linalg.norm(frame)), timestamp=timestamp)
-
-    `feature.outputs` is the [Schema][pyeyesweb.data_models.results.Schema], available before any data is seen.
+    Examples
+    --------
+    >>> from pyeyesweb.data_models import Output, OutputsMixin, Schema
+    >>> class Demo(OutputsMixin):
+    ...     _OUTPUTS = Schema(Output("speed", unit="m/s"))
+    >>> Demo().outputs.names
+    ('speed',)
     """
 
     _OUTPUTS: ClassVar[Optional[Schema]] = None
@@ -63,7 +69,7 @@ class OutputsMixin:
 
     @property
     def outputs(self) -> Schema:
-        """The declared outputs: names, shapes, component names, units. Fixed for the life of the feature."""
+        """The declared outputs (:class:`Schema`): names, shapes, component names, units. Fixed for the life of the feature."""
         schema = self.__dict__.get("_outputs_cache")
         if schema is None:
             schema = self.__dict__["_outputs_cache"] = self._schema()
@@ -82,15 +88,15 @@ class OutputsMixin:
         Parameters
         ----------
         status : Status, optional
-            `Status.OK` (default) when the call produced output.
+            ``Status.OK`` (default) when the call produced output.
         reason : str, optional
-            Short explanation when `status` is not `OK`.
+            Short explanation when ``status`` is not ``OK``.
         timestamp : float, optional
-            Timestamp of the input in seconds; `NaN` in the result when not given.
+            Timestamp of the input in seconds; ``NaN`` in the result when not given.
         **values
-            The outputs produced by this call, by name. An output that is omitted (or `None`) counts as not
-            produced: it holds the empty value (`NaN`, `0` or `False`) and `result.valid[name]` is `False`. With
-            `Status.INVALID_INPUT` every output is empty whatever is passed: the diagnostic belongs in `reason`.
+            The outputs produced by this call, by name. An output that is omitted (or ``None``) counts as not
+            produced: it holds the empty value (``NaN``, ``0`` or ``False``) and ``result.valid[name]`` is ``False``. With
+            ``Status.INVALID_INPUT`` every output is empty whatever is passed: the diagnostic belongs in ``reason``.
 
         Raises
         ------
@@ -117,8 +123,8 @@ class OutputsMixin:
         return result_type(schema, data, status, reason, math.nan if timestamp is None else timestamp, missing)
 
     def _finite_result(self, *, timestamp: Optional[float] = None, **values: Any) -> Result:
-        """`_result(...)`, or `INVALID_INPUT` ("the result is not finite") when a computed output is NaN or infinite: an
-        overflow of finite data (1e300) is not an `OK` number."""
+        """``_result(...)``, or ``INVALID_INPUT`` ("the result is not finite") when a computed output is NaN or infinite: an
+        overflow of finite data (1e300) is not an ``OK`` number."""
         if any(value is not None and not np.isfinite(np.asarray(value, dtype=float)).all() for value in values.values()):
             return self._no_output(Status.INVALID_INPUT, "the result is not finite", timestamp)
         return self._result(timestamp=timestamp, **values)

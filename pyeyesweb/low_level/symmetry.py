@@ -1,4 +1,6 @@
-"""Symmetry of a skeleton frame: `Symmetry` (two methods: left/right ratio or mirror reflection) and the triangle index."""
+"""Symmetry of a skeleton frame: ``Symmetry`` (a left/right ratio index or a mirror-reflection score) and
+``TriangleSymmetry``.
+"""
 
 from typing import Any, Literal, Optional, Sequence, Tuple
 
@@ -22,28 +24,110 @@ def _from_skeleton(skeleton: Skeleton) -> dict:
 
 @describe(Layer.LOW_LEVEL, eyesweb="SymmetryIndex-3D (SymmetrySkeleton3D)")
 class Symmetry(VariantFeature, FrameFeature):
-    """Left/right symmetry of a skeleton frame; `method` chooses the formula (`"ratio"` or `"reflection"`).
+    r"""Left/right symmetry of a skeleton frame, as a ratio index or a mirror-reflection score.
 
-    `"ratio"` (default, the EyesWeb SymmetryIndex-3D block): per axis, the ratio of the left and right magnitudes of
-    the couples, valid when a sign condition holds, aggregated (`aggregation`: Mean, Min, Max, WeightedMean) into one
-    index, globally or per axis. With `skeleton=` and the default `reference_type="label"` the skeleton must define its
-    reference joint or `reference_point` must be given (`ValueError` otherwise). Parameters: `labels` (joint names of array input; a dict carries its own),
-    `pairs` (the left and right joint of each couple, by name) and `reference_point`, both taken from `skeleton` when
-    given, and the block parameters (normalisation, `aggregation`, `index_type`, `output_dims`, `reference_type`, ...).
-    Input: one frame, an `(N, 3)` array in the order of `labels` or a dict `label -> (x, y, z)`.
-    Output `symmetry` in [0, 1] (1 = symmetric): a scalar when `output_dims` is GLOBAL (default), a `(3,)` vector
-    (x, y, z) when it is COMPONENTS. `INVALID_INPUT` ("missing joints: ...") for a dict frame that
-    lacks a joint of a couple.
+    Measures how symmetric a posture is across the sagittal plane, with the x axis as the lateral axis, for couples of
+    joints that mirror each other (left and right hand, left and right foot, ...). One class offers two formulas, chosen
+    at construction by ``method``.
 
-    `"reflection"` (mirror symmetry): the right joint of each pair is reflected across the first axis about a centre
-    and its 3-D distance to the left joint gives a score per pair. Parameters: `labels`, `pairs` and `reference_point`
-    (the joint to reflect about; `None`, the default of this method, is the barycentre), as in the other method.
-    Input: one `(N, D)` frame of joint positions, in the order of `labels`. Output `pair_symmetry`, one score per pair
-    in [0, 1] (1 = perfectly symmetric), labelled `<left>_<right>`.
+    **method="ratio"** (default; the EyesWeb SymmetryIndex-3D). Coordinates are taken relative to the reference joint,
+    optionally normalised, and compared couple by couple and axis by axis. With :math:`L` and :math:`R` the left and
+    right joints of a couple relative to the reference, on each axis :math:`k \in \{x, y, z\}`
 
-    Use `"ratio"` for the EyesWeb index of a labelled skeleton with named couples and one summary value; use
-    `"reflection"` for per-pair scores of a mirror about a body centre. A parameter of the other method raises
-    `TypeError` or `ValueError`. Stateless; `process(frame, timestamp=None)`; `timestamp` in seconds (`NaN` when not given).
+    .. math::
+
+        s_k = \begin{cases}
+            \min(\lvert L_k \rvert, \lvert R_k \rvert) / \max(\lvert L_k \rvert, \lvert R_k \rvert)
+                & \text{if the sign condition holds} \\
+            0 & \text{otherwise}
+        \end{cases}
+
+    where the sign condition requires the two joints to lie on opposite sides of the reference along x and on the same
+    side along y and z. The values :math:`s_k` are aggregated (``aggregation``) over all couples and axes into one index
+    (``output_dims="global"``), or over the couples for each axis into a vector of three values
+    (``output_dims="components"``). With ``normalize_skeleton`` each joint is first divided by its distance to the
+    reference, so that only its direction counts. With ``index_type="symmetry_asymmetry"`` the sign condition is dropped
+    and :math:`s_k` is the ratio of magnitudes alone.
+
+    **method="reflection"** (mirror symmetry). The coordinates are taken relative to a centre :math:`C`, the right joint
+    of each pair is reflected across the first axis, :math:`R'' = (-R_x, R_y, R_z)`, and the score of the pair is based
+    on its distance to the left joint:
+
+    .. math::
+
+        s = \max\!\left(0,\; 1 - \frac{\lVert L - R'' \rVert}{\lVert L \rVert + \lVert R \rVert}\right),
+
+    with :math:`L, R` relative to :math:`C`; it is 1 for a perfect mirror image and decreases towards 0.
+
+    Input: one frame per call, an ``(N, 3)`` array in the order of ``labels`` (for ``"reflection"``, ``(N, D)``) or, for
+    ``"ratio"``, a dictionary ``label -> (x, y, z)`` that carries its own labels; ``process(frame, *, timestamp=None)``.
+    The feature keeps no state. Use ``"ratio"`` for the EyesWeb index of a labelled skeleton with named couples and one
+    summary value, and ``"reflection"`` for one score per pair of a mirror about a body centre. A parameter of the other
+    method raises ``TypeError`` or ``ValueError``.
+
+    Parameters
+    ----------
+    labels : sequence of str, optional
+        Joint names, in the order of the rows of an array frame. Given by ``skeleton`` when that is passed; needed for
+        array input.
+    skeleton : str or Skeleton, optional
+        A device preset or a user-defined ``Skeleton`` that provides ``labels``, ``pairs`` and, when it defines one, the
+        reference joint, unless they are passed explicitly.
+    method : {"ratio", "reflection"}, optional
+        The formula; fixed at construction. Defaults to ``"ratio"``.
+    pairs : sequence of (str, str)
+        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). *(live)*
+    reference_point : str, optional
+        ``"ratio"``: the joint taken as the origin of the coordinates when ``reference_type="label"``, ``"neck"`` by
+        default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).
+        ``"reflection"``: the joint about which the right joint is reflected; ``None``, the default for this method, is
+        the barycenter (mean position) of the frame. *(live)*
+    index_type : {"symmetry", "symmetry_asymmetry"}, optional
+        ``"ratio"`` only. ``"symmetry"`` applies the sign condition; ``"symmetry_asymmetry"`` uses the magnitude ratio
+        alone. Defaults to ``"symmetry"``. *(live)*
+    output_dims : {"global", "components"}, optional
+        ``"ratio"`` only. ``"global"``: one value; ``"components"``: one value per axis. Defaults to ``"global"``.
+        *(live)*
+    aggregation : {"mean", "min", "max", "weighted_mean"}, optional
+        ``"ratio"`` only. How the values :math:`s_k` are combined; the weight of ``"weighted_mean"`` is the larger of
+        the two magnitudes of a value. Defaults to ``"mean"``. *(live)*
+    normalize_skeleton : bool, optional
+        ``"ratio"`` only. Divide each joint of a couple by its distance to the reference. Defaults to ``True``. *(live)*
+    reference_type : {"label", "barycenter", "point"}, optional
+        ``"ratio"`` only. ``"label"`` translates the frame so that ``reference_point`` is the origin; with
+        ``"barycenter"`` or ``"point"`` no translation is applied and the coordinates are taken as they are, so they
+        must already be relative to the centre of symmetry. Defaults to ``"label"``. *(live)*
+
+    Notes
+    -----
+    **Outputs.** ``"ratio"``: ``symmetry``, in [0, 1] (1 is symmetric), a scalar for ``"global"`` and a ``(3,)`` vector
+    (x, y, z) for ``"components"``. ``"reflection"``: ``pair_symmetry``, ``(number of pairs,)`` in [0, 1] (1 is a
+    perfect mirror image), labelled ``<left>_<right>``.
+
+    **Statuses.** ``INVALID_INPUT`` for NaN or infinite coordinates; for ``"ratio"`` also for a dictionary frame that
+    lacks a joint of a couple (``"missing joints: ..."``), when no complete couple is present, and when the index is not
+    finite (both joints of a couple have a zero coordinate on an axis, a 0/0 ratio); for ``"reflection"`` when the frame
+    has too few joints for the pairs.
+
+    Corrected in the core: with ``method="ratio"`` the normalisation distance of a joint is measured from the reference
+    joint (the origin of the translated frame), not from its coordinates before the translation.
+
+    References
+    ----------
+    :cite:`glowinski2011minimal`
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import Symmetry
+    >>> labels, pairs = ["neck", "left_hand", "right_hand"], [("left_hand", "right_hand")]
+    >>> frame = np.array([[0.0, 0.0, 0.0], [-0.5, -0.3, 0.1], [0.8, -0.1, 0.2]])
+    >>> ratio = Symmetry(labels, pairs=pairs, reference_point="neck")
+    >>> print(f"{ratio.process(frame).symmetry:.2f}")
+    0.61
+    >>> mirror = Symmetry(labels, pairs=pairs, method="reflection", reference_point="neck")
+    >>> print(np.round(mirror.process(frame).pair_symmetry, 2))
+    [0.74]
     """
     _SWITCH = ("method", "ratio")
     _variants = {}
@@ -54,30 +138,7 @@ class Symmetry(VariantFeature, FrameFeature):
 
 
 class _ReflectionSymmetry(Symmetry, variant="reflection"):
-    """Computes the instantaneous spatial symmetry error for a skeletal frame (maths in the compiled core).
-
-    !!! info
-        The symmetry error is calculated as the Euclidean distance between a joint and the reflection of its corresponding paired joint.
-
-        Input: one frame per call, an `(N, D)` array of joint positions in the order of `labels`;
-    stateless. `process(frame, timestamp=None)`; `timestamp` is the timestamp in seconds (`NaN` when not given).
-
-    Parameters
-    ----------
-    labels : sequence of str, optional
-        Joint names, in the order of the rows of the frame (the joints of `skeleton` when that is given).
-    skeleton : str or Skeleton, optional
-        A device preset or your own `Skeleton`: gives `labels`, `pairs` and `reference_point` unless passed.
-    pairs : list of (str, str)
-        The `(left, right)` joint names of each symmetric pair.
-    reference_point : str, optional
-        The joint taken as the centre of symmetry. If not provided, it is the barycenter.
-
-    Returns
-    -------
-    Result
-        Output `pair_symmetry`, a vector with one entry per configured pair, labelled `<left>_<right>`
-        (flat names `pair_symmetry_<left>_<right>`). `Status.INVALID_INPUT` if the frame has too few joints.
+    """The ``method="reflection"`` formula of ``Symmetry``; see that class for the parameters and the outputs.
     """
 
     _core_class = core.motion.GeometricSymmetry
@@ -124,15 +185,7 @@ class _ReflectionSymmetry(Symmetry, variant="reflection"):
 
 
 class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
-    """EyesWeb SymmetryIndex-3D (SymmetrySkeleton3D).
-
-    Input: one skeleton frame per call, an `(N, 3)` array in the order of `labels`, or a dict
-    `label -> (x, y, z)`; stateless. `process(skeleton, timestamp=None)`; `timestamp` in seconds (`NaN` when not given).
-    `labels` are the joint names of the arrays; they are needed for array input (a dict carries its own).
-
-    Output `symmetry` in [0, 1] (1 = symmetric): a scalar when `output_dims` is GLOBAL (default), a `(3,)` vector
-    with components x, y, z when it is COMPONENTS. `INVALID_INPUT` ("missing joints: ...") for a dict frame that lacks a
-    joint of a couple.
+    """The ``method="ratio"`` formula of ``Symmetry``; see that class for the parameters and the outputs.
     """
     _core_class = core.motion.SymmetryIndex3D
     _core_names = {"pairs": "couples", "aggregation": "algorithm", "output_dims": "output_type"}
@@ -175,16 +228,35 @@ _COLLINEAR = 1e-9  # relative size of the triangle area below which the vertices
 
 @describe(Layer.LOW_LEVEL, eyesweb="trianglesymmetryindex (SymmetryTriangle3D)")
 class TriangleSymmetry(CoreFeature):
-    """EyesWeb SymmetryTriangle3D, as a symmetry index.
+    """Symmetry of a head-and-shoulders triangle about its apex, from 0 to 1.
 
-    Three inputs, the vertices of the triangle as `(x, y)` samples (y grows downwards): `process(upper, left, right,
-    timestamp=None)` and `run(upper, left, right, timestamps=None)`; stateless. The apex (`upper`) is the FIRST argument and is
-    anatomical (head over the shoulders), not detected: the coordinates are taken relative to the apex x, so it is a
-    posture measure (tilt of the apex over the base), not the isosceles-ness of the triangle. `timestamp` in seconds
-    (`NaN` when not given).
+    Measures the lateral lean of an upper body as the symmetry of the triangle formed by the head (apex, ``upper``) and
+    the two shoulders (``left`` and ``right``) about the vertical line through the apex. The coordinates are taken
+    relative to the apex, the base is split at that line, and the two halves of the triangle, mirrored on top of each
+    other, are compared: the index is 1 when they coincide and decreases as their areas differ, down to 0. It is a
+    posture measure, the tilt of the apex over the base, not a test of whether the triangle is isosceles. When both base
+    vertices lie on the same side of the apex the index is 0.
 
-    Output `symmetry`: 1 for a symmetric triangle down to 0 for total asymmetry (the EyesWeb block outputs the
-    asymmetry; this is `1 - asymmetry`). Always `OK`, `INVALID_INPUT` for collinear vertices.
+    Three inputs, the vertices of the triangle as ``(x, y)`` samples with y growing downwards (image coordinates):
+    ``process(upper, left, right, *, timestamp=None)``; ``run`` takes the three recordings in the same order. The apex
+    is the first argument and is anatomical (head over the shoulders), not detected. The feature has no parameters and
+    keeps no state.
+
+    Notes
+    -----
+    **Outputs.** ``symmetry``: dimensionless, in [0, 1], 1 for a symmetric triangle and 0 for total asymmetry. It is one
+    minus the asymmetry that the original block outputs.
+
+    **Statuses.** ``INVALID_INPUT`` for an empty vertex, for NaN or infinite coordinates and for collinear vertices.
+
+    Examples
+    --------
+    >>> from pyeyesweb.low_level import TriangleSymmetry
+    >>> feature = TriangleSymmetry()
+    >>> print(f"{feature.process((0, 0), (-1, 1), (1, 1)).symmetry:.2f}")
+    1.00
+    >>> print(f"{feature.process((0, 0), (-1, 1), (3, 1)).symmetry:.2f}")
+    0.33
     """
     _core_class = core.motion.TriangleSymmetryIndex
 

@@ -21,46 +21,96 @@ from pyeyesweb.utils.validators import validate_numeric
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="rarityindex (Rarity)")
 class Rarity(VariantFeature, CoreFeature):
-    r"""Rarity of the newest value of a signal within a memory of past values, by `method`.
+    r"""Rarity of the newest value of a signal within a memory of past values, by ``method``.
 
-    The two methods are different formulas (neither is a special case of the other); the parameters, inputs and
-    outputs are those of the chosen method, and a parameter of the other method raises an error.
+    Rarity measures how atypical the current state of a movement is with respect to what happened before: a value
+    that has been seen often in the recent past is common, a value that has hardly occurred is rare. It can flag the
+    unusual movement within a performance. The two methods are different formulas (neither is a special case of the
+    other) and have different parameters and outputs; a parameter of the other method raises an error.
 
-    `"information"` (default): the port of the EyesWeb `rarityindex` block. Each of `number_of_inputs`
-    scalar signals is discretised into bins of user-given widths; the block keeps its own memory and computes a
-    Contrast across the inputs or a Rarity across the last values of the same input (parameter `measure`, with
-    the memory length `window`; see the core block for the other parameters). Input: one sample of `number_of_inputs` values per call
-    (`process(*sample, timestamp=None)`). Output `rarity`, shape `(number_of_inputs,)` (default 2): one index per input,
-    $-\log(A B + 10^{-16})$; `timestamp` is the timestamp in seconds (`NaN` when not given). `reset()` clears the memory
-    and the bin indices, so `run` is a pure function of the recording. Status: with `measure="rarity"` the memory starts
-    filled with zeros, so the outputs are `WARMING_UP` (the numbers are given, but are artefacts) until `window`
-    samples have been seen; a value above the sum of the bin widths keeps the previous bin and gives
-    `INVALID_INPUT` ("value outside the bins"), with no numbers; `NaN` or infinity is `INVALID_INPUT` before the block sees
-    it. `measure="contrast"` needs at least 2 inputs and
-    `measure="rarity"` a `window` of at least 2: otherwise construction raises `ValueError`.
+    ``"information"`` (default): each of ``number_of_inputs`` scalar signals is discretised into bins of the widths
+    ``bins``, and the index of each input is
 
-    `"mode_distance"`: windowed rarity of a scalar stream. Parameters `window`, `hop` (default 1) and
-    `alpha` (default 0.5). Input: one value per call, buffered over `window` samples and computed every `hop`
-    samples (`WARMING_UP` while the first window fills, `NO_OUTPUT` between hops); `_process_window(series)` takes
-    one `(1, window)` window. The histogram of the window has $\max(\lfloor\sqrt{N}\rfloor, 1)$ equal-width bins
-    and the score is :math:`|\mathrm{mode} - \mathrm{last}| (p_\mathrm{mode} - p_\mathrm{last}) \alpha`. Output `rarity`
-    (float, $\ge 0$): higher means more atypical; `WARMING_UP` below 2 samples, `INVALID_INPUT` when the window holds a NaN or an infinite value (it stays invalid until that sample leaves the window). The maths runs in the compiled core.
+    .. math::
 
-    Use `"information"` to reproduce EyesWeb or to compare several signals with chosen bin widths; use
-    `"mode_distance"` for a self-contained score of one stream that needs no bin widths.
+        R = -\ln (A B + 10^{-16}),
 
-    Read more in the [User Guide](../../user_guide/theoretical_framework/analysis_primitives/rarity.md).
+    where :math:`A` and :math:`B` are two probability terms estimated from the occupancy of the bins: with
+    ``measure="rarity"`` from a memory of the last ``window`` values of the same input (a *rarity* across time), with
+    ``measure="contrast"`` across the inputs (a *contrast* between the signals). A rare value gives a large index.
+    The feature keeps its own memory, one sample per call. A value above the sum of the bin widths is outside the
+    bins.
+
+    ``"mode_distance"``: rarity of the newest sample of a window of one scalar stream. The histogram of the window of
+    :math:`N` samples has :math:`\max(\lfloor\sqrt{N}\rfloor, 1)` equal-width bins. With :math:`i_{\mathrm{mode}}` the
+    bin of the most populated bin, :math:`i_{\mathrm{last}}` the bin of the newest sample and :math:`p` the fraction of
+    the window in a bin,
+
+    .. math::
+
+        R = \alpha \, |i_{\mathrm{mode}} - i_{\mathrm{last}}| \, (p_{\mathrm{mode}} - p_{\mathrm{last}}).
+
+    It is zero when the newest sample is in the most common bin and grows with its distance from it and with how much
+    less frequent its bin is. It needs no bin widths.
+
+    Use ``"information"`` to reproduce EyesWeb or to compare several signals with chosen bin widths; use
+    ``"mode_distance"`` for a self-contained score of one stream.
 
     Parameters
     ----------
     method : {"information", "mode_distance"}, optional
-        Formula. Defaults to `"information"`.
-    **params
-        Parameters of the chosen method.
+        Formula. Defaults to ``"information"``. Which of the other parameters apply depends on the method; all are
+        keyword-only.
+    number_of_inputs : int, optional
+        ``"information"`` only: number of scalar signals per sample. ``measure="contrast"`` needs at least 2.
+        Defaults to ``2``. *(structural)*
+    measure : {"rarity", "contrast"}, optional
+        ``"information"`` only: rarity across the last ``window`` values of each input, or contrast across the
+        inputs. Defaults to ``"rarity"``. *(live)*
+    window : int, optional
+        ``"information"``: length of the memory in samples, at least 2 for ``measure="rarity"`` (``50`` by default,
+        *structural*). ``"mode_distance"``: samples per window (``50`` by default); changing it on a running feature
+        keeps the newest samples.
+    bins : sequence of float, optional
+        ``"information"`` only: widths of the successive bins, in the units of the signals. Defaults to
+        ``(0.3, 0.3, 0.4)``, which covers signals in ``[0, 1]``. *(structural)*
+    hop : int, optional
+        ``"mode_distance"`` only: new samples between two windows. Defaults to ``1``.
+    alpha : float, optional
+        ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``.
+        *(live)*
+
+    Notes
+    -----
+    **Inputs.** ``"information"``: one sample of ``number_of_inputs`` values per call. ``"mode_distance"``: one value
+    per call, buffered over ``window`` samples and computed every ``hop`` samples.
+
+    **Outputs.** ``rarity``: for ``"information"`` shape ``(number_of_inputs,)``, :math:`R` per input (a larger
+    value is rarer), together with a ``timestamp`` in seconds (``NaN`` when not given); for ``"mode_distance"`` a
+    scalar :math:`R \ge 0`, higher meaning more atypical.
+
+    **Statuses.** ``"information"`` with ``measure="rarity"``: the memory starts filled with zeros, so the result is
+    ``WARMING_UP`` (``"the memory holds k of window values"``; the numbers are given but are artefacts) until
+    ``window`` samples have been seen; a value above the sum of ``bins`` (or ``NaN``) keeps the previous bin and gives
+    ``INVALID_INPUT`` (``"value outside the bins"``) with the numbers kept; a non-finite value is ``INVALID_INPUT``.
+    ``"mode_distance"``: ``WARMING_UP`` while the window holds fewer than 2 samples (and while the first window
+    fills), ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` while the window holds a ``NaN`` or an infinite value
+    (until that sample leaves the window). ``reset()`` clears the memory and the bin indices, so ``run`` is a pure
+    function of the recording.
+
+    Corrected in the core: ``reset()`` kept the previous bin indices; a contrast with one input, or a rarity with a
+    memory of one value, divided 0 by 0 and gave ``NaN``: both combinations are invalid and raise ``ValueError`` at
+    construction.
 
     Examples
     --------
-    >>> rarity = Rarity(method="mode_distance", window=100, alpha=1.0)
+    >>> from pyeyesweb.analysis_primitives import Rarity
+    >>> contrast = Rarity(measure="contrast", number_of_inputs=2)
+    >>> contrast.process([0.1, 0.5]).rarity.round(3)
+    array([1.099, 1.099])
+    >>> rarity = Rarity(method="mode_distance", window=10, alpha=1.0)
+    >>> rarity.run([0.0, 0.1, 0.0, 0.1, 0.0, 0.1, 0.0, 0.1, 0.0, 1.0])[-1].rarity
+    1.6
     """
 
     _SWITCH = ("method", "information")
@@ -72,24 +122,9 @@ class Rarity(VariantFeature, CoreFeature):
 
 
 class _ModeDistanceRarity(MinimumWindow, WindowedFeature, Rarity, variant="mode_distance"):
-    r"""Rarity of the latest sample relative to the window distribution (method `"mode_distance"`).
+    r"""Rarity of the latest sample relative to the window distribution (method ``"mode_distance"``).
 
-    Input: one value per call. The feature buffers `window` samples and computes every `hop` samples (`process`
-    returns `WARMING_UP` while the first window fills and `NO_OUTPUT` between hops); `_process_window(series)` takes
-    one complete `(1, window)` window. `timestamp` is the timestamp (seconds) of the newest sample.
-
-    The number of histogram bins is $\max(\lfloor\sqrt{N}\rfloor, 1)$ where $N$ is the number of samples. Rarity
-    compares the probability of the most recent sample with that of the most probable bin. The maths runs in the
-    compiled core (`core.motion.HistogramRarity`).
-
-    Parameters
-    ----------
-    window : int
-        Samples per window.
-    hop : int, optional
-        New samples between two windows. Defaults to `1`.
-    alpha : float, optional
-        Scaling factor for the rarity calculation. Defaults to `0.5`.
+    Input: one value per call, buffered over ``window`` samples and computed every ``hop`` samples. See ``Rarity``.
     """
 
     _OUTPUTS = Schema(Output("rarity", doc="Rarity score >= 0; higher values indicate more atypical movement."))
@@ -134,14 +169,9 @@ class _ModeDistanceRarity(MinimumWindow, WindowedFeature, Rarity, variant="mode_
 
 
 class _InformationRarity(Rarity, FrameFeature, variant="information"):
-    """EyesWeb Rarity (rarity or contrast) of `number_of_inputs` scalar signals (method `"information"`).
+    """Rarity or contrast of ``number_of_inputs`` scalar signals (method ``"information"``).
 
-    Input: one sample of `number_of_inputs` values per call; the block keeps its own memory of past samples
-    (`process(*sample, timestamp=None)`, `reset()` clears it and the bin indices, so `run` is a pure function of the recording).
-
-    Output `rarity`, shape `(number_of_inputs,)` (constructor parameter, default 2): one index per input,
-    -log(A * B + 1e-16); `timestamp` is the timestamp in seconds (`NaN` when not given). `WARMING_UP` while the memory of
-    `measure="rarity"` is not full yet, `INVALID_INPUT` ("value outside the bins") for a value above the sum of the bins.
+    Input: one sample of ``number_of_inputs`` values per call. See ``Rarity``.
     """
     _core_class = core.motion.RarityIndex
     _core_names = {"window": "data_memory", "measure": "type"}

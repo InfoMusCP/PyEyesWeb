@@ -1,21 +1,24 @@
-"""The call contract shared by every feature: declared inputs and outputs, `process`, `run`, `reset`.
+"""The call contract shared by every feature: declared inputs and outputs, ``process``, ``run``, ``reset``.
 
-    feature.inputs                 what one call receives (before any data)
-    feature.outputs                what it returns (before any data)
-    feature.process(*sample, timestamp=None)     one frame or sample, streaming: returns a `Result`
-    feature.run(*data, timestamps=None)         a whole recording, offline: returns a `Recorder`
-    feature.reset()                forget the accumulated state
+========================================  ============================================================================
+``feature.inputs``                        what one call receives (known before any data)
+``feature.outputs``                       what it returns (known before any data)
+``feature.process(*sample, timestamp)``   one frame or sample, streaming: returns a ``Result``
+``feature.run(*data, timestamps)``        a whole recording, offline: returns a ``Recorder``
+``feature.reset()``                       forget the accumulated state
+``feature.latest``                        the last result with status ``OK``
+``feature.parameters``                    the constructor parameters with their current values
+========================================  ============================================================================
 
-`process` keeps state between calls (previous frames, the window being filled). `run` starts from a fresh state
-by default (`reset=True`), so `run(recording)` is a pure function of the recording: the same input gives the same
-output however often it is called. Pass `reset=False` to continue from the previous call, e.g. to process a long
-recording in chunks. Both give the same numbers; tests check it.
+``process`` keeps state between calls (previous frames, the window being filled). ``run`` starts from a fresh state by
+default (``reset=True``), so ``run(recording)`` is a pure function of the recording; pass ``reset=False`` to continue
+from the previous call, e.g. to process a long recording in chunks. Both give the same numbers.
 
-Time is optional and in seconds: `timestamp` is the timestamp of the sample, `timestamps` of `run` one per sample. Nothing is
-stamped with the wall clock.
+Time is optional and in seconds: ``timestamp`` is the timestamp of the sample, ``timestamps`` of ``run`` one per sample.
+Nothing is stamped with the wall clock.
 
-Features that work on a window of samples own their buffer (`WindowedFeature`): they are configured with `window`
-and `hop` and receive samples.
+Features that work on a window of samples own their buffer (:class:`WindowedFeature`): they are configured with
+``window`` and ``hop`` and receive samples.
 """
 
 import functools
@@ -44,9 +47,9 @@ def _recording(series: Any, declared: Input) -> Any:
 
 
 def _checked(method, window: bool):
-    """`process` / `_process_window` of a feature, preceded by the check of the call against the declared inputs: a
+    """``process`` / ``_process_window`` of a feature, preceded by the check of the call against the declared inputs: a
     wrong shape raises, a value that is not data (NaN, infinity, a missing joint, a time that goes back) returns
-    `INVALID_INPUT` before the feature sees the sample."""
+    ``INVALID_INPUT`` before the feature sees the sample."""
 
     @functools.wraps(method)
     def wrapper(self, *sample, **kwargs):
@@ -55,7 +58,7 @@ def _checked(method, window: bool):
         except NotImplementedError:
             return method(self, *sample, **kwargs)
         if window:
-            inputs.check_windows(sample, type(self).__name__)  # the samples of a window were accepted by `process`
+            inputs.check_windows(sample, type(self).__name__)  # the samples of a window were accepted by ``process``
         else:
             inputs.check(sample, type(self).__name__)
             if reason := self._input_problem(sample, kwargs.get("timestamp")):
@@ -67,7 +70,7 @@ def _checked(method, window: bool):
 
 
 def _remembering(method):
-    """`process` of a feature, followed by the memory of its last result with status `OK` (`Feature.latest`)."""
+    """``process`` of a feature, followed by the memory of its last result with status ``OK`` (``Feature.latest``)."""
 
     @functools.wraps(method)
     def wrapper(self, *sample, **kwargs):
@@ -81,7 +84,7 @@ def _remembering(method):
 
 
 def _forgetting(method):
-    """`reset` of a feature, followed by the loss of the remembered result."""
+    """``reset`` of a feature, followed by the loss of the remembered result."""
 
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -94,20 +97,74 @@ def _forgetting(method):
 
 
 class Feature(OutputsMixin, ABC):
-    """Base of every feature. Subclasses declare `_INPUTS` / `_inputs()` and `_OUTPUTS` / `_schema()` and implement
-    `process`; `run` is derived from it (a feature with a batch fast path overrides `run`).
+    """Base class of every feature: the call contract (``process``, ``run``, ``reset``) and the declared inputs and outputs.
 
-    A feature with several inputs (a pair of signals) takes them as positional arguments in the order of `inputs`:
-    `process(first, second, timestamp=None)` and `run(first, second, timestamps=None)`. `timestamp` and `timestamps` are keyword-only.
+    A feature declares what one call receives (:attr:`inputs`) and what it returns (:attr:`outputs`) once, from its
+    constructor parameters and before any data is seen. ``process`` takes one sample or frame per input and returns an
+    immutable :class:`Result`; ``run`` applies ``process`` to a whole recording and returns a :class:`Recorder`.
+
+    A feature with several inputs (a pair of signals) takes them as positional arguments in the order of
+    :attr:`inputs`: ``process(first, second, timestamp=None)`` and ``run(first, second, timestamps=None)``.
+    ``timestamp`` and ``timestamps`` are keyword-only and in seconds.
+
+    Attributes
+    ----------
+    inputs : Inputs
+        What one call receives: kind, shape, labels.
+    outputs : Schema
+        What a call returns: names, shapes, component names, units.
+    latest : Result or None
+        The last result with status ``OK``.
+    parameters : mapping
+        The constructor parameters with their current values (read-only).
+
+    Notes
+    -----
+    Every call is first checked against :attr:`inputs`. A wrong shape raises ``ValueError`` naming the feature and the
+    input; an empty frame is not a shape error and returns ``INVALID_INPUT``, as do NaN or infinity and a timestamp
+    that is not finite or goes back. The state is unchanged by an ``INVALID_INPUT`` call.
+
+    Every catalog feature is a subclass; custom features follow the same contract by declaring their inputs and
+    outputs and implementing ``process``.
+
+    Examples
+    --------
+    A minimal custom feature, and the three ways of reading what it returns:
+
+    >>> import numpy as np
+    >>> from pyeyesweb.data_models import Feature, Input, InputKind, Inputs, Output, Schema
+    >>> class Speed(Feature):
+    ...     _INPUTS = Inputs(Input("position", InputKind.SAMPLE, shape=(2,), unit="m"))
+    ...     _OUTPUTS = Schema(Output("speed", unit="m/s"))
+    ...     def __init__(self, sampling_rate=100.0):
+    ...         self.sampling_rate, self._previous = sampling_rate, None
+    ...     def process(self, position, *, timestamp=None):
+    ...         position, previous, self._previous = np.asarray(position, float), self._previous, np.asarray(position, float)
+    ...         if previous is None:
+    ...             return self._no_output(timestamp=timestamp)
+    ...         return self._result(speed=float(np.linalg.norm(position - previous)) * self.sampling_rate, timestamp=timestamp)
+    ...     def reset(self):
+    ...         self._previous = None
+    >>> feature = Speed()
+    >>> feature.outputs.flat_names, feature.latest
+    (('speed',), None)
+    >>> first = feature.process((0.0, 0.0), timestamp=0.0)
+    >>> first.status.name, first.valid["speed"]
+    ('NO_OUTPUT', False)
+    >>> feature.process((0.03, 0.04), timestamp=0.01).speed
+    5.0
+    >>> recording = feature.run([[0, 0], [0.03, 0.04], [0.06, 0.08]], timestamps=[0.0, 0.01, 0.02])
+    >>> recording.speed.round(3).tolist(), recording.ok.tolist()
+    ([nan, 5.0, 5.0], [False, True, True])
     """
 
     _INPUTS: Optional[Inputs] = None
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
-        """Every `process` (and `_process_window`) a subclass defines checks its arguments against `inputs` first.
+        """Every ``process`` a subclass defines checks its arguments against ``inputs`` first.
 
-        A wrong shape raises `ValueError` naming the feature and the input; an empty frame is not a shape error and
-        goes through; NaN or infinity returns `INVALID_INPUT` (`Input.problem`).
+        A wrong shape raises ``ValueError`` naming the feature and the input; an empty frame is not a shape error and
+        goes through; NaN or infinity returns ``INVALID_INPUT`` (``Input.problem``).
         """
         super().__init_subclass__(**kwargs)
         for name, window in (("process", False), ("_process_window", True)):
@@ -123,18 +180,23 @@ class Feature(OutputsMixin, ABC):
 
     @property
     def latest(self) -> Optional[Result]:
-        """The last result with status `OK`, or `None` before the first one (and after `reset()`).
+        """The last result with status ``OK``, or ``None`` before the first one and after ``reset()``.
 
-        Between two windows (`NO_OUTPUT`), during warm-up and on invalid input a call returns no new measurement; a
-        caller that needs a continuous signal holds this value: `result if result.ok else feature.latest`.
+        Between two windows (``NO_OUTPUT``), during warm-up and on invalid input a call returns no new measurement and
+        does not change this value; a caller that needs a continuous signal holds it:
+        ``result if result.ok else feature.latest``.
         """
         return self.__dict__.get("_latest")
 
     @property
     def parameters(self) -> Mapping[str, Any]:
-        """The parameters of the constructor with their current values, read-only (as scikit-learn's `get_params`).
-        Change one by assigning it: `feature.window = 50`. A parameter the feature resolves at construction and does not keep
-        (`skeleton`, which becomes `labels`, `weights` and `pairs`) is not listed."""
+        """The constructor parameters with their current values, as a read-only mapping.
+
+        Like scikit-learn's ``get_params``. Change a parameter by assigning the attribute (``feature.window = 50``): the
+        value is validated as in the constructor and applied live or restarts the state, according to the parameter
+        (marked *live* or *structural* in the class documentation). A parameter the feature resolves at construction and
+        does not keep (``skeleton``, which becomes ``labels``, ``weights`` and ``pairs``) is not listed.
+        """
         names = (name for name, parameter in inspect.signature(type(self)).parameters.items()
                  if parameter.kind not in (parameter.VAR_POSITIONAL, parameter.VAR_KEYWORD))
         values = {name: getattr(self, name, _UNSET) for name in names}
@@ -147,34 +209,66 @@ class Feature(OutputsMixin, ABC):
 
     @property
     def inputs(self) -> Inputs:
-        """What one call receives: kind, shape, labels. Known from the constructor parameters alone."""
+        """What one call receives (:class:`Inputs`): kind, shape, labels. Known from the constructor parameters alone."""
         inputs = self.__dict__.get("_inputs_cache")
         if inputs is None:
             inputs = self.__dict__["_inputs_cache"] = self._inputs()
         return inputs
 
     def _input_problem(self, sample: Any, timestamp: Optional[float]) -> str:
-        """Why this call is not data, or `""`: the central rules of the call contract (a subclass adds its own and
-        calls `super()`). Raises `ValueError` for a call that cannot be meant (a wrong shape, an unknown joint name)."""
+        """Why this call is not data, or ``""``: the central rules of the call contract (a subclass adds its own and
+        calls ``super()``). Raises ``ValueError`` for a call that cannot be meant (a wrong shape, an unknown joint name)."""
         if timestamp is not None and not math.isfinite(timestamp):
             return "non-finite timestamp"
         return self.inputs.problem(sample)
 
     @abstractmethod
     def process(self, *sample: Any, timestamp: Optional[float] = None) -> Result:
-        """Process one sample or frame per input (see `inputs`) and return the result. `timestamp`: timestamp in seconds."""
+        """Process one sample or frame per input (see :attr:`inputs`) and return the result.
+
+        Parameters
+        ----------
+        *sample
+            One sample or frame per input, in the order of :attr:`inputs`.
+        timestamp : float, optional
+            Timestamp of the sample in seconds (keyword-only); it must be finite. ``NaN`` in the result when omitted.
+
+        Returns
+        -------
+        Result
+            The values of the declared outputs and a :class:`Status`; see ``Result.valid`` for which outputs were
+            produced.
+
+        Raises
+        ------
+        ValueError
+            For a call that cannot be meant: a wrong number of inputs, a wrong shape, an unknown joint name.
+        """
 
     def run(self, *data: Any, timestamps: Optional[Any] = None, reset: bool = True) -> Recorder:
-        """Process a whole recording and return a `Recorder` with one row per sample (frame).
+        """Process a whole recording and return a :class:`Recorder` with one row per sample (frame).
+
+        The numbers equal those of a loop of :meth:`process`.
 
         Parameters
         ----------
         *data : array-like
-            One array per input, first axis = time (see `inputs` for the shape of one sample).
+            One array per input, first axis = time (see :attr:`inputs` for the shape of one sample).
         timestamps : array-like, optional
             Timestamps in seconds, one per sample.
         reset : bool, optional
             Start from a fresh state (default), or continue from the previous call.
+
+        Returns
+        -------
+        Recorder
+            One row per sample, including the rows that are not ``OK`` (see ``Recorder.status``).
+
+        Raises
+        ------
+        ValueError
+            If the inputs do not have the same number of samples, ``timestamps`` does not hold one value per sample, or
+            a sample does not fit :attr:`inputs`.
         """
         self.inputs._check_count(data, type(self).__name__)  # the optional last inputs may be left out
         if reset:
@@ -197,28 +291,52 @@ class Feature(OutputsMixin, ABC):
         return recorder
 
     def _check_recording(self, arrays: Any) -> None:
-        """Check the first sample of each recording against `inputs`, so `run` fails before it starts."""
+        """Check the first sample of each recording against ``inputs``, so ``run`` fails before it starts."""
         if all(len(array) for array in arrays):
             self.inputs.check([array[0] for array in arrays], type(self).__name__)
 
     def reset(self) -> None:
-        """Forget the state accumulated by `process` (no-op for stateless features)."""
+        """Forget the state accumulated by ``process`` (and ``latest``); a no-op for stateless features."""
 
 
 class WindowedFeature(Feature):
     """A feature computed on a window of samples that it buffers itself.
 
+    The feature receives one sample (or frame) per call; it keeps the newest ``window`` of them and computes its
+    outputs each time ``hop`` new samples have arrived. The first frame after ``reset()`` fixes the number of values of
+    a frame; a frame of another size raises ``ValueError``.
+
     Parameters
     ----------
     window : int
-        Samples per window.
+        Samples per window (live: changing it keeps the newest samples).
     hop : int, optional
-        New samples between two windows (default 1: a result for every sample once the window is full).
+        New samples between two windows, ``1 <= hop <= window`` (default 1: a result for every sample once the window is
+        full). Live.
 
-    `process(sample)` returns `WARMING_UP` until the first window is full and `NO_OUTPUT` between hops; when a window
-    is ready it calls `_process_window(series)`, where `series` is `(channels, window)` with the oldest sample first
-    (one such array per input for a feature with several inputs). `_process_window` is the private hook a subclass implements.
-    The first frame after `reset()` fixes the number of values of a frame; a frame of another size raises `ValueError`.
+    Attributes
+    ----------
+    window, hop : int
+        The current values; assigning one is the same as ``configure`` with that value.
+
+    Notes
+    -----
+    ``process`` returns ``WARMING_UP`` (``reason`` ``"k of N samples"``) until the first window is full, ``NO_OUTPUT``
+    between two windows when ``hop > 1``, and the result of the window otherwise. The first window is ``OK`` at call
+    number ``window``. A window of ``window`` samples spans ``window / sampling_rate`` seconds when the feature has a
+    ``sampling_rate``.
+
+    Examples
+    --------
+    >>> from pyeyesweb.analysis_primitives import CoarseGraining
+    >>> feature = CoarseGraining(window=4, hop=2, factor=2)
+    >>> [feature.process(float(value)).status.name for value in range(1, 6)]
+    ['WARMING_UP', 'WARMING_UP', 'WARMING_UP', 'OK', 'NO_OUTPUT']
+    >>> feature.latest.coarse_grained.tolist()
+    [[1.5, 3.5]]
+    >>> feature.configure(window=6)
+    >>> feature.window, feature.hop
+    (6, 2)
     """
 
     def __init__(self, window: int, hop: int = 1, **params: Any):
@@ -236,7 +354,7 @@ class WindowedFeature(Feature):
 
     @property
     def window(self) -> int:
-        """Samples per window; setting it keeps the newest samples (see `configure`)."""
+        """Samples per window; setting it keeps the newest samples (see :meth:`configure`)."""
         return self._window
 
     @window.setter
@@ -245,7 +363,7 @@ class WindowedFeature(Feature):
 
     @property
     def hop(self) -> int:
-        """New samples between two windows; setting it keeps the newest samples (see `configure`)."""
+        """New samples between two windows; setting it keeps the newest samples (see :meth:`configure`)."""
         return self._hop
 
     @hop.setter
@@ -253,7 +371,20 @@ class WindowedFeature(Feature):
         self.configure(hop=value)
 
     def configure(self, window: Optional[int] = None, hop: Optional[int] = None) -> None:
-        """Change `window` and / or `hop` together (validated as in the constructor), keeping the newest samples."""
+        """Change ``window`` and / or ``hop`` together, keeping the newest samples.
+
+        Parameters
+        ----------
+        window : int, optional
+            New number of samples per window.
+        hop : int, optional
+            New number of samples between two windows.
+
+        Raises
+        ------
+        ValueError
+            Unless ``window >= 1`` and ``1 <= hop <= window``; the feature is left unchanged.
+        """
         old_window = self._window
         window, hop = self._validated(self._window if window is None else window, self._hop if hop is None else hop)
         if self._buffer is not None:
@@ -263,13 +394,13 @@ class WindowedFeature(Feature):
         self._window_changed()
 
     def _window_changed(self) -> None:
-        """Called after `window` or `hop` changed: a feature whose block depends on them updates it here."""
+        """Called after ``window`` or ``hop`` changed: a feature whose block depends on them updates it here."""
 
     @abstractmethod
     def _process_window(self, *series: Any, timestamp: Optional[float] = None) -> Result:
-        """The hook subclasses implement: the feature of one complete window `(channels, window)` per input.
+        """The hook subclasses implement: the feature of one complete window ``(channels, window)`` per input.
 
-        Private: `process` calls it once the buffer holds a full window.
+        Private: ``process`` calls it once the buffer holds a full window.
         """
 
     def process(self, *sample: Any, timestamp: Optional[float] = None) -> Result:

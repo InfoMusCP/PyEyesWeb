@@ -10,7 +10,7 @@ Layout of `tests/`:
   `humanoid_inputs.py`, `imaging_inputs.py`, `symmetry_inputs.py`.
 - `data/`: frozen outputs and recordings; `tools/regenerate_trajectory_reference.py` regenerates `trajectory_reference.npz`.
 
-EYESWEB_CORE_PATH: directory holding `eyesweb_core*.pyd` (the CMake build output of the private EyesWebCore repository: `EyesWebCore/build/Release`). It is put on `sys.path` before any
+EYESWEB_CORE_PATH: directory holding `eyesweb_core*.pyd` (a local build of the core). It is put on `sys.path` before any
 test module is collected, so tests need no path handling of their own. The core is optional: tests that need it skip.
 """
 

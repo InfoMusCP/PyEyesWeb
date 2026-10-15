@@ -1,9 +1,8 @@
-"""Kinematics of a moving point: velocity, acceleration, curvature, direction (EyesWeb TrajectoryAnalysis).
+"""Kinematics of a moving point: velocity, acceleration, jerk, curvature and direction.
 
-`Kinematics` returns a `Result` with one output per requested `output_type` (`velocity` by default), named after it:
-a scalar for TANGENTIAL output, a `(dimension,)` vector with components x, y, z for COMPONENTS. A `direction` output is
-always COMPONENTS (the schema mirrors that). `timestamp` is the timestamp in seconds. Point and time-series input always
-give `OK`, except when a result is not finite.
+``Kinematics`` returns a ``Result`` with one output per requested ``output_type`` (``velocity`` by default), named after
+it: a scalar for ``output_dims="tangential"``, a ``(dims,)`` vector with the components x, y, z for ``"components"``;
+a ``direction`` output is always a vector. ``timestamp`` is the timestamp in seconds.
 """
 
 from typing import Any, Optional
@@ -61,21 +60,92 @@ class _InferredDimsBlock(InferredDims, FrameFeature):
 
 @describe(Layer.LOW_LEVEL, eyesweb="TrajectoryFeatures-1D/2D/3D (Kinematics1D/2D/3D)")
 class Kinematics(_InferredDimsBlock):
-    """EyesWeb TrajectoryFeatures-1D/2D/3D (Kinematics1D/2D/3D).
+    r"""Velocity, acceleration, jerk, curvature or direction of a moving point, from a Savitzky-Golay fit.
 
-    Point input (`input_mode="point"`, default; `Kinematics.from_point(...)`): `process(point, *, timestamp=None)` takes one
-    `(D,)` sample per call (`run` takes `(T, D)`); the block keeps its own window, so no buffer is added here. Time-series
-    input (`input_mode="time_series"`; `Kinematics.from_series(...)`): `process(series, *, timestamp=None)` takes a `(D, N)`
-    series, newest sample last. The factories take the constructor's parameters except `input_mode`. `timestamp` is a
-    timestamp in seconds (`NaN` in the result when not given).
+    ``Kinematics`` describes how a point (a joint, a marker, the centre of mass) moves along its path; with one
+    component it describes a scalar signal. The position samples are smoothed and differentiated in one step by a
+    Savitzky-Golay filter: the newest ``filter_window_length`` samples are fitted by a polynomial of order
+    ``filter_polyorder`` and the estimate is the fit, or one of its derivatives, evaluated at the centre of that window.
+    With :math:`\mathbf{x}(t)` the smoothed position, the derivatives are taken with respect to time in seconds,
 
-    `output_type` is one of `smoothed`, `velocity`, `acceleration`, `jerk`, `curvature`, `direction`, or a list of them
-    (`output_type=["velocity", "acceleration"]`): the result has one output per type, in that order and named after it, all
-    computed from the same Savitzky-Golay pass and each identical to a `Kinematics` built for that type alone. `output_dims`
-    applies to every output: a scalar for TANGENTIAL (default), a `(dimension,)` vector (components x, y, z) for COMPONENTS,
-    except `direction`, which is always a vector. Derivatives are per second^k with the time step. The curvature-based smoothness index is a separate feature, `CurvatureDispersion`, fed with the velocity
-    and the acceleration of this one (`output_dims="components"`). The Savitzky-Golay filter has frame
-    `filter_window_length` (odd, > 3 and > `filter_polyorder`) and order `filter_polyorder`; the estimate is the fit to the newest `filter_window_length` samples (the window holds that many) evaluated at their centre, so it lags the newest sample by (filter_window_length - 1) / 2 samples (EyesWeb skips the newest sample and lags one sample more).
+    .. math::
+
+        \mathbf{v} = \frac{d\mathbf{x}}{dt}, \qquad \mathbf{a} = \frac{d^2\mathbf{x}}{dt^2}, \qquad
+        \mathbf{j} = \frac{d^3\mathbf{x}}{dt^3},
+
+    and the curvature is that of the path (:math:`1/r` for a circle of radius :math:`r`); the direction is the unit
+    vector of the velocity. Because the estimate is centred in the window it lags the newest sample by
+    ``(filter_window_length - 1) / 2`` samples (70 ms at 100 Hz with the default window of 15). The step :math:`dt` of
+    a call is the difference to the previous ``timestamp`` if given, else ``1 / sampling_rate``, else one second per
+    sample.
+
+    ``output_type`` may be a list; the result then holds one output per type, in that order, all computed in the same
+    pass and each identical to a ``Kinematics`` built for that type alone. The curvature-based smoothness index of
+    a movement is a separate feature, ``CurvatureDispersion``, fed with the velocity and acceleration vectors of this
+    one (``output_dims="components"``).
+
+    Parameters
+    ----------
+    dims : int, optional
+        Number of components of a point: 1, 2 or 3. ``None`` (default) takes it from the first frame; a later frame
+        of another size raises. *(structural)*
+    input_mode : {"point", "time_series"}, optional
+        ``"point"`` (default): one position per call, the feature keeps its own window. ``"time_series"``: a series
+        of positions buffered by the caller per call. ``Kinematics.from_point(...)`` and
+        ``Kinematics.from_series(...)`` build one or the other. *(structural)*
+    output_dims : {"tangential", "components"}, optional
+        ``"tangential"`` (default): each output is a scalar, the magnitude of the vector (the speed, for the
+        velocity). ``"components"``: a ``(dims,)`` vector with the components x, y, z. A ``"direction"`` output is
+        always a vector. *(structural)*
+    output_type : str or sequence of str, optional
+        What to compute: ``"smoothed"`` (the filtered position), ``"velocity"`` (default), ``"acceleration"``,
+        ``"jerk"``, ``"curvature"`` or ``"direction"``, or a list of them. *(structural)*
+    filter_window_length : int, optional
+        Samples of the Savitzky-Golay window; odd, greater than 3 and than ``filter_polyorder``. Defaults to ``15``.
+        *(structural)*
+    filter_polyorder : int, optional
+        Order of the fitted polynomial. Defaults to ``3``. *(structural)*
+    movement_threshold : float, optional
+        Speed below which the point counts as still and the curvature is reported as 0, in m/s (scaled by
+        ``units``). Defaults to ``0.005``. *(live)*
+    sampling_rate : float, optional
+        Sampling rate in Hz, used when no timestamp is given. Defaults to ``None`` (one second per sample, and the
+        ``reason`` says so). *(live)*
+    units : {"m", "mm"}, optional
+        Unit of the position data. It scales ``movement_threshold`` and names the output units (``m/s``,
+        ``mm/s``, ...); the data and the outputs are never scaled. Defaults to ``"m"``. *(live)*
+
+    Notes
+    -----
+    **Inputs.** In ``"point"`` mode ``process(point, *, timestamp=None)`` takes one ``(D,)`` position per call and
+    ``run(points, *, timestamps=None)`` a ``(T, D)`` recording. In ``"time_series"`` mode ``process(series)`` takes a
+    ``(D, N)`` matrix, newest sample last, with ``N >= filter_window_length`` and the same ``N`` at every call; it
+    describes the newest sample. ``timestamp`` is in seconds.
+
+    **Outputs.** One output per requested type, named after it: ``smoothed`` (unit of the data), ``velocity`` (unit/s),
+    ``acceleration`` (unit/s^2), ``jerk`` (unit/s^3), ``curvature`` (1/unit; 0 below ``movement_threshold``),
+    ``direction`` (dimensionless unit vector). A scalar for ``output_dims="tangential"``, a ``(dims,)`` vector for
+    ``"components"`` (``direction`` always a vector).
+
+    **Statuses.** ``OK`` from the first sample on (the window is filled from the first call); ``INVALID_INPUT`` when
+    the input or a result is not finite, or the timestamp does not increase. The first estimates, before the window
+    holds ``filter_window_length`` real samples, are those of a partly filled window.
+
+    Corrected in the core: acceleration and jerk are the true second and third derivatives (they were the polynomial
+    coefficients, half and a sixth of them); the 2D tangential curvature was too large by a factor
+    :math:`\sqrt{2}`; the component curvature used a wrong normalisation. The estimate is the fit to the newest
+    ``filter_window_length`` samples read at their centre; EyesWeb leaves the newest sample out of the fit, so its
+    estimate lags one sample more.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import Kinematics
+    >>> t = np.arange(100) / 100.0
+    >>> path = np.c_[0.5 * t, np.zeros_like(t)]  # 0.5 m/s along x, sampled at 100 Hz
+    >>> feature = Kinematics(sampling_rate=100.0, output_type="velocity")
+    >>> round(float(feature.run(path).velocity[-1]), 3)
+    0.5
     """
     _core_class = _trajectory.Kinematics
     _timed = True
@@ -83,15 +153,15 @@ class Kinematics(_InferredDimsBlock):
 
     @input_mode_factory("point")
     def from_point(cls) -> "Kinematics":
-        """Kinematics of a point streamed one sample per call: `process(point)` takes a `(D,)` position (or signal value),
-        `run` a `(T, D)` recording. Stateful: the block keeps its sliding Savitzky-Golay window. Takes the parameters of
-        `Kinematics` except `input_mode`."""
+        """Kinematics of a point streamed one sample per call: ``process(point)`` takes a ``(D,)`` position (or signal
+        value), ``run`` a ``(T, D)`` recording. Stateful: the feature keeps its sliding Savitzky-Golay window. Takes the
+        parameters of ``Kinematics`` except ``input_mode``."""
 
     @input_mode_factory("time_series")
     def from_series(cls) -> "Kinematics":
-        """Kinematics of a series buffered by the caller: `process(series)` takes a `(D, N)` matrix (N at least
-        `filter_window_length`, the same N every call, newest sample last) and describes its newest sample. The
-        Takes the parameters of `Kinematics` except `input_mode`."""
+        """Kinematics of a series buffered by the caller: ``process(series)`` takes a ``(D, N)`` matrix (``N`` at least
+        ``filter_window_length``, the same ``N`` at every call, newest sample last) and describes its newest sample.
+        Takes the parameters of ``Kinematics`` except ``input_mode``."""
 
     def _output_types(self) -> list:
         """The requested output types as enum members, in order."""

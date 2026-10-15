@@ -1,7 +1,8 @@
 """Cut asynchronous streams into windows of the same duration (EyesWeb Synchronizer).
 
-This is stream plumbing, not a feature: it has no `Result` and is not in `pyeyesweb.catalog()`. Use it to feed several
-features with data that arrives in chunks of different sizes and rates (audio, motion capture, video frames).
+This is stream plumbing, not a feature: it has no :class:`~pyeyesweb.data_models.Result` and is not in
+:func:`pyeyesweb.catalog`. Use it to feed several features with data that arrives in chunks of different sizes and
+rates (audio, motion capture, video frames).
 """
 
 import dataclasses
@@ -16,8 +17,21 @@ _Synchronizer = core.base.TimeWindowSynchronizer
 
 @dataclasses.dataclass(frozen=True)
 class SynchronizedWindow:
-    """One window of every stream: `samples[i]` is a `(samples, channels)` array for a sampled stream and `None` for a
-    frame stream, whose latest frame is `frames[i]` (`None` for a sampled stream or before any frame arrived)."""
+    """One window of every stream, as returned by :meth:`TimeWindowSynchronizer.pop`.
+
+    Attributes
+    ----------
+    start_time : float
+        Presentation time of the start of the window, in seconds.
+    duration : float
+        Duration of the window, in seconds (the ``window`` of the synchronizer).
+    samples : tuple of (ndarray or None)
+        One entry per stream, in the order of the ``inputs`` of the synchronizer: a ``(samples, channels)`` array for a
+        sampled stream, ``None`` for a frame stream.
+    frames : tuple
+        One entry per stream: the latest frame that starts before the end of the window for a frame stream (``None``
+        before any frame arrived), ``None`` for a sampled stream.
+    """
 
     start_time: float
     duration: float
@@ -26,30 +40,53 @@ class SynchronizedWindow:
 
 
 class TimeWindowSynchronizer:
-    """Re-chunk streams into windows that cover the same interval `[t, t + window)`, `t` advancing by one window.
+    r"""Re-chunk streams into windows that cover the same interval :math:`[t, t + \mathrm{window})`.
 
-    A sampled stream (audio, motion capture, any time series) gives `int(sampling_rate * window)` samples per window,
-    cut from and concatenated over the chunks received: samples that do not fit stay for the next window. A frame stream
-    (video) gives the latest frame that starts before the end of the window.
+    Sensors and media rarely deliver data in blocks of the same size or at the same rate: audio comes in thousands of
+    samples, motion capture in a few, video in single frames. The synchronizer buffers every stream and releases, one window
+    at a time, the data of the same stretch of time, ready to be given together to features that need aligned inputs;
+    :math:`t` advances by one window at each ``pop()``. A sampled stream (audio, motion capture, any time series) gives
+    ``int(sampling_rate * window)`` samples per window, cut from and concatenated over the chunks received: samples that do
+    not fit stay for the next window. A frame stream (video) gives the latest frame that starts before the end of the
+    window. The synchronizer is pull-based: ``push`` and ``push_frame`` add data, ``ready()`` says whether every stream
+    holds enough for the next window and ``pop()`` returns it.
 
     Parameters
     ----------
     window : float
         Duration of every window in seconds, > 0; it must hold at least one sample of every sampled stream.
     inputs : sequence of (int, float) or None
-        One entry per stream, in the order used by `push`: `(channels, sampling_rate)` for a sampled stream (the rate
-        in Hz), `None` for a frame stream.
-    start_time : float, optional
-        Presentation time in seconds of the start of the first window (default 0).
+        One entry per stream, in the order used by ``push``: ``(channels, sampling_rate)`` for a sampled stream (the rate
+        in Hz), ``None`` for a frame stream.
+    start_time : float, default 0.0
+        Presentation time in seconds of the start of the first window.
+
+    Notes
+    -----
+    ``push(stream, samples, timestamp=None)`` adds a ``(samples, channels)`` chunk to a sampled stream (a 1-D array is one
+    channel); with ``timestamp`` (seconds, of the first sample) the samples older than the start of the next window are
+    dropped. ``push_frame(stream, frame, timestamp)`` adds a frame (any object) with its presentation time in seconds.
+    ``pop()`` returns a :class:`SynchronizedWindow` and raises ``RuntimeError`` when ``ready()`` is false;
+    ``samples_per_window(stream)`` gives the samples of a window of a sampled stream (0 for a frame stream); ``reset()``
+    drops everything buffered and restarts at ``start_time``.
+
+    **Corrected in the core.** The part of a chunk that did not fit in a window is kept and opens the next window (the
+    original dropped it as soon as a window was full). Unlike the EyesWeb block, which outputs once per activation and
+    possibly an incomplete window, this one outputs only complete windows.
 
     Examples
     --------
-    >>> sync = TimeWindowSynchronizer(0.04, [(2, 48000.0), (51, 100.0), None])   # audio, mocap, video
-    >>> sync.push(0, audio_chunk)                    # (samples, 2)
-    >>> sync.push(1, mocap_chunk)                    # (samples, 51)
-    >>> sync.push_frame(2, frame, timestamp=0.01)
-    >>> while sync.ready():
-    ...     window = sync.pop()                      # window.samples[0] is (1920, 2)
+    >>> import numpy as np
+    >>> from pyeyesweb.physical_signals import TimeWindowSynchronizer
+    >>> sync = TimeWindowSynchronizer(0.04, [(1, 100.0), None])      # a 100 Hz signal and a video, windows of 40 ms
+    >>> sync.push(0, np.arange(3.0))                                 # 3 of the 4 samples of the first window
+    >>> sync.push_frame(1, "frame", timestamp=0.01)
+    >>> sync.ready()
+    False
+    >>> sync.push(0, np.arange(3.0, 6.0))                            # the extra 2 samples stay for the next window
+    >>> window = sync.pop()
+    >>> window.samples[0].ravel().tolist(), window.frames[1], window.start_time
+    ([0.0, 1.0, 2.0, 3.0], 'frame', 0.0)
     """
 
     def __init__(self, window: float, inputs: Sequence[Optional[Tuple[int, float]]], start_time: float = 0.0):

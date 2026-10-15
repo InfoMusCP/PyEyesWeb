@@ -1,7 +1,8 @@
 """Peak events of a scalar signal (EyesWeb DANCE).
 
-The block is a stateful stream over a scalar signal: `process(value, timestamp=None)` takes one sample per call and returns
-an always-`OK` `Result` whose `timestamp` is the timestamp in seconds (`NaN` when not given); `reset()` restarts the stream.
+The feature is a stateful stream over a scalar signal: `process(value, timestamp=None)` takes one sample per call and
+returns an always-`OK` `Result` whose `timestamp` is the timestamp in seconds (`NaN` when not given); `reset()`
+restarts the stream.
 """
 
 from typing import Any, Optional
@@ -32,7 +33,41 @@ class _ScalarStream(FrameFeature):
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="scalar_peak_detector")
 class ScalarPeakDetector(_ScalarStream):
-    """EyesWeb scalar_peak_detector. Output `is_peak` (bool): a peak was detected on this sample."""
+    """Peak detection on a scalar signal: flags the samples at which a peak has been found.
+
+    The detector keeps a buffer of the last ``window`` samples of the signal and reports a peak when the buffered
+    signal has a local maximum above the detection ``threshold``. It is used to extract events from a continuous
+    movement signal (for example the peaks of a speed or an energy profile), which can be fed to
+    ``BinaryPulsesRegularity``. A peak is reported a few samples after the maximum, once the following samples are in
+    the buffer.
+
+    Parameters
+    ----------
+    window : int, optional
+        Length of the buffer, in samples. Defaults to ``5``. *(structural)*
+    threshold : float, optional
+        Detection threshold, in the units of the signal. Defaults to ``0.01``. *(live)*
+
+    Notes
+    -----
+    **Inputs.** One value per call (a single channel); the stream keeps its state between calls and ``reset()``
+    restarts it.
+
+    **Outputs.** ``is_peak`` (bool): a peak was detected on this sample. ``timestamp`` is the timestamp in seconds
+    (``NaN`` when not given).
+
+    **Statuses.** Always ``OK``.
+
+    Corrected in the core: the running maximum was seeded with the smallest positive number, so a signal that stays
+    at or below 0 never produced a peak.
+
+    Examples
+    --------
+    >>> from pyeyesweb.analysis_primitives import ScalarPeakDetector
+    >>> detector = ScalarPeakDetector(window=3, threshold=0.5)
+    >>> [detector.process(value).is_peak for value in [0, 1, 3, 1, 0, 0, 2, 0, 0, 0]]
+    [False, False, False, False, True, False, False, False, True, False]
+    """
     _core_class = _dance.ScalarPeakDetector
     _core_names = {"window": "buffer_length"}
 

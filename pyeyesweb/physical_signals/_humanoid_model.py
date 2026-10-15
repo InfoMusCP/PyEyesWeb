@@ -1,4 +1,6 @@
-"""The humanoid's joint and bone tables and `MassSpringModel`, the model type of the features in `humanoid.py`."""
+"""The joint and bone tables of the humanoid and :class:`MassSpringModel`, the model type of the features in
+:mod:`pyeyesweb.physical_signals.humanoid`.
+"""
 
 import os
 from typing import Any, Tuple, Union
@@ -20,35 +22,53 @@ _CORE_MODEL = _humanoid.MassSpringModel
 
 
 class MassSpringModel:
-    """A named set of masses and springs (bones): the model of the `GenericModel*` features.
+    """A named set of masses and springs (bones): the model of the ``GenericModel*`` features.
 
-    Build it from an EyesWeb XML file (`MassSpringModel.from_xml_file(path)`; `<Model><Masses>...<Springs>...`) or
-    by hand with `add_mass` and `add_spring`, and give it to a feature as `model=` (a path to an XML file is accepted
-    there too). The features copy the model they get; `feature.model` returns a copy of its current state (the
-    estimator's estimated parameters, for instance).
+    A mass has a name, a mass in kg and a position; a spring joins two masses, the hinge (``mass1``) and the tip
+    (``mass2``), with a rest length, a rest direction, a stiffness and a damping for the length and for the direction.
+    Build the model from an EyesWeb XML file (``MassSpringModel.from_xml_file(path)``; ``<Model><Masses>...<Springs>...``) or
+    by hand with ``add_mass`` and ``add_spring``, and give it to a feature as ``model=`` (a path to an XML file is accepted
+    there too). The features copy the model they get; ``feature.model`` returns a copy of its current state (the
+    estimated parameters of a :class:`GenericModelEstimator`, for instance). Lengths and positions are in the unit of your
+    data; the dynamics are those of the model in that unit (see :class:`GenericModelSimulator`).
 
     Parameters
     ----------
-    reference_direction : tuple of float, optional
-        Reference direction of the rest directions of the springs (default the x axis).
-    name : str, optional
+    reference_direction : tuple of float, default (1.0, 0.0, 0.0)
+        Reference direction of the rest directions of the springs (dimensionless; the x axis by default).
+    name : str, default "model"
         Name of the model.
 
     Methods
     -------
     from_xml_file(path), from_xml_string(xml)
-        Load a model; the damping attributes of the file are relative (1 = critical damping).
+        Load a model; ``FileNotFoundError`` for a missing file, ``ValueError`` for a malformed model. The damping attributes
+        of the file are relative (1 = critical damping).
     to_xml(), save_xml_file(path)
-        The XML of the model (the damping written is the absolute coefficient, as the EyesWeb estimator does).
-    add_mass(name, mass, position), add_spring(name, mass1, mass2, rest_length, length_stiffness, rest_direction,
-    dir_stiffness, length_damping, dir_damping)
-        Build the model by hand (`mass1` is the hinge of a spring, `mass2` its tip). Lengths and positions are in the
-        unit of your data.
+        The XML of the model. The damping written is the absolute coefficient, as the EyesWeb estimator does, so a saved model
+        does not reload to the same dynamics.
+    add_mass(name, mass, position), add_spring(name, mass1, mass2, rest_length, length_stiffness, rest_direction, dir_stiffness, length_damping, dir_damping)
+        Build the model by hand (``mass1`` is the hinge of a spring, ``mass2`` its tip); the two damping values are relative
+        (1 = critical damping, the default).
     export_configuration(), set_parameter(label, value)
-        The parameters as a dict `label -> value` (`spring::<name>::stiffness`, `::damping`, `::dir_stiffness`,
-        `::dir_damping`, `mass::<name>::mass`), and one parameter set by its label.
+        The parameters as a dict ``label -> value`` (``spring::<name>::stiffness``, ``::damping``, ``::dir_stiffness``,
+        ``::dir_damping``, ``mass::<name>::mass``), and one parameter set by its label.
     mass_names, spring_names, spring_masses(name), positions()
-        What the model holds.
+        What the model holds: the names, the two masses of a spring and a dict ``mass name -> position``.
+
+    Examples
+    --------
+    >>> from pyeyesweb.physical_signals import MassSpringModel
+    >>> model = MassSpringModel(name="rod")
+    >>> model.add_mass("root", 1e10)
+    >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
+    >>> model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
+    >>> model
+    MassSpringModel(2 masses, 1 springs)
+    >>> model.mass_names, model.spring_names
+    (['root', 'tip'], ['rod'])
+    >>> MassSpringModel.from_xml_string(model.to_xml()).mass_names
+    ['root', 'tip']
     """
 
     def __init__(self, reference_direction: Tuple[float, float, float] = (1.0, 0.0, 0.0), name: str = "model"):

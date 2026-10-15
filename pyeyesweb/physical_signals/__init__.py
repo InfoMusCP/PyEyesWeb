@@ -1,4 +1,6 @@
-"""Layer 1, physical signals and virtual sensors: frame-level, continuous data (skeletons, space, images) and the stream plumbing that feeds them (`TimeWindowSynchronizer`)."""
+"""Layer 1, physical signals and virtual sensors: frame-level, continuous data (skeletons, space, images) and the
+stream plumbing that feeds them (:class:`TimeWindowSynchronizer`).
+"""
 
 from .humanoid import (
     HumanoidSimulator, HumanoidOrientations, GenericModelOrientations, GenericModelSimulator, GenericModelPredictor,

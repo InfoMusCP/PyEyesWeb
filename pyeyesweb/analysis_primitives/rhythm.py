@@ -16,30 +16,45 @@ from pyeyesweb.data_models.results import Output, Result, Schema, Status
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="binary_pulses_regularity (BinaryPulsesRegularity)")
 class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
-    """Whether the pulses of a window are equally spaced (EyesWeb BinaryPulsesRegularity).
+    """Whether the pulses of a window are equally spaced.
 
-    `process(sample, *, timestamp=None)` takes one value of a single-channel signal per call, in which a non-zero value
-    is a pulse (a step, a beat, the `is_peak` flag of `ScalarPeakDetector`). The feature buffers `window` samples and
-    computes every `hop` samples (`WARMING_UP` while the first window fills, `NO_OUTPUT` between hops). The distance
-    between the first two pulses of a window is the reference interval; the window is regular when at least three
-    pulses are found and every other interval differs from the reference by at most `threshold` samples.
+    A pulse is a non-zero sample of a single-channel signal (a step, a beat, the ``is_peak`` flag of
+    ``ScalarPeakDetector``). The distance between the first two pulses of a window is the reference interval; the
+    window is regular when at least three pulses are found and every other interval differs from the reference by at
+    most ``threshold`` samples. It measures the regularity of a rhythm, such as a steady walk or a metronomic
+    gesture.
 
     Parameters
     ----------
     window : int
-        Samples per window, >= 3 (three pulses are needed).
+        Samples per window, at least 3 (three pulses are needed). Changing it on a running feature keeps the newest
+        samples.
     hop : int, optional
-        New samples between two windows (default 1).
+        New samples between two windows. Defaults to ``1``.
     threshold : int, optional
-        Tolerance in samples when two intervals are compared, >= 0 (default 0: intervals must be equal). Live.
+        Tolerance in samples when two intervals are compared, at least 0. Defaults to ``0``: the intervals must be
+        equal. *(live)*
 
-    Returns
-    -------
-    Result
-        `is_regular` (EyesWeb "Regularity Index"): the intervals between the pulses are equal within `threshold`;
-        `pulse_count`: number of pulses (non-zero samples) in the window; `is_regularity_detected` (EyesWeb "Regularity
-        Detected" trigger): `is_regular` on the first window after a window that was not. `INVALID_INPUT` for a
-        window with NaN or infinite values.
+    Notes
+    -----
+    **Inputs.** One value per call (a single channel); a non-zero value is a pulse.
+
+    **Outputs.** ``is_regular`` (bool): the intervals between the pulses are equal within ``threshold``;
+    ``pulse_count`` (int, at least 0): number of pulses (non-zero samples) in the window;
+    ``is_regularity_detected`` (bool): ``is_regular`` on the first window after a window that was not regular (a
+    trigger).
+
+    **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` for a
+    window that holds a ``NaN`` or an infinite value.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.analysis_primitives import BinaryPulsesRegularity
+    >>> feature = BinaryPulsesRegularity(window=10)
+    >>> result = feature.run(np.array([1, 0, 0, 1, 0, 0, 1, 0, 0, 1.0]))[-1]
+    >>> result.is_regular, result.pulse_count
+    (True, 4)
     """
     _core_class = core.base.BinaryPulsesRegularity
     MIN_WINDOW = 3

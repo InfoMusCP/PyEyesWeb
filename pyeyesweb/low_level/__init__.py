@@ -1,5 +1,6 @@
-"""Layer 2, low-level features: quantities of a movement over up to about 0.5 s (kinematics, energy, shape,
-symmetry, smoothness, shape, and the directness and non-planarity of a path)."""
+"""Layer 2, low-level features: quantities of a movement over up to about 0.5 s (kinematics, energy, contraction, symmetry
+and balance, smoothness, contour shape, and the directness and non-planarity of a path).
+"""
 
 from .kinematics import Kinematics
 from .energy import KineticEnergy

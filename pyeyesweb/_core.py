@@ -1,16 +1,16 @@
-"""Access to the compiled EyesWeb core: C++ ports of the EyesWeb feature blocks.
+"""Access to the compiled EyesWeb core: the C++ ports of the EyesWeb feature blocks.
 
-The module comes from the `eyesweb_core` package, a binary wheel built from the private EyesWebCore repository (the C++
-is closed source and not part of PyEyesWeb). During development a build of that repository is used instead: the folder
-named by `EYESWEB_CORE_PATH` (normally `EyesWebCore/build/Release`) is put first on `sys.path`, and the import fails
-if the module found is not the one in that folder. Whatever is loaded must report a compatible version.
+The core is part of the ``pyeyesweb`` wheel (the module ``pyeyesweb._eyesweb_core``) and is installed with
+``pip install pyeyesweb``; its source is not part of this repository. To use a locally built core instead, set the
+environment variable ``EYESWEB_CORE_PATH`` to the folder holding it: that folder is put first on ``sys.path``, and the
+import fails if the module found is not the one in that folder. Whatever is loaded must report a compatible version.
 """
 
 import os
 import sys
 from pathlib import Path
 
-REQUIRED_CORE = (2, 0)  # (major, minor) of `eyesweb_core.__version__`; bump with EyesWebCore's CMake version
+REQUIRED_CORE = (2, 0)  # (major, minor) of `eyesweb_core.__version__`; bump with the version of the core
 
 try:
     from pyeyesweb import _eyesweb_core as core  # type: ignore[attr-defined]
@@ -22,7 +22,7 @@ except ImportError:
     except ImportError as error:
         raise ImportError(
             "pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). "
-            "Install a pyeyesweb wheel that includes it, or set EYESWEB_CORE_PATH to a development build of eyesweb_core."
+            "Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core."
         ) from error
     if development_path and Path(development_path).resolve() not in Path(core.__file__).resolve().parents:
         raise ImportError(f"EYESWEB_CORE_PATH is {development_path}, but eyesweb_core was already loaded from {core.__file__}.")

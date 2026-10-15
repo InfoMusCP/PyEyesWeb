@@ -1,8 +1,7 @@
-"""Barycenter and equilibrium analysis for postural snapshots.
+"""Equilibrium of a posture: where the barycenter lies within the support region of the two feet.
 
-This module provides features for analysing postural balance. It computes the
-relationship between two support points (e.g. feet) and a barycenter to
-estimate the stability of a movement.
+The feature takes the two feet and the barycenter as points on the floor plane and measures how well the barycenter is
+centred inside an elliptical support region built around the feet.
 """
 
 from typing import Any, Optional
@@ -19,37 +18,72 @@ from pyeyesweb.base.core_feature import CoreFeature
 
 @describe(Layer.LOW_LEVEL)
 class Equilibrium(CoreFeature):
-    """Elliptical equilibrium evaluation between two feet and a barycenter (maths in the compiled core).
+    r"""Equilibrium of a barycenter within the elliptical support region between two feet.
 
-    Computes how well the barycenter is centered between two support points
-    using an elliptical model.
+    Estimates the postural balance of a person from one snapshot of the floor plane: the barycenter is well balanced
+    when it lies near the centre of the segment joining the feet, and the balance is lost when it leaves the support
+    region. The support region is an ellipse centred midway between the left foot :math:`P_L` and the right foot
+    :math:`P_R`, with its major axis along the line through the feet. With :math:`d = \lVert P_R - P_L \rVert` and the
+    margin :math:`m`, its semi-axes are
 
-    !!! note
-        This method relies on 2D projections of the 3D joints: the caller picks the floor plane.
+    .. math::
 
-    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/postural_balance.md).
+        a = \frac{d}{2} + m, \qquad b = m \, w_y,
 
-    Three inputs, `(x, y)` points on the floor plane: `process(left_foot, right_foot, barycenter, timestamp=None)` and
-    `run(left_foot, right_foot, barycenter, timestamps=None)`; stateless. The barycenter is computed by the caller, and
-    so is the projection onto the floor: for Y-up data (Qualisys) take the columns `[0, 2]`, e.g.
-    `barycenter = positions.mean(axis=0)[[0, 2]]`. `timestamp` is the timestamp in seconds (`NaN` when not given).
+    where :math:`w_y` is ``y_weight``. Let :math:`(x', y')` be the position of the barycenter relative to the centre of
+    the ellipse, rotated so that the first axis runs from the left foot to the right foot. Then
+
+    .. math::
+
+        q = \left(\frac{x'}{a}\right)^2 + \left(\frac{y'}{b}\right)^2, \qquad
+        E = \begin{cases} 1 - \sqrt{q} & q \le 1 \\ 0 & q > 1 \end{cases}
+
+    so that :math:`E` is 1 when the barycenter is exactly at the centre of the support and falls linearly with the
+    normalised distance to 0 on the boundary of the ellipse and outside it. The ``angle`` output is the direction of the
+    foot-to-foot vector, :math:`\operatorname{atan2}(y_R - y_L, x_R - x_L)`, in degrees.
+
+    Three inputs, each an ``(x, y)`` point on the floor plane: ``process(left_foot, right_foot, barycenter, *,
+    timestamp=None)``; ``run`` takes the three recordings in the same order. The barycenter is computed by the caller,
+    and so is the projection onto the floor: for Y-up data (for example Qualisys) take the columns ``[0, 2]``, as in
+    ``positions.mean(axis=0)[[0, 2]]``. The feature keeps no state.
 
     Parameters
     ----------
     margin : float, optional
-        Safety margin added to the support ellipse, in the unit of the points. It is written in metres, like the
-        other lengths of the library, and multiplied by 1000 when `units="mm"`. Defaults to `0.1` (the 100 mm of
-        the original, whose margin was in millimetres).
+        Safety margin added to the support ellipse, in metres (it is written in metres whatever the unit of the data,
+        and multiplied by 1000 when ``units="mm"``). It also sets the semi-minor axis of the ellipse together with
+        ``y_weight``. Defaults to ``0.1`` m. *(live)*
     y_weight : float, optional
-        Weighting factor for the semi-minor axis of the ellipse (`margin * y_weight`).
-        Defaults to `0.5`.
+        Dimensionless weight of the margin in the semi-minor axis of the ellipse, :math:`b = m \, w_y`. Defaults to
+        ``0.5``. *(live)*
     units : {"m", "mm"}, optional
-        Unit of the data; `margin` is scaled by 1000 for `"mm"`. Defaults to `"m"`.
+        Unit of the data (the feet and barycenter coordinates); the data and the outputs are never scaled, only
+        ``margin`` is. Defaults to ``"m"``.
+
+    Notes
+    -----
+    **Outputs.** ``equilibrium``: dimensionless, in [0, 1], 1 when the barycenter is at the centre of the support.
+    ``angle``: degrees, in [-180, 180], direction of the vector from the left to the right foot.
+
+    **Statuses.** ``INVALID_INPUT`` for an empty or non-finite point and when the two feet coincide (there is no support
+    vector); every output is then empty.
+
+    The default margin is 0.1 m; it was 100 mm in the original block, whose lengths were in millimetres, and the same
+    numbers are obtained for the same coordinates by passing ``units="mm"``.
+
+    References
+    ----------
+    :cite:`ghisio2015exergames`
 
     Examples
     --------
-    >>> eq = Equilibrium(margin=0.1, y_weight=0.5)
-    >>> result = eq.process(left_foot=(-0.1, 0.0), right_foot=(0.1, 0.0), barycenter=(0.0, 0.0))
+    >>> from pyeyesweb.low_level import Equilibrium
+    >>> equilibrium = Equilibrium(margin=0.1)
+    >>> centred = equilibrium.process((-0.1, 0.0), (0.1, 0.0), (0.0, 0.0))
+    >>> print(f"{centred.equilibrium:.2f} {centred.angle:.0f}")
+    1.00 0
+    >>> print(f"{equilibrium.process((-0.1, 0.0), (0.1, 0.0), (0.1, 0.0)).equilibrium:.2f}")
+    0.50
     """
 
     _OUTPUTS = Schema(
@@ -75,7 +109,7 @@ class Equilibrium(CoreFeature):
 
     @property
     def margin(self) -> float:
-        """Safety margin added to the support ellipse (metres; scaled for `units="mm"`)."""
+        """Safety margin added to the support ellipse (metres; scaled for ``units="mm"``)."""
         return self._params["margin"]
 
     @margin.setter
@@ -92,9 +126,9 @@ class Equilibrium(CoreFeature):
         self._set_param("y_weight", float(value))
 
     def process(self, left_foot: Any, right_foot: Any, barycenter: Any, *, timestamp: Optional[float] = None) -> Result:
-        """Elliptical equilibrium of one posture: outputs `equilibrium` (in `[0, 1]`) and `angle` (degrees).
+        """Elliptical equilibrium of one posture: outputs ``equilibrium`` (in [0, 1]) and ``angle`` (degrees).
 
-        `Status.INVALID_INPUT` for an empty or non-finite point, and when the feet coincide (no support vector).
+        ``INVALID_INPUT`` for an empty or non-finite point, and when the feet coincide (no support vector).
         """
         points = [np.asarray(point, dtype=float) for point in (left_foot, right_foot, barycenter)]
         for point in points:

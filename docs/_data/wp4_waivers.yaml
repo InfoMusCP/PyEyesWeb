@@ -1,5 +1,3 @@
 # Classes whose numpydoc Parameters section does not match the signature (WP0 audit). Tolerated until WP4 rewrites the
 # docstrings; the extension fails when a waiver is no longer needed, so this list can only shrink.
-- SilhouetteCentroids
-- CurvatureVelocityCorrelation
-- Rarity
+[]

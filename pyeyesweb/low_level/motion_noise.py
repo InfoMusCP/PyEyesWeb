@@ -1,4 +1,4 @@
-"""Noise test of the skeleton motion (EyesWeb GestureSegmenter, IsUserMotionRandomic2): per-joint speed variances."""
+"""Noise test of the skeleton motion: variances of the per-joint speeds."""
 
 from typing import Any, Optional, Sequence, Tuple
 
@@ -14,16 +14,59 @@ from pyeyesweb.skeletons import with_skeleton
 
 @describe(Layer.LOW_LEVEL, eyesweb="GestureSegmenter (IsUserMotionRandomic2)")
 class MotionNoiseDetector(LabelGuard, FrameFeature):
-    """The noise test of the EyesWeb GestureSegmenter (IsUserMotionRandomic2): is the motion of the skeleton random?
+    r"""Noise test of the skeleton motion: is the variation of the joint speeds too small to be a gesture?
 
-    Input: one skeleton frame per call, an `(N, 3)` array in the order of `labels`, or a dict `label -> (x, y, z)`
-    (`labels` are needed for array input). `process(frame, timestamp=None)`; `timestamp` is the frame time in seconds,
-    from which the block derives its time step (see `run`, `sampling_rate`).
+    The detector tells noise (a still body, sensor jitter, a uniform drift) from movement with a structure. For every
+    watched joint it keeps the last 10 speeds and computes their variance; this variance is averaged over 5 frames and
+    the motion is flagged as noise while that mean stays below ``noise_threshold``. A body that moves with changing
+    speed, as in a gesture, has a large speed variance and is not flagged. It is the noise input of the gesture
+    segmentation: the kinetic energy of the same frames, from ``KineticEnergy``, is the other.
 
-    Output `is_noisy`, valid on every call: the variance of the speed of each joint over its last 10 frames is averaged over
-    5 frames, and the motion is noise while that mean is below `noise_threshold`. EyesWeb quirks are kept: only the last
-    joint in label order with a full window counts, and the flag is true until 14 speeds were seen. It feeds the second
-    input of `GestureSegmenter`; the kinetic energy of the same frames, from `KineticEnergy`, feeds the first.
+    Two quirks of the original are kept: only the last joint, in label order, that has a full window counts, and the
+    flag is true until 14 speeds have been seen.
+
+    Parameters
+    ----------
+    labels : sequence of str, optional
+        Joint names: the watched joints, which are also the names of the rows of an array frame (a dict frame carries
+        its own). Taken from ``skeleton`` when that is given. *(live)*
+    skeleton : str or Skeleton, optional
+        A skeleton preset (``"kinect_v2"``, ...) or definition; its joints are the watched joints.
+    noise_threshold : float, optional
+        Threshold on the mean variance of the speed, a squared length: in m^2, scaled by ``units`` with the power 2.
+        A negative threshold never flags noise. Defaults to ``0.5``. *(live)*
+    sampling_rate : float, optional
+        Sampling rate of the frames in Hz, used when no timestamp is given. Defaults to ``None`` (one second per
+        frame, and the ``reason`` says so). *(live)*
+    units : {"m", "mm"}, optional
+        Unit of the position data: scales ``noise_threshold`` (the data and the output are never scaled). Defaults
+        to ``"m"``. *(live)*
+
+    Notes
+    -----
+    **Inputs.** One skeleton frame per call: an ``(N, 3)`` array in the order of ``labels`` or a dict
+    ``label -> (x, y, z)``. ``process(frame, *, timestamp=None)``; ``run(frames, *, timestamps=None)`` takes a
+    ``(T, N, 3)`` recording. ``timestamp`` is in seconds, from which the time step is derived.
+
+    **Outputs.** ``is_noisy`` (bool): ``True`` while the mean speed variance is below ``noise_threshold``, that is,
+    for a still body, a uniform motion and the first frames. It is valid on every call.
+
+    **Statuses.** ``OK`` on every valid call; ``INVALID_INPUT`` for a non-finite frame, an unknown joint or a
+    timestamp that does not increase.
+
+    Corrected in the core: ``reset()`` left the per-joint speed windows in place; it now clears them.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import MotionNoiseDetector
+    >>> rng = np.random.default_rng(0)
+    >>> frames = rng.normal(scale=0.3, size=(40, 1, 3))  # a joint that jumps about
+    >>> feature = MotionNoiseDetector(labels=["hand"], sampling_rate=50.0)
+    >>> still = feature.run(np.zeros((40, 1, 3))).is_noisy[-1]
+    >>> jumping = feature.run(frames).is_noisy[-1]
+    >>> bool(still), bool(jumping)
+    (True, False)
     """
     _core_class = core.motion.MotionNoiseDetector
     _timed = True

@@ -1,9 +1,8 @@
-"""Contraction and expansion analysis for body movement patterns.
+"""Contraction and expansion of a body configuration in 3D: bounding-box filled area, ellipsoid sphericity and points
+density.
 
-This module provides optimized functions for analyzing contraction and expansion
-of body configurations in 3D space. It computes geometric shape metrics, including
-bounding box areas, convex hulls and ellipsoid approximations, to track structural
-changes relative to a movement baseline.
+Each feature takes one frame of points and measures how compact or spread out the configuration is, independently of
+where the body is and, for the first two, of the unit of the data.
 """
 
 from typing import Any, Optional, Sequence, Tuple
@@ -24,27 +23,46 @@ _MIN_RADIUS = 1e-6  # the C++ threshold below which the major radius is zero
 
 @describe(Layer.LOW_LEVEL)
 class BoundingBoxFilledArea(FrameFeature):
-    r"""Computes the Contraction Index based on 3D Surface Area.
+    r"""Contraction index of a 3D posture: convex hull area over bounding box area.
 
-    Mathematical formulation involves computing the ratio:
+    Measures how much of the axis-aligned box that encloses a posture is filled by the convex hull of its points, a
+    proxy for how contracted or expanded the body is. The index is the ratio of the surface area of the convex hull to
+    the surface area of the bounding box:
 
-    $$
-    Index = \frac{Area_{hull}}{Area_{bbox}}
-    $$
+    .. math::
 
-    where $Area_{hull}$ is the surface area of the 3D convex hull enclosing the points,
-    and $Area_{bbox}$ is the surface area of the axis-aligned bounding box.
+        I = \frac{A_{\mathrm{hull}}}{A_{\mathrm{box}}}, \qquad
+        A_{\mathrm{box}} = 2\,(\Delta_x \Delta_y + \Delta_x \Delta_z + \Delta_y \Delta_z),
 
-    !!! note
-        This feature uses the Convex Hull area and the Axis-Aligned Bounding Box (AABB) area.
+    where :math:`\Delta_x, \Delta_y, \Delta_z` are the extents of the points along the three axes. The hull lies inside
+    the box, so :math:`0 \le I \le 1`: the eight corners of a box give 1, the six vertices of an octahedron inscribed in
+    a cube give :math:`\sqrt{3}/6 \approx 0.289`. The index is dimensionless and independent of the unit of the data.
 
-    Input: one frame per call, an `(N, 3)` array of points (other widths raise `ValueError`); stateless.
-    `process(points, timestamp=None)` returns `contraction_index`; `Status.INVALID_INPUT` for a frame without points or
-    whose bounding box has no extent (area at most `epsilon`, 1e-6), with fewer than 4 points or with coplanar points (the 3D
-    hull is degenerate); the index is then empty (NaN).
-    `timestamp` is the timestamp in seconds (`NaN` when not given).
+    The feature has no parameters and keeps no state. ``process(frame, *, timestamp=None)`` takes one frame, an ``(N,
+    3)`` array of points (any other width raises ``ValueError``); ``timestamp`` (seconds) is only reported on the
+    result.
 
-    Read more in the [User Guide](../../user_guide/theoretical_framework/low_level/contraction_expansion.md).
+    Notes
+    -----
+    **Outputs.** ``contraction_index``: dimensionless, in [0, 1].
+
+    **Statuses.** ``INVALID_INPUT`` (the index is empty) for a frame with no points, with NaN or infinite coordinates,
+    with fewer than 4 points, with coplanar or collinear points (the 3D hull is degenerate), or whose bounding box has
+    an area of at most 1e-6 (in the squared unit of the data). Such a frame used to give an index of 0 with status
+    ``OK``.
+
+    References
+    ----------
+    :cite:`camurri2003recognizing`, :cite:`glowinski2011minimal`
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import BoundingBoxFilledArea
+    >>> corners = np.array([[x, y, z] for x in (0, 1) for y in (0, 1) for z in (0, 1)], dtype=float)
+    >>> result = BoundingBoxFilledArea().process(corners)
+    >>> print(f"{result.contraction_index:.3f}")
+    1.000
     """
 
     _OUTPUTS = Schema(Output("contraction_index", doc="Ratio of convex hull area to bounding box area."))
@@ -79,13 +97,58 @@ class BoundingBoxFilledArea(FrameFeature):
 
 @describe(Layer.LOW_LEVEL, eyesweb="PointsDensity3D")
 class PointsDensity(FrameFeature):
-    """EyesWeb PointsDensity3D.
+    r"""Dispersion of a set of 3D points around their centroid.
 
-    Input: one set of points per call, an `(N, 3)` array (named by `labels` when given, else by index: the labels do
-    not enter the maths) or a dict `label -> (x, y, z)`. `process(points, timestamp=None)`; `timestamp` in seconds.
+    Measures how widely a configuration of points, for instance the joints of a skeleton, is spread around its centre:
+    small when the points are clustered (contracted posture), large when they are far apart (expanded posture). With
+    :math:`c` the centroid of the points :math:`x_i` (their mean, or the per-axis median) and :math:`d_i = \lVert x_i -
+    c \rVert` their Euclidean distances to it, the density is an aggregate of the distances:
 
-    Outputs `density`, a scalar when `output_dims` is MODULE (default) or a `(3,)` vector (x, y, z) when
-    COMPONENT, and `centroid` `(3,)`. `INVALID_INPUT` ("no points") when the set holds no points.
+    .. math::
+
+        D = \operatorname{agg}_i \, d_i, \qquad
+        \operatorname{agg} \in \{\text{mean}, \text{median}, \max, \textstyle\sum\}.
+
+    With ``output_dims="components"`` the aggregate is taken per axis over the absolute deviations :math:`\lvert x_{i,k}
+    - c_k \rvert` and ``density`` is a vector of three values.
+
+    Input: one set of points per call, an ``(N, 3)`` array or a dictionary ``label -> (x, y, z)``; ``process(frame, *,
+    timestamp=None)``. The labels name the rows of an array and do not enter the computation.
+
+    Parameters
+    ----------
+    labels : sequence of str, optional
+        Names of the points of array input, in row order. Given by ``skeleton`` when that is passed. *(structural)*
+    skeleton : str or Skeleton, optional
+        A device preset or a user-defined ``Skeleton`` that provides ``labels``.
+    centroid_type : {"mean", "median"}, optional
+        The centroid: the mean of the points or their per-axis median. Defaults to ``"mean"``. *(live)*
+    distance_type : {"mean", "median", "max", "sum_of_lengths"}, optional
+        How the distances to the centroid are aggregated. Defaults to ``"mean"``. *(live)*
+    output_dims : {"module", "components"}, optional
+        ``"module"``: ``density`` is a scalar built from the Euclidean distances. ``"components"``: ``density`` has
+        three components (x, y, z) built from the per-axis deviations. Defaults to ``"module"``. *(live)*
+
+    Notes
+    -----
+    **Outputs.** ``density``: scalar, or ``(3,)`` for ``"components"``, in the unit of the data, not negative.
+    ``centroid``: ``(3,)``, the centroid, in the unit of the data.
+
+    **Statuses.** ``INVALID_INPUT`` for a set with no points or with NaN or infinite coordinates. The median is the
+    exact median of the values.
+
+    References
+    ----------
+    :cite:`camurri2003recognizing`, :cite:`glowinski2011minimal`
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import PointsDensity
+    >>> points = np.array([[0.0, 0, 0], [2, 0, 0], [0, 2, 0], [0, 0, 2]])
+    >>> result = PointsDensity().process(points)
+    >>> print(f"{result.density:.3f}", result.centroid)
+    1.460 [0.5 0.5 0.5]
     """
     _core_class = core.motion.PointsDensity
 
@@ -96,7 +159,7 @@ class PointsDensity(FrameFeature):
 
     @property
     def labels(self) -> Optional[Tuple[str, ...]]:
-        """The names of the points of array input (`None`: by index)."""
+        """The names of the points of array input (``None``: by index)."""
         return self._labels
 
     def _inputs(self) -> Inputs:
@@ -126,19 +189,49 @@ class PointsDensity(FrameFeature):
 
 @describe(Layer.LOW_LEVEL, eyesweb="EllipsoidSphericity (EllipsoidSphericity3D)")
 class EllipsoidSphericity(FrameFeature):
-    """EyesWeb EllipsoidSphericity3D, and the sphericity of a point cloud.
+    r"""Sphericity of the ellipsoid fitted to a point cloud, or of one given by its three axes.
 
-    `process(points, timestamp=None)` (EXTENSION, not in EyesWeb) takes an `(N, 3)` point cloud, fits an ellipsoid by PCA
-    (radii = sqrt of the covariance eigenvalues, sorted major to minor) and gives `sphericity` of the fitted radii,
-    `axis_ratio` (minor / major radius) and `radii` `(3,)`. Fewer than 2 points, or a major radius below 1e-6,
-    give `axis_ratio` 0 (and `sphericity` NaN when all radii are 0). Always `OK`.
+    Quantifies how close a posture is to a sphere rather than to an elongated or flat shape. The point cloud is
+    summarised by the ellipsoid whose radii :math:`a \ge b \ge c` are the square roots of the eigenvalues of the sample
+    covariance matrix of the points (principal component analysis, so the result does not depend on the orientation of
+    the body). Two indices are derived from the radii: the axis ratio :math:`c / a`, and the Wadell sphericity, the
+    ratio between the surface area of the sphere with the volume of the ellipsoid and the surface area of the ellipsoid:
 
-    `process_axes(first_axis, second_axis, third_axis, timestamp=None)` (faithful EyesWeb input) takes the three ellipsoid sizes, three scalars of
-    the same unit, and gives `sphericity`, the Wadell sphericity (1 for a sphere, < 1 otherwise); `axis_ratio`
-    and `radii` are not produced (`valid` is `False`). It is a separate entry point because it receives
-    something else than the declared `inputs`.
+    .. math::
 
-    `timestamp` is the timestamp in seconds (`NaN` when not given).
+        \Psi = \frac{\pi^{1/3} (6 V)^{2/3}}{A}, \qquad V = \tfrac{4}{3} \pi a b c, \qquad
+        A \approx 4 \pi \left( \frac{(ab)^p + (ac)^p + (bc)^p}{3} \right)^{1/p}, \quad p = 1.6075,
+
+    where the area :math:`A` is Knud Thomsen's approximation. :math:`\Psi` is 1 for a sphere and decreases towards 0 as
+    the ellipsoid is stretched or flattened; it is dimensionless and does not depend on the unit of the data.
+
+    Two entry points exist. ``process(frame, *, timestamp=None)`` takes an ``(N, 3)`` point cloud, fits the ellipsoid
+    and returns the three outputs. ``process_axes(first_axis, second_axis, third_axis, *, timestamp=None)`` takes the
+    three sizes of an ellipsoid directly (three positive scalars in the same unit, in any order) and returns only
+    ``sphericity``; ``axis_ratio`` and ``radii`` are then not produced. The feature has no parameters and keeps no
+    state.
+
+    Notes
+    -----
+    **Outputs.** ``sphericity``: dimensionless, in (0, 1]. ``axis_ratio``: minor over major radius, in [0, 1]
+    (point-cloud input only). ``radii``: ``(3,)`` fitted radii, major to minor, in the unit of the data (point-cloud
+    input only).
+
+    **Statuses.** ``INVALID_INPUT`` for fewer than 2 points, for NaN or infinite coordinates, and for a cloud whose
+    major radius is below 1e-6; ``process_axes`` gives ``INVALID_INPUT`` unless the three sizes are positive and finite.
+
+    References
+    ----------
+    :cite:`camurri2003recognizing`
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.low_level import EllipsoidSphericity
+    >>> cube = np.array([[x, y, z] for x in (0, 1) for y in (0, 1) for z in (0, 1)], dtype=float)
+    >>> feature = EllipsoidSphericity()
+    >>> print(f"{feature.process(cube).sphericity:.3f} {feature.process_axes(2.0, 1.0, 1.0).sphericity:.3f}")
+    1.000 0.929
     """
     _core_class = core.motion.EllipsoidSphericity
 
@@ -166,7 +259,7 @@ class EllipsoidSphericity(FrameFeature):
                            sphericity=sphericity, axis_ratio=axis_ratio, radii=np.asarray(radii, dtype=float), timestamp=timestamp)
 
     def process_axes(self, first_axis: float, second_axis: float, third_axis: float, *, timestamp: Optional[float] = None) -> Result:
-        """Sphericity of an ellipsoid of sizes `a`, `b`, `c` (the EyesWeb input); see the class documentation."""
+        """Sphericity of an ellipsoid given by its three sizes (the EyesWeb input); see the class documentation."""
         valid = all(np.isfinite(size) and size > 0 for size in (first_axis, second_axis, third_axis))
         return self._result(status=Status.OK if valid else Status.INVALID_INPUT,
                            reason="" if valid else "the sizes must be positive and finite",

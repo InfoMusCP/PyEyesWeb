@@ -1,14 +1,13 @@
 """Output contract of every PyEyesWeb feature: declared outputs, a status, fixed-layout results.
 
-A feature **declares its outputs once** as a [Schema][pyeyesweb.data_models.results.Schema] (what it returns,
-with which shape, component names and unit), available as `feature.outputs` as soon as the feature is built.
-Each call returns a [Result][pyeyesweb.data_models.results.Result]: the same fields on every call, a
-[Status][pyeyesweb.data_models.results.Status] saying whether the call produced output, and a per-output
-validity mask. Missing values are `NaN` (or `0` / `False` for integer / boolean outputs), never `None`.
+A feature **declares its outputs once** as a :class:`Schema` (what it returns, with which shape, component names and
+unit), available as ``feature.outputs`` as soon as the feature is built. Each call returns a :class:`Result`: the same
+fields on every call, a :class:`Status` saying whether the call produced output, and a per-output validity mask.
+Missing values are ``NaN`` (or ``0`` / ``False`` for integer / boolean outputs), never ``None``.
 
-The schema drives everything else: flat column names (`schema.flat_names`), `result.to_array()` (one fixed
-vector per call, e.g. one CHOP sample), `result.to_dict()` / `to_flat_dict()`, and the
-[Recorder][pyeyesweb.data_models.recorder.Recorder] for offline analysis.
+The schema drives everything else: flat column names (``schema.flat_names``), ``result.to_array()`` (one fixed vector
+per call), ``result.to_dict()`` / ``to_flat_dict()``, and the :class:`~pyeyesweb.data_models.Recorder` for offline
+analysis.
 """
 
 import enum
@@ -27,16 +26,42 @@ Shape = Tuple[Optional[int], ...]
 
 
 class Status(enum.IntEnum):
-    """Why a call produced (or did not produce) output. `IntEnum`: usable directly as a numeric column."""
+    """Why a call produced (or did not produce) output.
+
+    An ``IntEnum``: a status can be stored directly as a numeric column (``Recorder.status``) and compared with
+    integers. ``str(Status.OK)`` is ``"OK"``, also in f-strings.
+
+    Attributes
+    ----------
+    OK : 0
+        The call produced output.
+    WARMING_UP : 1
+        A window is still filling; ``Result.reason`` is a sample count, ``"k of N samples"``.
+    NO_OUTPUT : 2
+        The feature emits only on some calls and this was not one of them (for a windowed feature with ``hop > 1``,
+        the calls between two windows; ``reason`` is ``"between windows"``).
+    INVALID_INPUT : 3
+        The call is not data (NaN or infinity, an empty frame, a missing joint, a non-increasing timestamp, a result
+        that overflows); ``Result.reason`` says why. Every output is empty and ``Result.valid`` is ``False`` for all
+        of them.
+
+    Examples
+    --------
+    >>> from pyeyesweb.data_models import Status
+    >>> [(status.name, int(status)) for status in Status]
+    [('OK', 0), ('WARMING_UP', 1), ('NO_OUTPUT', 2), ('INVALID_INPUT', 3)]
+    >>> f"{Status.WARMING_UP}", Status.OK == 0
+    ('WARMING_UP', True)
+    """
 
     OK = 0
     """The call produced output."""
     WARMING_UP = 1
-    """The window or internal state is still filling. Some outputs may already be valid (see `Result.valid`)."""
+    """The window or internal state is still filling. Some outputs may already be valid (see ``Result.valid``)."""
     NO_OUTPUT = 2
     """The feature emits only on some calls (event or phase change) and this was not one of them."""
     INVALID_INPUT = 3
-    """The input cannot be processed (empty, too short, degenerate); `Result.reason` says why."""
+    """The input cannot be processed (empty, too short, degenerate); ``Result.reason`` says why."""
 
     def __str__(self) -> str:
         return self.name
@@ -50,22 +75,42 @@ class Output:
     name : str
         Python identifier; the attribute name on results and the base of the flat names.
     shape : int or tuple of (int or None), optional
-        Shape of the value; `()` for a scalar (default). `None` for a dimension whose size depends on the input.
-        Inferred from `labels` and `components` when omitted.
+        Shape of the value; ``()`` for a scalar (default). ``None`` for a dimension whose size depends on the input.
+        Inferred from ``labels`` and ``components`` when omitted.
     kind : {float, int, bool}, optional
-        Element type. Missing values are `NaN` for `float`, `0` for `int`, `False` for `bool`.
+        Element type. Missing values are ``NaN`` for ``float``, ``0`` for ``int``, ``False`` for ``bool``.
     components : sequence of str, optional
-        Names of the entries along the last axis, e.g. `("x", "y", "z")`.
+        Names of the entries along the last axis, e.g. ``("x", "y", "z")``.
     labels : sequence of str, optional
         Names of the entries along the first axis, e.g. joint names.
     unit : str, optional
-        Unit of the values, for documentation, in terms of the data: `"<length>"` stands for the length unit of the data,
-        `"<input>"` for the unit of the input; a feature with `units=` writes the unit it was given (`"mm/s"`). Empty when
-        the value is dimensionless.
+        Unit of the values, for documentation, in terms of the data: ``"<length>"`` stands for the length unit of the
+        data, ``"<input>"`` for the unit of the input; a feature with ``units=`` writes the unit it was given
+        (``"mm/s"``). Empty when the value is dimensionless.
     doc : str, optional
         One-line description.
     labelled : bool, optional
-        The value is a dict `label -> array(shape)` whose labels are only known at run time (a skeleton).
+        The value is a dict ``label -> array(shape)`` whose labels are only known at run time (a skeleton).
+
+    Attributes
+    ----------
+    name, shape, kind, unit, doc, labelled
+        The declaration as given (``shape`` is always a tuple).
+    axis_names : tuple
+        Per axis, the tuple of entry names (``labels`` on the first axis, ``components`` on the last) or ``None``.
+
+    Notes
+    -----
+    An ``Output`` is immutable. A missing value is ``NaN`` for ``float``, ``0`` for ``int`` and ``False`` for ``bool``.
+
+    Examples
+    --------
+    >>> from pyeyesweb.data_models import Output
+    >>> position = Output("position", components=("x", "y", "z"), unit="m")
+    >>> position.shape, position.size, position.flat_names
+    ((3,), 3, ('position_x', 'position_y', 'position_z'))
+    >>> Output("count", kind=int).flat_names
+    ('count',)
     """
 
     __slots__ = ("name", "shape", "kind", "axis_names", "unit", "doc", "labelled")
@@ -105,7 +150,7 @@ class Output:
 
     @property
     def fixed(self) -> bool:
-        """Whether the shape is known before any data is seen (no `None` size, not labelled at run time)."""
+        """Whether the shape is known before any data is seen (no ``None`` size, not labelled at run time)."""
         return not self.labelled and all(size is not None for size in self.shape)
 
     @property
@@ -117,7 +162,7 @@ class Output:
 
     @property
     def flat_names(self) -> Tuple[str, ...]:
-        """Names of the scalar entries of a fixed output, C order: `name`, `name_x`, `name_<label>_<component>`."""
+        """Names of the scalar entries of a fixed output, C order: ``name``, ``name_x``, ``name_<label>_<component>``."""
         if not self.fixed:
             raise ValueError(f"output {self.name!r} has a data-dependent size")
         return tuple(_flat_names(self.name, self.shape, self.axis_names))
@@ -163,13 +208,47 @@ def _flat_names(prefix: str, shape: Shape, axis_names: Sequence[Optional[Tuple[s
 
 
 class Schema:
-    """The ordered outputs of a feature. Known before the feature is run; fixed for the life of the feature.
+    """The ordered outputs of a feature, known before the feature is run and fixed for its life.
+
+    A schema is a read-only container of :class:`Output` declarations: iterate it, index it by name, test a name with
+    ``in``. It also defines the flat layout used to export results (``flat_names``, ``to_array()``) and the
+    :class:`Result` subclass generated for the feature (:meth:`result_type`).
+
+    Parameters
+    ----------
+    *outputs : Output
+        The outputs, in declaration order. Names must be unique (``ValueError`` otherwise).
+
+    Attributes
+    ----------
+    names : tuple of str
+        Output names, in declaration order.
+    fixed_outputs, variable_outputs : tuple of Output
+        Outputs whose shape is known in advance, and the others (variable length, or labelled at run time). Only
+        the fixed outputs enter ``flat_names``, ``size`` and ``Result.to_array()``.
+    flat_names : tuple of str
+        Names of the scalar columns of the fixed outputs, in ``Result.to_array()`` order (C order inside an output).
+    size : int
+        Length of ``Result.to_array()``, ``len(flat_names)``.
+    flat_index : dict of str to int
+        Position of each flat name.
+    layout : tuple
+        ``(output name, offset, size, is_scalar)`` for each fixed output.
+    is_fixed : bool
+        Whether every output is fixed.
 
     Examples
     --------
-    >>> s = Schema(Output("centroid", components=("x", "y", "z")), Output("density"))
+    >>> from pyeyesweb.data_models import Schema, Output
+    >>> s = Schema(Output("centroid", components=("x", "y", "z"), unit="m"), Output("density"))
+    >>> s.names
+    ('centroid', 'density')
     >>> s.flat_names
     ('centroid_x', 'centroid_y', 'centroid_z', 'density')
+    >>> s.size, s.flat_index["density"], "density" in s, s["centroid"].shape
+    (4, 3, True, (3,))
+    >>> s.select(["density"]).names
+    ('density',)
     """
 
     def __init__(self, *outputs: Output):
@@ -198,7 +277,7 @@ class Schema:
         return name in self._by_name
 
     def select(self, names: Iterable[str]) -> "Schema":
-        """A schema with only the outputs called `names`, in declaration order (a catalogue narrowed to a choice)."""
+        """A schema with only the outputs called ``names``, in declaration order (a catalogue narrowed to a choice)."""
         wanted = set(names)
         unknown = wanted - set(self._by_name)
         if unknown:
@@ -212,7 +291,7 @@ class Schema:
 
     @property
     def fixed_outputs(self) -> Tuple[Output, ...]:
-        """The outputs whose shape is known in advance; they make up `flat_names` / `to_array()`."""
+        """The outputs whose shape is known in advance; they make up ``flat_names`` / ``to_array()``."""
         return tuple(output for output in self._outputs if output.fixed)
 
     @property
@@ -222,26 +301,26 @@ class Schema:
 
     @property
     def flat_names(self) -> Tuple[str, ...]:
-        """Names of the scalar columns of the fixed outputs, in `to_array()` order."""
+        """Names of the scalar columns of the fixed outputs, in ``to_array()`` order."""
         if self._flat is None:
             self._flat = tuple(name for output in self.fixed_outputs for name in output.flat_names)
         return self._flat
 
     @property
     def size(self) -> int:
-        """Length of `to_array()`."""
+        """Length of ``to_array()``."""
         return len(self.flat_names)
 
     @property
     def flat_index(self) -> Dict[str, int]:
-        """Position of each flat name in `to_array()`."""
+        """Position of each flat name in ``to_array()``."""
         if self._flat_index is None:
             self._flat_index = {name: index for index, name in enumerate(self.flat_names)}
         return self._flat_index
 
     @property
     def layout(self) -> Tuple[Tuple[str, int, int, bool], ...]:
-        """`(output name, offset, size, is_scalar)` of each fixed output in `to_array()`."""
+        """``(output name, offset, size, is_scalar)`` of each fixed output in ``to_array()``."""
         if self._layout is None:
             offset, rows = 0, []
             for output in self.fixed_outputs:
@@ -275,7 +354,7 @@ class Schema:
         return {"outputs": [output.to_dict() for output in self._outputs], "flat_names": list(self.flat_names)}
 
     def result_type(self, name: str = "Result") -> type:
-        """The `Result` subclass for this schema (one read-only attribute per output); created once per name."""
+        """The ``Result`` subclass for this schema (one read-only attribute per output); created once per name."""
         if name not in self._types:
             namespace = {"__slots__": ()}
             for output_name in self._by_name:
@@ -290,20 +369,54 @@ class Schema:
 class Result:
     """What a feature returns: the values of its declared outputs for one call.
 
+    A result is immutable and has the same fields on every call. Each feature returns an instance of a subclass
+    generated from its schema and named ``<Feature>Result`` (``KineticEnergyResult``); it has one read-only attribute
+    per output. Array values are read-only. A value that was not produced is ``NaN`` (float), ``0`` (int) or ``False``
+    (bool), never ``None``, and ``valid[name]`` is ``False``.
+
     Attributes
     ----------
     status : Status
         Whether this call produced output, and if not, why.
     reason : str
-        Short explanation when `status` is not `OK`.
+        Short explanation when ``status`` is not ``OK``; ``""`` otherwise.
     timestamp : float
-        Timestamp of the input (seconds); `NaN` when unknown.
+        Timestamp of the input in seconds; ``NaN`` when none was given. Time is in seconds only: there are no ticks,
+        and nothing is stamped with the wall clock.
+    schema : Schema
+        The schema of the feature that produced the result.
+    ok : bool
+        ``status is Status.OK``.
+    is_valid : bool
+        Alias of ``ok``, kept for the 1.x API.
     valid : dict of str to bool
-        Per-output flag: `False` where an output was not produced this call (its value is the empty value).
+        Per output, whether it was produced by this call.
 
-    The outputs are read-only attributes named as in `schema` (`result.kinetic_energy`) and also available
-    as `result["kinetic_energy"]`. `result["centroid_x"]` reads one scalar by its flat name.
-    Results are immutable; array values are read-only.
+    Notes
+    -----
+    The outputs are available as attributes (``result.kinetic_energy``) and as items (``result["kinetic_energy"]``);
+    ``result["centroid_x"]`` reads one scalar by its flat name (see :attr:`Schema.flat_names`). Results compare equal
+    when they have the same status and the same values (``NaN`` equals ``NaN``).
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyeyesweb.data_models import Output, Schema, Status
+    >>> schema = Schema(Output("centroid", components=("x", "y")), Output("density"))
+    >>> result = schema.result_type("DemoResult")(
+    ...     schema, {"centroid": np.array([1.0, 2.0]), "density": 0.5}, Status.OK, "", 0.25)
+    >>> result.status, result.ok, result.timestamp
+    (<Status.OK: 0>, True, 0.25)
+    >>> result.density == result["density"], result["centroid_y"]
+    (True, 2.0)
+    >>> result.valid
+    {'centroid': True, 'density': True}
+    >>> result.to_array()
+    array([1. , 2. , 0.5])
+    >>> sorted(result.to_flat_dict())
+    ['centroid_x', 'centroid_y', 'density', 'status', 'timestamp']
+    >>> result.with_time(None).timestamp
+    nan
     """
 
     __slots__ = ("_schema", "_values", "status", "reason", "timestamp", "_missing")
@@ -327,12 +440,12 @@ class Result:
 
     @property
     def ok(self) -> bool:
-        """`status is Status.OK`."""
+        """``status is Status.OK``."""
         return self.status is Status.OK
 
     @property
     def is_valid(self) -> bool:
-        """Alias of `ok`, kept for the 1.x API."""
+        """Alias of ``ok``, kept for the 1.x API."""
         return self.status is Status.OK
 
     @property
@@ -341,19 +454,19 @@ class Result:
         return {name: name not in self._missing for name in self._schema.names}
 
     def with_time(self, timestamp: Optional[float]) -> "Result":
-        """A copy with timestamp `timestamp` in seconds (`NaN` when `timestamp` is `None`)."""
+        """A copy with timestamp ``timestamp`` in seconds (``NaN`` when it is ``None``)."""
         return type(self)(self._schema, self._values, self.status, self.reason, math.nan if timestamp is None else timestamp,
                           self._missing)
 
     # -- export
     def to_dict(self) -> Dict[str, Any]:
-        """`output name -> value`: floats / ints / bools, NumPy arrays, or dicts of arrays. Same keys every call."""
+        """``output name -> value``: floats / ints / bools, NumPy arrays, or dicts of arrays. Same keys every call."""
         return dict(self._values)
 
     def to_array(self) -> np.ndarray:
-        """The fixed outputs as one float64 vector, in `schema.flat_names` order; missing values are `NaN`.
+        """The fixed outputs as one float64 vector, in ``schema.flat_names`` order; missing values are ``NaN``.
 
-        Variable-size outputs are not included (use `to_dict()` or `to_flat_dict()`).
+        Variable-size outputs are not included (use ``to_dict()`` or ``to_flat_dict()``).
         """
         out = np.empty(self._schema.size)
         values = self._values
@@ -367,9 +480,9 @@ class Result:
     def to_flat_dict(self, prefix: str = "", meta: bool = True) -> Dict[str, Any]:
         """One scalar per key, ready for a log row or one channel per value.
 
-        The keys of fixed outputs are those of `schema.flat_names`, identical on every call. Variable-size outputs
-        are expanded by the sizes and labels they have in this result. `meta` adds `status` (its integer code)
-        and `timestamp`.
+        The keys of fixed outputs are those of ``schema.flat_names``, identical on every call. Variable-size outputs
+        are expanded by the sizes and labels they have in this result. ``meta`` adds ``status`` (its integer code)
+        and ``timestamp``.
         """
         flat: Dict[str, Any] = {}
         if meta:
@@ -411,8 +524,8 @@ def _join(prefix: str, key: str) -> str:
 
 
 def _fit_names(shape: Sequence[int], axis_names: Sequence[Optional[Tuple[str, ...]]]) -> List[Optional[Tuple[str, ...]]]:
-    """Axis names applied to an actual shape: the first `size` names of an axis whose declared names are enough
-    (`("x", "y", "z", "w")` on an axis of 3 gives x, y, z), indices otherwise."""
+    """Axis names applied to an actual shape: the first ``size`` names of an axis whose declared names are enough
+    (``("x", "y", "z", "w")`` on an axis of 3 gives x, y, z), indices otherwise."""
     return [names[:size] if names is not None and size <= len(names) else None
             for size, names in zip(shape, axis_names)]
 

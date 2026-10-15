@@ -1,8 +1,8 @@
 """Column-oriented storage of results, for offline analysis and logging.
 
-Appending thousands of [Result][pyeyesweb.data_models.results.Result] objects to a list and converting them
-afterwards is slow and awkward. A [Recorder][pyeyesweb.data_models.recorder.Recorder] knows the schema, so it
-keeps one preallocated, growable NumPy column per output and hands back arrays or a DataFrame.
+Appending thousands of :class:`~pyeyesweb.data_models.Result` objects to a list and converting them afterwards is slow
+and awkward. A :class:`Recorder` knows the schema, so it keeps one preallocated, growable NumPy column per output and
+hands back arrays or a DataFrame.
 """
 
 from typing import Any, Callable, Dict, Iterable, List, Union
@@ -23,23 +23,55 @@ def _signature(schema: Schema) -> tuple:
 
 
 class Recorder:
-    """Records a stream of results as columns.
+    """Records a stream of results as columns, one row per call.
+
+    A recorder is what ``Feature.run`` returns, and can be filled by hand with :meth:`append`. It stores, per row, the
+    values of every output, the status, the reason, the timestamp (seconds) and the per-output validity.
 
     Parameters
     ----------
     source : Schema or feature
-        What is being recorded: a schema, or any object with an `outputs` schema (a feature).
+        What is being recorded: a schema, or any object with an ``outputs`` schema (a feature).
     capacity : int, optional
-        Initial number of rows; the columns double when full.
+        Initial number of rows (default 1024); the columns double when full.
+
+    Attributes
+    ----------
+    schema : Schema
+        The schema of the recorded outputs.
+    status : numpy.ndarray of int
+        Status code of each row (the values of :class:`Status`), shape ``(n,)``.
+    ok : numpy.ndarray of bool
+        Mask of the rows whose status is ``OK``.
+    timestamps : numpy.ndarray of float
+        Timestamp of each row in seconds, ``NaN`` where unknown, shape ``(n,)``.
+    valid : dict of str to numpy.ndarray
+        Per output, a boolean ``(n,)`` array: whether the output was produced in each row.
+
+    Notes
+    -----
+    ``len(rec)`` is the number of rows. ``rec["speed"]`` and ``rec.speed`` are the column of an output (an array of
+    shape ``(n,) + shape`` for a fixed output, a list for a variable-size or image output); ``rec["position_x"]``
+    is one flat column of shape ``(n,)``. ``rec[3]`` and ``rec[-1]`` are single rows as a :class:`Result` (``IndexError``
+    out of range); ``rec[2:5]`` is a *list* of results.
+
+    Only the fixed outputs enter :meth:`to_numpy` and :meth:`to_frame`; an image or labelled output stays in
+    :meth:`column`. There is no ``Recorder.to_array`` (that name belongs to ``Result.to_array``).
 
     Examples
     --------
-    >>> rec = Recorder(feature)
-    >>> for frame in frames:
-    ...     rec.append(feature.process(frame))
-    >>> rec.column("centroid").shape          # (n_frames, 3); also rec["centroid"] and rec.centroid
-    >>> rec[0], rec[-5:]                      # one row as a Result, a slice as a list of Results
-    >>> rec.to_frame()                        # pandas DataFrame, one column per flat name
+    >>> from pyeyesweb.data_models import Output, Recorder, Schema
+    >>> schema = Schema(Output("speed", unit="m/s"), Output("direction", components=("x", "y")))
+    >>> make = schema.result_type("DemoResult")
+    >>> rec = Recorder(schema)
+    >>> for index in range(3):
+    ...     rec.append(make(schema, {"speed": 1.0 + index, "direction": [0.6, 0.8]}, timestamp=0.01 * index))
+    >>> len(rec), rec.speed.tolist(), rec["direction"].shape, rec["direction_y"].tolist()
+    (3, [1.0, 2.0, 3.0], (3, 2), [0.8, 0.8, 0.8])
+    >>> rec[-1].speed, len(rec[0:2]), bool(rec.ok.all()), rec.timestamps.tolist()
+    (3.0, 2, True, [0.0, 0.01, 0.02])
+    >>> rec.to_numpy().shape, list(rec.to_frame().columns)
+    ((3, 3), ['status', 'timestamp', 'speed', 'direction_x', 'direction_y'])
     """
 
     def __init__(self, source: Union[Schema, Any], capacity: int = 1024):
@@ -65,10 +97,19 @@ class Recorder:
     @classmethod
     def from_arrays(cls, source: Union[Schema, Any], columns: Dict[str, Any], timestamps: Any = None,
                     status: Any = None) -> "Recorder":
-        """A recorder filled in one go from whole-recording arrays (the result of a batch `run`).
+        """A recorder filled in one go from whole-recording arrays (the result of a batch ``run``).
 
-        `columns` maps every output name to an array `(n,) + shape`; outputs of variable size are not supported.
-        `timestamps` (seconds) defaults to NaN and `status` to `Status.OK` for every row; every output counts as produced.
+        Parameters
+        ----------
+        source : Schema or feature
+            As for the constructor.
+        columns : dict of str to array-like
+            Every output name mapped to an array of shape ``(n,) + shape``; outputs of variable size are not
+            supported (``ValueError``).
+        timestamps : array-like, optional
+            Timestamps in seconds, one per row; ``NaN`` for every row when omitted.
+        status : int or array-like, optional
+            A status code per row, or one for all rows; ``Status.OK`` when omitted. Every output counts as produced.
         """
         rec = cls(source, capacity=1)
         names = [output.name for output in rec.schema]
@@ -100,7 +141,7 @@ class Recorder:
         return f"Recorder({self._feature or 'schema'}, rows={self._n}, columns={list(self.schema.names)}, status={status})"
 
     def append(self, result: Result) -> None:
-        """Add one result. It must come from a feature with the same schema."""
+        """Add one result. It must come from a feature with the same schema (``ValueError`` otherwise)."""
         if result.schema is not self.schema and _signature(result.schema) != self._signature:
             raise ValueError("result does not match the recorder's schema: the feature's outputs changed since this "
                              "Recorder was created: create a new Recorder")
@@ -125,7 +166,7 @@ class Recorder:
             self.append(result)
 
     def run(self, process: Callable[[Any], Result], inputs: Iterable[Any]) -> "Recorder":
-        """Call `process(x)` for each input and record the results. Returns the recorder."""
+        """Call ``process(x)`` for each input and record the results. Returns the recorder."""
         for item in inputs:
             self.append(process(item))
         return self
@@ -145,33 +186,34 @@ class Recorder:
     # -- access
     @property
     def status(self) -> np.ndarray:
-        """Status code of each row (`Status` values), shape `(n,)`."""
+        """Status code of each row (:class:`Status` values), shape ``(n,)``."""
         return self._status[:self._n]
 
     @property
     def ok(self) -> np.ndarray:
-        """Boolean mask of the rows whose status is `OK`."""
+        """Boolean mask of the rows whose status is ``OK``."""
         return self._status[:self._n] == Status.OK
 
     @property
     def timestamps(self) -> np.ndarray:
-        """Timestamp of each row (`NaN` where unknown), shape `(n,)`."""
+        """Timestamp of each row in seconds (``NaN`` where unknown), shape ``(n,)``."""
         return self._timestamps[:self._n]
 
     @property
     def valid(self) -> Dict[str, np.ndarray]:
-        """Per output, a boolean `(n,)` array: whether the output was produced in each row."""
+        """Per output, a boolean ``(n,)`` array: whether the output was produced in each row."""
         return {name: self._valid[:self._n, index] for index, name in enumerate(self.schema.names)}
 
     def column(self, name: str) -> Union[np.ndarray, List[Any]]:
-        """All recorded values of an output: an array `(n,) + shape` for a fixed output, a list otherwise."""
+        """All recorded values of an output: an array ``(n,) + shape`` for a fixed output, a list otherwise."""
         if name in self._columns:
             return self._columns[name][:self._n]
         return self._lists[name]
 
     def __getitem__(self, key: Union[str, int, slice]) -> Any:
-        """`rec["centroid"]` is `column("centroid")`; `rec["centroid_x"]` is one flat column, shape `(n,)`; `rec[3]` is row 3 as
-        a `Result` (negative counts from the end, `IndexError` out of range); `rec[2:5]` is a list of `Result`s."""
+        """``rec["speed"]`` is ``column("speed")``; ``rec["position_x"]`` is one flat column, shape ``(n,)``; ``rec[3]``
+        is row 3 as a :class:`Result` (negative counts from the end, ``IndexError`` out of range); ``rec[2:5]`` is a
+        list of results."""
         if isinstance(key, slice):
             return [self._row(row) for row in range(*key.indices(self._n))]
         if isinstance(key, (int, np.integer)):
@@ -186,7 +228,7 @@ class Recorder:
         return self._flat_cache[:, index]
 
     def _row(self, row: int) -> Result:
-        """Row `row` as the `Result` that was appended."""
+        """Row ``row`` as the ``Result`` that was appended."""
         values = {output.name: _coerce(output, self.column(output.name)[row]) for output in self.schema}
         missing = frozenset(name for name, valid in zip(self.schema.names, self._valid[row]) if not valid)
         result_type = self.schema.result_type((self._feature or "") + "Result")
@@ -194,7 +236,7 @@ class Recorder:
                            missing)
 
     def __getattr__(self, name: str) -> Union[np.ndarray, List[Any]]:
-        """`rec.centroid` is `rec["centroid"]` (an output or a flat name)."""
+        """``rec.speed`` is ``rec["speed"]`` (an output or a flat name)."""
         if not name.startswith("_") and "schema" in self.__dict__ and (
                 name in self.schema or name in self.schema.flat_index):
             return self[name]
@@ -204,18 +246,24 @@ class Recorder:
         return sorted(set(super().__dir__()) | set(self.schema.names))
 
     def to_numpy(self) -> np.ndarray:
-        """The fixed outputs as a float64 matrix `(n, schema.size)`, columns in `schema.flat_names` order."""
+        """The fixed outputs as a float64 matrix ``(n, schema.size)``, columns in ``schema.flat_names`` order."""
         parts = [self._columns[output.name][:self._n].reshape(self._n, -1).astype(np.float64)
                  for output in self.schema.fixed_outputs]
         return np.concatenate(parts, axis=1) if parts else np.empty((self._n, 0))
 
     def to_frame(self, meta: bool = True):
-        """A pandas DataFrame: one column per flat name, plus `status` and `timestamp` when `meta`.
+        """A pandas DataFrame: one column per flat name, plus ``status`` and ``timestamp`` when ``meta``.
 
-        `status` holds the `Status` names (`"OK"`, `"WARMING_UP"`, ...), so `frame.status == "OK"` selects the rows that
-        produced output.
+        Parameters
+        ----------
+        meta : bool, optional
+            Add the columns ``status`` (the :class:`Status` names, ``"OK"``, ``"WARMING_UP"``, ...: ``frame.status ==
+            "OK"`` selects the rows that produced output) and ``timestamp`` (seconds), in front. Default ``True``.
 
-        Raises `ImportError` if pandas is not installed.
+        Raises
+        ------
+        ImportError
+            If pandas is not installed.
         """
         import pandas as pd  # optional dependency
 
