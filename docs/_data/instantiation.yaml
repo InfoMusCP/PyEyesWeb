@@ -1,0 +1,32 @@
+# Minimum constructor arguments used to build a feature instance for the generated pages (inputs and outputs are
+# only known from an instance). Source: WP0 audit (catalog_dump.json, `instantiation`). A class not listed here is
+# built with no arguments. The value "@mass_spring_model" is a two-mass model made by the extension.
+KineticEnergy: {skeleton: kinect_v2}
+Symmetry: {skeleton: kinect_v2}
+MotionNoiseDetector: {skeleton: kinect_v2}
+PointsPredictor: {skeleton: kinect_v2}
+GenericModelOrientations: {model: "@mass_spring_model"}
+GenericModelSimulator: {model: "@mass_spring_model"}
+GenericModelPredictor: {model: "@mass_spring_model"}
+GenericModelEstimator: {model: "@mass_spring_model"}
+SpectralArcLength: {sampling_rate: 100.0}
+LogDimensionlessJerk: {sampling_rate: 100.0}
+Harmonicity: {sampling_rate: 100.0}
+SubmovementCount: {sampling_rate: 100.0}
+CurvatureVelocityCorrelation: {window: 50, sampling_rate: 100.0}
+DirectionChange: {window: 50}
+Suddenness: {window: 50}
+SuddennessImpulsivity: {window: 50}
+SampleEntropy: {window: 50}
+CoarseGraining: {window: 50}
+BinaryPulsesRegularity: {window: 50}
+Periodicity: {window: 50}
+PhaseLockingValue: {window: 50}
+CorrelationsMatrix: {window: 50}
+GeneralisedAutoCorrelation: {window: 50}
+EventSynchronization: {window: 50}
+EventSynchronizationMECS: {window: 50}
+NonlinearInterdependence: {window: 50}
+SpikeSynchronization: {window: 50}
+RecurrencePlot: {window: 50}
+CrossRecurrencePlot: {window: 50}

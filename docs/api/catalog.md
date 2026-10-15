@@ -1,6 +1,6 @@
 # Catalog
 
-To be written (WP3).
+Reference for the objects below (generated from the docstrings).
 
 ```{eval-rst}
 .. currentmodule:: pyeyesweb.catalog

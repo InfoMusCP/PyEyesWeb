@@ -43,7 +43,7 @@ class Rarity(VariantFeature, CoreFeature):
     `alpha` (default 0.5). Input: one value per call, buffered over `window` samples and computed every `hop`
     samples (`WARMING_UP` while the first window fills, `NO_OUTPUT` between hops); `_process_window(series)` takes
     one `(1, window)` window. The histogram of the window has $\max(\lfloor\sqrt{N}\rfloor, 1)$ equal-width bins
-    and the score is $|\mathrm{mode} - \mathrm{last}| (p_\mathrm{mode} - p_\mathrm{last}) \alpha$. Output `rarity`
+    and the score is :math:`|\mathrm{mode} - \mathrm{last}| (p_\mathrm{mode} - p_\mathrm{last}) \alpha`. Output `rarity`
     (float, $\ge 0$): higher means more atypical; `WARMING_UP` below 2 samples, `INVALID_INPUT` when the window holds a NaN or an infinite value (it stays invalid until that sample leaves the window). The maths runs in the compiled core.
 
     Use `"information"` to reproduce EyesWeb or to compare several signals with chosen bin widths; use

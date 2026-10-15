@@ -52,7 +52,7 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     # "sphinx_gallery.gen_gallery",  # TODO(WP7): enable together with sphinx_gallery_conf below
-    # "feature_pages",               # TODO(WP3): docs/_ext/feature_pages.py
+    "feature_pages",  # docs/_ext/feature_pages.py: one page per catalog feature (DOCS_PLAN 4.2)
 ]
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}

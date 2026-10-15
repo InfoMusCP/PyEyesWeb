@@ -1,0 +1,47 @@
+# Feature families: every catalog feature belongs to exactly one family (the extension fails the build otherwise).
+# A family names a theory page (doc: path relative to docs/, without suffix). Decided 2026-10-15: HitCellDetector,
+# PositionDependingPotentials and RegionDependingPotentials stay in shape_symmetry_balance.
+kinematics_energy:
+  title: Kinematics and energy
+  doc: theory/kinematics_energy
+  features: [Kinematics, KineticEnergy, DirectionChange, Directness, TrajectoryNonPlanarity, MotionNoiseDetector]
+smoothness:
+  title: Smoothness
+  doc: theory/smoothness
+  features: [SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount, CurvatureDispersion, CurvatureVelocityCorrelation]
+shape_symmetry_balance:
+  title: Shape, symmetry and balance
+  doc: theory/shape_symmetry_balance
+  features: [BoundingBoxFilledArea, EllipsoidSphericity, PointsDensity, Symmetry, TriangleSymmetry, Equilibrium,
+             HitCellDetector, PositionDependingPotentials, RegionDependingPotentials]
+impulsivity_suddenness:
+  title: Impulsivity and suddenness
+  doc: theory/impulsivity_suddenness
+  features: [Suddenness, SuddennessImpulsivity, ContractionImpulsivity]
+gesture_segmentation:
+  title: Gesture segmentation
+  doc: theory/gesture_segmentation
+  features: [GestureSegmenter, MotionDuration, ScalarPeakDetector]
+entropy_rarity_periodicity:
+  title: Entropy, rarity and periodicity
+  doc: theory/entropy_rarity_periodicity
+  features: [SampleEntropy, CoarseGraining, MultiScaleEntropy, Rarity, Periodicity, BinaryPulsesRegularity]
+synchronization:
+  title: Synchronization
+  doc: theory/synchronization
+  features: [PhaseLockingValue, CorrelationsMatrix, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation,
+             EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization,
+             SequenceDetector, RecurrencePlot, CrossRecurrencePlot, TemporalSynchronization]
+dominance:
+  title: Dominance
+  doc: theory/dominance
+  features: [EnsembleDominance]
+humanoid_models:
+  title: Humanoid and mass-spring models
+  doc: theory/humanoid_models
+  features: [HumanoidSimulator, HumanoidOrientations, GenericModelOrientations, GenericModelSimulator,
+             GenericModelPredictor, GenericModelEstimator, PointsPredictor]
+imaging:
+  title: Imaging
+  doc: theory/imaging
+  features: [SilhouetteCentroids, SilhouetteBodyParts, Videogram, FilterContour, ContourCurvature, ConvexHull, BodyPartsFromCurvature]

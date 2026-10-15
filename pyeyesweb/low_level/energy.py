@@ -42,7 +42,7 @@ class KineticEnergy(LabelGuard, FrameFeature):
     `labels` are the joint names of the arrays; they are needed for array input (a dict carries its own). `weights` is a
     mapping `joint -> weight`, or a sequence with one weight per label; any other length raises `ValueError`.
     `input_mode` (EXTENSION, not in EyesWeb): `"position"` (default, faithful) takes positions and differentiates
-    them; `"velocity"` takes velocities and applies 0.5 * w * |v|^2 directly. `KineticEnergy.from_position(...)` and
+    them; `"velocity"` takes velocities and applies ``0.5 * w * |v|^2`` directly. `KineticEnergy.from_position(...)` and
     `KineticEnergy.from_velocity(...)` build one or the other; they take the constructor's parameters.
     `INVALID_INPUT` for NaN or infinity, an empty frame or ("missing joints: ...") a dict frame that lacks a weighted joint;
     `timestamp` is the timestamp in seconds (`NaN` when not given).
@@ -67,7 +67,7 @@ class KineticEnergy(LabelGuard, FrameFeature):
     @input_mode_factory("velocity")
     def from_velocity(cls) -> "KineticEnergy":
         """Kinetic energy of joint velocities (EXTENSION): each frame holds the velocities `(N, 3)` of the joints, or a dict
-        `label -> (vx, vy, vz)`. Stateless: 0.5 * w * |v|^2 per frame from the first one on, with no time step and no
+        `label -> (vx, vy, vz)`. Stateless: ``0.5 * w * |v|^2`` per frame from the first one on, with no time step and no
         `reference_point`. Takes the parameters of `KineticEnergy` except `input_mode`."""
 
     def _label_names(self):
