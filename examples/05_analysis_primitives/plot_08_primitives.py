@@ -12,7 +12,7 @@ which period repeats (``Periodicity``).
         complexity across scales; compare the complexity of several signals to find the most regular one; flag unusual
         values with the two rarity methods; detect peaks online; find the period of a repeated movement.
 :Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`. Smoothness of movement is introduced in
-                tutorial 05; it is not required here.
+                :ref:`sphx_glr_tutorials_03_low_level_plot_05_motion.py`; it is not required here.
 :Data: trials 7 (clapping), 11 and 12 (figure-eight, smooth and not smooth), 20 (balance lost), 21 (hiding an object on
        cue) and 24 (alternating light and heavy) of the example session, plus short synthetic signals.
 :Time: about 30 minutes.
@@ -303,11 +303,11 @@ fig.tight_layout()
 # Peaks: when does a movement burst happen?
 # -----------------------------------------
 # :class:`~pyeyesweb.analysis_primitives.ScalarPeakDetector` turns a continuous signal into events. It keeps the last
-# ``window`` samples and flags a peak (``is_peak``) when the buffer holds a maximum whose swing exceeds ``threshold``, in the
-# units of the signal. The peak is reported a little after it happened, once the following samples are in the buffer.
+# ``window`` samples and flags a peak (``is_peak``) when the buffer shows a fall after a rise, both larger than ``threshold`` (a swing, in the units
+# of the signal, not a level). Only maxima are reported, and a peak comes after the maximum, once the fall is in the buffer.
 #
 # On the horizontal position of the right hand in trial 7 (clapping hands), in metres around its mean, a threshold of 3 cm and
-# a buffer of 0.4 s mark the turning points of the swings.
+# a buffer of 0.4 s mark the maxima of the swings.
 
 from pyeyesweb.analysis_primitives import ScalarPeakDetector
 
@@ -327,10 +327,11 @@ ax.legend(fontsize=7, loc="upper center", ncol=1, bbox_to_anchor=(0.5, 1.45))
 fig.tight_layout()
 
 # %%
-# The markers come after the turning point, once the buffer holds the samples that follow it (a delay of up to the buffer length). A larger threshold keeps only the large swings (the green markers); both parameters have to
+# The markers come after the maximum, once the buffer holds the fall that follows it (a delay of up to the buffer length), and the minima are not marked. A larger threshold keeps only the large swings (the green markers); both parameters have to
 # suit the amplitude and the rhythm of the signal. The ``is_peak`` train is what other features take as events (see
-# tutorial 09, and :class:`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` in tutorial 04 for the regularity of a pulse
-# train).
+# :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`, and
+# :class:`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` in :ref:`sphx_glr_tutorials_02_physical_signals_plot_04_images.py` for the
+# regularity of a pulse train).
 #
 # **Takeaway.** Choose ``threshold`` in the units of your signal and ``window`` as long as the swings you want to detect.
 

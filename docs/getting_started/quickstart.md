@@ -185,6 +185,13 @@ ValueError: SpectralArcLength: input 'speed' expects sample of shape (1,), got s
 The layers and the catalog, the input forms, the result objects, and the rules for time, units and parameters.
 :::
 
+:::{grid-item-card} Tutorials
+:link: sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py
+:link-type: ref
+
+Hands-on tutorials by layer, ending with {ref}`a capstone <sphx_glr_tutorials_06_capstone_plot_10_capstone.py>` that combines features of several layers.
+:::
+
 :::{grid-item-card} API reference
 :link: ../api/overview
 :link-type: doc

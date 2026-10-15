@@ -59,4 +59,4 @@ entropy) is ignored.
 - The scores are dimensionless and only meaningful for comparing the members of one group over the same window.
 - The leader is the participant with the lowest index (the first in a tie), or `-1` when no participant has an index.
 
-% TODO(WP7): gallery link
+Hands-on: see {ref}`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py`, which applies `EnsembleDominance` to the complexity of several signals.

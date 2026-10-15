@@ -111,7 +111,10 @@ second does; simultaneous events count for $Q$ but not for $q$. With `weighted=T
 the weight $1-(d-1)/\tau$ instead of 1. The outputs are `synchronization` ($Q$) and `delay` ($q$).
 
 The counts are accumulated across windows, so consecutive windows must not overlap: `hop` equals `window` (its default) and any
-other value raises `ValueError`. This is the exception to the sliding windows of the family: the feature gives one result per
+other value raises `ValueError`. By default the counts of `EventSynchronization` accumulate across windows, so the value of a window describes the whole
+recording up to its end; for the value of each window on its own, pass `reset_every_buffer=True`. $Q$ also depends strongly on
+`tau`: the same two series give a low $Q$ with a small `tau` and a $Q$ close to 1 with a large one, so choose `tau` from the lags that
+count as simultaneous in your data. This is the exception to the sliding windows of the family: the feature gives one result per
 window (`OK` once per window) and no `NO_OUTPUT`. It has received several corrections in the core, all of which make its
 result follow the definition above: the coincidence window is $0<\text{lag}\le\tau$, the weight and the sign of the delay are
 those given here, and an event is credited exactly once.
@@ -122,7 +125,8 @@ to `number_of_inputs` series that carry events of several classes (for example o
 the pairs of events within `tau` samples, weighted by the `kernel`; with $m_i$ and $m_j$ the event counts of the two series the
 pair term is $\min\!\big(1,S_{ij}/\sqrt{m_im_j}\big)$, and the synchronization of the class is the mean of the pair terms over
 the $M(M-1)/2$ pairs of the $M$ series. It returns the `synchronization` of each class and the number of `events` of each class
-in the window, summed over the series, and also needs non-overlapping windows. Only the former "version 2" of the algorithm is
+in the window, summed over the series, and also needs non-overlapping windows. It has no `reset_every_buffer`: its values and counts are those of
+each window on its own (checked on random trains), and it depends on `tau` in the same way. Only the former "version 2" of the algorithm is
 provided.
 
 ```{doctest}

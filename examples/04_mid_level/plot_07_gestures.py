@@ -43,7 +43,7 @@ print(trial.positions.shape, "frames x joints x coordinates | duration", trial.d
 # :class:`~pyeyesweb.mid_level.GestureSegmenter` smooths it with a Savitzky-Golay filter and declares a gesture while the
 # smoothed intensity is at least ``firing_threshold``, in the unit of the intensity. A second stream, the **noise flag**, can
 # block the start of a gesture: :class:`~pyeyesweb.low_level.MotionNoiseDetector` sets ``is_noisy`` when the speeds of the
-# last joint jump about at random, as with a tracker that loses a marker. The flag is passed directly to the segmenter
+# joint that decides (the alphabetically last name) jump about at random, as with a tracker that loses a marker. The flag is passed directly to the segmenter
 # (``True`` means noise: no gesture can start). The pipeline is skeleton, energy, noise flag, segmenter:
 
 from pyeyesweb.low_level import KineticEnergy, MotionNoiseDetector

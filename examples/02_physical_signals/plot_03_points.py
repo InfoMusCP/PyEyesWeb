@@ -12,7 +12,7 @@ models look a moment ahead, and ``GenericModelEstimator`` fits a model to a move
         next positions of points; build, drive, forecast and fit a model of your own.
 :Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
 :Data: trial 10 of the example session (sumo squat with weight shift) for the hit cells, trial 7 (clapping hands) for the
-       humanoid; synthetic skeletons and chains elsewhere.
+       humanoid (seconds 3 to 5.5, a moderate arm movement); synthetic skeletons and chains elsewhere.
 :Time: about 30 minutes.
 """
 
@@ -237,16 +237,16 @@ fig_directions.tight_layout()
 # ``start_from_input=True`` puts the body on the first frame, with the bone lengths of the person instead of those of the
 # rest pose, before it starts to follow. The constructor raises when the labels lack a joint that the model needs.
 
-clapping = load_qualisys_trial(7, start=0, stop=10)
-centre = (clapping.joint("Left_Shoulder") + clapping.joint("Right_Shoulder")) / 2
-captured = np.concatenate([clapping.positions, centre[:, None, :]], axis=1)
-labels = list(clapping.labels) + ["Shoulder_Center"]
+arm_movement = load_qualisys_trial(7, start=3, stop=5.5)
+centre = (arm_movement.joint("Left_Shoulder") + arm_movement.joint("Right_Shoulder")) / 2
+captured = np.concatenate([arm_movement.positions, centre[:, None, :]], axis=1)
+labels = list(arm_movement.labels) + ["Shoulder_Center"]
 joint_map = {"head": "Head", "neck": "Neck", "spine": "Spine", "spine_base": "Pelvis", "spine_shoulder": "Shoulder_Center"}
 for side in ("left", "right"):
     for part in ("shoulder", "elbow", "wrist", "hand", "hip", "knee", "ankle", "foot"):
         joint_map[f"{side}_{part}"] = f"{side.capitalize()}_{part.capitalize()}"
 
-follower = HumanoidSimulator(labels=labels, joint_map=joint_map, units="mm", sampling_rate=clapping.sampling_rate, start_from_input=True)
+follower = HumanoidSimulator(labels=labels, joint_map=joint_map, units="mm", sampling_rate=arm_movement.sampling_rate, start_from_input=True)
 body = follower.run(captured)["joints"]  # (frames, 21, 3) in millimetres
 measured = np.stack([captured[:, labels.index(joint_map[name])] for name in HUMANOID_JOINTS], axis=1)
 print("simulated joints:", body.shape, "| first frame equals the input:", np.allclose(body[0], measured[0]))
@@ -257,10 +257,11 @@ except ValueError as error:
     print("ValueError:", str(error)[:150])
 
 # %%
-# The head is pinned, so the comparison is made relative to the head. The simulated hand follows the slow part and then the
-# rhythm of the clapping, but a fast movement excites the springs of the long chain of bones and the pose overshoots at
-# times: this is the limitation of the model described in :doc:`/theory/humanoid_models`, and a reason to look at the
-# output before using it. The median over joints and frames is a fairer summary than the mean.
+# The head is pinned, so the comparison is made relative to the head. We use 2.5 seconds of trial 7 (from 3 s to 5.5 s) in
+# which the person moves the arms at a moderate pace, and compare the simulated joints with the measured ones: the median
+# over joints and frames is a fairer summary than the mean, because a few frames weigh more than the rest. The model is a
+# pose generator and it can overshoot on fast movements (see the note in :doc:`/theory/humanoid_models`), so it is worth looking
+# at the output before using it.
 
 head = HUMANOID_JOINTS.index("head")
 measured_hand = (measured - measured[:, head][:, None])[:, HAND]
@@ -270,7 +271,7 @@ print(f"distance between simulated and measured joints, relative to the head: me
 
 fig_real, axes = plt.subplots(1, 2, figsize=(10, 3), sharey=True)
 for ax, signal, title in zip(axes, (measured_hand, simulated_hand), ("measured", "simulated")):
-    ax.plot(clapping.timestamps, signal, lw=0.9)
+    ax.plot(arm_movement.timestamps, signal, lw=0.9)
     ax.set_title(f"{title} left hand, relative to the head", fontsize=9)
     ax.set_xlabel("time (s)")
 axes[0].set_ylabel("position (mm)")
@@ -294,6 +295,7 @@ from pyeyesweb.physical_signals import PointsPredictor
 hands = ["Left_Hand", "Right_Hand"]
 predictor = PointsPredictor(labels=hands)
 print(predictor.inputs)
+clapping = load_qualisys_trial(7, start=0, stop=10)
 points = np.stack([clapping.joint(name) for name in hands], axis=1)  # (frames, 2, 3) in millimetres
 predicted = predictor.run(points)["predicted"]
 error_linear = np.linalg.norm(predicted[:-1] - points[1:], axis=2)[1:]

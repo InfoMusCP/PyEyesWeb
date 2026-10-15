@@ -74,4 +74,4 @@ suddenness features.
 - The potentials need the cells of `HitCellDetector`, a layer-1 feature, and keep a memory across calls: `reset()` them
   between recordings.
 
-% TODO(WP7): gallery link
+Hands-on: see {ref}`sphx_glr_tutorials_04_mid_level_plot_07_gestures.py`.

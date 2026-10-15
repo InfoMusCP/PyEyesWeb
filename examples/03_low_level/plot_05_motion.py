@@ -350,10 +350,10 @@ fig.tight_layout()
 #
 # Three things to know. ``True`` means **noise**: this flag is meant to go straight to the ``noise`` input of
 # :class:`~pyeyesweb.mid_level.GestureSegmenter`, which then does not start a gesture. The flag is ``False`` for the first 14
-# frames while the speeds fill up. And with several joints, **only the last joint in label order decides the flag** (a jumpy
-# joint that is not the last one is not seen; see the docstring). So we list the joints we watch with the one that matters
-# last. Here the labels are in alphabetical order: Head, Left_Hand, Right_Hand. We add a random jump of a few centimetres
-# to trial 21, once on the last joint and once on the first.
+# frames while the speeds fill up. And with several joints, **only the alphabetically last joint name decides the flag**
+# (a jumpy joint with another name is not seen, whatever the order of the labels; this is the behaviour of the underlying
+# EyesWeb block, see the docstring). Here the names are Head, Left_Hand and Right_Hand, so Right_Hand decides. We add a
+# random jump of a few centimetres to trial 21, once on Right_Hand and once on Head.
 
 from pyeyesweb.low_level import MotionNoiseDetector
 
@@ -371,7 +371,7 @@ def with_jumps(joint):
     return noisy
 
 
-cases = {"recording as it is": frames, "jumps on Right_Hand (last)": with_jumps("Right_Hand"), "jumps on Head (first)": with_jumps("Head")}
+cases = {"recording as it is": frames, "jumps on Right_Hand (alphabetically last)": with_jumps("Right_Hand"), "jumps on Head (alphabetically first)": with_jumps("Head")}
 fig, axes = plt.subplots(len(cases), 1, figsize=(8, 3.6), sharex=True, sharey=True)
 for ax, (name, data) in zip(axes, cases.items()):
     flag = detector.run(data, timestamps=reactive.timestamps).is_noisy
@@ -383,11 +383,11 @@ axes[-1].set_xlabel("time (s)")
 fig.tight_layout()
 
 # %%
-# The recording as it is is flagged only for an instant, jumps on the last joint raise the flag for the whole recording, and the
-# same jumps on the first joint are not seen.
+# The recording as it is is flagged only for an instant, jumps on Right_Hand raise the flag for the whole recording, and the
+# same jumps on Head are not seen.
 #
-# **Takeaway.** ``is_noisy`` is ``True`` for random, jumpy speeds, goes to the segmenter as it is, and is decided by the last
-# joint in label order.
+# **Takeaway.** ``is_noisy`` is ``True`` for random, jumpy speeds, goes to the segmenter as it is, and is decided by the
+# alphabetically last joint name.
 
 # %%
 # Try it
@@ -396,7 +396,7 @@ fig.tight_layout()
 #    ``window=600`` (6 s) and print the mean spectral arc length of both movements. Does the jerky one stay below the smooth one?
 # 2. Compute the kinetic energy of trial 21 with only the two hands (``weights={"Left_Hand": 1.0, "Right_Hand": 1.0}`` on the
 #    skeleton of the trial) and compare its peak with that of the whole body.
-# 3. Reduce the standard deviation of the jumps added to the last joint of ``MotionNoiseDetector`` (5 cm above) until the flag
+# 3. Reduce the standard deviation of the jumps added to ``Right_Hand`` for ``MotionNoiseDetector`` (5 cm above) until the flag
 #    stops being raised. What is the smallest value, in a list of 5, 2, 1 and 0.5 cm, that is still flagged?
 
 # %%

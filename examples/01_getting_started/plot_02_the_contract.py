@@ -289,7 +289,7 @@ print("trial.skeleton:", metres.skeleton.name, len(metres.skeleton.joints), "joi
 # %%
 # A preset can be incomplete (``Skeleton.missing()`` lists what is still to be filled in). A few humanoid features take a
 # ``joint_map`` instead, which maps the joint names of a model to the labels of your data; they come with the tutorial on
-# physical signals (tutorial 03).
+# physical signals (:ref:`sphx_glr_tutorials_02_physical_signals_plot_03_points.py`).
 
 # %%
 # The catalog
@@ -352,4 +352,4 @@ print("next valid sample:", check.process(hand[1], timestamp=1.01).status)
 #   form.
 # * :doc:`/api/data_models`: ``Feature``, ``Result``, ``Schema``, ``Status`` and ``Recorder``.
 # * :doc:`/api/catalog`: the catalog and its types.
-# * The tutorials by layer start with tutorial 03, physical signals: points.
+# * The tutorials by layer start with :ref:`sphx_glr_tutorials_02_physical_signals_plot_03_points.py` (physical signals: points).

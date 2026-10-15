@@ -184,15 +184,18 @@ def test_a_jumpy_joint_blocks_the_segmenter_and_a_smooth_one_does_not():
     assert len(starts) >= 1 and starts[0] > ran["smooth"][1][0]  # blocked while jumpy, opens once the jumps are over
 
 
-def test_only_the_last_joint_decides_the_noise_flag():
-    """Quirk of the original, kept: with several joints only the last one (in label order) counts, so the flag of a jumpy
-    joint is lost when it is not the last; a single joint is judged on its own."""
+def test_only_the_alphabetically_last_joint_name_decides_the_noise_flag():
+    """Quirk of the original, kept: with several joints only the alphabetically last joint name counts, whatever the order
+    of the labels, so the flag of a jumpy joint is lost when its name is not the last; a single joint is judged on its own."""
     jumps = np.random.default_rng(0).normal(scale=0.3, size=(60, 1, 3))
     still = np.zeros((60, 1, 3))
     flag = lambda labels, frames: np.asarray(MotionNoiseDetector(labels=labels, sampling_rate=50.0).run(frames)["is_noisy"])
     assert flag(["hand"], jumps)[-1]
     assert flag(["a", "b"], np.concatenate([jumps, still], axis=1))[-1] == False  # noqa: E712  jumpy "a", still "b"
     assert flag(["a", "b"], np.concatenate([still, jumps], axis=1))[-1]
+    # the order of the labels does not matter: "b" decides although it is listed first
+    assert flag(["b", "a"], np.concatenate([jumps, still], axis=1))[-1]
+    assert flag(["b", "a"], np.concatenate([still, jumps], axis=1))[-1] == False  # noqa: E712
 
 
 def test_a_plain_signal_is_segmented_without_a_noise_input():

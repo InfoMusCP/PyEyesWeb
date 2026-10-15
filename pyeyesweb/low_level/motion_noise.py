@@ -23,9 +23,10 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
     while it is set (``True`` = judged to be noise): pass ``is_noisy`` together with the kinetic energy of the same
     frames, from ``KineticEnergy``.
 
-    Two quirks of the original are kept: only the last joint, in label order, that has a full window counts (a jumpy
-    joint that is not the last one is not seen, a single joint is judged on its own), and the flag is false until 14
-    speeds have been seen.
+    Two quirks of the original are kept: with several joints only the alphabetically last joint name that has a full
+    window counts (a jumpy joint with any other name is not seen, whatever the order of ``labels``; a single joint is
+    judged on its own), and the flag is false until 14 speeds have been seen. This is the behaviour of the underlying
+    EyesWeb block: only one joint decides.
 
     Parameters
     ----------

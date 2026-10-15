@@ -21,10 +21,10 @@ given order of events and follows a staged process in which several measures are
 # -----------------------
 # In the clapping task both hands swing horizontally (the ``x`` axis of the recordings) towards and away from each other. In
 # trial 7 the claps are synchronised, in trial 8 they are not. We turn each hand into an **event train**: a series with one
-# value per sample, where a non-zero value is an event. The events are the turning points of each swing, found online with
+# value per sample, where a non-zero value is an event. The events are the maxima of each swing, found online with
 # :class:`~pyeyesweb.analysis_primitives.ScalarPeakDetector` on the position of the hand around its mean, in metres, with a
 # buffer of 0.4 s (40 samples) and a swing of at least 5 cm. A peak is reported when the buffer already holds the samples that
-# follow it, so the markers come up to a few tenths of a second after the turning point. Time is in seconds; ``tau`` and the windows below are in samples
+# follow it, so the markers come up to a few tenths of a second after the maximum. Time is in seconds; ``tau`` and the windows below are in samples
 # (100 per second).
 
 import matplotlib.pyplot as plt
@@ -280,4 +280,4 @@ print("degree:", float(SpikeSynchronization(window=8, mode="timings").process(sh
 # ----------
 # * :doc:`/theory/synchronization`: the definitions of every measure and how to choose one.
 # * :doc:`/api/analysis_primitives`: every parameter of these features.
-# * Tutorial 10, the capstone: a real-time loop and a batch analysis that combine features of several layers.
+# * :ref:`sphx_glr_tutorials_06_capstone_plot_10_capstone.py`: a real-time loop and a batch analysis that combine features of several layers.

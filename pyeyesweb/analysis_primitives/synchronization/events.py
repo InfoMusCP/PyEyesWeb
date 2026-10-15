@@ -94,6 +94,12 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.
 
+    **Accumulation and ``tau``.** By default the counts :math:`m_x`, :math:`m_y`, :math:`c(y|x)` and :math:`c(x|y)`
+    accumulate across windows, so the value of a window describes the whole recording up to its end; for the value of
+    each window on its own, pass ``reset_every_buffer=True``. :math:`Q` depends strongly on ``tau``: the same two
+    trains give a low :math:`Q` with a small ``tau`` and a :math:`Q` close to 1 with a large one, so choose ``tau``
+    from the lags that count as simultaneous in your data and report it with the result.
+
     **Corrected in the core.** The coincidence window is now ``0 < lag <= tau`` (an event used to expire one sample
     too early, so ``tau = 1`` matched nothing); the weight of ``weighted=True`` is the one above (an integer division
     made it 0 for nearly every pair); ``delay`` is positive when the first series leads (the sign was reversed); and
@@ -145,7 +151,7 @@ class EventSynchronizationMECS(_MECSBlock):
         \min\left(1, \; \frac{S_{ij}}{\sqrt{m_i m_j}}\right),
 
     and the synchronization of the class is the mean of the pair terms over the :math:`N(N-1)/2` pairs of the
-    :math:`N` series. The result is accumulated across windows, so consecutive windows must not overlap: ``hop``
+    :math:`N` series. The block keeps state across windows, so consecutive windows must not overlap: ``hop``
     equals ``window`` (its default) and any other value raises ``ValueError``.
 
     Parameters
@@ -179,6 +185,11 @@ class EventSynchronizationMECS(_MECSBlock):
     class; ``events`` (count, same shape): the number of events of each class in the window, summed over the series.
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.
+
+    **Windows and ``tau``.** Unlike ``EventSynchronization``, this block has no ``reset_every_buffer`` parameter; in
+    a check on random trains the value and the ``events`` count of each window were those of the same window run
+    alone, so they are per-window values. The index depends strongly on ``tau``: a larger ``tau`` matches more events,
+    so choose it from the lags that count as simultaneous in your data.
 
     **Corrected in the core.** The number of pairs was evaluated as :math:`(N!/2)(N-2)!` instead of
     :math:`N(N-1)/2`, and the pair term shrank with the number of events (two identical series of four events gave

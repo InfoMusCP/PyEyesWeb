@@ -80,4 +80,4 @@ Compute the speed once and give the same array to as many metrics as you need.
   {doc}`../howto/map_skeleton`.
 - To run a whole recording through a feature, use `run`; it gives the same numbers as a loop of `process`.
 
-% TODO(WP7): gallery link
+Hands-on: see {ref}`sphx_glr_tutorials_03_low_level_plot_05_motion.py` (motion) and {ref}`sphx_glr_tutorials_03_low_level_plot_06_shape.py` (shape).

@@ -23,7 +23,7 @@ Theory: {doc}`../theory/entropy_rarity_periodicity`.
 each channel of a window by the Periodicity Transform, with their normalised power;
 {py:class}`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` tells whether the pulses of a window are equally spaced. For
 the peaks of a signal use {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector`, which flags the samples at which a peak
-has been found. Theory: {doc}`../theory/entropy_rarity_periodicity` and {doc}`../theory/gesture_segmentation`.
+has been found (a maximum, reported up to `window` samples late; `threshold` is the swing of the signal, not a level). Theory: {doc}`../theory/entropy_rarity_periodicity` and {doc}`../theory/gesture_segmentation`.
 
 **Do two or more signals move together?** The synchronization measures are the largest family and are chosen by the kind of
 signal.
@@ -76,4 +76,4 @@ lower entropy.
   build them first, for instance with `ScalarPeakDetector`.
 - Time is in seconds, and a feature that needs a rate takes `sampling_rate` ({doc}`../concepts/time_units_parameters`).
 
-% TODO(WP7): gallery link
+Hands-on: see {ref}`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py`, {ref}`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` and {ref}`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`.

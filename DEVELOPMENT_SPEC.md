@@ -270,6 +270,8 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   is untouched: its `noise` input blocks the start of a gesture while set (`True` = judged to be noise), so a pipeline passes `is_noisy`
   directly (the docstrings, `test_parity_gesture_segmenter.py` and `test_time_and_units.py` do it; the first version of this note asked for
   `not is_noisy`, which blocked every smooth gesture; `tests/data/gesture_segmenter_reference.npz` was regenerated with the direct wiring).
+  With several joints the alphabetically last joint name decides the flag, whatever the order of `labels` (the behaviour of the underlying
+  EyesWeb block: only one joint decides).
 - **`Suddenness.gamma`** has no unit (dimensionless, a ratio of quantile differences); listed in `EXEMPT` of `test_units_all_features.py`.
   The classification of a still or constant-speed window as sudden is unchanged.
 - **`CurvatureVelocityCorrelation` velocity in seconds.** `velocity` and `velocity_std` are length/s in both modes: with the default

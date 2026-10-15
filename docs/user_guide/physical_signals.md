@@ -83,4 +83,4 @@ The other pipeline of the layer goes from an image to the measures of an outline
   the boundary); the generic models do not. {doc}`../theory/humanoid_models` explains the difference.
 - Image features take 8-bit images or masks and return pixel coordinates (see {doc}`../concepts/inputs`).
 
-% TODO(WP7): gallery link
+Hands-on: see {ref}`sphx_glr_tutorials_02_physical_signals_plot_03_points.py` (points) and {ref}`sphx_glr_tutorials_02_physical_signals_plot_04_images.py` (images).

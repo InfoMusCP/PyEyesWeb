@@ -45,7 +45,8 @@ not finite, in the intensity or in the flag, gives `INVALID_INPUT`.
 A skeleton tracker may lose a joint, and the speed of a joint that jumps about at random gives an intensity that looks like a
 gesture and is not. The `noise` input is a second stream, one flag for each sample, that is true while the motion is judged to
 be noise, and while it is set no gesture can start. The flag is computed by
-{py:class}`~pyeyesweb.low_level.MotionNoiseDetector` (output `is_noisy`) on the same frames ({doc}`kinematics_energy`).
+{py:class}`~pyeyesweb.low_level.MotionNoiseDetector` (output `is_noisy`) on the same frames ({doc}`kinematics_energy`). With several joints the detector is decided by the
+alphabetically last joint name: this is the behaviour of the underlying EyesWeb block, and only one joint decides.
 Without a flag the feature segments any one-dimensional signal. The call is `process(intensity, noise=False, *, timestamp=None)`
 and `run(intensity, noise=None, *, timestamps=None)`.
 
@@ -67,9 +68,10 @@ are `motion_duration` and `pause_duration`.
 ## Peaks of a signal
 
 A gesture often contains events: the moment of maximum speed, the stroke of a beat. {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector`
-keeps a buffer of the last `window` samples (5 by default) of a scalar signal and reports a peak when the buffered signal has a
-local maximum above `threshold`; the output is `is_peak`, true on the sample at which the peak is reported. A peak is reported a
-few samples after the maximum, once the following samples are in the buffer. It is an analysis primitive because it knows
+keeps a buffer of the last `window` samples (5 by default) of a scalar signal and reports a peak when the buffered signal shows a fall after
+a rise, each larger than `threshold`: the threshold is a swing (the largest minus the smallest value of the buffer), not a level,
+and only maxima are reported, not minima. The output is `is_peak`, true on the sample at which the peak is reported, with a delay of up to
+`window` samples after the maximum, once the fall is in the buffer. It is an analysis primitive because it knows
 nothing of bodies, and its output, a stream of events, is the input of the measures of regularity and synchronization of
 events ({doc}`entropy_rarity_periodicity`, {doc}`synchronization`). Corrected in the core: the running maximum was seeded with
 the smallest positive number, so a signal that stays at or below 0 never produced a peak.

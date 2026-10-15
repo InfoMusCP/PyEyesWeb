@@ -343,4 +343,6 @@ for tolerance in (0, 2):
 # * :doc:`/theory/imaging`: the definitions and the formulas of the image features.
 # * :doc:`/howto/images`: preparing silhouettes from your own video.
 # * :doc:`/user_guide/physical_signals`: the features of layer 1.
-# * The next tutorials move to the low-level features, which take the points and the contours that these features give.
+# * The next tutorials move to the low-level features, which take the points and the contours that these features give:
+#   :ref:`sphx_glr_tutorials_03_low_level_plot_05_motion.py` (motion) and
+#   :ref:`sphx_glr_tutorials_03_low_level_plot_06_shape.py` (shape).
