@@ -23,19 +23,19 @@ The workspace is **not a git repository**. Before WP1 make a dated backup of `PE
 | Concern | Choice | Replaces |
 |---|---|---|
 | Generator / theme | **Sphinx + PyData Sphinx Theme** (`pydata-sphinx-theme`) | mkdocs, mkdocs-material/readthedocs theme |
-| Docstrings | numpydoc style (existing docstrings are already numpy style); `numpydoc` or `sphinx.ext.napoleon` (decide in WP1; `numpydoc` gives the validation hook) | mkdocstrings numpy handler |
+| Docstrings | numpydoc style, **decided**: the `numpydoc` extension (validation hook), not napoleon | mkdocstrings numpy handler |
 | API pages | `sphinx.ext.autosummary` (+ `autodoc`) and **one generated page per catalog feature** through a small in-repo extension (`docs/_ext/feature_pages.py`, directive `.. feature:: Name`) reading `catalog()` and the feature's `inputs`, `outputs` (Schema), `parameters` | `docs/scripts/gen_pages.py`, `tools/update_catalog_docs.py`, mkdocs-gen-files, literate-nav, section-index |
 | Tutorials | **`sphinx-gallery`** over the percent scripts (see TEACHING_PLAN.md) | mkdocs-jupyter, `examples/build.py`, `examples/check.py` |
-| References | `sphinxcontrib-bibtex`, one `docs/references.bib`, a "References" block per metric | `TODO(ref)` placeholders in docstrings |
+| References | `sphinxcontrib-bibtex`, one `docs/references.bib`, a "References" block per metric, **ACM style** (§4.3) | `TODO(ref)` placeholders in docstrings |
 | Cross-links | `intersphinx` to python, numpy, scipy, pandas, matplotlib | — |
 | Layout widgets | `sphinx-design` (cards, grids, tabs, dropdowns) | pymdownx tabbed/details/admonition |
 | Math | `sphinx.ext.mathjax` (built in) | `docs/javascripts/mathjax.js` |
-| Source format | reStructuredText for pages with directives and maths; MyST (`myst-parser`) optional for prose pages: **decide once in WP1, do not mix without reason** | Markdown |
+| Source format | **Decided: MyST Markdown (`myst-parser`) for the prose pages** (reuses the old `.md`; directives via MyST `{directive}` syntax, maths via `dollarmath`/`amsmath`), docstrings in numpydoc/RST, API pages generated, gallery text blocks in RST (checked 2026-10-15 in the sphinx-gallery syntax documentation, 0.22: text blocks are reST only, there is no Markdown/MyST option). `index` and generated pages may stay `.rst`; do not mix within one page | Markdown |
 | Hosting | GitHub Pages (as now), built in CI | `mkdocs gh-deploy` |
 
 Tone: scientific and institutional, like the scikit-learn, SciPy and NumPy documentation: definitions, notation, theory pages, references; not marketing. One-line pitch on the landing page, no superlatives.
 
-Dependencies for the build go in a **`docs` extra** of `pyproject.toml` (replacing the mkdocs lines in `dev`) and a pinned `docs/requirements.txt` for CI; both list: `sphinx`, `pydata-sphinx-theme`, `numpydoc`, `sphinx-gallery`, `sphinxcontrib-bibtex`, `sphinx-design`, `matplotlib`, `pandas`, `scipy`, `pillow` (gallery thumbnails). Python 3.11. (Touching `pyproject.toml` here is limited to this extra and is coordinated with work package E.)
+Dependencies for the build go in a **`docs` extra** of `pyproject.toml` (replacing the mkdocs lines in `dev`) and a pinned `docs/requirements.txt` for CI; both list: `sphinx`, `pydata-sphinx-theme`, `numpydoc`, `sphinx-gallery`, `sphinxcontrib-bibtex`, `sphinx-design`, `matplotlib`, `pandas`, `scipy`, `pillow` (gallery thumbnails). Python 3.11 (CI also tests 3.10-3.13, §4.5). Add `myst-parser` to the list. (Touching `pyproject.toml` here is limited to this extra and is coordinated with work package E.)
 
 ---
 
@@ -47,7 +47,7 @@ Target form is the Sphinx page named in §3. Keep prose and theory where it is s
 
 | Path (under `docs/`) | Topic | Status | Notes |
 |---|---|---|---|
-| `index.md` | Home | **rewrite** → `index.rst` | landing page (§4.4); keep EU/CP logos and funding text |
+| `index.md` | Home | **rewrite** → `index.md` (MyST) | landing page (§4.4); keep EU/CP logos and funding text |
 | `user_guide/getting_started.md` (91) | install + first example | **rewrite** | old `SlidingWindow` + `SpeedSmoothness` style; new: install, core loading, `process`/`run`, `Recorder` |
 | `user_guide/library_structure.md` (49) | packages | **rewrite** → `concepts/layers` | layers + `catalog()` |
 | `user_guide/input_contract.md` (83) | inputs | **rewrite** → `concepts/inputs` | dict / `(N,3)` / `(n,D)` forms, `labels=`, skeleton presets, `joint_map` (verify it still exists), `InputKind.IMAGE`, `from_*`, shape `ValueError` vs `INVALID_INPUT` |
@@ -59,8 +59,8 @@ Target form is the Sphinx page named in §3. Keep prose and theory where it is s
 | `mid_level/impulsivity.md`, `suddenness.md` | per-topic theory | **merge** | |
 | `mid_level/lightness.md`, `analysis_primitives/clusterability.md`, `statistical_moments.md` | dropped features | **delete** | listed on the "Removed features" page only |
 | `analysis_primitives/mse_dominance.md`, `rarity.md`, `synchronization.md` | theory | **merge/rewrite** | sync becomes a family page (11 classes; verify count) |
-| `utils/index.md` (0), `utils/tsv_reader.md` (394) | TSV reader | `pyeyesweb.utils` is **internal** since work package C (not listed in `dir(pyeyesweb)`): check whether a TSV loader is public; if not, delete the page and cover loading in a how-to using the gallery download/loader helper | |
-| `assets/*` | logos, figures | **keep**, add SVG logo (§4.4) | |
+| `utils/index.md` (0), `utils/tsv_reader.md` (394) | TSV reader | **delete both** (decided 2026-10-15): `TSVReader` (`pyeyesweb/utils/tsv_reader.py`) was removed from the library; loading data is covered by the `pyeyesweb.datasets` helper and the gallery (TEACHING_PLAN §5). Delete the pages at WP1 | |
+| `assets/*` | logos, figures | **keep** (inventory in §4.4); SVG logo wanted | |
 | `javascripts/*`, `overrides/*`, `scripts/gen_pages.py` | mkdocs machinery | **delete** (superseded by `conf.py`, `_static/custom.css`, `_ext/`) | |
 | `mkdocs.yml`, `site/` | mkdocs config and built output (6.6 MB) | **delete from repo** after the Sphinx build is green; `_build/` into `.gitignore` | `site/` is also excluded from release (ALPHA_REVIEW Q6) |
 
@@ -69,10 +69,11 @@ Target form is the Sphinx page named in §3. Keep prose and theory where it is s
 |---|---|---|
 | `README.md` | **rewrite** | example uses `SpeedSmoothness` + `SlidingWindow` (both gone). New: one-paragraph pitch, install (the wheel depends on `eyesweb-core`; `EYESWEB_CORE_PATH` for dev builds), a 10-line example with `process`/`run`/`Recorder` that is **executed in WP8**, links to docs and gallery, citation, funding |
 | `CHANGELOG.md` | **rewrite** | single 2.0.0 entry (Keep a Changelog): Added / Changed / Removed / Fixed ("Corrected in the core") + migration table old→new, built from `PORTING_STATUS.md` and DEVELOPMENT_SPEC "Contract changes". 1.x entries kept below untouched. Included in the docs as the Changelog page |
-| `STRUCTURE_REVIEW.md`, `DESIGN_PROPOSALS.md`, `OPEN_POINTS.md`, `ALPHA_REVIEW.md` | internal | not in the docs and not in the sdist/wheel (ALPHA_REVIEW Q6); conclusions go into the developer guide. Ask maintainer where they live |
-| `DEVELOPMENT_SPEC.md` | source | becomes the developer-guide page: include it with `.. include::` / MyST `{include}` (do not copy; update only in the source). Strip internal remarks (e.g. private repository paths) that the public docs must not show: **maintainer to confirm what in the spec may be public** |
+| `STRUCTURE_REVIEW.md`, `DESIGN_PROPOSALS.md`, `OPEN_POINTS.md`, `ALPHA_REVIEW.md`, `DOCS_PLAN.md`, `TEACHING_PLAN.md` and the other agentic-development notes | internal | **move to the private repository** (`EyesWebCore/dev-notes/`) **before release**; not in the public repo, docs, sdist or wheel; conclusions go into the developer guide |
+| `DEVELOPMENT_SPEC.md` | source | **kept and published** as the "Contributing / development spec" page for open-source contributors: MyST `{include}` (do not copy; update only in the source). Needs a pass first to remove private repository names and C++ internals (WP8) |
 | `CITATION.cff` | **update** | version 2.0.0, date |
 | `main.py` | delete (ALPHA_REVIEW Q6) | |
+| `pyeyesweb/utils/tsv_reader.py` | **removed 2026-10-15** | its docs page and `utils/index.md` are on the deletion list (§1.1); the 2.0.0 CHANGELOG entry lists `TSVReader` under Removed |
 | `tools/update_catalog_docs.py` | **delete** | superseded by the generated pages |
 | `docs/conf.py`, `docs/Makefile`/`make.bat` | **new** | WP1 |
 
@@ -102,7 +103,7 @@ Write `docs/facts.rst` (an internal, non-published `.. only:: dev` page, or a `d
 8. **Units**: lengths and thresholds in metres as in EyesWeb; `units="m"|"mm"` for features declaring `_unit_params` (parameters are scaled, data/outputs never); `Output.unit` is documentation (`"<length>"`, `"<input>"`, `"samples"`, `"frames"`, `"px"`, `"deg"`, `"s"`, or the concrete unit when `units=` was given); empty unit = dimensionless. **Humanoid exception** (`HumanoidSimulator` works internally in mm and converts at the boundary; `GenericModel*` run in the unit of the user's model and `units` only names it).
 9. **Choices**: lower-case strings (`method=`, `aggregation=`, `output_dims`, `input_mode`), case-insensitive, `-`/space count as `_`, wrong value lists the options; booleans are real bools; no enums in the public API; `parts=` sequences for the silhouette/potential switches (`SilhouetteCentroids`, `SilhouetteBodyParts`, `RegionDependingPotentials`).
 10. **Constructors**: `from_*` classmethods per `input_mode` (`KineticEnergy.from_position/from_velocity`, `Kinematics`, `LogDimensionlessJerk`); list them by introspection, do not hand-write.
-11. **Skeletons**: presets `kinect_v2`, `qualisys_sport`, `mediapipe`, `openpose` (some fields unfilled: `SKELETON_TODO`; **say so**) or a `pyeyesweb.skeletons.Skeleton`; `skeleton=`, `labels=`, `pairs=`, `weights=` override; `joint_map` (verify).
+11. **Skeletons**: presets `kinect_v2`, `qualisys_sport`, `mediapipe`, `openpose` (`qualisys_sport`, `mediapipe`, `openpose` are incomplete, with `TODO(fill)` markers: **decided, document them as incomplete until the maintainer fills them, do not hide them**; `SKELETON_TODO` lists the gaps) or a `pyeyesweb.skeletons.Skeleton`; `skeleton=`, `labels=`, `pairs=`, `weights=` override; `joint_map` (verify).
 12. **Dims**: `dims=None` is inferred from the first frame.
 13. **Layers and catalog**: `catalog()`, `catalog_table()`, `Layer`, `Timescale`; the five packages and the **placement rule** (copy it from the `catalog` docstring; `FilterContour`, `Directness`, `TrajectoryNonPlanarity` are low-level after C and D). `dir(pyeyesweb)` lists public modules; `pyeyesweb.base` and `pyeyesweb.utils` are internal and are **not documented as API**.
 14. **Live vs structural parameters**: live = applied in place, state kept; structural = state resets and the next result says "parameters changed: state reset". Per-parameter source: `examples/scratch/live_parameters_classification.md` (**verify against code**: the `Feature.parameters` / setters).
@@ -136,7 +137,7 @@ API reference
   skeletons                   presets, get_skeleton, with_skeleton
   catalog                     Layer, Timescale, FeatureInfo, catalog, catalog_table
 Tutorials                     sphinx-gallery (TEACHING_PLAN.md): auto_examples/ or tutorials/
-How-tos                       load Qualisys TSV; map a skeleton; real-time loop with live parameters; batch a recording to pandas; images
+How-tos                       load the example data (`pyeyesweb.datasets`); map a skeleton; real-time loop with live parameters; batch a recording to pandas; images
 Developer guide               architecture and contract (DEVELOPMENT_SPEC include) | conventions | porting status (public summary only) | adding a feature | building the docs
 Changelog                     CHANGELOG.md, 2.0.0 + migration guide 1.x → 2.0 + removed features
 References                    bibliography (`.. bibliography::`)
@@ -159,22 +160,25 @@ The extension also provides `.. feature-table:: <layer>` (the layer tables, repl
 Acceptance of this mechanism is a test: the number of generated pages equals `len(catalog())`.
 
 ### 4.3 References
-`docs/references.bib` with all literature; each metric docstring has a numpydoc "References" section using `:cite:` keys (e.g. `[Balasubramanian2015]_`-style rendered by sphinxcontrib-bibtex: **decide citation style, e.g. `:cite:p:` in prose and a footnote-style block in the generated page**). Known: SpectralArcLength → Balasubramanian, Melendez-Calderon, Roby-Brami, Burdet (2015), "On the analysis of movement smoothness", J NeuroEng Rehabil 12:112. The rest are supplied by the maintainer (OPEN_POINTS §3); until then the key `TODO` is **allowed only in a draft build** and the final gate (WP9) fails on it. Add the Camurri et al. papers for the conceptual model and the EyesWeb reference.
+`docs/references.bib` with all literature; each metric docstring has a numpydoc "References" section using `:cite:` keys.
+**Citation style: ACM (decided).** Checked 2026-10-15: sphinxcontrib-bibtex has no ACM style built in (`alpha`, `plain`, `unsrt`, `unsrtalpha`; no CSL support) and no maintained pybtex ACM plugin was found. Proposal: a small pybtex style in `docs/_ext/acm_style.py` (subclass of `pybtex.style.formatting.unsrt.Style`, ACM Reference Format ordering: authors, year, title, venue, volume(issue), pages, DOI), registered with `pybtex.plugin.register_plugin("pybtex.style.formatting", "acm", ...)`, `bibtex_default_style = "acm"`, numeric labels (`bibtex_reference_style = "label"`). **First step of the references task: mine the citations already present** in `docs/` (theory pages) and in the `pyeyesweb` docstrings (grep for years, `et al.`, `doi`, `TODO(ref)`) into `docs/references.bib`, then fill the gaps (OPEN_POINTS §3). Known: SpectralArcLength → Balasubramanian, Melendez-Calderon, Roby-Brami, Burdet (2015), "On the analysis of movement smoothness", J NeuroEng Rehabil 12:112. The rest are supplied by the maintainer (OPEN_POINTS §3); until then the key `TODO` is **allowed only in a draft build** and the final gate (WP9) fails on it. Add the Camurri et al. papers for the conceptual model and the EyesWeb reference.
 
 ### 4.4 Identity and landing page
-- Custom `_static/custom.css` + `pydata` theme options: a recognisable palette (derive from the EyesWeb/Casa Paganini logos; light and dark variants, both checked for contrast), a SVG logo (light/dark) under `html_theme_options["logo"]`, footer with EU/Casa Paganini/RESILENCE logos and funding text (keep `assets/*logo*.png`), a favicon.
+- Logo inventory (`docs/assets/`): `eyesweb-logo.png` (main mark: header logo, light and dark variants under `html_theme_options["logo"]`; if the PNG suits only one background, an inverted copy is needed for the other theme), `favicon-32x32.png` (favicon), `cp-logo.png` and `cp-logo-squared.png` (Casa Paganini; footer, the squared one for narrow layouts), `eu-logo.png` and `resilence-logo.png` (footer, funding text), `ConceptualModel.png` (theory figure, not a logo). PNG is acceptable now; **SVG versions of the EyesWeb logo and favicon would be better** (sharp in both themes, recolourable): ask the maintainer for the sources. Palette derived from the EyesWeb logo (sample its dominant colours, check contrast), set through `_static/custom.css` + pydata CSS variables, light and dark.
 - Landing page: one-sentence pitch (research toolkit for expressive movement analysis, built on the EyesWeb Expressive Gesture Analysis library), install line, a 10-line executed example, then a `sphinx-design` **grid of cards, one per layer** (title, timescale, number of features from `catalog()`, link), and cards for Getting started / Concepts / Gallery / API. No marketing copy; funding and citation at the foot.
 - Version switcher: **decide** (pydata `switcher.json`, needs versioned deploys) or drop; start with a single "stable" build plus "latest".
 
-### 4.5 Hosting and the private core (constraint, decision needed; ties to work package E)
-Autodoc, the generated pages and the gallery need the compiled `eyesweb_core`, which is closed source and built from the private repository `InfoMusCP/EwbCore` ("EyesWebCore"). The public PyEyesWeb repository must not contain C++ sources, and the docs CI must obtain **the binary wheel** `eyesweb-core` produced by the private repository's own build. Options:
-| Option | How | Pros | Cons |
-|---|---|---|---|
-| A. Artifact from the private repo | private workflow builds the wheel and uploads it as a release asset or workflow artifact; docs workflow downloads it with a fine-grained token (`secrets.EWBCORE_TOKEN`, read-only, `contents`/`actions`) | no extra infrastructure | token management; forks/PRs from outside cannot build docs; artifacts expire |
-| B. Private package index | wheels published to a private index (GitHub Packages, Azure Artifacts, devpi, a private PyPI project); docs CI installs with `pip --extra-index-url` and an index token | the normal `pip install` path; same mechanism the release will use | needs an index (cost/setup); same token caveat |
-| C. Public PyPI wheel | publish `eyesweb-core` binary-only on PyPI (the compiled module is public, sources stay private) | simplest CI, users get the same | **the maintainer must accept distributing the binary**; license check (ALPHA_REVIEW Q5) first |
-| D. Prebuilt docs from a private runner | docs built in the private repo's CI (it already has the core) and pushed to the public Pages branch | no token in the public repo | docs workflow lives next to the closed code; harder for contributors |
-Recommendation to put to the maintainer: **C if the binary may be public (it will be, to make `pip install pyeyesweb` work, so this is the same decision as work package E); until then A.** CI details common to all: Windows is the dev platform but the docs job runs on Linux, so it needs the Linux wheel (cibuildwheel matrix of Q14 must include it), Python 3.11, the wheel installed into the job's venv, then `pip install .[docs]`, `sphinx-build -W --keep-going -b html docs docs/_build/html`, deploy with `actions/deploy-pages` (GitHub Pages "GitHub Actions" source) on pushes to main; pull-request builds run the same without deploying. The gallery executes in this job, so the wheel must be available there. The docs job must **not echo or upload** the wheel, and the public repo's workflow files must contain no C++ paths or sources. Local build: `EYESWEB_CORE_PATH=<EyesWebCore>/build/Release` plus `PYTHONPATH` as in the header, then `sphinx-build -b html docs docs/_build/html` (document it in the "Building the docs" page and in `docs/README`-free form: only in the developer guide).
+### 4.5 Hosting, the core wheel and CI (decided 2026-10-15; budgets and runner are proposals)
+**Decision:** the compiled core is published to PyPI as a **public binary wheel `eyesweb-core`**, built in the private repository with cibuildwheel for Linux (manylinux), Windows and macOS; an alpha `2.0.0a1` is acceptable and is the first release. The C++ sources stay private. The docs CI installs `pip install pyeyesweb` plus the docs extra from PyPI or TestPyPI: no private artifact, no token, forks and PRs can build. **Packaging (WP E of `ALPHA_REVIEW.md`) is a prerequisite of docs CI; until it is done the docs are built locally** against the dev build (`PYTHONPATH`/`EYESWEB_CORE_PATH` as in the header; `sphinx-build -b html docs docs/_build/html`). Workflow files contain no C++ paths or sources.
+
+**Proposals to confirm** (the maintainer has no preference; these are defaults):
+- Runner: GitHub Actions `ubuntu-latest` (free for public repositories, 4 vCPU / 16 GB) for the docs job, Python 3.11.
+- Tests: matrix ubuntu / windows / macos x Python 3.10-3.13 (`pyproject.toml` has `requires-python >=3.10` and classifiers 3.10-3.12 only: add 3.13 to the classifiers when its wheel exists).
+- Budgets: each gallery script < 60 s, whole gallery < 10 min, docs job `timeout-minutes: 30`.
+- sphinx-gallery cache of executed outputs keyed on the script hash.
+- `sphinx-build -W --keep-going` (warnings are errors).
+- Deploy to GitHub Pages from `main` with `actions/deploy-pages`; pull-request builds run the same without deploying.
+- Pin the `eyesweb-core` version in the docs extra; the page footer prints `eyesweb_core.__version__`.
 
 ### 4.6 Docs-build checks (small, replace `examples/check.py`)
 `docs/_ext/` (or `docs/check.py` run as the last CI step) asserts: every `catalog()` name has a generated page and appears in at least one gallery script (**catalog coverage**; `sphinx-gallery` back-references give the data) or is listed in an explicit allow-list with a reason; every feature has a family; grep for **stale names** over `docs/`, `README.md`, `examples/*.py`, docstrings (`SpeedSmoothness|SlidingWindow|HistogramRarity|StatisticalMoment|Lightness|Clusterability|dims=3|rate_hz|fix_|time_mode|_process_window` outside the changelog/migration/removed-features pages) = 0 hits; no `TODO` reference keys in a release build. Plus: `-W` (warnings are errors), `linkcheck` builder run weekly, and docstring validation by `numpydoc` (`numpydoc_validation_checks`) limited to the catalog classes.
@@ -222,16 +226,46 @@ Order: WP0 → WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 (WP7 may star
 ## 8. Out of scope now: the artists' site (TouchDesigner CHOPs)
 A **second, separate site** for artists and creatives, documenting the TouchDesigner CHOPs (layer "EyesWebTD"), is **not part of this plan** and is a later work package, after packaging and the CHOP sources are updated (OPEN_POINTS §5: the `chop/` folder is ignored until then). Boundary: this site documents the Python library for researchers and developers; the artists' site has **no maths, no paper citations**, uses patches and screenshots, and describes "what it feels like" (what a movement quality looks like in a patch, typical ranges, recipes). It would **reuse**: the generated feature metadata (names, layer, timescale, inputs/outputs, parameters from `catalog()` and the CHOP-facing equivalents), the same Sphinx toolchain and extension (a second `conf.py`, a different template for the feature page), its own theme colours and logo, and links to the corresponding scientific page for anyone who wants the definition. Nothing is built for it now; keep the extension of §4.2 data-driven (families, metadata in `docs/_data/`) so a second site can consume it.
 
-## 9. Decisions still needed from the maintainer
-1. **Core wheel in docs CI** (§4.5): option A, B, C or D; who creates the token or index; may the binary `eyesweb-core` be public on PyPI (also decides work package E)? Which platforms the wheel is built for (docs job needs Linux).
-2. Source format: reStructuredText only, or MyST Markdown for prose pages (reuses the old `.md`)? `numpydoc` or `napoleon`?
-3. Literature references per metric (OPEN_POINTS §3) and the bibliographic citation style; the Camurri/EyesWeb papers to cite for the conceptual model.
-4. Wording for removed features (§2 item 15) and what in `DEVELOPMENT_SPEC.md`/`PORTING_STATUS.md` may be public (private repository names, internal paths).
-5. Visual identity: palette, logo (SVG), whether to keep the existing EyesWeb logo as the main mark; version switcher yes/no; custom domain.
-6. Where internal documents (`STRUCTURE_REVIEW`, `DESIGN_PROPOSALS`, `OPEN_POINTS`, `ALPHA_REVIEW`) are kept once the repo ships; whether `main.py` and `tools/update_catalog_docs.py` are deleted.
-7. Whether the TSV reader is a public utility (page kept) or example-only.
-8. Whether docstring doctests are also run inside Sphinx or only by `pytest --doctest-modules`.
-9. Skeleton presets still incomplete (`qualisys_sport`, `mediapipe`, `openpose`): document as incomplete or complete them first.
-10. Version policy for the docs (2.0.0a1 first, which URL: `latest`/`stable`).
-11. Git: initialise version control for the PyEyesWeb tree before the docs work starts (backup alternative).
-12. Whether the artists' site (§8) gets its own repository and when.
+## 9. Decisions taken (2026-10-15) and what remains open
+Taken by the maintainer:
+1. **Core wheel**: public binary wheel `eyesweb-core` on PyPI (cibuildwheel: Linux manylinux, Windows, macOS; first release `2.0.0a1`); sources private; docs CI installs from PyPI/TestPyPI; WP E is a prerequisite of docs CI, docs are built locally until then (§4.5).
+2. **Formats**: prose pages in MyST Markdown, docstrings numpydoc (`numpydoc` extension), API pages generated, gallery text blocks RST (no MyST option in sphinx-gallery; §0).
+3. **Citation style ACM** (custom pybtex style, §4.3); first step: mine existing citations from `docs/` and docstrings into `references.bib`.
+4. **Internal agentic-development documents** move to the private repository (`EyesWebCore/dev-notes/`) before release; `DEVELOPMENT_SPEC.md` is kept and published as "Contributing / development spec" after a pass removing private repository names and C++ internals.
+5. **Logos** are in `docs/assets/` (inventory and use in §4.4); palette derived from the logo; SVG wanted.
+6. **Public repository layout** (below).
+7. **TSV reader removed** from the library (data ships in `examples/`; delete `docs/user_guide/theoretical_framework/utils/tsv_reader.md` and `utils/index.md`); the incomplete skeleton presets `qualisys_sport`, `mediapipe`, `openpose` stay with their `TODO(fill)` markers, documented as incomplete; the maintainer fills them later.
+8. **Creatives site**: its own repository, much later (after docs, PyPI release and the TouchDesigner wrapper).
+9. **Gallery details** (proposals, no maintainer preference; TEACHING_PLAN §1, §5): layout by layer, no Binder/JupyterLite, `pyeyesweb.datasets` helper with `pooch`, `examples/helpers.py`.
+10. **Data** (videos, kinect, imu): stay in the repository for now and feed examples and educational material; the licensing/consent question is **parked ("to be discussed")**, not blocking, but a release-checklist item (below).
+11. **Exercise solutions**: executed code in a `sphinx-design` dropdown.
+12. **Features that did not separate the example conditions** are documented as if they work (no caveat pages); the OPEN_POINTS §4 analysis remains an internal to-do.
+13. **Budgets and CI class**: no preference from the maintainer; proposals in §4.5.
+
+**Public repository layout** (nothing else ships: no internal notes, no `site/`, no C++):
+```
+pyeyesweb/              library (pure Python)
+tests/                  unit tests + small reference data
+docs/                   conf.py, index.md, requirements.txt, Makefile, make.bat, references.bib
+  _ext/                 feature_pages.py, acm_style.py
+  _data/                families.yaml
+  _static/              custom.css, logos (SVG when available)
+  assets/               current logos and figures
+  getting_started/ concepts/ theory/ user_guide/ howto/ developer/ api/   (generated parts git-ignored)
+examples/               gallery scripts in layer folders (TEACHING_PLAN §1), GALLERY_HEADER.rst per folder, helpers.py, requirements.txt, data/ (trimmed)
+tools/                  maintained scripts only (regenerate_trajectory_reference.py); update_catalog_docs.py deleted
+.github/workflows/      tests.yml, docs.yml
+root                    README.md, CHANGELOG.md, CITATION.cff, LICENSE.txt, DEVELOPMENT_SPEC.md, pyproject.toml, .gitignore
+```
+Leave the public tree: `site/`, `mkdocs.yml`, `main.py`, `docs/javascripts|overrides|scripts`, the internal `.md` plans/reviews (to `EyesWebCore/dev-notes/`), `examples/*.ipynb`, `examples/utils/`, `examples/scratch/`, the TSV reader docs pages.
+
+**Release checklist item (parked)**: before the PyPI sdist/wheel, the wheel/sdist must not bundle the big data (`examples/data`, 939 MB); repository size and the data licence/consent still need a decision.
+
+**Remaining open**:
+- Confirm the proposals of §4.5 and TEACHING_PLAN §9.
+- Wording for removed features (§2 item 15); the public/private pass of `DEVELOPMENT_SPEC.md`.
+- Literature still missing after mining (OPEN_POINTS §3); the Camurri/EyesWeb papers.
+- SVG logo sources; version switcher yes/no; custom domain; docs version policy (`2.0.0a1`, `latest`/`stable` URL).
+- Doctests inside Sphinx or only `pytest --doctest-modules` (default: only pytest).
+- Git for the PyEyesWeb tree.
+- Data licence and consent (parked).

@@ -5,18 +5,25 @@ Run with: `PYTHONPATH="<EyesWebCore/build/Release>;<PEW>" EYESWEB_CORE_PATH=<Eye
 
 ## 1. Pipeline: percent scripts → sphinx-gallery (replaces `examples/build.py` and `examples/check.py`)
 
-The scripts are the single source; sphinx-gallery executes each on **every docs build**, renders HTML with embedded figures, and generates a downloadable `.ipynb` and `.py` per tutorial (and a Binder/JupyterLite link only if the maintainer wants it: needs the core wheel, so default is **no**). Notebooks are therefore no longer committed; `examples/build.py` is dropped; execution errors fail the docs build (`abort_on_example_error: True`), which is the guarantee that tutorials match the code.
+The scripts are the single source; sphinx-gallery executes each on **every docs build**, renders HTML with embedded figures, and generates a downloadable `.ipynb` and `.py` per tutorial (no Binder/JupyterLite: the compiled core cannot run in a browser; each page offers the downloadable `.ipynb`/`.py`, whose first cell is `%pip install pyeyesweb`). Notebooks are therefore no longer committed; `examples/build.py` is dropped; execution errors fail the docs build (`abort_on_example_error: True`), which is the guarantee that tutorials match the code.
 
-Layout (decide the final names with the maintainer; recommended):
+Layout (**proposal**, maintainer has no preference: gallery grouped by layer, numbered names kept):
 ```
-examples/                 gallery source (public): 01_getting_started.py ... 10_capstone.py, GALLERY_HEADER.rst (index text), helpers.py, data/ (trimmed Qualisys + synthetic generators)
+examples/                 gallery source (public): README.rst (gallery intro) + one folder per layer, each with its own README.rst/GALLERY_HEADER.rst
+  00_getting_started/     01_getting_started.py, 02_the_contract.py
+  01_physical_signals/    03_physical_signals_points.py, 04_physical_signals_images.py
+  02_low_level/           05_low_level_motion.py, 06_low_level_shape.py
+  03_mid_level/           07_mid_level.py
+  04_analysis_primitives/ 08_analysis_primitives.py, 09_synchronization.py
+  05_capstone/            10_capstone.py
+  helpers.py, data/ (trimmed Qualisys; synthetic generators in helpers.py)
 docs/tutorials/           gallery_dirs target (generated, git-ignored): index + one page per script + .ipynb/.py downloads
 ```
 `conf.py`:
 ```
 sphinx_gallery_conf = {
-  "examples_dirs": "../examples", "gallery_dirs": "tutorials",
-  "filename_pattern": r"/\d\d_",            # default is plot_*.py: our files are NN_name.py
+  "examples_dirs": "../examples", "gallery_dirs": "tutorials",   # with subfolders, examples_dirs/gallery_dirs may be lists of one entry per layer folder or one parent dir with subsections
+  "filename_pattern": r"/\d\d_",            # default is plot_*.py: our files are NN_name.py (works in the layer subfolders)
   "ignore_pattern": r"helpers\.py|build\.py",
   "within_subsection_order": "FileNameSortKey",
   "backreferences_dir": "api/generated/backreferences",
@@ -36,13 +43,13 @@ sphinx_gallery_conf = {
 (`junit` makes per-example run times visible in CI for the time budgets of §4.)
 
 Script conventions required by sphinx-gallery:
-- first block: a module docstring (title with `===` underline in RST, then a short abstract: it becomes the page heading and the **gallery card text**); then `# %%` blocks. Text blocks are comments starting `# %%` followed by `# ` lines **in reStructuredText** (sphinx-gallery default): the existing markdown cells (`# %% [markdown]`) must be converted to RST (headings, `:class:` roles to `:class:\`~pyeyesweb.low_level.Kinematics\``, math with `:math:`/`.. math::`); this is a mechanical but manual pass: verify by building. Section headings use `# %%` + `# Title` + `# -----`.
+- first block: a module docstring (title with `===` underline in RST, then a short abstract: it becomes the page heading and the **gallery card text**); then `# %%` blocks. Text blocks are comments starting `# %%` followed by `# ` lines **in reStructuredText** (sphinx-gallery has no Markdown/MyST option for text blocks: checked in its syntax documentation, 0.22; prose pages of the docs are MyST, gallery text is RST): the existing markdown cells (`# %% [markdown]`) must be converted to RST (headings, `:class:` roles to `:class:\`~pyeyesweb.low_level.Kinematics\``, math with `:math:`/`.. math::`); this is a mechanical but manual pass: verify by building. Section headings use `# %%` + `# Title` + `# -----`.
 - **Cross-references**: every public class in prose is a role (`:class:`) so back-references fill the "Examples using X" gallery on each generated feature page (and feed the catalog coverage check of the docs plan §4.6). No `_` names in code cells (they would not link).
 - **Thumbnails**: `# sphinx_gallery_thumbnail_number = N` in each script to choose the figure that is the card (one deliberately telling figure per tutorial; fallback `default_thumb_file`).
 - Per-script options as comments where needed: `# sphinx_gallery_capture_repr = ()` to hide noisy reprs, `# sphinx_gallery_dummy_images = N` is **not** used (we execute everything).
-- Downloads: sphinx-gallery adds "Download Jupyter notebook" and "Download Python source code" at the foot of each page and a `download_all_examples` zip; the notebooks contain a first cell `%matplotlib inline`; they run with `pip install pyeyesweb` + `examples/requirements.txt`-equivalent (`docs`-independent: matplotlib, pandas, numpy, scipy). State on the tutorials index how to run them locally.
-- Execution budget: each script < 60 s, whole gallery < 8 min on the CI runner with the released wheel (docs plan §4.5); `junit` output checked in CI; cut data by time slices; no benchmark/timing cells.
-- Data location: scripts find data through `helpers.data_path(name)` (see §5), never through absolute paths or the cwd, so they run from the docs build, from a downloaded notebook, and from a checkout.
+- Downloads: sphinx-gallery adds "Download Jupyter notebook" and "Download Python source code" at the foot of each page and a `download_all_examples` zip; the notebooks contain a first cell `%matplotlib inline`; they run with `pip install pyeyesweb` + the tutorials' requirements (`docs`-independent: matplotlib, pandas, numpy, scipy). A downloaded notebook starts with `%pip install pyeyesweb` (a `first_notebook_cell` of `"%pip install pyeyesweb\n%matplotlib inline"`); state on the tutorials index how to run them locally. **How a downloaded notebook gets `helpers.py`** (proposal): inline the three needed functions (`plot_recorder`, `shade_status`, `load`) in a first-cell block only in notebooks where they are used, or, simpler, the first cell downloads the file (`urllib.request.urlretrieve(<raw URL of helpers.py on the tagged release>, "helpers.py")`); in the docs build and in a checkout the file is simply next to the scripts. Default: the download cell, guarded by `if not Path("helpers.py").exists()`.
+- Execution budget (**proposal**, DOCS_PLAN §4.5): each script < 60 s, whole gallery < 10 min on a GitHub Actions `ubuntu-latest` runner with the released wheel, docs job timeout 30 min, executed outputs cached keyed on the script hash; `junit` output checked in CI; cut data by time slices; no benchmark/timing cells.
+- Data location: scripts find data through `pyeyesweb.datasets` / `helpers.data_path(name)` (see §5), never through absolute paths or the cwd, so they run from the docs build, from a downloaded notebook, and from a checkout.
 - Figures: matplotlib only, dpi 80-100 (`plt.rcParams["figure.dpi"]`), axes labelled with units, time axis in seconds, status shading via `shade_status`; one concept per figure.
 
 The old `examples/build.py` (nbclient/nbformat) is deleted together with the committed notebooks; `examples/check.py` is not written: its jobs move to the docs build (execution = gallery; catalog coverage and stale-name grep = the small docs-build check of the docs plan §4.6, which reads sphinx-gallery back-references).
@@ -62,12 +69,12 @@ Reviewer-only material counted by grep (`Notes for the reviewer|where(|call_path
 | `07_imaging` (175) | IMAGE input, silhouettes, Videogram, BinaryPulsesRegularity, TimeWindowSynchronizer | clean; `TimeWindowSynchronizer`/`SynchronizedWindow` are public in `pyeyesweb.physical_signals`; `parts=` replaces bool switches |
 | `08_humanoid` (337) | HumanoidSimulator (damping, flutter limitation), orientations, `control`, `joint_map` with Qualisys, PointsPredictor, mass-spring, GenericModelEstimator (`seed`) | clean; keep limitation numbers phrased for learners; units rule (mm internal, converted at the boundary) |
 
-Also remove in every script: references to resolved issues/fix numbers, "faithful vs corrected" debates (replace by one sentence "Corrected in the core" where relevant), timing cells unless pedagogical, comparisons that show features failing to separate two conditions (OPEN_POINTS §4: `CurvatureVelocityCorrelation`, `Harmonicity`, `Suddenness`, `SuddennessImpulsivity`, `Directness`, PLV on the vertical axis): either choose a condition where the feature is meaningful (synthetic) or state honestly that two trials need not differ in the measured quantity; never present a failed separation as a result.
+Also remove in every script: references to resolved issues/fix numbers, "faithful vs corrected" debates (replace by one sentence "Corrected in the core" where relevant), timing cells unless pedagogical, comparisons that show features failing to separate two conditions (OPEN_POINTS §4: `CurvatureVelocityCorrelation`, `Harmonicity`, `Suddenness`, `SuddennessImpulsivity`, `Directness`, PLV on the vertical axis): **decided 2026-10-15: document them as if they work** (no caveat pages, no "fails to separate" text); the analysis of OPEN_POINTS §4 remains an internal to-do for the maintainer. Prefer a synthetic or well-chosen condition in the tutorial where the feature visibly responds.
 
 `common.py` functions: `Recording`, `load(trial, standardize)`, `describe`, `peek`, `trace`, `shade_status`, `plot_recorder`, `draw_skeleton`, `show_frames`, `options`, `where`, `call_path`, `synthetic_silhouette`.
-Decision (recommended, confirm with maintainer):
-- **library**: nothing new unless the maintainer wants a public loader; `describe` is covered by `catalog()` / `feature.parameters` / `feature.inputs` / `feature.outputs`.
-- **`examples/helpers.py`** (not installed, plain file next to the scripts; sphinx-gallery puts the examples folder on `sys.path`): `data_path`, `load`/`Recording`, `plot_recorder`, `shade_status`, `draw_skeleton`, `show_frames`, `synthetic_silhouette`, `peek`, `trace`. Learners must be able to read it: < 250 lines, documented; it must work in a downloaded notebook (see §5: the helper is also offered as a download in the gallery header, or the first cell imports it from a published URL: **decide**).
+Decision:
+- **library**: the TSV reader is **removed from the library** (decided 2026-10-15; data ships in `examples/`). One small addition is proposed: `pyeyesweb.datasets` (§5). `describe` is covered by `catalog()` / `feature.parameters` / `feature.inputs` / `feature.outputs`.
+- **`examples/helpers.py`** (not installed, plain file next to the scripts; sphinx-gallery puts the examples folder on `sys.path`): `data_path`, `load`/`Recording`, `plot_recorder`, `shade_status`, `draw_skeleton`, `show_frames`, `synthetic_silhouette`, `peek`, `trace`. Learners must be able to read it: < 250 lines, documented; a downloaded notebook obtains it with a first cell (§1, proposal), and the `.py` download page of the gallery header also links it.
 - **drop from teaching** (move to a maintainer `dev/` folder): `where`, `call_path`, `options`, `_snake`.
 
 ## 3. Target curriculum (one script = one gallery page = one downloadable notebook)
@@ -85,7 +92,7 @@ Decision (recommended, confirm with maintainer):
 | 10 | `10_capstone` | real-time loop with `process` + live parameter change; batch features → table → simple plot/classifier | all | qualisys | mix | 30 min |
 
 Coverage rule: every `catalog()` name appears in at least one script **as a linked class role and in code** (checked by the docs-build check through back-references; the tables above are provisional, re-derive from `catalog()` in T0 because layers changed).
-Exercises: 2-3 per script in a final "Try it" section; solutions in a `.. dropdown::` (sphinx-design, RST text block) following the exercise; a code solution block must also run (it is part of the script) or be a literal block clearly marked as not executed (**decide**; default: executed, so a single file stays runnable).
+Exercises: 2-3 per script in a final "Try it" section; **decided: solutions are executed code inside a sphinx-design dropdown**. A reST text block cannot hold executed code, so T1 must verify how to wrap a gallery code cell in a dropdown (a `.. dropdown::` block with a `.. code-block:: python` solution plus an executed check cell, or sphinx-design/CSS wrapping of the cell); acceptance: every solution executes.
 Figures: as in §1.
 
 ## 4. Conventions
@@ -97,11 +104,11 @@ Figures: as in §1.
 - Budgets are enforced from the sphinx-gallery junit output (§1); a script over budget is fixed by slicing data.
 
 ## 5. Data: size, licensing, handling
-`examples/data` is 939 MB: `videos/` 780 MB, `qualisys/` 84 MB (22+ trial TSVs), `kinect/` 68 MB, `imu/` 8.5 MB, `markers_mappings.json`, `README.md` (trial descriptions, 2024-03-26 session). The gallery must build from a clean checkout and in CI without the full data.
+`examples/data` is 939 MB: `videos/` 780 MB, `qualisys/` 84 MB (22+ trial TSVs), `kinect/` 68 MB, `imu/` 8.5 MB, `markers_mappings.json`, `README.md` (trial descriptions, 2024-03-26 session). **Decided 2026-10-15: videos, kinect, imu and the rest stay in the repository for now and are used for examples and educational material; the data/licensing/consent question is parked ("to be discussed"), not blocking.** Release-checklist item: before the PyPI sdist/wheel, the wheel must not bundle the big data (exclude `examples/` from both), and the repository size and the licence still need a decision. The gallery must build from a clean checkout and in CI without the full data.
 - Tutorials use **only Qualisys + synthetic** data. Choose ≤ 6-8 trials (3-8 plus the sudden/impulsive ones) and **trim** them (time slice, needed markers only) to ≤ 15 MB total kept in the repository under `examples/data/`; keep the trimming script in the maintainer `dev/` folder (not shipped).
-- `helpers.data_path(name)` returns the local file if present, otherwise **downloads** it once (to the user's cache directory, `pooch`-style: URL + SHA-256 per file in a small table in `helpers.py`; stdlib `urllib` is enough) from the persistent host (Zenodo/OSF, maintainer to choose; the same host holds the full set: videos, kinect, imu). In the docs build the download step is skipped when the trimmed files exist; a downloaded notebook uses the download path. Offline failure gives a clear message.
-- Videos, kinect, imu never ship in the repository or wheel (`examples/` is excluded from the wheel anyway; the repository checkout shrinks from 939 MB once they are moved).
-- Licensing: the maintainer provides the performers' consent and a data licence (e.g. CC BY 4.0); add `examples/data/LICENSE` and a citation; rewrite `data/README.md` with units (mm raw Qualisys), frame rate, marker set ↔ skeleton preset/`joint_map`; remove `kinect/desktop.ini`. The gallery index states the licence and how to cite the data.
+- **Proposal** (no maintainer preference): a small public `pyeyesweb.datasets` helper using `pooch` (optional extra `pyeyesweb[datasets]`, SHA-256 checksums, user cache directory), modelled on the scikit-learn/SciPy dataset fetchers; the trimmed data are small enough to ship in `examples/data`, and the helper falls back to downloading from a persistent host (Zenodo/OSF, to be chosen) when the local file is absent. `helpers.data_path(name)` is a thin wrapper over it. In the docs build the download step is skipped when the trimmed files exist; a downloaded notebook uses the download path. Offline failure gives a clear message.
+- Videos, kinect, imu never ship in the **wheel/sdist** (they stay in the repository for now, see above).
+- Licensing (parked): when the maintainer settles consent and a data licence (e.g. CC BY 4.0), add `examples/data/LICENSE` and a citation; rewrite `data/README.md` with units (mm raw Qualisys), frame rate, marker set ↔ skeleton preset/`joint_map`; remove `kinect/desktop.ini`. The gallery index states the licence and how to cite the data.
 - Synthetic generators live in `helpers.py` and are seeded (`numpy.random.default_rng(seed)`) so figures are reproducible.
 
 ## 6. Fate of current public notebooks (all use removed APIs: `SlidingWindow`, `SpeedSmoothness`, `HistogramRarity`, `StatisticalMoment`, `Lightness`, `Synchronization`, `StaticFeature`, `dims=3`)
@@ -113,7 +120,7 @@ Figures: as in §1.
 | `04_output_contracts.ipynb` | tutorial 02 + docs Concepts/Results | delete |
 | `05_theoretical_framework.ipynb` | tutorials 05-09 + docs Theory/framework | delete |
 | `06_multimodal_capstone.ipynb` | tutorial 10 | delete (reuse its storyline if good; it used IMU/kinect, which are not shipped) |
-| `examples/utils/data_loader.py`, `plot_utils.py` | `examples/helpers.py` | delete after porting what is needed |
+| `examples/utils/data_loader.py`, `plot_utils.py` | `examples/helpers.py` | delete after porting what is needed (`data_loader.py` has its own `_load_tsv`: it does not use the removed library reader) |
 | `examples/requirements.txt` | the tutorials' runtime list (`matplotlib`, `pandas`, `scipy`, `pyeyesweb`); build tools live in the `docs` extra; drop `ipywidgets`, `tqdm`, `opencv-python` unless used | rewrite |
 | `examples/scratch/` (including `build.py`, `*.ipynb`) | source for tutorials 01-10; stays git-ignored, excluded from release; deleted after WP T7 when the maintainer says | ask maintainer |
 | committed `*.ipynb` anywhere | none: generated by the gallery as downloads | do not commit notebooks |
@@ -128,7 +135,7 @@ Figures: as in §1.
 | T4 | tutorials 03-09 from scratch 01-08 | each < 60 s; reviewer cells removed (grep `reviewer|where\(|call_path|_process_window` = 0); stale names re-verified by running |
 | T5 | tutorial 10 + exercises and solutions in all | every solution executes (or is explicitly marked) |
 | T6 | data trim, `data/README.md`, LICENSE, host upload | repository `examples/` < 30 MB; checksums verified |
-| T7 | delete old notebooks/utils/build; update `examples/README.md` (one paragraph: gallery, how to run locally); link from docs Tutorials; docs-build check (catalog coverage, stale names) | no reference to deleted files (grep); gallery total < 8 min; coverage check passes; maintainer + one student test-reader sign-off |
+| T7 | delete old notebooks/utils/build; update `examples/README.md` (one paragraph: gallery, how to run locally); link from docs Tutorials; docs-build check (catalog coverage, stale names) | no reference to deleted files (grep); gallery total < 10 min; coverage check passes; maintainer + one student test-reader sign-off |
 
 Order: T0 → T1 (after docs-plan WP1) → T2 → T3 → T4 → T5 → T6 → T7. T3/T4 can follow docs-plan WP3 (generated API pages exist for the links).
 
@@ -139,12 +146,23 @@ Order: T0 → T1 (after docs-plan WP1) → T2 → T3 → T4 → T5 → T6 → T7
 - The scratch scripts call `_process_window` heavily for comparisons: rewriting with `run` can change what is shown; markdown-to-RST conversion is manual and can break math; sphinx-gallery's default file pattern (`plot_*.py`) does not match our names (set `filename_pattern`).
 - Executed outputs live only in the build: no pre-rendered notebooks on GitHub; accept, or add a release attachment of the notebooks zip.
 
-## 9. Decisions still needed from the maintainer
-1. Gallery layout and names (`examples/` source, `docs/tutorials/` target), and whether Binder/JupyterLite links are wanted (requires the core wheel to be installable there, so probably not).
-2. Data: which trials, host (Zenodo/OSF), licence and performer consent, citation text; whether videos/kinect/imu leave the repository.
-3. `examples/helpers.py` vs library additions (public loader?); how a downloaded notebook obtains `helpers` (download link, inline cell, or install extra).
-4. Exercise solutions: executed code in a dropdown (default) or unexecuted.
-5. Fate of `examples/scratch/` after conversion (delete or archive), and of `main.py`/`examples/utils`.
-6. Honest handling of features that did not separate the example conditions (OPEN_POINTS §4): synthetic demonstration, or omit those comparisons.
-7. Budgets: confirm < 60 s per script and < 8 min total, and the CI runner class.
-8. Whether the core-wheel option chosen in the docs plan (§4.5) allows pull-request builds from forks to run the gallery.
+## 9. Decisions taken (2026-10-15) and what remains open
+Taken by the maintainer (see also DOCS_PLAN §9):
+1. **Core wheel**: public `eyesweb-core` binary wheel on PyPI (first release `2.0.0a1`); docs CI installs `pyeyesweb` from PyPI/TestPyPI; packaging (WP E) is a prerequisite of docs CI, until then docs and gallery are built locally. Forks and PRs can therefore build the gallery.
+2. Prose pages MyST, docstrings numpydoc; **gallery text blocks RST** (sphinx-gallery has no MyST option).
+3. ACM citation style; references mined from the existing docs/docstrings first.
+4. Internal agentic documents (including this plan) move to the private repository before release.
+5. Public repository layout: DOCS_PLAN §9 (`examples/`: layer folders, `helpers.py`, `requirements.txt`, trimmed `data/`).
+6. TSV reader removed from the library; data ships in `examples/`; incomplete skeleton presets stay documented as incomplete.
+7. Data (videos, kinect, imu): stay in the repository for now and feed examples and educational material; licensing/consent parked ("to be discussed") but on the release checklist (no big data in wheel/sdist).
+8. Exercise solutions: executed code in a sphinx-design dropdown.
+9. Features that did not separate conditions: documented as if they work; OPEN_POINTS §4 stays an internal to-do.
+10. Creatives site: separate repository, much later.
+
+**Proposals, no maintainer preference (confirm)**: gallery grouped by layer under `examples/` with `filename_pattern` matching the numbered names; no Binder/JupyterLite, downloadable `.ipynb`/`.py` with a first cell `%pip install pyeyesweb`; `pyeyesweb.datasets` with `pooch` (optional extra, checksums, cache dir); `examples/helpers.py` imported next to the scripts, fetched by a first cell in downloaded notebooks; budgets (< 60 s per script, < 10 min total, docs job timeout 30 min), GitHub Actions `ubuntu-latest`, tests on ubuntu/windows/macos x Python 3.10-3.13, executed-output cache keyed on script hash, `-W`, deploy to GitHub Pages from `main`, PR builds without deploy.
+
+**Remaining open**:
+- Confirm the proposals above.
+- Which trials, trimming rule and host (Zenodo/OSF) for the downloadable data; data licence and consent text (parked).
+- Final feasibility of an executed solution inside a dropdown with sphinx-gallery (check in T1; fallback: solution cell directly after the dropdown-closed text).
+- Fate of `examples/scratch/` after conversion.
