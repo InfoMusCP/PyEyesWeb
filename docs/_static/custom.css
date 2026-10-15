@@ -1,0 +1,15 @@
+/* First palette. The EyesWeb logo is monochrome (dark grey on transparent), so the primary colour is its graphite and the
+   accent is a muted blue chosen for contrast. TODO(WP9): confirm with the maintainer, check AA contrast. */
+html[data-theme="light"] {
+  --pst-color-primary: #3a3a3a;
+  --pst-color-secondary: #2b6a99;
+  --pst-color-link: #1f5f8b;
+  --pst-color-link-hover: #123f5e;
+}
+html[data-theme="dark"] {
+  --pst-color-primary: #e6e6e6;
+  --pst-color-secondary: #7db3d9;
+  --pst-color-link: #8cc1e6;
+  --pst-color-link-hover: #b5d8f0;
+}
+.navbar-brand img { height: 2rem; width: auto; }

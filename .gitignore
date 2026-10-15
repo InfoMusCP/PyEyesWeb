@@ -58,3 +58,9 @@ __*
 site/
 # Personal review notebooks
 examples/scratch/
+
+# Documentation build
+site/
+docs/_build/
+docs/api/generated/
+docs/tutorials/
