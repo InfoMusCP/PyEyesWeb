@@ -80,6 +80,7 @@ LIVE = [
     (lambda: BodyPartsFromCurvature(), "minimum_distance", 3, CURVATURES),
     (lambda: ConvexHull(integer_coordinates=True), "integer_coordinates", False, HULLS),
     (lambda: FilterContour(window=5, gaussian_sigma=2.0), "gaussian_sigma", 1.0, CONTOURS),
+    (lambda: FilterContour(window=5, gaussian_sigma=2.0), "window", 7, CONTOURS),
     (lambda: segmenter(), "firing_threshold", 5.0, INTENSITY),
     (lambda: detector(), "noise_threshold", 1e-9, TIMED_HAND),
     (lambda: ContractionImpulsivity(sampling_rate=25.0), "sampling_rate", 50.0, IMPULSES),

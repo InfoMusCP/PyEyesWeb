@@ -68,14 +68,14 @@ class Rarity(VariantFeature, CoreFeature):
         ``"information"`` only: rarity across the last ``window`` values of each input, or contrast across the
         inputs. Defaults to ``"rarity"``. *(live)*
     window : int, optional
-        ``"information"``: length of the memory in samples, at least 2 for ``measure="rarity"`` (``50`` by default,
-        *structural*). ``"mode_distance"``: samples per window (``50`` by default); changing it on a running feature
-        keeps the newest samples.
+        ``"information"``: length of the memory in samples, at least 2 for ``measure="rarity"`` (``50`` by default).
+        The core sizes the memory when it is built and cannot resize it, so changing it restarts the memory. *(structural)* ``"mode_distance"``: samples per window (``50`` by default); changing it on a running
+        feature keeps the newest samples. *(live)*
     bins : sequence of float, optional
         ``"information"`` only: widths of the successive bins, in the units of the signals. Defaults to
         ``(0.3, 0.3, 0.4)``, which covers signals in ``[0, 1]``. *(structural)*
     hop : int, optional
-        ``"mode_distance"`` only: new samples between two windows. Defaults to ``1``.
+        ``"mode_distance"`` only: new samples between two windows. Defaults to ``1``. *(live)*
     alpha : float, optional
         ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``.
         *(live)*

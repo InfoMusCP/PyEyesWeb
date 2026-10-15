@@ -25,9 +25,9 @@ class Periodicity(MinimumWindow, WindowedFeature, CoreFeature):
     Parameters
     ----------
     window : int
-        Samples per window, at least 2. Changing it on a running feature keeps the newest samples.
+        Samples per window, at least 2. Changing it on a running feature keeps the newest samples. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     method : {"small2large", "mbest"}, optional
         Search strategy of the transform: ``"small2large"`` (periods from the smallest to the largest) or
         ``"mbest"`` (the ``best_periods`` best periods). Defaults to ``"small2large"``.

@@ -216,6 +216,9 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     _core_class = _sync.GeneralisedAutoCorrelation
     _finite_inputs = True
 
+    def _window_changed(self) -> None:
+        self._invalidate_block()  # the block fixes the series length (and the lag spread) at its first call; it holds no history
+
     def _minimum_window(self, **overrides: Any) -> int:
         params = {**self._params, **overrides}
         if params.get("output_type") == _OutputType.SCALAR:

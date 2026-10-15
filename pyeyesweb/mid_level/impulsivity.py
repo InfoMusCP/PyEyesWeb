@@ -47,9 +47,9 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
     Parameters
     ----------
     window : int
-        Frames per window, at least 6.
+        Frames per window, at least 6. *(live)*
     hop : int, optional
-        New frames between two windows, between 1 and ``window``. Defaults to ``1``.
+        New frames between two windows, between 1 and ``window``. Defaults to ``1``. *(live)*
     dims : int, optional
         Coordinates of the position, 2 or 3. Defaults to the size of the first position.
     direction_change_epsilon : float, optional

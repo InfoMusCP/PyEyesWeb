@@ -106,6 +106,7 @@ concepts/time_units_parameters
 :maxdepth: 1
 
 theory/framework
+theory/notation
 theory/kinematics_energy
 theory/smoothness
 theory/shape_symmetry_balance

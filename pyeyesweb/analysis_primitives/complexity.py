@@ -38,9 +38,9 @@ class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     ----------
     window : int
         Samples per window (at least ``embedding_dimension + 1``). Changing it on a running feature keeps the newest
-        samples.
+        samples. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     embedding_dimension : int, optional
         Number of template lengths computed (the output has this many entries). Defaults to ``12``. *(structural)*
     tolerance : float or None, optional
@@ -136,9 +136,9 @@ class CoarseGraining(MinimumWindow, WindowedFeature, CoreFeature):
     Parameters
     ----------
     window : int
-        Samples per window (at least ``factor``).
+        Samples per window (at least ``factor``). *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     factor : int, optional
         Number of samples averaged into one (the scale), at least 1. Defaults to ``2``. *(structural)*
 

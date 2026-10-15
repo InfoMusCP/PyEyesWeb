@@ -42,9 +42,9 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
     Parameters
     ----------
     window : int
-        Frames per window (at least 3). Changing it on a running feature keeps the newest frames.
+        Frames per window (at least 3). Changing it on a running feature keeps the newest frames. *(live)*
     hop : int, optional
-        New frames between two windows. Defaults to ``1``.
+        New frames between two windows. Defaults to ``1``. *(live)*
     epsilon : float, optional
         Half-width, in units of :math:`a` (dimensionless), of the interval around a right angle in which the cosine
         metric is non-zero. Defaults to ``0.5``. *(live)*

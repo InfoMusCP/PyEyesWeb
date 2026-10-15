@@ -28,9 +28,9 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     ----------
     window : int
         Samples per window, at least 3 (three pulses are needed). Changing it on a running feature keeps the newest
-        samples.
+        samples. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     threshold : int, optional
         Tolerance in samples when two intervals are compared, at least 0. Defaults to ``0``: the intervals must be
         equal. *(live)*

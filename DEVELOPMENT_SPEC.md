@@ -230,6 +230,8 @@ Results, recorder and discoverability.
   `-DEW_WARNINGS_AS_ERRORS=ON` turns them into errors. `.gitignore` covers `examples/scratch/` (build outputs were
   already covered).
 
+- **Core package (2026-10-15).** The core is its own wheel `eyesweb-core` (import name `eyesweb_core`) that pyeyesweb will depend on; `_core.py` imports only `eyesweb_core` (no bundled `pyeyesweb._eyesweb_core`), `EYESWEB_CORE_PATH` stays the development override.
+
 ### Contract changes of work package H (2026-10-15)
 
 From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
@@ -356,6 +358,14 @@ The classification is decided per parameter from the original EyesWeb source (wh
 `bool adoptParams(const Block& fresh)` (see `CONVENTIONS.md`, "Changing parameters at run time"). A bad new value
 raises at the setter and leaves the feature unchanged, for the same values the constructor refuses (see "Live validation"
 below). New features add their cases to the live-parameter tests.
+
+`window` and `hop` of a `WindowedFeature` are live: the Python buffer keeps the newest samples (`configure`), a shorter window
+gives a result at once, a longer one warms up again (`test_live_window_hop.py`). Exceptions, structural because the state is
+sized by them: `CurvatureVelocityCorrelation` (`window`, `hop`, `sampling_rate`: its filters need the same length and overlap in
+consecutive windows), `Rarity(method="information")` `window` (memory in the core), `Videogram.window` and
+`ScalarPeakDetector.window` (buffers in the core). Making those three live needs a core change: resize the buffer keeping the
+newest values in `adoptParams` (`ShiftWindow` has no resize; `VideoGram` would crop or pad its image). `EventSynchronization*`
+change `window` and `hop` together with `configure(window=, hop=)`.
 
 ### Time (**Decided**)
 

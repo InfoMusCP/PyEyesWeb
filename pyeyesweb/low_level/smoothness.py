@@ -64,9 +64,9 @@ class SpectralArcLength(_SpeedProfileMetric):
     ----------
     window : int, optional
         Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to
-        ``60``.
+        ``60``. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     sampling_rate : float
         Sampling rate of the speed in Hz. Required: the window carries no time axis of its own. *(live)*
     amplitude_threshold : float, optional
@@ -142,9 +142,9 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
     ----------
     window : int, optional
         Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to
-        ``60``.
+        ``60``. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     sampling_rate : float
         Sampling rate of the signal in Hz. Required: the window carries no time axis of its own. *(live)*
     input_mode : {"velocity", "acceleration"}, optional
@@ -222,9 +222,9 @@ class Harmonicity(_SpeedProfileMetric):
     ----------
     window : int, optional
         Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to
-        ``60``.
+        ``60``. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     sampling_rate : float
         Sampling rate of the speed in Hz. Required: the window carries no time axis of its own. *(live)*
 
@@ -273,9 +273,9 @@ class SubmovementCount(_SpeedProfileMetric):
     ----------
     window : int, optional
         Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to
-        ``60``.
+        ``60``. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     sampling_rate : float
         Sampling rate of the speed in Hz, which turns the 100 ms separation into samples. Required: the window
         carries no time axis of its own. *(live)*
@@ -427,11 +427,11 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     ----------
     window : int
         Samples per window, at least ``filter_window_length + 1`` (10 with the default filter). Changing it, or
-        ``hop`` or ``sampling_rate``, on a running feature restarts the filters with an empty history.
+        ``hop`` or ``sampling_rate``, on a running feature restarts the filters with an empty history. *(structural)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(structural)*
     sampling_rate : float
-        Sampling rate of the series in Hz. Required: the window carries no time axis of its own.
+        Sampling rate of the series in Hz. Required: the window carries no time axis of its own. *(structural)*
     velocity_threshold : float, optional
         Velocity threshold of the original block. It has no effect: the block validates it and never reads it.
         Defaults to ``0.001``. *(live)*

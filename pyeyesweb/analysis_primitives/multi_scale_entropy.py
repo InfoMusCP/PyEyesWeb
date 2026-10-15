@@ -62,9 +62,9 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     window : int, optional
         Samples per window. Must be at least ``max_scale * minimum_points`` so that every scale is used (the
         constructor raises ``ValueError`` otherwise). Defaults to ``3000``, the minimum of the default ``max_scale``
-        and ``minimum_points``. Changing it on a running feature keeps the newest samples.
+        and ``minimum_points``. Changing it on a running feature keeps the newest samples. *(live)*
     hop : int, optional
-        New samples between two windows. Defaults to ``1``.
+        New samples between two windows. Defaults to ``1``. *(live)*
     embedding_dimension : int, optional
         Template length of the sample entropy, at least 1. Defaults to ``2``. *(structural)*
     tolerance : float, optional

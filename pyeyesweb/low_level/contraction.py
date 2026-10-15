@@ -38,7 +38,8 @@ class BoundingBoxFilledArea(FrameFeature):
     the box, so :math:`0 \le I \le 1`: the eight corners of a box give 1, the six vertices of an octahedron inscribed in
     a cube give :math:`\sqrt{3}/6 \approx 0.289`. The index is dimensionless and independent of the unit of the data.
 
-    The feature has no parameters and keeps no state. ``process(frame, *, timestamp=None)`` takes one frame, an ``(N,
+    The feature has no constructor parameters and keeps no state; the area below which the index is 0 is the attribute
+    ``epsilon`` (default 1e-6, in the squared unit of the data), which can be assigned at run time. *(live)* ``process(frame, *, timestamp=None)`` takes one frame, an ``(N,
     3)`` array of points (any other width raises ``ValueError``); ``timestamp`` (seconds) is only reported on the
     result.
 

@@ -6,7 +6,7 @@ documented status / valid mask, that parameter-dependent schemas match what the 
 constructor defaults the schemas rely on match the C++ defaults. The numerical behaviour of each block is tested in
 C++ alongside the core.
 
-The compiled core is found as pyeyesweb._eyesweb_core, or as eyesweb_core in the directory named by the
+The compiled core is the package eyesweb_core, or the build in the directory named by the
 EYESWEB_CORE_PATH environment variable. Without it these tests are skipped.
 """
 import math

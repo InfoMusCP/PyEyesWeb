@@ -84,9 +84,9 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     Parameters
     ----------
     window : int
-        Frames per window, at least 6 (5 speeds are needed).
+        Frames per window, at least 6 (5 speeds are needed). *(live)*
     hop : int, optional
-        New frames between two windows, between 1 and ``window``. Defaults to ``1``.
+        New frames between two windows, between 1 and ``window``. Defaults to ``1``. *(live)*
     dims : int, optional
         Coordinates of the position, 2 or 3. Defaults to the size of the first position.
     method : {"constrained", "quantile"}, optional
