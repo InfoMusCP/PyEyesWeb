@@ -99,14 +99,15 @@ def test_motion_noise_detector_with_a_skeleton(name):
 @pytest.mark.parametrize("name", NAMES)
 def test_symmetry_with_a_skeleton(name):
     skeleton = SKELETONS[name]
-    result = Symmetry(skeleton=name).process(_frames(skeleton, 1)[0])
+    reference = {} if skeleton.reference else {"reference_point": skeleton.joints[0]}  # a preset without one needs it given
+    result = Symmetry(skeleton=name, **reference).process(_frames(skeleton, 1)[0])
     assert result.status is Status.OK
     assert np.isfinite(result.symmetry) and result.symmetry > 0
 
 
 def test_symmetry_explicit_pairs_win_and_reflection_takes_the_skeleton_too():
     pairs = [("LHeelBack", "RHeelBack")]
-    feature = Symmetry(skeleton="qualisys_sport", pairs=pairs)
+    feature = Symmetry(skeleton="qualisys_sport", pairs=pairs, reference_point=QUALISYS_SPORT.joints[0])
     assert feature.process(_frames(QUALISYS_SPORT, 1)[0]).status is Status.OK
     mirror = Symmetry(method="reflection", skeleton="qualisys_sport", pairs=pairs)
     assert mirror.process(_frames(QUALISYS_SPORT, 1)[0]).status is Status.OK

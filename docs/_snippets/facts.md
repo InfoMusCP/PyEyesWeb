@@ -400,8 +400,7 @@ the suspected inconsistencies); `NO_OUTPUT` reason text added.
 
 **Statement.** `Recorder` is returned by `run` (and built by hand with `Recorder(feature)` / `Recorder.from_arrays`).
 
-- `repr(rec)`: `Recorder(<feature>, rows=n, columns=[...], status={...})` (exception: see S1 in the suspected bugs, a fast-path `run`
-  prints `schema`).
+- `repr(rec)`: `Recorder(<feature>, rows=n, columns=[...], status={...})` (a fast-path `run` too: S1, fixed in H).
 - `rec[3]`, `rec[-1]`: a `Result` (with `reason` and `valid`); out of range raises `IndexError`; `rec[2:5]`: a **list** of `Result`s;
   `rec["kinetic_energy"]` and `rec.kinetic_energy`: the column of an output (array `(n,) + shape`, or a list for a variable-size
   output); `rec["radii_0"]`: one flat column `(n,)`.
@@ -525,12 +524,13 @@ Schema(Output('videogram', shape=(None, None, None), kind=int)) | size: 0 | flat
 | misspelled keyword | `TypeError` naming the feature, with "did you mean" and the valid names |
 | a missing required argument (`window`) | `TypeError` naming the public class and saying what `window` is |
 | on/off switch given something other than `True` or `False` (`"on"`, `1`) | `TypeError` |
-| a timestamp that is NaN or infinite (timed features only) | `ValueError` |
-| `weights=` that is not a mapping (`KineticEnergy`) | `TypeError` from the core with the raw overload text (see S5) |
+| a timestamp that is NaN or infinite (every feature; S7, fixed in H) | `INVALID_INPUT`, reason `"non-finite timestamp"`, nothing changes |
+| `weights=` of the wrong length or kind (`KineticEnergy`; S5, fixed in H) | `ValueError` ("weights has 1 value, the skeleton has 3 joints"); a sequence with one weight per label is accepted |
+| `Symmetry(method="ratio", skeleton=<preset without a reference>)` (S4, fixed in H) | `ValueError` naming the preset and asking for `reference_point=` |
 
 **Evidence.** `data_models/inputs.py:98,130,180-181` (shape messages), `base/labels.py:45-47`, `base/signatures.py:112-120`
 (`unexpected_keyword`), `base/core_feature.py:68-76` (`check_range`) and `:324` (called by `_coerce_choices` in the constructor and the setters), `:328-329` and
-`physical_signals/humanoid.py:62` (bool check), `data_models/feature.py:228-231` (window and hop), `base/core_feature.py:212` (timestamp);
+`physical_signals/humanoid.py:62` (bool check), `data_models/feature.py:228-231` (window and hop), `data_models/feature.py` (`_input_problem`, timestamp);
 DEV 91-102, 134-138.
 
 Run `i05_errors`:
@@ -573,10 +573,10 @@ empty frame: no error, status INVALID_INPUT, reason 'empty frame'
 missing joint: no error, status INVALID_INPUT, reason 'missing joints: Head'
 unknown joint: ValueError: KineticEnergy: unknown joint names ['Bogus']; expected ['SpineBase', 'SpineMid', 'Neck', 'Head', 'ShoulderLeft', 'ElbowLeft', 'WristLeft', 'HandLeft',
 too few samples: no error, status WARMING_UP, reason '1 of 20 samples'
-bad parameter, constructor: ValueError: window must be >= 1 and 1 <= hop <= window (got window=-1, hop=1)
+bad parameter, constructor: ValueError: SpectralArcLength: window must be >= 1 and 1 <= hop <= window (got window=-1, hop=1)
 misspelled keyword: TypeError: SpectralArcLength() got unexpected keyword argument(s) 'windw' (did you mean 'window'?); valid parameters: window, hop, sampling_rate, amplitude_thres
 bad parameter, setter: ValueError: SpectralArcLength: window must be >= 10 (got -1)
-bad parameter, setter (hop): ValueError: window must be >= 1 and 1 <= hop <= window (got window=20, hop=99)
+bad parameter, setter (hop): ValueError: SpectralArcLength: window must be >= 1 and 1 <= hop <= window (got window=20, hop=99)
 after the failed setters: 20 1
 ```
 
@@ -625,7 +625,7 @@ joint is `INVALID_INPUT`; a frame array of the wrong number of rows raises.
 - The five window metrics (`SpectralArcLength`, `LogDimensionlessJerk`, `Harmonicity`, `SubmovementCount`,
   `CurvatureVelocityCorrelation`) have no time axis of their own: **`sampling_rate` is required** and `ValueError` at construction
   without it. They take `timestamp` only to put it in `result.timestamp`; **it does not enter the computation and is not checked**
-  (a decreasing or NaN timestamp is accepted).
+  (a decreasing timestamp is accepted; a NaN or infinite one is `INVALID_INPUT`, S7).
 - `ContractionImpulsivity`: `frames` is now `sampling_rate`; without it the index is per frame (unit `1/frame`, and the per-sample note).
   `MotionDuration` and `PhaseLockingValue` also take `sampling_rate` (optional; PLV needs it when a filter band is given).
 
@@ -665,10 +665,8 @@ print("repeated timestamp             ", repeated.status.name, repr(repeated.rea
 print("next valid call (1.5 s)        ", round(float(feature.process({"a": (0.1, 0.0, 0.0)}, timestamp=1.5).kinetic_energy), 6), "(0.1 m over 0.5 s: previous time kept)")
 
 for bad in (float("nan"), float("inf")):
-    try:
-        feature.process({"a": (0.1, 0.0, 0.0)}, timestamp=bad)
-    except ValueError as error:
-        print("non-finite timestamp:", error)
+    rejected = feature.process({"a": (0.1, 0.0, 0.0)}, timestamp=bad)
+    print("non-finite timestamp:", rejected.status.name, repr(rejected.reason))
 ```
 
 Output:
@@ -682,8 +680,8 @@ epoch seconds, first call       [(0.0, ''), (0.02, '')]
 untimed call, then epoch time   50.0
 repeated timestamp              INVALID_INPUT 'non-increasing timestamp'
 next valid call (1.5 s)         0.02 (0.1 m over 0.5 s: previous time kept)
-non-finite timestamp: timestamp must be a finite number of seconds, got nan
-non-finite timestamp: timestamp must be a finite number of seconds, got inf
+non-finite timestamp: INVALID_INPUT 'non-finite timestamp'
+non-finite timestamp: INVALID_INPUT 'non-finite timestamp'
 ```
 
 
@@ -748,18 +746,18 @@ without, irregular_result = last_value(None), last_value(irregular)
 print("same value with irregular timestamps:", without.spectral_arc_length == irregular_result.spectral_arc_length,
       "| result.timestamp is still recorded:", round(irregular_result.timestamp, 3))
 feature = SpectralArcLength(window=20, sampling_rate=100.0)
-print("decreasing / NaN timestamps are not checked here:", [feature.process(1.0, timestamp=t).status.name for t in (5.0, 1.0, float("nan"))])
+print("decreasing timestamps are not checked here, a NaN one is rejected:", [feature.process(1.0, timestamp=t).status.name for t in (5.0, 1.0, float("nan"))])
 ```
 
 Output:
 
 ```text
 same value with irregular timestamps: True | result.timestamp is still recorded: 10.752
-decreasing / NaN timestamps are not checked here: ['WARMING_UP', 'WARMING_UP', 'WARMING_UP']
+decreasing timestamps are not checked here, a NaN one is rejected: ['WARMING_UP', 'WARMING_UP', 'INVALID_INPUT']
 ```
 
 
-**Status.** corrected vs plan: the timestamp rules (non-increasing, finite) apply to the 9 timed classes, not to every feature; the window
+**Status.** corrected vs plan: the non-increasing rule applies to the 9 timed classes, the finite rule (H) to every feature; the window
 metrics ignore `timestamp`; first-call and reason texts specified. `sampling_rate` default `None` everywhere and the five metrics
 raising: verified. "Warm-up says so in seconds": no, it is a sample count (item 3).
 
@@ -1184,10 +1182,10 @@ LogDimensionlessJerk acceleration | Inputs(signal: sample (1) [units/s or units/
 - **`joint_map` exists only on six classes**: `HumanoidSimulator`, `HumanoidOrientations`, `GenericModelOrientations`,
   `GenericModelSimulator`, `GenericModelPredictor`, `GenericModelEstimator` (`joint of the model -> label of your data`; HUMANOID_JOINTS has 21 names).
   Other features with `labels`: `PointsPredictor`, `PointsDensity`, `Symmetry`, `KineticEnergy`, `MotionNoiseDetector`.
-- **Incomplete presets stay documented as incomplete** (decided). Nothing raises. A missing `weights` silently becomes **uniform weights of 1.0**
+- **Incomplete presets stay documented as incomplete** (decided). Only the ratio symmetry raises (below). A missing `weights` silently becomes **uniform weights of 1.0**
   (so kinetic-energy values on `qualisys_sport`, `mediapipe` and `openpose` are not comparable with `kinect_v2` and are not the EyesWeb numbers); a missing
-  `reference` means: `Symmetry(method="reflection")` uses the barycentre (`reference_point=None`); `Symmetry(method="ratio")` reads back
-  `reference_point='neck'`, which is not a joint of those presets, and still runs `OK` (see S4). The `TODO(fill)` markers are at
+  `reference` means: `Symmetry(method="reflection")` uses the barycentre (`reference_point=None`); `Symmetry(method="ratio")` raises
+  `ValueError` at construction naming the preset and asking for `reference_point=` (S4, fixed in H; an explicit `reference_point=` works, so does `reference_type="barycenter"`). The `TODO(fill)` markers are at
   `skeletons.py:71,72,89,90,103`; re-check when the maintainer fills them. Naming is inconsistent across presets (`L*/R*`, `*Left/*Right`,
   `left_*/right_*`; `RelbowOut` keeps the TSV spelling): document, do not normalise.
 - A dict frame must use the preset joint names (unknown key: `ValueError`; missing weighted joint: `INVALID_INPUT` "missing joints: ..."); an array frame
@@ -1382,7 +1380,7 @@ Output:
 
 ```text
 60 features; {'physical_signals': 11, 'low_level': 22, 'mid_level': 7, 'high_level': 1, 'analysis_primitives': 19}
-{'PHYSICAL_SIGNALS': 'Layer 1: physical signals', 'LOW_LEVEL': 'Layer 2: low-level features', 'MID_LEVEL': 'Layer 3: mid-level features', 'HIGH_LEVEL': 'Layer 4: qualities communication', 'ANALYSIS_PRIMITIVE': 'Analysis primitives'}
+{'PHYSICAL_SIGNALS': 'Layer 1: physical signals', 'LOW_LEVEL': 'Layer 2: low-level features', 'MID_LEVEL': 'Layer 3: mid-level features', 'HIGH_LEVEL': 'Layer 4: qualities communicated', 'ANALYSIS_PRIMITIVE': 'Analysis primitives'}
 timescales: {'physical_signals': 'frame', 'low_level': 'up to ~0.5 s', 'mid_level': '0.5-3 s', 'high_level': '3 s and above', 'analysis_primitives': 'any'}
 features per synchronization module: Counter({'events': 5, 'correlation': 3, 'recurrence': 2, 'phase': 1, 'temporal': 1})
 classes in pyeyesweb.analysis_primitives.synchronization: 12
@@ -1914,14 +1912,14 @@ Each row is verified by the run block named in the last column (the code and the
 | B3 | `latest` stays `None` until the first `OK` result (not "the last result") and is untouched by `WARMING_UP`, `NO_OUTPUT`, `INVALID_INPUT`; `reset()` clears it. | `i01b_latest`, `i01_contract` |
 | B4 | The **first timed call** (first call, after `reset()`, after a call without timestamp) has step `1 / sampling_rate`, else 1 s: epoch timestamps never become a step. | `i06_time` |
 | B5 | Without `sampling_rate`, even a first call **with** a timestamp says "no time given: per-sample derivatives". | `i06_time` |
-| B6 | The timestamp checks ("must increase", "must be finite") exist in 9 classes only; the five window metrics need `sampling_rate` but **ignore `timestamp`** (it is only copied to `result.timestamp`). | `i06b_rate_required`, `i06c_window_timestamps` |
-| B7 | A NaN or infinite `timestamp` **raises `ValueError`** in the 9 timed classes (not `INVALID_INPUT`). | `i06_time` |
+| B6 | The "must increase" check exists in 9 classes only (the "must be finite" check is central since H); the five window metrics need `sampling_rate` but **ignore `timestamp`** (it is only copied to `result.timestamp`). | `i06b_rate_required`, `i06c_window_timestamps` |
+| B7 | A NaN or infinite `timestamp` is `INVALID_INPUT` "non-finite timestamp" in every feature (was `ValueError` in the 9 timed classes; changed in H). | `i06_time` |
 | B8 | `WARMING_UP` says `"k of N samples"`; the first full window is `OK` at call `N`; with `hop > 1`, calls between windows are `NO_OUTPUT` (`"between windows"`). | `i03_status`, `i01b_latest` |
 | B9 | `run()` starts from a fresh state by default (it calls `reset()`); `run(..., reset=False)` continues; a second `run()` does not carry the window over. | `i20_behaviours_a` |
 | B10 | `timestamp` is keyword-only: `process(frame, 0.0)` is read as a second input and raises `ValueError` ("takes 1 input(s)"). | `i01_contract` |
 | B11 | `feature.parameters` is read-only, omits `skeleton` (it is resolved into `labels`/`weights`), and a setter validates like the constructor and leaves the feature unchanged on error. | `i01_contract`, `i05_errors` |
 | B12 | `units="mm"` scales the **parameters** (thresholds are written in metres whatever `units` says) and renames the output units (`mm/s`), never the data: `parameters` reads the value back unscaled. | `i08_units` |
-| B13 | `qualisys_sport`, `mediapipe`, `openpose` run without error but with **uniform kinetic-energy weights of 1.0**; `Symmetry(method="ratio")` on the two presets without a reference runs with `reference_point='neck'`, which is not one of their joints. | `i11b_skeleton_override`, `x3_symmetry_ratio_reference` |
+| B13 | `qualisys_sport`, `mediapipe`, `openpose` run without error but with **uniform kinetic-energy weights of 1.0**; `Symmetry(method="ratio")` on the two presets without a reference raises `ValueError` asking for `reference_point=` (S4, fixed in H). | `i11b_skeleton_override`, `x3_symmetry_ratio_reference` |
 | B14 | A dict frame lacking a weighted joint is `INVALID_INPUT`, one with an unknown key **raises**; an array with the wrong number of rows raises. | `i05_errors` |
 | B15 | `dims=None` is inferred at the first frame, forgotten by `reset()`, and a later frame of another size raises; this exists in four classes only. | `i12_dims` |
 | B16 | A value that was not produced is never `None`, for scalar, vector, matrix, variable-size and image outputs; labelled outputs (3 of them) hold a dict that can be empty. Checked on 417 results (`OK`, `WARMING_UP`, `NO_OUTPUT`, `INVALID_INPUT`) of all 60 features, including shapes. | `i21_never_none` |
@@ -2063,23 +2061,23 @@ problems: none
 
 ---
 
-## 20. Suspected bugs and inconsistencies (not fixed)
+## 20. Suspected bugs and inconsistencies
 
-Found while verifying; no code, docstring or document was changed for any of them. Each has the snippet that reproduces it (run output below). "Decision" means the maintainer already decided and the
+Found while verifying. Items marked "fixed in H" were fixed in work package H (see `DEVELOPMENT_SPEC.md`, "Contract changes of work package H"); the others are unchanged. Each has the snippet that reproduces it (run output below). "Decision" means the maintainer already decided and the
 item is listed only because a page writer will stumble over it.
 
 | # | What | Where |
 |---|---|---|
-| S1 | **`Recorder` made by a fast-path `run` loses the feature name.** `KineticEnergy.run(...)` returns `Recorder(schema, rows=...)` and rows are plain `Result`, while `Kinematics.run(...)` prints `Recorder(Kinematics, ...)` and rows are `KinematicsResult`. The fast path ends in `Recorder.from_arrays(self.outputs, ...)`, passing the schema instead of the feature, so `_feature` stays `None`. | `low_level/energy.py:90`; `data_models/recorder.py:47,97`; run `x1_recorder_repr` |
-| S2 | `Result` docstring says the timestamp is "seconds or ticks": ticks are gone, it is seconds. | `data_models/results.py:300` |
-| S3 | `HumanoidSimulator.process` docstring says the joints are "in mm", but the default is `units="m"` and the output unit is `m` (the parameter docs are right). | `physical_signals/humanoid.py:289` |
-| S4 | **`Symmetry(method="ratio")` on `mediapipe` and `qualisys_sport`** reads back `reference_point='neck'`, which is not a joint of those presets, and runs `OK`: the signature default `reference_point='neck'` survives when the preset has no reference: either the ratio method ignores the reference or it falls back silently. Not verified in the core; ask the maintainer before documenting a rule. | `x3_symmetry_ratio_reference` |
-| S5 | `KineticEnergy(weights=[1.0])` (a list, as 1.x allowed) fails with the raw nanobind overload text (4 lines); a mapping is required and the message does not say so. | run `x2_weights_list` |
-| S6 | An overflow `INVALID_INPUT` advances the state (next valid call also invalid); the plan and DEV 104-138 speak of "state unchanged" for rejected input. May be by design; say so on the Status page. | run `i03c_overflow_state` |
-| S7 | A NaN/infinite `timestamp` raises `ValueError` in the 9 timed classes and is accepted silently by every other class (no check, no `INVALID_INPUT`); a decreasing timestamp is likewise not checked outside the 9. | runs `i06_time`, `i06c_window_timestamps` |
-| S8 | Constructor error for `window`/`hop` lacks the class name (`window must be >= 1 and 1 <= hop <= window (got window=-1, hop=1)`) while the setter's names it (`SpectralArcLength: window must be >= 10 (got -1)`). | `data_models/feature.py:228-231` vs `base/core_feature.py`; run `i05_errors` |
-| S9 | Stale words: `pyeyesweb/__init__.py:9` says the catalog lists "layer, timescale and origin" (origin was removed); `DEVELOPMENT_SPEC.md:315` says `GestureSegmenter` takes `skeleton=` (it is `MotionNoiseDetector`); `DEV` line 175 lists `SilhouetteBodyParts` parts in a different order than the code returns; private `PORTING_STATUS.md` still places `Directness` in `mid_level` and `TimeWindowSynchronizer` in `pyeyesweb.utils`. | files named |
-| S10 | `Layer.HIGH_LEVEL.title` and the package docstrings say "Layer 4: qualities communication" (ungrammatical; the table of the catalog docstring says "qualities communicated"); the layers are numbered 1 to 4 but the fifth, `analysis_primitives`, has no number. | `catalog.py:52`, `high_level/__init__.py:1` |
+| S1 | **Fixed in H.** `KineticEnergy.run` now builds its `Recorder` from the feature (`Recorder.from_arrays(self, ...)`): `Recorder(KineticEnergy, ...)` with `KineticEnergyResult` rows, as every other `run` (catalog-wide test). Was: `Recorder(schema, ...)` and plain `Result` rows. | `low_level/energy.py:90`; `data_models/recorder.py:47,97`; run `x1_recorder_repr` |
+| S2 | **Fixed in H.** `Result` docstring says seconds. | `data_models/results.py:300` |
+| S3 | **Fixed in H.** `HumanoidSimulator.process` docstring says the unit of `units`. | `physical_signals/humanoid.py:289` |
+| S4 | **Fixed in H.** `Symmetry(method="ratio", skeleton=...)` with a preset that defines no reference joint (`mediapipe`, `qualisys_sport`) raises `ValueError` at construction naming the preset and asking for `reference_point=` (or `reference_type="barycenter"`); the presets are not filled. The core skips the translation when the label is absent, which is what used to happen silently. An explicit `reference_point=` works. | `x3_symmetry_ratio_reference` |
+| S5 | **Fixed in H.** `KineticEnergy(weights=[1.0])` raises `ValueError` ("weights has 1 value, the skeleton has 3 joints"; without labels: "weights must be a mapping ... or a sequence with one weight per label"); a sequence of the right length is accepted as one weight per label. No other feature takes `weights`; `MotionNoiseDetector`, `PointsDensity`, `PointsPredictor` take `labels` only. (A malformed `pairs` of `Symmetry` still shows the raw core error: not in scope.) | run `x2_weights_list` |
+| S6 | **By design, documented in H.** An overflow `INVALID_INPUT` is detected after the block advanced and the core cannot undo it, so the next valid call can be `INVALID_INPUT` too (`KineticEnergy` position mode, windowed features until the sample leaves the window). The other rejections change nothing. Pinned by `test_an_overflow_has_advanced_the_state_of_the_block`; run `i03c_overflow_state` still shows it. | run `i03c_overflow_state` |
+| S7 | **Fixed in H.** A NaN or infinite `timestamp` is `INVALID_INPUT` "non-finite timestamp" in every feature (one check in `Feature._input_problem`), nothing changes; was `ValueError` in the 9 timed classes and unchecked elsewhere. A decreasing timestamp is still checked only by the 9 timed classes (the window metrics ignore `timestamp`). | runs `i06_time`, `i06c_window_timestamps` |
+| S8 | **Fixed in H.** The constructor error of `window`/`hop` names the class (`SpectralArcLength: window must be >= 1 ...`). | `data_models/feature.py:228-231` vs `base/core_feature.py`; run `i05_errors` |
+| S9 | Stale words: *Fixed in H:* `pyeyesweb/__init__.py:9`, `DEVELOPMENT_SPEC.md` (`MotionNoiseDetector`; the order of the `SilhouetteBodyParts` parts). *Open:* private `PORTING_STATUS.md` still places `Directness` in `mid_level` and `TimeWindowSynchronizer` in `pyeyesweb.utils`. | files named |
+| S10 | **Fixed in H** (the typo): layer 4 reads "qualities communicated" in `Layer.HIGH_LEVEL.title`, `pyeyesweb/__init__.py`, `high_level/__init__.py`. Still open: the fifth layer, `analysis_primitives`, has no number. | `catalog.py:52`, `high_level/__init__.py:1` |
 | S11 | `TrajectoryNonPlanarity` defaults (`radius=100.0`, `nan_value=999.0`) look like millimetres but `units` defaults to `"m"` (a 100 m neighbourhood). *Decision*: kept in package C (ALPHA_REVIEW U10); still a trap for data in metres. | run `x5_defaults` |
 | S12 | `EllipsoidSphericity.process_axes` is a public entry point outside the contract (documented in its docstring); it bypasses the central input check and `latest`. *Probably by design.* | `low_level/contraction.py:168`; run `i01c_process_axes` |
 | S13 | `to_frame()` of a feature with image-only outputs (`Videogram`) has no value columns (`schema.size` is 0): correct but surprising; page writers should say so. | run `i04b_recorder_images` |
@@ -2102,7 +2100,7 @@ print("process():", type(energy.process(frames[0])).__name__)
 Output:
 
 ```text
-Recorder(schema, rows=4, columns=['kinetic_energy'], status={'OK': 4}) | Result
+Recorder(KineticEnergy, rows=4, columns=['kinetic_energy'], status={'OK': 4}) | KineticEnergyResult
 Recorder(Kinematics, rows=4, columns=['velocity'], status={'OK': 4}) | KinematicsResult
 process(): KineticEnergyResult
 ```
@@ -2113,20 +2111,22 @@ Run `x2_weights_list`:
 ```python
 from pyeyesweb.low_level import KineticEnergy
 
-for weights in ({"a": 1.0}, [1.0], 1.0):
+for labels, weights in ((["a"], {"a": 1.0}), (["a"], [1.0]), (["a", "b", "c"], [1.0]), (None, [1.0]), (["a"], 1.0)):
     try:
-        KineticEnergy(labels=["a"], weights=weights)
-        print(repr(weights), "accepted")
+        KineticEnergy(labels=labels, weights=weights)
+        print(repr(weights), "with", labels, "accepted")
     except Exception as error:
-        print(repr(weights), "->", type(error).__name__, "|", str(error).splitlines()[0][:120], "| lines:", len(str(error).splitlines()))
+        print(repr(weights), "with", labels, "->", type(error).__name__, "|", str(error))
 ```
 
 Output:
 
 ```text
-{'a': 1.0} accepted
-[1.0] -> TypeError | __init__(): incompatible function arguments. The following argument types are supported: | lines: 4
-1.0 -> TypeError | __init__(): incompatible function arguments. The following argument types are supported: | lines: 4
+{'a': 1.0} with ['a'] accepted
+[1.0] with ['a'] accepted
+[1.0] with ['a', 'b', 'c'] -> ValueError | KineticEnergy: weights has 1 value, the skeleton has 3 joints
+[1.0] with None -> ValueError | KineticEnergy: weights must be a mapping joint -> weight, or a sequence with one weight per label (given with labels= or skeleton=), got list
+1.0 with ['a'] -> ValueError | KineticEnergy: weights must be a mapping joint -> weight, or a sequence with one weight per label (given with labels= or skeleton=), got float
 ```
 
 
@@ -2139,11 +2139,16 @@ from pyeyesweb.skeletons import get_skeleton
 
 for preset in ("kinect_v2", "mediapipe", "qualisys_sport", "openpose"):
     for method in ("reflection", "ratio"):
-        feature = Symmetry(skeleton=preset, method=method)
+        try:
+            feature = Symmetry(skeleton=preset, method=method)
+        except ValueError as error:
+            print(f"{preset:15s} {method:10s} ValueError: {error}")
+            continue
         parameters = {name: feature.parameters.get(name) for name in ("reference_point", "reference_type") if name in feature.parameters}
         frame = np.random.default_rng(0).normal(size=(len(get_skeleton(preset).joints), 3))
         print(f"{preset:15s} {method:10s} {parameters} -> {feature.process(frame).status.name}")
-print("neck is a joint of mediapipe:", "neck" in get_skeleton("mediapipe").joints)
+joint = get_skeleton("mediapipe").joints[0]
+print(f"mediapipe ratio with reference_point={joint!r}:", Symmetry(skeleton="mediapipe", reference_point=joint).parameters["reference_point"])
 ```
 
 Output:
@@ -2152,12 +2157,12 @@ Output:
 kinect_v2       reflection {'reference_point': 'SpineShoulder'} -> OK
 kinect_v2       ratio      {'reference_point': 'SpineShoulder', 'reference_type': 'label'} -> OK
 mediapipe       reflection {'reference_point': None} -> OK
-mediapipe       ratio      {'reference_point': 'neck', 'reference_type': 'label'} -> OK
+mediapipe       ratio      ValueError: Symmetry(method='ratio'): the skeleton 'mediapipe' defines no reference joint; pass reference_point= (a joint of the skeleton) or reference_type='barycenter'
 qualisys_sport  reflection {'reference_point': None} -> OK
-qualisys_sport  ratio      {'reference_point': 'neck', 'reference_type': 'label'} -> OK
+qualisys_sport  ratio      ValueError: Symmetry(method='ratio'): the skeleton 'qualisys_sport' defines no reference joint; pass reference_point= (a joint of the skeleton) or reference_type='barycenter'
 openpose        reflection {'reference_point': 'Neck'} -> OK
 openpose        ratio      {'reference_point': 'Neck', 'reference_type': 'label'} -> OK
-neck is a joint of mediapipe: False
+mediapipe ratio with reference_point='nose': nose
 ```
 
 

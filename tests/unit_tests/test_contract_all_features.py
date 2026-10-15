@@ -228,6 +228,15 @@ def test_contract(name):
     check_feature_contract(factory, *recordings)
 
 
+@pytest.mark.parametrize("name", NAMES)
+def test_run_returns_a_recorder_that_names_the_feature_whatever_its_path(name):
+    # a fast-path `run` (KineticEnergy) must give the same kind of recorder as the loop of `process`
+    factory, recordings = factory_and_recordings(name)
+    recorded = factory().run(*recordings)
+    assert repr(recorded).startswith(f"Recorder({type(factory()).__name__}, ")
+    assert type(recorded[0]).__name__ == type(factory().process(*(recording[0] for recording in recordings))).__name__
+
+
 def test_every_catalog_feature_is_covered_or_excused():
     catalog_names = {info.name for info in catalog()}
     assert set(OVERRIDES) <= catalog_names, "an entry of OVERRIDES is not in the catalog"

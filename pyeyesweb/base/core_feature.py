@@ -1,7 +1,6 @@
 """Base classes of the features that wrap a block of the compiled core."""
 
 import inspect
-import math
 import re
 from numbers import Real
 from abc import ABCMeta
@@ -208,8 +207,6 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         `1 / sampling_rate`, else 1 (per sample). With no previous timestamp (the first call, a call after one without
         timestamp, after `reset()`) the step is `1 / sampling_rate` or 1: an absolute time is not a step. A timestamp
         that does not increase never gets here (`_input_problem`)."""
-        if timestamp is not None and not math.isfinite(timestamp):
-            raise ValueError(f"timestamp must be a finite number of seconds, got {timestamp!r}")
         rate = self._params.get("sampling_rate")
         previous, self._previous_t = self._previous_t, timestamp
         self._untimed = rate is None and (timestamp is None or previous is None)

@@ -297,7 +297,7 @@ class Result:
     reason : str
         Short explanation when `status` is not `OK`.
     timestamp : float
-        Timestamp of the input (seconds or ticks, as supplied by the feature); `NaN` when unknown.
+        Timestamp of the input (seconds); `NaN` when unknown.
     valid : dict of str to bool
         Per-output flag: `False` where an output was not produced this call (its value is the empty value).
 

@@ -12,7 +12,7 @@ from pyeyesweb.data_models.results import Output, Result, Schema, Status
 from pyeyesweb.data_models.skeleton import Skeleton
 from pyeyesweb.base.inputs import labelled_set, points_input
 from pyeyesweb.base.labels import LabelGuard
-from pyeyesweb.skeletons import with_skeleton
+from pyeyesweb.skeletons import get_skeleton, with_skeleton
 
 
 def _from_skeleton(skeleton: Skeleton) -> dict:
@@ -26,7 +26,8 @@ class Symmetry(VariantFeature, FrameFeature):
 
     `"ratio"` (default, the EyesWeb SymmetryIndex-3D block): per axis, the ratio of the left and right magnitudes of
     the couples, valid when a sign condition holds, aggregated (`aggregation`: Mean, Min, Max, WeightedMean) into one
-    index, globally or per axis. Parameters: `labels` (joint names of array input; a dict carries its own),
+    index, globally or per axis. With `skeleton=` and the default `reference_type="label"` the skeleton must define its
+    reference joint or `reference_point` must be given (`ValueError` otherwise). Parameters: `labels` (joint names of array input; a dict carries its own),
     `pairs` (the left and right joint of each couple, by name) and `reference_point`, both taken from `skeleton` when
     given, and the block parameters (normalisation, `aggregation`, `index_type`, `output_dims`, `reference_type`, ...).
     Input: one frame, an `(N, 3)` array in the order of `labels` or a dict `label -> (x, y, z)`.
@@ -140,6 +141,11 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
                  method: str = "ratio", **params: Any):
         labels, params = with_skeleton(skeleton, labels, params, _from_skeleton)
         super().__init__(**params)
+        reference_type = core.motion.SymmetryIndex3DReferenceType
+        if skeleton is not None and "reference_point" not in params and self._param("reference_type", reference_type.LABEL) == reference_type.LABEL:
+            # the core translates by the reference only if the label is present: a default that is no joint would pass silently
+            raise ValueError(f"Symmetry(method='ratio'): the skeleton {get_skeleton(skeleton).name!r} defines no reference joint; "
+                             "pass reference_point= (a joint of the skeleton) or reference_type='barycenter'")
         self._set_labels(labels)
 
     def _label_names(self):

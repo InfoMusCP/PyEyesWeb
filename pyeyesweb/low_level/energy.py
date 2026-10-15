@@ -4,7 +4,7 @@ Skeletons are dicts `label -> (x, y, z)`. The feature declares its outputs as a 
 returns a `Result` (see `pyeyesweb.data_models`). Timestamps are optional and in seconds.
 """
 
-from typing import Any, Optional, Sequence
+from typing import Any, Mapping, Optional, Sequence
 
 import numpy as np
 
@@ -20,6 +20,17 @@ from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.skeletons import with_skeleton
 
 
+def _weights_by_label(weights: Any, labels: Optional[Sequence[str]]) -> dict:
+    """A sequence of weights, one per label, as the mapping the block takes; anything else raises here, not in the core."""
+    if labels is None or isinstance(weights, (str, bytes)) or not hasattr(weights, "__len__"):
+        raise ValueError("KineticEnergy: weights must be a mapping joint -> weight, or a sequence with one weight per label "
+                         f"(given with labels= or skeleton=), got {type(weights).__name__}")
+    if len(weights) != len(labels):
+        raise ValueError(f"KineticEnergy: weights has {len(weights)} value{'' if len(weights) == 1 else 's'}, "
+                         f"the skeleton has {len(labels)} joints")
+    return dict(zip(labels, weights))
+
+
 @describe(Layer.LOW_LEVEL, eyesweb="KineticEnergyIndex (KineticEnergy)")
 class KineticEnergy(LabelGuard, FrameFeature):
     """Kinetic energy of labelled 3D points (EyesWeb KineticEnergy).
@@ -28,7 +39,8 @@ class KineticEnergy(LabelGuard, FrameFeature):
     `process(frame, timestamp=None)` returns `kinetic_energy`, the weighted kinetic energy of the skeleton (0 on the first
     frame in `POSITION` mode). `run(frames, timestamps=None)` processes a whole `(T, N, 3)` recording in C++.
 
-    `labels` are the joint names of the arrays; they are needed for array input (a dict carries its own).
+    `labels` are the joint names of the arrays; they are needed for array input (a dict carries its own). `weights` is a
+    mapping `joint -> weight`, or a sequence with one weight per label; any other length raises `ValueError`.
     `input_mode` (EXTENSION, not in EyesWeb): `"position"` (default, faithful) takes positions and differentiates
     them; `"velocity"` takes velocities and applies 0.5 * w * |v|^2 directly. `KineticEnergy.from_position(...)` and
     `KineticEnergy.from_velocity(...)` build one or the other; they take the constructor's parameters.
@@ -40,6 +52,8 @@ class KineticEnergy(LabelGuard, FrameFeature):
 
     def __init__(self, labels: Optional[Sequence[str]] = None, skeleton: Any = None, **params: Any):
         labels, params = with_skeleton(skeleton, labels, params, lambda resolved: {"weights": resolved.weights_or_uniform()})
+        if params.get("weights") is not None and not isinstance(params["weights"], Mapping):
+            params["weights"] = _weights_by_label(params["weights"], labels)
         super().__init__(**params)
         self._set_labels(labels)
         self._layout = None if labels is None else core.SkeletonLayout(list(labels))
@@ -80,14 +94,15 @@ class KineticEnergy(LabelGuard, FrameFeature):
 
     def run(self, data: Any, *, timestamps: Optional[Any] = None, reset: bool = True) -> Recorder:
         data = np.asarray(data, dtype=float)
-        if not np.isfinite(data).all() or (timestamps is not None and not (np.diff(np.asarray(timestamps, dtype=float)) > 0).all()):
+        stamps = None if timestamps is None else np.asarray(timestamps, dtype=float)
+        if not np.isfinite(data).all() or (stamps is not None and not (np.isfinite(stamps).all() and (np.diff(stamps) > 0).all())):
             return super().run(data, timestamps=timestamps, reset=reset)  # rows the central rules reject: the loop of `process`
         if reset:
             self.reset()
         self._check_recording([data])
-        stamps = [None] * len(data) if timestamps is None else np.asarray(timestamps, dtype=float)
-        energy = self._block.run(self._need_layout(), data, np.array([self._time_step(timestamp) for timestamp in stamps]))
-        return Recorder.from_arrays(self.outputs, {"kinetic_energy": energy}, timestamps=timestamps)
+        steps = np.array([self._time_step(timestamp) for timestamp in ([None] * len(data) if stamps is None else stamps)])
+        energy = self._block.run(self._need_layout(), data, steps)
+        return Recorder.from_arrays(self, {"kinetic_energy": energy}, timestamps=timestamps)
 
     def _need_layout(self):
         if self._layout is None:

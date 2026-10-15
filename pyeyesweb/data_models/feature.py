@@ -20,6 +20,7 @@ and `hop` and receive samples.
 
 import functools
 import inspect
+import math
 import types
 from abc import ABC, abstractmethod
 from typing import Any, Mapping, Optional
@@ -155,6 +156,8 @@ class Feature(OutputsMixin, ABC):
     def _input_problem(self, sample: Any, timestamp: Optional[float]) -> str:
         """Why this call is not data, or `""`: the central rules of the call contract (a subclass adds its own and
         calls `super()`). Raises `ValueError` for a call that cannot be meant (a wrong shape, an unknown joint name)."""
+        if timestamp is not None and not math.isfinite(timestamp):
+            return "non-finite timestamp"
         return self.inputs.problem(sample)
 
     @abstractmethod
@@ -224,11 +227,11 @@ class WindowedFeature(Feature):
         self._pushed = 0
         super().__init__(**params)
 
-    @staticmethod
-    def _validated(window: int, hop: int) -> tuple:
+    @classmethod
+    def _validated(cls, window: int, hop: int) -> tuple:
         window, hop = int(window), int(hop)
         if window < 1 or not 1 <= hop <= window:
-            raise ValueError(f"window must be >= 1 and 1 <= hop <= window (got window={window}, hop={hop})")
+            raise ValueError(f"{cls.__name__}: window must be >= 1 and 1 <= hop <= window (got window={window}, hop={hop})")
         return window, hop
 
     @property

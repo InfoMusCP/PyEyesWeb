@@ -49,7 +49,7 @@ class Layer(enum.Enum):
     @property
     def title(self) -> str:
         return {"physical_signals": "Layer 1: physical signals", "low_level": "Layer 2: low-level features",
-                "mid_level": "Layer 3: mid-level features", "high_level": "Layer 4: qualities communication",
+                "mid_level": "Layer 3: mid-level features", "high_level": "Layer 4: qualities communicated",
                 "analysis_primitives": "Analysis primitives"}[self.value]
 
 

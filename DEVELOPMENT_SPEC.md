@@ -118,14 +118,16 @@ These are Python-layer rules, implemented once in the central call path (`Featur
   design). An input that is cast to an integer (`SequenceDetector`) says `integer=True` and also rejects values beyond the
   integer range. A feature that checks first or more specifically (an empty frame, a degenerate shape) keeps its own
   reason. A result that overflows (finite data, 1e300) is `INVALID_INPUT` "the result is not finite" through
-  `_finite_result(...)`, used by the features whose arithmetic can overflow.
+  `_finite_result(...)`, used by the features whose arithmetic can overflow; that rejection comes after the block advanced (see work
+  package H).
 - **Labels.** For a dict frame, a feature that reads named joints (`LabelGuard`: `KineticEnergy`, `MotionNoiseDetector`,
   `Symmetry` ratio) checks it centrally: a joint it needs that is missing gives `INVALID_INPUT` "missing joints: a, b";
   when `labels` are configured, a key that is not one of them raises `ValueError` (a wrong joint name is a
   configuration error). The humanoid features set `_dropouts = True` and keep their dropout handling.
 - **Empty outputs.** `OutputsMixin.result` ignores every value it is given when the status is `INVALID_INPUT`: all
   outputs are empty and `valid` is `False` for all. `WARMING_UP` and `NO_OUTPUT` are as before.
-- **Time.** After a timed call, a timestamp that is not larger than the previous one gives `INVALID_INPUT`
+- **Time.** A timestamp that is NaN or infinite gives `INVALID_INPUT` "non-finite timestamp" (every feature, timed or not;
+  work package H). After a timed call, a timestamp that is not larger than the previous one gives `INVALID_INPUT`
   "non-increasing timestamp" and changes nothing (the previous time stays). The previous timestamp is `None`, not 0,
   when unknown (the first call, after `reset()`, after a call without timestamp, after a state reset). A call with no
   previous timestamp has the step `1 / sampling_rate`, else 1 s per sample with the per-sample note in `reason`,
@@ -172,8 +174,8 @@ Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of fo
 
 Results, recorder and discoverability.
 
-- **`parts=`.** `SilhouetteCentroids` (`center_of_gravity`, `head`, `left_shoulder`, ...), `SilhouetteBodyParts` (`head`,
-  `trunk`, `left_arm`, `right_arm`, `left_leg`, `right_leg`) and `RegionDependingPotentials` (`potential`, `hit_regions`,
+- **`parts=`.** `SilhouetteCentroids` (`center_of_gravity`, `head`, `left_shoulder`, ...), `SilhouetteBodyParts` (`right_leg`,
+  `left_leg`, `trunk`, `right_arm`, `left_arm`, `head`) and `RegionDependingPotentials` (`potential`, `hit_regions`,
   `hit_region_indexes`, `region_values`, which are also its output names) take `parts=` instead of the bool switches
   (14, 6 and 4). Default: the parts the switches had on (all, all, `("potential",)`), read from the block. Names are
   case-insensitive with `-` or a space for `_`; a wrong name raises `ValueError` listing the options; the value reads back
@@ -227,6 +229,33 @@ Results, recorder and discoverability.
 - **Build (Q13).** Strict warnings (`/W4`, `-Wall -Wextra`) apply to the core, the tests and the bindings;
   `-DEW_WARNINGS_AS_ERRORS=ON` turns them into errors. `.gitignore` covers `examples/scratch/` (build outputs were
   already covered).
+
+### Contract changes of work package H (2026-10-15)
+
+From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
+
+- **Recorder of a fast-path `run` (S1).** `KineticEnergy.run` builds its `Recorder` from the feature (`Recorder.from_arrays(self, ...)`),
+  not from the schema: every `run` gives `Recorder(<Feature>, ...)` whose rows are `<Feature>Result`.
+  `test_contract_all_features.py` checks it for every feature.
+- **Non-finite timestamp (S7).** One central rule in `Feature._input_problem`: a NaN or infinite `timestamp` is `INVALID_INPUT` with
+  reason "non-finite timestamp", empty outputs, nothing changed (the previous time stays), in every feature (timed or not). It
+  was a `ValueError` raised in `_time_step` by the timed features only. `run` agrees with the loop of `process`
+  (`KineticEnergy.run` falls back to it for such a recording).
+- **`Symmetry(method="ratio")` reference (S4).** With `skeleton=` and `reference_type="label"` (the default) the reference joint is that of the
+  skeleton, else the given `reference_point`; a preset that defines none (`mediapipe`, `qualisys_sport` until their `TODO(fill)` is
+  filled) raises `ValueError` at construction naming the preset and asking for `reference_point=` (or `reference_type="barycenter"`).
+  Before, the core default `"neck"`, which is no joint of those presets, was kept and the core silently skipped the translation.
+- **`KineticEnergy(weights=...)` (S5).** A sequence of weights is read as one weight per label (`labels=` or `skeleton=`); another length
+  raises `ValueError` ("weights has 1 value, the skeleton has 3 joints"), as does a sequence without labels or a value that is neither
+  mapping nor sequence. No other feature takes `weights`; `MotionNoiseDetector`, `PointsDensity` and `PointsPredictor` take `labels` only.
+- **Constructor error of `window`/`hop` (S8).** It names the class, as the setter's does.
+- **Overflow does not roll the state back (S6, documented, not changed).** `"the result is not finite"` is detected after the block
+  processed the sample, and the core cannot undo that. A stateful feature (`KineticEnergy` in position mode keeps the overflowing frame as
+  the previous one; a windowed feature holds the sample in its window until it leaves) can therefore return `INVALID_INPUT` on the
+  next valid call too. The other rejections (non-finite values, missing joints, non-increasing or non-finite timestamp) never
+  reach the block and change nothing. Pinned by `test_an_overflow_has_advanced_the_state_of_the_block` in `test_input_safety.py`.
+- **Wording.** `Result.timestamp` is in seconds; `HumanoidSimulator.process` outputs are in the unit of `units`; layer 4 is "qualities
+  communicated" (as the catalog table says); the stale lines of the package docstring and of sections 3 and 4 were fixed.
 
 ## 4. Parameters
 
@@ -312,7 +341,7 @@ declares outputs ahead of data needs. A frame of another dimension later raises 
 
 ### Skeletons and joints
 
-Features that must know joints (`KineticEnergy`, `GestureSegmenter`, `Symmetry` (both methods), `PointsDensity`)
+Features that must know joints (`KineticEnergy`, `MotionNoiseDetector`, `Symmetry` (both methods), `PointsDensity`)
 take `skeleton=`: the name of a lab preset (`"kinect_v2"`, `"qualisys_sport"`, `"mediapipe"`, `"openpose"`) or a
 `pyeyesweb.skeletons.Skeleton` you build yourself (joints, pairs, reference, weights). Explicit `weights=`, `pairs=`
 and `labels=` override it. Without any joint information they raise a clear `ValueError` at construction. Presets

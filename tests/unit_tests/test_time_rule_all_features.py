@@ -5,6 +5,7 @@
   timestamp"), with empty outputs, and changes nothing: the call after it behaves as if it had not happened;
 * the first timed call has no previous timestamp: its step is `1 / sampling_rate`, else 1 s per sample (with the note in
   `reason`), whatever its absolute value (epoch seconds, 1e9);
+* a timestamp that is NaN or infinite is `INVALID_INPUT` ("non-finite timestamp") in every feature, timed or not, and changes nothing;
 * a call without timestamp takes the same fallback step and makes the previous timestamp unknown, so the next timed call
   is a first one again.
 """
@@ -14,7 +15,7 @@ import pytest
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from test_contract_all_features import factory_and_recordings  # noqa: E402
+from test_contract_all_features import NAMES, factory_and_recordings  # noqa: E402
 
 from pyeyesweb import catalog  # noqa: E402
 from pyeyesweb.data_models import Status  # noqa: E402
@@ -85,3 +86,18 @@ def test_run_agrees_with_process_on_a_repeated_timestamp(name):
     rows = [loop.process(*(recording[index] for recording in recordings), timestamp=stamps[index]) for index in range(count)]
     assert [int(status) for status in recorded.status] == [int(row.status) for row in rows]
     assert recorded.status[5] == Status.INVALID_INPUT
+
+
+@pytest.mark.parametrize("name", NAMES)
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")], ids=["nan", "inf", "-inf"])
+def test_a_non_finite_timestamp_is_rejected_and_changes_nothing(name, bad):
+    factory, frame = _feature_and_frames(name)
+    feature, baseline = factory(), factory()
+    for index in range(2):
+        feature.process(*frame(index), timestamp=1.0 + index * STEP)
+        baseline.process(*frame(index), timestamp=1.0 + index * STEP)
+    rejected = feature.process(*frame(2), timestamp=bad)
+    assert rejected.status is Status.INVALID_INPUT and rejected.reason == "non-finite timestamp"
+    assert not any(rejected.valid.values())
+    after, expected = feature.process(*frame(2), timestamp=1.0 + 2 * STEP), baseline.process(*frame(2), timestamp=1.0 + 2 * STEP)
+    assert _same(after, expected)

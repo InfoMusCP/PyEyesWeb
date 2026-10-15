@@ -77,3 +77,10 @@ def test_accepts_negative_names_only_existing_parameters():
     existing = {parameter.name for name in NAMES for parameter in _numeric_parameters(type(factory_and_recordings(name)[0]()))}
     assert set(ACCEPTS_NEGATIVE) <= existing
     assert all(ACCEPTS_NEGATIVE.values())
+
+
+@pytest.mark.parametrize("name", [name for name in NAMES if hasattr(factory_and_recordings(name)[0](), "configure")])
+def test_a_bad_window_names_the_class(name):
+    feature = factory_and_recordings(name)[0]()
+    with pytest.raises(ValueError, match=type(feature).__name__):
+        feature.configure(window=-1)

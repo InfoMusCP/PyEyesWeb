@@ -16,7 +16,6 @@ import numpy as np
 from pyeyesweb._core import core
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
-from pyeyesweb.data_models.feature import WindowedFeature
 from pyeyesweb.data_models.results import Output, Result, Schema
 from pyeyesweb.base.core_feature import FrameFeature
 from pyeyesweb.base.inputs import train
@@ -42,7 +41,7 @@ class _NonOverlapping:
 
     @classmethod
     def _validated(cls, window: int, hop: int) -> tuple:
-        window, hop = WindowedFeature._validated(window, hop)
+        window, hop = super()._validated(window, hop)
         if hop != window:
             raise ValueError(f"{cls.__name__} accumulates across executions and cannot take overlapping windows: hop "
                              f"must equal window (got window={window}, hop={hop}); change both with configure()")

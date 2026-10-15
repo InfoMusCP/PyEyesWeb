@@ -93,3 +93,19 @@ def test_catalog_lists_one_symmetry_and_no_private_implementation():
     assert names.count("Symmetry") == 1
     assert not {"SymmetryIndex3D", "GeometricSymmetry", "_RatioSymmetry", "_ReflectionSymmetry"} & set(names)
     assert not {"_RatioSymmetry", "_ReflectionSymmetry"} & set(module.__all__)
+
+
+@pytest.mark.parametrize("preset", ["mediapipe", "qualisys_sport"])
+def test_ratio_on_a_preset_without_reference_asks_for_one(preset):
+    with pytest.raises(ValueError, match=rf"'{preset}' defines no reference joint.*reference_point="):
+        Symmetry(skeleton=preset)
+    Symmetry(skeleton=preset, reference_type="barycenter")  # the reference joint is not read
+
+
+@pytest.mark.parametrize("preset", ["mediapipe", "qualisys_sport"])
+def test_ratio_on_a_preset_without_reference_takes_one_explicitly(preset):
+    skeleton = pyeyesweb.skeletons.get_skeleton(preset)
+    joint = skeleton.pairs[0][0]
+    feature = Symmetry(skeleton=preset, reference_point=joint)
+    assert feature.parameters["reference_point"] == joint
+    assert Symmetry(skeleton="kinect_v2").parameters["reference_point"] == "SpineShoulder"  # a preset that has one

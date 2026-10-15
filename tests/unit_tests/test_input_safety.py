@@ -65,9 +65,45 @@ def test_blocks_that_ignore_time_do_not_need_it():
     assert KineticEnergy(labels=LABELS, weights=dict.fromkeys(LABELS, 1.0)).process(FRAMES[0]).status is Status.OK
 
 
+# --------------------------------------------- weights that do not fit the joints (was the raw overload text of the core)
+def test_weights_of_the_wrong_length_raise_a_clear_value_error():
+    with pytest.raises(ValueError, match=r"weights has 1 value, the skeleton has 3 joints"):
+        KineticEnergy(labels=LABELS, weights=[1.0])
+    with pytest.raises(ValueError, match="weights must be a mapping"):
+        KineticEnergy(weights=[1.0])  # no joint names to pair it with
+    with pytest.raises(ValueError, match="weights must be a mapping"):
+        KineticEnergy(labels=LABELS, weights="abc")
+
+
+def test_a_sequence_of_weights_is_one_weight_per_label():
+    by_list = KineticEnergy(labels=LABELS, weights=[1.0, 2.0, 3.0])
+    by_name = KineticEnergy(labels=LABELS, weights=dict(zip(LABELS, [1.0, 2.0, 3.0])))
+    stamps = np.arange(30) * 0.1
+    assert np.array_equal(by_list.run(FRAMES, timestamps=stamps).kinetic_energy, by_name.run(FRAMES, timestamps=stamps).kinetic_energy)
+
+
+# ----------------------------------------- an overflow is detected after the block advanced: pinned (DEVELOPMENT_SPEC, work package H)
+def test_an_overflow_has_advanced_the_state_of_the_block():
+    energy, control = (KineticEnergy(labels=["a"], weights={"a": 1.0}, sampling_rate=100.0) for _ in range(2))
+    for feature in (energy, control):
+        feature.process({"a": (0.0, 0.0, 0.0)}, timestamp=0.0)
+    overflow = energy.process({"a": (1e300, 0.0, 0.0)}, timestamp=0.01)
+    assert overflow.status is Status.INVALID_INPUT and overflow.reason == "the result is not finite"
+    after = energy.process({"a": (0.01, 0.0, 0.0)}, timestamp=0.02)
+    assert after.status is Status.INVALID_INPUT  # the block remembers 1e300 as the previous position
+    assert control.process({"a": (0.01, 0.0, 0.0)}, timestamp=0.02).status is Status.OK
+
+
 # ------------------------------------------------------------- timestamps that are not finite
 @pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
 @pytest.mark.parametrize("make, data", [(_auto_kinematics, FRAMES[0, 0, :]), (_auto_energy, FRAMES[0])])
-def test_a_non_finite_or_huge_timestamp_raises_value_error(make, data, bad):
-    with pytest.raises(ValueError):
-        make().process(data, timestamp=bad)
+def test_a_non_finite_timestamp_is_invalid_input_and_changes_nothing(make, data, bad):
+    feature = make()
+    rejected = feature.process(data, timestamp=bad)
+    assert rejected.status is Status.INVALID_INPUT and rejected.reason == "non-finite timestamp"
+    assert feature.process(data, timestamp=1.0).status is not Status.INVALID_INPUT  # the first timed call: nothing was remembered
+
+
+def test_a_non_finite_timestamp_in_a_recording_is_invalid_input_in_run_too():
+    recorded = _auto_energy().run(FRAMES[:3], timestamps=[0.0, float("inf"), 2.0])
+    assert [int(status) for status in recorded.status] == [0, 3, 0]

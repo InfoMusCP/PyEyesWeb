@@ -1,4 +1,4 @@
-"""Layer 4, qualities communication (3 s and above): social and interaction-level features."""
+"""Layer 4, qualities communicated (3 s and above): social and interaction-level features."""
 
 from .dominance import EnsembleDominance
 

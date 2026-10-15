@@ -286,7 +286,7 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
     documentation for the flutter at a low `damping`).
 
     `process(skeleton, control=None, *, timestamp=None)` takes the captured joints and returns `joints`, the
-    simulated positions `(21, 3)` in mm labelled by `HUMANOID_JOINTS`. `control` (optional) holds bone directions, an
+    simulated positions `(21, 3)` in the unit of `units` labelled by `HUMANOID_JOINTS`. `control` (optional) holds bone directions, an
     `(20, 3)` array in the order of `HUMANOID_BONES` or a dict `"<joint1>-<joint2>" -> (x, y, z)`; the bones follow them
     instead of the directions seen in the joints. They are directions RELATIVE to the parent bone, the convention of the
     output of `HumanoidOrientations`: piping the extractor's output into `control` reproduces the pose of the joints it
