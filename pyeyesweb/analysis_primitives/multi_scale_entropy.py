@@ -93,6 +93,10 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     The entropies are computed with the sample entropy of the core (see ``SampleEntropy``); they differ from the
     pure-Python implementation of the 1.x releases by O(1/N), not by rounding.
 
+    References
+    ----------
+    :cite:`glowinski2010mse`, :cite:`costa2005multiscale`
+
     Examples
     --------
     >>> import numpy as np
@@ -102,10 +106,6 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     >>> result = feature.run(x)[-1]
     >>> result.complexity_index.round(1), result.scale_entropies.round(1)
     (array([2.5]), array([[2.5, 2.4]]))
-
-    References
-    ----------
-    :cite:`glowinski2010mse`, :cite:`costa2005multiscale`
     """
     _core_class = core.motion.MultiScaleEntropy
     _lazy_block = True

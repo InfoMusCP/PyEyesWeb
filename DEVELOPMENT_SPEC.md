@@ -1,6 +1,6 @@
 # PyEyesWeb: development specification
 
-Conventions and rules for anyone (people or coding agents) who changes PyEyesWeb or the EyesWeb C++ core under it.
+Conventions and rules for anyone (people or coding agents) who changes PyEyesWeb.
 Read this first. When a rule here conflicts with what you see in older code, the rule wins and the old code is a bug
 to fix, unless the maintainer says otherwise. Rules marked **Decided** were chosen by the maintainer; do not change
 them without asking.
@@ -8,26 +8,21 @@ them without asking.
 **Status (2026-10-16).** The contract below is implemented and tested for all 60 catalog features. **Remaining work:
 `ALPHA_REVIEW.md` section 8** (packaging and release, the code and core backlog, the final documentation pass, the example
 data). Section 11 of this file points to the backlog items that touch the contract; section 10 lists what must be removed or
-reworded before this file is published for contributors.
+reworded before this file is published for contributors (done on 2026-10-16).
 
 ## 1. What this is
 
-PyEyesWeb is a Python library for movement analysis. It has three tiers, each with one job:
+PyEyesWeb is a Python library for movement analysis. It has two parts, each with one job:
 
-| Tier | Where | Job |
+| Part | Where | Job |
 |---|---|---|
-| C++ core `ew_core` | `EyesWebCore/core` (repository EyesWebCore) | The algorithms: faithful ports of EyesWeb blocks plus the lab's own features. Pure C++17, no Python, no nanobind. |
-| Bindings and module `eyesweb_core` | `EyesWebCore/bindings` (private repository EyesWebCore) | Marshalling only (dict, numpy, lists to C++ types and back). No logic. Built there into the compiled module and shipped as the binary wheel `eyesweb-core`. |
-| Python package `pyeyesweb` | `PyEyesWeb/pyeyesweb` (this repository) | The public API: one uniform call contract, validation, discovery, results. Pure Python; depends on the compiled `eyesweb_core` package. |
+| Compiled core `eyesweb_core` | a separate binary package (`eyesweb-core`) | The algorithms: faithful ports of EyesWeb blocks plus the lab's own features. |
+| Python package `pyeyesweb` | `pyeyesweb/` (this repository) | The public API: one uniform call contract, validation, discovery, results. Pure Python; depends on the compiled `eyesweb_core` package. |
 
-The C++ (core, bindings, module build) is closed source and is not part of this repository: PyEyesWeb contains Python only.
+This repository contains Python only. Logic belongs in the core; validation and the call contract belong in the Python layer.
 
-Keep the core independent of Python. It must stay usable from native C++ (for example TouchDesigner operators) and
-from the command line. Logic belongs in the core, validation and the call contract belong in the Python layer,
-marshalling belongs in the bindings.
-
-Related documents: `EyesWebCore/CONVENTIONS.md` (the C++ rules, read it before touching the core),
-`EyesWebCore/PORTING_STATUS.md` (every ported block, deviations from the original, removed blocks).
+Related pages: the developer guide of the documentation (`docs/developer/`: architecture, conventions, adding a feature,
+porting status, building the docs).
 
 ## 2. Package layout (Python)
 
@@ -46,7 +41,7 @@ The package follows the conceptual model of movement qualities (layers):
 | `pyeyesweb.skeletons` | | The lab device presets (`KINECT_V2`, ...), `get_skeleton`, `with_skeleton`; re-exports `Skeleton` (defined in `data_models/skeleton.py`). |
 | `pyeyesweb.utils` | | `validators.py`: argument validators of a few analysis primitives. Internal. |
 | `pyeyesweb.datasets` | | The example recordings of the gallery: `load_qualisys_trial` (returns a `QualisysTrial`: positions in mm, labels, sampling rate, units), `fetch_data_file`, `cache_dir`, `available_trials`. Needs no core. Files are looked up in `PYEYESWEB_DATA`, then `examples/data` of a checkout, then downloaded with the optional `pooch` (`BASE_URL` is `None` until a host is chosen; SHA-256 sums in `_datasets_registry.py`, written by `tools/trim_example_data.py`). Data access only: plotting and derived signals live in `examples/helpers.py`. |
-| `pyeyesweb._core` | | The only place that imports the compiled module (the `eyesweb_core` package, a binary wheel built from the private EyesWebCore repository; in development the build found through `EYESWEB_CORE_PATH`). |
+| `pyeyesweb._core` | | The only place that imports the compiled module (the `eyesweb_core` package, a separate binary wheel; in development the build found through `EYESWEB_CORE_PATH`). |
 
 Outside the package (all in this repository): `tests/` (`unit_tests/` the tests, `_support/` the shared suites and input builders,
 `data/` frozen references and small recordings, `conftest.py` documents the layout), `tools/` (`trim_example_data.py`,
@@ -83,7 +78,7 @@ feature.outputs                                        # the Schema of the resul
 - Windowed features derive from `WindowedFeature`: they own their buffer, take `window` and `hop`, report `WARMING_UP`
   then `NO_OUTPUT` between hops, and implement the private hook `_process_window(*series)` for one full
   `(channels, window)` series. `_process_window` is never public API.
-- Features backed by a C++ block derive from `CoreFeature` (`_core_class = core.<area>.<Block>`); features with
+- Features backed by a block of the compiled core derive from `CoreFeature`; features with
   several algorithms or versions derive from `VariantFeature` (one subclass per variant, chosen by a selector
   argument such as `method=`).
 - Frame-wise features without a window derive from `FrameFeature`.
@@ -224,12 +219,12 @@ Results, recorder and discoverability.
 - **Placement.** `Directness`, `TrajectoryNonPlanarity` and `average_curvature_3d` are in `pyeyesweb.low_level` (files
   `low_level/directness.py` and `low_level/non_planarity.py`): a path given as a list of points is low-level, mid-level is
   a whole gesture. The `catalog` placement rule says so. `Result.to_flat_dict()` keeps integer statuses.
-- **Core version (Q9).** `eyesweb_core` has `__version__` (the CMake project version of EyesWebCore, bumped with the
-  bindings) and `__build__` (git short hash at configure time). `pyeyesweb/_core.py` requires `REQUIRED_CORE` (major.minor,
+- **Core version (Q9).** `eyesweb_core` has `__version__` and `__build__` (the build identifier). `pyeyesweb/_core.py` requires `REQUIRED_CORE` (major.minor,
   now 2.0) and raises `ImportError` for another version or a module without a version. `EYESWEB_CORE_PATH` is put first on
   `sys.path` by `_core.py` itself, and the import fails when `eyesweb_core` was already loaded from another place.
-- **Signatures (Q7, Q8).** Annotations of the nanobind signature text are resolved by `typing.get_type_hints` against a
-  fixed namespace (no `eval` of module globals); the text is still parsed with `ast`, defaults with `ast.literal_eval`.
+- **Signatures (Q7, Q8).** The signatures of core-backed features are read from the compiled module once per class
+  (`base/signatures.py`): annotations are resolved by `typing.get_type_hints` against a fixed namespace (no `eval` of module
+  globals), defaults with `ast.literal_eval`.
   `from_*` constructors are descriptors (`_InputModeFactory`) that build the function per class on access, so a
   subclass or grandchild shows and checks its own parameters; the parent's is never touched.
 - **Humanoid (Q16).** The joint and bone tables and `MassSpringModel` are in `physical_signals/_humanoid_model.py`;
@@ -239,11 +234,9 @@ Results, recorder and discoverability.
   option of `test_trajectory_parity.py`, now `tools/regenerate_trajectory_reference.py` (the other `.npz` files have no
   generator in the repository). `tests/benchmarks` (animation scripts on the 1.x API, not benchmarks) deleted
   (with `SlidingWindow`, removed on 2026-10-14); `pytest-benchmark` is not added.
-- **Build (Q13).** Strict warnings (`/W4`, `-Wall -Wextra`) apply to the core, the tests and the bindings;
-  `-DEW_WARNINGS_AS_ERRORS=ON` turns them into errors. `.gitignore` covers `examples/scratch/` (build outputs were
-  already covered).
+- **Repository hygiene (Q13).** `.gitignore` covers `examples/scratch/` and the build outputs.
 
-- **Core package (2026-10-15).** The core is its own wheel `eyesweb-core` (import name `eyesweb_core`) that pyeyesweb will depend on; `_core.py` imports only `eyesweb_core` (no bundled `pyeyesweb._eyesweb_core`), `EYESWEB_CORE_PATH` stays the development override.
+- **Core package (2026-10-15).** The core is its own wheel `eyesweb-core` (import name `eyesweb_core`) that pyeyesweb will depend on; `_core.py` imports only `eyesweb_core`, `EYESWEB_CORE_PATH` stays the development override.
 
 ### Contract changes of work package H (2026-10-15)
 
@@ -265,7 +258,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   mapping nor sequence. No other feature takes `weights`; `MotionNoiseDetector`, `PointsDensity` and `PointsPredictor` take `labels` only.
 - **Constructor error of `window`/`hop` (S8).** It names the class, as the setter's does.
 - **Overflow does not roll the state back (S6, documented, not changed).** `"the result is not finite"` is detected after the block
-  processed the sample, and the core cannot undo that. A stateful feature (`KineticEnergy` in position mode keeps the overflowing frame as
+  processed the sample, and the state is not rolled back. A stateful feature (`KineticEnergy` in position mode keeps the overflowing frame as
   the previous one; a windowed feature holds the sample in its window until it leaves) can therefore return `INVALID_INPUT` on the
   next valid call too. The other rejections (non-finite values, missing joints, non-increasing or non-finite timestamp) never
   reach the block and change nothing. Pinned by `test_an_overflow_has_advanced_the_state_of_the_block` in `test_input_safety.py`.
@@ -282,8 +275,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   is untouched: its `noise` input blocks the start of a gesture while set (`True` = judged to be noise), so a pipeline passes `is_noisy`
   directly (the docstrings, `test_parity_gesture_segmenter.py` and `test_time_and_units.py` do it; the first version of this note asked for
   `not is_noisy`, which blocked every smooth gesture; `tests/data/gesture_segmenter_reference.npz` was regenerated with the direct wiring).
-  With several joints the alphabetically last joint name decides the flag, whatever the order of `labels` (the behaviour of the underlying
-  EyesWeb block: only one joint decides).
+  With several joints the alphabetically last joint name decides the flag, whatever the order of `labels` (documented).
 - **`Suddenness.gamma`** has no unit (dimensionless, a ratio of quantile differences); listed in `EXEMPT` of `test_units_all_features.py`.
   The classification of a still or constant-speed window as sudden is unchanged.
 - **`CurvatureVelocityCorrelation` velocity in seconds.** `velocity` and `velocity_std` are length/s in both modes: with the default
@@ -300,22 +292,21 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
 
 #### I-b
 
-- **`SpikeSynchronization(mode="timings")` is public.** The core takes the spike times of the trains as the rows of one matrix, all trains
-  with the same number of spikes (`SpikeES::validate`), and keeps no state between calls. So in `"timings"` mode the declared input is
+- **`SpikeSynchronization(mode="timings")` is public.** The spike times of the trains are the rows of one matrix, all trains
+  with the same number of spikes, and no state is kept between calls. So in `"timings"` mode the declared input is
   `spike_times`, `InputKind.MATRIX` of shape `(number_of_inputs, window)` (`window` = spikes per train, live: `configure` updates
   `feature.inputs`), `process` takes one such matrix and returns the result for it (status `OK`, no buffering, no warm-up, `hop` unused),
   and `run` takes `(T, number_of_inputs, window)`, one row of the recorder per set of trains. Times must be `> 0` and strictly increasing
-  within a train, else `INVALID_INPUT` (the core does not check the order); NaN and a non-finite timestamp follow the central rules; a
+  within a train, else `INVALID_INPUT` (checked in the Python layer); NaN and a non-finite timestamp follow the central rules; a
   matrix of another shape, including trains with different numbers of spikes, is a `ValueError`. Trains with different numbers of spikes
-  would need a core change (a ragged input in `SpikeES::process`); not done. The `TypeError` pointing at `_process_window` is gone.
-- **`MassSpringModel.to_xml()` / `save_xml_file()` write relative damping.** The core loads the damping attributes as relative (1 =
-  critical, as `CSpringImpl`) and writes the absolute coefficient (as the EyesWeb estimator does), so a saved model did not reload to
+  would need a core change; not done.
+- **`MassSpringModel.to_xml()` / `save_xml_file()` write relative damping.** The XML loader reads the damping attributes as relative (1 =
+  critical) while the writer wrote the absolute coefficient (as the EyesWeb estimator does), so a saved model did not reload to
   the same configuration. The Python wrapper now divides the damping of the core's XML by `0.5 * sqrt(mass2 * stiffness)` (the factor the
   loader multiplies by), so `from_xml_*(m.to_xml())` has the configuration of `m` (to rounding, about 1e-16 relative); loading is unchanged and
-  existing files read as before. A spring with zero stiffness or tip mass has no relative damping and is written as 0. The core's own
-  `to_xml` still writes absolute values; making it symmetric would be a core change (not needed here).
+  existing files read as before. A spring with zero stiffness or tip mass has no relative damping and is written as 0.
 - **`CoarseGraining` cadence is the core's, documented.** The EyesWeb block counts its activations modulo `factor` and computes only on
-  activation 0 (`CoarseGraining::process`), so with `hop` the series is produced on the first full window and then every `factor * hop`
+  activation 0, so with `hop` the series is produced on the first full window and then every `factor * hop`
   samples; the other windows are `NO_OUTPUT` "not recomputed on this activation". Not a defect: kept, described in the docstring and pinned by
   `test_coarse_graining_is_computed_every_factor_th_window`.
 
@@ -372,20 +363,19 @@ The documentation is built from the code, so these are rules for any later chang
   on the same input; two different quantities are two classes.
 - Strings are case-insensitive and `-` or a space count as `_`; a wrong value raises `ValueError` listing the valid
   options. The coercion is central (`base/choices.py`, `CoreFeature`); do not write per-feature parsing.
-- Do not export C++ enums into the public namespaces and do not document enum members. Core enum members passed by
-  mistake are still accepted silently.
+- No enum in a public parameter and no enum members in the documentation (the only public enums are `Layer`, `Timescale`,
+  `InputKind` and `Status`).
 - A group of on/off switches that select what a feature outputs (the 14 centroids of `SilhouetteCentroids`, the 6 parts of
   `SilhouetteBodyParts`, the outputs of `RegionDependingPotentials`) is one `parts=` sequence of names, validated like any
   choice; declared once in `_parts = {name: block switch}` (`CoreFeature`).
 - An on/off switch is a **bool** (`True`/`False` only; words such as "on" or "yes" are rejected with a `TypeError`).
-  Do not model on/off as an enum, in C++ or in Python.
+  Do not model on/off as an enum.
 - Selectors of a `VariantFeature` (`method`) are fixed at construction.
 
 ### Signatures are explicit
 
 Every feature shows its parameters and defaults to `inspect.signature` and IDEs; there is no `**params` in a public
-signature. For core-backed features the signature is derived once from the nanobind annotations (`base/signatures.py`),
-so the core binding must name every parameter descriptively and give it a default. A misspelled keyword raises a
+signature. For core-backed features the signature is derived once from the compiled module (`base/signatures.py`). A misspelled keyword raises a
 `TypeError` that names the feature and suggests the right spelling.
 
 ### Live and structural parameters (**Decided**)
@@ -397,8 +387,7 @@ A parameter must be changeable while a feature runs, as in real-time use:
   and the next result says "parameters changed: state reset" in `reason`.
 
 The classification is decided per parameter from the original EyesWeb source (what `Init()` reads versus
-`Execute()`); where it is uncertain the parameter is structural. In C++ every block with parameters has
-`bool adoptParams(const Block& fresh)` (see `CONVENTIONS.md`, "Changing parameters at run time"). A bad new value
+`Execute()`); where it is uncertain the parameter is structural. A bad new value
 raises at the setter and leaves the feature unchanged, for the same values the constructor refuses (see "Live validation"
 below). New features add their cases to the live-parameter tests.
 
@@ -406,8 +395,7 @@ below). New features add their cases to the live-parameter tests.
 gives a result at once, a longer one warms up again (`test_live_window_hop.py`). Exceptions, structural because the state is
 sized by them: `CurvatureVelocityCorrelation` (`window`, `hop`, `sampling_rate`: its filters need the same length and overlap in
 consecutive windows), `Rarity(method="information")` `window` (memory in the core), `Videogram.window` and
-`ScalarPeakDetector.window` (buffers in the core). Making those three live needs a core change: resize the buffer keeping the
-newest values in `adoptParams` (`ShiftWindow` has no resize; `VideoGram` would crop or pad its image). `EventSynchronization*`
+`ScalarPeakDetector.window` (buffers in the core): the three windows are structural today. `EventSynchronization*`
 change `window` and `hop` together with `configure(window=, hop=)`.
 
 ### Time (**Decided**)
@@ -449,33 +437,30 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
 
 - A port reproduces the original block: same formulas, same order of floating-point operations where it matters, same
   defaults, same edge cases. The EyesWeb source is the only authority; never invent maths that is not in the tree.
-- Hangs, crashes and undefined behaviour are never reproduced: implement the evident intent and document it in the
-  block header.
+- Hangs, crashes and undefined behaviour are never reproduced: the evident intent is implemented and documented.
 - A deviation from the original that changes numbers needs a maintainer decision. Once decided, the corrected
   behaviour is the behaviour of the core: **no boolean `fix_*` flags** (all existing ones were resolved and
-  removed). Record every correction in one line under "Corrected in the core (no flag)" in
-  `EyesWebCore/PORTING_STATUS.md`. While a correction is undecided, ask; do not guess and do not add a flag.
-- Blocks the maintainer retires are removed from the core, the bindings and the Python package together, and noted
-  under "Removed blocks" in `PORTING_STATUS.md`.
+  removed). Every correction is listed in one line in the developer guide page `porting_status` ("Corrected in the core").
+  While a correction is undecided, ask; do not guess and do not add a flag.
+- Features the maintainer retires are removed from the core and the Python package together, and listed in `docs/migration.md`.
 - Lab features (no EyesWeb block) are tested by behaviour, the catalog-wide suites and frozen data in `tests/data`; there
   are no legacy oracles.
 
 ## 6. How to add a feature
 
-1. Core: header with the documentation comment (EyesWeb id, source, inputs, outputs, formula, state, quirks), source,
-   `Params` with the original defaults, validating constructor (`std::invalid_argument`), `process`, `reset`,
-   `adoptParams`, tests in `EyesWebCore/tests/<area>/`, a binding in `EyesWebCore/bindings` ending with `EW_REGISTER_BINDING(...)`, and the
-   shared helpers in `EyesWebCore/bindings/convert.h`. Follow `CONVENTIONS.md`.
+1. Core: a feature that needs a new block of the compiled core starts there (the maintainers' procedure, outside this
+   repository); a feature written in Python only skips this step.
 2. Python class in the right layer package: `@describe(...)`, base class (`CoreFeature` / `WindowedFeature` /
    `VariantFeature` / `FrameFeature`), `_OUTPUTS` schema, `_inputs()`, `_schema()` if parameter dependent,
    `_process`/`_process_window`, a docstring with `Parameters` and `Returns` (units stated), export in the layer's
    `__init__` and `__all__`.
 3. Tests: the contract suite (`tests/_support/contract_suite.py`, `check_feature_contract`) so `process` and `run` agree and
    results are well formed; the live-parameter suite (`tests/_support/live_param_suite.py`) for every parameter, live or
-   structural; parity against the C++ or reference implementation; error cases (wrong shape, NaN, too short).
+   structural; parity against a reference implementation where one exists; error cases (wrong shape, NaN, too short).
    `tests/test_signatures.py`, `tests/unit_tests/test_choices_everywhere.py` and `test_naming.py` pick the new
    feature up automatically through `catalog()`: they must pass without changes.
-4. Update `EyesWebCore/PORTING_STATUS.md` for ported blocks.
+4. Documentation: the family in `docs/_data/families.yaml` (and `instantiation.yaml` if needed), and the "Corrected in the
+   core" line of `docs/developer/porting_status.md` for a corrected port.
 
 ## 7. Code style
 
@@ -485,31 +470,18 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
   to dispatch on a method, to pick a time step.
 - Comments say why, not what. Docstrings are numpy style (`Parameters`, `Returns`) and must stay true: when you
   change behaviour, change the docstring in the same edit.
-- C++: C++17, 4-space indent, 120 columns, `camelCase` functions and members (`trailing_` for private),
-  `PascalCase` types. Names in the core that are visible from Python (parameter names in bindings, properties)
-  follow the Python naming rules above, including no one-letter names. One-letter locals in numerical C++ code are
-  tolerated for now; do not add new ones in new code.
 - No `from x import *` in new code, no global state, no behaviour that depends on import order.
 
 ## 8. Build and test
 
-Python 3.11 virtual environment. The C++ is built in the private EyesWebCore repository (a sibling checkout of PyEyesWeb);
-PyEyesWeb itself has nothing to compile. The compiled module is the `eyesweb_core` package when installed, or the build
-in the directory named by `EYESWEB_CORE_PATH` (and on `PYTHONPATH`) during development. CMake option
-`-DEW_WARNINGS_AS_ERRORS=ON` makes any compiler warning an error (CI); strict warnings apply to every target.
+Python 3.11 or newer virtual environment. PyEyesWeb has nothing to compile. The compiled module is the `eyesweb_core`
+package when installed, or a development build in the directory named by `EYESWEB_CORE_PATH` (and on `PYTHONPATH`).
 
 ```
-# C++ core, tests and compiled module (repository EyesWebCore, a sibling checkout)
-cmake -S <EyesWebCore> -B <EyesWebCore>/build -G "Visual Studio 17 2022" -A x64 ^
-      -DEW_BUILD_PYTHON=ON -Dnanobind_DIR=<python -m nanobind --cmake_dir> -DPython_EXECUTABLE=<python 3.11>
-cmake --build <EyesWebCore>/build --config Release --parallel
-<EyesWebCore>/build/Release/ew_tests.exe [name filter]       # C++ tests; the module lands in the same folder
-                                                             # (run cmake twice after adding or removing files)
-python <EyesWebCore>/bindings/tests/test_bindings.py <EyesWebCore>/build/Release   # binding smoke test
-
-# Python tests (from PyEyesWeb)
-set PYTHONPATH=<EyesWebCore>/build/Release;<PyEyesWeb>
-set EYESWEB_CORE_PATH=<EyesWebCore>/build/Release
+# Python tests, from the repository root. <core build> is a development build of the core; omit the two set lines
+# when the eyesweb-core package is installed.
+set PYTHONPATH=<core build>;<PyEyesWeb>
+set EYESWEB_CORE_PATH=<core build>
 python -m pytest -q
 ```
 
@@ -518,10 +490,10 @@ pyeyesweb` 92 passed; the Sphinx doctest builder 856 tests, 0 failures; the docs
 run in about 37 s). Without the core on the path (no `EYESWEB_CORE_PATH`, no installed `eyesweb-core`) `python -m pytest -q` collects only
 the pure data-model tests: 34 passed. The suite must pass in both situations.
 
-Documentation, from the repository root (Windows: `docs/build.ps1 -Core <EyesWebCore>/build/Release` does the same and opens the result):
+Documentation, from the repository root (Windows: `docs/build.ps1 -Core <core build>` does the same and opens the result):
 ```
-set PYTHONPATH=<EyesWebCore>/build/Release;<PyEyesWeb>
-set EYESWEB_CORE_PATH=<EyesWebCore>/build/Release
+set PYTHONPATH=<core build>;<PyEyesWeb>
+set EYESWEB_CORE_PATH=<core build>
 python -m sphinx -b html -W --keep-going docs docs/_build/html
 python -m sphinx -b doctest docs docs/_build/doctest
 ```
@@ -532,7 +504,7 @@ which is expected.
 
 Before you say a change is done:
 
-- C++ tests, the binding test and the whole `pytest` suite pass, with and without the core on the path (the pure tests).
+- The whole `pytest` suite passes, with and without the core on the path (the pure tests).
 - `tests/unit_tests/test_naming.py` passes (no one-character names), and a linter such as `pyflakes` shows no new
   unused imports or variables.
 - The documentation builds and its examples run: `docs/build.ps1` (or `python -m sphinx -b html -W --keep-going docs docs/_build/html`,
@@ -557,37 +529,19 @@ Before you say a change is done:
 - Documentation is part of the change. When behaviour changes, change in the same commit the docstring, the pages of `docs/` that state
   it (grep the old wording), the tutorial that shows it, the example output of a `{doctest}` block (rerun it, do not edit the
   output by hand), the fact sheet entry if the page relied on it, and `CHANGELOG.md` for a user-visible change. A documentation-only
-  change needs no code change but must build. Keep `PORTING_STATUS.md` (private) and the docstrings of the code you touch correct.
+  change needs no code change but must build. Keep the porting-status page and the docstrings of the code you touch correct.
 - Ask the maintainer when a decision is open (an unclear original behaviour, a block that may be retired, a name that
   could be read two ways) and do not choose silently.
 
-## 10. Public-safe pass (todo)
+## 10. Public-safe pass (done 2026-10-16)
 
-This file will be published for contributors (as the contributing page of the documentation or as `CONTRIBUTING.md`). The public
-repository holds no C++ and no URL or path of the private core repository, so the sentences below must be removed or reworded first.
-Find them again with
-`grep -n "EyesWebCore\|PORTING_STATUS\|CONVENTIONS\|C++\|nanobind\|\.cpp\|bindings\|CMake\|cmake\|ew_\|::\|Impl\|adoptParams" DEVELOPMENT_SPEC.md`.
-Treatment: say "the compiled core (`eyesweb_core`, a separate binary package)", keep what a Python contributor needs, move the
-C++ procedure to a private companion file (`EyesWebCore/dev-notes/`), and do not link private files.
-
-| Where | What names the private repository, C++ files or core internals |
-|---|---|
-| Title paragraph | "the EyesWeb C++ core under it" |
-| Section 1, tier table and the two paragraphs after it | the rows `ew_core` (`EyesWebCore/core`) and `eyesweb_core` bindings (`EyesWebCore/bindings`, nanobind); "The C++ ... is closed source ..." (state only that the compiled core is a separate package); "Keep the core independent of Python ... TouchDesigner operators"; "Related documents" (`EyesWebCore/CONVENTIONS.md`, `EyesWebCore/PORTING_STATUS.md`: replace by the developer guide `porting_status` page) |
-| Section 2, row `pyeyesweb._core` and the `CoreFeature` line of section 3 | "built from the private EyesWebCore repository", `_core_class = core.<area>.<Block>` (internal; may stay as "a block of the compiled core") |
-| Section 3, "Contract changes of work package D" | "Core version (Q9)" (the CMake project version of EyesWebCore, `__build__` is a git hash), "Signatures (Q7, Q8)" (nanobind signature text), "Build (Q13)" (`/W4`, `-Wall`, `-DEW_WARNINGS_AS_ERRORS=ON`), "Core package" |
-| Section 3, "Contract changes of work packages H and I" | C++ symbols and core internals: `SpikeES::validate`, `SpikeES::process`, `CSpringImpl`, `CoarseGraining::process`, "the core cannot undo that", "the core's own `to_xml`", the underlying EyesWeb block's behaviour with several joints |
-| Section 4, "Choices are strings" | "Do not export C++ enums ...", "in C++ or in Python" (the enum rule can stay as a rule about the public Python API) |
-| Section 4, "Signatures are explicit" | "derived once from the nanobind annotations", "the core binding must name every parameter" |
-| Section 4, "Live and structural parameters" | `bool adoptParams(const Block& fresh)`, `CONVENTIONS.md`, `ShiftWindow`, `VideoGram`, "needs a core change" (say: the three windows are structural today) |
-| Section 5 | `EyesWebCore/PORTING_STATUS.md` (twice), "removed from the core, the bindings and the Python package", "the block header" |
-| Section 6, steps 1 and 4 | the whole core procedure (header, `Params`, `std::invalid_argument`, `EyesWebCore/tests/<area>/`, `EyesWebCore/bindings`, `EW_REGISTER_BINDING`, `convert.h`, `CONVENTIONS.md`, `PORTING_STATUS.md`) |
-| Section 7, the C++ style bullet | C++17, 4-space indent, 120 columns, naming of members |
-| Section 8 | the cmake recipe, `ew_tests.exe`, `bindings/tests/test_bindings.py`, `-DEW_WARNINGS_AS_ERRORS=ON`, "C++ tests, the binding test and ..." in "Before you say a change is done", the sibling-checkout wording |
-| Section 9 | the private file name `PORTING_STATUS.md` in the documentation bullet |
-| Section 11 | the items B8 to B12 and B19 are core changes: keep their number and one line, not the internals |
-
-Also: remove this section and the status paragraph at the top when the file is published.
+The sentences that named the private core repository, its files, C++ symbols or the build of the core were removed or
+reworded; the C++ procedure (core steps of adding a feature, C++ style, the core build and its tests, the core-side reasons of
+some contract changes) is kept by the maintainers with the core. Check again before publishing with
+`grep -n -E "EyesWebCore|PORTING_STATUS|CONVENTIONS|C\+\+|nanobind|\.cpp|bindings|CMake|cmake|ew_|::|Impl|adoptParams" DEVELOPMENT_SPEC.md`.
+Still to do when the file is published (the maintainer decides how: a "Contributing" page that includes it, or `CONTRIBUTING.md`):
+remove this section, the status paragraph at the top and the pointers to the internal notes (`ALPHA_REVIEW.md`, `DOCS_PLAN.md`,
+`docs/_snippets/facts.md`).
 
 ## 11. Backlog and open decisions
 
@@ -596,6 +550,6 @@ The full list, with recommended actions, is `ALPHA_REVIEW.md` section 8.2 (ids B
 
 | Group | Items |
 |---|---|
-| Code (agent, Python layer) | B1 `Symmetry` signature lists removed `reference_type` values; B2 `Kinematics.reset()` reports "parameters changed"; B3 core camelCase names in setter errors; B5 `Recorder` has no `reason` column; B17 raw nanobind error for `Symmetry(pairs=[("a",)])`, bare `TypeError` for dict frames in `run()`; B20 the second review pass (complexity, duplication, `adoptParams` consistency, NaN in point and image inputs); B21 stale private notes |
+| Code (agent, Python layer) | B1 `Symmetry` signature lists removed `reference_type` values; B2 `Kinematics.reset()` reports "parameters changed"; B3 core camelCase names in setter errors; B5 `Recorder` has no `reason` column; B17 raw binding error for `Symmetry(pairs=[("a",)])`, bare `TypeError` for dict frames in `run()`; B20 the second review pass (complexity, duplication, live-parameter consistency, NaN in point and image inputs); B21 stale private notes |
 | Core (core change, then a regenerated reference where noted) | B8 `MotionNoiseDetector` with several joints (regenerate `gesture_segmenter_reference.npz` with `tools/regenerate_gesture_segmenter_reference.py`); B9 `CurvatureVelocityCorrelation` dead `velocity_threshold`; B10 humanoid flutter and `GenericModelEstimator`; B11 live windows for `Rarity(method="information")`, `Videogram`, `ScalarPeakDetector`; B12 ragged spike trains, MECS accumulation; B19 state rollback after an overflow |
 | Maintainer decisions | B4 `ConvexHull` default `integer_coordinates`; B6 `KineticEnergy(labels=...)` alone; B7 `Suddenness` classification rule (the docstring fix is the agent's); B8, B9, B12 the intent of the original blocks; B13 original definitions of `TemporalSynchronization`, `progression`, `stage_weights`, `CurvatureDispersion`, `Periodicity`, `ScalarPeakDetector`; B14 keep or drop `Harmonicity`; B15 `TrajectoryNonPlanarity` and `Equilibrium` defaults (decided: keep); B16 fill the skeleton presets; B18 `EllipsoidSphericity.process_axes`; the licence of `eyesweb-core` (E3) and of the example data (`TEACHING_PLAN.md` section 9) |

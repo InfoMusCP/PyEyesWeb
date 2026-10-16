@@ -192,15 +192,19 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
 
     @input_mode_factory("velocity")
     def from_velocity(cls) -> "LogDimensionlessJerk":
-        """Log dimensionless jerk of a speed profile: one speed value (length/s) per call, buffered over ``window``
-        samples; the jerk is the second difference of the speed. Takes the parameters of ``LogDimensionlessJerk`` except
-        ``input_mode``."""
+        """Log dimensionless jerk of a speed profile.
+
+        One speed value (length/s) per call, buffered over ``window`` samples; the jerk is the second difference of the
+        speed. Takes the parameters of ``LogDimensionlessJerk`` except ``input_mode``.
+        """
 
     @input_mode_factory("acceleration")
     def from_acceleration(cls) -> "LogDimensionlessJerk":
-        """Log dimensionless jerk of an acceleration profile: one acceleration magnitude (length/s^2) per call, buffered
-        over ``window`` samples; the jerk is the first difference of the acceleration. Takes the parameters of
-        ``LogDimensionlessJerk`` except ``input_mode``."""
+        """Log dimensionless jerk of an acceleration profile.
+
+        One acceleration magnitude (length/s^2) per call, buffered over ``window`` samples; the jerk is the first
+        difference of the acceleration. Takes the parameters of ``LogDimensionlessJerk`` except ``input_mode``.
+        """
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("signal", InputKind.SAMPLE, (1,), unit="units/s or units/s^2",

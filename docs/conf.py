@@ -1,7 +1,7 @@
 # Sphinx configuration of the PyEyesWeb documentation.
 #
 # Local build (from the PyEyesWeb root; the compiled core is a development build, see DOCS_PLAN.md section 4.5):
-#   MSYS_NO_PATHCONV=1 PYTHONPATH="<EyesWebCore>/build/Release;<PyEyesWeb>" EYESWEB_CORE_PATH=<EyesWebCore>/build/Release python -m sphinx -b html -W --keep-going docs docs/_build/html
+#   MSYS_NO_PATHCONV=1 PYTHONPATH="<core build>;<PyEyesWeb>" EYESWEB_CORE_PATH=<core build> python -m sphinx -b html -W --keep-going docs docs/_build/html
 # In CI the core comes from the eyesweb-core wheel (`pip install .[docs]`), no path variables are needed.
 
 import doctest
@@ -63,12 +63,21 @@ extensions = [
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 root_doc = "index"
-exclude_patterns = ["_build", "_legacy", "_snippets", "Thumbs.db", ".DS_Store"]  # _snippets: internal fact sheet (docs/_snippets/facts.md), never published
+exclude_patterns = ["_build", "_snippets", "Thumbs.db", ".DS_Store"]  # _snippets: internal fact sheet (docs/_snippets/facts.md), never published
 
 autosummary_generate = True
 autodoc_typehints = "none"
 numpydoc_show_class_members = False  # member tables come from autosummary templates (WP3)
 numpydoc_class_members_toctree = False
+# Docstring validation (DOCS_PLAN 11.2): the checks of form (summary, sections, parameter and return entries), each failure a
+# warning, so -W fails. Not yet enabled, by count of failures on 2026-10-16: PR09 (182, a parameter text ends with a period),
+# SA01 (160, See Also), EX01 (80, Examples on every method), ES01 (77, extended summary), PR01 (30, undocumented parameters of
+# data-model methods), RT01 (28, Returns of small methods), SS05 (a noun summary such as "Names of ..." is read as a verb).
+numpydoc_validation_checks = {"GL02", "GL03", "GL05", "GL06", "GL07", "GL09", "GL10", "SS01", "SS02", "SS03", "SS04",
+                              "SS06", "PR02", "PR03", "PR04", "PR05", "PR06", "PR07", "PR08", "PR10", "RT02", "RT03",
+                              "RT04", "RT05", "YD01"}
+# Fields and enum members without a docstring of their own: they are described in the Attributes section of their class.
+numpydoc_validation_exclude = {r"\.Output\.\w+$", r"\.Result\.(status|reason|timestamp)$", r"\.Status\.[A-Z_]+$"}
 
 # --- executed code in the prose pages (DOCS_PLAN WP5) ----------------------------------------------------------------------
 # Text: {doctest} blocks, checked with `python -m sphinx -b doctest docs docs/_build/doctest`. Figures: {plot} blocks,
@@ -89,6 +98,14 @@ plot_rcparams = {"figure.figsize": (6.4, 3.0), "axes.spines.top": False, "axes.s
                  "figure.dpi": 110, "savefig.bbox": "tight"}
 nitpicky = True  # every cross-reference must resolve (DOCS_PLAN 11.2); nitpick_ignore lists the exceptions, with a reason
 nitpick_ignore = []
+
+# linkcheck (weekly workflow .github/workflows/linkcheck.yml): links that cannot be checked by a script, with the reason.
+linkcheck_ignore = [
+    r"https://doi\.org/10\.1145/",  # the ACM Digital Library answers 403 to scripts; the DOI is the one of CITATION.cff
+    # A commit of the 1.x history that is no longer in the repository; the 1.x entries of CHANGELOG.md are kept as written.
+    r"https://github\.com/InfoMusCP/PyEyesWeb/commit/6834c0cf6bdcc64f59dbda48991987d2eb6f107",
+]
+linkcheck_allowed_redirects = {r"https://doi\.org/.*": r".*"}  # a DOI always redirects to the publisher
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),

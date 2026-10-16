@@ -153,15 +153,20 @@ class Kinematics(_InferredDimsBlock):
 
     @input_mode_factory("point")
     def from_point(cls) -> "Kinematics":
-        """Kinematics of a point streamed one sample per call: ``process(point)`` takes a ``(D,)`` position (or signal
-        value), ``run`` a ``(T, D)`` recording. Stateful: the feature keeps its sliding Savitzky-Golay window. Takes the
-        parameters of ``Kinematics`` except ``input_mode``."""
+        """Kinematics of a point streamed one sample per call.
+
+        ``process(point)`` takes a ``(D,)`` position (or signal value), ``run`` a ``(T, D)`` recording. Stateful: the
+        feature keeps its sliding Savitzky-Golay window. Takes the parameters of ``Kinematics`` except ``input_mode``.
+        """
 
     @input_mode_factory("time_series")
     def from_series(cls) -> "Kinematics":
-        """Kinematics of a series buffered by the caller: ``process(series)`` takes a ``(D, N)`` matrix (``N`` at least
-        ``filter_window_length``, the same ``N`` at every call, newest sample last) and describes its newest sample.
-        Takes the parameters of ``Kinematics`` except ``input_mode``."""
+        """Kinematics of a series buffered by the caller.
+
+        ``process(series)`` takes a ``(D, N)`` matrix (``N`` at least ``filter_window_length``, the same ``N`` at every
+        call, newest sample last) and describes its newest sample. Takes the parameters of ``Kinematics`` except
+        ``input_mode``.
+        """
 
     def _output_types(self) -> list:
         """The requested output types as enum members, in order."""

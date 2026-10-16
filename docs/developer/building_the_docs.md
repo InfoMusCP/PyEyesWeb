@@ -22,8 +22,8 @@ python -m sphinx -b html -W --keep-going docs docs/_build/html
 python -m sphinx -b doctest docs docs/_build/doctest
 ```
 
-`docs/build.ps1` does the same on Windows. It looks for the core in `..\EyesWebCore\build\Release` next to the repository, or in
-the folder given with `-Core`, sets `EYESWEB_CORE_PATH` and `PYTHONPATH`, builds with warnings as errors and opens the result;
+`docs/build.ps1` does the same on Windows. It takes the folder of a development build of the core with `-Core` (or from
+`EYESWEB_CORE_PATH` when it is set), sets `EYESWEB_CORE_PATH` and `PYTHONPATH`, builds with warnings as errors and opens the result;
 with `-Live` it rebuilds and reloads in the browser on every save (it needs `sphinx-autobuild`).
 
 ```powershell

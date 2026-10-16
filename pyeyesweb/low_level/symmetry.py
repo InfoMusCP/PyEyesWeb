@@ -76,12 +76,6 @@ class Symmetry(VariantFeature, FrameFeature):
         reference joint, unless they are passed explicitly.
     method : {"ratio", "reflection"}, optional
         The formula; fixed at construction. Defaults to ``"ratio"``.
-    pairs : sequence of (str, str)
-        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). *(live)*
-    reference_point : str, optional
-        ``"ratio"``: the joint taken as the origin of the coordinates, ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).
-        ``"reflection"``: the joint about which the right joint is reflected; ``None``, the default for this method, is
-        the barycenter (mean position) of the frame. *(live)*
     index_type : {"symmetry", "symmetry_asymmetry"}, optional
         ``"ratio"`` only. ``"symmetry"`` applies the sign condition; ``"symmetry_asymmetry"`` uses the magnitude ratio
         alone. Defaults to ``"symmetry"``. *(live)*
@@ -93,11 +87,17 @@ class Symmetry(VariantFeature, FrameFeature):
         the two magnitudes of a value. Defaults to ``"mean"``. *(live)*
     normalize_skeleton : bool, optional
         ``"ratio"`` only. Divide each joint of a couple by its distance to the reference. Defaults to ``True``. *(live)*
+    pairs : sequence of (str, str)
+        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). *(live)*
     reference_type : {"label"}, optional
         ``"ratio"`` only. ``"label"`` translates the frame so that ``reference_point`` is the origin. The other two
         values of the original block, ``"barycenter"`` and ``"point"``, did nothing there and are rejected with
         ``ValueError``; to take the barycenter as the centre, subtract it from the frame before the call. Defaults to
         ``"label"``. *(live)*
+    reference_point : str, optional
+        ``"ratio"``: the joint taken as the origin of the coordinates, ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).
+        ``"reflection"``: the joint about which the right joint is reflected; ``None``, the default for this method, is
+        the barycenter (mean position) of the frame. *(live)*
 
     Notes
     -----

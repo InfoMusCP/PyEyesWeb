@@ -21,7 +21,7 @@ from sphinx.util import logging
 logger = logging.getLogger(__name__)
 DOCS = Path(__file__).resolve().parent.parent
 ROOT = DOCS.parent
-_SKIPPED = ("docs/_legacy/", "docs/_snippets/", "docs/_build/", "docs/api/generated/", "docs/tutorials/")
+_SKIPPED = ("docs/_snippets/", "docs/_build/", "docs/api/generated/", "docs/tutorials/")
 
 
 def load(path=DOCS / "_data" / "gate.yaml"):

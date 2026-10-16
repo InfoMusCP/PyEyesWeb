@@ -1,6 +1,6 @@
-"""Event synchronisation blocks after the corrections of 2026-10-14 (see PORTING_STATUS.md, "Corrected in the core").
+"""Event synchronisation blocks after the corrections of 2026-10-14 (see docs/developer/porting_status.md).
 
-The expected numbers are those of the independent port `eyw_core` (cross-check CROSSCHECK_EYW_CORE.md), which agree with
+The expected numbers are those of the independent port `eyw_core` (cross-checked by the maintainers), which agree with
 the core after the corrections on every input tried (unweighted and weighted Event Sync, MECS v2, SPIKE sync in both
 modes, SequenceDetector, TemporalSynchronization).
 """

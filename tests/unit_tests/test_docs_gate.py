@@ -58,7 +58,7 @@ def test_allowed_lines_and_api_names_are_not_markers(tmp_path):
 
 
 def test_skipped_folders_are_not_scanned(tmp_path):
-    paths = _tree(tmp_path, {"docs/_legacy/old.md": "TODO SpeedSmoothness\n", "docs/api/generated/x.rst": "TODO\n"})
+    paths = _tree(tmp_path, {"docs/_snippets/facts.md": "TODO SpeedSmoothness\n", "docs/api/generated/x.rst": "TODO\n"})
     assert docs_gate.marker_counts(paths, DATA, tmp_path) == {}
     assert docs_gate.stale_hits(paths, DATA, tmp_path) == []
 

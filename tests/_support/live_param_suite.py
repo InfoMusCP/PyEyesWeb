@@ -1,4 +1,4 @@
-"""Reusable checks of live parameter changes (see `EyesWebCore/CONVENTIONS.md`, "Changing parameters at run time").
+"""Reusable checks of live parameter changes (see docs/howto/realtime_live_parameters.md, "Which parameters are live").
 
 A case is `(factory, attr, value, recording)`: `factory()` builds a feature, `attr = value` is the change, `recording` is a
 list of what `process` receives, one item per call. Each area keeps its own table in `tests/unit_tests/test_live_parameters_<area>.py`:

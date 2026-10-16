@@ -107,7 +107,7 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
     * any other attribute of the C++ block (properties, presets, helpers) is available unchanged.
 
     Changing a parameter keeps the state of the block unless the parameter is structural (see
-    `CONVENTIONS.md` of the core); then the next result carries "parameters changed: state reset" in its `reason`.
+    docs/howto/realtime_live_parameters.md); then the next result carries "parameters changed: state reset" in its `reason`.
 
     `process` is not pure: blocks keep state between calls (previous frames, filter histories, counters), so
     results depend on the call sequence.

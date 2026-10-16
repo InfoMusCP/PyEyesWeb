@@ -117,16 +117,21 @@ class KineticEnergy(LabelGuard, FrameFeature):
 
     @input_mode_factory("position")
     def from_position(cls) -> "KineticEnergy":
-        """Kinetic energy of joint positions (the EyesWeb mode): each frame holds the positions ``(N, 3)`` of the joints,
-        or a dict ``label -> (x, y, z)``. Stateful: the speed is the difference to the previous frame over the time
-        step, so the first frame gives 0. Takes the parameters of ``KineticEnergy`` except ``input_mode``."""
+        """Kinetic energy of joint positions (the EyesWeb mode).
+
+        Each frame holds the positions ``(N, 3)`` of the joints, or a dict ``label -> (x, y, z)``. Stateful: the speed is
+        the difference to the previous frame over the time step, so the first frame gives 0. Takes the parameters of
+        ``KineticEnergy`` except ``input_mode``.
+        """
 
     @input_mode_factory("velocity")
     def from_velocity(cls) -> "KineticEnergy":
-        """Kinetic energy of joint velocities (an extension, not in EyesWeb): each frame holds the velocities ``(N, 3)``
-        of the joints, or a dict ``label -> (vx, vy, vz)``. Stateless: ``0.5 * w * |v|^2`` per frame from the first one
-        on, with no time step and no ``reference_point``. Takes the parameters of ``KineticEnergy`` except
-        ``input_mode``."""
+        """Kinetic energy of joint velocities (an extension, not in EyesWeb).
+
+        Each frame holds the velocities ``(N, 3)`` of the joints, or a dict ``label -> (vx, vy, vz)``. Stateless:
+        ``0.5 * w * |v|^2`` per frame from the first one on, with no time step and no ``reference_point``. Takes the
+        parameters of ``KineticEnergy`` except ``input_mode``.
+        """
 
     def _label_names(self):
         return set(self._param("weights", None) or ())

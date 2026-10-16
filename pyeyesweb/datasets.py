@@ -84,6 +84,7 @@ def cache_dir() -> Path:
     Returns
     -------
     pathlib.Path
+        The cache directory (it may not exist yet).
 
     Examples
     --------
@@ -323,8 +324,10 @@ class QualisysTrial:
 
     @property
     def skeleton(self):
-        """A :class:`~pyeyesweb.data_models.Skeleton` of the 20 standard joints (uniform weights, reference ``Pelvis``,
-        couples ``Left_*`` / ``Right_*``), to pass as ``skeleton=``. Only for ``standardized=True`` trials."""
+        """The :class:`~pyeyesweb.data_models.Skeleton` of the 20 standard joints, to pass as ``skeleton=``.
+
+        Uniform weights, reference ``Pelvis``, couples ``Left_*`` / ``Right_*``. Only for ``standardized=True`` trials.
+        """
         if not self.standardized:
             raise ValueError("only the standardized trial (20 joints) has a skeleton; load it with standardize=True")
         from .skeletons import Skeleton
@@ -357,6 +360,7 @@ def load_qualisys_trial(trial: int | str, *, standardize: bool = True, start: fl
     Returns
     -------
     QualisysTrial
+        The positions, joint names, timestamps, sampling rate and unit of the recording.
 
     Raises
     ------

@@ -133,6 +133,7 @@ def get_skeleton(skeleton: Any) -> Skeleton:
     Returns
     -------
     Skeleton
+        The preset, or ``skeleton`` itself when a ``Skeleton`` is given.
 
     Raises
     ------

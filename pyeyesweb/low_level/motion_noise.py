@@ -14,7 +14,7 @@ from pyeyesweb.skeletons import with_skeleton
 
 @describe(Layer.LOW_LEVEL, eyesweb="GestureSegmenter (IsUserMotionRandomic2)")
 class MotionNoiseDetector(LabelGuard, FrameFeature):
-    r"""Noise test of the skeleton motion: is the motion random, with jumpy speeds?
+    r"""Noise test of the skeleton motion: whether the motion is random, with jumpy speeds.
 
     For every watched joint the detector keeps the last 10 speeds and computes their variance; this variance is
     averaged over 5 frames and the motion is flagged as noisy (random, jumpy) when that mean exceeds
