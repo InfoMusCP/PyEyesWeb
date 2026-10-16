@@ -1,7 +1,7 @@
 # Sphinx configuration of the PyEyesWeb documentation.
 #
 # Local build (from the PyEyesWeb root; the compiled core is a development build, see DOCS_PLAN.md section 4.5):
-#   MSYS_NO_PATHCONV=1 PYTHONPATH="C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release;C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb" EYESWEB_CORE_PATH=C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release C:/Users/Nicola/Desktop/CP/EwbTD/.venv/Scripts/python.exe -m sphinx -b html -W --keep-going docs docs/_build/html
+#   MSYS_NO_PATHCONV=1 PYTHONPATH="<EyesWebCore>/build/Release;<PyEyesWeb>" EYESWEB_CORE_PATH=<EyesWebCore>/build/Release python -m sphinx -b html -W --keep-going docs docs/_build/html
 # In CI the core comes from the eyesweb-core wheel (`pip install .[docs]`), no path variables are needed.
 
 import doctest

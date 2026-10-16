@@ -5,6 +5,11 @@ Read this first. When a rule here conflicts with what you see in older code, the
 to fix, unless the maintainer says otherwise. Rules marked **Decided** were chosen by the maintainer; do not change
 them without asking.
 
+**Status (2026-10-16).** The contract below is implemented and tested for all 60 catalog features. **Remaining work:
+`ALPHA_REVIEW.md` section 8** (packaging and release, the code and core backlog, the final documentation pass, the example
+data). Section 11 of this file points to the backlog items that touch the contract; section 10 lists what must be removed or
+reworded before this file is published for contributors.
+
 ## 1. What this is
 
 PyEyesWeb is a Python library for movement analysis. It has three tiers, each with one job:
@@ -36,11 +41,18 @@ The package follows the conceptual model of movement qualities (layers):
 | `pyeyesweb.high_level` | 4 | Social and interaction-level features (3 s and above): `EnsembleDominance`. |
 | `pyeyesweb.analysis_primitives` | any | Metrics applicable to any movement feature at any layer (entropy, rarity, periodicity, `synchronization/`). |
 | `pyeyesweb.data_models` | | The contract: `Feature`, `WindowedFeature`, `Input(s)`, `Schema`, `Output`, `Result`, `Status`, `Recorder`, and `skeleton.py` (the `Skeleton` class). |
-| `pyeyesweb.base` | | Machinery features are built from: `core_feature.py` (`CoreFeature`, `VariantFeature`, `FrameFeature`), `signatures.py`, `choices.py`, `inputs.py`, `minimum_window.py`, `labels.py` (`LabelGuard`). Internal. |
+| `pyeyesweb.base` | | Machinery features are built from: `core_feature.py` (`CoreFeature`, `VariantFeature`, `FrameFeature`), `signatures.py`, `choices.py`, `inputs.py`, `minimum_window.py`, `labels.py` (`LabelGuard`), `point_list.py` (`PointListFeature`: features that take a list of points). Internal. |
 | `pyeyesweb.catalog` | | `@describe(Layer, ...)` metadata and `catalog()`. |
 | `pyeyesweb.skeletons` | | The lab device presets (`KINECT_V2`, ...), `get_skeleton`, `with_skeleton`; re-exports `Skeleton` (defined in `data_models/skeleton.py`). |
+| `pyeyesweb.utils` | | `validators.py`: argument validators of a few analysis primitives. Internal. |
 | `pyeyesweb.datasets` | | The example recordings of the gallery: `load_qualisys_trial` (returns a `QualisysTrial`: positions in mm, labels, sampling rate, units), `fetch_data_file`, `cache_dir`, `available_trials`. Needs no core. Files are looked up in `PYEYESWEB_DATA`, then `examples/data` of a checkout, then downloaded with the optional `pooch` (`BASE_URL` is `None` until a host is chosen; SHA-256 sums in `_datasets_registry.py`, written by `tools/trim_example_data.py`). Data access only: plotting and derived signals live in `examples/helpers.py`. |
 | `pyeyesweb._core` | | The only place that imports the compiled module (the `eyesweb_core` package, a binary wheel built from the private EyesWebCore repository; in development the build found through `EYESWEB_CORE_PATH`). |
+
+Outside the package (all in this repository): `tests/` (`unit_tests/` the tests, `_support/` the shared suites and input builders,
+`data/` frozen references and small recordings, `conftest.py` documents the layout), `tools/` (`trim_example_data.py`,
+`regenerate_trajectory_reference.py`, `regenerate_gesture_segmenter_reference.py`: maintained scripts, not part of the wheel),
+`docs/` (Sphinx sources; `_ext/`, `_data/`, `build.ps1`), `examples/` (the tutorials of the gallery, `helpers.py`, the data),
+`.github/workflows/` (`tests.yml`, `docs.yml`, `pypi_deploy.yml`: the last is the 1.x release file).
 
 Where a new feature goes: the layer whose timescale and meaning fit it; if it applies to any signal at any layer it is
 an analysis primitive. Every feature class carries `@describe(Layer.X, eyesweb="<EyesWeb block>")` (omit `eyesweb`
@@ -284,7 +296,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   depends on the mode (`|y''| / (1 + y'^2)^1.5`).
 - **`Symmetry(method="ratio")` `reference_type`.** The core translates the frame only for `"label"`; `"barycenter"` and `"point"` are
   unimplemented there (the original did nothing, and `"point"` has no point parameter). They raise `ValueError` at construction and on
-  assignment (`_coerce_choices`); `"label"` stays. A skeleton without reference joint now only suggests `reference_point=`.
+  assignment (`_coerce_choices`); `"label"` stays. The `Literal` of the signature still lists the two removed values (backlog B1). A skeleton without reference joint now only suggests `reference_point=`.
 
 #### I-b
 
@@ -306,6 +318,33 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   activation 0 (`CoarseGraining::process`), so with `hop` the series is produced on the first full window and then every `factor * hop`
   samples; the other windows are `NO_OUTPUT` "not recomputed on this activation". Not a defect: kept, described in the docstring and pinned by
   `test_coarse_graining_is_computed_every_factor_th_window`.
+
+### Contract changes of the documentation work (2026-10-15/16)
+
+The documentation is built from the code, so these are rules for any later change; the mechanisms are described in
+`DOCS_PLAN.md` sections 4 and 10.
+
+- **`pyeyesweb.datasets`** (new public module, needs no core): `load_qualisys_trial(n, start=, stop=)` returns a `QualisysTrial`
+  (positions in mm, `labels`, `sampling_rate`, `joint`, `window`, `to_units`), plus `fetch_data_file`, `cache_dir`,
+  `available_trials`, `BASE_URL`. Files come from `PYEYESWEB_DATA`, then `examples/data` of a checkout, then a download with the
+  optional `pooch` (extra `datasets`) checked against `_datasets_registry.py` (written by `tools/trim_example_data.py`).
+  `BASE_URL` is `None` until a host is chosen. It is data access only: plotting stays in `examples/helpers.py`.
+  `tests/unit_tests/test_datasets.py` covers it.
+- **Executed examples.** A `>>>` example in a docstring runs under `python -m pytest --doctest-modules pyeyesweb` (92 tests): keep
+  it short, self-contained and with the real output. A code block in a prose page of `docs/` is a MyST `{doctest}` directive with the
+  real output (never typed by hand), run by `python -m sphinx -b doctest docs docs/_build/doctest` (856 tests); figures are
+  `{plot}` blocks. The tutorials are numbered scripts `plot_NN_name.py` (an optional `a` or `b` after the number) in the layer
+  folders of `examples/`, executed by every docs build; a script that raises fails the build.
+- **A new catalog feature needs two data entries or the docs build fails** (`docs/_ext/feature_pages.py` raises instead of skipping):
+  its name in a family of `docs/_data/families.yaml` (each feature in exactly one family, whose theory page must exist) and, if the
+  class cannot be built without arguments, its minimum constructor arguments in `docs/_data/instantiation.yaml`. The generated page
+  also fails if the `Parameters` section of the docstring does not match the signature: `docs/_data/wp4_waivers.yaml` lists the
+  tolerated mismatches and **must stay empty** (the extension fails when a waiver is no longer needed). The number of generated
+  pages must equal `len(catalog())`: `tests/unit_tests/test_docs_feature_pages.py`.
+- **References.** A `References` section of a docstring cites keys of `docs/references.bib` with `:cite:`; a source that is not in the
+  file is written `**[citation needed]**` in a page (never invented) and listed in `DOCS_PLAN.md` 11.1; the final gate refuses it.
+- **Docstring and page conventions.** Parameters carry their unit and the mark *(live)* or *(structural)*; the facts the pages state are
+  those of `docs/_snippets/facts.md` (internal, verified by running code) or of the code.
 
 ## 4. Parameters
 
@@ -474,6 +513,19 @@ set EYESWEB_CORE_PATH=<EyesWebCore>/build/Release
 python -m pytest -q
 ```
 
+State on 2026-10-16 with the core: `python -m pytest -q` gives 2963 passed and 12 skipped; `python -m pytest --doctest-modules
+pyeyesweb` 92 passed; the Sphinx doctest builder 856 tests, 0 failures; the docs build with `-W` has no warning (the ten tutorials
+run in about 37 s). Without the core on the path (no `EYESWEB_CORE_PATH`, no installed `eyesweb-core`) `python -m pytest -q` collects only
+the pure data-model tests: 34 passed. The suite must pass in both situations.
+
+Documentation, from the repository root (Windows: `docs/build.ps1 -Core <EyesWebCore>/build/Release` does the same and opens the result):
+```
+set PYTHONPATH=<EyesWebCore>/build/Release;<PyEyesWeb>
+set EYESWEB_CORE_PATH=<EyesWebCore>/build/Release
+python -m sphinx -b html -W --keep-going docs docs/_build/html
+python -m sphinx -b doctest docs docs/_build/doctest
+```
+
 On Git Bash use `;` as the `PYTHONPATH` separator when the paths are Windows paths, and prefix commands whose arguments
 start with `/` with `MSYS_NO_PATHCONV=1`. Without the core only the pure data-model tests run and the rest are skipped,
 which is expected.
@@ -483,6 +535,15 @@ Before you say a change is done:
 - C++ tests, the binding test and the whole `pytest` suite pass, with and without the core on the path (the pure tests).
 - `tests/unit_tests/test_naming.py` passes (no one-character names), and a linter such as `pyflakes` shows no new
   unused imports or variables.
+- The documentation builds and its examples run: `docs/build.ps1` (or `python -m sphinx -b html -W --keep-going docs docs/_build/html`,
+  warnings are errors), the doctest builder `python -m sphinx -b doctest docs docs/_build/doctest` (0 failures) and
+  `python -m pytest --doctest-modules pyeyesweb`. A new or changed feature has its entry in `docs/_data/families.yaml` and, when it
+  needs arguments, in `instantiation.yaml`; its docstring has `Parameters` for every signature name, an `Examples` section that runs
+  and, where the literature has one, a `References` section.
+- The catalog-wide suites picked the change up without edits: `test_contract_all_features.py` (process against run, schema, statuses),
+  `test_invariants_all_features.py` (OK implies finite outputs, INVALID_INPUT implies empty outputs, rejected samples not buffered),
+  `test_time_rule_all_features.py`, `test_live_validation_all_features.py`, `test_units_all_features.py` (no output without a unit),
+  `test_naming.py`, `test_choices_everywhere.py`, `test_signatures.py`, `test_public_surface.py` and `test_docs_feature_pages.py`.
 - No numeric test was edited to make it pass: if a number changed, the change needs a decision (section 5).
 - You did not add public API that this document forbids (enums as parameters, `time_mode`, `fix_*` flags, `**params`
   in a public signature, public `process_window`, one-letter parameters).
@@ -493,8 +554,48 @@ Before you say a change is done:
 - Keep the scope of a change to what was asked. Report anything you notice outside it instead of fixing it silently.
 - Do not remove or rename public names without a decision, and do not leave compatibility aliases: version 2.0.0 is
   unreleased, so renames are clean.
-- The documentation pages, README, CHANGELOG and the structure review are updated in dedicated passes by the maintainer;
-  do not edit them as a side effect of a code change, except where this document or the maintainer says so. Keep
-  `PORTING_STATUS.md` and the docstrings of the code you touch correct.
+- Documentation is part of the change. When behaviour changes, change in the same commit the docstring, the pages of `docs/` that state
+  it (grep the old wording), the tutorial that shows it, the example output of a `{doctest}` block (rerun it, do not edit the
+  output by hand), the fact sheet entry if the page relied on it, and `CHANGELOG.md` for a user-visible change. A documentation-only
+  change needs no code change but must build. Keep `PORTING_STATUS.md` (private) and the docstrings of the code you touch correct.
 - Ask the maintainer when a decision is open (an unclear original behaviour, a block that may be retired, a name that
   could be read two ways) and do not choose silently.
+
+## 10. Public-safe pass (todo)
+
+This file will be published for contributors (as the contributing page of the documentation or as `CONTRIBUTING.md`). The public
+repository holds no C++ and no URL or path of the private core repository, so the sentences below must be removed or reworded first.
+Find them again with
+`grep -n "EyesWebCore\|PORTING_STATUS\|CONVENTIONS\|C++\|nanobind\|\.cpp\|bindings\|CMake\|cmake\|ew_\|::\|Impl\|adoptParams" DEVELOPMENT_SPEC.md`.
+Treatment: say "the compiled core (`eyesweb_core`, a separate binary package)", keep what a Python contributor needs, move the
+C++ procedure to a private companion file (`EyesWebCore/dev-notes/`), and do not link private files.
+
+| Where | What names the private repository, C++ files or core internals |
+|---|---|
+| Title paragraph | "the EyesWeb C++ core under it" |
+| Section 1, tier table and the two paragraphs after it | the rows `ew_core` (`EyesWebCore/core`) and `eyesweb_core` bindings (`EyesWebCore/bindings`, nanobind); "The C++ ... is closed source ..." (state only that the compiled core is a separate package); "Keep the core independent of Python ... TouchDesigner operators"; "Related documents" (`EyesWebCore/CONVENTIONS.md`, `EyesWebCore/PORTING_STATUS.md`: replace by the developer guide `porting_status` page) |
+| Section 2, row `pyeyesweb._core` and the `CoreFeature` line of section 3 | "built from the private EyesWebCore repository", `_core_class = core.<area>.<Block>` (internal; may stay as "a block of the compiled core") |
+| Section 3, "Contract changes of work package D" | "Core version (Q9)" (the CMake project version of EyesWebCore, `__build__` is a git hash), "Signatures (Q7, Q8)" (nanobind signature text), "Build (Q13)" (`/W4`, `-Wall`, `-DEW_WARNINGS_AS_ERRORS=ON`), "Core package" |
+| Section 3, "Contract changes of work packages H and I" | C++ symbols and core internals: `SpikeES::validate`, `SpikeES::process`, `CSpringImpl`, `CoarseGraining::process`, "the core cannot undo that", "the core's own `to_xml`", the underlying EyesWeb block's behaviour with several joints |
+| Section 4, "Choices are strings" | "Do not export C++ enums ...", "in C++ or in Python" (the enum rule can stay as a rule about the public Python API) |
+| Section 4, "Signatures are explicit" | "derived once from the nanobind annotations", "the core binding must name every parameter" |
+| Section 4, "Live and structural parameters" | `bool adoptParams(const Block& fresh)`, `CONVENTIONS.md`, `ShiftWindow`, `VideoGram`, "needs a core change" (say: the three windows are structural today) |
+| Section 5 | `EyesWebCore/PORTING_STATUS.md` (twice), "removed from the core, the bindings and the Python package", "the block header" |
+| Section 6, steps 1 and 4 | the whole core procedure (header, `Params`, `std::invalid_argument`, `EyesWebCore/tests/<area>/`, `EyesWebCore/bindings`, `EW_REGISTER_BINDING`, `convert.h`, `CONVENTIONS.md`, `PORTING_STATUS.md`) |
+| Section 7, the C++ style bullet | C++17, 4-space indent, 120 columns, naming of members |
+| Section 8 | the cmake recipe, `ew_tests.exe`, `bindings/tests/test_bindings.py`, `-DEW_WARNINGS_AS_ERRORS=ON`, "C++ tests, the binding test and ..." in "Before you say a change is done", the sibling-checkout wording |
+| Section 9 | the private file name `PORTING_STATUS.md` in the documentation bullet |
+| Section 11 | the items B8 to B12 and B19 are core changes: keep their number and one line, not the internals |
+
+Also: remove this section and the status paragraph at the top when the file is published.
+
+## 11. Backlog and open decisions
+
+The full list, with recommended actions, is `ALPHA_REVIEW.md` section 8.2 (ids B1 to B21); packaging is 8.1 (E1 to E9), documentation
+8.3, data 8.4. Only pointers here.
+
+| Group | Items |
+|---|---|
+| Code (agent, Python layer) | B1 `Symmetry` signature lists removed `reference_type` values; B2 `Kinematics.reset()` reports "parameters changed"; B3 core camelCase names in setter errors; B5 `Recorder` has no `reason` column; B17 raw nanobind error for `Symmetry(pairs=[("a",)])`, bare `TypeError` for dict frames in `run()`; B20 the second review pass (complexity, duplication, `adoptParams` consistency, NaN in point and image inputs); B21 stale private notes |
+| Core (core change, then a regenerated reference where noted) | B8 `MotionNoiseDetector` with several joints (regenerate `gesture_segmenter_reference.npz` with `tools/regenerate_gesture_segmenter_reference.py`); B9 `CurvatureVelocityCorrelation` dead `velocity_threshold`; B10 humanoid flutter and `GenericModelEstimator`; B11 live windows for `Rarity(method="information")`, `Videogram`, `ScalarPeakDetector`; B12 ragged spike trains, MECS accumulation; B19 state rollback after an overflow |
+| Maintainer decisions | B4 `ConvexHull` default `integer_coordinates`; B6 `KineticEnergy(labels=...)` alone; B7 `Suddenness` classification rule (the docstring fix is the agent's); B8, B9, B12 the intent of the original blocks; B13 original definitions of `TemporalSynchronization`, `progression`, `stage_weights`, `CurvatureDispersion`, `Periodicity`, `ScalarPeakDetector`; B14 keep or drop `Harmonicity`; B15 `TrajectoryNonPlanarity` and `Equilibrium` defaults (decided: keep); B16 fill the skeleton presets; B18 `EllipsoidSphericity.process_axes`; the licence of `eyesweb-core` (E3) and of the example data (`TEACHING_PLAN.md` section 9) |

@@ -28,8 +28,8 @@ How to read an item: **Statement** (what pages may say), **Evidence** (`file:lin
 To re-run any snippet:
 
 ```text
-MSYS_NO_PATHCONV=1 PYTHONPATH="C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release;C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb" \
-EYESWEB_CORE_PATH=C:/Users/Nicola/Desktop/CP/EwbTD/EyesWebCore/build/Release C:/Users/Nicola/Desktop/CP/EwbTD/.venv/Scripts/python.exe snippet.py
+MSYS_NO_PATHCONV=1 PYTHONPATH="<workspace>/EyesWebCore/build/Release;<workspace>/PyEyesWeb" \
+EYESWEB_CORE_PATH=<workspace>/EyesWebCore/build/Release <workspace>/.venv/Scripts/python.exe snippet.py
 ```
 
 ## Summary
@@ -964,7 +964,7 @@ Run `i08c_unit_strings`:
 import collections, sys
 import pyeyesweb as pew
 
-tests = r"C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb/tests"
+tests = r"<workspace>/PyEyesWeb/tests"
 sys.path[:0] = [tests + "/unit_tests", tests + "/_support"]
 from test_contract_all_features import NAMES, factory_and_recordings    # the test suite's way to build every catalog feature
 
@@ -1424,7 +1424,7 @@ Run `i14_live_table`:
 import collections, glob, importlib, os, sys
 import pyeyesweb as pew
 
-tests = r"C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb/tests"
+tests = r"<workspace>/PyEyesWeb/tests"
 sys.path[:0] = [tests + "/_support", tests + "/unit_tests"]
 table = collections.defaultdict(lambda: {"live": set(), "structural": set()})
 for path in sorted(glob.glob(tests + "/unit_tests/test_live_parameters*.py")):
@@ -1704,7 +1704,7 @@ Run `i17_core_version`:
 import os, subprocess, sys
 from pathlib import Path
 
-repo = r"C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb"
+repo = r"<workspace>/PyEyesWeb"
 here = Path(__file__).resolve().parent.parent       # a folder holding stand-in "cores"
 
 def attempt(label, core_dir, code="import pyeyesweb._core"):
@@ -2021,7 +2021,7 @@ import sys
 import numpy as np
 from pyeyesweb.data_models import InputKind, Status
 
-tests = r"C:/Users/Nicola/Desktop/CP/EwbTD/PyEyesWeb/tests"
+tests = r"<workspace>/PyEyesWeb/tests"
 sys.path[:0] = [tests + "/unit_tests", tests + "/_support"]
 from test_contract_all_features import NAMES, factory_and_recordings    # builds every catalog feature and a recording for it
 

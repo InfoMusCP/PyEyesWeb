@@ -1,20 +1,33 @@
-# PyEyesWeb 2.0 — Documentation Plan (for an executing agent)
+# PyEyesWeb 2.0 — Documentation Plan and status (for the finalizing agent)
 
-Root: `C:\Users\Nicola\Desktop\CP\EwbTD\PyEyesWeb` (below: `PEW/`). C++ core build (private repository EyesWebCore, sibling checkout): `C:\Users\Nicola\Desktop\CP\EwbTD\EyesWebCore\build\Release` (check the path exists; the repository layout changed on 2026-10-14, older notes say `EyesWebTD`).
-Run the library with:
+Paths are relative to the root of the PyEyesWeb repository (branch `feature/v2-eyesweb-core`; the core is the sibling checkout `EyesWebCore`, private). Run the library and the docs with:
 ```
-PYTHONPATH="<EyesWebCore/build/Release>;<PEW>" EYESWEB_CORE_PATH=<EyesWebCore/build/Release> C:/Users/Nicola/Desktop/CP/EwbTD/.venv/Scripts/python.exe
+PYTHONPATH="<EyesWebCore>/build/Release;<PyEyesWeb>" EYESWEB_CORE_PATH=<EyesWebCore>/build/Release python ...
 ```
-**Sources of truth, in this order** (if two disagree, the earlier one wins; when the code and a document disagree, the code wins and the disagreement goes on a list for the maintainer):
-1. the code and `pyeyesweb.catalog()` (60 `FeatureInfo` entries, re-counted 2026-10-15: 11 physical_signals, 22 low_level, 7 mid_level, 1 high_level, 19 analysis_primitives; work packages A-D moved features between layers);
-2. `PEW/DEVELOPMENT_SPEC.md` (the current contract, including "Contract changes of work package A-D"), then `PEW/OPEN_POINTS.md`, `EyesWebCore/CONVENTIONS.md`, `EyesWebCore/PORTING_STATUS.md`;
-3. `PEW/examples/scratch/*.py` + `common.py` (real usage; written before packages B-D, so names may be stale: verify by running).
+(Windows paths: `;` as separator; on Git Bash prefix with `MSYS_NO_PATHCONV=1`.) Once the `eyesweb-core` wheel exists (`ALPHA_REVIEW.md` 8.1) no path variable is needed.
 
-Everything under `PEW/docs/`, `README.md`, `CHANGELOG.md`, `STRUCTURE_REVIEW.md`, `examples/*.ipynb`, `mkdocs.yml`, `site/` describes the **old** library unless proven otherwise. Stale names listed anywhere in this plan (including §1.3) were true on 2026-10-14 and **may have changed again: re-verify against the code, do not copy.**
+**Where to start.** Work packages WP0 to WP8 are done and committed; **what is left is section 11 (WP9 and the release items)**, which follows `ALPHA_REVIEW.md` section 8.3. Sections 0 to 10 record the decisions and the mechanisms that were built; read them when you touch the mechanism. Companions: `DEVELOPMENT_SPEC.md` (contract and rules), `ALPHA_REVIEW.md` (section 8 is the master list of remaining work), `TEACHING_PLAN.md` (the gallery).
 
-Standing rules: no edits to docs, README, CHANGELOG or docstrings until the companion AI executes this plan; documentation page content must match the current code; packaging is last (work package E of `ALPHA_REVIEW.md`), so this plan only *prepares* the `docs` extra and the CI recipe, it does not edit the packaging metadata beyond that. The public repository must never contain C++ sources (nothing from `EyesWebCore` is copied, vendored or quoted at length into docs; describe behaviour, not code).
+## Status (2026-10-16)
 
-The workspace is **not a git repository**. Before WP1 make a dated backup of `PEW/docs`, `README.md`, `CHANGELOG.md`, `mkdocs.yml`, `examples/` (or ask the maintainer to initialise git).
+| WP | Content | Status | Evidence in the repository |
+|---|---|---|---|
+| WP0 | Audit | DONE | stale-name grep, doctests, catalog dump (kept outside the repository); `docs/_data/instantiation.yaml` is its output |
+| WP1 | Sphinx skeleton, CI | DONE (CI never run) | `docs/conf.py`, `docs/requirements.txt`, `docs/Makefile`, `docs/make.bat`, `docs/build.ps1`, `docs/_static/custom.css`, `docs/_templates/core_version.html`, `.github/workflows/docs.yml`; the mkdocs files and the TSV reader pages are deleted |
+| WP2 | Fact sheet | DONE | `docs/_snippets/facts.md` (internal; 19 sections with the run output) |
+| WP3 | Generated API | DONE | `docs/_ext/feature_pages.py`, `docs/_data/{families,instantiation,wp4_waivers}.yaml`, `docs/api/*.md` (layer pages, `overview`, `data_models`, `skeletons`, `catalog`, `datasets`), `tests/unit_tests/test_docs_feature_pages.py`; 60 generated pages |
+| WP4 | Docstrings | DONE (references open) | numpydoc docstrings of the 60 classes and the data model; `wp4_waivers.yaml` is empty; 92 doctests (`pytest --doctest-modules pyeyesweb`) |
+| WP5 | Getting started, concepts | DONE | `docs/getting_started/{install,quickstart}.md`, `docs/concepts/{layers,inputs,results,time_units_parameters}.md`; executed `{doctest}` blocks |
+| WP6 | Theory, user guide | DONE (15 citations missing) | `docs/theory/{framework,notation,kinematics_energy,smoothness,shape_symmetry_balance,impulsivity_suddenness,gesture_segmentation,entropy_rarity_periodicity,synchronization,dominance,humanoid_models,imaging}.md`, `docs/user_guide/{physical_signals,low_level,mid_level,high_level,analysis_primitives}.md`, `docs/references.bib` (27 entries), `docs/references.md` |
+| WP7 | Gallery | DONE (data and cleanup open: `TEACHING_PLAN.md` T6, T7) | `docs/_ext/tutorial_reset.py`, `examples/` (10 tutorials, `helpers.py`), `pyeyesweb/datasets.py`, `tools/trim_example_data.py`; gallery run 36.9 s |
+| WP8 | How-tos, developer guide, README, changelog | DONE | `docs/howto/{load_data,map_skeleton,realtime_live_parameters,batch_to_pandas,images}.md`, `docs/developer/{architecture,conventions,adding_a_feature,building_the_docs,porting_status}.md`, `docs/migration.md`, `docs/changelog.md`, `README.md`, `CHANGELOG.md` (2.0.0 entry) |
+| WP9 | Polish, gate, first deploy | OPEN | section 11 |
+
+State: `python -m sphinx -b html -W --keep-going docs docs/_build/html` and the doctest builder (856 tests) pass; `pytest` 2963 passed and 12 skipped; `pytest --doctest-modules pyeyesweb` 92 passed. `nitpicky` is still off (`docs/conf.py`). The release items (packaging, data, tag) are in `ALPHA_REVIEW.md` section 8.
+
+**Rules that still apply.** Documentation content matches the code (the code wins; report the disagreement). Docs are part of the code review (`DEVELOPMENT_SPEC.md` section 9). The public repository never contains C++ sources or the URL of the private repository; nothing from `EyesWebCore` is quoted at length in the docs (describe behaviour, not code). `docs/_legacy` and the local `site/` hold the old mkdocs pages and describe the 1.x library: mine them, never copy names from them.
+
+**Sources of truth, in this order** (the earlier wins; a disagreement goes on a list for the maintainer): 1. the code and `pyeyesweb.catalog()` (60 `FeatureInfo` entries: 11 physical_signals, 22 low_level, 7 mid_level, 1 high_level, 19 analysis_primitives); 2. `DEVELOPMENT_SPEC.md`; 3. `docs/_snippets/facts.md` (verified on 2026-10-15/16; sections that changed afterwards are listed in 11.4).
 
 ---
 
@@ -24,9 +37,9 @@ The workspace is **not a git repository**. Before WP1 make a dated backup of `PE
 |---|---|---|
 | Generator / theme | **Sphinx + PyData Sphinx Theme** (`pydata-sphinx-theme`) | mkdocs, mkdocs-material/readthedocs theme |
 | Docstrings | numpydoc style, **decided**: the `numpydoc` extension (validation hook), not napoleon | mkdocstrings numpy handler |
-| API pages | `sphinx.ext.autosummary` (+ `autodoc`) and **one generated page per catalog feature** through a small in-repo extension (`docs/_ext/feature_pages.py`, directive `.. feature:: Name`) reading `catalog()` and the feature's `inputs`, `outputs` (Schema), `parameters` | `docs/scripts/gen_pages.py`, `tools/update_catalog_docs.py`, mkdocs-gen-files, literate-nav, section-index |
+| API pages | `sphinx.ext.autosummary` (+ `autodoc`) and **one generated page per catalog feature** through a small in-repo extension (`docs/_ext/feature_pages.py`: at `builder-inited` it writes one reST page per feature under `docs/api/generated/`; the layer tables use the directive `.. feature-table:: <layer>`) reading `catalog()` and the feature's `inputs`, `outputs` (Schema), `parameters` | `docs/scripts/gen_pages.py`, `tools/update_catalog_docs.py`, mkdocs-gen-files, literate-nav, section-index |
 | Tutorials | **`sphinx-gallery`** over the percent scripts (see TEACHING_PLAN.md) | mkdocs-jupyter, `examples/build.py`, `examples/check.py` |
-| References | `sphinxcontrib-bibtex`, one `docs/references.bib`, a "References" block per metric, **ACM style** (§4.3) | `TODO(ref)` placeholders in docstrings |
+| References | `sphinxcontrib-bibtex`, one `docs/references.bib`, a "References" block per metric, **`unsrt` numeric labels, no custom style** (decided, §4.3) | `TODO(ref)` placeholders in docstrings |
 | Cross-links | `intersphinx` to python, numpy, scipy, pandas, matplotlib | — |
 | Layout widgets | `sphinx-design` (cards, grids, tabs, dropdowns) | pymdownx tabbed/details/admonition |
 | Math | `sphinx.ext.mathjax` (built in) | `docs/javascripts/mathjax.js` |
@@ -35,49 +48,49 @@ The workspace is **not a git repository**. Before WP1 make a dated backup of `PE
 
 Tone: scientific and institutional, like the scikit-learn, SciPy and NumPy documentation: definitions, notation, theory pages, references; not marketing. One-line pitch on the landing page, no superlatives.
 
-Dependencies for the build go in a **`docs` extra** of `pyproject.toml` (replacing the mkdocs lines in `dev`) and a pinned `docs/requirements.txt` for CI; both list: `sphinx`, `pydata-sphinx-theme`, `numpydoc`, `sphinx-gallery`, `sphinxcontrib-bibtex`, `sphinx-design`, `matplotlib`, `pandas`, `scipy`, `pillow` (gallery thumbnails). Python 3.11 (CI also tests 3.10-3.13, §4.5). Add `myst-parser` to the list. (Touching `pyproject.toml` here is limited to this extra and is coordinated with work package E.)
+Dependencies for the build go in a **`docs` extra** of `pyproject.toml` (replacing the mkdocs lines in `dev`) and a pinned `docs/requirements.txt` for CI; both list: `sphinx`, `pydata-sphinx-theme`, `numpydoc`, `sphinx-gallery`, `sphinxcontrib-bibtex`, `sphinx-design`, `matplotlib`, `pandas`, `scipy`, `pillow` (gallery thumbnails). Python 3.11 (CI also tests 3.10-3.13, §4.5). `myst-parser`, `sphinx-copybutton` and `pooch` (the `datasets` extra) are in the list too. `docs/requirements.txt` holds the exact pins the docs were built with; the `docs` extra holds minimum versions. The rest of `pyproject.toml` (still the 1.1.1 setuptools file) is packaging work: `ALPHA_REVIEW.md` 8.1 (E4).
 
 ---
 
 ## 1. Inventory of existing artefacts and disposition
 
-### 1.1 `docs/` pages (mkdocs Markdown, 1836 lines total)
+### 1.1 `docs/` pages (the old mkdocs Markdown, 1836 lines)
 
-Target form is the Sphinx page named in §3. Keep prose and theory where it is still true; fix names.
+Historical inventory. **Status 2026-10-16: every row is done** (last column). The old pages that were not deleted are in `docs/_legacy/` (`index.md` and `user_guide/`, 26 files; excluded from the build by `exclude_patterns`), kept only for mining text and references; **delete the folder in WP9** (11.5). The built mkdocs output `site/` is untracked and git-ignored; delete the local copy by hand.
 
-| Path (under `docs/`) | Topic | Status | Notes |
-|---|---|---|---|
-| `index.md` | Home | **rewrite** → `index.md` (MyST) | landing page (§4.4); keep EU/CP logos and funding text |
-| `user_guide/getting_started.md` (91) | install + first example | **rewrite** | old `SlidingWindow` + `SpeedSmoothness` style; new: install, core loading, `process`/`run`, `Recorder` |
-| `user_guide/library_structure.md` (49) | packages | **rewrite** → `concepts/layers` | layers + `catalog()` |
-| `user_guide/input_contract.md` (83) | inputs | **rewrite** → `concepts/inputs` | dict / `(N,3)` / `(n,D)` forms, `labels=`, skeleton presets, `joint_map` (verify it still exists), `InputKind.IMAGE`, `from_*`, shape `ValueError` vs `INVALID_INPUT` |
-| `user_guide/output_contracts.md` (162) | outputs | **rewrite** → `concepts/results` | `Schema/Output/Result/Status/Recorder/latest`; see DEVELOPMENT_SPEC §3 and work packages A, C |
-| `user_guide/integrations.md` (8) | TD/Unity/Max | **delete or merge** into how-tos | claim only integrations that exist; TouchDesigner is the separate later site (§8) |
-| `.../theoretical_framework.md` (64) | conceptual model | **keep, edit** → `theory/framework` | keep `assets/ConceptualModel.png`; fix class names; layer table must match `catalog.Layer`/`Timescale` |
-| `.../physical_signals/physical_signals.md` (37), `low_level.md` (79), `mid_level.md` (80), `high_level.md` (58), `analysis_primitives.md` (93) | layer pages | **rewrite** | catalog tables become a generated `.. feature-table:: <layer>` directive (from `catalog()`); one real narrative per layer |
-| `low_level/contraction_expansion.md`, `direction_change.md`, `kinetic_energy.md`, `geometric_symmetry.md`, `postural_balance.md`, `smoothness.md` | per-topic theory | **merge** into `theory/` pages (one per family, see §3) | keep the theory paragraphs; smoothness becomes the smoothness family (SpectralArcLength, LogDimensionlessJerk, SubmovementCount, Harmonicity, Curvature*); verify membership and layer in code |
-| `mid_level/impulsivity.md`, `suddenness.md` | per-topic theory | **merge** | |
-| `mid_level/lightness.md`, `analysis_primitives/clusterability.md`, `statistical_moments.md` | dropped features | **delete** | listed on the "Removed features" page only |
-| `analysis_primitives/mse_dominance.md`, `rarity.md`, `synchronization.md` | theory | **merge/rewrite** | sync becomes a family page (12 classes, verified 2026-10-15) |
-| `utils/index.md` (0), `utils/tsv_reader.md` (394) | TSV reader | **delete both** (decided 2026-10-15): `TSVReader` (`pyeyesweb/utils/tsv_reader.py`) was removed from the library; loading data is covered by the `pyeyesweb.datasets` helper and the gallery (TEACHING_PLAN §5). Delete the pages at WP1 | |
-| `assets/*` | logos, figures | **keep** (inventory in §4.4); SVG logo wanted | |
-| `javascripts/*`, `overrides/*`, `scripts/gen_pages.py` | mkdocs machinery | **delete** (superseded by `conf.py`, `_static/custom.css`, `_ext/`) | |
-| `mkdocs.yml`, `site/` | mkdocs config and built output (6.6 MB) | **delete from repo** after the Sphinx build is green; `_build/` into `.gitignore` | `site/` is also excluded from release (ALPHA_REVIEW Q6) |
+| Path (under `docs/`) | Topic | Plan | Notes | Done |
+|---|---|---|---|---|
+| `index.md` | Home | **rewrite** → `index.md` (MyST) | landing page (§4.4); keep EU/CP logos and funding text | landing page built; the executed example, the timescale line and the citation block are still `TODO` comments in `index.md` (11.4) |
+| `user_guide/getting_started.md` (91) | install + first example | **rewrite** | old `SlidingWindow` + `SpeedSmoothness` style; new: install, core loading, `process`/`run`, `Recorder` | `getting_started/install.md`, `quickstart.md` |
+| `user_guide/library_structure.md` (49) | packages | **rewrite** → `concepts/layers` | layers + `catalog()` | `concepts/layers.md` |
+| `user_guide/input_contract.md` (83) | inputs | **rewrite** → `concepts/inputs` | dict / `(N,3)` / `(n,D)` forms, `labels=`, skeleton presets, `joint_map` (verify it still exists), `InputKind.IMAGE`, `from_*`, shape `ValueError` vs `INVALID_INPUT` | `concepts/inputs.md` |
+| `user_guide/output_contracts.md` (162) | outputs | **rewrite** → `concepts/results` | `Schema/Output/Result/Status/Recorder/latest`; see DEVELOPMENT_SPEC §3 and work packages A, C | `concepts/results.md` |
+| `user_guide/integrations.md` (8) | TD/Unity/Max | **delete or merge** into how-tos | claim only integrations that exist; TouchDesigner is the separate later site (§8) | deleted |
+| `.../theoretical_framework.md` (64) | conceptual model | **keep, edit** → `theory/framework` | keep `assets/ConceptualModel.png`; fix class names; layer table must match `catalog.Layer`/`Timescale` | `theory/framework.md` |
+| `.../physical_signals/physical_signals.md` (37), `low_level.md` (79), `mid_level.md` (80), `high_level.md` (58), `analysis_primitives.md` (93) | layer pages | **rewrite** | catalog tables become a generated `.. feature-table:: <layer>` directive (from `catalog()`); one real narrative per layer | `user_guide/<layer>.md` and the generated `api/<layer>.md` (`feature-table` directive) |
+| `low_level/contraction_expansion.md`, `direction_change.md`, `kinetic_energy.md`, `geometric_symmetry.md`, `postural_balance.md`, `smoothness.md` | per-topic theory | **merge** into `theory/` pages (one per family, see §3) | keep the theory paragraphs; smoothness becomes the smoothness family (SpectralArcLength, LogDimensionlessJerk, SubmovementCount, Harmonicity, Curvature*); verify membership and layer in code | merged into `theory/{kinematics_energy,smoothness,shape_symmetry_balance}.md` |
+| `mid_level/impulsivity.md`, `suddenness.md` | per-topic theory | **merge** | | `theory/impulsivity_suddenness.md`, `theory/gesture_segmentation.md` |
+| `mid_level/lightness.md`, `analysis_primitives/clusterability.md`, `statistical_moments.md` | dropped features | **delete** | listed on the "Removed features" page only | deleted; the names are in `migration.md` |
+| `analysis_primitives/mse_dominance.md`, `rarity.md`, `synchronization.md` | theory | **merge/rewrite** | sync becomes a family page (12 classes, verified 2026-10-15) | `theory/entropy_rarity_periodicity.md`, `dominance.md`, `synchronization.md` |
+| `utils/index.md` (0), `utils/tsv_reader.md` (394) | TSV reader | **delete both** (decided 2026-10-15): `TSVReader` (`pyeyesweb/utils/tsv_reader.py`) was removed from the library; loading data is covered by the `pyeyesweb.datasets` helper and the gallery (TEACHING_PLAN §5). Delete the pages at WP1 | | deleted |
+| `assets/*` | logos, figures | **keep** (inventory in §4.4); SVG logo wanted | | kept; the SVG logo is still open (11.3) |
+| `javascripts/*`, `overrides/*`, `scripts/gen_pages.py` | mkdocs machinery | **delete** (superseded by `conf.py`, `_static/custom.css`, `_ext/`) | | deleted |
+| `mkdocs.yml`, `site/` | mkdocs config and built output (6.6 MB) | **delete from repo** after the Sphinx build is green; `_build/` into `.gitignore` | `site/` is also excluded from release (ALPHA_REVIEW Q6) | `mkdocs.yml` deleted; `site/` untracked and ignored |
 
 ### 1.2 Root files
-| File | Status | Action |
-|---|---|---|
-| `README.md` | **rewrite** | example uses `SpeedSmoothness` + `SlidingWindow` (both gone). New: one-paragraph pitch, install (the wheel depends on `eyesweb-core`; `EYESWEB_CORE_PATH` for dev builds), a 10-line example with `process`/`run`/`Recorder` that is **executed in WP8**, links to docs and gallery, citation, funding |
-| `CHANGELOG.md` | **rewrite** | single 2.0.0 entry (Keep a Changelog): Added / Changed / Removed / Fixed ("Corrected in the core") + migration table old→new, built from `PORTING_STATUS.md` and DEVELOPMENT_SPEC "Contract changes". 1.x entries kept below untouched. Included in the docs as the Changelog page |
-| `STRUCTURE_REVIEW.md`, `DESIGN_PROPOSALS.md`, `OPEN_POINTS.md`, `ALPHA_REVIEW.md`, `DOCS_PLAN.md`, `TEACHING_PLAN.md` and the other agentic-development notes | internal | **move to the private repository** (`EyesWebCore/dev-notes/`) **before release**; not in the public repo, docs, sdist or wheel; conclusions go into the developer guide |
-| `DEVELOPMENT_SPEC.md` | source | **kept and published** as the "Contributing / development spec" page for open-source contributors: MyST `{include}` (do not copy; update only in the source). Needs a pass first to remove private repository names and C++ internals (WP8) |
-| `CITATION.cff` | **update** | version 2.0.0, date |
-| `main.py` | delete (ALPHA_REVIEW Q6) | |
-| `pyeyesweb/utils/tsv_reader.py` | **removed 2026-10-15** | its docs page and `utils/index.md` are on the deletion list (§1.1); the 2.0.0 CHANGELOG entry lists `TSVReader` under Removed |
-| `tools/update_catalog_docs.py` | **delete** | superseded by the generated pages |
-| `docs/conf.py`, `docs/Makefile`/`make.bat` | **new** | WP1 |
+| File | Plan | Action | Done |
+|---|---|---|---|
+| `README.md` | **rewrite** | example uses `SpeedSmoothness` + `SlidingWindow` (both gone). New: one-paragraph pitch, install (the wheel depends on `eyesweb-core`; `EYESWEB_CORE_PATH` for dev builds), a 10-line example with `process`/`run`/`Recorder` that is **executed in WP8**, links to docs and gallery, citation, funding | DONE (2.0 example, executed in WP8) |
+| `CHANGELOG.md` | **rewrite** | single 2.0.0 entry (Keep a Changelog): Added / Changed / Removed / Fixed ("Corrected in the core") + migration table old→new, built from `PORTING_STATUS.md` and DEVELOPMENT_SPEC "Contract changes". 1.x entries kept below untouched. Included in the docs as the Changelog page | DONE (2.0.0 entry, 'unreleased'; date and wording come with the release, `ALPHA_REVIEW.md` E8) |
+| `STRUCTURE_REVIEW.md`, `DESIGN_PROPOSALS.md`, `OPEN_POINTS.md`, `ALPHA_REVIEW.md`, `DOCS_PLAN.md`, `TEACHING_PLAN.md` and the other agentic-development notes | internal | **move to the private repository** (`EyesWebCore/dev-notes/`) **before release**; not in the public repo, docs, sdist or wheel; conclusions go into the developer guide | OPEN: move before release (11.5) |
+| `DEVELOPMENT_SPEC.md` | source | **kept and published** as the "Contributing / development spec" page for open-source contributors: MyST `{include}` (do not copy; update only in the source). Needs a pass first to remove private repository names and C++ internals (WP8) | OPEN: public pass and the decision how it is published (11.5); no page includes it yet |
+| `CITATION.cff` | **update** | version 2.0.0, date | OPEN: no `version` and no `date-released` yet (release step E8) |
+| `main.py` | delete (ALPHA_REVIEW Q6) | | DONE (deleted) |
+| `pyeyesweb/utils/tsv_reader.py` | **removed 2026-10-15** | its docs page and `utils/index.md` are on the deletion list (§1.1); the 2.0.0 CHANGELOG entry lists `TSVReader` under Removed | DONE |
+| `tools/update_catalog_docs.py` | **delete** | superseded by the generated pages | DONE (deleted) |
+| `docs/conf.py`, `docs/Makefile`/`make.bat` | **new** | WP1 | DONE |
 
-### 1.3 Docstrings (sample check done 2026-10-14; **repeat in WP0**)
+### 1.3 Docstrings (checked in WP0 and WP4; the stale-name grep becomes part of the gate, 11.2)
 Grep across `pyeyesweb/**/*.py` found no occurrences of `SpeedSmoothness`, `Smoothness(`, `time_mode`, `fix_`, `SkeletonManipulator`, `Lightness`, `ZeroCross`, `StatisticalMoment`, `Clusterability`, `Trajectory(`, `GetKinematical`. Suspects to re-check:
 - `SlidingWindow` was **removed on 2026-10-14**: any remaining mention (it was in `data_models/sliding_window.py:37`) must be gone.
 - `process_window`: only the private `_process_window` exists; no public docstring may mention it.
@@ -87,7 +100,7 @@ Grep across `pyeyesweb/**/*.py` found no occurrences of `SpeedSmoothness`, `Smoo
 - Other stale items: `rate_hz` (now `sampling_rate`, default `None`), `t=`/`ts=` (now `timestamp`/`timestamps`, seconds), boolean `fix_*`, `output_dims` values, `COMPONENT` (spelled `"components"`), bool switches replaced by `parts=`.
 Record results in a table (file:line, wrong text, fix) in WP0.
 
-The **docs** pages and public notebooks are where the stale names live: `SpeedSmoothness` (docs 5 files, 5 notebooks, README 2), `Lightness`, `StatisticalMoment`, `Clusterability`, `HistogramRarity`, `Synchronization`, `SlidingWindow`, `dims=3`, `fix_`, `SkeletonManipulator`, `ZeroCross`, `GetKinematical`. Re-grep.
+Stale names now survive only in `docs/_legacy`, in the old `examples/*.ipynb` (both to be deleted), and deliberately in the changelog, migration and porting-status pages: `SpeedSmoothness`, `Lightness`, `StatisticalMoment`, `Clusterability`, `HistogramRarity`, `Synchronization`, `SlidingWindow`, `dims=3`, `fix_`, `SkeletonManipulator`, `ZeroCross`, `GetKinematical`. The list of the gate is in 11.2.
 
 ---
 
@@ -109,7 +122,7 @@ The **docs** pages and public notebooks are where the stale names live: `SpeedSm
 14. **Live vs structural**: live = applied in place, structural = state resets and the next `reason` says "parameters changed: state reset"; `window`/`hop` keep the newest samples. Per-parameter source: the `LIVE`/`STRUCTURAL` tables of `tests/unit_tests/test_live_parameters*.py` (table generated in the sheet; `examples/scratch/live_parameters_classification.md` is git-ignored).
 15. **Removed features**: complete old-name -> new-name/removed table with reasons in the sheet (section 18), absence verified by import.
 16. **Fidelity policy**: ports are faithful; a corrected defect is the core's behaviour with no flag (no `fix_*`/`legacy` parameter exists) and the page says **"Corrected in the core"** with the one-line text taken from the private `PORTING_STATUS.md` (63 entries).
-17. **Install/core**: `pyeyesweb._core` requires `REQUIRED_CORE` (major.minor, 2.0) and raises `ImportError` for another version or none (texts in the sheet); `import pyeyesweb` and `data_models` need no core, `catalog()` does. **`pip install pyeyesweb` pulling `eyesweb-core` is not yet true** (pyproject is 1.1.1 with numpy/scipy/scikit-learn/tqdm; packaging WP E is last): install pages state the decision and flag it until WP E lands.
+17. **Install/core**: `pyeyesweb._core` requires `REQUIRED_CORE` (major.minor, 2.0) and raises `ImportError` for another version or none (texts in the sheet); `import pyeyesweb` and `data_models` need no core, `catalog()` does. **`pip install pyeyesweb` pulling `eyesweb-core` is not yet true** (`pyproject.toml` is still the 1.1.1 file with numpy, scipy, scikit-learn and tqdm; `ALPHA_REVIEW.md` E4 and E6): the install pages state the decision and carry a pre-release note until then.
 
 ---
 
@@ -150,18 +163,19 @@ Extensions: `sphinx.ext.autodoc`, `sphinx.ext.autosummary` (`autosummary_generat
 The docs import the library: `conf.py` puts the repository root on `sys.path` and honours `EYESWEB_CORE_PATH` (the library does this itself in `_core.py`; do not duplicate logic, only document it). If the core is missing the build must **fail with a clear message** (never silently build empty API pages).
 
 ### 4.2 The generated feature pages (the key mechanism)
-A small extension (`docs/_ext/feature_pages.py`, ≤ ~200 lines, no C++ knowledge) that, at `builder-inited`, iterates `pyeyesweb.catalog()` and writes `docs/api/<layer>/<Name>.rst` (generated into the source tree under `docs/api/generated/`, git-ignored). Each page contains, **all taken from code so pages cannot drift**:
+A small extension (`docs/_ext/feature_pages.py`, ≤ ~200 lines, no C++ knowledge) that, at `builder-inited`, iterates `pyeyesweb.catalog()` and writes `docs/api/generated/<layer>/<Name>.rst` (generated into the source tree, git-ignored). Each page contains, **all taken from code so pages cannot drift**:
 - title = class name, one-line summary (`FeatureInfo.summary`), badges: layer (`Layer.title`), timescale (`Timescale.value`), EyesWeb block (`FeatureInfo.eyesweb_block`, shown as "EyesWeb: …" or omitted for lab features);
 - **Parameters** table from `feature.parameters` of a default-constructed instance when possible, otherwise from `inspect.signature` (classes with required arguments such as `window`: instantiate with the minimum arguments from a small per-class override table in the extension, or read the signature only; **decide in WP3**): name, default, type annotation; the docstring `Parameters` section supplies units and the *(live)*/*(structural)* mark (the extension checks the docstring covers every signature name and fails the build otherwise);
 - **Inputs** from `feature.inputs` (name, kind, shape, labels), **Outputs** from `feature.outputs` (Schema: name, shape, kind, **unit**, doc), constructors `from_*` found by introspection;
 - the docstring body (numpydoc: What it measures, Notes, **References**, Examples) through `autodoc`; the "Corrected in the core" note is in Notes;
 - cross-links: layer page, theory page of its family (`:family:` attribute in a small table `docs/_data/families.yaml` the extension reads; every catalog feature must be assigned or the build fails), gallery examples that use it (sphinx-gallery back-references, `backreferences_dir`).
-The extension also provides `.. feature-table:: <layer>` (the layer tables, replacing `catalog_table()` use) and `.. removed-features::` if the list is kept as data. Features that cannot be instantiated without the core fail the build (intended). Private modules (`_*.py`) and `pyeyesweb.base`/`utils` never appear.
-Acceptance of this mechanism is a test: the number of generated pages equals `len(catalog())`.
+The extension also provides `.. feature-table:: <layer>` (the layer tables, replacing `catalog_table()` use). A `.. removed-features::` directive was not built: the removed names are a plain table in `docs/migration.md`. Features that cannot be instantiated without the core fail the build (intended). Private modules (`_*.py`) and `pyeyesweb.base`/`utils` never appear.
+Acceptance of this mechanism is a test (`tests/unit_tests/test_docs_feature_pages.py`): the number of generated pages equals `len(catalog())`. **New feature checklist:** a new catalog class needs an entry in `docs/_data/families.yaml` (and in `instantiation.yaml` if it has required arguments), otherwise the build fails; `docs/_data/wp4_waivers.yaml` must stay empty.
 
 ### 4.3 References
 `docs/references.bib` with all literature; each metric docstring has a numpydoc "References" section using `:cite:` keys.
 **Citation style: not strict (maintainer, 2026-10-15): any supported format.** sphinxcontrib-bibtex ships `alpha`, `plain`, `unsrt`, `unsrtalpha` (no CSL, no ACM). Start with `unsrt` and numeric labels (`bibtex_reference_style = "label"`, the scikit-learn/SciPy look), zero maintenance; in WP4 check whether a maintained APA/ACM pybtex plugin exists and switch only if it costs nothing. No custom `acm_style.py`. **First step of the references task: mine the citations already present** in `docs/` (theory pages) and in the `pyeyesweb` docstrings (grep for years, `et al.`, `doi`, `TODO(ref)`) into `docs/references.bib`, then fill the gaps (OPEN_POINTS §3). Known: SpectralArcLength → Balasubramanian, Melendez-Calderon, Roby-Brami, Burdet (2015), "On the analysis of movement smoothness", J NeuroEng Rehabil 12:112. The rest are supplied by the maintainer (OPEN_POINTS §3); until then the key `TODO` is **allowed only in a draft build** and the final gate (WP9) fails on it. Add the Camurri et al. papers for the conceptual model and the EyesWeb reference.
+**Status 2026-10-16:** `docs/references.bib` has 27 entries (mined in WP0, extended in WP6; 12 carry a `DRAFT:` note), the `References` sections of 15 class docstrings use `:cite:` keys, and the theory pages carry 15 `**[citation needed]**` markers: the task list is 11.1.
 
 ### 4.4 Identity and landing page
 - Logo inventory (`docs/assets/`): `eyesweb-logo.png` (main mark: header logo, light and dark variants under `html_theme_options["logo"]`; if the PNG suits only one background, an inverted copy is needed for the other theme), `favicon-32x32.png` (favicon), `cp-logo.png` and `cp-logo-squared.png` (Casa Paganini; footer, the squared one for narrow layouts), `eu-logo.png` and `resilence-logo.png` (footer, funding text), `ConceptualModel.png` (theory figure, not a logo). PNG is acceptable now; **SVG versions of the EyesWeb logo and favicon would be better** (sharp in both themes, recolourable): ask the maintainer for the sources. Palette derived from the EyesWeb logo (sample its dominant colours, check contrast), set through `_static/custom.css` + pydata CSS variables, light and dark.
@@ -180,7 +194,11 @@ Acceptance of this mechanism is a test: the number of generated pages equals `le
 - Deploy to GitHub Pages from `main` with `actions/deploy-pages`; pull-request builds run the same without deploying.
 - Pin the `eyesweb-core` version in the docs extra; the page footer prints `eyesweb_core.__version__`.
 
+**Status 2026-10-16:** `.github/workflows/docs.yml` (HTML build with `-W` on ubuntu, 30 minute timeout, deploy with `actions/deploy-pages` on a push to `main`; it does not run the doctest builder) and `tests.yml` (ubuntu, windows, macos by Python 3.10 to 3.13) exist and have **never run**; `pypi_deploy.yml` is the 1.x release file (replace or delete: `ALPHA_REVIEW.md` E7). The remaining CI work is in 11.2 and 11.6.
+
 ### 4.6 Docs-build checks (small, replace `examples/check.py`)
+**Not implemented, except the family, docstring-signature and page-count checks of `feature_pages.py`.** What is missing and how to build it: 11.2.
+
 `docs/_ext/` (or `docs/check.py` run as the last CI step) asserts: every `catalog()` name has a generated page and appears in at least one gallery script (**catalog coverage**; `sphinx-gallery` back-references give the data) or is listed in an explicit allow-list with a reason; every feature has a family; grep for **stale names** over `docs/`, `README.md`, `examples/*.py`, docstrings (`SpeedSmoothness|SlidingWindow|HistogramRarity|StatisticalMoment|Lightness|Clusterability|dims=3|rate_hz|fix_|time_mode|_process_window` outside the changelog/migration/removed-features pages) = 0 hits; no `TODO` reference keys in a release build. Plus: `-W` (warnings are errors), `linkcheck` builder run weekly, and docstring validation by `numpydoc` (`numpydoc_validation_checks`) limited to the catalog classes.
 
 ---
@@ -195,32 +213,21 @@ numpydoc style. Class docstring of every catalog feature:
 - **Notes**: EyesWeb origin block (also in metadata); **"Corrected in the core: …"** where applicable; known limitations (e.g. humanoid flutter);
 - **References**: `.. [Key]`/`:cite:` entries from `references.bib`; none invented;
 - **Examples**: a ≤ 10-line synthetic example that runs (doctest, executed by `pytest --doctest-modules`).
-Checklist table (60 rows × these columns, ✔/✘) lives in `docs/dev/feature_checklist` and is produced by a script, not by hand. Standing rule: docstrings are edited only in WP4 and only by the executor.
+The checklist table of 60 rows was not built: the checks that exist are the signature/`Parameters` match of `feature_pages.py`, `pytest --doctest-modules pyeyesweb` and the contract tests; `numpydoc_validation_checks` is still off (11.2). Docstrings change in the same commit as the behaviour they describe (`DEVELOPMENT_SPEC.md` section 9).
 
-## 6. Work packages (ordered)
-| WP | Content | Acceptance criteria |
-|---|---|---|
-| WP0 Audit | backup; stale-name grep (§1.3) over docs, README, notebooks, scripts, docstrings; run doctests; dump `catalog()` (layer, timescale, inputs, outputs with units, `parameters`, `from_*`) to a JSON file kept out of the repo; compare docstring `Parameters` with signatures | findings table delivered; doctest failures listed; counts per layer re-verified |
-| WP1 Skeleton + CI | `docs/conf.py` (§4.1), theme, empty toctree of §3 with stub pages, `docs` extra + `docs/requirements.txt`, `.gitignore` for `_build/` and generated pages, GitHub Actions workflow (build with `-W`, deploy to Pages) and the **core-wheel acquisition decided and working** (§4.5), local build recipe | CI green on a stub site obtained from the real wheel; local build with `EYESWEB_CORE_PATH` green; `site/` and mkdocs files removed from the build path |
-| WP2 Fact sheet | **done 2026-10-15**: `docs/_snippets/facts.md` per §2 | every item cited to file:line and verified by running code; maintainer approves |
-| WP3 Generated API | extension of §4.2, `families.yaml`, layer tables, `data_models`/`skeletons`/`catalog` autosummary pages | pages generated = `len(catalog())`; docstring/signature coverage check passes; unit test for the extension; build `-W` green | **Done 2026-10-15**: `docs/_ext/feature_pages.py` (pages are reST, not `.. feature::`; `feature-table` directive; layer landing pages `api/<layer>.md`), `docs/_data/{families,instantiation,wp4_waivers}.yaml`, `tests/unit_tests/test_docs_feature_pages.py`; 60 pages, build `-W` 0 warnings. WP4 input: `docs/api/generated/_wp4_todo.json` (39 classes: 36 without a Parameters section + 3 waived mismatches `SilhouetteCentroids`, `CurvatureVelocityCorrelation`, `Rarity`; the waiver list must reach empty). Two minimal markup fixes were made in docstrings (`KineticEnergy` `|v|^2`, `Rarity` formula).
-| WP4 Docstrings | apply §5 to all catalog classes + `Result/Schema/Recorder/Status/Feature`; `references.bib` first entries | checklist 100% except references awaiting the maintainer; `pytest --doctest-modules pyeyesweb` green; no docstring names a private method, removed class or stale parameter |
-| WP5 Concepts + Getting started | pages of §3 (install, quickstart, layers, inputs, results, time/units/parameters) | every code block executed (use `.. jupyter-execute`-free approach: `sphinx.ext.doctest` or `plot` directive, one mechanism, **decide**); consistent with the fact sheet |
-| WP6 Theory + User guide | merge old theory pages (§1.1), family pages, per-layer pages, bibliography | every catalog feature is linked from a theory/user-guide page; every cited paper is in `references.bib`; notation page exists |
-| WP7 Gallery | percent scripts → `sphinx-gallery` per TEACHING_PLAN.md | gallery builds, executes within budget, catalog coverage check passes |
-| WP8 How-tos, developer guide, README, CHANGELOG, CITATION, migration guide | §1.2, DEVELOPMENT_SPEC include | README example runs verbatim; migration table covers every removed/renamed name from WP0; internal documents not in toctree |
-| WP9 Polish + gate | identity (§4.4), accessibility and dark-mode check, mobile check, `linkcheck`, spell/grammar pass, stale-name grep, no draft reference keys | `sphinx-build -W` green on CI; stale grep 0 outside changelog/migration; maintainer sign-off; first Pages deploy |
+## 6. Work packages: acceptance criteria
 
-Order: WP0 → WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 (WP7 may start after WP3, in parallel with WP5/WP6 in a second pass) → WP8 → WP9.
+The status of each package is in the table at the top. The acceptance criteria that were set and met for WP0 to WP8: WP1 build `-W` green, `site/` and mkdocs files out of the build path; WP2 every fact cited to `file:line` and run; WP3 pages generated equal `len(catalog())`, docstring/signature coverage, a unit test of the extension (`tests/unit_tests/test_docs_feature_pages.py`); WP4 `pytest --doctest-modules pyeyesweb` green, no docstring names a private method, a removed class or a stale parameter (`wp4_waivers.yaml` is empty); WP5 every code block executed by the doctest builder (`{doctest}` blocks) or the `plot` directive, one mechanism; WP6 every catalog feature linked from a theory or user-guide page, notation page present; WP7 gallery builds and executes within budget (36.9 s for 11 files); WP8 README example runs verbatim, migration table covers every removed or renamed name, internal documents not in the toctree. **WP9 (polish and gate), acceptance:** `sphinx-build -W` green in CI, the checks of 11.2 enforced by the build, no marker or draft reference, maintainer sign-off, first Pages deploy (11.6).
+
+Order followed: WP0, WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8; next WP9.
 
 ## 7. Risks
 - The core wheel is needed at docs time (CI cannot build without it); a changed Linux wheel or expired token breaks all builds: pin the core version in the workflow.
 - The docs import the library; a docs build against a **different core version** than the docs describe: the build prints `eyesweb_core.__version__` and `__build__` into the page footer.
-- Not a git repository: no rollback (backup in WP0).
-- References and retirement wording depend on the maintainer.
+- References (11.1) and the wording of retired features depend on the maintainer.
 - Generated pages hide per-class failures if the extension swallows errors: it must raise.
 - Parameters that need required arguments to instantiate: handled by signature fallback (§4.2).
-- Gallery execution time grows the docs build (budgets in TEACHING_PLAN.md).
+- Gallery execution time grows the docs build (budgets in `TEACHING_PLAN.md`; 36.9 s today). The gallery reads `examples/data` of the checkout: until the data decision (`TEACHING_PLAN.md` T6) a CI clone carries 939 MB.
 - `viewcode` and autodoc expose Python source only; confirm no private paths or tokens leak into docstrings or build logs.
 
 ## 8. Out of scope now: the artists' site (TouchDesigner CHOPs)
@@ -230,11 +237,11 @@ A **second, separate site** for artists and creatives, documenting the TouchDesi
 Taken by the maintainer:
 1. **Core wheel**: public binary wheel `eyesweb-core` on PyPI (cibuildwheel: Linux manylinux, Windows, macOS; first release `2.0.0a1`); sources private; docs CI installs from PyPI/TestPyPI; WP E is a prerequisite of docs CI, docs are built locally until then (§4.5).
 2. **Formats**: prose pages in MyST Markdown, docstrings numpydoc (`numpydoc` extension), API pages generated, gallery text blocks RST (no MyST option in sphinx-gallery; §0).
-3. **Citation style**: not strict, `unsrt` numeric to start (§4.3); first step: mine existing citations from `docs/` and docstrings into `references.bib`.
+3. **Citation style**: not strict, `unsrt` numeric labels, no custom style (§4.3; built that way in `docs/conf.py`); the existing citations were mined into `references.bib`.
 4. **Internal agentic-development documents** move to the private repository (`EyesWebCore/dev-notes/`) before release; `DEVELOPMENT_SPEC.md` is kept and published as "Contributing / development spec" after a pass removing private repository names and C++ internals.
 5. **Logos** are in `docs/assets/` (inventory and use in §4.4); palette derived from the logo; SVG wanted.
 6. **Public repository layout** (below).
-7. **TSV reader removed** from the library (data ships in `examples/`; delete `docs/user_guide/theoretical_framework/utils/tsv_reader.md` and `utils/index.md`); the incomplete skeleton presets `qualisys_sport`, `mediapipe`, `openpose` stay with their `TODO(fill)` markers, documented as incomplete; the maintainer fills them later.
+7. **TSV reader removed** from the library (data ships in `examples/`; the two docs pages are deleted); the incomplete skeleton presets `qualisys_sport`, `mediapipe`, `openpose` stay with their `TODO(fill)` markers, documented as incomplete; the maintainer fills them later.
 8. **Creatives site**: its own repository, much later (after docs, PyPI release and the TouchDesigner wrapper).
 9. **Gallery details** (proposals, no maintainer preference; TEACHING_PLAN §1, §5): layout by layer, no Binder/JupyterLite, `pyeyesweb.datasets` helper with `pooch`, `examples/helpers.py`.
 10. **Data** (videos, kinect, imu): stay in the repository for now and feed examples and educational material; the licensing/consent question is **parked ("to be discussed")**, not blocking, but a release-checklist item (below).
@@ -242,104 +249,170 @@ Taken by the maintainer:
 12. **Features that did not separate the example conditions** are documented as if they work (no caveat pages); the OPEN_POINTS §4 analysis remains an internal to-do.
 13. **Budgets and CI class**: no preference from the maintainer; proposals in §4.5.
 
-**Public repository layout** (nothing else ships: no internal notes, no `site/`, no C++):
+**Public repository layout** (state of 2026-10-16; nothing else ships: no internal notes, no `site/`, no C++):
 ```
-pyeyesweb/              library (pure Python)
-tests/                  unit tests + small reference data
-docs/                   conf.py, index.md, requirements.txt, Makefile, make.bat, references.bib
-  _ext/                 feature_pages.py
-  _data/                families.yaml
-  _static/              custom.css, logos (SVG when available)
-  assets/               current logos and figures
-  getting_started/ concepts/ theory/ user_guide/ howto/ developer/ api/   (generated parts git-ignored)
-examples/               gallery scripts in layer folders (TEACHING_PLAN §1), GALLERY_HEADER.rst per folder, helpers.py, requirements.txt, data/ (trimmed)
-tools/                  maintained scripts only (regenerate_trajectory_reference.py); update_catalog_docs.py deleted
-.github/workflows/      tests.yml, docs.yml
-root                    README.md, CHANGELOG.md, CITATION.cff, LICENSE.txt, DEVELOPMENT_SPEC.md, pyproject.toml, .gitignore
+pyeyesweb/              library (pure Python), datasets.py, _datasets_registry.py
+tests/                  unit_tests/, _support/, data/ (small frozen references), conftest.py
+docs/                   conf.py, index.md, requirements.txt, references.bib, references.md, Makefile, make.bat, build.ps1
+  _ext/                 feature_pages.py, tutorial_reset.py
+  _data/                families.yaml, instantiation.yaml, wp4_waivers.yaml (must stay empty)
+  _static/ _templates/  custom.css, core_version.html (footer)
+  _snippets/facts.md    the fact sheet (INTERNAL: excluded from the build; move to the private repository, 11.5)
+  _legacy/              the old mkdocs pages, kept for mining (DELETE in WP9, 11.5)
+  assets/               logos (PNG) and ConceptualModel.png
+  getting_started/ concepts/ theory/ user_guide/ howto/ developer/ api/   (api/generated/, tutorials/, sg_execution_times.rst are generated and git-ignored)
+  changelog.md migration.md                                               (changelog.md includes CHANGELOG.md)
+examples/               gallery: 01_getting_started .. 06_capstone with plot_NN_*.py and GALLERY_HEADER.rst, GALLERY_HEADER.rst (overview), helpers.py, requirements.txt, data/ (939 MB, see TEACHING_PLAN.md T6), data_trimmed/ (git-ignored); still to delete: the six old *.ipynb, utils/ (tracked), scratch/ (git-ignored)
+tools/                  trim_example_data.py, regenerate_trajectory_reference.py, regenerate_gesture_segmenter_reference.py
+.github/workflows/      tests.yml, docs.yml, pypi_deploy.yml (the last one is the 1.x file)
+root                    README.md, CHANGELOG.md, CITATION.cff, LICENSE.txt, DEVELOPMENT_SPEC.md, pyproject.toml (still 1.1.1), .gitignore, conftest.py;
+                        internal notes to move before release: ALPHA_REVIEW.md, DOCS_PLAN.md, TEACHING_PLAN.md, OPEN_POINTS.md, STRUCTURE_REVIEW.md, DESIGN_PROPOSALS.md
 ```
-Leave the public tree: `site/`, `mkdocs.yml`, `main.py`, `docs/javascripts|overrides|scripts`, the internal `.md` plans/reviews (to `EyesWebCore/dev-notes/`), `examples/*.ipynb`, `examples/utils/`, `examples/scratch/`, the TSV reader docs pages.
+Leave the public tree at the release: `site/` (untracked), `docs/_legacy/`, `docs/_snippets/facts.md`, the internal `.md` notes above (to the private repository's `dev-notes/`), `examples/*.ipynb`, `examples/utils/`, `examples/scratch/`.
 
-**Release checklist item (parked)**: before the PyPI sdist/wheel, the wheel/sdist must not bundle the big data (`examples/data`, 939 MB); repository size and the data licence/consent still need a decision.
+**Release checklist item (open)**: the wheel and the sdist must not bundle the big data (`examples/data`, 939 MB: `ALPHA_REVIEW.md` E5); repository size, data licence and consent need a decision (`TEACHING_PLAN.md` T6).
 
-**Remaining open**:
-- Confirm the proposals of §4.5 and TEACHING_PLAN §9.
-- Wording for removed features (§2 item 15); the public/private pass of `DEVELOPMENT_SPEC.md`.
-- Literature still missing after mining (OPEN_POINTS §3); the Camurri/EyesWeb papers.
-- SVG logo sources; version switcher yes/no; custom domain; docs version policy (`2.0.0a1`, `latest`/`stable` URL).
-- Doctests inside Sphinx or only `pytest --doctest-modules` (default: only pytest).
-- Git for the PyEyesWeb tree.
-- Data licence and consent (parked).
+**Remaining open**: see section 11 (and `ALPHA_REVIEW.md` section 8 for packaging, data and release).
 
-## 10. WP7 stage 1 conventions (2026-10-15; infrastructure and two pilot tutorials built, the other eight tutorials follow)
+## 10. Gallery conventions (WP7, as built; the teaching content is in `TEACHING_PLAN.md`)
 
-**Built**: `docs/conf.py` (gallery, below), `docs/_ext/tutorial_reset.py`, `docs/_ext/feature_pages.py` (back-references include), `docs/index.md` (Tutorials in the toctree, card fixed), `examples/` (layer folders, `GALLERY_HEADER.rst` per folder, `helpers.py`, `requirements.txt`), `pyeyesweb/datasets.py` (+ `_datasets_registry.py`, `docs/api/datasets.md`, `tests/unit_tests/test_datasets.py`), `tools/trim_example_data.py`, pilots `examples/01_getting_started/plot_01_first_feature.py` and `plot_02_the_contract.py`.
+**What was built.** `docs/conf.py` (gallery settings), `docs/_ext/tutorial_reset.py` (reset between scripts), `docs/_ext/feature_pages.py` (back-references), `examples/` with ten tutorials and `helpers.py`, `pyeyesweb/datasets.py` (+ `_datasets_registry.py`, `docs/api/datasets.md`, `tests/unit_tests/test_datasets.py`), `tools/trim_example_data.py`, `docs/howto/load_data.md`.
 
-**Layout and names.** `examples/NN_<layer>/plot_NN_<name>.py`; folders `01_getting_started`, `02_physical_signals`, `03_low_level`, `04_mid_level`, `05_analysis_primitives`, `06_capstone`; the script number is global (01..10, TEACHING_PLAN section 3) and the file must start with `plot_` followed by two digits (the build only treats `plot_NN_*.py` as tutorials; any other `.py`, such as `helpers.py`, is ignored). Planned files and the trials each needs (trimmed ranges in `tools/trim_example_data.py`; keep a script inside them):
-`02_physical_signals/plot_03_points.py` (trials 3, 10, 18 with raw markers, 7), `plot_04_images.py` (synthetic only), `03_low_level/plot_05_motion.py` (11, 12, 13, 14, 21, 25), `plot_06_shape.py` (3-8, 10, 13, 14, 17, 18, 19), `04_mid_level/plot_07_gestures.py` (20-25), `05_analysis_primitives/plot_08_primitives.py` (7, 11, 12, 20, 21, 24), `plot_09_synchronization.py` (3-8), `06_capstone/plot_10_capstone.py` (7, 21 and a few from the others).
+**Layout and names.** `examples/NN_<layer>/plot_NN_<name>.py`, six folders: `01_getting_started`, `02_physical_signals`, `03_low_level`, `04_mid_level`, `05_analysis_primitives`, `06_capstone`. The script number is global (01 to 10); tutorial 09 is split in two files, `plot_09a_synchronization_signals.py` and `plot_09b_synchronization_events.py`, both in `05_analysis_primitives`. The name must match `filename_pattern` = `[/\\]plot_\d\d[ab]?_` (so a new split uses `a`/`b`); `ignore_pattern` = `^(?!plot_)` makes every other file (`helpers.py`) a non-tutorial. The files are listed with their features in `TEACHING_PLAN.md` section 3.
 
-**How the gallery is wired.** One sphinx-gallery per layer folder (`sphinx_gallery_conf["examples_dirs"]` is the list of the folders that have a `GALLERY_HEADER.rst` and at least one `plot_NN_*.py`, found by `docs/conf.py`; the folder name is also the folder under `docs/tutorials/`). Not one gallery with sub-sections: sphinx-gallery takes every folder of `examples/` with a README as a section, including the git-ignored `examples/scratch/`. `docs/tutorials/index.rst` (the overview) is written at configuration time from `examples/GALLERY_HEADER.rst` plus a toctree of the layer galleries; everything under `docs/tutorials/` is generated and git-ignored. A folder appears in the docs when its first script is added: nothing else to edit. Labels for `:ref:` between tutorials: `sphx_glr_tutorials_<folder>_<file>.py` (for example `sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`); the pilots do not link to tutorial 03 yet (add the link when it exists).
-Settings worth knowing: `abort_on_example_error=True`, `filename_pattern` `plot_NN_`, `ignore_pattern` `^(?!plot_)`, thumbnails 320x240 with `# sphinx_gallery_thumbnail_number = N` per script, `reset_modules` (matplotlib reset, dpi 90, `numpy.random.seed(0)`, print options: `docs/_ext/tutorial_reset.py`), `junit` at `<html>/sphinx-gallery/junit-results.xml` (run time per script), `min_reported_time=5`, `first_notebook_cell` (only in the downloaded `.ipynb`: `%pip install pyeyesweb[datasets] matplotlib pandas`, `%matplotlib inline`, and a download of `helpers.py` from the raw GitHub URL, TODO: pin to the release tag), `suppress_warnings=["config.cache"]` (sphinx-gallery mutates its configuration, which Sphinx cannot pickle). Executed results are cached by script hash in `docs/tutorials/`; a clean build (delete `docs/tutorials`) re-runs everything.
+**How the gallery is wired.** One sphinx-gallery per layer folder: `sphinx_gallery_conf["examples_dirs"]` is the list of the folders that match `\d\d_\w+`, have a `GALLERY_HEADER.rst` and at least one `plot_NN*_*.py` (found by `docs/conf.py`; the output folders are `docs/tutorials/<folder>`). Not one gallery with sub-sections: sphinx-gallery takes every folder of `examples/` with a README, including the git-ignored `examples/scratch/`. `docs/tutorials/index.rst` is written at configuration time from `examples/GALLERY_HEADER.rst` plus a toctree of the layer galleries; everything under `docs/tutorials/` is generated and git-ignored. A new folder appears when its first script is added. Labels for `:ref:`: `sphx_glr_tutorials_<folder>_<file>.py`. Settings: `abort_on_example_error=True`; thumbnails 320x240 with `# sphinx_gallery_thumbnail_number = N` per script, `default_thumb_file` the logo; `reset_modules` = matplotlib reset plus `reset_tutorial_state` (dpi 90, `numpy.random.seed(0)`, print options); `junit` at `<html>/sphinx-gallery/junit-results.xml`; `min_reported_time=5`; `first_notebook_cell` (only in the downloaded `.ipynb`: `%pip install --quiet pyeyesweb[datasets] matplotlib pandas`, `%matplotlib inline` and a download of `helpers.py` from `_HELPERS_URL`, a raw GitHub URL of the `main` branch: **pin to the release tag**, `TODO(release)` in `docs/conf.py`); `suppress_warnings=["config.cache"]`. Executed results are cached by script hash in `docs/tutorials/`; delete that folder for a clean run.
 
-**Back-references.** sphinx-gallery records which documented objects a script uses (the `from pyeyesweb.x import Class` of the code cells, and the roles of the text) and writes `docs/api/generated/backreferences/<module>.<Class>.examples`; `feature_pages.py` includes that file at the end of every generated feature page ("Examples using ..." with thumbnails). sphinx-gallery touches an empty file for every documented class, so a class without examples gets an empty section. Consequence: to make a feature appear on its page, **import it by name in a code cell and use it**; a class only named in prose is not recorded. The catalog coverage check of section 4.6 reads the same files.
+**Back-references.** sphinx-gallery writes `docs/api/generated/backreferences/<module>.<Class>.examples` for each documented class a script imports and uses; `feature_pages.py` includes that file at the end of every generated feature page ("Examples using ..."). To make a feature appear on its page, import it by name in a code cell and use it; a class only named in prose is not recorded. The coverage check of 11.2 reads the same files.
 
-**Script template** (`plot_01_first_feature.py` is a worked example):
+**Script template and rules** (`plot_01_first_feature.py` is the worked example): module docstring (title, abstract = the gallery card text, `:Goals:`, `:Prerequisites:`, `:Data:`, `:Time:`), then `# %%` blocks in reStructuredText with one concept per section (text, minimal code, figure, one-sentence `# **Takeaway.** ...`), "Try it" (2 to 3 numbered exercises), "Solutions" (plain executed cells, no dropdown), "Next steps" (links to concept, theory and API pages, then the next tutorial as a `:ref:`). A role for every class named in prose and the class imported and used in a code cell; public names only (no identifier starting with `_`, nothing from `pyeyesweb.base` or `utils`); no reviewer notes, no resolved-issue talk, at most one sentence "Corrected in the core"; features that did not separate conditions are presented as working; units stated (Qualisys positions are mm: `trial.to_units("m")` or `units="mm"`), time in seconds; `# sphinx_gallery_thumbnail_number = N` on the figure that should be the card.
 
-```python
-"""
-Title of the tutorial
-=====================
+**How to add a script.** (1) A folder needs a `GALLERY_HEADER.rst`; (2) write `plot_NN_name.py` from the template; read data only through `pyeyesweb.datasets.load_qualisys_trial(n, start=, stop=)` inside the trimmed range of `tools/trim_example_data.py` (edit `PLAN` there and re-run it if a script needs more); (3) plot through `examples/helpers.py` (`use_style`, `speed`, `vertical_axis`, `shade_status`, `plot_recorder`, `draw_skeleton`, `show_frames`, `synthetic_silhouette`; 166 lines, public API only; a helper used by one script stays in the script); (4) run it alone with the core, the repository and `examples/` on `PYTHONPATH`; (5) build the docs and check the page and the back-references; (6) `grep -n "\._[a-z]"` over its code is empty and `pyflakes` is clean; (7) its time is in `junit-results.xml`.
 
-One-paragraph abstract: it is the text of the gallery card.
+**Runtime and data rules.** Each script under 60 s (all eleven files are under 8 s; the gallery runs in 36.9 s), the whole gallery under 10 min; fix a slow script by slicing the data. Figures: matplotlib, 8 inches wide, dpi 90, labelled axes with units, time in seconds, status shading by `shade_status`/`plot_recorder`. Synthetic data: `numpy.random.default_rng(seed)`. Data: `pyeyesweb.datasets` looks in `PYEYESWEB_DATA`, then `examples/data` of the checkout, then downloads (optional `pooch`; `BASE_URL` is `None`: without a local copy the error says "not available online yet"). `PYEYESWEB_DATA=examples/data_trimmed` makes the scripts read the trimmed `.tsv.gz` copies (14.9 MB, written by `tools/trim_example_data.py`, git-ignored); the docs build currently uses the full files of `examples/data`. Trimmed files keep the original time column, so `start=` and `stop=` mean the same in both.
 
-:Goals: ...
-:Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
-:Data: trial N of the example session (task), seconds A to B.
-:Time: about 30 minutes.
-"""
+**What is in `pyeyesweb.datasets` and what is not.** In the library (`load_qualisys_trial`, `fetch_data_file`, `cache_dir`, `available_trials`, `QualisysTrial`): finding, downloading (SHA-256 sums) and reading a recording, the unit (`to_units`), the 20-joint skeleton, the task and condition of a trial, `joint`, `window`. In `examples/helpers.py`: everything that plots or derives a signal for a figure.
 
-# %%
-# Section title
-# -------------
-# Why and what, in reStructuredText (roles: :class:`~pyeyesweb.low_level.Kinematics`, :doc:`/theory/smoothness`,
-# :func:`~pyeyesweb.datasets.load_qualisys_trial`; literals with double backquotes; maths with :math:`...`).
+**Open points of the gallery** are in `TEACHING_PLAN.md` section 9 (data host and licence, the helpers URL, the old examples) and in 11.4 of this file (the "next tutorial" sentences). The `TODO(WP7): gallery link` comments of the five `docs/user_guide/*.md` pages and of `docs/howto/load_data.md` were resolved in WP8 (verified: no `TODO(WP7)` remains).
 
-from helpers import plot_recorder                      # import a name where it is first needed
-from pyeyesweb.datasets import load_qualisys_trial
-from pyeyesweb.low_level import Kinematics             # this import is what feeds the back-references
+## 11. Status and remaining work (WP9 and the release items)
 
-trial = load_qualisys_trial(7, start=4, stop=19)       # minimal code
-...
-fig = plot_recorder(recorder, t=trial.timestamps)      # one figure per concept (assign it: a bare Figure prints its repr)
+Everything in 11.1 to 11.6 is open; the order is that of `ALPHA_REVIEW.md` 8.3, which is the master list (items marked **[maintainer]** need an input an agent cannot supply). Do B1 to B7 of `ALPHA_REVIEW.md` 8.2 first (they change wording) and, ideally, E6 (so the install pages are true). Tick a box only when its acceptance criterion holds on a clean build.
 
-# %%
-# **Takeaway.** One sentence.
+### 11.1 References
 
-# ... one section per concept: text, code, figure, takeaway ...
+| Done | Task | Acceptance |
+|---|---|---|
+| [ ] | **[maintainer]** supplies the sources for the 15 `**[citation needed]**` markers below; an agent adds the entries to `docs/references.bib` and replaces each marker by `{cite}` keys. Do not invent entries. | `grep -rn "citation needed" docs --include=*.md` finds only the two instruction lines (`developer/adding_a_feature.md:56`, `developer/conventions.md:114`) |
+| [ ] | **[maintainer]** says which of the 45 classes whose docstring has no `References` section need one (15 have it: `KineticEnergy`, `BoundingBoxFilledArea`, `EllipsoidSphericity`, `PointsDensity`, `Symmetry`, `SpectralArcLength`, `LogDimensionlessJerk`, `CurvatureVelocityCorrelation`, `Equilibrium`, `Suddenness`, `SuddennessImpulsivity`, `ContractionImpulsivity`, `EnsembleDominance`, `MultiScaleEntropy`, `PhaseLockingValue`). Plumbing and geometry blocks (`FilterContour`, `ConvexHull`, `CoarseGraining`, `SequenceDetector`, ...) may need none; the list is `catalog()` minus those 15. | each of the 45 either cites or is named in the maintainer's "none needed" list |
+| [ ] | **[maintainer]** verifies the 12 entries of `docs/references.bib` whose `note` starts with `DRAFT:` (`camurri2004eyesweb4`, `volpe2016xmi`, `romano2025salient`, `mazzarino2009impulsivity`, `ghisio2015exergames`, `camurri2018energylift`, `balasubramanian2015smoothness`, `piana2013fullbody`, `alborno2016fluidity`, `mcculloch1986stable`, `costa2005multiscale`, `sabharwal2026pyeyesweb`: truncated author lists, missing publisher, venue or pages) and confirms the key `mazzarino2009impulsivity` (cited by the framework and impulsivity pages; its note says publisher, place and pages are unknown). `ALPHA_REVIEW.md` 8.3 speaks of two DRAFT entries: the file has 12. | no `DRAFT` note left; the header comment of the file (`% citations_mined.bib -- DRAFT ...`) is removed |
+| [ ] | The final gate fails on a marker or a `DRAFT` note (11.2) | the build fails if one is added |
 
-# %%
-# Try it
-# ------
-# 1. ...   (2-3 exercises, numbered)
+The 15 markers (`path:line`, claim, probable source to confirm with the maintainer):
 
-# %%
-# Solutions
-# ---------
-# Exercise 1. One line of explanation.
+| Page | Claim | Hint |
+|---|---|---|
+| `theory/entropy_rarity_periodicity.md:24` | sample entropy | Richman and Moorman (2000) |
+| `theory/entropy_rarity_periodicity.md:116` | the rarity and contrast measures (probabilities from the bin occupancy) | EyesWeb rarity measure: lab publication (maintainer) |
+| `theory/entropy_rarity_periodicity.md:151` | Periodicity Transform | Sethares and Staley (1999) |
+| `theory/gesture_segmentation.md:30` | Savitzky-Golay smoothing | Savitzky and Golay (1964) |
+| `theory/humanoid_models.md:13` | original mass-spring humanoid models of the EyesWeb libraries | publication that introduced the HumanoidModel blocks (maintainer) |
+| `theory/imaging.md:123` | motiongram | Jensenius (2006) |
+| `theory/imaging.md:189` | extremities of a body from the curvature of its silhouette | EyesWeb silhouette analysis (maintainer) |
+| `theory/kinematics_energy.md:56` | Savitzky-Golay differentiation | Savitzky and Golay (1964) |
+| `theory/smoothness.md:21` | minimum-jerk model of reaching | Flash and Hogan (1985) |
+| `theory/smoothness.md:171` | Savitzky-Golay filter | Savitzky and Golay (1964) |
+| `theory/synchronization.md:32` | nonlinear interdependence | Arnhold et al. (1999) |
+| `theory/synchronization.md:100` | event synchronization | Quian Quiroga et al. (2002) |
+| `theory/synchronization.md:123` | multi-event-class event synchronization (MECS) | maintainer |
+| `theory/synchronization.md:145` | SPIKE-synchronization | Kreuz et al. (2015) |
+| `theory/synchronization.md:168` | recurrence plots and cross-recurrence | Eckmann et al. (1987); Marwan et al. (2007) |
 
-solution_code()                                        # plain executed cells, no dropdown
+(The hints are the names the pages already give; check the bibliographic details before adding them.)
 
-# %%
-# Next steps
-# ----------
-# * :doc:`/concepts/results`: links to concept, theory and API pages, then the next tutorial (a :ref: as above).
+### 11.2 Automated checks (the gate): none of these exists yet
+
+`docs/_ext/feature_pages.py` already fails the build for an unassigned family, a class that cannot be instantiated, a docstring whose `Parameters` do not match the signature, and a count of pages different from `len(catalog())`; `tests/unit_tests/test_docs_feature_pages.py` tests it. `docs/_data/wp4_waivers.yaml` must stay empty. The rest of section 4.6 is **not implemented**. Implement it as a second small extension `docs/_ext/docs_gate.py` (listed in `extensions`; it raises at `build-finished` so `-W` is not needed to see it) or as functions in `feature_pages.py`, with a unit test next to `test_docs_feature_pages.py`:
+
+| Done | Check | Where and acceptance |
+|---|---|---|
+| [ ] | **Marker and draft gate** | scan the source of `docs/**/*.md` (not `_legacy`, not `_snippets`) for `[citation needed]`, `TODO`, `TBD`, `FIXME`, and `docs/references.bib` for `DRAFT`; fail on any hit except the two instruction lines in the developer guide (put them in a small allow-list with the reason). Include the `TODO(...)` comments of `docs/index.md` (landing example, timescale line, citation block), of `docs/conf.py` and of `docs/_static/custom.css`. Acceptance: adding a marker to a page fails the build |
+| [ ] | **Stale-name grep** | over `docs/` (sources), `README.md`, `examples/**/plot_*.py`, `examples/helpers.py` and the docstrings of `pyeyesweb`: `SpeedSmoothness`, `SlidingWindow`, `HistogramRarity`, `StatisticalMoment`, `Lightness`, `Clusterability`, `dims=3`, `rate_hz`, `fix_`, `time_mode`, `_process_window`, `TSVReader`, `SkeletonManipulator`, `ZeroCross`, `GetKinematical`, ... outside `docs/changelog.md`, `docs/migration.md` and `docs/developer/porting_status.md` (the pages that list removed names; keep an allow-list of files, not of lines). Acceptance: 0 hits |
+| [ ] | **Catalog coverage by back-references** | after the gallery ran, every `catalog()` name has a non-empty file `docs/api/generated/backreferences/<module>.<Class>.examples`, or is on an explicit allow-list with a reason (sphinx-gallery touches an empty file for each class: test for content). Today every one of the 60 names is imported and used in at least one script of `examples/` (checked 2026-10-16; the list per script is in `TEACHING_PLAN.md` section 3), so the allow-list starts empty. Acceptance: removing a feature from the scripts fails the build |
+| [ ] | **`nitpicky = True`** | uncomment in `docs/conf.py` (line "nitpicky"); fix or list in `nitpick_ignore` the unresolved references; Acceptance: `-W` build green with it |
+| [ ] | **`linkcheck`** | `python -m sphinx -b linkcheck docs docs/_build/linkcheck`; fix or ignore (`linkcheck_ignore`) with a reason; add a weekly scheduled workflow (`on: schedule`) that is not a PR gate |
+| [ ] | **numpydoc validation** | set `numpydoc_validation_checks` in `docs/conf.py` (numpydoc validates the objects the build documents; limit it with `numpydoc_validation_exclude` if the data-model internals produce noise). Start narrow, for example `{"SS03", "PR01", "PR02", "PR06"}` (summary ends with a period; parameters documented, no unknown ones, type spelling), and widen with the maintainer. Acceptance: the build is green with the chosen set on the 60 classes and the data model |
+| [ ] | **Spelling** | add `sphinxcontrib-spelling` (or a CI `codespell` step: simpler, no system dependency) over `docs/`, `README.md` and the docstrings; project vocabulary in `docs/spelling_wordlist.txt` |
+| [ ] | **Doctest builder in CI** | `docs.yml` runs only the HTML build; add `python -m sphinx -b doctest docs docs/_build/doctest`, `pytest --doctest-modules pyeyesweb` and a step that fails if any script in `sphinx-gallery/junit-results.xml` exceeds 60 s or the total exceeds 10 min (budgets of 4.5) |
+
+### 11.3 Identity
+
+| Done | Task | Acceptance |
+|---|---|---|
+| [ ] | **[maintainer]** supplies the SVG sources of the EyesWeb logo and favicon (the PNGs in `docs/assets/` stay as fallback: `eyesweb-logo.png`, `eyesweb-logo-dark.png`, `favicon-32x32.png`) | SVG in `docs/_static/`, wired in `html_theme_options["logo"]` and `html_favicon` |
+| [ ] | Palette: `docs/_static/custom.css` carries a muted blue "chosen for contrast" with a `TODO(WP9)`; **[maintainer]** confirms it against the logo; check the AA contrast in light and dark mode | no `TODO` in the css file; contrast checked on text, links, admonitions, code |
+| [ ] | Footer logos: `cp-logo.png` (`cp-logo-squared.png` for narrow layouts), `eu-logo.png`, `resilence-logo.png` are in `docs/assets/` and not shown (`TODO(WP9)` in `docs/conf.py`); add them with the funding sentence of `docs/index.md` | logos visible, alt text set, no horizontal scroll at phone width |
+| [ ] | Dark mode and mobile check of the landing page, a generated feature page, a theory page with maths, a tutorial and a wide table (the live/structural table, the layer tables) | no clipped formula, readable figures (look at the gallery figures in the dark theme and decide whether they need a background or a theme-aware style) |
+| [ ] | **[maintainer]** version switcher: yes (pydata `switcher.json`, needs versioned deploys) or no; the first release is a single "latest" build | decision written in 11.6; no dead switcher in the theme options |
+
+### 11.4 Text issues found during the build, and the fact sheet
+
+| Done | Where | Issue and fix |
+|---|---|---|
+| [ ] | `docs/index.md` (3 places) | `TODO(WP5)`: replace the paragraph under the install line by the executed 10-line example (the same as the README, as a `{doctest}` block); `TODO(WP6)`: the timescale line of the first layer card (the other cards have none: give every card a timescale from `catalog()`); `TODO(WP8)`: the citation block under "Funding and citation" (from `CITATION.cff`) |
+| [ ] | `docs/theory/synchronization.md`, section "Event series", paragraph "The counts are accumulated across windows ..." (lines about 113 to 120) | the accumulation is said twice ("The counts are accumulated across windows ..." and "By default the counts of `EventSynchronization` accumulate across windows ...") and the paragraph ends with an unrelated remark about the corrections of the core; split it into the accumulation rule (with `reset_every_buffer`), the dependence on `tau`, and "Corrected in the core" |
+| [ ] | `examples/03_low_level/plot_05_motion.py` and `examples/04_mid_level/plot_07_gestures.py`, last bullet of "Next steps" | "The next tutorial ..." is plain text: use `:ref:` with the labels `sphx_glr_tutorials_03_low_level_plot_06_shape.py` and `sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (as `plot_08_primitives.py` does for 09a) |
+| [ ] | `docs/concepts/time_units_parameters.md` ("Live and structural parameters") and `docs/howto/realtime_live_parameters.md` | the same table (live and structural parameters per feature) appears on both pages; keep it on one (the how-to) and link from the other. It is taken from the `LIVE`/`STRUCTURAL` tables of `tests/unit_tests/test_live_parameters*.py` (`facts.md` section 14): regenerate it from there rather than by hand |
+| [ ] | the `FilterContour` row of that table | `ALPHA_REVIEW.md` 8.3 names this row as wrong; the coordinator could not find the defect: the row (`gaussian_sigma`, `window` live), the docstring (both marked live) and `test_live_parameters_motion.py` agree. `FilterContour` is one of six classes with a `window` parameter that are not windowed features (`facts.md` section 7), which may be what is meant: ask the maintainer, then fix the row or the page |
+| [ ] | `docs/index.md` line 9 and `docs/api/overview.md` line 3 | "five layers": the conceptual model has four layers and the analysis primitives (`facts.md` section 13 and `theory/framework.md` say so; `catalog.py` too): write "four layers and the analysis primitives" |
+| [ ] | `docs/getting_started/install.md` | "The core ships with the package: there is nothing to compile" and "3.10, 3.11 and 3.12 are declared": after E4 and E6 the core is the dependency wheel `eyesweb-core`, and 3.13 is a classifier; rewrite with the real install line and remove the pre-release admonition at the release |
+| [ ] | `docs/_snippets/facts.md` section 17 (install and core; the sheet has 21 sections, the last one lists the changes after its first version) | "`pip install pyeyesweb` pulling `eyesweb-core` is not yet true": regenerate after E4 to E6 |
+| [ ] | `docs/_snippets/facts.md` other sections | **regenerate or re-verify** the sections whose statements changed after the sheet: the Symmetry `reference_type` (only `"label"`; B1 still lists the other two in the signature), `MotionNoiseDetector.is_noisy` (flipped), `Suddenness.gamma` (dimensionless), `CurvatureVelocityCorrelation` velocity (per second), `SpikeSynchronization(mode="timings")` (public), the XML round trip of `MassSpringModel`, the `Recorder` (B5 adds `reason`), the item "S9 stale words" (the private notes), section 18 (migration table) against `docs/migration.md`, and the counts (2963 passed and 12 skipped, 92 doctests, 856 sphinx doctests, 11 tutorial files in 36.9 s) |
+| [ ] | `CITATION.cff` | add `version` and `date-released` at the release (`ALPHA_REVIEW.md` E8); keep the `preferred-citation` (the paper) unless the maintainer says otherwise |
+| [ ] | after B1 to B7 of `ALPHA_REVIEW.md` 8.2 | grep the docs and the tutorials for the sentences those items change (`Suddenness` beta range, `ConvexHull` integer coordinates, `Recorder` reasons, `KineticEnergy(labels=...)`) and update them in the same commit as the code |
+
+### 11.5 Public and private, and cleanup
+
+| Done | Task | Acceptance |
+|---|---|---|
+| [ ] | Delete `docs/_legacy/` (26 tracked files of the old mkdocs site; `docs/conf.py` lists it in `exclude_patterns`: remove it there too) after a last grep that nothing else is to be mined (the references were mined into `docs/references.bib` in WP0) | folder gone, build green |
+| [ ] | Make `docs/_snippets/facts.md` internal only: it is excluded from the build (`exclude_patterns`) but is tracked and says "internal"; move it (with `STRUCTURE_REVIEW.md`, `DESIGN_PROPOSALS.md`, `OPEN_POINTS.md`, `ALPHA_REVIEW.md`, `DOCS_PLAN.md`, `TEACHING_PLAN.md`) to the private repository's `dev-notes/` at the end, after the finalizing agent has used them; leave one line in `docs/developer/building_the_docs.md` if a page mentions it | `git ls-files` lists none of them; grep for their names in `docs/` and `pyproject.toml` is empty |
+| [ ] | `DEVELOPMENT_SPEC.md` public pass (its new section 10 lists the sentences) and **[maintainer]** decision how it is published: a "Contributing" page that includes the file (MyST `{include}` of `../DEVELOPMENT_SPEC.md`: no page does it yet; the developer guide pages `architecture`, `conventions`, `adding_a_feature`, `porting_status` summarise it) or `CONTRIBUTING.md` at the root | the page builds; grep for `EyesWebCore`, `PORTING_STATUS`, `CONVENTIONS`, `nanobind`, `.cpp` in it is empty |
+| [ ] | Check the existing developer pages for private names: `docs/build.ps1` and `docs/developer/building_the_docs.md` mention the sibling checkout `EyesWebCore` (as a path to the dev build, no URL): reword to "a development build of the core" for the public site; `docs/developer/porting_status.md` and `conventions.md`: no C++ file names, no private paths | `grep -rn "EyesWebCore" docs README.md pyeyesweb tests tools .github` empty except what the maintainer allows |
+| [ ] | No local paths: the docstrings of `tests/unit_tests/test_sync_corrections.py` (`PORTING_STATUS.md`) and `tests/_support/live_param_suite.py` (`EyesWebCore/CONVENTIONS.md`) cite private notes: reword (no absolute local path or private URL is tracked today: checked 2026-10-16) | `grep -rn "C:/Users\|EyesWebTD" .` over tracked files is empty |
+| [ ] | The old notebooks and scratch files (`examples/*.ipynb`, `examples/utils/`, `examples/scratch/`): `TEACHING_PLAN.md` T7 | see there |
+
+### 11.6 GitHub Pages and the first deploy
+
+| Done | Task | Acceptance |
+|---|---|---|
+| [ ] | `ALPHA_REVIEW.md` E1 to E6 done: the install in a clean environment gives the core (docs CI cannot build without it) | `pip install ".[docs]"` in a clean venv, then the build |
+| [ ] | Check `.github/workflows/docs.yml` (written, never run): action versions (`checkout@v4`, `setup-python@v5`, `upload-pages-artifact@v3`, `deploy-pages@v4`), the data: the gallery reads `examples/data` of the checkout (939 MB today, `TEACHING_PLAN.md` T6) or `PYEYESWEB_DATA`; the `-W` build on a pull request must pass without deploying | green run on a branch |
+| [ ] | Repository settings: Pages with the source "GitHub Actions"; **[maintainer]** custom domain or none; `docs/conf.py` `html_baseurl` if a domain is set | the site is served from the Pages URL named in `CITATION.cff` (`infomuscp.github.io/PyEyesWeb`) |
+| [ ] | First deploy from `main` after the merge of `feature/v2-eyesweb-core`; check the footer prints the core version, the downloads of two tutorials run, the search works | maintainer sign-off |
+
+### 11.7 Build and verify
+
+Local build (Windows, from the repository root; the script finds the core in `..\EyesWebCore\build\Release` or in the folder given with `-Core`, sets `EYESWEB_CORE_PATH` and `PYTHONPATH`, builds with `-W --keep-going` and opens the result; `-Live` needs `sphinx-autobuild`):
+
+```
+.\docs\build.ps1 -Core <EyesWebCore>\build\Release
 ```
 
-Rules: the first block is the module docstring (title underlined with `=`); every text block is RST (`# %%` then `# ` lines; sections are `# Title` + `# -----`); a header field list (`:Goals:`, `:Prerequisites:`, `:Data:`, `:Time:`); one concept per section: text, minimal code, figure, one-sentence takeaway (`# **Takeaway.** ...`; do not put emphasis around literals, RST cannot nest them); a role for every class named in prose and the class imported and used in a code cell; only public names (no identifier or attribute starting with `_`, nothing from `pyeyesweb.base` or `utils`, no `_process_window`); no reviewer notes, no resolved-issue talk, no faithful-versus-corrected debates (at most one sentence "Corrected in the core"); features that did not separate conditions are presented as working (choose a condition where they respond); state the units (Qualisys positions are mm: `trial.to_units("m")` or `units="mm"`) and give time in seconds; exercises whose solutions execute; `# sphinx_gallery_thumbnail_number = N` on the figure that should be the card (figures are counted in order, solutions included); no timing cells.
+Without the script (any platform):
 
-**How to add a script.** (1) Create the folder with a `GALLERY_HEADER.rst` if it is missing (the headers of all six exist); (2) write `plot_NN_name.py` from the template; read data only with `pyeyesweb.datasets.load_qualisys_trial(n, start=, stop=)` inside the trimmed range of `tools/trim_example_data.py` (edit `PLAN` there and re-run it if a script needs more); (3) plot only through `helpers.py`; a new generic helper goes there (limit 250 lines, documented, public API only), a helper used by one script stays in that script; (4) run it alone with the core, the repository and `examples/` on `PYTHONPATH`; (5) build the docs with `-W --keep-going` and check the page and the back-references of its classes; (6) the grep for `\._[a-z]` over its code is empty and `pyflakes` is clean; (7) the run time is in `junit-results.xml`.
+```
+export EYESWEB_CORE_PATH=<EyesWebCore>/build/Release
+export PYTHONPATH="$EYESWEB_CORE_PATH:$PWD"           # ";" on Windows
+python -m sphinx -b html -W --keep-going docs docs/_build/html
+python -m sphinx -b doctest docs docs/_build/doctest
+```
 
-**Runtime and data rules.** Each script under 60 s (measured: the pilots take 2.4 s and 0.6 s; the whole docs build with the gallery 26 s), the whole gallery under 10 min; a script over budget is fixed by slicing the data, never by dropping the plot. Figures: matplotlib only, 8 inches wide, dpi 90, labelled axes with units, time axis in seconds, status shading by `shade_status`/`plot_recorder`. Synthetic data: `numpy.random.default_rng(seed)`. Data: `pyeyesweb.datasets` looks in `PYEYESWEB_DATA`, then `examples/data` of the checkout, then downloads (optional `pooch`; `BASE_URL` is `None` until the maintainer chooses a host: without a local copy the error says "not available online yet"). `PYEYESWEB_DATA=examples/data_trimmed` makes the scripts read the trimmed `.tsv.gz` copies (14.9 MB) written by `tools/trim_example_data.py`; the docs build currently uses the full files of `examples/data`. Trimmed files keep the original time column, so `start=`/`stop=` mean the same in both.
+CI (`.github/workflows/docs.yml`): `pip install ".[docs]"` (the `eyesweb-core` wheel comes with the dependencies) then `python -m sphinx -b html -W --keep-going docs docs/_build/html`; deploy with `actions/deploy-pages` on a push to `main`.
 
-**What is in `pyeyesweb.datasets` and what is not.** In the library: finding, downloading (checksums) and reading a recording, the unit (`to_units`), the 20-joint `skeleton`, the task/condition table, `joint`, `window`. In `examples/helpers.py`: everything that plots or derives a signal for a figure (`plot_recorder`, `shade_status`, `draw_skeleton`, `show_frames`, `speed`, `synthetic_silhouette`, the style).
+How to verify (all must pass before a box is ticked):
 
-**Open points of stage 1**: host and licence of the data; the raw GitHub URL of `helpers.py` in the notebook cell (pin to a tag); whether the trimmed files replace `examples/data` in the repository; the `TODO(WP7): gallery link` lines of the five `docs/user_guide/*.md` pages and the placeholder `docs/howto/load_data.md` (to point to the tutorials and `pyeyesweb.datasets` in the next stage); the `datasets` extra (`pooch`) added to `pyproject.toml` is outside the docs-only rule for that file and awaits the packaging work package.
+1. `-W` HTML build: 0 warnings; delete `docs/tutorials` first to force a clean run of the gallery (a normal build reuses executed outputs by script hash).
+2. The doctest builder (the `{doctest}` blocks of the prose pages; 856 tests on 2026-10-16) reports 0 failures.
+3. `python -m pytest -q` (2963 passed, 12 skipped on 2026-10-16) and `python -m pytest --doctest-modules pyeyesweb` (92 passed), with the core on the paths.
+4. Gallery timing: `docs/sg_execution_times.rst` (generated, git-ignored) and `docs/_build/html/sphinx-gallery/junit-results.xml`. On 2026-10-16: 36.9 s for the 11 scripts, the slowest `plot_07_gestures.py` 7.2 s and `plot_10_capstone.py` 6.0 s; the budget is 60 s per script and 10 min in total.
+5. After the gate of 11.2 exists: the same build proves the markers, the stale names and the catalog coverage.
