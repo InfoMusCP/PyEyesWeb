@@ -170,6 +170,7 @@ ValueError: SpectralArcLength: amplitudeThreshold must be in [0, 1]
 0.1
 ```
 
+(which-parameters-are-live)=
 ### Which parameters are live
 
 The classification was made parameter by parameter from the original EyesWeb block: a value read at every call is live, one read

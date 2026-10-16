@@ -6,9 +6,25 @@ PyEyesWeb is a research toolkit for the analysis of expressive movement, built o
 pip install pyeyesweb
 ```
 
-The catalog holds {{ n_features }} features, organised in five layers, from physical signals to high-level descriptors (compiled core {{ core_version }}).
+The catalog holds {{ n_features }} features, organised in four layers, from physical signals to high-level descriptors, and the analysis primitives (compiled core {{ core_version }}).
 
-<!-- TODO(WP5): replace this paragraph by the executed 10-line example. -->
+A feature processes one sample at a time (`process`) or a whole recording (`run`); both give the same numbers.
+
+```{doctest}
+>>> from pyeyesweb.low_level import SpectralArcLength
+>>> rate = 100.0                                              # samples per second
+>>> time = np.arange(300) / rate                              # seconds
+>>> speed = 0.6 * np.exp(-0.5 * ((time - 1.5) / 0.4) ** 2)    # one smooth reach, m/s
+>>> feature = SpectralArcLength(window=100, sampling_rate=rate)
+>>> recording = feature.run(speed, timestamps=time)           # a whole recording gives a Recorder
+>>> print(recording)
+Recorder(SpectralArcLength, rows=300, columns=['spectral_arc_length'], status={'OK': 201, 'WARMING_UP': 99})
+>>> print(recording[-1])                                      # a row is a Result
+SpectralArcLengthResult(status=OK, spectral_arc_length=-1.63417)
+>>> feature.reset()                                           # streaming: one sample per call
+>>> print(feature.process(speed[0], timestamp=time[0]))
+SpectralArcLengthResult(status=WARMING_UP, reason='1 of 100 samples', spectral_arc_length=nan)
+```
 
 ::::{grid} 1 2 3 3
 :gutter: 3
@@ -17,35 +33,35 @@ The catalog holds {{ n_features }} features, organised in five layers, from phys
 :link: user_guide/physical_signals
 :link-type: doc
 
-{{ n_physical_signals }} features. <!-- TODO(WP6): timescale line -->
+{{ n_physical_signals }} features. Timescale: {{ ts_physical_signals }}.
 :::
 
 :::{grid-item-card} Low-level features
 :link: user_guide/low_level
 :link-type: doc
 
-{{ n_low_level }} features.
+{{ n_low_level }} features. Timescale: {{ ts_low_level }}.
 :::
 
 :::{grid-item-card} Mid-level features
 :link: user_guide/mid_level
 :link-type: doc
 
-{{ n_mid_level }} features.
+{{ n_mid_level }} features. Timescale: {{ ts_mid_level }}.
 :::
 
 :::{grid-item-card} High-level features
 :link: user_guide/high_level
 :link-type: doc
 
-{{ n_high_level }} feature.
+{{ n_high_level }} feature. Timescale: {{ ts_high_level }}.
 :::
 
 :::{grid-item-card} Analysis primitives
 :link: user_guide/analysis_primitives
 :link-type: doc
 
-{{ n_analysis_primitives }} features.
+{{ n_analysis_primitives }} features. Timescale: {{ ts_analysis_primitives }}.
 :::
 ::::
 
@@ -78,7 +94,24 @@ Executed tutorials, from the first feature to a real-time loop, each downloadabl
 ## Funding and citation
 
 Developed with the partial support of the [EU ICT STARTS Resilence project](https://resilence.eu/).
-TODO(WP8): citation block (CITATION.cff).
+
+If you use PyEyesWeb in your research, please cite (from `CITATION.cff` in the repository):
+
+> S. R. Sabharwal, N. Corbellini, S. Ghisio, P. Coletta, G. Romano, A. A. Foysal, G. Volpe and A. Camurri.
+> PyEyesWeb: An open source toolkit for multimodal movement feature extraction. In *MOCO '26: Proceedings of the 10th
+> International Conference on Movement and Computing*, ACM, 2026. [doi:10.1145/3802842.3802904](https://doi.org/10.1145/3802842.3802904)
+
+```bibtex
+@inproceedings{sabharwal2026pyeyesweb,
+  author    = {Sabharwal, Sanket Rajeev and Corbellini, Nicola and Ghisio, Simone and Coletta, Paolo and
+               Romano, Gabriele and Foysal, Abdullah Al and Volpe, Gualtiero and Camurri, Antonio},
+  title     = {PyEyesWeb: An open source toolkit for multimodal movement feature extraction},
+  booktitle = {MOCO '26: Proceedings of the 10th International Conference on Movement and Computing},
+  publisher = {ACM},
+  year      = {2026},
+  doi       = {10.1145/3802842.3802904}
+}
+```
 
 ```{toctree}
 :hidden:

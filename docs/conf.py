@@ -58,6 +58,7 @@ extensions = [
     "myst_parser",
     "sphinx_gallery.gen_gallery",  # the tutorials: examples/*/plot_NN_*.py (settings in sphinx_gallery_conf below)
     "feature_pages",  # docs/_ext/feature_pages.py: one page per catalog feature (DOCS_PLAN 4.2)
+    "docs_gate",  # docs/_ext/docs_gate.py: markers, stale names, catalog coverage (DOCS_PLAN 11.2; data in _data/gate.yaml)
 ]
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
@@ -86,7 +87,8 @@ plot_html_show_formats = False
 plot_formats = [("png", 110)]
 plot_rcparams = {"figure.figsize": (6.4, 3.0), "axes.spines.top": False, "axes.spines.right": False, "font.size": 9,
                  "figure.dpi": 110, "savefig.bbox": "tight"}
-# nitpicky = True  # TODO(WP9): once the page set is stable (DOCS_PLAN 4.1)
+nitpicky = True  # every cross-reference must resolve (DOCS_PLAN 11.2); nitpick_ignore lists the exceptions, with a reason
+nitpick_ignore = []
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
@@ -106,10 +108,14 @@ myst_enable_extensions = ["colon_fence", "deflist", "dollarmath", "amsmath", "su
 myst_heading_anchors = 3
 
 _counts = {}
+_timescales = {}
 for _info in pyeyesweb.catalog():
     _counts[_info.layer.value] = _counts.get(_info.layer.value, 0) + 1
-# Feature counts for the landing page, computed from catalog(): {{ n_low_level }} etc. in the Markdown.
+    _timescales.setdefault(_info.layer.value, set()).add(_info.timescale)
+# Feature counts and timescales for the landing page, computed from catalog(): {{ n_low_level }}, {{ ts_low_level }} etc.
 myst_substitutions = {f"n_{layer}": str(n) for layer, n in _counts.items()}
+myst_substitutions.update({f"ts_{layer}": ", ".join(ts.value for ts in pyeyesweb.Timescale if ts in found)
+                           for layer, found in _timescales.items()})
 myst_substitutions["n_features"] = str(sum(_counts.values()))
 myst_substitutions["core_version"] = core_version
 

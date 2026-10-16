@@ -1,0 +1,44 @@
+# Data of the documentation gate, docs/_ext/docs_gate.py (DOCS_PLAN.md 11.2). The gate scans the files tracked by git.
+
+# --- markers: open work in the published sources -------------------------------------------------------------------------
+# A marker that is not listed below fails every build; a release build (PYEYESWEB_DOCS_RELEASE=1) fails while `open` is
+# not empty. When a marker is resolved, lower its count (or remove the line): the gate also fails on a stale count.
+markers: ['\[citation needed\]', '\bTODO\b', '\bTBD\b', '\bFIXME\b']
+draft_marker: '\bDRAFT\b'  # docs/references.bib only
+
+# Lines that mention a marker on purpose: path -> text the line contains, with the reason.
+allowed:
+  - path: docs/developer/adding_a_feature.md
+    contains: "or write **[citation needed]**"
+    reason: instruction to the writers of a docstring
+  - path: docs/developer/conventions.md
+    contains: "is marked **[citation needed]** until it is added"
+    reason: instruction to the writers of a docstring
+  - path: docs/howto/map_skeleton.md
+    contains: "empty fields are marked `TODO(fill)` in the source"
+    reason: names the marker of the incomplete skeleton presets (pyeyesweb/skeletons.py)
+
+# Open work, tracked in DOCS_PLAN.md section 11: path -> {marker: count}.
+open:
+  docs/conf.py: {'\bTODO\b': 2}  # footer logos and version switcher, helpers URL pinned at the release
+  docs/_static/custom.css: {'\bTODO\b': 1}  # palette confirmed by the maintainer (11.3)
+  docs/references.bib: {'\bDRAFT\b': 13}  # 12 entries and the header comment (11.1)
+  docs/theory/entropy_rarity_periodicity.md: {'\[citation needed\]': 3}
+  docs/theory/gesture_segmentation.md: {'\[citation needed\]': 1}
+  docs/theory/humanoid_models.md: {'\[citation needed\]': 1}
+  docs/theory/imaging.md: {'\[citation needed\]': 2}
+  docs/theory/kinematics_energy.md: {'\[citation needed\]': 1}
+  docs/theory/smoothness.md: {'\[citation needed\]': 2}
+  docs/theory/synchronization.md: {'\[citation needed\]': 5}
+
+# --- names of the 1.x library: never in the published text -------------------------------------------------------------------
+# Scanned in docs/**/*.md|rst, README.md, examples/**/plot_*.py, examples/helpers.py and the public docstrings of pyeyesweb.
+# `dims=3` of the first list of DOCS_PLAN 4.6 is not here: `Kinematics(dims=3)` is valid 2.0 code (facts.md section 12).
+stale_names: ['SpeedSmoothness', 'SlidingWindow', 'HistogramRarity', 'StatisticalMoment', '\bLightness\b', 'Clusterability',
+              '\brate_hz\b', '\bfix_', '\btime_mode\b', '_process_window', 'TSVReader', 'SkeletonManipulator', 'ZeroCross',
+              'GetKinematical']
+# The pages whose subject is the removed names (a list of files, not of lines).
+stale_allowed: [docs/changelog.md, docs/migration.md, docs/developer/porting_status.md]
+
+# --- catalog coverage: every feature is used by a tutorial (sphinx-gallery back-references) ----------------------------------
+coverage_allowed: {}  # feature name -> reason

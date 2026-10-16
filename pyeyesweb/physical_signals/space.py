@@ -3,7 +3,7 @@
 A 2D area is divided into a grid of ``cells_along_y`` rows (from the y coordinate) and ``cells_along_x`` columns (from the
 x coordinate); a cell is ``(i, j)`` = (row, column). The feature declares its outputs as a
 :class:`~pyeyesweb.data_models.Schema` (``feature.outputs``) and returns a :class:`~pyeyesweb.data_models.Result`. The
-potentials driven by the hit cells are in :mod:`pyeyesweb.mid_level.space_occupation`.
+potentials driven by the hit cells are in ``pyeyesweb.mid_level``.
 """
 
 from typing import Any, Optional
@@ -32,7 +32,8 @@ class HitCellDetector(FrameFeature):
         j = \left\lfloor \frac{x - x_{min}}{x_{max} - x_{min}}\, n_x \right\rfloor,
 
     with the upper edge of the area belonging to the last cell. It is the first step of the space-occupation features, which
-    turn the hit cells into potentials (:mod:`pyeyesweb.mid_level.space_occupation`).
+    turn the hit cells into potentials (:class:`~pyeyesweb.mid_level.PositionDependingPotentials`,
+    :class:`~pyeyesweb.mid_level.RegionDependingPotentials`).
 
     ``process(points, *, timestamp=None)`` takes an ``(N, 2)`` array of ``(x, y)`` (``run`` takes ``(T, N, 2)``); the
     feature is stateless and has no time axis: ``timestamp`` is only copied into ``result.timestamp``.

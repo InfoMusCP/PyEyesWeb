@@ -423,4 +423,5 @@ print("most visited cell (row, column):", tuple(int(i) for i in np.unravel_index
 # * :doc:`/theory/gesture_segmentation` and :doc:`/theory/impulsivity_suddenness`: the definitions behind the features of this
 #   tutorial; :doc:`/theory/shape_symmetry_balance` for the contraction index and the space potentials.
 # * :doc:`/user_guide/mid_level`: every mid-level feature with its parameters.
-# * The next tutorial turns to the analysis primitives: entropy, rarity and periodicity of a signal.
+# * :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py`: the next tutorial turns to the analysis primitives:
+#   entropy, rarity and periodicity of a signal.

@@ -282,55 +282,6 @@ Structural
 
 The classification was made parameter by parameter from the original EyesWeb block (a value read at every call is live, one
 read when the block is created is structural; when in doubt, structural). The page of each feature marks its parameters
-*(live)* or *(structural)* where the distinction applies. The table lists the parameters that the test suite changes one by
-one on a running feature and checks against this classification; it is taken from those tests.
+*(live)* or *(structural)* where the distinction applies, and the table of all features is in
+{ref}`the real-time how-to <which-parameters-are-live>`; the humanoid and generic-model features are described in the paragraph after it.
 
-| Feature | Live | Structural |
-|---|---|---|
-| `SilhouetteCentroids` | `add_intermediate_centroids`, `parts` | `silhouette` |
-| `SilhouetteBodyParts` | `arm_percentage`, `parts` | |
-| `Videogram` | | `mode`, `window` |
-| `HitCellDetector` | `x_max` | |
-| `Kinematics` | `movement_threshold` | `filter_polyorder`, `output_type` |
-| `KineticEnergy` | `weights` | `input_mode` |
-| `BoundingBoxFilledArea` | `epsilon` | |
-| `PointsDensity` | `distance_type` | |
-| `Symmetry` | `aggregation`, `reference_point` | |
-| `SpectralArcLength` | `amplitude_threshold`, `maximum_cutoff_frequency`, `minimum_cutoff_frequency`, `sampling_rate` | |
-| `LogDimensionlessJerk` | `input_mode`, `sampling_rate` | |
-| `Harmonicity` | `sampling_rate` | |
-| `SubmovementCount` | `prominence_factor`, `sampling_rate` | |
-| `CurvatureVelocityCorrelation` | `upper_limit` | `filter_window_length` |
-| `Equilibrium` | `margin` | |
-| `DirectionChange` | `epsilon` | |
-| `FilterContour` | `gaussian_sigma` | |
-| `ConvexHull` | `integer_coordinates` | |
-| `BodyPartsFromCurvature` | `minimum_distance` | |
-| `TrajectoryNonPlanarity` | `radius` | |
-| `GestureSegmenter` | `firing_threshold` | `filter_window_length` |
-| `MotionDuration` | `sampling_rate` | |
-| `SuddennessImpulsivity` | `direction_change_epsilon` | |
-| `ContractionImpulsivity` | `motion_threshold`, `peak_threshold`, `sampling_rate` | |
-| `PositionDependingPotentials` | `gaussian_sigma_x` | `potential_type` |
-| `RegionDependingPotentials` | `parts` | `potential_type` |
-| `SampleEntropy` | `relative_tolerance`, `tolerance` | |
-| `CoarseGraining` | | `factor` |
-| `Rarity` | `alpha`, `measure` | `window` |
-| `BinaryPulsesRegularity` | `threshold` | |
-| `MultiScaleEntropy` | `tolerance` | |
-| `Periodicity` | `threshold` | |
-| `ScalarPeakDetector` | `threshold` | `window` |
-| `PhaseLockingValue` | `low_frequency` | |
-| `GeneralisedAutoCorrelation` | `epsilon` | `output_type`, `tau_spread` |
-| `EventSynchronization` | `tau` | `reset_every_buffer` |
-| `EventSynchronizationMECS` | `kernel` | `number_of_event_classes`, `tau` |
-| `NonlinearInterdependence` | `neighbours` | |
-| `SequenceDetector` | `inter_event_time` | `sequence` |
-| `RecurrencePlot` | `epsilon` | |
-| `CrossRecurrencePlot` | `epsilon` | |
-| `TemporalSynchronization` | `thresholds` | `number_of_inputs` |
-
-In the humanoid and generic-model features every tested parameter is live (`damping`, `viscosity`, `gravity`, the forces,
-`integration_step`, `reference_direction`, `floor_position`, the predictor and estimator parameters, `sampling_rate`), except the
-`seed` of `GenericModelEstimator`, a replacement of the `model` by one of a different topology, and the
-`reference_direction` of `HumanoidOrientations`, which are structural.

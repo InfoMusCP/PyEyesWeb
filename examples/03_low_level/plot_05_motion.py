@@ -436,4 +436,5 @@ for centimetres in (5, 2, 1, 0.5):
 # * :doc:`/theory/kinematics_energy` and :doc:`/theory/smoothness`: the definitions and the references.
 # * :doc:`/api/low_level`: the API of the features of this tutorial.
 # * :doc:`/concepts/time_units_parameters`: the time rule and the units used throughout.
-# * The next tutorial measures the shape of the body: contraction, symmetry, balance and contours.
+# * :ref:`sphx_glr_tutorials_03_low_level_plot_06_shape.py`: the next tutorial measures the shape of the body: contraction,
+#   symmetry, balance and contours.

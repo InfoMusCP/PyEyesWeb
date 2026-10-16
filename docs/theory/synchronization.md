@@ -110,14 +110,16 @@ $Q=1$ means that every event of each series has a partner in the other. $q>0$ me
 second does; simultaneous events count for $Q$ but not for $q$. With `weighted=True` a pair at a lag of $d$ samples counts with
 the weight $1-(d-1)/\tau$ instead of 1. The outputs are `synchronization` ($Q$) and `delay` ($q$).
 
-The counts are accumulated across windows, so consecutive windows must not overlap: `hop` equals `window` (its default) and any
-other value raises `ValueError`. By default the counts of `EventSynchronization` accumulate across windows, so the value of a window describes the whole
-recording up to its end; for the value of each window on its own, pass `reset_every_buffer=True`. $Q$ also depends strongly on
-`tau`: the same two series give a low $Q$ with a small `tau` and a $Q$ close to 1 with a large one, so choose `tau` from the lags that
-count as simultaneous in your data. This is the exception to the sliding windows of the family: the feature gives one result per
-window (`OK` once per window) and no `NO_OUTPUT`. It has received several corrections in the core, all of which make its
-result follow the definition above: the coincidence window is $0<\text{lag}\le\tau$, the weight and the sign of the delay are
-those given here, and an event is credited exactly once.
+The feature works on consecutive windows that do not overlap: `hop` equals `window` (its default) and any other value raises
+`ValueError`. It gives one result per window (`OK` once per window) and no `NO_OUTPUT`, the exception to the sliding windows of
+the family. By default the counts accumulate across windows, so the value of a window describes the whole recording up to its
+end; for the value of each window on its own, pass `reset_every_buffer=True`.
+
+$Q$ depends strongly on `tau`: the same two series give a low $Q$ with a small `tau` and a $Q$ close to 1 with a large one, so
+choose `tau` from the lags that count as simultaneous in your data.
+
+Corrected in the core: the result follows the definition above, with the coincidence window $0<	ext{lag}\le	au$, the weight and
+the sign of the delay given here, and each event credited exactly once.
 
 {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` (multi-event-class synchronization) extends the measure
 to `number_of_inputs` series that carry events of several classes (for example one channel per type of gesture) **[citation needed]**

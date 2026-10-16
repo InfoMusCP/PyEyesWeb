@@ -1,6 +1,6 @@
 # API overview
 
-The catalog holds {{ n_features }} features in five layers (see {doc}`/concepts/layers`). Every feature has one generated page with its parameters, inputs, outputs and description, built from the code and from `pyeyesweb.catalog()`.
+The catalog holds {{ n_features }} features in four layers and the analysis primitives (see {doc}`/concepts/layers`). Every feature has one generated page with its parameters, inputs, outputs and description, built from the code and from `pyeyesweb.catalog()`.
 
 | Layer | Features |
 |---|---|

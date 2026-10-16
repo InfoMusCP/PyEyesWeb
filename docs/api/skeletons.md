@@ -3,6 +3,8 @@
 Reference for the objects below (generated from the docstrings).
 
 ```{eval-rst}
+.. py:module:: pyeyesweb.skeletons
+
 .. currentmodule:: pyeyesweb.skeletons
 
 .. autosummary::

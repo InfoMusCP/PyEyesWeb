@@ -31,8 +31,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ".[docs]"
-      - name: Build the documentation (warnings are errors)
+      - name: Spelling (project words in docs/spelling_wordlist.txt)
+        run: |
+          pip install codespell
+          codespell -I docs/spelling_wordlist.txt docs/*.md docs/getting_started docs/concepts docs/theory docs/user_guide \
+            docs/howto docs/developer docs/api/*.md README.md pyeyesweb examples/*/plot_*.py examples/helpers.py
+      - name: Build the documentation (warnings are errors; the gate of docs/_ext/docs_gate.py runs here)
         run: python -m sphinx -b html -W --keep-going docs docs/_build/html
+      - name: Tutorials within their run-time budget (60 s per script, 10 min in total)
+        run: python tools/check_gallery_times.py docs/_build/html/sphinx-gallery/junit-results.xml
+      - name: Executed examples of the prose pages (doctest builder)
+        run: python -m sphinx -b doctest docs docs/_build/doctest
+      - name: Examples of the docstrings
+        run: |
+          pip install pytest
+          python -m pytest --doctest-modules pyeyesweb
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:

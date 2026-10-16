@@ -3,6 +3,8 @@
 Reference for the objects below (generated from the docstrings).
 
 ```{eval-rst}
+.. py:module:: pyeyesweb.data_models
+
 .. currentmodule:: pyeyesweb.data_models
 
 .. autosummary::

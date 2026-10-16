@@ -99,12 +99,12 @@ def _forgetting(method):
 class Feature(OutputsMixin, ABC):
     """Base class of every feature: the call contract (``process``, ``run``, ``reset``) and the declared inputs and outputs.
 
-    A feature declares what one call receives (:attr:`inputs`) and what it returns (:attr:`outputs`) once, from its
+    A feature declares what one call receives (:attr:`~Feature.inputs`) and what it returns (:attr:`~OutputsMixin.outputs`) once, from its
     constructor parameters and before any data is seen. ``process`` takes one sample or frame per input and returns an
     immutable :class:`Result`; ``run`` applies ``process`` to a whole recording and returns a :class:`Recorder`.
 
     A feature with several inputs (a pair of signals) takes them as positional arguments in the order of
-    :attr:`inputs`: ``process(first, second, timestamp=None)`` and ``run(first, second, timestamps=None)``.
+    :attr:`~Feature.inputs`: ``process(first, second, timestamp=None)`` and ``run(first, second, timestamps=None)``.
     ``timestamp`` and ``timestamps`` are keyword-only and in seconds.
 
     Attributes
@@ -120,7 +120,7 @@ class Feature(OutputsMixin, ABC):
 
     Notes
     -----
-    Every call is first checked against :attr:`inputs`. A wrong shape raises ``ValueError`` naming the feature and the
+    Every call is first checked against :attr:`~Feature.inputs`. A wrong shape raises ``ValueError`` naming the feature and the
     input; an empty frame is not a shape error and returns ``INVALID_INPUT``, as do NaN or infinity and a timestamp
     that is not finite or goes back. The state is unchanged by an ``INVALID_INPUT`` call.
 
@@ -224,12 +224,12 @@ class Feature(OutputsMixin, ABC):
 
     @abstractmethod
     def process(self, *sample: Any, timestamp: Optional[float] = None) -> Result:
-        """Process one sample or frame per input (see :attr:`inputs`) and return the result.
+        """Process one sample or frame per input (see :attr:`~Feature.inputs`) and return the result.
 
         Parameters
         ----------
         *sample
-            One sample or frame per input, in the order of :attr:`inputs`.
+            One sample or frame per input, in the order of :attr:`~Feature.inputs`.
         timestamp : float, optional
             Timestamp of the sample in seconds (keyword-only); it must be finite. ``NaN`` in the result when omitted.
 
@@ -253,7 +253,7 @@ class Feature(OutputsMixin, ABC):
         Parameters
         ----------
         *data : array-like
-            One array per input, first axis = time (see :attr:`inputs` for the shape of one sample).
+            One array per input, first axis = time (see :attr:`~Feature.inputs` for the shape of one sample).
         timestamps : array-like, optional
             Timestamps in seconds, one per sample.
         reset : bool, optional
@@ -268,7 +268,7 @@ class Feature(OutputsMixin, ABC):
         ------
         ValueError
             If the inputs do not have the same number of samples, ``timestamps`` does not hold one value per sample, or
-            a sample does not fit :attr:`inputs`.
+            a sample does not fit :attr:`~Feature.inputs`.
         """
         self.inputs._check_count(data, type(self).__name__)  # the optional last inputs may be left out
         if reset:
