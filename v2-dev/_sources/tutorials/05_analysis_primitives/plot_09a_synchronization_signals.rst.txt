@@ -269,7 +269,7 @@ The four signals are the heights of both hands, the left knee and the head.
  .. code-block:: none
 
 
-    <matplotlib.colorbar.Colorbar object at 0x7fcba59ee750>
+    <matplotlib.colorbar.Colorbar object at 0x7f78744e2a50>
 
 
 
