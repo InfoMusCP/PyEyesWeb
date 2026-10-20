@@ -249,3 +249,15 @@ version switcher and a custom domain for the docs.
   first public PyPI release. The core is likely to become public later, under another licence: then replace `LICENSE`, the SPDX
   headers (`tools/add_spdx_headers.py` in the private repository) and `license` in its `pyproject.toml`. PyEyesWeb stays MIT with
   `Copyright (c) 2025 InfoMusCP` (maintainer decision).
+
+### 8.8 TestPyPI trial of 2.0.0a1 (2026-10-20): done
+
+- `eyesweb-core 2.0.0a1` (tag `v2.0.0a1` of the private repository, workflow `wheels.yml`, cibuildwheel 3.4) built for Windows, Linux x86_64
+  and macOS x86_64 and was uploaded to TestPyPI; the macOS arm64 job was dropped for the trial (no runner: see `TODO(release)` in
+  `wheels.yml` of the core). `pyeyesweb 2.0.0a1` (tag `v2.0.0a1` on `dev`, workflow `pypi_deploy.yml`) was uploaded to TestPyPI.
+- E6 verified on TestPyPI by the maintainer: in a fresh virtual environment `pip install --pre --extra-index-url
+  https://test.pypi.org/simple/ pyeyesweb` pulls `eyesweb-core` and `pyeyesweb.catalog()` works without `EYESWEB_CORE_PATH`
+  (core installed first with `--no-deps` from TestPyPI).
+- Open before the real PyPI release: the macOS arm64 wheel, `CORE_FROM_TESTPYPI` removal, the real-PyPI publishers and environments,
+  the release date in `CHANGELOG.md` and `CITATION.cff`, the documentation switch from `gh-pages/v2-dev/` to the Pages root
+  (`DOCS_PLAN.md` 11.9), the references and the backlog of 8.2.
