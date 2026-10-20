@@ -3,10 +3,16 @@ name: Docs
 # `pip install .[docs]` pulls the binary wheel `eyesweb-core` from PyPI. Until it is published there, set the repository
 # variable CORE_FROM_TESTPYPI to `true` (or tick the input of a manual run): the core is then installed from TestPyPI first,
 # alone and with --no-deps. The gallery reads the sensor data of examples/data, which is part of the checkout.
+#
+# Publishing: GitHub Pages is still served from the branch gh-pages (the documentation of 1.x is at its root and is not touched).
+# A push to dev builds the 2.x documentation and publishes it to the folder v2-dev/ of gh-pages (https://<owner>.github.io/
+# PyEyesWeb/v2-dev/), replacing only that folder. When 2.x is released: change the Pages source to "GitHub Actions" (Settings >
+# Pages), publish this build at the root (actions/upload-pages-artifact + actions/deploy-pages, see DOCS_PLAN.md section 11.6)
+# and decide what happens to the 1.x site (keep it in a versioned folder).
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -60,23 +66,31 @@ jobs:
         run: python -m sphinx -b doctest docs docs/_build/doctest
       - name: Examples of the docstrings
         run: python -m pytest --doctest-modules pyeyesweb
-      - uses: actions/upload-pages-artifact@v3
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         with:
+          name: html
           path: docs/_build/html
+          if-no-files-found: error
 
-  deploy:
-    # Only pushes to main deploy; pull-request builds stop after `build`.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  publish-preview:
+    # Only pushes to dev publish; pull-request builds stop after `build`. The root of gh-pages (the 1.x site) stays as it is.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write
     steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: html
+          path: html
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: html
+          destination_dir: v2-dev
+          keep_files: false
+          force_orphan: false

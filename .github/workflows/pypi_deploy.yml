@@ -3,7 +3,9 @@ name: Publish
 # PyEyesWeb 2.x is a pure-Python wheel (plus an sdist) that depends on the binary wheel `eyesweb-core`, published separately
 # from the private core repository: publish the core first, or `pip install pyeyesweb` cannot resolve.
 #
-# - Manual run (workflow_dispatch): builds, checks and uploads to TestPyPI.
+# - A pushed tag `v*` (for example v2.0.0a1, made on dev): builds, checks and uploads to TestPyPI. A tag runs the workflow file of
+#   the tagged commit, so this works from dev without the file being on the default branch.
+# - Manual run (workflow_dispatch): the same; GitHub lists a manual workflow only when its file is on the default branch.
 # - A published GitHub release: builds, checks and uploads to PyPI (a tag such as v2.0.0a1 is a pre-release: tick "pre-release").
 #
 # Trusted publishing (OIDC): no token is stored. One-time setup by the maintainer, on pypi.org and test.pypi.org: project
@@ -12,6 +14,8 @@ name: Publish
 # required reviewer).
 
 on:
+  push:
+    tags: ["v*"]
   release:
     types: [published]
   workflow_dispatch:
@@ -39,7 +43,7 @@ jobs:
       - name: Check the metadata
         run: python -m twine check --strict dist/*
       - name: The version of the package matches the release tag
-        if: github.event_name == 'release'
+        if: github.ref_type == 'tag'
         run: |
           python -c "import glob, os; tag = os.environ['GITHUB_REF_NAME'].lstrip('v'); version = os.path.basename(glob.glob('dist/*.whl')[0]).split('-')[1]; assert version == tag, f'tag {tag} but the wheel is {version}'"
       - uses: actions/upload-artifact@v4
@@ -49,7 +53,7 @@ jobs:
           if-no-files-found: error
 
   publish-testpypi:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -66,6 +70,7 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
 
   publish-pypi:
     if: github.event_name == 'release'

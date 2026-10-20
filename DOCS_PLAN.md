@@ -473,3 +473,15 @@ Still open: every CI workflow is unrun (packaging).
   adding a feature, C++ style, the CMake build and its tests, the core-side reasons of some contract changes) moved to
   `dev-notes/DEVELOPMENT_SPEC_core.md` of the core checkout (written, not committed there). How the file is published is the
   maintainer's decision.
+
+### 11.9 Release flow and Pages while 1.x is still served (maintainer, 2026-10-20)
+
+Work is merged into `dev` before `main`; GitHub Pages is still served from the branch `gh-pages` (the 1.x documentation at its
+root), and it must not break until the development release is done. Therefore `docs.yml` builds on pull requests and on pushes to
+`main` and `dev`, and a push to `dev` publishes the 2.x build to the folder `v2-dev/` of `gh-pages` (`peaceiris/actions-gh-pages`,
+`destination_dir: v2-dev`, only that folder is replaced; `contents: write`): <owner>.github.io/PyEyesWeb/v2-dev/. The Pages source
+stays "Deploy from a branch". At the release: switch the source to "GitHub Actions", deploy this build at the root with
+`actions/upload-pages-artifact` and `actions/deploy-pages` (the job was removed for now) and decide where the 1.x site goes (a versioned
+folder, or the gh-pages history). Publishing workflows (`pypi_deploy.yml`, and `wheels.yml` in the private core repository) run on a pushed
+tag `v*` (from the tagged commit: no default-branch requirement) and upload to TestPyPI; a published GitHub release uploads to PyPI;
+a manual run needs the workflow file on the default branch.
