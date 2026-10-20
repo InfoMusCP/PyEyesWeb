@@ -51,8 +51,8 @@ a continuous signal, such as a parameter sent to a synthesiser, holds it: `value
 list `held` above does exactly that, and is `NaN` until the first window is complete.
 
 ```{doctest}
->>> held[98], held[99], held[100], held[109], held[110]
-(nan, -2.6867218106842063, -2.6867218106842063, -2.766859267025632, -2.766859267025632)
+>>> [round(held[index], 6) for index in (98, 99, 100, 109, 110)]
+[nan, -2.686722, -2.686722, -2.766859, -2.766859]
 ```
 
 ## Time: `timestamp` or `sampling_rate`
