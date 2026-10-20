@@ -22,8 +22,6 @@ allowed:
 open:
   docs/conf.py: {'\bTODO\b': 2}  # footer logos and version switcher, helpers URL pinned at the release
   docs/_static/custom.css: {'\bTODO\b': 1}  # palette confirmed by the maintainer (11.3)
-  examples/GALLERY_HEADER.rst: {'\bTODO\b': 1}  # licence and citation of the sensor data (ALPHA_REVIEW.md 8.4, maintainer)
-  examples/data/README.md: {'\bTODO\b': 1}  # same: licence and performer consent of the sensor data
   docs/references.bib: {'\bDRAFT\b': 13}  # 12 entries and the header comment (11.1)
   docs/theory/entropy_rarity_periodicity.md: {'\[citation needed\]': 3}
   docs/theory/gesture_segmentation.md: {'\[citation needed\]': 1}

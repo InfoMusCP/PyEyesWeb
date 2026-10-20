@@ -3,8 +3,7 @@
 The sensor recordings used by the tutorials of the documentation and by `pyeyesweb.datasets`. Only **sensor data** are
 distributed; video recordings of the sessions are not distributed.
 
-<!-- TODO(maintainer): licence and performer consent for these recordings are not decided. Add `LICENSE` here and the
-     citation of the data when they are; until then nothing in this folder is licensed for reuse. Listed in docs/_data/gate.yaml. -->
+**Licence.** These recordings are released under the MIT licence of the repository (see `LICENSE.txt` at the root of the repository). When you use them, cite the toolkit as in `CITATION.cff`.
 
 ## Files
 

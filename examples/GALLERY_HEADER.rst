@@ -24,4 +24,4 @@ put ``examples/`` on the Python path (``PYTHONPATH=examples``). The recordings a
 millimetres), made in the session of 2026: synchronized and unsynchronized gestures, smooth and jerky movements,
 contraction and expansion, balance, impulsive and light movements. The tutorials use parts of them.
 
-.. TODO(maintainer): licence and citation of the data (parked); add them here when decided.
+**Licence.** The recordings are released under the MIT licence of the repository; cite the toolkit as in ``CITATION.cff``.

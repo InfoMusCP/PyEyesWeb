@@ -244,7 +244,7 @@ Taken by the maintainer:
 7. **TSV reader removed** from the library (data ships in `examples/`; the two docs pages are deleted); the incomplete skeleton presets `qualisys_sport`, `mediapipe`, `openpose` stay with their `TODO(fill)` markers, documented as incomplete; the maintainer fills them later.
 8. **Creatives site**: its own repository, much later (after docs, PyPI release and the TouchDesigner wrapper).
 9. **Gallery details** (proposals, no maintainer preference; TEACHING_PLAN §1, §5): layout by layer, no Binder/JupyterLite, `pyeyesweb.datasets` helper with `pooch`, `examples/helpers.py`.
-10. **Data** (decided 2026-10-20): the **videos are private** and out of the repository; the public data is **sensor data only** (qualisys, kinect, imu, `markers_mappings.json`) and feeds the examples and educational material. The licence and performer consent for it are **still the maintainer's to supply**: a `TODO(maintainer)` marker in `examples/data/README.md` and `examples/GALLERY_HEADER.rst`, counted in `docs/_data/gate.yaml`, so a release build fails until it is resolved.
+10. **Data** (decided 2026-10-20): the **videos are private** and out of the repository; the public data is **sensor data only** (qualisys, kinect, imu, `markers_mappings.json`) and feeds the examples and educational material. The licence and performer consent for it are **still the maintainer's to supply**: a `TODO(maintainer)` marker in `examples/data/README.md` and `examples/GALLERY_HEADER.rst`, counted in `docs/_data/gate.yaml`, so a release build fails until it is resolved. **Update 2026-10-20: the data licence is the MIT licence of the repository (decided); the licence TODO markers are gone.**
 11. **Exercise solutions**: executed code in a dropdown was the wish, but it is awkward in sphinx-gallery: **skipped** (maintainer: if awkward, skip); exercises are plain "Try it" sections.
 12. **Features that did not separate the example conditions** are documented as if they work (no caveat pages); the OPEN_POINTS §4 analysis remains an internal to-do.
 13. **Budgets and CI class**: no preference from the maintainer; proposals in §4.5.
@@ -270,7 +270,7 @@ root                    README.md, CHANGELOG.md, CITATION.cff, LICENSE.txt, DEVE
 ```
 Leave the public tree at the release: `site/` (untracked), `docs/_legacy/`, `docs/_snippets/facts.md`, the internal `.md` notes above (to the private repository's `dev-notes/`), (the old notebooks, `examples/utils/` and `examples/scratch/` are already deleted).
 
-**Release checklist item (partly done)**: the wheel and the sdist do not bundle the data (verified 2026-10-20 with `python -m build`: `ALPHA_REVIEW.md` E5); the licence and consent of the sensor data are still open (`TEACHING_PLAN.md` T6).
+**Release checklist item (partly done)**: the wheel and the sdist do not bundle the data (verified 2026-10-20 with `python -m build`: `ALPHA_REVIEW.md` E5); the licence and consent of the sensor data are still open (`TEACHING_PLAN.md` T6). **Update 2026-10-20: the data licence is the MIT licence of the repository (decided); the licence TODO markers are gone.**
 
 **Remaining open**: see section 11 (and `ALPHA_REVIEW.md` section 8 for packaging, data and release).
 
