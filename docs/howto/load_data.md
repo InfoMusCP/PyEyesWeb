@@ -1,7 +1,7 @@
 # Load the example data
 
 The tutorials and the examples of this documentation use motion-capture recordings of expressive movement: one performer,
-Qualisys system, 41 markers, 100 Hz, one session of 2024. {py:mod}`pyeyesweb.datasets` finds a recording, reads it, and returns
+Qualisys system, 41 markers, 100 Hz, one session of 2026. {py:mod}`pyeyesweb.datasets` finds a recording, reads it, and returns
 the positions as a NumPy array with the names of the joints, the sampling rate and the unit. It computes nothing else: derived
 signals belong to the code that uses them. The module is a convenience for the examples, not part of the feature API, and it
 needs no dependency beyond NumPy to read a local file.

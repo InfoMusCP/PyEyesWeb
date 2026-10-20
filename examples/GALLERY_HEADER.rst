@@ -21,7 +21,7 @@ put ``examples/`` on the Python path (``PYTHONPATH=examples``). The recordings a
 :func:`pyeyesweb.datasets.load_qualisys_trial`.
 
 **Data.** The recordings are motion-capture takes of one performer (Qualisys, 41 markers, 100 Hz, positions in
-millimetres), made in the session of 2024-03-26: synchronized and unsynchronized gestures, smooth and jerky movements,
+millimetres), made in the session of 2026: synchronized and unsynchronized gestures, smooth and jerky movements,
 contraction and expansion, balance, impulsive and light movements. The tutorials use parts of them.
 
 .. TODO(maintainer): licence and citation of the data (parked); add them here when decided.

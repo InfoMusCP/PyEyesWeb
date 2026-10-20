@@ -47,7 +47,7 @@ BASE_URL: str | None = None
 TODO(maintainer): set it once the host is chosen (Zenodo, OSF or a GitHub release asset); the checksums of the files to
 host are in ``pyeyesweb/_datasets_registry.py``, written by ``tools/trim_example_data.py``."""
 
-#: Trial number -> (task, condition), from ``examples/data/README.md`` (session of 2024-03-26; trials 1, 2 and 9 are
+#: Trial number -> (task, condition), from ``examples/data/README.md`` (session of 2026; trials 1, 2 and 9 are
 #: test takes and are not listed).
 QUALISYS_TRIALS: dict[int, tuple[str, str]] = {
     3: ("Open the window", "synchronized"), 4: ("Open the window", "unsynchronized"),

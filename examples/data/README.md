@@ -1,4 +1,4 @@
-# Example data: sensor recordings of one performer (session of 2024-03-26)
+# Example data: sensor recordings of one performer (session of 2026)
 
 The sensor recordings used by the tutorials of the documentation and by `pyeyesweb.datasets`. Only **sensor data** are
 distributed; video recordings of the sessions are not distributed.
