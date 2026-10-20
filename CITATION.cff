@@ -26,6 +26,7 @@ authors:
     family-names: Volpe
   - given-names: Antonio
     family-names: Camurri
+version: 2.0.0a1
 repository-code: 'https://github.com/InfoMusCP/PyEyesWeb'
 url: 'https://infomuscp.github.io/PyEyesWeb/'
 license: MIT

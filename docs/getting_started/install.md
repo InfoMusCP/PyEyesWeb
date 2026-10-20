@@ -11,15 +11,17 @@ published; until then, follow "Development install".
 
 ## Requirements
 
-- Python 3.10 or later (3.10, 3.11 and 3.12 are declared; the documentation is built with 3.11).
-- NumPy. The features need nothing else.
+- Python 3.10 or later (3.10 to 3.13 are declared; the documentation is built with 3.11).
+- NumPy and the compiled core, the package `eyesweb-core`. These are the only two runtime dependencies of PyEyesWeb, and
+  `pip` installs both.
 - Optional: pandas for `to_frame()` of a {py:class}`~pyeyesweb.data_models.Recorder`, and matplotlib for the plots
   of the examples.
-- A platform with the compiled EyesWeb core. The release is planned with binary packages for Windows, Linux and macOS; a
+- A platform for which a core wheel exists. The core is published as binary wheels for Windows, Linux and macOS; a
   development build has so far been used on Windows only.
 
 PyEyesWeb is pure Python on top of a compiled core, which holds the numerical implementation of the EyesWeb blocks. The core
-ships with the package: there is nothing to compile.
+is a separate wheel, `eyesweb-core`, that PyEyesWeb depends on (`eyesweb-core>=2.0.0a1,<2.1`, the series the library was
+written for): there is nothing to compile.
 
 ## Install a release
 
@@ -29,7 +31,9 @@ A pre-release is not installed by default; ask for it explicitly:
 pip install --pre pyeyesweb
 ```
 
-and, once a stable 2.0 exists, simply `pip install pyeyesweb`. Use a virtual environment (`python -m venv .venv`) as for
+`pip install pyeyesweb` pulls the `eyesweb-core` wheel with it (and `--pre` lets `pip` take the pre-release of the core too).
+Once a stable 2.0 exists, `--pre` is no longer needed. Optional extras: `pyeyesweb[pandas]` (for `Recorder.to_frame()`),
+`pyeyesweb[datasets]` (downloads of the example data) and `pyeyesweb[test]`. Use a virtual environment (`python -m venv .venv`) as for
 any scientific project.
 
 ## Development install
@@ -98,7 +102,7 @@ The documentation footer shows the version of the core the pages were built with
 `ImportError` is the only exception raised while loading. It has one of four causes, each with its own text.
 
 No core at all (the library cannot find the compiled module, and `EYESWEB_CORE_PATH` is unset or names a folder without it)
-: ``pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.``
+: ``pyeyesweb features need the compiled EyesWeb core (the package eyesweb_core). Install it with `pip install eyesweb-core`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.``
   Importing `pyeyesweb`, `pyeyesweb.data_models`, `Layer` and `Timescale` still works; `catalog()` and the layer packages
   (`low_level`, `mid_level`, ...) raise it.
 

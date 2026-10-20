@@ -1,21 +1,31 @@
 name: Tests
 
-# Until the eyesweb-core wheel exists on PyPI (packaging, work package E of ALPHA_REVIEW.md) the core cannot be installed in CI:
-# tests/conftest.py then collects only the pure-Python subset (no core) and skips the rest. After the first eyesweb-core
-# release `pip install .` brings the core and the whole suite runs.
+# The package is pure Python; the compiled core is the separate wheel `eyesweb-core`, which `pip install .` pulls from PyPI.
+# Until that wheel is on PyPI, set the repository variable CORE_FROM_TESTPYPI to `true` (Settings > Secrets and variables >
+# Actions > Variables) or start the workflow by hand with the input ticked: the core is then installed from TestPyPI first
+# (alone, with --no-deps, so that no other dependency comes from TestPyPI) and `pip install .` finds it already satisfied.
+# Without the core the suite degrades to the pure-Python subset (tests/conftest.py); the catalog step below makes that a failure.
 
 on:
   push:
     branches: [main, dev]
   pull_request:
   workflow_dispatch:
+    inputs:
+      core_from_testpypi:
+        description: "Install eyesweb-core from TestPyPI (until it is published on PyPI)"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: tests-${{ github.ref }}
+  group: tests-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  CORE_FROM_TESTPYPI: ${{ github.event_name == 'workflow_dispatch' && inputs.core_from_testpypi || vars.CORE_FROM_TESTPYPI }}
 
 jobs:
   pytest:
@@ -32,9 +42,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+      - name: Install the core from TestPyPI (only while it is not on PyPI)
+        if: env.CORE_FROM_TESTPYPI == 'true'
+        run: python -m pip install --pre --no-deps --index-url https://test.pypi.org/simple/ "eyesweb-core>=2.0.0a1,<2.1"
       - name: Install the package and the test tools
-        run: |
-          python -m pip install --upgrade pip
-          pip install . pytest pytest-cov
+        run: python -m pip install ".[test]"
+      - name: The core is present (a silent pure-Python-only run is a failure)
+        run: python -c "import pyeyesweb; print(len(pyeyesweb.catalog()), 'features')"
       - name: Run the tests
         run: python -m pytest -ra
+      - name: Run the examples of the docstrings
+        run: python -m pytest --doctest-modules pyeyesweb

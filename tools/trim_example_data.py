@@ -2,7 +2,8 @@
 
 Reads ``examples/data/qualisys/trial*.tsv`` and writes smaller copies to ``examples/data_trimmed/`` (git-ignored for
 now): the same Qualisys TSV format, gzip-compressed (``trial7.tsv.gz``; ``pyeyesweb.datasets`` reads both), only the frames between two times and only the markers that the
-tutorials use. ``examples/data`` is never modified. The result is a drop-in replacement for the data folder:
+tutorials use (sensor data only: the video recordings of the sessions are private and not in the repository).
+``examples/data`` is never modified. The result is a drop-in replacement for the data folder:
 ``PYEYESWEB_DATA=examples/data_trimmed`` makes ``pyeyesweb.datasets`` read the trimmed files.
 
     python tools/trim_example_data.py                 # write examples/data_trimmed/ and print the size table

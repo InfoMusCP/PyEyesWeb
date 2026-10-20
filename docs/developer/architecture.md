@@ -47,7 +47,8 @@ data model.
 :class: note
 
 The decision is that the core is published as a binary wheel `eyesweb-core` on PyPI and that `pyeyesweb` depends on it, so that
-`pip install pyeyesweb` brings both. The packaging has not been done yet; until it is, a development install needs a build of the
+`pip install pyeyesweb` brings both (`pyproject.toml` depends on `numpy` and `eyesweb-core>=2.0.0a1,<2.1`; the library is a pure
+Python wheel). The packages are not published yet; until they are, a development install needs a build of the
 core and `EYESWEB_CORE_PATH`, as described in {doc}`building_the_docs`.
 ```
 

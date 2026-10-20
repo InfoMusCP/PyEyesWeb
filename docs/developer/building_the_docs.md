@@ -119,7 +119,8 @@ cover the catalog, and the data files agree with the code. It runs with the rest
 
 `.github/workflows/docs.yml` builds the site on every push and pull request with `python -m sphinx -b html -W --keep-going docs
 docs/_build/html` on Python 3.11, and deploys to GitHub Pages only from `main`. The workflow installs the package with the `docs`
-extra, which brings the compiled core from its binary wheel. That wheel has not been published yet, so the workflow cannot succeed
-until the packaging is done, and the documentation is built locally in the meantime as above. The tests run in
-`.github/workflows/tests.yml` on three operating systems and Python 3.10 to 3.13; without the core they collect only the tests of the
-pure Python data model.
+extra, which brings the compiled core from its binary wheel. That wheel has not been published on PyPI yet: until it is, set the
+repository variable `CORE_FROM_TESTPYPI` to `true` (or tick the input of a manual run) and the workflow installs the core from
+TestPyPI first. The documentation can also be built locally as above. The tests run in
+`.github/workflows/tests.yml` on three operating systems and Python 3.10 to 3.13 with the same switch; without the core they collect
+only the tests of the pure Python data model, and the workflow fails on purpose when the core is missing.

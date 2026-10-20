@@ -5,35 +5,27 @@ trials and synthetic signals, 1 to 3 dimensions, point and time-series input, ti
 Needs the compiled core (EYESWEB_CORE_PATH).
 """
 
-import sys
-from pathlib import Path
-
 import numpy as np
 import pytest
 
 pytest.importorskip("pyeyesweb._core")
 
 from pyeyesweb.data_models import Status  # noqa: E402
+from pyeyesweb.datasets import load_qualisys_trial  # noqa: E402
 from pyeyesweb.low_level import Kinematics, KineticEnergy, LogDimensionlessJerk  # noqa: E402
 
-EXAMPLES = Path(__file__).resolve().parents[2] / "examples"
 TYPES = ["curvature", "velocity", "direction", "acceleration", "jerk", "smoothed"]
 FILTER = dict(filter_window_length=9, filter_polyorder=3)
 RNG = np.random.default_rng(5)
 
 
 def _qualisys(trial, joints=("Right_Hand", "Head", "Left_Foot")):
-    """Positions (T, 3 * len(joints)) in metres of some joints of a Qualisys trial, or a skip without the data."""
-    sys.path.insert(0, str(EXAMPLES))
+    """Positions (T, 3 * len(joints)) in metres of some joints of a Qualisys trial, or None without the data."""
     try:
-        from utils.data_loader import GestureDataLoader
-        positions, _, _, names = GestureDataLoader(EXAMPLES / "data").load(f"trial{trial}", "qualisys", standardize=True, fps=100.0)
-    except Exception as error:  # no data, or no loader dependency
-        pytest.skip(f"Qualisys data not available: {error}")
-    finally:
-        sys.path.remove(str(EXAMPLES))
-    names = list(names)
-    return np.concatenate([positions[:300, names.index(joint)] for joint in joints], axis=1) / 1000.0
+        recording = load_qualisys_trial(trial)
+    except FileNotFoundError:  # no copy of the recordings (sdist, or a clone without examples/data)
+        return None
+    return np.concatenate([recording.joint(joint)[:300] for joint in joints], axis=1) / 1000.0
 
 
 SIGNALS = {
@@ -43,6 +35,7 @@ SIGNALS = {
     "qualisys 7": _qualisys(7),
     "qualisys 11": _qualisys(11),
 }
+SIGNALS = {name: signal for name, signal in SIGNALS.items() if signal is not None}
 TIMES = {"timestamps": "timestamps", "sampling_rate": "sampling_rate", "per sample": None}
 
 

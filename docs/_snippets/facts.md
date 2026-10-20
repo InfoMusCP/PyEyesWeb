@@ -1681,22 +1681,21 @@ scale 500: [2.14014154 2.12606486 2.21995283] | finite: True
 
 **Statement.**
 
-- The compiled core is the module `eyesweb_core` (a binary build; the C++ is closed source and never described or quoted). The docstring of `pyeyesweb/_core.py` says it is part of the
-  `pyeyesweb` wheel (module `pyeyesweb._eyesweb_core`) and installed with `pip install pyeyesweb` (WP5: the earlier statement of a separate `eyesweb-core` wheel dependency is not what the code says;
-  maintainer to confirm). **PyPI today (checked 2026-10-15): `pyeyesweb` 1.1.1 is the latest release (the 1.x API, no core); there is no `eyesweb-core` project.** `pyeyesweb._core`
-  loads it (`from pyeyesweb import _eyesweb_core`, else `eyesweb_core`; during development the folder `EYESWEB_CORE_PATH` is put first on `sys.path`, and the
+- The compiled core is the module `eyesweb_core` (a binary build; the C++ is closed source and never described or quoted), published as the separate binary wheel `eyesweb-core` that `pyeyesweb`
+  depends on (`pyproject.toml`: `numpy>=1.24.0` and `eyesweb-core>=2.0.0a1,<2.1`, the only runtime dependencies; the lower bound names the alpha because `2.0.0a1` sorts before `2.0`). `pip install pyeyesweb` therefore pulls the core
+  **once both are published**. **PyPI today (checked 2026-10-15): `pyeyesweb` 1.1.1 is the latest release (the 1.x API, no core); there is no `eyesweb-core` project.** `pyeyesweb._core`
+  loads it (`import eyesweb_core`; during development the folder `EYESWEB_CORE_PATH` is put first on `sys.path`, and the
   import fails if `eyesweb_core` was already loaded from somewhere else).
 - `REQUIRED_CORE = (2, 0)` (major, minor of `eyesweb_core.__version__`). Another version, or a module without a version, raises `ImportError`: *"pyeyesweb needs eyesweb_core 2.0.x, but
   <file> is version 1.9.3 (build abc1234). Rebuild or reinstall the core."*, or for a module without a version *"... is a module without a version (a stale or foreign build). Rebuild
-  or reinstall the core."* No core at all: *"pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a
-  local build of eyesweb_core."* (text changed after the first version of the sheet). A development path that conflicts with an already loaded core: *"EYESWEB_CORE_PATH is <path>, but eyesweb_core was already loaded from <file>."* Runs here: core 2.0.0, build `dbaf21c`.
+  or reinstall the core."* No core at all: *"pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install eyesweb-core`, or set EYESWEB_CORE_PATH to the folder of a
+  local build of eyesweb_core."* (the text of `_core.py` is: "pyeyesweb features need the compiled EyesWeb core (the package eyesweb_core). ..."). A development path that conflicts with an already loaded core: *"EYESWEB_CORE_PATH is <path>, but eyesweb_core was already loaded from <file>."* Runs here: core 2.0.0, build `dbaf21c`.
 - `import pyeyesweb`, `pyeyesweb.data_models`, `Layer`/`Timescale` need **no core**; `catalog()` and every layer package (`low_level`, ...) do.
-- **Not yet true (packaging, work package E, is last): `pip install pyeyesweb` does not give a 2.0 install.** `pyproject.toml` still says version `1.1.1`, a setuptools build whose metadata the setuptools of the venv rejects (`project.license` as a string: `pip install -e .` fails in WP5, so the development install is `PYTHONPATH` + `EYESWEB_CORE_PATH`), and dependencies
-  `numpy`, `scipy`, `scikit-learn`, `tqdm` (lines 7 and 49-54); the library itself imports only numpy (no scipy, sklearn or tqdm import in `pyeyesweb/`; pandas only inside
-  `Recorder.to_frame`). Install pages must say what is decided (wheel `eyesweb-core`, first release `2.0.0a1`) and be flagged until WP E lands; today's working install is a development
-  build plus `EYESWEB_CORE_PATH`.
+- **Packaging (work package E, PyEyesWeb side, done 2026-10-20):** `pyproject.toml` is version `2.0.0a1`, setuptools (>= 77, SPDX `license = "MIT"`), pure Python, packages `pyeyesweb*` only, `requires-python >=3.10`, classifiers 3.10 to 3.13 and
+  Alpha; extras `test`, `docs`, `datasets`, `pandas`, `dev`; the library imports only numpy and `eyesweb_core` (pandas only inside `Recorder.to_frame`, pooch only inside the download of `pyeyesweb.datasets`). `python -m build` gives a wheel (about 0.2 MB) and an sdist (about 1.3 MB) that `twine check` accepts.
+  **Still not installable from PyPI:** neither `pyeyesweb` 2.0.0a1 nor `eyesweb-core` is published; the working install is a development build plus `EYESWEB_CORE_PATH`. Install pages say so.
 
-**Evidence.** `_core.py:13` (`REQUIRED_CORE`), `:18-36` (import and version check); `pyproject.toml:7,49-54`; DEV 212-215, ALPHA_REVIEW section 5.
+**Evidence.** `_core.py:13` (`REQUIRED_CORE`), `:18-36` (import and version check); `pyproject.toml` (`dependencies`, version); DEV 212-215, ALPHA_REVIEW section 5.
 
 Run `i17_core_version`:
 
@@ -1737,15 +1736,15 @@ core with version 1.9.3 (REQUIRED_CORE is 2.0):
 module without __version__:
   ImportError: pyeyesweb needs eyesweb_core 2.0.x, but <scratch>/fake_noversion/eyesweb_core/__init__.py is a module without a version (a stale or foreign build). Rebuild or reinstall the core.
 EYESWEB_CORE_PATH without any core:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (the package eyesweb_core). Install it with `pip install eyesweb-core`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 no core anywhere:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (the package eyesweb_core). Install it with `pip install eyesweb-core`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 import pyeyesweb, data_models, Layer without any core:
   (imported without error)
 catalog() without any core:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (the package eyesweb_core). Install it with `pip install eyesweb-core`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 import pyeyesweb.low_level without any core:
-  ImportError: pyeyesweb features need the compiled EyesWeb core (pyeyesweb._eyesweb_core). Install it with `pip install pyeyesweb`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
+  ImportError: pyeyesweb features need the compiled EyesWeb core (the package eyesweb_core). Install it with `pip install eyesweb-core`, or set EYESWEB_CORE_PATH to the folder of a local build of eyesweb_core.
 required: (2, 0) | loaded: 2.0.0 | build: dbaf21c | module: eyesweb_core
 ```
 

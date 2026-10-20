@@ -21,6 +21,7 @@ from sphinx.util import logging
 logger = logging.getLogger(__name__)
 DOCS = Path(__file__).resolve().parent.parent
 ROOT = DOCS.parent
+_EXTRA_SCANNED = ("examples/GALLERY_HEADER.rst", "examples/data/README.md")  # the data licence is open work too
 _SKIPPED = ("docs/_snippets/", "docs/_build/", "docs/api/generated/", "docs/tutorials/")
 
 
@@ -44,8 +45,8 @@ def _doc_sources(paths):
 
 # --- markers -------------------------------------------------------------------------------------------------------------
 def marker_counts(paths, data, root=ROOT):
-    """``{path: {marker: count}}`` over the prose pages, ``docs/conf.py``, the CSS files and (for ``DRAFT``) the bibliography."""
-    scanned = _doc_sources(paths) + [p for p in paths if p == "docs/conf.py" or
+    """``{path: {marker: count}}`` over the prose pages, ``docs/conf.py``, the gallery header, the data README, the CSS files and (for ``DRAFT``) the bibliography."""
+    scanned = _doc_sources(paths) + [p for p in paths if p in _EXTRA_SCANNED or p == "docs/conf.py" or
                                      (p.startswith("docs/_static/") and p.endswith(".css"))]
     allowed = data.get("allowed") or []
     counts = {}

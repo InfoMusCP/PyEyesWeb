@@ -1,0 +1,9 @@
+# sdist contents: the package (setuptools adds it), the metadata files and the tests. Nothing else.
+include LICENSE.txt README.md CITATION.cff CHANGELOG.md DEVELOPMENT_SPEC.md
+graft tests
+prune examples
+prune docs
+prune tools
+prune .github
+prune site
+prune resources

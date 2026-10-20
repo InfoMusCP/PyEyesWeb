@@ -187,14 +187,14 @@ Acceptance of this mechanism is a test (`tests/unit_tests/test_docs_feature_page
 
 **Proposals to confirm** (the maintainer has no preference; these are defaults):
 - Runner: GitHub Actions `ubuntu-latest` (free for public repositories, 4 vCPU / 16 GB) for the docs job, Python 3.11.
-- Tests: matrix ubuntu / windows / macos x Python 3.10-3.13 (confirmed: build for multiple OS and Python versions) (`pyproject.toml` has `requires-python >=3.10` and classifiers 3.10-3.12 only: add 3.13 to the classifiers when its wheel exists).
+- Tests: matrix ubuntu / windows / macos x Python 3.10-3.13 (confirmed: build for multiple OS and Python versions) (`pyproject.toml`: `requires-python >=3.10`, classifiers 3.10 to 3.13, done 2026-10-20).
 - Budgets: each gallery script < 60 s, whole gallery < 10 min, docs job `timeout-minutes: 30`.
 - sphinx-gallery cache of executed outputs keyed on the script hash.
 - `sphinx-build -W --keep-going` (warnings are errors).
 - Deploy to GitHub Pages from `main` with `actions/deploy-pages`; pull-request builds run the same without deploying.
 - Pin the `eyesweb-core` version in the docs extra; the page footer prints `eyesweb_core.__version__`.
 
-**Status 2026-10-16:** `.github/workflows/docs.yml` (HTML build with `-W` on ubuntu, 30 minute timeout, deploy with `actions/deploy-pages` on a push to `main`; it does not run the doctest builder) and `tests.yml` (ubuntu, windows, macos by Python 3.10 to 3.13) exist and have **never run**; `pypi_deploy.yml` is the 1.x release file (replace or delete: `ALPHA_REVIEW.md` E7). The remaining CI work is in 11.2 and 11.6.
+**Status 2026-10-16:** `.github/workflows/docs.yml` (HTML build with `-W` on ubuntu, 30 minute timeout, deploy with `actions/deploy-pages` on a push to `main`; it does not run the doctest builder) and `tests.yml` (ubuntu, windows, macos by Python 3.10 to 3.13) exist and have **never run**; `pypi_deploy.yml` was the 1.x release file. **Update 2026-10-20 (E7):** the three workflows were reviewed and rewritten (core from TestPyPI by the variable `CORE_FROM_TESTPYPI` or the manual input, until `eyesweb-core` is on PyPI; docs install from the pinned `docs/requirements.txt`; the doctest builder and the docstring doctests run in `docs.yml`; `pypi_deploy.yml` builds the pure wheel and sdist, `twine check --strict`, TestPyPI on a manual run, PyPI on a published release, trusted publishing); YAML validated and `actionlint` 1.7.12 clean, but **nothing has run on GitHub**. The remaining CI work is in 11.2 and 11.6.
 
 ### 4.6 Docs-build checks (small, replace `examples/check.py`)
 **Not implemented, except the family, docstring-signature and page-count checks of `feature_pages.py`.** What is missing and how to build it: 11.2.
@@ -244,7 +244,7 @@ Taken by the maintainer:
 7. **TSV reader removed** from the library (data ships in `examples/`; the two docs pages are deleted); the incomplete skeleton presets `qualisys_sport`, `mediapipe`, `openpose` stay with their `TODO(fill)` markers, documented as incomplete; the maintainer fills them later.
 8. **Creatives site**: its own repository, much later (after docs, PyPI release and the TouchDesigner wrapper).
 9. **Gallery details** (proposals, no maintainer preference; TEACHING_PLAN §1, §5): layout by layer, no Binder/JupyterLite, `pyeyesweb.datasets` helper with `pooch`, `examples/helpers.py`.
-10. **Data** (videos, kinect, imu): stay in the repository for now and feed examples and educational material; the licensing/consent question is **parked ("to be discussed")**, not blocking, but a release-checklist item (below).
+10. **Data** (decided 2026-10-20): the **videos are private** and out of the repository; the public data is **sensor data only** (qualisys, kinect, imu, `markers_mappings.json`) and feeds the examples and educational material. The licence and performer consent for it are **still the maintainer's to supply**: a `TODO(maintainer)` marker in `examples/data/README.md` and `examples/GALLERY_HEADER.rst`, counted in `docs/_data/gate.yaml`, so a release build fails until it is resolved.
 11. **Exercise solutions**: executed code in a dropdown was the wish, but it is awkward in sphinx-gallery: **skipped** (maintainer: if awkward, skip); exercises are plain "Try it" sections.
 12. **Features that did not separate the example conditions** are documented as if they work (no caveat pages); the OPEN_POINTS §4 analysis remains an internal to-do.
 13. **Budgets and CI class**: no preference from the maintainer; proposals in §4.5.
@@ -262,15 +262,15 @@ docs/                   conf.py, index.md, requirements.txt, references.bib, ref
   assets/               logos (PNG) and ConceptualModel.png
   getting_started/ concepts/ theory/ user_guide/ howto/ developer/ api/   (api/generated/, tutorials/, sg_execution_times.rst are generated and git-ignored)
   changelog.md migration.md                                               (changelog.md includes CHANGELOG.md)
-examples/               gallery: 01_getting_started .. 06_capstone with plot_NN_*.py and GALLERY_HEADER.rst, GALLERY_HEADER.rst (overview), helpers.py, requirements.txt, data/ (939 MB, see TEACHING_PLAN.md T6), data_trimmed/ (git-ignored); still to delete: the six old *.ipynb, utils/ (tracked), scratch/ (git-ignored)
+examples/               gallery: 01_getting_started .. 06_capstone with plot_NN_*.py and GALLERY_HEADER.rst, GALLERY_HEADER.rst (overview), helpers.py, requirements.txt, data/ (sensor data only, see TEACHING_PLAN.md T6), data_trimmed/ (git-ignored); the old notebooks, utils/ and scratch/ are deleted
 tools/                  trim_example_data.py, regenerate_trajectory_reference.py, regenerate_gesture_segmenter_reference.py
-.github/workflows/      tests.yml, docs.yml, pypi_deploy.yml (the last one is the 1.x file)
-root                    README.md, CHANGELOG.md, CITATION.cff, LICENSE.txt, DEVELOPMENT_SPEC.md, pyproject.toml (still 1.1.1), .gitignore, conftest.py;
+.github/workflows/      tests.yml, docs.yml, linkcheck.yml, pypi_deploy.yml (2.0 pure wheel, trusted publishing; rewritten 2026-10-20, never run)
+root                    README.md, CHANGELOG.md, CITATION.cff, LICENSE.txt, DEVELOPMENT_SPEC.md, pyproject.toml (2.0.0a1), MANIFEST.in, .gitignore, conftest.py;
                         internal notes to move before release: ALPHA_REVIEW.md, DOCS_PLAN.md, TEACHING_PLAN.md, OPEN_POINTS.md, STRUCTURE_REVIEW.md, DESIGN_PROPOSALS.md
 ```
-Leave the public tree at the release: `site/` (untracked), `docs/_legacy/`, `docs/_snippets/facts.md`, the internal `.md` notes above (to the private repository's `dev-notes/`), `examples/*.ipynb`, `examples/utils/`, `examples/scratch/`.
+Leave the public tree at the release: `site/` (untracked), `docs/_legacy/`, `docs/_snippets/facts.md`, the internal `.md` notes above (to the private repository's `dev-notes/`), (the old notebooks, `examples/utils/` and `examples/scratch/` are already deleted).
 
-**Release checklist item (open)**: the wheel and the sdist must not bundle the big data (`examples/data`, 939 MB: `ALPHA_REVIEW.md` E5); repository size, data licence and consent need a decision (`TEACHING_PLAN.md` T6).
+**Release checklist item (partly done)**: the wheel and the sdist do not bundle the data (verified 2026-10-20 with `python -m build`: `ALPHA_REVIEW.md` E5); the licence and consent of the sensor data are still open (`TEACHING_PLAN.md` T6).
 
 **Remaining open**: see section 11 (and `ALPHA_REVIEW.md` section 8 for packaging, data and release).
 
@@ -379,7 +379,7 @@ The 15 markers (`path:line`, claim, probable source to confirm with the maintain
 | [~] | (pass done 2026-10-16, the publishing decision is open) `DEVELOPMENT_SPEC.md` public pass (its new section 10 lists the sentences) and **[maintainer]** decision how it is published: a "Contributing" page that includes the file (MyST `{include}` of `../DEVELOPMENT_SPEC.md`: no page does it yet; the developer guide pages `architecture`, `conventions`, `adding_a_feature`, `porting_status` summarise it) or `CONTRIBUTING.md` at the root | the page builds; grep for `EyesWebCore`, `PORTING_STATUS`, `CONVENTIONS`, `nanobind`, `.cpp` in it is empty |
 | [x] | (done 2026-10-16) Check the existing developer pages for private names: `docs/build.ps1` and `docs/developer/building_the_docs.md` mention the sibling checkout `EyesWebCore` (as a path to the dev build, no URL): reword to "a development build of the core" for the public site; `docs/developer/porting_status.md` and `conventions.md`: no C++ file names, no private paths | `grep -rn "EyesWebCore" docs README.md pyeyesweb tests tools .github` empty except what the maintainer allows |
 | [x] | (done 2026-10-16) No local paths: the docstrings of `tests/unit_tests/test_sync_corrections.py` (`PORTING_STATUS.md`) and `tests/_support/live_param_suite.py` (`EyesWebCore/CONVENTIONS.md`) cite private notes: reword (no absolute local path or private URL is tracked today: checked 2026-10-16) | `grep -rn "C:/Users\|EyesWebTD" .` over tracked files is empty |
-| [ ] | The old notebooks and scratch files (`examples/*.ipynb`, `examples/utils/`, `examples/scratch/`): `TEACHING_PLAN.md` T7 | see there |
+| [x] | (done 2026-10-20) The old notebooks and scratch files (`examples/*.ipynb`, `examples/utils/`, `examples/scratch/`) are deleted | grep empty |
 
 ### 11.6 GitHub Pages and the first deploy
 

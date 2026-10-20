@@ -1,4 +1,26 @@
-# PyEyesWeb Feature Recording - 2024/03/26
+# Example data: sensor recordings of one performer (session of 2024-03-26)
+
+The sensor recordings used by the tutorials of the documentation and by `pyeyesweb.datasets`. Only **sensor data** are
+distributed; video recordings of the sessions are not distributed.
+
+<!-- TODO(maintainer): licence and performer consent for these recordings are not decided. Add `LICENSE` here and the
+     citation of the data when they are; until then nothing in this folder is licensed for reuse. Listed in docs/_data/gate.yaml. -->
+
+## Files
+
+| Folder or file | Content | Units, rate |
+| :--- | :--- | :--- |
+| `qualisys/trial<N>.tsv` | Optical motion capture (Qualisys TSV export, 3D positions): 19 cameras, 41 markers. 22 trials: 3 to 8 and 10 to 25 | **millimetres**, 100 Hz; a `Frame` column and a `Time` column (seconds) precede the marker columns `<Name> X`, `<Name> Y`, `<Name> Z` |
+| `kinect/trial<N>.tsv` | Skeleton of a Kinect v2 (25 joints, same TSV layout, 3D) for the same trials | 100 Hz as written in the header; the unit of the positions is not recorded in the files (to be confirmed by the maintainer) |
+| `imu/trial<N>.tsv` | Four inertial sensors (`RWristIn`, `LWristIn`, `RAnkleOut`, `LAnkleOut`), 3D acceleration | 100 Hz as written in the header; the unit is not recorded in the files (to be confirmed by the maintainer) |
+| `markers_mappings.json` | Mapping of the joint groups (`Head`, `Neck`, `Spine`, `Pelvis`, ...) to the marker names of the Qualisys and Kinect sets | |
+| `ConceptualModel.png` | Figure of the conceptual model of movement | |
+
+The tutorials read the Qualisys trials with `pyeyesweb.datasets.load_qualisys_trial`; they do not use the Kinect and IMU
+files. Marker names are those of the 41-marker Qualisys set (for example `HeadFront`, `LWristIn`, `RAnkleOut`); the Kinect
+joint names are lower case with underscores (`left_wrist`).
+
+## Trials
 
 This document lists the motion capture recordings for various expressive movement features. Each section corresponds to a specific movement quality or "Labanesque" effort.
 
