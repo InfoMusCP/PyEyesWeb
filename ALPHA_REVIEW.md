@@ -240,3 +240,12 @@ version switcher and a custom domain for the docs.
 - The video recordings (780 MB) were removed from the tree in commit 29f3676 and are kept privately; they are **not** purged from the
   git history (maintainer decision 2026-10-20: no history rewrite). Commits before 29f3676 still contain them, so a public clone stays
   about 1.9 GB. Every later commit is free of them (`examples/data/videos/` is git-ignored).
+- **Core licence (2026-10-20).** E3 is done in the private repository: the wheel carries the InfoMus Binary Licence
+  (`LicenseRef-InfoMus-Binary`, copyright 2026 InfoMus Lab - Casa Paganini) with an acknowledgement clause (the lab is always credited
+  and the paper of `CITATION.cff` cited), `THIRD_PARTY_NOTICES` (pocketfft, nanobind) and an SPDX header on every C++ and Python source.
+  The maintainer confirmed that the original EyesWeb licence allows the closed derived core (the lab owns the software and `eyw_core`
+  has the same origin and owner). Governing law is provisionally Italian law with the Court of Genoa (section 8 of `LICENSE`); the
+  technology-transfer office should confirm it, and the copyright holder's legal name (University of Genoa and/or the lab), before the
+  first public PyPI release. The core is likely to become public later, under another licence: then replace `LICENSE`, the SPDX
+  headers (`tools/add_spdx_headers.py` in the private repository) and `license` in its `pyproject.toml`. PyEyesWeb stays MIT with
+  `Copyright (c) 2025 InfoMusCP` (maintainer decision).
