@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.catalog &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/catalog';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.catalog</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.catalog</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Discovery metadata: where each feature sits in the conceptual model, and ``catalog()`` to list them.</span>
+
+<span class="sd">The conceptual model (Camurri et al.) has four layers plus the analysis primitives that span them:</span>
+
+<span class="sd">====================== ================= ===========================================================================</span>
+<span class="sd">Layer                  Timescale         Content</span>
+<span class="sd">====================== ================= ===========================================================================</span>
+<span class="sd">``PHYSICAL_SIGNALS``   frame, continuous physical signals and virtual sensors: skeletons, images, space, body models</span>
+<span class="sd">``LOW_LEVEL``          up to ~0.5 s      kinematics, energy, shape, symmetry, smoothness</span>
+<span class="sd">``MID_LEVEL``          0.5-3 s           amodal gesture features: segments, impulsivity, space occupation</span>
+<span class="sd">``HIGH_LEVEL``         3 s and above     qualities communicated (social and interaction level)</span>
+<span class="sd">``ANALYSIS_PRIMITIVE`` any               metrics applicable to any movement feature at any layer</span>
+<span class="sd">====================== ================= ===========================================================================</span>
+
+<span class="sd">Placement rule: a feature goes to the layer of what it needs as input and gives as output, not to the layer of its</span>
+<span class="sd">EyesWeb block.</span>
+
+<span class="sd">- Physical signals: produces a signal from raw frames or a model and gives a signal again (simulating a body,</span>
+<span class="sd">  extracting centroids or parts from an image, locating points in a grid); stream plumbing that feeds the features</span>
+<span class="sd">  belongs here too.</span>
+<span class="sd">- Low-level: measures one frame, or a short window the feature buffers itself, of a signal (kinematics, energy,</span>
+<span class="sd">  symmetry, smoothness), including the shape and the filtering of a contour and a path given as a list of points</span>
+<span class="sd">  (directness, non-planarity).</span>
+<span class="sd">- Mid-level: needs a whole gesture: the segmentation of gestures, impulsivity, suddenness, space occupied over time.</span>
+<span class="sd">- High-level: needs several people.</span>
+<span class="sd">- Analysis primitive: takes any scalar, vector or event signal and knows nothing of bodies, skeletons or geometry.</span>
+
+<span class="sd">Every feature class carries ``LAYER``, ``TIMESCALE`` and ``EYESWEB_BLOCK`` (the EyesWeb block it comes from, ``None``</span>
+<span class="sd">when it has none). ``catalog()`` lists them, and ``catalog_table()`` renders the "Implemented" tables of the</span>
+<span class="sd">documentation. The layer packages need the compiled EyesWeb core; the types of this module do not.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Layer"</span><span class="p">,</span> <span class="s2">"Timescale"</span><span class="p">,</span> <span class="s2">"FeatureInfo"</span><span class="p">,</span> <span class="s2">"describe"</span><span class="p">,</span> <span class="s2">"catalog"</span><span class="p">,</span> <span class="s2">"catalog_table"</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Layer">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.Layer.html#pyeyesweb.catalog.Layer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Layer</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A layer of the conceptual model, or the analysis primitives that span them.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    PHYSICAL_SIGNALS : ``"physical_signals"``</span>
+<span class="sd">        Layer 1: physical signals and virtual sensors.</span>
+<span class="sd">    LOW_LEVEL : ``"low_level"``</span>
+<span class="sd">        Layer 2: low-level features.</span>
+<span class="sd">    MID_LEVEL : ``"mid_level"``</span>
+<span class="sd">        Layer 3: mid-level features.</span>
+<span class="sd">    HIGH_LEVEL : ``"high_level"``</span>
+<span class="sd">        Layer 4: qualities communicated.</span>
+<span class="sd">    ANALYSIS_PRIMITIVE : ``"analysis_primitives"``</span>
+<span class="sd">        Metrics applicable to any movement feature at any layer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb import Layer</span>
+<span class="sd">    &gt;&gt;&gt; Layer.LOW_LEVEL.package, Layer.LOW_LEVEL.title</span>
+<span class="sd">    ('pyeyesweb.low_level', 'Layer 2: low-level features')</span>
+<span class="sd">    &gt;&gt;&gt; Layer("analysis_primitives") is Layer.ANALYSIS_PRIMITIVE</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+
+    <span class="n">PHYSICAL_SIGNALS</span> <span class="o">=</span> <span class="s2">"physical_signals"</span>
+    <span class="n">LOW_LEVEL</span> <span class="o">=</span> <span class="s2">"low_level"</span>
+    <span class="n">MID_LEVEL</span> <span class="o">=</span> <span class="s2">"mid_level"</span>
+    <span class="n">HIGH_LEVEL</span> <span class="o">=</span> <span class="s2">"high_level"</span>
+    <span class="n">ANALYSIS_PRIMITIVE</span> <span class="o">=</span> <span class="s2">"analysis_primitives"</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Dotted name of the package holding the features of the layer."""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"pyeyesweb.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Heading of the layer in the documentation."""</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"physical_signals"</span><span class="p">:</span> <span class="s2">"Layer 1: physical signals"</span><span class="p">,</span> <span class="s2">"low_level"</span><span class="p">:</span> <span class="s2">"Layer 2: low-level features"</span><span class="p">,</span>
+                <span class="s2">"mid_level"</span><span class="p">:</span> <span class="s2">"Layer 3: mid-level features"</span><span class="p">,</span> <span class="s2">"high_level"</span><span class="p">:</span> <span class="s2">"Layer 4: qualities communicated"</span><span class="p">,</span>
+                <span class="s2">"analysis_primitives"</span><span class="p">:</span> <span class="s2">"Analysis primitives"</span><span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="Timescale">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.Timescale.html#pyeyesweb.catalog.Timescale">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Timescale</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The time span a feature needs in order to produce a value.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    FRAME : ``"frame"``</span>
+<span class="sd">        One frame (the default of the physical signals).</span>
+<span class="sd">    SHORT : ``"up to ~0.5 s"``</span>
+<span class="sd">        Up to about half a second (the default of the low-level features).</span>
+<span class="sd">    MEDIUM : ``"0.5-3 s"``</span>
+<span class="sd">        Half a second to three seconds (the default of the mid-level features).</span>
+<span class="sd">    LONG : ``"3 s and above"``</span>
+<span class="sd">        Three seconds and more (the default of the high-level features).</span>
+<span class="sd">    ANY : ``"any"``</span>
+<span class="sd">        No intrinsic timescale (the default of the analysis primitives).</span>
+
+<span class="sd">    The ``value`` of a member is the text shown in the catalog tables.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb import Timescale</span>
+<span class="sd">    &gt;&gt;&gt; [timescale.value for timescale in Timescale]</span>
+<span class="sd">    ['frame', 'up to ~0.5 s', '0.5-3 s', '3 s and above', 'any']</span>
+<span class="sd">    """</span>
+
+    <span class="n">FRAME</span> <span class="o">=</span> <span class="s2">"frame"</span>
+    <span class="n">SHORT</span> <span class="o">=</span> <span class="s2">"up to ~0.5 s"</span>
+    <span class="n">MEDIUM</span> <span class="o">=</span> <span class="s2">"0.5-3 s"</span>
+    <span class="n">LONG</span> <span class="o">=</span> <span class="s2">"3 s and above"</span>
+    <span class="n">ANY</span> <span class="o">=</span> <span class="s2">"any"</span></div>
+
+
+
+<span class="n">_DEFAULT_TIMESCALE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">:</span> <span class="n">Timescale</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span>
+    <span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">:</span> <span class="n">Timescale</span><span class="o">.</span><span class="n">SHORT</span><span class="p">,</span>
+    <span class="n">Layer</span><span class="o">.</span><span class="n">MID_LEVEL</span><span class="p">:</span> <span class="n">Timescale</span><span class="o">.</span><span class="n">MEDIUM</span><span class="p">,</span>
+    <span class="n">Layer</span><span class="o">.</span><span class="n">HIGH_LEVEL</span><span class="p">:</span> <span class="n">Timescale</span><span class="o">.</span><span class="n">LONG</span><span class="p">,</span>
+    <span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">:</span> <span class="n">Timescale</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="describe">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.describe.html#pyeyesweb.catalog.describe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="n">layer</span><span class="p">:</span> <span class="n">Layer</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timescale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timescale</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">eyesweb</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Class decorator: attach ``LAYER``, ``TIMESCALE`` and ``EYESWEB_BLOCK`` to a feature class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layer : Layer</span>
+<span class="sd">        The layer of the feature (see the placement rule in the module documentation).</span>
+<span class="sd">    timescale : Timescale, optional</span>
+<span class="sd">        Defaults to the timescale of the layer.</span>
+<span class="sd">    eyesweb : str, optional</span>
+<span class="sd">        The EyesWeb block the feature comes from, if any.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">LAYER</span> <span class="o">=</span> <span class="n">layer</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">TIMESCALE</span> <span class="o">=</span> <span class="n">timescale</span> <span class="ow">or</span> <span class="n">_DEFAULT_TIMESCALE</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">EYESWEB_BLOCK</span> <span class="o">=</span> <span class="n">eyesweb</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
+    <span class="k">return</span> <span class="n">apply</span></div>
+
+
+
+<div class="viewcode-block" id="FeatureInfo">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.FeatureInfo.html#pyeyesweb.catalog.FeatureInfo">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The catalog entry of one feature.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Class name.</span>
+<span class="sd">    layer : Layer</span>
+<span class="sd">        Layer of the conceptual model.</span>
+<span class="sd">    timescale : Timescale</span>
+<span class="sd">        Time span the feature needs.</span>
+<span class="sd">    eyesweb_block : str or None</span>
+<span class="sd">        The EyesWeb block the feature comes from; ``None`` for the lab features that have none.</span>
+<span class="sd">    module : str</span>
+<span class="sd">        Module that defines the class.</span>
+<span class="sd">    summary : str</span>
+<span class="sd">        The one-line summary: the first line of the class docstring.</span>
+<span class="sd">    cls : type</span>
+<span class="sd">        The feature class.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb import Layer, catalog</span>
+<span class="sd">    &gt;&gt;&gt; info = catalog(Layer.LOW_LEVEL)[0]</span>
+<span class="sd">    &gt;&gt;&gt; info.layer, info.name == info.cls.__name__, bool(info.summary)</span>
+<span class="sd">    (&lt;Layer.LOW_LEVEL: 'low_level'&gt;, True, True)</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">layer</span><span class="p">:</span> <span class="n">Layer</span>
+    <span class="n">timescale</span><span class="p">:</span> <span class="n">Timescale</span>
+    <span class="n">eyesweb_block</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">module</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_summary</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">lines</span> <span class="k">else</span> <span class="s2">""</span>
+
+
+<div class="viewcode-block" id="catalog">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.catalog.html#pyeyesweb.catalog.catalog">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">catalog</span><span class="p">(</span><span class="n">layer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Layer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">FeatureInfo</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Every described feature of the conceptual tree, in layer order.</span>
+
+<span class="sd">    Needs the compiled EyesWeb core, which the layer packages import.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layer : Layer, optional</span>
+<span class="sd">        List only the features of this layer.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of FeatureInfo</span>
+<span class="sd">        One entry per feature class.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb import Layer, catalog</span>
+<span class="sd">    &gt;&gt;&gt; features = catalog()</span>
+<span class="sd">    &gt;&gt;&gt; len(features) &gt; 40, len(catalog(Layer.LOW_LEVEL)) &lt; len(features)</span>
+<span class="sd">    (True, True)</span>
+<span class="sd">    &gt;&gt;&gt; info = next(info for info in features if info.name == "KineticEnergy")</span>
+<span class="sd">    &gt;&gt;&gt; info.layer.name, info.timescale.value</span>
+<span class="sd">    ('LOW_LEVEL', 'up to ~0.5 s')</span>
+<span class="sd">    """</span>
+    <span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FeatureInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">lay</span> <span class="ow">in</span> <span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="k">if</span> <span class="n">layer</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">lay</span><span class="o">.</span><span class="n">package</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">package</span><span class="o">.</span><span class="n">__all__</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">name</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"LAYER"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="n">lay</span><span class="p">:</span>
+                <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FeatureInfo</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lay</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">TIMESCALE</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">EYESWEB_BLOCK</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                                           <span class="n">_summary</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">entries</span></div>
+
+
+
+<div class="viewcode-block" id="catalog_table">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.catalog_table.html#pyeyesweb.catalog.catalog_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">catalog_table</span><span class="p">(</span><span class="n">layer</span><span class="p">:</span> <span class="n">Layer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Markdown table of the features of one layer.</span>
+
+<span class="sd">    The "Implemented" tables of the documentation are generated from it. Needs the compiled EyesWeb core.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layer : Layer</span>
+<span class="sd">        The layer to list.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        A table with the columns ``Feature``, ``Timescale`` and ``EyesWeb block``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb import Layer, catalog_table</span>
+<span class="sd">    &gt;&gt;&gt; catalog_table(Layer.LOW_LEVEL).splitlines()[0]</span>
+<span class="sd">    '| Feature | Timescale | EyesWeb block |'</span>
+<span class="sd">    """</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"| Feature | Timescale | EyesWeb block |"</span><span class="p">,</span> <span class="s2">"|---|---|---|"</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">catalog</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"| `</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">` | </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">timescale</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">eyesweb_block</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2"> |"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

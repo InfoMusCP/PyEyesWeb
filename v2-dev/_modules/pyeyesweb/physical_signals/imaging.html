@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.physical_signals.imaging &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/physical_signals/imaging';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.physical_signals.imaging</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.physical_signals.imaging</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Image features (EyesWeb BaseImaging): the centroids and the parts of a silhouette, the videogram.</span>
+
+<span class="sd">An image is one 8-bit array per call: ``(H, W)`` for a grayscale image or a silhouette mask, ``(H, W, C)`` for colour</span>
+<span class="sd">(``run`` takes ``(T, H, W[, C])`` or a list of images). A ``bool`` array is a 0 / 1 mask; any other numeric array must</span>
+<span class="sd">hold whole numbers in 0-255. A silhouette is a mask in which every non-zero pixel is foreground; the region the</span>
+<span class="sd">EyesWeb blocks work on (the mask cropped to its bounding box, with its origin and the frame size) is built from it, so</span>
+<span class="sd">coordinates come back in the frame of the mask. An empty image is ``INVALID_INPUT``. Outputs that are images have a</span>
+<span class="sd">shape known only from the first frame (``None`` sizes in the schema) and hold the pixel values as integers.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameFeature</span><span class="p">,</span> <span class="n">XY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_image</span><span class="p">,</span> <span class="n">image_input</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
+
+<span class="n">_imaging</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">imaging</span>
+
+<span class="n">_CENTROIDS</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="s2">"center_of_gravity"</span> <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">"cog"</span> <span class="k">else</span> <span class="n">label</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">_imaging</span><span class="o">.</span><span class="n">CentroidsCalc</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">_BODY_PARTS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"right_leg"</span><span class="p">,</span> <span class="s2">"left_leg"</span><span class="p">,</span> <span class="s2">"trunk"</span><span class="p">,</span> <span class="s2">"right_arm"</span><span class="p">,</span> <span class="s2">"left_arm"</span><span class="p">,</span> <span class="s2">"head"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ImageFeature</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A block taking one image per call: an empty image is `INVALID_INPUT`, any other goes to `_from_image`."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">as_image</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"empty image"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<div class="viewcode-block" id="SilhouetteCentroids">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/SilhouetteCentroids.html#pyeyesweb.physical_signals.SilhouetteCentroids">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"centroids_calc (Centroids Calc)"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SilhouetteCentroids</span><span class="p">(</span><span class="n">_ImageFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Hierarchical centroids of a human silhouette: centre of gravity, head, shoulders, limbs.</span>
+
+<span class="sd">    The silhouette of a person, a binary mask, is described by the centres of gravity of its parts, a cheap body model that</span>
+<span class="sd">    needs no skeleton. The centre of gravity of the whole mask,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mathbf{c} = \left(\frac{1}{N}\sum_k x_k,\ \frac{1}{N}\sum_k y_k\right),</span>
+
+<span class="sd">    where the sum runs over the :math:`N` foreground pixels (the result is truncated to whole pixels), is the root. The</span>
+<span class="sd">    silhouette is then split recursively into rectangles around the centre of gravity, and the centre of gravity of the</span>
+<span class="sd">    foreground of each rectangle is taken, which yields the head and the shoulders, then the elbows, the forearms and the</span>
+<span class="sd">    hands, and the knees and the feet, each computed from the one it depends on. "Left" and "right" are those of the</span>
+<span class="sd">    image: left means the smaller x.</span>
+
+<span class="sd">    ``process(silhouette, *, timestamp=None)`` takes one ``(H, W)`` mask (non-zero is body; see the module description for the</span>
+<span class="sd">    image types); the frame is the frame of the mask, so the coordinates are in it. A centroid that cannot be found (empty</span>
+<span class="sd">    region, missing parent) is NaN.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    silhouette : {"full", "upper", "lower", "left", "right"}, default "full"</span>
+<span class="sd">        The part of the body the mask shows *(structural)*: the centroids of the missing half (and the head of a left or</span>
+<span class="sd">        right half) are not computed. Changing it restarts the filters.</span>
+<span class="sd">    filter_centroids : bool, default False</span>
+<span class="sd">        Smooth every centroid over time, ``filtered += alpha * (new - filtered)`` *(live)*. As in EyesWeb the filter</span>
+<span class="sd">        works on the position inside the bounding box of the silhouette, not on the movement of the box.</span>
+<span class="sd">    alpha : float, default 0.75</span>
+<span class="sd">        Coefficient of the filter, in [0, 1], dimensionless *(live)*: 1 does not filter, 0 keeps the first value.</span>
+<span class="sd">    add_intermediate_centroids : bool, default False</span>
+<span class="sd">        Also output the centroids that were computed only because another one needs them *(live)*.</span>
+<span class="sd">    parts : sequence of str, default all fourteen</span>
+<span class="sd">        Which centroids to output *(live)*, among ``"center_of_gravity"``, ``"head"``, ``"left_shoulder"``,</span>
+<span class="sd">        ``"left_elbow"``, ``"left_forearm"``, ``"left_hand"``, ``"right_shoulder"``, ``"right_elbow"``,</span>
+<span class="sd">        ``"right_forearm"``, ``"right_hand"``, ``"left_knee"``, ``"left_foot"``, ``"right_knee"`` and ``"right_foot"``.</span>
+<span class="sd">        A centroid is computed when it or one that depends on it is requested (head after the shoulders, hand after</span>
+<span class="sd">        forearm after elbow after shoulder, foot after knee).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``centroids``: ``(14, 2)`` array of ``(x, y)`` in pixels of the frame, one row per label in the order above</span>
+<span class="sd">    (whole-pixel values); the rows of the parts that were not requested are NaN. ``normalized``: the same coordinates divided</span>
+<span class="sd">    by the width and the height of the frame, dimensionless, in [0, 1]. A mask without foreground is ``INVALID_INPUT``</span>
+<span class="sd">    (``"no foreground pixels in the silhouette"``); an empty image too (``"empty image"``). The result is otherwise ``OK``</span>
+<span class="sd">    (no warm-up).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import SilhouetteCentroids</span>
+<span class="sd">    &gt;&gt;&gt; mask = np.zeros((20, 20), dtype=np.uint8)</span>
+<span class="sd">    &gt;&gt;&gt; mask[2:18, 8:12] = 255                                    # a vertical bar, 16 high and 4 wide</span>
+<span class="sd">    &gt;&gt;&gt; result = SilhouetteCentroids(parts=["center_of_gravity"]).process(mask)</span>
+<span class="sd">    &gt;&gt;&gt; result.centroids[0].tolist()                              # (x, y) of the centre of gravity, whole pixels</span>
+<span class="sd">    [9.0, 9.0]</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_imaging</span><span class="o">.</span><span class="n">CentroidsCalc</span>
+    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"center_of_gravity"</span><span class="p">:</span> <span class="s2">"cog"</span><span class="p">}</span>
+    <span class="n">_parts</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="n">label</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">_CENTROIDS</span><span class="p">}</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">image_input</span><span class="p">(</span><span class="s2">"silhouette"</span><span class="p">,</span> <span class="s2">"mask of the body: every non-zero pixel is foreground"</span><span class="p">))</span>
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+        <span class="n">Output</span><span class="p">(</span><span class="s2">"centroids"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_CENTROIDS</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">_CENTROIDS</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"px"</span><span class="p">,</span>
+               <span class="n">doc</span><span class="o">=</span><span class="s2">"centroid coordinates in the frame; NaN where absent"</span><span class="p">),</span>
+        <span class="n">Output</span><span class="p">(</span><span class="s2">"normalized"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_CENTROIDS</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">_CENTROIDS</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span>
+               <span class="n">doc</span><span class="o">=</span><span class="s2">"the centroids divided by the frame width and height"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">found</span><span class="p">,</span> <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"no foreground pixels in the silhouette"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">centroids</span><span class="o">=</span><span class="n">raw</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">normalized</span><span class="o">=</span><span class="n">raw</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:])</span></div>
+
+
+
+<div class="viewcode-block" id="SilhouetteBodyParts">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/SilhouetteBodyParts.html#pyeyesweb.physical_signals.SilhouetteBodyParts">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"BlobSubRegions"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SilhouetteBodyParts</span><span class="p">(</span><span class="n">_ImageFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Head, trunk, arms and legs of a human silhouette, from its projection histograms.</span>
+
+<span class="sd">    The silhouette of a person, a binary mask, is divided into six body parts, each with its bounding box and mask, for the</span>
+<span class="sd">    analysis of the movement of single parts (the arms, the head) from a plain image. The columns holding the arms are</span>
+<span class="sd">    found by accumulating the area from each side (``arm_percentage``), the legs by the horizontal extent of the lower rows, the neck by the first row, going up from the</span>
+<span class="sd">    barycentre, where the body narrows, and each arm by the rows where it holds many pixels. "Right" and "left" are the</span>
+<span class="sd">    image's: the right arm and the right leg are on the smaller x.</span>
+
+<span class="sd">    ``process(silhouette, *, timestamp=None)`` takes one ``(H, W)`` mask (non-zero is body; see the module description for the</span>
+<span class="sd">    image types); the boxes are in the frame of the mask.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arm_percentage : float, default 0.8</span>
+<span class="sd">        Fraction of the silhouette area that is not arm, in [0, 1], dimensionless *(live)*.</span>
+<span class="sd">    legs_search : float, default 0.5</span>
+<span class="sd">        Fraction of the distance between the barycentre and the feet where the search for the legs starts, dimensionless</span>
+<span class="sd">        *(live)*.</span>
+<span class="sd">    legs_offset : float, default 0.2</span>
+<span class="sd">        Minimal distance between the barycentre and the top of the legs, as a fraction of the same distance, dimensionless</span>
+<span class="sd">        *(live)*.</span>
+<span class="sd">    arms_min_threshold : float, default 0.2</span>
+<span class="sd">        An arm ends at the first row with fewer foreground pixels than this fraction of its width *(live)*.</span>
+<span class="sd">    arms_max_threshold : float, default 0.5</span>
+<span class="sd">        An arm starts at the first row with more foreground pixels than this fraction of its width *(live)*.</span>
+<span class="sd">    parts : sequence of str, default all six</span>
+<span class="sd">        Which parts to output *(live)*, among ``"right_leg"``, ``"left_leg"``, ``"trunk"``, ``"right_arm"``, ``"left_arm"``</span>
+<span class="sd">        and ``"head"``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``regions``: ``(6, 4)`` integer array of ``(x, y, width, height)`` in pixels of the frame, rows in the order</span>
+<span class="sd">    right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found. ``is_found``: ``(6,)``</span>
+<span class="sd">    booleans, which parts were found. ``masks``: dict ``part -&gt; (height, width)`` array of 0 and 255 holding the mask of</span>
+<span class="sd">    each part found. A part is dropped when it is empty or touches the first column or the first row of the frame, as in</span>
+<span class="sd">    EyesWeb. A mask without foreground is ``INVALID_INPUT`` (``"no foreground pixels in the silhouette"``); an empty image</span>
+<span class="sd">    too (``"empty image"``). The result is otherwise ``OK`` (no warm-up).</span>
+
+<span class="sd">    **Known limitation.** The tests of the original read pixels outside the mask or the region of interest (the neck test</span>
+<span class="sd">    and the walk over the arm columns, in particular when ``arm_percentage`` is above 1); such pixels count as background.</span>
+
+<span class="sd">    **Differences from EyesWeb.** Every output region carries the name of its body part.</span>
+
+<span class="sd">    **Corrected in the core.** The barycentre is the centroid of the mask, truncated to whole pixels (the original took the</span>
+<span class="sd">    normalised centroid of the blob times its width, which is only right for a blob as large as its frame).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import SilhouetteBodyParts</span>
+<span class="sd">    &gt;&gt;&gt; rows, columns = np.mgrid[:240, :320]</span>
+<span class="sd">    &gt;&gt;&gt; body = (abs(columns - 160) &lt;= 28) &amp; (rows &gt;= 60) &amp; (rows &lt;= 140)             # trunk</span>
+<span class="sd">    &gt;&gt;&gt; body |= ((columns - 160) ** 2 / 18 ** 2 + (rows - 40) ** 2 / 22 ** 2 &lt;= 1)   # head</span>
+<span class="sd">    &gt;&gt;&gt; body |= (abs(rows - 75) &lt;= 7) &amp; (columns &gt;= 80) &amp; (columns &lt;= 240)           # arms, a horizontal bar</span>
+<span class="sd">    &gt;&gt;&gt; body |= (abs(columns - 147) &lt;= 9) &amp; (rows &gt; 140) &amp; (rows &lt;= 225)             # legs</span>
+<span class="sd">    &gt;&gt;&gt; body |= (abs(columns - 173) &lt;= 9) &amp; (rows &gt; 140) &amp; (rows &lt;= 225)</span>
+<span class="sd">    &gt;&gt;&gt; result = SilhouetteBodyParts().process(body.astype(np.uint8) * 255)</span>
+<span class="sd">    &gt;&gt;&gt; result.is_found.tolist()</span>
+<span class="sd">    [True, True, True, True, True, True]</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_imaging</span><span class="o">.</span><span class="n">BlobSubRegions</span>
+    <span class="n">_parts</span> <span class="o">=</span> <span class="p">{</span><span class="n">part</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"extract_</span><span class="si">{</span><span class="n">part</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_BODY_PARTS</span><span class="p">}</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">image_input</span><span class="p">(</span><span class="s2">"silhouette"</span><span class="p">,</span> <span class="s2">"mask of the body: every non-zero pixel is foreground"</span><span class="p">))</span>
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+        <span class="n">Output</span><span class="p">(</span><span class="s2">"regions"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_BODY_PARTS</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">_BODY_PARTS</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"width"</span><span class="p">,</span> <span class="s2">"height"</span><span class="p">),</span>
+               <span class="n">unit</span><span class="o">=</span><span class="s2">"px"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"bounding box of each part in the frame; zeros where not found"</span><span class="p">),</span>
+        <span class="n">Output</span><span class="p">(</span><span class="s2">"is_found"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_BODY_PARTS</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">_BODY_PARTS</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"the part was found"</span><span class="p">),</span>
+        <span class="n">Output</span><span class="p">(</span><span class="s2">"masks"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">labelled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"0 / 255 mask of each part found"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"no foreground pixels in the silhouette"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">regions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">_BODY_PARTS</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_BODY_PARTS</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">part_mask</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="n">_BODY_PARTS</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">regions</span><span class="p">[</span><span class="n">slot</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">part_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">part_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">found</span><span class="p">[</span><span class="n">slot</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">masks</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">part_mask</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">regions</span><span class="o">=</span><span class="n">regions</span><span class="p">,</span> <span class="n">is_found</span><span class="o">=</span><span class="n">found</span><span class="p">,</span> <span class="n">masks</span><span class="o">=</span><span class="n">masks</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Videogram">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/Videogram.html#pyeyesweb.physical_signals.Videogram">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"video_gram (VideoGram)"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Videogram</span><span class="p">(</span><span class="n">_ImageFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Videogram or motiongram: each frame collapsed to one line, the lines stacked over time.</span>
+
+<span class="sd">    A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line (a column</span>
+<span class="sd">    or a row) and the lines of successive frames are placed side by side, so that a movement becomes a visible trace. With a</span>
+<span class="sd">    motion image (a frame difference) it is a motiongram (Jensenius, 2006). For a grayscale frame :math:`I(h, w)` and the</span>
+<span class="sd">    mode ``"horizontal"`` the line of a frame is the sum of each row, scaled by its maximum to 0-255,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        v(h) = 255\, \frac{\sum_w I(h, w)}{\max_h \sum_w I(h, w)},</span>
+
+<span class="sd">    each channel of a colour frame being summed and scaled on its own; the mode ``"vertical"`` sums the columns instead.</span>
+
+<span class="sd">    ``process(frame, *, timestamp=None)`` takes one ``(H, W)`` or ``(H, W, C)`` image with 1, 3 or 4 channels (see the module</span>
+<span class="sd">    description for the image types). The first frame fixes the size; a frame of another size restarts the videogram (the</span>
+<span class="sd">    result says so in ``reason``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int, default 500</span>
+<span class="sd">        Number of lines of the videogram, &gt;= 1 *(structural)*; changing it restarts the image.</span>
+<span class="sd">    mode : {"horizontal", "vertical"}, default "horizontal"</span>
+<span class="sd">        ``"horizontal"``: each frame becomes a column (the sum of each row) of an image ``window`` wide and ``H`` high;</span>
+<span class="sd">        ``"vertical"``: a row (the sum of each column) of an image ``W`` wide and ``window`` high *(structural)*. Changing</span>
+<span class="sd">        it restarts the image.</span>
+<span class="sd">    direction : {"left_to_right", "right_to_left"}, default "left_to_right"</span>
+<span class="sd">        Where the newest line is written *(live)*; the position wraps around so that the oldest line is overwritten.</span>
+<span class="sd">    end_of_image_mode : {"loop", "scroll"}, default "loop"</span>
+<span class="sd">        ``"loop"``: the image as it is; ``"scroll"``: once it has been filled, the image is rotated so that the oldest line</span>
+<span class="sd">        comes first *(live)*.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``videogram``: integer image in 0-255, channels last, of shape ``(H, window, C)`` (``"horizontal"``) or</span>
+<span class="sd">    ``(window, W, C)`` (``"vertical"``); ``C = 1`` for a grayscale input. The lines not written yet are 0. A line of an</span>
+<span class="sd">    entirely black frame is 0. The result is ``OK`` on every valid call. An empty image is ``INVALID_INPUT``. The output</span>
+<span class="sd">    is an image: ``result.to_frame()`` and the recorder have no value columns for it.</span>
+
+<span class="sd">    **Corrected in the core.** The channel sums are independent: in the original the accumulators of the channels aliased each</span>
+<span class="sd">    other, so with one channel the next pixel was added to channel 0 (and a byte past the end of the row was read), and with</span>
+<span class="sd">    three channels the first byte of the next pixel was.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import Videogram</span>
+<span class="sd">    &gt;&gt;&gt; videogram = Videogram(window=4)</span>
+<span class="sd">    &gt;&gt;&gt; frame = np.zeros((3, 2), dtype=np.uint8)</span>
+<span class="sd">    &gt;&gt;&gt; frame[1] = (10, 30)                                       # only the middle row holds signal</span>
+<span class="sd">    &gt;&gt;&gt; videogram.process(frame).videogram[:, 0, 0].tolist()      # the first line: its row sums, scaled to 255</span>
+<span class="sd">    [0, 255, 0]</span>
+<span class="sd">    &gt;&gt;&gt; videogram.process(frame * 2).videogram.shape              # a second line is written next to it</span>
+<span class="sd">    (3, 4, 1)</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_imaging</span><span class="o">.</span><span class="n">VideoGram</span>
+    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"window"</span><span class="p">:</span> <span class="s2">"length"</span><span class="p">}</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">image_input</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"grayscale or colour frame"</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"videogram"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"the videogram image, channels last"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frame_shape</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: input 'frame' expects an image with 1, 3 or 4 channels, got shape </span><span class="si">{</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">restarted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">restarted</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frame_shape</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">videogram</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">image</span><span class="p">)),</span>
+                           <span class="n">reason</span><span class="o">=</span><span class="s2">"frame size changed: videogram restarted"</span> <span class="k">if</span> <span class="n">restarted</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_image</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">raw</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frame_shape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SilhouetteCentroids"</span><span class="p">,</span> <span class="s2">"SilhouetteBodyParts"</span><span class="p">,</span> <span class="s2">"Videogram"</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

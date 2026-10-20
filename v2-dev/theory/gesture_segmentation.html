@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Gesture segmentation &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/gesture_segmentation';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Entropy, rarity and periodicity" href="entropy_rarity_periodicity.html" />
+    <link rel="prev" title="Impulsivity and suddenness" href="impulsivity_suddenness.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Gesture segmentation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="gesture-segmentation">
+<h1>Gesture segmentation<a class="headerlink" href="#gesture-segmentation" title="Link to this heading">#</a></h1>
+<p>A movement recorded over seconds or minutes is a stream of samples, but it is perceived and described as a sequence of
+units: a wave, a step, a strike, separated by moments of stillness. To say how long a gesture lasted, how energetic it was or
+how smooth, the stream must first be cut into gestures. Segmentation is therefore the step that takes a movement from the
+low-level layer, where there is one value for each sample, to the mid-level layer, where there is one value for each movement
+unit (<a class="reference internal" href="framework.html"><span class="doc">Conceptual framework</span></a>).</p>
+<p>The family has three features. <a class="reference internal" href="../api/generated/mid_level/GestureSegmenter.html#pyeyesweb.mid_level.GestureSegmenter" title="pyeyesweb.mid_level.GestureSegmenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">GestureSegmenter</span></code></a> finds the start and the end of the gestures
+in an intensity signal. <a class="reference internal" href="../api/generated/mid_level/MotionDuration.html#pyeyesweb.mid_level.MotionDuration" title="pyeyesweb.mid_level.MotionDuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotionDuration</span></code></a> measures how long the phases of motion and of pause
+last, from the output of the segmenter. <a class="reference internal" href="../api/generated/analysis_primitives/ScalarPeakDetector.html#pyeyesweb.analysis_primitives.ScalarPeakDetector" title="pyeyesweb.analysis_primitives.ScalarPeakDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></a> finds the peaks of a
+signal, which locate events inside a gesture or between gestures. The symbols are those of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>.</p>
+<section id="a-threshold-on-the-intensity-of-motion">
+<h2>A threshold on the intensity of motion<a class="headerlink" href="#a-threshold-on-the-intensity-of-motion" title="Link to this heading">#</a></h2>
+<p>The approach of the library is the simplest one that works for a body in motion: a gesture is a period in which the body
+moves enough. The <strong>intensity</strong> <span class="math notranslate nohighlight">\(I(n)\)</span> is a scalar that measures how much the body moves at sample <span class="math notranslate nohighlight">\(n\)</span>, such as the kinetic
+energy of a skeleton (<a class="reference internal" href="../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><code class="xref py py-class docutils literal notranslate"><span class="pre">KineticEnergy</span></code></a>, <a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>) or the quantity of motion
+of a video. The intensity is noisy, so it is first smoothed to <span class="math notranslate nohighlight">\(\bar{I}(n)\)</span>, and a gesture is declared while the smoothed
+intensity is at least a threshold <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{start: } \bar{I}(n) \ge \theta \;\text{ and not noise}, \qquad \text{end: } \bar{I}(n) &lt; \theta .
+\]</div>
+<p>A gesture starts on the first sample at which the smoothed intensity reaches <span class="math notranslate nohighlight">\(\theta\)</span>, provided that the optional noise flag
+is not set, and ends on the first sample at which it falls below <span class="math notranslate nohighlight">\(\theta\)</span>. Once a gesture has started, the noise flag has no
+effect on its end. Between two gestures the body is in a <strong>pause</strong>.</p>
+<p>The smoothing of <a class="reference internal" href="../api/generated/mid_level/GestureSegmenter.html#pyeyesweb.mid_level.GestureSegmenter" title="pyeyesweb.mid_level.GestureSegmenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">GestureSegmenter</span></code></a> is a Savitzky-Golay filter <strong>[citation needed]</strong>
+(Savitzky and Golay) of polynomial order 3, applied to the last 10 samples with a window of <code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code>
+samples. This must be odd and shorter than the series of 10: 5, 7 or 9, the default being 9 (the window of 15 samples of
+the original EyesWeb block cannot be used with a series of 10, so the default is 9 here). The smoothing delays the
+detection by a few samples, and the filter needs 10 samples before it can produce a value: the status is <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> for the
+first 10 samples and <code class="docutils literal notranslate"><span class="pre">OK</span></code> afterwards. A change of <code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code> restarts the filter, and <code class="docutils literal notranslate"><span class="pre">firing_threshold</span></code> can be
+changed at any time. The threshold is in the unit of the intensity: for a kinetic energy, the squared unit of length per
+squared second (and the weights).</p>
+<p>The outputs are <code class="docutils literal notranslate"><span class="pre">smoothed_intensity</span></code> (the filtered intensity, in the unit of the input), <code class="docutils literal notranslate"><span class="pre">is_gesturing</span></code> (true while a gesture
+is running), and <code class="docutils literal notranslate"><span class="pre">is_gesture_start</span></code> and <code class="docutils literal notranslate"><span class="pre">is_gesture_end</span></code>, true on the sample that opens or closes a gesture. A value that is
+not finite, in the intensity or in the flag, gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>.</p>
+<section id="the-noise-flag">
+<h3>The noise flag<a class="headerlink" href="#the-noise-flag" title="Link to this heading">#</a></h3>
+<p>A skeleton tracker may lose a joint, and the speed of a joint that jumps about at random gives an intensity that looks like a
+gesture and is not. The <code class="docutils literal notranslate"><span class="pre">noise</span></code> input is a second stream, one flag for each sample, that is true while the motion is judged to
+be noise, and while it is set no gesture can start. The flag is computed by
+<a class="reference internal" href="../api/generated/low_level/MotionNoiseDetector.html#pyeyesweb.low_level.MotionNoiseDetector" title="pyeyesweb.low_level.MotionNoiseDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code></a> (output <code class="docutils literal notranslate"><span class="pre">is_noisy</span></code>) on the same frames (<a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>). With several joints the detector is decided by the
+alphabetically last joint name: this is the behaviour of the underlying EyesWeb block, and only one joint decides.
+Without a flag the feature segments any one-dimensional signal. The call is <code class="docutils literal notranslate"><span class="pre">process(intensity,</span> <span class="pre">noise=False,</span> <span class="pre">*,</span> <span class="pre">timestamp=None)</span></code>
+and <code class="docutils literal notranslate"><span class="pre">run(intensity,</span> <span class="pre">noise=None,</span> <span class="pre">*,</span> <span class="pre">timestamps=None)</span></code>.</p>
+</section>
+</section>
+<section id="duration-of-motion-and-pause">
+<h2>Duration of motion and pause<a class="headerlink" href="#duration-of-motion-and-pause" title="Link to this heading">#</a></h2>
+<p>The duration of the gestures and of the pauses between them is itself a quantity of expressive movement: a calm and a tense
+movement differ in the length of their pauses, and a rhythm is made of durations.
+<a class="reference internal" href="../api/generated/mid_level/MotionDuration.html#pyeyesweb.mid_level.MotionDuration" title="pyeyesweb.mid_level.MotionDuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotionDuration</span></code></a> takes the segmentation signal, one scalar for each sample, typically the
+<code class="docutils literal notranslate"><span class="pre">is_gesturing</span></code> output of the segmenter. A sample is <strong>motion</strong> when the signal is not zero and a <strong>pause</strong> when it is zero,
+and the length of a phase is reported when the phase ends, on the first sample of the next one: a motion duration when a
+pause begins and a pause duration when a motion begins. The phase that is running when the first sample arrives is counted
+from that sample, whether or not it began earlier.</p>
+<p>The durations are in seconds when a <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> is given and in frames without one. By default a call produces an output
+only on the sample that ends a phase, and the others have status <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>; with <code class="docutils literal notranslate"><span class="pre">continuous_output=True</span></code> every call gives
+both durations, those of the last completed motion and pause phases (0 until a phase of that kind has ended). The outputs
+are <code class="docutils literal notranslate"><span class="pre">motion_duration</span></code> and <code class="docutils literal notranslate"><span class="pre">pause_duration</span></code>.</p>
+</section>
+<section id="peaks-of-a-signal">
+<h2>Peaks of a signal<a class="headerlink" href="#peaks-of-a-signal" title="Link to this heading">#</a></h2>
+<p>A gesture often contains events: the moment of maximum speed, the stroke of a beat. <a class="reference internal" href="../api/generated/analysis_primitives/ScalarPeakDetector.html#pyeyesweb.analysis_primitives.ScalarPeakDetector" title="pyeyesweb.analysis_primitives.ScalarPeakDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></a>
+keeps a buffer of the last <code class="docutils literal notranslate"><span class="pre">window</span></code> samples (5 by default) of a scalar signal and reports a peak when the buffered signal shows a fall after
+a rise, each larger than <code class="docutils literal notranslate"><span class="pre">threshold</span></code>: the threshold is a swing (the largest minus the smallest value of the buffer), not a level,
+and only maxima are reported, not minima. The output is <code class="docutils literal notranslate"><span class="pre">is_peak</span></code>, true on the sample at which the peak is reported, with a delay of up to
+<code class="docutils literal notranslate"><span class="pre">window</span></code> samples after the maximum, once the fall is in the buffer. It is an analysis primitive because it knows
+nothing of bodies, and its output, a stream of events, is the input of the measures of regularity and synchronization of
+events (<a class="reference internal" href="entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a>, <a class="reference internal" href="synchronization.html"><span class="doc">Synchronization</span></a>). Corrected in the core: the running maximum was seeded with
+the smallest positive number, so a signal that stays at or below 0 never produced a peak.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarPeakDetector</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">detector</span> <span class="o">=</span> <span class="n">ScalarPeakDetector</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">detector</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">is_peak</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="go">[False, False, False, False, True, False, False, False, True, False]</span>
+</pre></div>
+</div>
+<p>The peaks are reported on samples 4 and 8, two samples after the maxima at samples 2 and 6.</p>
+</section>
+<section id="from-a-skeleton-to-the-durations-of-gestures">
+<h2>From a skeleton to the durations of gestures<a class="headerlink" href="#from-a-skeleton-to-the-durations-of-gestures" title="Link to this heading">#</a></h2>
+<p>The pipeline is: a skeleton, the kinetic energy of each frame, the segmentation into gestures, and the durations of their
+phases. The signal of the example is a hand that makes two movements in eight seconds, sampled at 50 Hz: a short, fast one
+and a longer, slower one, with speeds of bell shape.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">KineticEnergy</span><span class="p">,</span> <span class="n">MotionNoiseDetector</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.mid_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">GestureSegmenter</span><span class="p">,</span> <span class="n">MotionDuration</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rate</span> <span class="o">=</span> <span class="mf">50.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">rate</span><span class="p">))</span> <span class="o">/</span> <span class="n">rate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">centre</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">height</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">time</span> <span class="o">-</span> <span class="n">centre</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">speed</span> <span class="o">=</span> <span class="n">bump</span><span class="p">(</span><span class="mf">1.75</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span> <span class="o">+</span> <span class="n">bump</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">)</span>               <span class="c1"># m/s, two movements</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span>                        <span class="c1"># the position of one joint, in m</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">energy</span> <span class="o">=</span> <span class="n">KineticEnergy</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"hand"</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">{</span><span class="s2">"hand"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">kinetic_energy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">noisy</span> <span class="o">=</span> <span class="n">MotionNoiseDetector</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"hand"</span><span class="p">],</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">is_noisy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">segmenter</span> <span class="o">=</span> <span class="n">GestureSegmenter</span><span class="p">(</span><span class="n">firing_threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">record</span> <span class="o">=</span> <span class="n">segmenter</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">noisy</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">starts</span><span class="p">,</span> <span class="n">ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">is_gesture_start</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">is_gesture_end</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="p">[</span><span class="n">starts</span><span class="p">],</span> <span class="n">time</span><span class="p">[</span><span class="n">ends</span><span class="p">]</span>
+<span class="go">(array([1.46, 4.54]), array([2.26, 5.68]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">durations</span> <span class="o">=</span> <span class="n">MotionDuration</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">is_gesturing</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">durations</span><span class="o">.</span><span class="n">motion_duration</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">durations</span><span class="o">.</span><span class="n">motion_duration</span><span class="p">)]</span>
+<span class="go">array([0.8 , 1.14])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">durations</span><span class="o">.</span><span class="n">pause_duration</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">durations</span><span class="o">.</span><span class="n">pause_duration</span><span class="p">)]</span>
+<span class="go">array([1.46, 2.28])</span>
+</pre></div>
+</div>
+<p>The two gestures start at 1.46 s and 4.54 s and end at 2.26 s and 5.68 s, and last 0.80 s and 1.14 s. The pauses before them
+are 1.46 s (counted from the first sample) and 2.28 s. The segmenter reports the start of the first gesture 0.1 s after the
+intensity first reached the threshold, at 1.36 s, the delay of the smoothing. The figure shows the intensity, its
+smoothed version and the gestures.</p>
+<figure class="align-default">
+<img alt="../_images/gesture_segmentation-1.png" class="plot-directive" src="../_images/gesture_segmentation-1.png" />
+</figure>
+</section>
+<section id="how-to-read-the-outputs">
+<h2>How to read the outputs<a class="headerlink" href="#how-to-read-the-outputs" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Output</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">smoothed_intensity</span></code></p></td>
+<td><p>unit of the input</p></td>
+<td><p>the filtered intensity</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_gesturing</span></code></p></td>
+<td><p>none</p></td>
+<td><p>true while a gesture is running</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_gesture_start</span></code>, <code class="docutils literal notranslate"><span class="pre">is_gesture_end</span></code></p></td>
+<td><p>none</p></td>
+<td><p>true on the sample that opens or closes a gesture</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">motion_duration</span></code>, <code class="docutils literal notranslate"><span class="pre">pause_duration</span></code></p></td>
+<td><p>s, or frames without a rate</p></td>
+<td><p>length of the last completed phase; 0 or more</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_peak</span></code></p></td>
+<td><p>none</p></td>
+<td><p>a peak was found on this sample</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The start of a gesture is reported a few samples after the intensity reaches the threshold, and a duration is reported at the
+end of its phase, so these outputs are available after the events they describe, by the delay of the smoothing and, for
+durations, the length of the phase. A recording is analysed offline with <code class="docutils literal notranslate"><span class="pre">run</span></code>, and the event and duration outputs are read
+from the recorder; in a stream, the output of each call is acted upon as it arrives.</p>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>The threshold.</strong> The firing threshold is the one parameter that matters, and it is set in the unit of the intensity. A
+low threshold includes the slow beginning and end of the movement, a high one keeps only the energetic part and may
+split a gesture that has a dip in the middle. In the example, the first gesture lasts from 1.30 s to 2.42 s
+with a threshold of 0.01 and from 1.66 s to 2.06 s with 0.2. Choose it on a recording of the same body, set-up and
+units, and compare gestures only with the same threshold.</p></li>
+<li><p><strong>Units.</strong> With a kinetic energy, the threshold depends on the weights and on the unit of length of the data: the same
+movement in millimetres has an energy <span class="math notranslate nohighlight">\(10^6\)</span> times larger in the squared unit.</p></li>
+<li><p><strong>The noise flag.</strong> Pass the <code class="docutils literal notranslate"><span class="pre">is_noisy</span></code> output of <code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code> as the flag. The flag only stops a gesture from
+starting: a running gesture ends when the smoothed intensity falls below the threshold, whatever the flag.</p></li>
+<li><p><strong>Short pauses.</strong> The smoothing makes the segmenter insensitive to dips of the intensity that last a few
+samples. A shorter filter window (5) follows the intensity more closely than the default of 9.</p></li>
+<li><p><strong>After segmentation.</strong> The segments are the units to which the mid-level features apply: cut the recording at the
+starts and the ends and compute the smoothness (<a class="reference internal" href="smoothness.html"><span class="doc">Smoothness</span></a>), the impulsivity (<a class="reference internal" href="impulsivity_suddenness.html"><span class="doc">Impulsivity and suddenness</span></a>) or the
+mean energy of each.</p></li>
+</ul>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The framework in which segmentation is the step from layer 2 to layer 3: <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id5" title="A. Camurri, G. Volpe, S. Piana, M. Mancini, R. Niewiadomski, N. Ferrari, and C. Canepa. The dancer in the eye: towards a multi-layered computational framework of qualities in movement. In Proceedings of the 3rd International Symposium on Movement and Computing, 1–7. jul 2016.">1</a>]</span>. A related method for the
+identification of salient moments in motion capture data: <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id13" title="G. Romano, S. Rajeev Sabharwal, G. Gnecco, and A. Camurri. A computational framework for identifying salient moments in motion capture data. In G. Nicosia, V. Ojha, S. Giesselbach, M. P. Pardalos, and R. Umeton, editors, Machine Learning, Optimization, and Data Science. LOD ACAIN 2024 2024, volume 15509 of Lecture Notes in Computer Science. Springer, Cham, 2025. doi:10.1007/978-3-031-82484-5_20.">20</a>]</span>. The EyesWeb library from which these
+blocks come: <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">2</a>]</span>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="impulsivity_suddenness.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Impulsivity and suddenness</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="entropy_rarity_periodicity.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Entropy, rarity and periodicity</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-threshold-on-the-intensity-of-motion">A threshold on the intensity of motion</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-noise-flag">The noise flag</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#duration-of-motion-and-pause">Duration of motion and pause</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peaks-of-a-signal">Peaks of a signal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-skeleton-to-the-durations-of-gestures">From a skeleton to the durations of gestures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-the-outputs">How to read the outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/gesture_segmentation.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.low_level.contraction &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/low_level/contraction';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.low_level.contraction</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.low_level.contraction</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Contraction and expansion of a body configuration in 3D: bounding-box filled area, ellipsoid sphericity and points</span>
+<span class="sd">density.</span>
+
+<span class="sd">Each feature takes one frame of points and measures how compact or spread out the configuration is, independently of</span>
+<span class="sd">where the body is and, for the first two, of the unit of the data.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYZ</span><span class="p">,</span> <span class="n">FrameFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">labelled_set</span><span class="p">,</span> <span class="n">non_finite</span><span class="p">,</span> <span class="n">points_input</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.skeletons</span><span class="w"> </span><span class="kn">import</span> <span class="n">with_skeleton</span>
+
+
+<span class="n">_MIN_RADIUS</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># the C++ threshold below which the major radius is zero</span>
+
+
+<div class="viewcode-block" id="BoundingBoxFilledArea">
+<a class="viewcode-back" href="../../../api/generated/low_level/BoundingBoxFilledArea.html#pyeyesweb.low_level.BoundingBoxFilledArea">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BoundingBoxFilledArea</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Contraction index of a 3D posture: convex hull area over bounding box area.</span>
+
+<span class="sd">    Measures how much of the axis-aligned box that encloses a posture is filled by the convex hull of its points, a</span>
+<span class="sd">    proxy for how contracted or expanded the body is. The index is the ratio of the surface area of the convex hull to</span>
+<span class="sd">    the surface area of the bounding box:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        I = \frac{A_{\mathrm{hull}}}{A_{\mathrm{box}}}, \qquad</span>
+<span class="sd">        A_{\mathrm{box}} = 2\,(\Delta_x \Delta_y + \Delta_x \Delta_z + \Delta_y \Delta_z),</span>
+
+<span class="sd">    where :math:`\Delta_x, \Delta_y, \Delta_z` are the extents of the points along the three axes. The hull lies inside</span>
+<span class="sd">    the box, so :math:`0 \le I \le 1`: the eight corners of a box give 1, the six vertices of an octahedron inscribed in</span>
+<span class="sd">    a cube give :math:`\sqrt{3}/6 \approx 0.289`. The index is dimensionless and independent of the unit of the data.</span>
+
+<span class="sd">    The feature has no constructor parameters and keeps no state; the area below which the index is 0 is the attribute</span>
+<span class="sd">    ``epsilon`` (default 1e-6, in the squared unit of the data), which can be assigned at run time. *(live)* ``process(frame, *, timestamp=None)`` takes one frame, an ``(N,</span>
+<span class="sd">    3)`` array of points (any other width raises ``ValueError``); ``timestamp`` (seconds) is only reported on the</span>
+<span class="sd">    result.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``contraction_index``: dimensionless, in [0, 1].</span>
+
+<span class="sd">    **Statuses.** ``INVALID_INPUT`` (the index is empty) for a frame with no points, with NaN or infinite coordinates,</span>
+<span class="sd">    with fewer than 4 points, with coplanar or collinear points (the 3D hull is degenerate), or whose bounding box has</span>
+<span class="sd">    an area of at most 1e-6 (in the squared unit of the data). Such a frame used to give an index of 0 with status</span>
+<span class="sd">    ``OK``.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :cite:`camurri2003recognizing`, :cite:`glowinski2011minimal`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import BoundingBoxFilledArea</span>
+<span class="sd">    &gt;&gt;&gt; corners = np.array([[x, y, z] for x in (0, 1) for y in (0, 1) for z in (0, 1)], dtype=float)</span>
+<span class="sd">    &gt;&gt;&gt; result = BoundingBoxFilledArea().process(corners)</span>
+<span class="sd">    &gt;&gt;&gt; print(f"{result.contraction_index:.3f}")</span>
+<span class="sd">    1.000</span>
+<span class="sd">    """</span>
+
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"contraction_index"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Ratio of convex hull area to bounding box area."</span><span class="p">))</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">points_input</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"points of the body configuration"</span><span class="p">))</span>
+
+    <span class="n">EPSILON</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">BoundingBoxFilledArea</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EPSILON</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># the block's own test: a box of area &lt;= epsilon gives index 0</span>
+        <span class="n">degenerate</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"epsilon"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">EPSILON</span><span class="p">)</span>
+        <span class="n">reason</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">degenerate</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">"the bounding box has no extent"</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">"fewer than 4 points: the 3D convex hull is degenerate"</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">points</span> <span class="o">-</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">"the points are coplanar or collinear: the 3D convex hull is degenerate"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">points</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span> <span class="k">if</span> <span class="n">reason</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
+                           <span class="n">contraction_index</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PointsDensity">
+<a class="viewcode-back" href="../../../api/generated/low_level/PointsDensity.html#pyeyesweb.low_level.PointsDensity">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"PointsDensity3D"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointsDensity</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Dispersion of a set of 3D points around their centroid.</span>
+
+<span class="sd">    Measures how widely a configuration of points, for instance the joints of a skeleton, is spread around its centre:</span>
+<span class="sd">    small when the points are clustered (contracted posture), large when they are far apart (expanded posture). With</span>
+<span class="sd">    :math:`c` the centroid of the points :math:`x_i` (their mean, or the per-axis median) and :math:`d_i = \lVert x_i -</span>
+<span class="sd">    c \rVert` their Euclidean distances to it, the density is an aggregate of the distances:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        D = \operatorname{agg}_i \, d_i, \qquad</span>
+<span class="sd">        \operatorname{agg} \in \{\text{mean}, \text{median}, \max, \textstyle\sum\}.</span>
+
+<span class="sd">    With ``output_dims="components"`` the aggregate is taken per axis over the absolute deviations :math:`\lvert x_{i,k}</span>
+<span class="sd">    - c_k \rvert` and ``density`` is a vector of three values.</span>
+
+<span class="sd">    Input: one set of points per call, an ``(N, 3)`` array or a dictionary ``label -&gt; (x, y, z)``; ``process(frame, *,</span>
+<span class="sd">    timestamp=None)``. The labels name the rows of an array and do not enter the computation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the points of array input, in row order. Given by ``skeleton`` when that is passed. *(structural)*</span>
+<span class="sd">    skeleton : str or Skeleton, optional</span>
+<span class="sd">        A device preset or a user-defined ``Skeleton`` that provides ``labels``.</span>
+<span class="sd">    centroid_type : {"mean", "median"}, optional</span>
+<span class="sd">        The centroid: the mean of the points or their per-axis median. Defaults to ``"mean"``. *(live)*</span>
+<span class="sd">    distance_type : {"mean", "median", "max", "sum_of_lengths"}, optional</span>
+<span class="sd">        How the distances to the centroid are aggregated. Defaults to ``"mean"``. *(live)*</span>
+<span class="sd">    output_dims : {"module", "components"}, optional</span>
+<span class="sd">        ``"module"``: ``density`` is a scalar built from the Euclidean distances. ``"components"``: ``density`` has</span>
+<span class="sd">        three components (x, y, z) built from the per-axis deviations. Defaults to ``"module"``. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``density``: scalar, or ``(3,)`` for ``"components"``, in the unit of the data, not negative.</span>
+<span class="sd">    ``centroid``: ``(3,)``, the centroid, in the unit of the data.</span>
+
+<span class="sd">    **Statuses.** ``INVALID_INPUT`` for a set with no points or with NaN or infinite coordinates. The median is the</span>
+<span class="sd">    exact median of the values.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :cite:`camurri2003recognizing`, :cite:`glowinski2011minimal`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import PointsDensity</span>
+<span class="sd">    &gt;&gt;&gt; points = np.array([[0.0, 0, 0], [2, 0, 0], [0, 2, 0], [0, 0, 2]])</span>
+<span class="sd">    &gt;&gt;&gt; result = PointsDensity().process(points)</span>
+<span class="sd">    &gt;&gt;&gt; print(f"{result.density:.3f}", result.centroid)</span>
+<span class="sd">    1.460 [0.5 0.5 0.5]</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">PointsDensity</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">labels</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">with_skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""The names of the points of array input (``None``: by index)."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">points_input</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="s2">"points whose dispersion is measured"</span><span class="p">,</span> <span class="n">accepts</span><span class="o">=</span><span class="p">(</span><span class="nb">dict</span><span class="p">,)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"output_dims"</span><span class="p">,</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">PointsDensityDistanceDim</span><span class="o">.</span><span class="n">MODULE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">PointsDensityDistanceDim</span><span class="o">.</span><span class="n">MODULE</span><span class="p">:</span>
+            <span class="n">density</span> <span class="o">=</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"density"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"dispersion around the centroid"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">density</span> <span class="o">=</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"density"</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"per-axis dispersion around the centroid"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"centroid"</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">labelled_set</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="s2">"PointsDensity"</span><span class="p">,</span> <span class="n">anonymous</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"no points"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">density</span><span class="p">,</span> <span class="n">centroid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">finite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">density</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">centroid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">OK</span> <span class="k">if</span> <span class="n">finite</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span>
+                           <span class="n">reason</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">finite</span> <span class="k">else</span> <span class="s2">"NaN or infinite coordinates"</span><span class="p">,</span>
+                           <span class="n">density</span><span class="o">=</span><span class="n">density</span> <span class="k">if</span> <span class="n">density</span><span class="o">.</span><span class="n">ndim</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">),</span> <span class="n">centroid</span><span class="o">=</span><span class="n">centroid</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="EllipsoidSphericity">
+<a class="viewcode-back" href="../../../api/generated/low_level/EllipsoidSphericity.html#pyeyesweb.low_level.EllipsoidSphericity">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"EllipsoidSphericity (EllipsoidSphericity3D)"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EllipsoidSphericity</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Sphericity of the ellipsoid fitted to a point cloud, or of one given by its three axes.</span>
+
+<span class="sd">    Quantifies how close a posture is to a sphere rather than to an elongated or flat shape. The point cloud is</span>
+<span class="sd">    summarised by the ellipsoid whose radii :math:`a \ge b \ge c` are the square roots of the eigenvalues of the sample</span>
+<span class="sd">    covariance matrix of the points (principal component analysis, so the result does not depend on the orientation of</span>
+<span class="sd">    the body). Two indices are derived from the radii: the axis ratio :math:`c / a`, and the Wadell sphericity, the</span>
+<span class="sd">    ratio between the surface area of the sphere with the volume of the ellipsoid and the surface area of the ellipsoid:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \Psi = \frac{\pi^{1/3} (6 V)^{2/3}}{A}, \qquad V = \tfrac{4}{3} \pi a b c, \qquad</span>
+<span class="sd">        A \approx 4 \pi \left( \frac{(ab)^p + (ac)^p + (bc)^p}{3} \right)^{1/p}, \quad p = 1.6075,</span>
+
+<span class="sd">    where the area :math:`A` is Knud Thomsen's approximation. :math:`\Psi` is 1 for a sphere and decreases towards 0 as</span>
+<span class="sd">    the ellipsoid is stretched or flattened; it is dimensionless and does not depend on the unit of the data.</span>
+
+<span class="sd">    Two entry points exist. ``process(frame, *, timestamp=None)`` takes an ``(N, 3)`` point cloud, fits the ellipsoid</span>
+<span class="sd">    and returns the three outputs. ``process_axes(first_axis, second_axis, third_axis, *, timestamp=None)`` takes the</span>
+<span class="sd">    three sizes of an ellipsoid directly (three positive scalars in the same unit, in any order) and returns only</span>
+<span class="sd">    ``sphericity``; ``axis_ratio`` and ``radii`` are then not produced. The feature has no parameters and keeps no</span>
+<span class="sd">    state.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``sphericity``: dimensionless, in (0, 1]. ``axis_ratio``: minor over major radius, in [0, 1]</span>
+<span class="sd">    (point-cloud input only). ``radii``: ``(3,)`` fitted radii, major to minor, in the unit of the data (point-cloud</span>
+<span class="sd">    input only).</span>
+
+<span class="sd">    **Statuses.** ``INVALID_INPUT`` for fewer than 2 points, for NaN or infinite coordinates, and for a cloud whose</span>
+<span class="sd">    major radius is below 1e-6; ``process_axes`` gives ``INVALID_INPUT`` unless the three sizes are positive and finite.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :cite:`camurri2003recognizing`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import EllipsoidSphericity</span>
+<span class="sd">    &gt;&gt;&gt; cube = np.array([[x, y, z] for x in (0, 1) for y in (0, 1) for z in (0, 1)], dtype=float)</span>
+<span class="sd">    &gt;&gt;&gt; feature = EllipsoidSphericity()</span>
+<span class="sd">    &gt;&gt;&gt; print(f"{feature.process(cube).sphericity:.3f} {feature.process_axes(2.0, 1.0, 1.0).sphericity:.3f}")</span>
+<span class="sd">    1.000 0.929</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">EllipsoidSphericity</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">points_input</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"point cloud to fit an ellipsoid to"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"sphericity"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Wadell sphericity, 1 = sphere"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"axis_ratio"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"minor / major radius; point-cloud input only"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"radii"</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"fitted radii, major to minor; point-cloud input only"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">),</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_points</span><span class="p">(</span><span class="n">points</span><span class="p">)),</span> <span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">sphericity</span><span class="p">,</span> <span class="n">axis_ratio</span><span class="p">,</span> <span class="n">radii</span> <span class="o">=</span> <span class="n">raw</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">"fewer than 2 points"</span>
+        <span class="k">elif</span> <span class="n">radii</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">_MIN_RADIUS</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sphericity</span><span class="p">):</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">"no extent, or NaN / infinite coordinates"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span> <span class="k">if</span> <span class="n">reason</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
+                           <span class="n">sphericity</span><span class="o">=</span><span class="n">sphericity</span><span class="p">,</span> <span class="n">axis_ratio</span><span class="o">=</span><span class="n">axis_ratio</span><span class="p">,</span> <span class="n">radii</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">radii</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_axis</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">second_axis</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">third_axis</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Sphericity of an ellipsoid given by its three sizes (the EyesWeb input); see the class documentation."""</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="p">(</span><span class="n">first_axis</span><span class="p">,</span> <span class="n">second_axis</span><span class="p">,</span> <span class="n">third_axis</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">OK</span> <span class="k">if</span> <span class="n">valid</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span>
+                           <span class="n">reason</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">valid</span> <span class="k">else</span> <span class="s2">"the sizes must be positive and finite"</span><span class="p">,</span>
+                           <span class="n">sphericity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">first_axis</span><span class="p">,</span> <span class="n">second_axis</span><span class="p">,</span> <span class="n">third_axis</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"BoundingBoxFilledArea"</span><span class="p">,</span> <span class="s2">"EllipsoidSphericity"</span><span class="p">,</span> <span class="s2">"PointsDensity"</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

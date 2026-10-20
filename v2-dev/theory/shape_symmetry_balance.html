@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Shape, symmetry and balance &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/shape_symmetry_balance';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Impulsivity and suddenness" href="impulsivity_suddenness.html" />
+    <link rel="prev" title="Smoothness" href="smoothness.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Shape, symmetry and balance</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="shape-symmetry-and-balance">
+<h1>Shape, symmetry and balance<a class="headerlink" href="#shape-symmetry-and-balance" title="Link to this heading">#</a></h1>
+<p>How a body occupies space is one of the oldest descriptors of expressive movement. A posture can be contracted or
+expanded, symmetric or lopsided, balanced over its feet or about to lose balance, and a performer can use the whole stage or
+stay in one corner. The features of this family describe one instant of a posture (or of a position on the floor) with a
+single dimensionless number, and the last three describe how space is used over time. They are computed frame by frame,
+keep no memory (except the space-occupation potentials) and need no sampling rate.</p>
+<p>Notation is that of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>: a posture is a set of <span class="math notranslate nohighlight">\(K\)</span> points <span class="math notranslate nohighlight">\(\mathbf{p}_k\in\mathbb{R}^d\)</span>, with <span class="math notranslate nohighlight">\(d=3\)</span> for body
+joints and <span class="math notranslate nohighlight">\(d=2\)</span> for floor positions. Lengths are in the unit of the data; every index below is dimensionless unless stated.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Question</p></th>
+<th class="head"><p>Quantity</p></th>
+<th class="head"><p>Feature</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>How much of its bounding box does the body fill?</p></td>
+<td><p>contraction index</p></td>
+<td><p><a class="reference internal" href="../api/generated/low_level/BoundingBoxFilledArea.html#pyeyesweb.low_level.BoundingBoxFilledArea" title="pyeyesweb.low_level.BoundingBoxFilledArea"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoundingBoxFilledArea</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>How round is the body cloud?</p></td>
+<td><p>sphericity, axis ratio</p></td>
+<td><p><a class="reference internal" href="../api/generated/low_level/EllipsoidSphericity.html#pyeyesweb.low_level.EllipsoidSphericity" title="pyeyesweb.low_level.EllipsoidSphericity"><code class="xref py py-class docutils literal notranslate"><span class="pre">EllipsoidSphericity</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>How spread are the joints around their centre?</p></td>
+<td><p>points density</p></td>
+<td><p><a class="reference internal" href="../api/generated/low_level/PointsDensity.html#pyeyesweb.low_level.PointsDensity" title="pyeyesweb.low_level.PointsDensity"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsDensity</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Are left and right joints mirror images?</p></td>
+<td><p>symmetry index or score</p></td>
+<td><p><a class="reference internal" href="../api/generated/low_level/Symmetry.html#pyeyesweb.low_level.Symmetry" title="pyeyesweb.low_level.Symmetry"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symmetry</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Is the head centred over the shoulders?</p></td>
+<td><p>triangle symmetry</p></td>
+<td><p><a class="reference internal" href="../api/generated/low_level/TriangleSymmetry.html#pyeyesweb.low_level.TriangleSymmetry" title="pyeyesweb.low_level.TriangleSymmetry"><code class="xref py py-class docutils literal notranslate"><span class="pre">TriangleSymmetry</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Is the barycenter over the support between the feet?</p></td>
+<td><p>equilibrium</p></td>
+<td><p><a class="reference internal" href="../api/generated/low_level/Equilibrium.html#pyeyesweb.low_level.Equilibrium" title="pyeyesweb.low_level.Equilibrium"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equilibrium</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Which floor cells are occupied, and how often?</p></td>
+<td><p>hit cells, potentials</p></td>
+<td><p><a class="reference internal" href="../api/generated/physical_signals/HitCellDetector.html#pyeyesweb.physical_signals.HitCellDetector" title="pyeyesweb.physical_signals.HitCellDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">HitCellDetector</span></code></a>, <a class="reference internal" href="../api/generated/mid_level/PositionDependingPotentials.html#pyeyesweb.mid_level.PositionDependingPotentials" title="pyeyesweb.mid_level.PositionDependingPotentials"><code class="xref py py-class docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code></a>, <a class="reference internal" href="../api/generated/mid_level/RegionDependingPotentials.html#pyeyesweb.mid_level.RegionDependingPotentials" title="pyeyesweb.mid_level.RegionDependingPotentials"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="contraction-and-expansion">
+<h2>Contraction and expansion<a class="headerlink" href="#contraction-and-expansion" title="Link to this heading">#</a></h2>
+<p>Contraction and expansion of the body are among the cues that observers use to read the emotional quality of a movement:
+an expanded posture occupies more space around the body, a contracted one less <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id15" title="A. Camurri, I. Lagerlöf, and G. Volpe. Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1–2):213–225, 2003.">12</a>, <a class="reference internal" href="../references.html#id14" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">13</a>]</span>.
+The library offers three complementary measures of the same idea, each computed from the <span class="math notranslate nohighlight">\(K\ge4\)</span> points of one frame.</p>
+<section id="convex-hull-over-bounding-box">
+<h3>Convex hull over bounding box<a class="headerlink" href="#convex-hull-over-bounding-box" title="Link to this heading">#</a></h3>
+<p>The bounding box of the posture is the axis-aligned box with extents <span class="math notranslate nohighlight">\(\Delta_x,\Delta_y,\Delta_z\)</span> along the three axes, and
+the convex hull is the smallest convex polyhedron that contains the points. The contraction index is the ratio of their
+surface areas,</p>
+<div class="math notranslate nohighlight">
+\[
+I = \frac{A_{\mathrm{hull}}}{A_{\mathrm{box}}}, \qquad A_{\mathrm{box}} = 2\,(\Delta_x\Delta_y + \Delta_x\Delta_z + \Delta_y\Delta_z),
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(0\le I\le1\)</span>. The index is 1 when the points fill the box (its eight corners) and smaller when the body is thin or
+diagonal inside its box. It is independent of the unit of the data.
+<a class="reference internal" href="../api/generated/low_level/BoundingBoxFilledArea.html#pyeyesweb.low_level.BoundingBoxFilledArea" title="pyeyesweb.low_level.BoundingBoxFilledArea"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoundingBoxFilledArea</span></code></a> implements it. A frame whose hull is degenerate (fewer than four
+points, coplanar or collinear points) or whose box has negligible area has no index and returns the status
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>; the output is then empty.</p>
+</section>
+<section id="sphericity-of-the-fitted-ellipsoid">
+<h3>Sphericity of the fitted ellipsoid<a class="headerlink" href="#sphericity-of-the-fitted-ellipsoid" title="Link to this heading">#</a></h3>
+<p>The point cloud is summarised by the ellipsoid whose radii <span class="math notranslate nohighlight">\(a\ge b\ge c\)</span> are the square roots of the eigenvalues of the
+sample covariance matrix of the points (a principal component analysis, so the orientation of the body does not matter).
+<a class="reference internal" href="../api/generated/low_level/EllipsoidSphericity.html#pyeyesweb.low_level.EllipsoidSphericity" title="pyeyesweb.low_level.EllipsoidSphericity"><code class="xref py py-class docutils literal notranslate"><span class="pre">EllipsoidSphericity</span></code></a> reports the radii, the axis ratio <span class="math notranslate nohighlight">\(c/a\)</span> and the Wadell sphericity</p>
+<div class="math notranslate nohighlight">
+\[
+\Psi = \frac{\pi^{1/3}(6V)^{2/3}}{A}, \qquad V=\tfrac43\pi abc,
+\]</div>
+<p>the ratio between the surface of the sphere that has the volume of the ellipsoid and the surface <span class="math notranslate nohighlight">\(A\)</span> of the ellipsoid (the
+feature uses Knud Thomsen’s approximation of <span class="math notranslate nohighlight">\(A\)</span>). <span class="math notranslate nohighlight">\(\Psi=1\)</span> for a sphere and decreases towards 0 as the ellipsoid is
+stretched or flattened. A body stretched along one axis (arms up) and a body flattened in one plane (lying down) both have a
+low sphericity, which separates them from a compact, roundish posture. The method <code class="docutils literal notranslate"><span class="pre">process_axes</span></code> computes the sphericity
+directly from three given axis lengths.</p>
+</section>
+<section id="dispersion-around-the-centroid">
+<h3>Dispersion around the centroid<a class="headerlink" href="#dispersion-around-the-centroid" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../api/generated/low_level/PointsDensity.html#pyeyesweb.low_level.PointsDensity" title="pyeyesweb.low_level.PointsDensity"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsDensity</span></code></a> measures how far the points lie from their centroid <span class="math notranslate nohighlight">\(\mathbf{c}\)</span> (the mean, or
+the per-axis median). With <span class="math notranslate nohighlight">\(d_k=\lVert\mathbf{p}_k-\mathbf{c}\rVert\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+D = \operatorname{agg}_k\, d_k, \qquad \operatorname{agg}\in\{\text{mean},\text{median},\max,\textstyle\sum\},
+\]</div>
+<p>or, per axis, the aggregate of <span class="math notranslate nohighlight">\(\lvert p_{k,i}-c_i\rvert\)</span> (one value for each of the three axes). Unlike the two indices
+above, <span class="math notranslate nohighlight">\(D\)</span> has the unit of the data: it grows with the body size, so compare it across participants only after
+normalising (for example by the height). The feature also returns the centroid.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoundingBoxFilledArea</span><span class="p">,</span> <span class="n">EllipsoidSphericity</span><span class="p">,</span> <span class="n">PointsDensity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expanded</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>      <span class="c1"># joints spread over a 1.6 m cube</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contracted</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">expanded</span>                          <span class="c1"># the same posture, folded to 30 percent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stretched</span> <span class="o">=</span> <span class="n">expanded</span> <span class="o">*</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>               <span class="c1"># a tall, thin posture</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"expanded"</span><span class="p">,</span> <span class="n">expanded</span><span class="p">),</span> <span class="p">(</span><span class="s2">"contracted"</span><span class="p">,</span> <span class="n">contracted</span><span class="p">),</span> <span class="p">(</span><span class="s2">"stretched"</span><span class="p">,</span> <span class="n">stretched</span><span class="p">)]:</span>
+<span class="gp">... </span>    <span class="n">index</span> <span class="o">=</span> <span class="n">BoundingBoxFilledArea</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">contraction_index</span>
+<span class="gp">... </span>    <span class="n">sphericity</span> <span class="o">=</span> <span class="n">EllipsoidSphericity</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">sphericity</span>
+<span class="gp">... </span>    <span class="n">density</span> <span class="o">=</span> <span class="n">PointsDensity</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">density</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2"> index=</span><span class="si">{</span><span class="n">index</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> sphericity=</span><span class="si">{</span><span class="n">sphericity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> density=</span><span class="si">{</span><span class="n">density</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">expanded   index=0.44 sphericity=0.95 density=0.70</span>
+<span class="go">contracted index=0.44 sphericity=0.95 density=0.21</span>
+<span class="go">stretched  index=0.44 sphericity=0.78 density=0.30</span>
+</pre></div>
+</div>
+<p>Folding the posture to 30 percent leaves the contraction index and the sphericity unchanged (they are dimensionless and
+scale-free) and scales the density with the size. The two indices answer different questions: the tall, thin posture has
+the same hull-to-box ratio as the expanded one here, and it is the sphericity (0.78 against 0.95) that tells it apart.
+The contraction index separates postures of different shape inside their box, not postures of different size; to follow how
+much space the body takes, use the density or the extents themselves.</p>
+</section>
+</section>
+<section id="symmetry">
+<h2>Symmetry<a class="headerlink" href="#symmetry" title="Link to this heading">#</a></h2>
+<section id="left-and-right-ratio-index-and-mirror-score">
+<h3>Left and right: ratio index and mirror score<a class="headerlink" href="#left-and-right-ratio-index-and-mirror-score" title="Link to this heading">#</a></h3>
+<p>A posture is bilaterally symmetric when the left half is the mirror image of the right half across the sagittal plane.
+<a class="reference internal" href="../api/generated/low_level/Symmetry.html#pyeyesweb.low_level.Symmetry" title="pyeyesweb.low_level.Symmetry"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symmetry</span></code></a> takes couples of joints that mirror each other (left and right hand, left and
+right foot, …) and offers two formulas, selected by <code class="docutils literal notranslate"><span class="pre">method</span></code> <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id14" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">13</a>]</span>. The <span class="math notranslate nohighlight">\(x\)</span> axis is the lateral axis.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">method=&quot;ratio&quot;</span></code> (the default, the EyesWeb index) the coordinates are taken relative to a reference joint (the neck by
+default), and for each couple and each axis <span class="math notranslate nohighlight">\(k\)</span> the values of the left and right joint <span class="math notranslate nohighlight">\(L_k,R_k\)</span> give</p>
+<div class="math notranslate nohighlight">
+\[
+s_k = \frac{\min(\lvert L_k\rvert,\lvert R_k\rvert)}{\max(\lvert L_k\rvert,\lvert R_k\rvert)}
+\]</div>
+<p>when the sign condition holds (the joints lie on opposite sides of the reference along <span class="math notranslate nohighlight">\(x\)</span> and on the same side along <span class="math notranslate nohighlight">\(y\)</span>
+and <span class="math notranslate nohighlight">\(z\)</span>), and <span class="math notranslate nohighlight">\(s_k=0\)</span> otherwise. The values are aggregated over couples and axes (mean by default) into one number, or over
+the couples for each axis into three numbers (<code class="docutils literal notranslate"><span class="pre">output_dims=&quot;components&quot;</span></code>). By default each joint is first divided by its
+distance to the reference, so only its direction counts. One sentence of correction: in the core the normalisation distance is
+measured from the reference joint, not from the coordinates before the translation.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">method=&quot;reflection&quot;</span></code> the right joint <span class="math notranslate nohighlight">\(R\)</span> of each pair is reflected across the first axis, <span class="math notranslate nohighlight">\(R''=(-R_x,R_y,R_z)\)</span>, with
+<span class="math notranslate nohighlight">\(L,R\)</span> relative to a centre <span class="math notranslate nohighlight">\(C\)</span> (a chosen joint, by default the barycenter of the frame), and the score of the pair is</p>
+<div class="math notranslate nohighlight">
+\[
+s = \max\!\left(0,\;1-\frac{\lVert L-R''\rVert}{\lVert L\rVert+\lVert R\rVert}\right),
+\]</div>
+<p>which is 1 for a perfect mirror image. The result is one score per pair, labelled <code class="docutils literal notranslate"><span class="pre">&lt;left&gt;_&lt;right&gt;</span></code>. Use <code class="docutils literal notranslate"><span class="pre">&quot;ratio&quot;</span></code> for the
+EyesWeb index of a labelled skeleton with a single summary value, and <code class="docutils literal notranslate"><span class="pre">&quot;reflection&quot;</span></code> for a per-pair score about a body centre.</p>
+</section>
+<section id="head-over-the-shoulders">
+<h3>Head over the shoulders<a class="headerlink" href="#head-over-the-shoulders" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../api/generated/low_level/TriangleSymmetry.html#pyeyesweb.low_level.TriangleSymmetry" title="pyeyesweb.low_level.TriangleSymmetry"><code class="xref py py-class docutils literal notranslate"><span class="pre">TriangleSymmetry</span></code></a> measures the lateral lean of the upper body. The head (the apex) and the
+two shoulders form a triangle; the base is split by the vertical line through the apex, and the two halves, mirrored on top
+of each other, are compared. The index is 1 when they coincide and decreases as their areas differ, down to 0 (also when both
+shoulders lie on the same side of the head). It is a posture measure, the tilt of the apex over the base, not a test that the
+triangle is isosceles. The three vertices are <span class="math notranslate nohighlight">\((x,y)\)</span> points with <span class="math notranslate nohighlight">\(y\)</span> growing downwards (image coordinates).</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">Symmetry</span><span class="p">,</span> <span class="n">TriangleSymmetry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"neck"</span><span class="p">,</span> <span class="s2">"left_hand"</span><span class="p">,</span> <span class="s2">"right_hand"</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"left_hand"</span><span class="p">,</span> <span class="s2">"right_hand"</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Symmetry</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">pairs</span><span class="o">=</span><span class="n">pairs</span><span class="p">,</span> <span class="n">reference_point</span><span class="o">=</span><span class="s2">"neck"</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">symmetry</span>
+<span class="go">0.6056630888033111</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Symmetry</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">pairs</span><span class="o">=</span><span class="n">pairs</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"reflection"</span><span class="p">,</span> <span class="n">reference_point</span><span class="o">=</span><span class="s2">"neck"</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">pair_symmetry</span>
+<span class="go">array([0.73692362])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">triangle</span> <span class="o">=</span> <span class="n">TriangleSymmetry</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">triangle</span><span class="o">.</span><span class="n">process</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">symmetry</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+<span class="go">[1.0, 0.5, 0.33]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="balance">
+<h2>Balance<a class="headerlink" href="#balance" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../api/generated/low_level/Equilibrium.html#pyeyesweb.low_level.Equilibrium" title="pyeyesweb.low_level.Equilibrium"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equilibrium</span></code></a> estimates the postural balance from one snapshot of the floor plane
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id17" title="S. Ghisio, P. Coletta, S. Piana, P. Alborno, G. Volpe, A. Camurri, others, and A. Ravaschio. An open platform for full body interactive sonification exergames. In 2015 7th International Conference on Intelligent Technologies for Interactive Entertainment (INTETAIN), 168–175. IEEE, jun 2015. DRAFT: author list truncated in the source.">16</a>]</span>. The support region is an ellipse centred midway between the left foot <span class="math notranslate nohighlight">\(P_L\)</span> and the right
+foot <span class="math notranslate nohighlight">\(P_R\)</span>, with its major axis along the line through the feet. With <span class="math notranslate nohighlight">\(d=\lVert P_R-P_L\rVert\)</span>, a margin <span class="math notranslate nohighlight">\(m\)</span> that accounts
+for the size of the foot and a weight <span class="math notranslate nohighlight">\(w_y\)</span> for the depth of the stance, the semi-axes are</p>
+<div class="math notranslate nohighlight">
+\[
+a = \frac d2 + m, \qquad b = m\,w_y .
+\]</div>
+<p>Let <span class="math notranslate nohighlight">\((x',y')\)</span> be the barycenter relative to the centre of the ellipse, rotated so that the first axis runs from the left to
+the right foot, and <span class="math notranslate nohighlight">\(q=(x'/a)^2+(y'/b)^2\)</span>. Then</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+E = \begin{cases} 1-\sqrt q &amp; q\le1\\ 0 &amp; q&gt;1 \end{cases}
+\end{split}\]</div>
+<p>so that <span class="math notranslate nohighlight">\(E=1\)</span> when the barycenter is at the centre of the support and falls linearly to 0 at the border of the ellipse and
+outside it. The <code class="docutils literal notranslate"><span class="pre">angle</span></code> output is the direction of the foot-to-foot vector in degrees. The three inputs are <span class="math notranslate nohighlight">\((x,y)\)</span> points on
+the floor plane: the caller computes the barycenter and projects onto the floor (for Y-up data, take the columns <span class="math notranslate nohighlight">\([0,2]\)</span>).
+The default margin is 0.1 m; pass <code class="docutils literal notranslate"><span class="pre">units=&quot;mm&quot;</span></code> for data in millimetres. When the two feet coincide there is no support vector
+and the status is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equilibrium</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">equilibrium</span> <span class="o">=</span> <span class="n">Equilibrium</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">equilibrium</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span><span class="o">.</span><span class="n">equilibrium</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)]</span>
+<span class="go">[1.0, 0.75, 0.5, 0.0]</span>
+</pre></div>
+</div>
+</section>
+<section id="use-of-space">
+<h2>Use of space<a class="headerlink" href="#use-of-space" title="Link to this heading">#</a></h2>
+<p>The three remaining features describe where on the floor a performer is, and how often.
+<a class="reference internal" href="../api/generated/physical_signals/HitCellDetector.html#pyeyesweb.physical_signals.HitCellDetector" title="pyeyesweb.physical_signals.HitCellDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">HitCellDetector</span></code></a> divides a rectangular area
+<span class="math notranslate nohighlight">\([x_{\min},x_{\max}]\times[y_{\min},y_{\max}]\)</span> into <code class="docutils literal notranslate"><span class="pre">cells_along_y</span></code> rows and <code class="docutils literal notranslate"><span class="pre">cells_along_x</span></code> columns and returns, for each
+<span class="math notranslate nohighlight">\((x,y)\)</span> point, the cell <span class="math notranslate nohighlight">\((i,j)\)</span> (row from <span class="math notranslate nohighlight">\(y\)</span>, column from <span class="math notranslate nohighlight">\(x\)</span>) that contains it, counted from 0. Points outside the area are
+clipped to the border cells unless <code class="docutils literal notranslate"><span class="pre">clip_values=False</span></code>, in which case the call is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>.</p>
+<p>The hit cells feed <a class="reference internal" href="../api/generated/mid_level/PositionDependingPotentials.html#pyeyesweb.mid_level.PositionDependingPotentials" title="pyeyesweb.mid_level.PositionDependingPotentials"><code class="xref py py-class docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code></a>, which keeps one potential value per cell
+and updates it at every call. With <code class="docutils literal notranslate"><span class="pre">potential_type=&quot;increment_decrement&quot;</span></code> a hit cell gains <code class="docutils literal notranslate"><span class="pre">increment</span></code> and every other cell
+loses <code class="docutils literal notranslate"><span class="pre">decrement</span></code>; with <code class="docutils literal notranslate"><span class="pre">&quot;occupation_rates&quot;</span></code> the value of a cell is the fraction of calls in which it was hit (optionally
+over the last <code class="docutils literal notranslate"><span class="pre">window</span></code> calls); the <code class="docutils literal notranslate"><span class="pre">&quot;polynomial&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;gaussian&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;logarithmic&quot;</span></code> types have no memory and draw a field
+centred on each hit cell. <a class="reference internal" href="../api/generated/mid_level/RegionDependingPotentials.html#pyeyesweb.mid_level.RegionDependingPotentials" title="pyeyesweb.mid_level.RegionDependingPotentials"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code></a> does the same for regions, groups of
+cells defined by a mask (for example the zones of a stage), with linear or exponential occupation rates. Both keep state:
+<code class="docutils literal notranslate"><span class="pre">reset()</span></code> restores the initial potential. An empty list of hits has status <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> and does not update the potential.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">HitCellDetector</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.mid_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositionDependingPotentials</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">detector</span> <span class="o">=</span> <span class="n">HitCellDetector</span><span class="p">(</span><span class="n">cells_along_x</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cells_along_y</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">potentials</span> <span class="o">=</span> <span class="n">PositionDependingPotentials</span><span class="p">(</span><span class="n">cells_along_x</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cells_along_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">potential_type</span><span class="o">=</span><span class="s2">"occupation_rates"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>       <span class="c1"># a dancer who mostly stays on the left</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">cells</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">process</span><span class="p">([</span><span class="n">point</span><span class="p">])</span><span class="o">.</span><span class="n">cells</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">potentials</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">potential</span>
+<span class="go">array([[50., 25.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0., 25.]])</span>
+</pre></div>
+</div>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>All frame features (<code class="docutils literal notranslate"><span class="pre">BoundingBoxFilledArea</span></code>, <code class="docutils literal notranslate"><span class="pre">EllipsoidSphericity</span></code>, <code class="docutils literal notranslate"><span class="pre">PointsDensity</span></code>, <code class="docutils literal notranslate"><span class="pre">Symmetry</span></code>, <code class="docutils literal notranslate"><span class="pre">TriangleSymmetry</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code>, <code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code>) are stateless: a call depends only on its frame, <code class="docutils literal notranslate"><span class="pre">hop</span></code> and <code class="docutils literal notranslate"><span class="pre">window</span></code> do not exist, and the
+<code class="docutils literal notranslate"><span class="pre">timestamp</span></code> is only copied to the result.</p></li>
+<li><p>Geometric quantities need the frame to be in one consistent frame of reference. Indices based on a hull or an ellipsoid
+need enough joints: use the whole skeleton rather than a handful of points.</p></li>
+<li><p>Missing joints are not interpolated: a dictionary frame that lacks a joint of a couple gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> with the
+names of the missing joints.</p></li>
+<li><p>Units are those of the data for <code class="docutils literal notranslate"><span class="pre">PointsDensity</span></code> and <code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code> (margin) and for the radii of <code class="docutils literal notranslate"><span class="pre">EllipsoidSphericity</span></code>; all
+other outputs are dimensionless. See <a class="reference internal" href="../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>.</p></li>
+</ul>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The contraction and symmetry cues come from the study of affective gestures <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id15" title="A. Camurri, I. Lagerlöf, and G. Volpe. Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1–2):213–225, 2003.">12</a>, <a class="reference internal" href="../references.html#id14" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">13</a>]</span>;
+the equilibrium measure was introduced for an exergame platform <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../references.html#id17" title="S. Ghisio, P. Coletta, S. Piana, P. Alborno, G. Volpe, A. Camurri, others, and A. Ravaschio. An open platform for full body interactive sonification exergames. In 2015 7th International Conference on Intelligent Technologies for Interactive Entertainment (INTETAIN), 168–175. IEEE, jun 2015. DRAFT: author list truncated in the source.">16</a>]</span>. For the output objects of the
+features see <a class="reference internal" href="../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="smoothness.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Smoothness</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="impulsivity_suddenness.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Impulsivity and suddenness</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contraction-and-expansion">Contraction and expansion</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convex-hull-over-bounding-box">Convex hull over bounding box</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sphericity-of-the-fitted-ellipsoid">Sphericity of the fitted ellipsoid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dispersion-around-the-centroid">Dispersion around the centroid</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#symmetry">Symmetry</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#left-and-right-ratio-index-and-mirror-score">Left and right: ratio index and mirror score</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#head-over-the-shoulders">Head over the shoulders</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#balance">Balance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-of-space">Use of space</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/shape_symmetry_balance.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

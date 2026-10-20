@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.analysis_primitives.synchronization.events &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/analysis_primitives/synchronization/events';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.analysis_primitives.synchronization.events</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.analysis_primitives.synchronization.events</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Synchronization of events: event synchronization, MECS, SPIKE-synchronization, interdependence and sequences.</span>
+
+<span class="sd">Event trains are sample streams in which a non-zero value is an event. The features that evaluate a window of samples</span>
+<span class="sd">(``window``, ``hop``) are windowed features; `SequenceDetector` is stateful per sample and takes one sample per call.</span>
+<span class="sd">Their results are ``OK`` unless the docstring of the feature says otherwise.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">train</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SeriesBlock</span><span class="p">,</span> <span class="n">_TrainPairBlock</span><span class="p">,</span> <span class="n">_train</span>
+
+<span class="n">_sync</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">sync</span>
+<span class="n">_SpikeSyncMode</span> <span class="o">=</span> <span class="n">_sync</span><span class="o">.</span><span class="n">SpikeSyncMode</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_series_inputs</span><span class="p">(</span><span class="n">feature</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One input per time series (`number_of_inputs`, default 2), each with one channel per event class."""</span>
+    <span class="n">number_of_series</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"number_of_inputs"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># C++ default</span>
+    <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="sa">f</span><span class="s2">"series</span><span class="si">{</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_series</span><span class="p">)))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_NonOverlapping</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Mixin, placed before the series block, of a block that accumulates across executions: consecutive windows must</span>
+<span class="sd">    not overlap (the samples of the overlap would be counted twice), so `hop` is `window` (the default)."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">window</span> <span class="k">if</span> <span class="n">hop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validated</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="n">window</span><span class="p">,</span> <span class="n">hop</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_validated</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hop</span> <span class="o">!=</span> <span class="n">window</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> accumulates across executions and cannot take overlapping windows: hop "</span>
+                             <span class="sa">f</span><span class="s2">"must equal window (got window=</span><span class="si">{</span><span class="n">window</span><span class="si">}</span><span class="s2">, hop=</span><span class="si">{</span><span class="n">hop</span><span class="si">}</span><span class="s2">); change both with configure()"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">window</span><span class="p">,</span> <span class="n">hop</span>
+
+
+<div class="viewcode-block" id="EventSynchronization">
+<a class="viewcode-back" href="../../../../api/generated/analysis_primitives/EventSynchronization.html#pyeyesweb.analysis_primitives.EventSynchronization">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"Event Sync"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventSynchronization</span><span class="p">(</span><span class="n">_NonOverlapping</span><span class="p">,</span> <span class="n">_TrainPairBlock</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Event synchronization of two event trains: how often events of one series follow those of the other.</span>
+
+<span class="sd">    Quantifies the coordination of two sequences of discrete events (for example the onsets of two performers'</span>
+<span class="sd">    gestures or beats) without assuming a fixed rhythm, following the event synchronization measure of Quian Quiroga</span>
+<span class="sd">    and colleagues. With :math:`m_x` and :math:`m_y` events in the first and second train and :math:`c(y|x)` the</span>
+<span class="sd">    number of events of the second train that follow an event of the first one within ``tau`` samples (and</span>
+<span class="sd">    :math:`c(x|y)` the converse), the feature reports</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        Q = \frac{c(x|y) + c(y|x)}{\sqrt{m_x m_y}} \in [0, 1], \qquad</span>
+<span class="sd">        q = \frac{c(y|x) - c(x|y)}{\sqrt{m_x m_y}} \in [-1, 1].</span>
+
+<span class="sd">    :math:`Q = 1` means that every event of each train has a partner in the other one; :math:`q &gt; 0` means that the</span>
+<span class="sd">    first train leads, :math:`q &lt; 0` that the second one does. Simultaneous events count as synchronous and</span>
+<span class="sd">    contribute to :math:`Q` but not to :math:`q`. With ``weighted=True`` a pair at lag :math:`d` (in samples)</span>
+<span class="sd">    counts with the weight :math:`1 - (d - 1)/\tau` instead of 1.</span>
+
+<span class="sd">    The queues and counts are accumulated across windows, so consecutive windows must not overlap: ``hop`` equals</span>
+<span class="sd">    ``window`` (its default) and any other value raises ``ValueError``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int</span>
+<span class="sd">        Samples per window (no default). Changing it keeps the newest samples. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        Samples between two results; ``None`` (default) means ``window``, and no other value is accepted.</span>
+<span class="sd">        *(live)*</span>
+<span class="sd">    tau : int, optional</span>
+<span class="sd">        Largest lag, in samples, at which an event of one train is matched to an event of the other (default 5).</span>
+<span class="sd">        *(live)*</span>
+<span class="sd">    reset_every_buffer : bool, optional</span>
+<span class="sd">        If ``True``, the accumulated events and counts are cleared at every window, so that each window is evaluated</span>
+<span class="sd">        on its own and events are not matched across the boundary of two windows (default ``False``).</span>
+<span class="sd">        *(structural)*</span>
+<span class="sd">    weighted : bool, optional</span>
+<span class="sd">        Weight each matched pair by its lag as above (default ``False``). *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** ``process(first_signal, second_signal, *, timestamp=None)`` takes one value of each train per call,</span>
+<span class="sd">    non-zero is an event; ``run(first_signal, second_signal, *, timestamps=None)`` takes two 1-D series.</span>
+
+<span class="sd">    **Outputs.** ``synchronization`` (dimensionless, in [0, 1]): :math:`Q`; ``delay`` (dimensionless, in [-1, 1]):</span>
+<span class="sd">    :math:`q`, positive when the first series leads.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.</span>
+
+<span class="sd">    **Accumulation and ``tau``.** By default the counts :math:`m_x`, :math:`m_y`, :math:`c(y|x)` and :math:`c(x|y)`</span>
+<span class="sd">    accumulate across windows, so the value of a window describes the whole recording up to its end; for the value of</span>
+<span class="sd">    each window on its own, pass ``reset_every_buffer=True``. :math:`Q` depends strongly on ``tau``: the same two</span>
+<span class="sd">    trains give a low :math:`Q` with a small ``tau`` and a :math:`Q` close to 1 with a large one, so choose ``tau``</span>
+<span class="sd">    from the lags that count as simultaneous in your data and report it with the result.</span>
+
+<span class="sd">    **Corrected in the core.** The coincidence window is now ``0 &lt; lag &lt;= tau`` (an event used to expire one sample</span>
+<span class="sd">    too early, so ``tau = 1`` matched nothing); the weight of ``weighted=True`` is the one above (an integer division</span>
+<span class="sd">    made it 0 for nearly every pair); ``delay`` is positive when the first series leads (the sign was reversed); and</span>
+<span class="sd">    events are no longer credited twice or never. Overlapping windows are refused (they counted the overlapped events</span>
+<span class="sd">    twice).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; first, second = np.zeros(60), np.zeros(60)</span>
+<span class="sd">    &gt;&gt;&gt; first[[5, 25, 45]] = 1</span>
+<span class="sd">    &gt;&gt;&gt; second[[7, 27, 56]] = 1</span>
+<span class="sd">    &gt;&gt;&gt; record = EventSynchronization(window=60, tau=3).run(first, second)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(record.synchronization[-1]), 2), round(float(record.delay[-1]), 2)</span>
+<span class="sd">    (0.67, 0.67)</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_sync</span><span class="o">.</span><span class="n">EventSynchronization</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">_train</span><span class="p">(</span><span class="s2">"first_signal"</span><span class="p">),</span> <span class="n">_train</span><span class="p">(</span><span class="s2">"second_signal"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"synchronization"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Q in [0, 1]"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"delay"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"q in [-1, 1]"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">synchronization</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">delay</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_MECSBlock</span><span class="p">(</span><span class="n">_NonOverlapping</span><span class="p">,</span> <span class="n">_SeriesBlock</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A MECS block accumulates across executions."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">synchronization</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">events</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_call_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="EventSynchronizationMECS">
+<a class="viewcode-back" href="../../../../api/generated/analysis_primitives/EventSynchronizationMECS.html#pyeyesweb.analysis_primitives.EventSynchronizationMECS">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"MECS Algorithm v2"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventSynchronizationMECS</span><span class="p">(</span><span class="n">_MECSBlock</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Multi-event-class synchronization of several event series (MECS), one index per event class.</span>
+
+<span class="sd">    Extends the event synchronization of two trains to ``number_of_inputs`` series that carry events of several</span>
+<span class="sd">    classes (for example gestures of different types, one channel per class), and reports for every class how</span>
+<span class="sd">    synchronous the series are. For each class and each pair of series, the coincidences :math:`S_{ij}` are the pairs</span>
+<span class="sd">    of events within ``tau`` samples, weighted by the ``kernel``; with :math:`m_i` and :math:`m_j` the event counts of</span>
+<span class="sd">    the two series, the pair term is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \min\left(1, \; \frac{S_{ij}}{\sqrt{m_i m_j}}\right),</span>
+
+<span class="sd">    and the synchronization of the class is the mean of the pair terms over the :math:`N(N-1)/2` pairs of the</span>
+<span class="sd">    :math:`N` series. The block keeps state across windows, so consecutive windows must not overlap: ``hop``</span>
+<span class="sd">    equals ``window`` (its default) and any other value raises ``ValueError``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int</span>
+<span class="sd">        Samples per window (no default). Changing it keeps the newest samples. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        Samples between two results; ``None`` (default) means ``window``, and no other value is accepted.</span>
+<span class="sd">        *(live)*</span>
+<span class="sd">    number_of_inputs : int, optional</span>
+<span class="sd">        Number of event series (default 2); ``process`` and ``run`` take that many inputs, ``series1``,</span>
+<span class="sd">        ``series2``, ... *(structural)*</span>
+<span class="sd">    number_of_event_classes : int, optional</span>
+<span class="sd">        Number of event classes (default 3), the number of channels of each series and the size of the outputs.</span>
+<span class="sd">        *(structural)*</span>
+<span class="sd">    tau : int, optional</span>
+<span class="sd">        Largest lag, in samples, at which two events are considered coincident (default 10). *(structural)*</span>
+<span class="sd">    kernel : {"uniform", "linear", "gaussian"}, optional</span>
+<span class="sd">        Weight given to a coincidence as a function of the lag: constant (``"uniform"``, the default), decreasing</span>
+<span class="sd">        linearly (``"linear"``), or Gaussian (``"gaussian"``). *(live)*</span>
+<span class="sd">    gaussian_sigma, gaussian_mean : float, optional</span>
+<span class="sd">        Standard deviation and mean, in samples, of the Gaussian kernel; used only with ``kernel="gaussian"``</span>
+<span class="sd">        (default ``None``: the defaults of the core). *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** ``process(series1, series2, ..., *, timestamp=None)`` takes one sample per series with one channel</span>
+<span class="sd">    per event class (non-zero is an event); ``run`` takes ``(T, number_of_event_classes)`` series.</span>
+
+<span class="sd">    **Outputs.** ``synchronization`` (dimensionless, shape ``(number_of_event_classes,)``, in [0, 1]): index of each</span>
+<span class="sd">    class; ``events`` (count, same shape): the number of events of each class in the window, summed over the series.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.</span>
+
+<span class="sd">    **Windows and ``tau``.** Unlike ``EventSynchronization``, this block has no ``reset_every_buffer`` parameter; in</span>
+<span class="sd">    a check on random trains the value and the ``events`` count of each window were those of the same window run</span>
+<span class="sd">    alone, so they are per-window values. The index depends strongly on ``tau``: a larger ``tau`` matches more events,</span>
+<span class="sd">    so choose it from the lags that count as simultaneous in your data.</span>
+
+<span class="sd">    **Corrected in the core.** The number of pairs was evaluated as :math:`(N!/2)(N-2)!` instead of</span>
+<span class="sd">    :math:`N(N-1)/2`, and the pair term shrank with the number of events (two identical series of four events gave</span>
+<span class="sd">    0.25 instead of 1); it is the normalization above. Only the former "version 2" of the algorithm is provided.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; first, second = np.zeros((60, 1)), np.zeros((60, 1))</span>
+<span class="sd">    &gt;&gt;&gt; first[[5, 25, 45], 0] = 1</span>
+<span class="sd">    &gt;&gt;&gt; second[[7, 27, 46], 0] = 1</span>
+<span class="sd">    &gt;&gt;&gt; record = EventSynchronizationMECS(window=60, number_of_event_classes=1, tau=3).run(first, second)</span>
+<span class="sd">    &gt;&gt;&gt; record.synchronization[-1], record.events[-1]</span>
+<span class="sd">    (array([1.]), array([6.]))</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_sync</span><span class="o">.</span><span class="n">EventSynchronizationMECS</span>
+    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"number_of_inputs"</span><span class="p">:</span> <span class="s2">"time_series_number"</span><span class="p">,</span> <span class="s2">"number_of_event_classes"</span><span class="p">:</span> <span class="s2">"event_class_number"</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_series_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"events of one class per channel"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="n">number_of_classes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"number_of_event_classes"</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># C++ default</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"synchronization"</span><span class="p">,</span> <span class="n">number_of_classes</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"sync index of each event class"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"events"</span><span class="p">,</span> <span class="n">number_of_classes</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"event count of each event class"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_call_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NonlinearInterdependence">
+<a class="viewcode-back" href="../../../../api/generated/analysis_primitives/NonlinearInterdependence.html#pyeyesweb.analysis_primitives.NonlinearInterdependence">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"EventSynchronization_Interdependence"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NonlinearInterdependence</span><span class="p">(</span><span class="n">_TrainPairBlock</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Nonlinear interdependence between two signals: how much the neighbours of one reflect those of the other.</span>
+
+<span class="sd">    Quantifies a generalized, possibly nonlinear, dependence between two movement signals that a linear correlation</span>
+<span class="sd">    would miss, following the nonlinear interdependence of Arnhold and colleagues. Each signal is embedded in a state</span>
+<span class="sd">    space of dimension ``embedding_dimension``; for each state of :math:`X` the ``neighbours`` nearest states in</span>
+<span class="sd">    time are found, and :math:`S(X|Y)` compares the distances of these states in the space of :math:`X` with the</span>
+<span class="sd">    distances of the corresponding states in the space of :math:`Y`. It is close to 1 for two signals that determine</span>
+<span class="sd">    each other (identical signals give 1) and close to 0 for independent signals. The two values are generally</span>
+<span class="sd">    different; their asymmetry is read as the direction of the coupling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int</span>
+<span class="sd">        Samples per window, at least ``neighbours + 1`` (no default). Changing it keeps the newest samples. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        Samples between two results, ``1 &lt;= hop &lt;= window`` (default 1). *(live)*</span>
+<span class="sd">    embedding_dimension : int, optional</span>
+<span class="sd">        Dimension of the state-space embedding built from each signal (default 1). *(live)*</span>
+<span class="sd">    neighbours : int, optional</span>
+<span class="sd">        Number of nearest neighbours used for each state (default 2); the window must exceed it. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** ``process(first_signal, second_signal, *, timestamp=None)`` takes one scalar of each signal per call;</span>
+<span class="sd">    ``run(first_signal, second_signal, *, timestamps=None)`` takes two 1-D series.</span>
+
+<span class="sd">    **Outputs.** ``first_to_second_interdependence`` :math:`S(X|Y)` and ``second_to_first_interdependence``</span>
+<span class="sd">    :math:`S(Y|X)` (dimensionless, normally in [0, 1]); ``threshold`` (dimensionless): the threshold value that the</span>
+<span class="sd">    block computes from the parameters, :math:`(k/m)^{2/m}` for ``neighbours`` :math:`k` and ``embedding_dimension``</span>
+<span class="sd">    :math:`m`.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT`` between two</span>
+<span class="sd">    windows when ``hop &gt; 1``, ``INVALID_INPUT`` when a result is not finite.</span>
+
+<span class="sd">    **Corrected in the core.** The threshold used an exclusive-or on integers instead of the power above.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.default_rng(0).normal(size=100)</span>
+<span class="sd">    &gt;&gt;&gt; record = NonlinearInterdependence(window=100, neighbours=3).run(x, x ** 3)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(record.first_to_second_interdependence[-1]), 2)</span>
+<span class="sd">    0.97</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_sync</span><span class="o">.</span><span class="n">EventSynchronizationInterdependence</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">_train</span><span class="p">(</span><span class="s2">"first_signal"</span><span class="p">,</span> <span class="s2">"signal"</span><span class="p">),</span> <span class="n">_train</span><span class="p">(</span><span class="s2">"second_signal"</span><span class="p">,</span> <span class="s2">"signal"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_minimum_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">}</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"neighbours"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># C++ default; the core wants neighbours &lt; samples</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"first_to_second_interdependence"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"S(X|Y)"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"second_to_first_interdependence"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"S(Y|X)"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"threshold"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finite_result</span><span class="p">(</span><span class="n">first_to_second_interdependence</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">second_to_first_interdependence</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                  <span class="n">threshold</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SpikeSynchronization">
+<a class="viewcode-back" href="../../../../api/generated/analysis_primitives/SpikeSynchronization.html#pyeyesweb.analysis_primitives.SpikeSynchronization">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"SPIKE sync"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpikeSynchronization</span><span class="p">(</span><span class="n">_SeriesBlock</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""SPIKE-synchronization of several spike trains: the share of spikes that have a coincident partner.</span>
+
+<span class="sd">    Measures how many of the events (spikes) of a group of ``number_of_inputs`` event trains occur together with an</span>
+<span class="sd">    event of another train, without a time scale parameter: coincidence is decided adaptively from the local spike</span>
+<span class="sd">    intervals (SPIKE-synchronization, Kreuz and colleagues). Each spike receives a coincidence indicator, 1 if it</span>
+<span class="sd">    coincides with a spike of the other trains and 0 if it does not, and the degree of synchronization is the mean</span>
+<span class="sd">    of the indicator over all the spikes of all the trains (a spike shared by two trains counts twice),</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mathrm{degree} \in [0, 1], \qquad \mathrm{distance} = 1 - \mathrm{degree}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int</span>
+<span class="sd">        ``"binary"``: samples per window (no default). Changing it keeps the newest samples. ``"timings"``: the number</span>
+<span class="sd">        of spikes of each train (the core needs the same number in every train). *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        Samples between two results, ``1 &lt;= hop &lt;= window`` (default 1); not used in ``"timings"`` mode, where every</span>
+<span class="sd">        call gives a result. *(live)*</span>
+<span class="sd">    number_of_inputs : int, optional</span>
+<span class="sd">        Number of spike trains (default 2), the number of channels of the input. *(structural)*</span>
+<span class="sd">    mode : {"binary", "timings"}, optional</span>
+<span class="sd">        How the trains are given (default ``"binary"``): ``"binary"`` for one channel per train sampled in time, a</span>
+<span class="sd">        positive value being a spike; ``"timings"`` for the spike times themselves, one call per set of trains. *(structural)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** ``"binary"``: ``process(trains, *, timestamp=None)`` takes one sample with one channel per train;</span>
+<span class="sd">    ``run(trains, *, timestamps=None)`` takes ``(T, number_of_inputs)``. ``"timings"``:</span>
+<span class="sd">    ``process(spike_times, *, timestamp=None)`` takes one ``(number_of_inputs, window)`` matrix, one row per train</span>
+<span class="sd">    holding its spike times (any unit, ``&gt; 0`` and increasing in each row), and returns the result for those trains;</span>
+<span class="sd">    ``run(spike_times, *, timestamps=None)`` takes ``(T, number_of_inputs, window)``, one set of trains per row of the</span>
+<span class="sd">    recorder, and nothing is carried from one call to the next. Spike times that are not ``&gt; 0`` or not increasing</span>
+<span class="sd">    give ``INVALID_INPUT``; a matrix of another shape (trains with different numbers of spikes) raises ``ValueError``.</span>
+
+<span class="sd">    **Outputs.** ``degree`` (dimensionless, in [0, 1]): SPIKE-synchronization; ``distance`` (dimensionless, in</span>
+<span class="sd">    [0, 1]): ``1 - degree``; ``profile`` (dimensionless, one value per sample of the window): the coincidence</span>
+<span class="sd">    indicator of the merged spikes at each sample, -1 where no train has a spike, available in ``"binary"`` mode</span>
+<span class="sd">    only (empty otherwise).</span>
+
+<span class="sd">    **Statuses.** ``"binary"``: ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT``</span>
+<span class="sd">    between two windows when ``hop &gt; 1``. ``"timings"``: ``OK`` for every call.</span>
+
+<span class="sd">    **Corrected in the core.** In binary mode the degree and the distance were swapped; the degree was the mean over</span>
+<span class="sd">    the distinct spike positions instead of over all spikes (for the trains 10, 20, 30 and 10, 21, 45 it was 0.6, it is</span>
+<span class="sd">    0.667); the merging of timings by "last train wins" was removed.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; trains = np.zeros((50, 2))</span>
+<span class="sd">    &gt;&gt;&gt; trains[[5, 20, 35], 0] = 1</span>
+<span class="sd">    &gt;&gt;&gt; trains[[5, 21, 40], 1] = 1</span>
+<span class="sd">    &gt;&gt;&gt; record = SpikeSynchronization(window=50).run(trains)</span>
+<span class="sd">    &gt;&gt;&gt; float(record.degree[-1]), float(record.distance[-1])</span>
+<span class="sd">    (1.0, 0.0)</span>
+
+<span class="sd">    The same trains as spike times (here in the same order, the second train 1 sample late for its last spike):</span>
+
+<span class="sd">    &gt;&gt;&gt; times = np.array([[5.0, 20.0, 35.0], [5.0, 21.0, 40.0]])</span>
+<span class="sd">    &gt;&gt;&gt; result = SpikeSynchronization(window=3, mode="timings").process(times)</span>
+<span class="sd">    &gt;&gt;&gt; float(result.degree), float(result.distance)</span>
+<span class="sd">    (1.0, 0.0)</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_sync</span><span class="o">.</span><span class="n">SpikeES</span>
+    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"number_of_inputs"</span><span class="p">:</span> <span class="s2">"number_of_input_trains"</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="n">number_of_trains</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"number_of_inputs"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># C++ default</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">_SpikeSyncMode</span><span class="o">.</span><span class="n">TIMINGS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"spike_times"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">MATRIX</span><span class="p">,</span> <span class="p">(</span><span class="n">number_of_trains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">),</span>
+                                <span class="n">doc</span><span class="o">=</span><span class="s2">"spike times, one row per train, increasing and &gt; 0"</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"trains"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="n">number_of_trains</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"one value per spike train"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_window_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_changed</span><span class="p">()</span>  <span class="c1"># in "timings" mode the inputs have ``window`` columns</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"degree"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"SPIKE-synchronization in [0, 1]"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"distance"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"1 - degree"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"profile"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"merged coincidence per sample, BINARY mode only"</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"mode"</span><span class="p">,</span> <span class="n">_SpikeSyncMode</span><span class="o">.</span><span class="n">BINARY</span><span class="p">)</span>  <span class="c1"># C++ default</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">samples</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">!=</span> <span class="n">_SpikeSyncMode</span><span class="o">.</span><span class="n">TIMINGS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="o">*</span><span class="n">samples</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">times</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"empty sample"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">times</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"spike times must be &gt; 0"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"spike times must increase within each train"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call_block</span><span class="p">([</span><span class="n">times</span><span class="p">]),</span> <span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_call_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">trains</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">_SpikeSyncMode</span><span class="o">.</span><span class="n">BINARY</span><span class="p">:</span>
+            <span class="n">trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">trains</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">trains</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">profile</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">raw</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="n">degree</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SequenceDetector">
+<a class="viewcode-back" href="../../../../api/generated/analysis_primitives/SequenceDetector.html#pyeyesweb.analysis_primitives.SequenceDetector">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"SequenceDetector"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SequenceDetector</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Detector of a given sequence of integer events in a stream, one sample per call.</span>
+
+<span class="sd">    Recognizes when a short ordered pattern of events (for example the successive gestures of an exercise, each coded</span>
+<span class="sd">    with an integer) is performed, and counts the completed patterns. At every sample the input is the id of the</span>
+<span class="sd">    event that happens (0 when none); the sequence is completed when its ids occur in order with at most</span>
+<span class="sd">    ``inter_event_time`` samples between two consecutive ones; a longer gap breaks it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sequence : str, optional</span>
+<span class="sd">        The ids of the sequence, integers separated by spaces (default ``"1 2"``). *(structural)*</span>
+<span class="sd">    inter_event_time : int, optional</span>
+<span class="sd">        Largest distance in samples between two consecutive events of the sequence (default 1: the events</span>
+<span class="sd">        are on consecutive samples; with 2 one sample without event may separate them). *(live)*</span>
+<span class="sd">    any_order : bool, optional</span>
+<span class="sd">        If ``True`` the sequence is also detected in the reversed order (default ``False``). *(structural)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** ``process(event, *, timestamp=None)`` takes the integer id of the event of this sample, 0 for none;</span>
+<span class="sd">    ``run(event, *, timestamps=None)`` takes a 1-D series of ids.</span>
+
+<span class="sd">    **Outputs.** ``is_completed`` (bool): the sequence was completed by this sample; ``sequence_count`` (count): the</span>
+<span class="sd">    number of sequences completed so far.</span>
+
+<span class="sd">    **Statuses.** Always ``OK``.</span>
+
+<span class="sd">    **Corrected in the core.** The detector of the reversed order started at the last position, so a lone first</span>
+<span class="sd">    element was detected; when both directions were completed by the same sample (a palindromic or one-element</span>
+<span class="sd">    sequence) the count rose by 2, it rises by 1.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; detector = SequenceDetector(sequence="1 2 3")</span>
+<span class="sd">    &gt;&gt;&gt; [int(detector.process(event).sequence_count) for event in [1, 2, 3, 0, 1, 2, 3]]</span>
+<span class="sd">    [0, 0, 1, 1, 1, 1, 2]</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_sync</span><span class="o">.</span><span class="n">SequenceDetector</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"event"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"event id, 0 = none"</span><span class="p">,</span> <span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"is_completed"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"sequence_count"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">train</span><span class="p">(</span><span class="n">event</span><span class="p">)[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">is_completed</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">sequence_count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">number_of_sequences</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"EventSynchronization"</span><span class="p">,</span> <span class="s2">"EventSynchronizationMECS"</span><span class="p">,</span> <span class="s2">"NonlinearInterdependence"</span><span class="p">,</span> <span class="s2">"SpikeSynchronization"</span><span class="p">,</span>
+           <span class="s2">"SequenceDetector"</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

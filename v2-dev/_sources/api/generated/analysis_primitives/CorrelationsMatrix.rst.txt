@@ -1,0 +1,87 @@
+.. _feature-CorrelationsMatrix:
+
+CorrelationsMatrix
+==================
+
+Matrix of positive Pearson correlations between the signals of a group over a sliding window.
+
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: CorrelationsMatrix (CPRMatrix)`
+
+Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``window``
+     - *required*
+     - ``int``
+   * - ``hop``
+     - ``1``
+     - ``int``
+   * - ``number_of_inputs``
+     - ``4``
+     - ``int``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``signals``
+     - sample
+     - (4,)
+     - 
+     - one value per signal
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``correlations_matrix``
+     - ``float``
+     - (4, 4)
+     - 
+     - CPR matrix
+
+.. py:currentmodule:: pyeyesweb.analysis_primitives
+
+Description
+-----------
+
+.. autoclass:: CorrelationsMatrix
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.analysis_primitives.CorrelationsMatrix.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

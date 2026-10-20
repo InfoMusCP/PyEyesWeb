@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Changelog &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="_static/documentation_options.js?v=944fa962"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'changelog';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Migrating from 1.x" href="migration.html" />
+    <link rel="prev" title="Building the docs" href="developer/building_the_docs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Changelog</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
+<section id="unreleased-pre-release">
+<h2>2.0.0 (unreleased, pre-release)<a class="headerlink" href="#unreleased-pre-release" title="Link to this heading">#</a></h2>
+<p>PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Gesture Analysis library. It is not released:
+the packages are not on PyPI yet. The migration table for every removed or renamed name is in the migration guide
+(<code class="docutils literal notranslate"><span class="pre">docs/migration.md</span></code>, “Migrating from 1.x”).</p>
+<section id="breaking-changes">
+<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat!: new call contract, shared by all features. A feature declares <code class="docutils literal notranslate"><span class="pre">inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">outputs</span></code> (a <code class="docutils literal notranslate"><span class="pre">Schema</span></code>) and <code class="docutils literal notranslate"><span class="pre">parameters</span></code>;
+<code class="docutils literal notranslate"><span class="pre">process(*sample,</span> <span class="pre">timestamp=None)</span></code> handles one sample or frame and returns an immutable <code class="docutils literal notranslate"><span class="pre">Result</span></code>, <code class="docutils literal notranslate"><span class="pre">run(*recording,</span> <span class="pre">timestamps=None,</span> <span class="pre">reset=True)</span></code> handles a whole recording and returns a <code class="docutils literal notranslate"><span class="pre">Recorder</span></code>, <code class="docutils literal notranslate"><span class="pre">reset()</span></code> clears the state, <code class="docutils literal notranslate"><span class="pre">latest</span></code>
+holds the last <code class="docutils literal notranslate"><span class="pre">OK</span></code> result (<code class="docutils literal notranslate"><span class="pre">None</span></code> before the first). <code class="docutils literal notranslate"><span class="pre">FeatureResult</span></code>, the per-feature result classes, <code class="docutils literal notranslate"><span class="pre">compute(...)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">__call__(SlidingWindow)</span></code> and <code class="docutils literal notranslate"><span class="pre">SlidingWindow</span></code> itself are removed; windowed features own their buffer (<code class="docutils literal notranslate"><span class="pre">window</span></code>, <code class="docutils literal notranslate"><span class="pre">hop</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Result</span></code> carries <code class="docutils literal notranslate"><span class="pre">status</span></code> (<code class="docutils literal notranslate"><span class="pre">OK</span></code>, <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code>, <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>, <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>), <code class="docutils literal notranslate"><span class="pre">reason</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>, a per-output <code class="docutils literal notranslate"><span class="pre">valid</span></code>
+mask and one attribute per output; <code class="docutils literal notranslate"><span class="pre">is_valid</span></code> remains as an alias of <code class="docutils literal notranslate"><span class="pre">ok</span></code>. A missing value is <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code> for integer and
+<code class="docutils literal notranslate"><span class="pre">False</span></code> for boolean outputs), never <code class="docutils literal notranslate"><span class="pre">None</span></code>, and array shapes do not change between calls.</p></li>
+<li><p>feat!: layered architecture. Features live in <code class="docutils literal notranslate"><span class="pre">pyeyesweb.physical_signals</span></code>, <code class="docutils literal notranslate"><span class="pre">low_level</span></code>, <code class="docutils literal notranslate"><span class="pre">mid_level</span></code>, <code class="docutils literal notranslate"><span class="pre">high_level</span></code> and
+<code class="docutils literal notranslate"><span class="pre">analysis_primitives</span></code>; the catalog (<code class="docutils literal notranslate"><span class="pre">pyeyesweb.catalog()</span></code>) holds 60 features (11, 22, 7, 1 and 19). <code class="docutils literal notranslate"><span class="pre">pyeyesweb.Smoothness</span></code>
+and <code class="docutils literal notranslate"><span class="pre">pyeyesweb.Synchronization</span></code> are no longer exported at the top level.</p></li>
+<li><p>The features run in a compiled core, the module <code class="docutils literal notranslate"><span class="pre">eyesweb_core</span></code>, a package separate from <code class="docutils literal notranslate"><span class="pre">pyeyesweb</span></code> (a development build is
+found through <code class="docutils literal notranslate"><span class="pre">EYESWEB_CORE_PATH</span></code>). <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">pyeyesweb</span></code>, <code class="docutils literal notranslate"><span class="pre">pyeyesweb.data_models</span></code> and <code class="docutils literal notranslate"><span class="pre">Layer</span></code> work without it. The minimum
+supported Python version is 3.10.</p></li>
+<li><p>Time rule and units: time is in seconds, keyword-only (<code class="docutils literal notranslate"><span class="pre">timestamp</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamps</span></code>); <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> in hertz replaces
+<code class="docutils literal notranslate"><span class="pre">rate_hz</span></code> and has no default; <code class="docutils literal notranslate"><span class="pre">creation_time</span></code>, <code class="docutils literal notranslate"><span class="pre">time_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">TICKS_PER_SECOND</span></code> are gone. <code class="docutils literal notranslate"><span class="pre">units=&quot;m&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code> scales the
+parameters, never the data.</p></li>
+<li><p>Naming and signatures: one spelling per concept (<code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">window</span></code>, <code class="docutils literal notranslate"><span class="pre">cells_along_x</span></code>, <code class="docutils literal notranslate"><span class="pre">gaussian_sigma</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gesture_duration</span></code>, <code class="docutils literal notranslate"><span class="pre">first_signal</span></code>/<code class="docutils literal notranslate"><span class="pre">second_signal</span></code>, …; enforced by a test), choices are lower-case strings (no enumeration
+parameters), groups of boolean switches are <code class="docutils literal notranslate"><span class="pre">parts=[...]</span></code>, joints are named (<code class="docutils literal notranslate"><span class="pre">labels=</span></code>, <code class="docutils literal notranslate"><span class="pre">skeleton=</span></code> presets) instead of
+indexed, signatures are explicit and keyword-only after <code class="docutils literal notranslate"><span class="pre">window,</span> <span class="pre">hop</span></code>.</p></li>
+<li><p>The 1.x features were reshaped: <code class="docutils literal notranslate"><span class="pre">Smoothness</span></code> is <code class="docutils literal notranslate"><span class="pre">SpectralArcLength</span></code>, <code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk</span></code>, <code class="docutils literal notranslate"><span class="pre">Harmonicity</span></code> and
+<code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code>; <code class="docutils literal notranslate"><span class="pre">Synchronization</span></code> is <code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code>; <code class="docutils literal notranslate"><span class="pre">GeometricSymmetry</span></code> and <code class="docutils literal notranslate"><span class="pre">SymmetryIndex3D</span></code> are <code class="docutils literal notranslate"><span class="pre">Symmetry</span></code>;
+<code class="docutils literal notranslate"><span class="pre">Impulsivity</span></code> is <code class="docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code>; <code class="docutils literal notranslate"><span class="pre">MultiScaleEntropyDominance</span></code> is <code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code> plus <code class="docutils literal notranslate"><span class="pre">EnsembleDominance</span></code>;
+<code class="docutils literal notranslate"><span class="pre">Rarity</span></code> is the EyesWeb block; <code class="docutils literal notranslate"><span class="pre">KineticEnergy</span></code>, <code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code>, <code class="docutils literal notranslate"><span class="pre">DirectionChange</span></code> and <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> have new signatures.</p></li>
+<li><p>Removed: <code class="docutils literal notranslate"><span class="pre">Lightness</span></code>, <code class="docutils literal notranslate"><span class="pre">Clusterability</span></code>, <code class="docutils literal notranslate"><span class="pre">StatisticalMoment</span></code>, <code class="docutils literal notranslate"><span class="pre">ZeroCross</span></code>, <code class="docutils literal notranslate"><span class="pre">CannyEdgeDetector</span></code>, <code class="docutils literal notranslate"><span class="pre">SkeletonManipulator</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NoPreparationDetector</span></code> and <code class="docutils literal notranslate"><span class="pre">NoPreparationDetector2</span></code>, MECS v1, <code class="docutils literal notranslate"><span class="pre">EventSynchronizationRealTime</span></code>, <code class="docutils literal notranslate"><span class="pre">TauEstimator</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ScalarBinarySyncDetector</span></code>, the trajectory datatype and its blocks, the <code class="docutils literal notranslate"><span class="pre">GeometricTrajectory3D</span></code> transforms,
+<code class="docutils literal notranslate"><span class="pre">pyeyesweb.utils.math_utils</span></code>, <code class="docutils literal notranslate"><span class="pre">pyeyesweb.utils.signal_processing</span></code> and <code class="docutils literal notranslate"><span class="pre">TSVReader</span></code>. See the migration guide for the
+replacements.</p></li>
+</ul>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: validation and <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>. NaN or infinite input, a missing joint and a timestamp that is not finite or not
+increasing give <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> with every output empty, and change no state (an overflowing result is also
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>, but is detected after the state advanced). Parameters are validated at construction and on assignment,
+and a rejected value leaves the feature unchanged.</p></li>
+<li><p>feat: new and ported features, among them the imaging blocks (<code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code>, <code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code>, <code class="docutils literal notranslate"><span class="pre">Videogram</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FilterContour</span></code>, <code class="docutils literal notranslate"><span class="pre">ContourCurvature</span></code>, <code class="docutils literal notranslate"><span class="pre">ConvexHull</span></code>, <code class="docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code>, <code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code>, <code class="docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code>), the humanoid and model blocks (<code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code>, <code class="docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GenericModelSimulator</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code>, <code class="docutils literal notranslate"><span class="pre">PointsPredictor</span></code>, <code class="docutils literal notranslate"><span class="pre">MassSpringModel</span></code>), the
+synchronization family (<code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code>, <code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code>, <code class="docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code>, <code class="docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code>, <code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code>,
+<code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code>, <code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code>, <code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code>, <code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code>), <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code>, <code class="docutils literal notranslate"><span class="pre">Directness</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code>, <code class="docutils literal notranslate"><span class="pre">TriangleSymmetry</span></code>,
+<code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code>, <code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code>, <code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code>, <code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code>, <code class="docutils literal notranslate"><span class="pre">Periodicity</span></code>, <code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code>, <code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code>, <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code> and <code class="docutils literal notranslate"><span class="pre">TimeWindowSynchronizer</span></code>.</p></li>
+<li><p>feat: <code class="docutils literal notranslate"><span class="pre">KineticEnergy(input_mode=&quot;velocity&quot;)</span></code> and a PCA fit of a point cloud in <code class="docutils literal notranslate"><span class="pre">EllipsoidSphericity.process</span></code> (with
+<code class="docutils literal notranslate"><span class="pre">axis_ratio</span></code> and <code class="docutils literal notranslate"><span class="pre">radii</span></code>), extensions of the EyesWeb blocks; the default behaviour is the faithful one.</p></li>
+<li><p>feat: discovery metadata (<code class="docutils literal notranslate"><span class="pre">LAYER</span></code>, <code class="docutils literal notranslate"><span class="pre">TIMESCALE</span></code>, <code class="docutils literal notranslate"><span class="pre">EYESWEB_BLOCK</span></code>) on every feature class, <code class="docutils literal notranslate"><span class="pre">pyeyesweb.catalog()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">catalog_table()</span></code>.</p></li>
+<li><p>feat: <code class="docutils literal notranslate"><span class="pre">Result.to_array()</span></code>, <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code>, <code class="docutils literal notranslate"><span class="pre">to_flat_dict(prefix,</span> <span class="pre">meta=True)</span></code> and <code class="docutils literal notranslate"><span class="pre">Recorder</span></code> (preallocated columns, pandas
+<code class="docutils literal notranslate"><span class="pre">to_frame()</span></code>, <code class="docutils literal notranslate"><span class="pre">rec[i]</span></code> rebuilds a <code class="docutils literal notranslate"><span class="pre">Result</span></code>). <code class="docutils literal notranslate"><span class="pre">Recorder.from_arrays</span></code> and a C++ loop in <code class="docutils literal notranslate"><span class="pre">KineticEnergy.run</span></code>.</p></li>
+<li><p>feat: live and structural parameters: <code class="docutils literal notranslate"><span class="pre">feature.parameters</span></code> is a read-only mapping, setters validate like the constructor,
+<code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> can change on a running feature, <code class="docutils literal notranslate"><span class="pre">from_*</span></code> constructors select an input mode.</p></li>
+<li><p>feat: <code class="docutils literal notranslate"><span class="pre">pyeyesweb.datasets</span></code> (example recordings, optional <code class="docutils literal notranslate"><span class="pre">datasets</span></code> extra).</p></li>
+</ul>
+</section>
+<section id="behaviour-changes">
+<h3>Behaviour changes<a class="headerlink" href="#behaviour-changes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Corrections of defects of the original EyesWeb blocks are the only behaviour (no <code class="docutils literal notranslate"><span class="pre">fix_*</span></code> flags); each is stated on the theory
+page of the feature as “Corrected in the core”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Symmetry(method=&quot;reflection&quot;)</span></code> returns a score in [0, 1] per pair instead of the distance of 1.x <code class="docutils literal notranslate"><span class="pre">GeometricSymmetry</span></code>.</p></li>
+<li><p>The smoothness metrics (1.x <code class="docutils literal notranslate"><span class="pre">Smoothness</span></code>) no longer use the Butterworth pre-filter; <code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code> values differ from 1.x by O(1/N);
+<code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code> uses a tolerance relative to the signal by default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector.is_noisy</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> for noisy motion; <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code> velocities are per second;
+<code class="docutils literal notranslate"><span class="pre">MassSpringModel.to_xml()</span></code> writes relative damping (round trip).</p></li>
+<li><p>Contraction features and <code class="docutils literal notranslate"><span class="pre">KineticEnergy</span></code> return <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> for an empty frame instead of <code class="docutils literal notranslate"><span class="pre">0.0</span></code>; negative joint indices
+are no longer accepted.</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The documentation is rebuilt with Sphinx and the PyData theme: concepts, theory pages with references, a user guide per
+layer, one generated API page per feature, how-to guides, a developer guide, a gallery of executed tutorials
+(sphinx-gallery) and a migration guide. Code blocks of the prose pages are executed by the documentation tests.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">README.md</span></code> and <code class="docutils literal notranslate"><span class="pre">CITATION.cff</span></code> are updated for 2.0.</p></li>
+</ul>
+</section>
+</section>
+<section id="v1-0-1-2026-04-07">
+<h2>v1.0.1 (2026-04-07)<a class="headerlink" href="#v1-0-1-2026-04-07" title="Link to this heading">#</a></h2>
+<section id="id1">
+<h3>Features<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: add Equilibrium class for elliptical postural balance analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/15e4e6310333141df469c15f48e882f76c2d7b4f"><code class="docutils literal notranslate"><span class="pre">15e4e63</span></code></a>)</p></li>
+<li><p>feat: implement GeometricSymmetry feature for skeletal frame and spatial symmetry analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d6c70cd260955f2e267c876df85b30cbb1085b04"><code class="docutils literal notranslate"><span class="pre">d6c70cd</span></code></a>, <a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2cdec2cf6fa94580c2369a90a3bd4de958e288af"><code class="docutils literal notranslate"><span class="pre">2cdec2c</span></code></a>)</p></li>
+</ul>
+</section>
+<section id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>fix: correct contraction index formula by removing the squared area term and updating associated tests and documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f5ccf2b8040f8edd26105c10b676397d142da1d9"><code class="docutils literal notranslate"><span class="pre">f5ccf2b</span></code></a>)</p></li>
+</ul>
+</section>
+<section id="refactoring-improvements">
+<h3>Refactoring &amp; Improvements<a class="headerlink" href="#refactoring-improvements" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>refactor: correct contraction index calculation and remove deprecated example notebooks (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/3c0f463f14772b2eab4a61c04c19b776dd25113d"><code class="docutils literal notranslate"><span class="pre">3c0f463</span></code></a>)</p></li>
+<li><p>refactor: update examples with interactive visualizations and clean up unused data files (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ac18782371bdc8fe5f57d22121faea792edf4268"><code class="docutils literal notranslate"><span class="pre">ac18782</span></code></a>)</p></li>
+<li><p>refactor: Update example notebooks, restructure Qualisys data directory, and modify data loading utilities. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ae721bbab842252995b19cc10e68f54ffb115a6b"><code class="docutils literal notranslate"><span class="pre">ae721bb</span></code></a>)</p></li>
+<li><p>refactor: add data in examples and update WIP notebooks (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ac9c4adb4f05263de60f49e3d5aabdc4ba41498b"><code class="docutils literal notranslate"><span class="pre">ac9c4ad</span></code></a>, <a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e59fa5bbbacd058ea61408b16a9cb3777df919dd"><code class="docutils literal notranslate"><span class="pre">e59fa5b</span></code></a>)</p></li>
+</ul>
+</section>
+<section id="maintenance">
+<h3>Maintenance<a class="headerlink" href="#maintenance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>bump version to 1.0.1 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6834c0cf6bdcc64f59dbda48991987d2eb6f107"><code class="docutils literal notranslate"><span class="pre">6834c0c</span></code></a>, <a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/96d01246f35a52947f649927316e0c8351c059d9"><code class="docutils literal notranslate"><span class="pre">96d0124</span></code></a>)</p></li>
+<li><p>rollback to previous release workflow (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/845be1f333b657abe6f8e916856da3fbe2585cf3"><code class="docutils literal notranslate"><span class="pre">845be1f</span></code></a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v0-1-0-2026-03-23">
+<h2>v0.1.0 (2026-03-23)<a class="headerlink" href="#v0-1-0-2026-03-23" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h3>Bug Fixes<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>fix: Correct parameter name from ‘methods’ to ‘metrics’ in StatisticalMoment initialization (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7ab172286f23074459ed4d865dcf57c9d95700ff"><code class="docutils literal notranslate"><span class="pre">7ab1722</span></code></a>)</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>Features<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: Add new analytical primitives for synchronization, kinetic energy, rarity, and statistical moments. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/8adbdf180be372274ba0d830b1aac1f135faeb35"><code class="docutils literal notranslate"><span class="pre">8adbdf1</span></code></a>)</p></li>
+<li><p>feat: add &#64;property to set Smoothness parameters (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/575a9cb0c6ecf7250602159f3e0695ed5abbba17"><code class="docutils literal notranslate"><span class="pre">575a9cb</span></code></a>)</p></li>
+<li><p>feat: add Equilibrium class with elliptical balance evaluation and interactive demo</p></li>
+</ul>
+<ul class="simple">
+<li><p>Implemented <code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code> class to evaluate balance using an ellipse aligned
+with the feet line, supporting margin and Y-axis weighting.</p></li>
+<li><p>Added full NumPy-style docstrings with detailed type annotations.</p></li>
+<li><p>Created interactive matplotlib demo (<code class="docutils literal notranslate"><span class="pre">demo_equilibrium.py</span></code>) to visualize
+equilibrium in real-time by moving the mouse cursor.</p></li>
+<li><p>The demo shows:</p>
+<ul>
+<li><p>Feet positions as reference points.</p></li>
+<li><p>Dynamic ellipse ROI, rotated according to foot alignment.</p></li>
+<li><p>Barycenter position updated interactively.</p></li>
+<li><p>Equilibrium value displayed and ellipse colored (green inside, red outside). (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a14d04ebdabcef99dd8b902b9cb40ffc6374d136"><code class="docutils literal notranslate"><span class="pre">a14d04e</span></code></a>)</p></li>
+</ul>
+</li>
+</ul>
+<ul class="simple">
+<li><p>feat(smoothness): added the functionality for computing smoothness and also a test example (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5d9b294c890af82af55608ba7bc0d81cc9361952"><code class="docutils literal notranslate"><span class="pre">5d9b294</span></code></a>)</p></li>
+<li><p>feat(sync): add synchronization module and live demo using MediaPipe (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a1f55f34f49facbc4e9659d18bfcf7dd5aa73d66"><code class="docutils literal notranslate"><span class="pre">a1f55f3</span></code></a>)</p></li>
+</ul>
+</section>
+<section id="refactoring">
+<h3>Refactoring<a class="headerlink" href="#refactoring" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>refactor: rename <code class="docutils literal notranslate"><span class="pre">BaseLowLevelFeature</span></code> to <code class="docutils literal notranslate"><span class="pre">BaseFeature</span></code>, update its usage, and standardize <code class="docutils literal notranslate"><span class="pre">compute</span></code> method parameter names. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/b6d4d00d0420fbda5434f89c2f660a7349394d13"><code class="docutils literal notranslate"><span class="pre">b6d4d00</span></code></a>)</p></li>
+<li><p>refactor: Remove old test and benchmark data, introduce new benchmark scripts and results, and update module imports and examples. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/b6f0c96a315ec648fff1bebf17b10a02b52d8ac3"><code class="docutils literal notranslate"><span class="pre">b6f0c96</span></code></a>)</p></li>
+<li><p>refactor: extract smoothness calculation utilities to math_utils and signal_processing modules (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6d4654863e7d097b0efad0fb4caa7ff1c9af887c"><code class="docutils literal notranslate"><span class="pre">6d46548</span></code></a>)</p></li>
+<li><p>refactor: extract utility functions from sync.py to reusable utils modules (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/525340624f2e5435cd3b756791852b9c6cc7c454"><code class="docutils literal notranslate"><span class="pre">5253406</span></code></a>)</p></li>
+</ul>
+</section>
+<section id="unknown">
+<h3>Unknown<a class="headerlink" href="#unknown" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Merge pull request #82 from InfoMusCP/dev</p></li>
+</ul>
+<p>Dev (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/147eeeb7412374d72b02458ef51a6df740d41cda"><code class="docutils literal notranslate"><span class="pre">147eeeb</span></code></a>)</p>
+<ul class="simple">
+<li><p>delete: md version of notebooks (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f3d08289a3e406ece98971bd9b090ddf958c5eb2"><code class="docutils literal notranslate"><span class="pre">f3d0828</span></code></a>)</p></li>
+<li><p>bump version (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/503a9825363dbb378c7e120d0beb9c069e93e649"><code class="docutils literal notranslate"><span class="pre">503a982</span></code></a>)</p></li>
+<li><p>Merge branch ‘examples’ into dev (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/fa8a8756d8568c7b0e716c61ff82353775ef1431"><code class="docutils literal notranslate"><span class="pre">fa8a875</span></code></a>)</p></li>
+<li><p>add: WIP examples and feat: release pipeline (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e3d8d4afb9f7d46656e293579319b701b733a959"><code class="docutils literal notranslate"><span class="pre">e3d8d4a</span></code></a>)</p></li>
+<li><p>add: educational md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5903a73fc476d426fa2926dc4d1602e767e22e62"><code class="docutils literal notranslate"><span class="pre">5903a73</span></code></a>)</p></li>
+<li><p>Merge pull request #81 from InfoMusCP/dev</p></li>
+</ul>
+<p>Dev (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/08ec98aea8b1b240ff01380ad13543d2d324b010"><code class="docutils literal notranslate"><span class="pre">08ec98a</span></code></a>)</p>
+<ul class="simple">
+<li><p>Merge branch ‘main’ into dev (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/85b8fc6d5d4abf823807c16609c0d25fe9a6f12a"><code class="docutils literal notranslate"><span class="pre">85b8fc6</span></code></a>)</p></li>
+<li><p>Update warning note in README.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5727bf8f6c2403598fc5b8dcc609c0020bd1789a"><code class="docutils literal notranslate"><span class="pre">5727bf8</span></code></a>)</p></li>
+<li><p>Update README with refactoring notice</p></li>
+</ul>
+<p>Added a note about ongoing refactoring and potential API changes. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bb64466ed6d6a0c93bb65602512eefb37ab4740e"><code class="docutils literal notranslate"><span class="pre">bb64466</span></code></a>)</p>
+<ul class="simple">
+<li><p>Add reference to additional smoothness research (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/21b3dc0b6c2781c2302b7f63fc2a697db4c25410"><code class="docutils literal notranslate"><span class="pre">21b3dc0</span></code></a>)</p></li>
+<li><p>Update reference for movement smoothness analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d3370515fef1c19414d77f80ebd3536ea6bad6a9"><code class="docutils literal notranslate"><span class="pre">d337051</span></code></a>)</p></li>
+<li><p>Add: mike for documentation versioning (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d4e27fe80d9bb31e89a06c75675d3d6fe8c12357"><code class="docutils literal notranslate"><span class="pre">d4e27fe</span></code></a>)</p></li>
+<li><p>add: missing references and links in conceptual documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ecabc16131261b82e9ab97d15adcb9c9b1690947"><code class="docutils literal notranslate"><span class="pre">ecabc16</span></code></a>)</p></li>
+<li><p>improved documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/56a279d4b68720c05048a99f6d97692cb255363c"><code class="docutils literal notranslate"><span class="pre">56a279d</span></code></a>)</p></li>
+<li><p>add: python docstrings and updated markdown documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a0fd2b5c67e2dac9b8c2aac1a4d3e3f4be13cb67"><code class="docutils literal notranslate"><span class="pre">a0fd2b5</span></code></a>)</p></li>
+<li><p>Removed absolute path (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/3c74802be2b2f66dd6fa27dbd641279b5d2709ed"><code class="docutils literal notranslate"><span class="pre">3c74802</span></code></a>)</p></li>
+<li><p>Aligned Compute_Sparc to article Balasubramanian, S., Melendez-Calderon, A., Roby-Brami, A., &amp; Burdet, E. (2015).  On the analysis of movement smoothness. Journal of NeuroEngineering and Rehabilitation,    12(1), 1-11.
+Add parameters in compute_sparc (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/286e9bc2286b887edac72b13109d242bf876eb8f"><code class="docutils literal notranslate"><span class="pre">286e9bc</span></code></a>)</p></li>
+<li><p>Add benchmarks for equilibrium and smootness
+Add KinectLoaderV2 (Kinect Log in EyesWeb Standard) (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/71d7ff82f2df992906cdc2c934544085f9a1c641"><code class="docutils literal notranslate"><span class="pre">71d7ff8</span></code></a>)</p></li>
+<li><p>add todo (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e44e904b06163411833920b37e630d76e47bb21c"><code class="docutils literal notranslate"><span class="pre">e44e904</span></code></a>)</p></li>
+<li><p>remove index (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/763744c30695d1a3b9cd4caba5effd2329b1613a"><code class="docutils literal notranslate"><span class="pre">763744c</span></code></a>)</p></li>
+<li><p>synchronization benchmark (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c90a2a788cf2dd5d293e0cd1969ee5ad69980bab"><code class="docutils literal notranslate"><span class="pre">c90a2a7</span></code></a>)</p></li>
+<li><p>update benchmarks (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/23d9fdca0329b86a1839bf844c5522571058cab9"><code class="docutils literal notranslate"><span class="pre">23d9fdc</span></code></a>)</p></li>
+<li><p>add feature benchmarks (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/997b1c6f910a18622b91cc8baf866c4787bbc0b0"><code class="docutils literal notranslate"><span class="pre">997b1c6</span></code></a>)</p></li>
+<li><p>rarity test (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/69c5e893c2a0bbcf62dc4e9d08482a57dbaeb7cf"><code class="docutils literal notranslate"><span class="pre">69c5e89</span></code></a>)</p></li>
+<li><p>add example notebooks (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1ae3a55b5acb629e1714f7d27bb7b763a437f227"><code class="docutils literal notranslate"><span class="pre">1ae3a55</span></code></a>)</p></li>
+<li><p>rarity test (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6c3c80f51515a068b315f76b478f8e0dfd1ccafa"><code class="docutils literal notranslate"><span class="pre">6c3c80f</span></code></a>)</p></li>
+<li><p>Merge remote-tracking branch ‘origin/refactor-sliding-window’ into refactor-sliding-window (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/aba510882f866f90e639cfe1d0c16744b3c30410"><code class="docutils literal notranslate"><span class="pre">aba5108</span></code></a>)</p></li>
+<li><p>refactoring (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/8529131a73cfb6a685e2277db33e4861434af54d"><code class="docutils literal notranslate"><span class="pre">8529131</span></code></a>)</p></li>
+<li><p>Rarity test (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e3fae2e4e5e6974b64e32f83cfd429bc53ce897c"><code class="docutils literal notranslate"><span class="pre">e3fae2e</span></code></a>)</p></li>
+<li><p>refactoring (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/0f05078a813b8f78d908dfff0f6b2e274c8e01e8"><code class="docutils literal notranslate"><span class="pre">0f05078</span></code></a>)</p></li>
+<li><p>bug fix (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d78540989fdab32be8a5741d3667828f7c6a0495"><code class="docutils literal notranslate"><span class="pre">d785409</span></code></a>)</p></li>
+<li><p>removed a left print (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e92d7d48f657d4fa8f79f2ef894d66f4c5c80418"><code class="docutils literal notranslate"><span class="pre">e92d7d4</span></code></a>)</p></li>
+<li><p>bug fixed and changed deps due to removal of trapz from numpy&gt;=2.4.0 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/21a806634dec773c3cb1883ff1ccab5c61b99151"><code class="docutils literal notranslate"><span class="pre">21a8066</span></code></a>)</p></li>
+<li><p>bug fix pt.2 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7b1fb82a8b2b9cf8a19a1c8d6acdff5b714c3b13"><code class="docutils literal notranslate"><span class="pre">7b1fb82</span></code></a>)</p></li>
+<li><p>bug fix (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/dc82e1c3c77c8e42f6c483ffc4049921998b4259"><code class="docutils literal notranslate"><span class="pre">dc82e1c</span></code></a>)</p></li>
+<li><p>SlidingWindow now has generic signals instead of joints
+refactored other classes  to align with current design (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1d92adf9f3083d581527db11dc8575d36b19e579"><code class="docutils literal notranslate"><span class="pre">1d92adf</span></code></a>)</p></li>
+<li><p>Merge branch ‘main’ into dev-impulsivity (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/cb4b9ff5d19d953fa2ee8297f2c998f44671ad1f"><code class="docutils literal notranslate"><span class="pre">cb4b9ff</span></code></a>)</p></li>
+<li><p>Merge pull request #75 from Foysal440/main</p></li>
+</ul>
+<p>Add files via upload (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5085a6eb3c117b7026bf97e54b524551e7f83a35"><code class="docutils literal notranslate"><span class="pre">5085a6e</span></code></a>)</p>
+<ul class="simple">
+<li><p>Add files via upload (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d66c02b51c3b37301fdaba3ef2ef46870c715320"><code class="docutils literal notranslate"><span class="pre">d66c02b</span></code></a>)</p></li>
+<li><p>Update license badge to MIT (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/fedd37587b6483ef389a818bd9c60563a3da7431"><code class="docutils literal notranslate"><span class="pre">fedd375</span></code></a>)</p></li>
+<li><p>Add files via upload (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4c0d9285159c9bc2374e4c395e9e2660c571623d"><code class="docutils literal notranslate"><span class="pre">4c0d928</span></code></a>)</p></li>
+<li><p>Update license badge in README.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/43549f39b3fd17dc00f56f46059182af82bef051"><code class="docutils literal notranslate"><span class="pre">43549f3</span></code></a>)</p></li>
+<li><p>Merge pull request #76 from InfoMusCP/review_doc</p></li>
+</ul>
+<p>fix doc (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ab71f594b9eb850838315645adf705db7f49a901"><code class="docutils literal notranslate"><span class="pre">ab71f59</span></code></a>)</p>
+<ul class="simple">
+<li><p>fix doc (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/95cdad38688bec9d42e860e409dd9799dd38cbc5"><code class="docutils literal notranslate"><span class="pre">95cdad3</span></code></a>)</p></li>
+<li><p>fix missing dependency (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/aa2d89ac51d064b65d9ab500957f97f0f15526a8"><code class="docutils literal notranslate"><span class="pre">aa2d89a</span></code></a>)</p></li>
+<li><p>fix missing dependency (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/795c7473f5d061cb168f544bf3cbac9df087ac85"><code class="docutils literal notranslate"><span class="pre">795c747</span></code></a>)</p></li>
+<li><p>change doc theme to readthedocs (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/dd298ef3e50dfc93cb1f02500c91725d6a9be3ce"><code class="docutils literal notranslate"><span class="pre">dd298ef</span></code></a>)</p></li>
+<li><p>fix lightness calculation to ensure sliding window length is an integer and prevent division by zero (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/32c4b3b3c579e471e0d6ecbcd7447369dc2948c8"><code class="docutils literal notranslate"><span class="pre">32c4b3b</span></code></a>)</p></li>
+<li><p>refactor Lightness class to make sliding window length configurable (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f44971e663152ee28d0346ff38f94f799e324b30"><code class="docutils literal notranslate"><span class="pre">f44971e</span></code></a>)</p></li>
+<li><p>Merge pull request #74 from InfoMusCP/docs</p></li>
+</ul>
+<p>rename index.md files to improve clarity and organization in documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ab0d43a8893270a5e0b334069498b4b29950710f"><code class="docutils literal notranslate"><span class="pre">ab0d43a</span></code></a>)</p>
+<ul class="simple">
+<li><p>rename index.md files to improve clarity and organization in documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bb7b073d8119ba18801a1b945aa4ac001fe712eb"><code class="docutils literal notranslate"><span class="pre">bb7b073</span></code></a>)</p></li>
+<li><p>Merge pull request #73 from Foysal440/stat</p></li>
+</ul>
+<p>added statistical_moment (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4d2c5bba1cc658b56b9e6331ccdcc4296446a6a6"><code class="docutils literal notranslate"><span class="pre">4d2c5bb</span></code></a>)</p>
+<ul class="simple">
+<li><p>added stat_moment (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/3e582483ba00bdba2d53899d3ec410df97d4b0eb"><code class="docutils literal notranslate"><span class="pre">3e58248</span></code></a>)</p></li>
+<li><p>remove print from synchronization.py (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/acc0c1dc1651ced0105ace98450f81abcddb4ded"><code class="docutils literal notranslate"><span class="pre">acc0c1d</span></code></a>)</p></li>
+<li><p>fix accessing rarity value in lightness (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/56880f249488a126089217b484540c126a82c483"><code class="docutils literal notranslate"><span class="pre">56880f2</span></code></a>)</p></li>
+<li><p>minor fixes to kinetic_energy.py and lightness.py (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f57d665c45e53f82644056c0793b5bdc068c9af9"><code class="docutils literal notranslate"><span class="pre">f57d665</span></code></a>)</p></li>
+<li><p>Add Kinetic Energy and Lightness (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1360f3d8ea08514efc82bf4b05e57c50af229042"><code class="docutils literal notranslate"><span class="pre">1360f3d</span></code></a>)</p></li>
+<li><p>remove print in rarity.py (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ec36754ae541a7c3ab6d8fdbdaa229bc77ed3841"><code class="docutils literal notranslate"><span class="pre">ec36754</span></code></a>)</p></li>
+<li><p>update Rarity class to return a dictionary instead of a float (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/0cfbec4c811fefff821b20d0a512a4c5bd8a303f"><code class="docutils literal notranslate"><span class="pre">0cfbec4</span></code></a>)</p></li>
+<li><p>fix return values in clusterability.py for consistency (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6c903fa741bcfb1dafcfad0d61a4245125eed983"><code class="docutils literal notranslate"><span class="pre">6c903fa</span></code></a>)</p></li>
+<li><p>add rarity.py (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/79e1007e3a3bc87867b88511d8a722a63dc72c17"><code class="docutils literal notranslate"><span class="pre">79e1007</span></code></a>)</p></li>
+<li><p>Merge branch ‘Foysal440-Clusterability’ (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/eff0ffc753f91075725b80fa9eb27d10a9ac591f"><code class="docutils literal notranslate"><span class="pre">eff0ffc</span></code></a>)</p></li>
+<li><p>improve readability and documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/56ade520bf50ab20af9df091ccdbf6c0aa9f973d"><code class="docutils literal notranslate"><span class="pre">56ade52</span></code></a>)</p></li>
+<li><p>improve readability and documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c1f128e05a9ba228747d9a1745cca632c6140128"><code class="docutils literal notranslate"><span class="pre">c1f128e</span></code></a>)</p></li>
+<li><p>Added clusterability.py (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/56328644105760080c8c4a0dc40ee39625c3b104"><code class="docutils literal notranslate"><span class="pre">5632864</span></code></a>)</p></li>
+<li><p>bump to v0.0.1a5 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/b7c8bf0b297e0fbc226989c44e446c361edd53a9"><code class="docutils literal notranslate"><span class="pre">b7c8bf0</span></code></a>)</p></li>
+<li><p>Merge pull request #68 from InfoMusCP/feature/fixes</p></li>
+</ul>
+<p>Feature/fixes (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5c706d3a9b6c5965ae85e343b9ce6c45bc185bc9"><code class="docutils literal notranslate"><span class="pre">5c706d3</span></code></a>)</p>
+<ul class="simple">
+<li><p>Merge branch ‘main’ into feature/fixes</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="conflicts">
+<h1>Conflicts:<a class="headerlink" href="#conflicts" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="docs-user-guide-theoretical-framework-analysis-primitives-synchronization-md">
+<h1>docs/user_guide/theoretical_framework/analysis_primitives/synchronization.md<a class="headerlink" href="#docs-user-guide-theoretical-framework-analysis-primitives-synchronization-md" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="docs-user-guide-theoretical-framework-low-level-contraction-expansion-md">
+<h1>docs/user_guide/theoretical_framework/low_level/contraction_expansion.md<a class="headerlink" href="#docs-user-guide-theoretical-framework-low-level-contraction-expansion-md" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="docs-user-guide-theoretical-framework-low-level-smoothness-md-72f2ea5">
+<h1>docs/user_guide/theoretical_framework/low_level/smoothness.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/72f2ea5f7f369f1facf9f0090831c35b737c58b0"><code class="docutils literal notranslate"><span class="pre">72f2ea5</span></code></a>)<a class="headerlink" href="#docs-user-guide-theoretical-framework-low-level-smoothness-md-72f2ea5" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>fix broken links and review docs information (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ae8cab1065d65b88e046d1aeb729a6b2c0c5e468"><code class="docutils literal notranslate"><span class="pre">ae8cab1</span></code></a>)</p></li>
+<li><p>Extend smoothness functionality as raised in #66 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/0f8745539f069ee27dee98dddd58fd569dc382d9"><code class="docutils literal notranslate"><span class="pre">0f87455</span></code></a>)</p></li>
+<li><p>Clarify velocity input requirement for smoothness module and improve jerk computation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ee37a2d66c9f6da71deee96b73581b10ea2b3c11"><code class="docutils literal notranslate"><span class="pre">ee37a2d</span></code></a>)</p></li>
+<li><p>Enhance type validation in SlidingWindow and clarify comments in PointsDensity (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/938dfd39f91654319145d8f122753af57f448a17"><code class="docutils literal notranslate"><span class="pre">938dfd3</span></code></a>)</p></li>
+<li><p>Refactor Synchronization and SlidingWindow classes for improved functionality and clarity; update dependencies in pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7453e1da4c08b2554aff3ca865583793590e5432"><code class="docutils literal notranslate"><span class="pre">7453e1d</span></code></a>)</p></li>
+<li><p>contraction expansion (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/42f0e6e7ada15750c7c40797ba063ca254778297"><code class="docutils literal notranslate"><span class="pre">42f0e6e</span></code></a>)</p></li>
+<li><p>developed and tested geometric symmetry (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9c7c43199692a123b5551e4a76b697989a4fb947"><code class="docutils literal notranslate"><span class="pre">9c7c431</span></code></a>)</p></li>
+<li><p>Refactor DirectionChange and Suddenness classes to return dictionaries with calculated values (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a7e956be8978aa1d3c736accaa6c89056baba56e"><code class="docutils literal notranslate"><span class="pre">a7e956b</span></code></a>)</p></li>
+<li><p>Add DirectionChange and Suddenness classes for impulsivity evaluation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/84d5e7a88b6d24a278a937c2746145f69e07f63c"><code class="docutils literal notranslate"><span class="pre">84d5e7a</span></code></a>)</p></li>
+<li><p>started testing (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4cc67cac3545dbc2dd983546d2f64c1adeea9fa2"><code class="docutils literal notranslate"><span class="pre">4cc67ca</span></code></a>)</p></li>
+<li><p>Merge branch ‘main’ into test-gabriele (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/10bad5ebbc0bf36d3a762b2b75e70760437e56e9"><code class="docutils literal notranslate"><span class="pre">10bad5e</span></code></a>)</p></li>
+<li><p>Simplify test fixtures using factory pattern (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/487451c2f587bad0e171196180b0dd0bb1ec1023"><code class="docutils literal notranslate"><span class="pre">487451c</span></code></a>)</p></li>
+<li><p>Apply ThreadSafeHistoryBuffer and validation utilities to bilateral_symmetry (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d0b97aa53532feb993e4af7d2db4887d5c2ffba2"><code class="docutils literal notranslate"><span class="pre">d0b97aa</span></code></a>)</p></li>
+<li><p>Apply ThreadSafeHistoryBuffer and utilities to synchronization module (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a8f4878d9c3aab675a810bd8468a7ee9d0292472"><code class="docutils literal notranslate"><span class="pre">a8f4878</span></code></a>)</p></li>
+<li><p>Standardize NaN usage to np.nan for consistency (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c1b585fbf7413beeb4e0f701d7e2bc5c6736c1d5"><code class="docutils literal notranslate"><span class="pre">c1b585f</span></code></a>)</p></li>
+<li><p>Add helper methods to reduce duplication in signal generators (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4d8638bd93ce5eafe2c149ef13a71f6a01c3dba7"><code class="docutils literal notranslate"><span class="pre">4d8638b</span></code></a>)</p></li>
+<li><p>Refactor baseline validation to eliminate duplication in contraction_expansion (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4d1e62bea8a28c8f3c23ea06591f967089f4a059"><code class="docutils literal notranslate"><span class="pre">4d1e62b</span></code></a>)</p></li>
+<li><p>Extract phase synchronization computation to reusable utility (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bf63a1390ad0b7d0a9a05cc7f16345bd6fcec348"><code class="docutils literal notranslate"><span class="pre">bf63a13</span></code></a>)</p></li>
+<li><p>Add validation utilities for filter params and window size (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/587875450f95e7791a5feab16f837b4f05cf07ff"><code class="docutils literal notranslate"><span class="pre">5878754</span></code></a>)</p></li>
+<li><p>Add ThreadSafeHistoryBuffer for centralized thread-safe operations (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9d062b1137d3d3ba34f4ad2eb1c247cf9fea165e"><code class="docutils literal notranslate"><span class="pre">9d062b1</span></code></a>)</p></li>
+<li><p>Add option to use real data files in CLI tool (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/521391c7cb5339cbe5c4f6aa3f48d03ce45f0930"><code class="docutils literal notranslate"><span class="pre">521391c</span></code></a>)</p></li>
+<li><p>Fix scipy version constraint in pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/efc0b61e8e7c3ff80baa70b6f0a02c4d93fa7cf7"><code class="docutils literal notranslate"><span class="pre">efc0b61</span></code></a>)</p></li>
+<li><p>Update README and pyproject.toml  for dependency specifications (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/272a79918e7886e11c2e287aa998dcf67dd6cfb2"><code class="docutils literal notranslate"><span class="pre">272a799</span></code></a>)</p></li>
+<li><p>Add missing dependencies for scikit-learn, pytest, opencv, and matplotlib (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bdf16ab9c863711f99d2cbf1e6889bf98189693c"><code class="docutils literal notranslate"><span class="pre">bdf16ab</span></code></a>)</p></li>
+<li><p>Refactor testing framework with pytest fixtures and modular architecture (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/8d960a7a1a8ebf6f84de92b63e8c0a1c2bdc09eb"><code class="docutils literal notranslate"><span class="pre">8d960a7</span></code></a>)</p></li>
+<li><p>Remove sys.path manipulation that caused import issues for Nicola (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/10df0a133ceb5ef1c09f2ca13043db638a52a0df"><code class="docutils literal notranslate"><span class="pre">10df0a1</span></code></a>)</p></li>
+<li><p>Update documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/0aed2ff7d75e25f8b09b0d42ff91e15acba720c4"><code class="docutils literal notranslate"><span class="pre">0aed2ff</span></code></a>)</p></li>
+<li><p>Add tests README with usage guide and examples (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/b9c6770404b9b9a5515ce21feb44a9d9952f33a0"><code class="docutils literal notranslate"><span class="pre">b9c6770</span></code></a>)</p></li>
+<li><p>Add feature testing CLI tool with timestamped output (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/3dbb749f9479192d781d347fe1611c862a80a54a"><code class="docutils literal notranslate"><span class="pre">3dbb749</span></code></a>)</p></li>
+<li><p>Remove TouchDesigner examples (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/570724bb84f16b03cc50e916690d149b1a28597f"><code class="docutils literal notranslate"><span class="pre">570724b</span></code></a>)</p></li>
+<li><p>Flatten examples directory structure (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/3f1611b0cfec4cc0375bc6079d19eba9cb360498"><code class="docutils literal notranslate"><span class="pre">3f1611b</span></code></a>)</p></li>
+<li><p>Add signal generation utilities for feature testing (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e6ee8e2df2b022004cb1af28d8aa8080990daa19"><code class="docutils literal notranslate"><span class="pre">e6ee8e2</span></code></a>)</p></li>
+<li><p>Move Smoothness to low_level subpackage and relocate LICENSE to .github folder (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6ecf06d41e0b070076f9fd6ead2338876bab01ab"><code class="docutils literal notranslate"><span class="pre">6ecf06d</span></code></a>)</p></li>
+<li><p>Fix Smoothness examples and correct SPARC interpretation in documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f03e8fd51516552b01e3d82a528efa668086a82f"><code class="docutils literal notranslate"><span class="pre">f03e8fd</span></code></a>)</p></li>
+<li><p>Correct SPARC value interpretation in documentation (more negative = less smooth) (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ada3ede5c60d3e7b8d0e0d80520f2d7801d96e8a"><code class="docutils literal notranslate"><span class="pre">ada3ede</span></code></a>)</p></li>
+<li><p>Add SPARC reference documentation and remove redundant validator comments (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/da9b253953df66406283e2a5f613e39ab8752a03"><code class="docutils literal notranslate"><span class="pre">da9b253</span></code></a>)</p></li>
+<li><p>Add thread lock, filter_params support, and centralized phase computation utilities to BilateralSymmetryAnalyzer (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/efbca98edcd4ad842ba89eaed536c4edfe9476dc"><code class="docutils literal notranslate"><span class="pre">efbca98</span></code></a>)</p></li>
+<li><p>Refactor synchronization module: move sync.py to analysis_primitives, use centralized validators, update import paths, and remove redundant comments (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6f501e3c5d84f320c7dbf7491ed52cba8eff079d"><code class="docutils literal notranslate"><span class="pre">6f501e3</span></code></a>)</p></li>
+<li><p>Improve SPARC computation with normalized frequency differences and add rate_hz validation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ea29b2aba1483827ba2861e1bbaaaa94ac76ee42"><code class="docutils literal notranslate"><span class="pre">ea29b2a</span></code></a>)</p></li>
+<li><p>Add validate_filter_params_tuple function to centralize filter parameter validation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/18090105a384ab042ddc725215c51cb491772b67"><code class="docutils literal notranslate"><span class="pre">1809010</span></code></a>)</p></li>
+<li><p>Refactor bilateral_symmetry to use centralized phase computation utilities (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2c6fef727fb6ce6d505d1054294ddaf8bca00825"><code class="docutils literal notranslate"><span class="pre">2c6fef7</span></code></a>)</p></li>
+<li><p>Refactor modules to use centralized validators (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d1ea34c3379e1401c97669d1f066b8c1ae3862f2"><code class="docutils literal notranslate"><span class="pre">d1ea34c</span></code></a>)</p></li>
+<li><p>Add validation utilities and extract filter validation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e700afc54250d1cfdd44cd40b63a3507873bd986"><code class="docutils literal notranslate"><span class="pre">e700afc</span></code></a>)</p></li>
+<li><p>Fix typos and broken links in documentation (correct GitHub URL, fix variable names, and grammar corrections) (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a1ccb04f8bd67f01dca8520abe0e81fd7cab99cc"><code class="docutils literal notranslate"><span class="pre">a1ccb04</span></code></a>)</p></li>
+<li><p>Add thread lock to Synchronization class to prevent race conditions in plv_history access (fixes #42) (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bf9dd0b23a9249424ea1d2de10ef9ea0416388f6"><code class="docutils literal notranslate"><span class="pre">bf9dd0b</span></code></a>)</p></li>
+<li><p>Fix - remove test file. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a990ad48818644a532ebf5e478479125a4af1f0f"><code class="docutils literal notranslate"><span class="pre">a990ad4</span></code></a>)</p></li>
+<li><p>Address issue #39 - tested and made sure all feats have a call method. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9621b358d6dbfe4164c8a138144e1fa852a1708b"><code class="docutils literal notranslate"><span class="pre">9621b35</span></code></a>)</p></li>
+<li><p>Standardize all feature functions to return dictionaries (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a73c7c0b09856d9323a80d43a032d9a184369edf"><code class="docutils literal notranslate"><span class="pre">a73c7c0</span></code></a>)</p></li>
+<li><p>Bump version to v0.0.1a4 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1c40cd57d92445ff138a70da5af5df3affe0bf43"><code class="docutils literal notranslate"><span class="pre">1c40cd5</span></code></a>)</p></li>
+<li><p>Bump version to v0.0.1a3 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/aa20d6b5607c391440ec2014ab148e1c6588184c"><code class="docutils literal notranslate"><span class="pre">aa20d6b</span></code></a>)</p></li>
+<li><p>bump version to v0.0.1a2 (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/32c35547afb733fc8d4484d05be1269ce86c16c7"><code class="docutils literal notranslate"><span class="pre">32c3554</span></code></a>)</p></li>
+<li><p>Merge pull request #48 from InfoMusCP/feature/sliding_window</p></li>
+</ul>
+<p>resize sliding_window.py at runtime and add <strong>repr</strong> method (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9b2ffc1b39eb25fa1343acb0d9b74a621cc98e16"><code class="docutils literal notranslate"><span class="pre">9b2ffc1</span></code></a>)</p>
+<ul class="simple">
+<li><p>resize sliding_window.py at runtime and add <strong>repr</strong> method (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5c4f2e5e03b01f11ed1f2363072e01a3c422ea61"><code class="docutils literal notranslate"><span class="pre">5c4f2e5</span></code></a>)</p></li>
+<li><p>Update README.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/55a591f319bfb9657303dbdc54a4282fc0c2a273"><code class="docutils literal notranslate"><span class="pre">55a591f</span></code></a>)</p></li>
+<li><p>Merge pull request #47 from InfoMusCP/documentation</p></li>
+</ul>
+<p>improve docs structure (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/31fbf331f567ca8b726dde042084b0e2690c898e"><code class="docutils literal notranslate"><span class="pre">31fbf33</span></code></a>)</p>
+<ul class="simple">
+<li><p>links docstrings to user guide (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/5c7dd2355e71756bbcb92c5f29b666b49835bbc1"><code class="docutils literal notranslate"><span class="pre">5c7dd23</span></code></a>)</p></li>
+<li><p>improve framework explanation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c2c885bb4480b68b124f9812fb303105185483c0"><code class="docutils literal notranslate"><span class="pre">c2c885b</span></code></a>)</p></li>
+<li><p>improve docs structure (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c37e9d514252f81ef15115f25c808e12f8527ba4"><code class="docutils literal notranslate"><span class="pre">c37e9d5</span></code></a>)</p></li>
+<li><p>Merge pull request #30 from InfoMusCP/documentation</p></li>
+</ul>
+<p>Setup Mkdocs and Getting Started page (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/293e9f06c4645f109400656d5ebd2336b6ec6eba"><code class="docutils literal notranslate"><span class="pre">293e9f0</span></code></a>)</p>
+<ul class="simple">
+<li><p>add references to tables (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/8eb36a8c2a4afa9a513793d80f93a65307c202ba"><code class="docutils literal notranslate"><span class="pre">8eb36a8</span></code></a>)</p></li>
+<li><p>move getting_started.md and integrations.md to specific section (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e2a52a54dae1f96c59bb93723561feaf870857a9"><code class="docutils literal notranslate"><span class="pre">e2a52a5</span></code></a>)</p></li>
+<li><p>merge main into current branch (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9aeb63e5565f8c7a63280de95c9312e9b3c31ad8"><code class="docutils literal notranslate"><span class="pre">9aeb63e</span></code></a>)</p></li>
+<li><p>Merge pull request #46 from InfoMusCP/nicola-corbellini-patch-1</p></li>
+</ul>
+<p>Create CONTRIBUTING.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/29028832758ca6319e3f165afb825828a63fadd5"><code class="docutils literal notranslate"><span class="pre">2902883</span></code></a>)</p>
+<ul class="simple">
+<li><p>Create CONTRIBUTING.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2e3bfbdb7a1112a806d349a2adb30b785ee98a41"><code class="docutils literal notranslate"><span class="pre">2e3bfbd</span></code></a>)</p></li>
+<li><p>minor fixes to readme (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ac2c083eecdbb1baf9fada7bf1b4099c4b9979e3"><code class="docutils literal notranslate"><span class="pre">ac2c083</span></code></a>)</p></li>
+<li><p>Merge pull request #45 from InfoMusCP/feature/readme</p></li>
+</ul>
+<p>update README.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1e5e30de4a513f2aaed0e3d6b6de9eaf6e1f38e7"><code class="docutils literal notranslate"><span class="pre">1e5e30d</span></code></a>)</p>
+<ul class="simple">
+<li><p>update README.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/35202bf0cb4959901bb3a9e496d2a2ee4c01a496"><code class="docutils literal notranslate"><span class="pre">35202bf</span></code></a>)</p></li>
+<li><p>Merge pull request #44 from InfoMusCP/feature/readme</p></li>
+</ul>
+<p>update README.md and add CITATION.cff (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9e5062415b08f79f982ddc14e7ceb95517c800e6"><code class="docutils literal notranslate"><span class="pre">9e50624</span></code></a>)</p>
+<ul class="simple">
+<li><p>update README.md and add CITATION.cff (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bc62f9bc2f1228867e0339fb3f4e0bfc41c7ad95"><code class="docutils literal notranslate"><span class="pre">bc62f9b</span></code></a>)</p></li>
+<li><p>improve documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/b11d79f0b2b9f34e07255c6f791b7de9ee223a1c"><code class="docutils literal notranslate"><span class="pre">b11d79f</span></code></a>)</p></li>
+<li><p>Merge remote-tracking branch ‘origin/main’ into documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/91eacb0f8f608b3e9f02b71a46d4f07827658e65"><code class="docutils literal notranslate"><span class="pre">91eacb0</span></code></a>)</p></li>
+<li><p>Update: Make z-coordinate optional in Equilibrium by accepting both 2D and 3D inputs (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7bd8e5eefef93cbdd5c2523bdf04a36f704ef0ce"><code class="docutils literal notranslate"><span class="pre">7bd8e5e</span></code></a>)</p></li>
+<li><p>add user guide, modules documentation and getting started (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d68cc9385f1ebc4a4aa078b5c69d83e70cdc5b17"><code class="docutils literal notranslate"><span class="pre">d68cc93</span></code></a>)</p></li>
+<li><p>Merge branch ‘main’ into documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1ed5914a5d7da838fa66b4de00f9094bcc056da0"><code class="docutils literal notranslate"><span class="pre">1ed5914</span></code></a>)</p></li>
+<li><p>Fix: Add <strong>del</strong> method to SlidingWindow for explicit memory cleanup (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9a35ffc30f8ef3f13fb9c3f98c7d645a77003f06"><code class="docutils literal notranslate"><span class="pre">9a35ffc</span></code></a>)</p></li>
+<li><p>Fix: Return NaN instead of None for errors and remove print statements from Smoothness (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d452bdbdb615d10fe80225b1d80624a1ed0767f9"><code class="docutils literal notranslate"><span class="pre">d452bdb</span></code></a>)</p></li>
+<li><p>Fix: Add column count validation to Synchronization and return NaN for insufficient data (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/67d324ae89b221a1a287cdca557a5a5b4d60912c"><code class="docutils literal notranslate"><span class="pre">67d324a</span></code></a>)</p></li>
+<li><p>Fix: Add array shape validation to SPARC function to prevent crashes (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/29b1d34fa25260f8f142cd8de1e6291f0ff2fcc2"><code class="docutils literal notranslate"><span class="pre">29b1d34</span></code></a>)</p></li>
+<li><p>Fix: Update Synchronization docstring to document validation requirements and exceptions (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/008b12d1fb7c298ddaefb86b313ec5819a1b8cde"><code class="docutils literal notranslate"><span class="pre">008b12d</span></code></a>)</p></li>
+<li><p>Fix: Add comprehensive input validation to Synchronization class constructor (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c7091148bf7626466caac3739b25909f336aa86b"><code class="docutils literal notranslate"><span class="pre">c709114</span></code></a>)</p></li>
+<li><p>Fix: Add validation for rate_hz and use_filter parameters in Smoothness class (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/98a96c18364344ac45b105e9aba33c65e85bc48a"><code class="docutils literal notranslate"><span class="pre">98a96c1</span></code></a>)</p></li>
+<li><p>Fix: Replace busy wait loop with time.sleep() in TSVReader to reduce CPU usage (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/37175082a675749638513ee9d2ecba8a27d6e512"><code class="docutils literal notranslate"><span class="pre">3717508</span></code></a>)</p></li>
+<li><p>Fix: Add input validation to SlidingWindow constructor to prevent invalid parameters (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2e299f0942bc3d3deecf941fc0ca01ff7781fb6b"><code class="docutils literal notranslate"><span class="pre">2e299f0</span></code></a>)</p></li>
+<li><p>Fix: Return NaN instead of 0.0 on errors in bilateral symmetry analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ac0150dcf25fddeeb61ede91057392f2a875d6f9"><code class="docutils literal notranslate"><span class="pre">ac0150d</span></code></a>)</p></li>
+<li><p>Fix: Return NaN instead of infinity for zero baseline in contraction expansion analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/83b95040616ef77c76f577ef37eefdc9602a9e5a"><code class="docutils literal notranslate"><span class="pre">83b9504</span></code></a>)</p></li>
+<li><p>Fix: Add parameter validation to bandpass filter to prevent invalid frequencies (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/06ec3471b6109d058c0791175db5de4705aa0093"><code class="docutils literal notranslate"><span class="pre">06ec347</span></code></a>)</p></li>
+<li><p>Fix: Return NaN for constant signals in SPARC function and validate sampling rate (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f1e8e544d706f19a377d8b6559797c1f76997013"><code class="docutils literal notranslate"><span class="pre">f1e8e54</span></code></a>)</p></li>
+<li><p>Fix: Handle division by zero in Equilibrium class for degenerate ellipse cases (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2c58f4b6c13afa12110ccd343f1aadceb66598eb"><code class="docutils literal notranslate"><span class="pre">2c58f4b</span></code></a>)</p></li>
+<li><p>Fix: Add thread-safe locking to SlidingWindow methods and return copies from to_array() to prevent race conditions (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c5422b915008736d57242731a0a5898e6eb1d2bc"><code class="docutils literal notranslate"><span class="pre">c5422b9</span></code></a>)</p></li>
+<li><p>Merge remote-tracking branch ‘origin/main’ into documentation (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7551edf7bb009567221d26d75d77f927d54c969e"><code class="docutils literal notranslate"><span class="pre">7551edf</span></code></a>)</p></li>
+<li><p>Moved gen_pages.py to docs/scripts (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c4c73eb4ea92f2bc20798d64793f10d4c927b9be"><code class="docutils literal notranslate"><span class="pre">c4c73eb</span></code></a>)</p></li>
+<li><p>Add docstrings and translate Italian comments to English in TSV reader (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/b84fd78304dcfd8947a9ee39ceaa8a49193081a5"><code class="docutils literal notranslate"><span class="pre">b84fd78</span></code></a>)</p></li>
+<li><p>Add docstrings to signal processing functions (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/37463d6a04138c32a7fe76364963f23ad33da838"><code class="docutils literal notranslate"><span class="pre">37463d6</span></code></a>)</p></li>
+<li><p>Add docstrings to math utility functions (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/844aadfb9ca17e219d3942f99e2d2124cb2e37a5"><code class="docutils literal notranslate"><span class="pre">844aadf</span></code></a>)</p></li>
+<li><p>Add docstrings to contraction expansion module (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/957c945cbfdbce0e58f1320d914af4870a00df24"><code class="docutils literal notranslate"><span class="pre">957c945</span></code></a>)</p></li>
+<li><p>Add docstrings to smoothness module (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/89d12cb0cbc3ccbdc61dda03314a987e88091fe6"><code class="docutils literal notranslate"><span class="pre">89d12cb</span></code></a>)</p></li>
+<li><p>Add docstrings to sync module (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/783154a1a2e2dd9cca8c7b6b83134da3a6383336"><code class="docutils literal notranslate"><span class="pre">783154a</span></code></a>)</p></li>
+<li><p>Merge pull request #29 from InfoMusCP/reorganize-examples-structure</p></li>
+</ul>
+<p>Reorganize examples folder structure with test_scripts and touchdesigner subfolders (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4e62409da9273b8132e94aeca52be1ace8f9e51e"><code class="docutils literal notranslate"><span class="pre">4e62409</span></code></a>)</p>
+<ul class="simple">
+<li><p>Reorganize examples folder structure with test_scripts and touchdesigner subfolders (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/0aa95ae38d4fcfb262dcfba90ba2a62046f1f35a"><code class="docutils literal notranslate"><span class="pre">0aa95ae</span></code></a>)</p></li>
+<li><p>setup mkdocs.yml and getting_started.md (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e50caeb0b4b698182529610bbde55df6a7a84285"><code class="docutils literal notranslate"><span class="pre">e50caeb</span></code></a>)</p></li>
+<li><p>update folder name (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ddeb0abbd9fff7089c8ef9fda4399678215e159c"><code class="docutils literal notranslate"><span class="pre">ddeb0ab</span></code></a>)</p></li>
+<li><p>Merge pull request #26 from InfoMusCP/Equilibrium</p></li>
+</ul>
+<p>feat: add Equilibrium class with elliptical balance evaluation and in… (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ec28e3d753d6dfd67d99f41ecd8fd252161b3908"><code class="docutils literal notranslate"><span class="pre">ec28e3d</span></code></a>)</p>
+<ul class="simple">
+<li><p>Merge pull request #25 from InfoMusCP/feature/fix_action</p></li>
+</ul>
+<p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/aad66dfb6e21fed213866917e3879e13be01f9a7"><code class="docutils literal notranslate"><span class="pre">aad66df</span></code></a>)</p>
+<ul class="simple">
+<li><p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/486346eb2d46e54519da280e0caf7ad21ee80e4a"><code class="docutils literal notranslate"><span class="pre">486346e</span></code></a>)</p></li>
+<li><p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c204bdac4b93f290f332a1e1376e378508e40a6b"><code class="docutils literal notranslate"><span class="pre">c204bda</span></code></a>)</p></li>
+<li><p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/81c272028175b99c661518c06a2e1b43009e55cd"><code class="docutils literal notranslate"><span class="pre">81c2720</span></code></a>)</p></li>
+<li><p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/282a3f5991c2445f92e3c224679c51bde7694b6b"><code class="docutils literal notranslate"><span class="pre">282a3f5</span></code></a>)</p></li>
+<li><p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/f97706fe193e1f705a3cb76b7d93738a460a3e30"><code class="docutils literal notranslate"><span class="pre">f97706f</span></code></a>)</p></li>
+<li><p>fix action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/82a3f3064397a03625a448ec17bece914a14136e"><code class="docutils literal notranslate"><span class="pre">82a3f30</span></code></a>)</p></li>
+<li><p>Merge pull request #24 from InfoMusCP/feature/doc</p></li>
+</ul>
+<p>setup github pages (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1907aa2493f1376d4825c26d5e7f884226ed0cbf"><code class="docutils literal notranslate"><span class="pre">1907aa2</span></code></a>)</p>
+<ul class="simple">
+<li><p>setup github pages (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/fcb07586c2f7462482a22689b06b293ee14dc6f7"><code class="docutils literal notranslate"><span class="pre">fcb0758</span></code></a>)</p></li>
+<li><p>Merge pull request #23 from InfoMusCP/feature/deploy_pypi</p></li>
+</ul>
+<p>setup pypi deploy (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/c0c6ee5dd9b61fa29730b6ab051fc4c27e4522e4"><code class="docutils literal notranslate"><span class="pre">c0c6ee5</span></code></a>)</p>
+<ul class="simple">
+<li><p>Merge branch ‘main’ into feature/deploy_pypi (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7539fd1d51a20c8c2dc1eba480d54d5e6ae37f75"><code class="docutils literal notranslate"><span class="pre">7539fd1</span></code></a>)</p></li>
+<li><p>Update pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/ab52cc12a1f2e225f55ee230132302c359cd87a1"><code class="docutils literal notranslate"><span class="pre">ab52cc1</span></code></a>)</p></li>
+<li><p>Merge pull request #22 from InfoMusCP/update-repo-name-to-pyeyesweb</p></li>
+</ul>
+<p>update repository name from infomove to pyeyesweb (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2c3a7b4c84a191ecbd4f96c1281a134f82f119ee"><code class="docutils literal notranslate"><span class="pre">2c3a7b4</span></code></a>)</p>
+<ul class="simple">
+<li><p>update repository name from infomove to pyeyesweb (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/8a4ef86b9230137365b535988805ee9d9ceee00e"><code class="docutils literal notranslate"><span class="pre">8a4ef86</span></code></a>)</p></li>
+<li><p>setup pypi deploy (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/de1781c7e31c710544ba4c7b35d9b542f75f63d7"><code class="docutils literal notranslate"><span class="pre">de1781c</span></code></a>)</p></li>
+<li><p>Merge pull request #21 from InfoMusCP/feature/license</p></li>
+</ul>
+<p>add license to pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/975b67ac9f7471f48e7d20f6318b8125fd37c892"><code class="docutils literal notranslate"><span class="pre">975b67a</span></code></a>)</p>
+<ul class="simple">
+<li><p>add license to pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bcf8b6fae075a279ab4f3ed6a1d69af16fb305e1"><code class="docutils literal notranslate"><span class="pre">bcf8b6f</span></code></a>)</p></li>
+<li><p>Create LICENSE (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4b5d49aad123f1eaade142171dc85ce8ce62036c"><code class="docutils literal notranslate"><span class="pre">4b5d49a</span></code></a>)</p></li>
+<li><p>Merge pull request #20 from InfoMusCP/feature/sliding_window_doc</p></li>
+</ul>
+<p>add <code class="docutils literal notranslate"><span class="pre">SlidingWindow</span></code> docstrings (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4ecf6fe4ff68828db32d363a908d1e66027f4af6"><code class="docutils literal notranslate"><span class="pre">4ecf6fe</span></code></a>)</p>
+<ul class="simple">
+<li><p>add <code class="docutils literal notranslate"><span class="pre">SlidingWindow</span></code> docstrings (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/119f45d50ced07270d99d81b5cef968cd1241728"><code class="docutils literal notranslate"><span class="pre">119f45d</span></code></a>)</p></li>
+<li><p>Merge pull request #19 from InfoMusCP/feature/pyproject</p></li>
+</ul>
+<p>update pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d97cbef47700ae21f67e522ffcf3f92f98257f1c"><code class="docutils literal notranslate"><span class="pre">d97cbef</span></code></a>)</p>
+<ul class="simple">
+<li><p>update pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/fdbfbd5fcfa80dc9f05fe9873ba7ccee7eff0ea5"><code class="docutils literal notranslate"><span class="pre">fdbfbd5</span></code></a>)</p></li>
+<li><p>Update README.md to reflect change of repo name (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4df54c50f07b674be957660a0c65d0faa94817a3"><code class="docutils literal notranslate"><span class="pre">4df54c5</span></code></a>)</p></li>
+<li><p>remove unnecessary parts (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6306d3869b207a968208c22ea081d24ecca6db55"><code class="docutils literal notranslate"><span class="pre">6306d38</span></code></a>)</p></li>
+<li><p>Merge pull request #17 from InfoMusCP/docs/modular-readme</p></li>
+</ul>
+<p>initial documentation structure (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a833309ec973c2a87a871ab2b06a4575d175bb55"><code class="docutils literal notranslate"><span class="pre">a833309</span></code></a>)</p>
+<ul class="simple">
+<li><p>initial documentation structure (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d2afe48b289536bcd927d9bcfb96ec6de81099f7"><code class="docutils literal notranslate"><span class="pre">d2afe48</span></code></a>)</p></li>
+<li><p>add comprehensive biomechanical test suite for bilateral symmetry analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bac585e07f3de118aecc49f56a05a807b793e990"><code class="docutils literal notranslate"><span class="pre">bac585e</span></code></a>)</p></li>
+<li><p>implement bilateral symmetry analysis with research-based methods (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/9f5bcc1eae995deee463fc6f770a20ec6fb54707"><code class="docutils literal notranslate"><span class="pre">9f5bcc1</span></code></a>)</p></li>
+<li><p>add example demonstrating contraction_expansion module usage (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4454e06da7423220cf920aaca4da8a82018e88dc"><code class="docutils literal notranslate"><span class="pre">4454e06</span></code></a>)</p></li>
+<li><p>implement contraction_expansion module with numba-optimized geometric analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/cbfb4ccfc8c1f923bde2667f220808bf5eb665f9"><code class="docutils literal notranslate"><span class="pre">cbfb4cc</span></code></a>)</p></li>
+<li><p>add numba dependency to pyproject.toml (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d77a92a3f7f9b504e12f9f3062daa238ac224e54"><code class="docutils literal notranslate"><span class="pre">d77a92a</span></code></a>)</p></li>
+<li><p>Merge branch ‘fix/core-sync’ (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/58da844a3aa77cf1fb4c307863c15dc96f3230b1"><code class="docutils literal notranslate"><span class="pre">58da844</span></code></a>)</p></li>
+<li><p>Merge pull request #16 from InfoMusCP/fix/core-sync</p></li>
+</ul>
+<p>optimize phase computation with vectorized operations and remove redu… (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/e4950bfb261e4f8351457b945c971b9fdcb7a397"><code class="docutils literal notranslate"><span class="pre">e4950bf</span></code></a>)</p>
+<ul class="simple">
+<li><p>optimize phase computation with vectorized operations and remove redundant calculations (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/72dee828f2b8a472f612c7fab7a238b33e949978"><code class="docutils literal notranslate"><span class="pre">72dee82</span></code></a>)</p></li>
+<li><p>Merge branch ‘main’ of https://github.com/InfoMusCP/InfoMove (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/937da93aaeffdc3d0b787c2038af5ca87416a98a"><code class="docutils literal notranslate"><span class="pre">937da93</span></code></a>)</p></li>
+<li><p>Update demo (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/772fb9d6bfddef898429a17beeba69f1d7b55f10"><code class="docutils literal notranslate"><span class="pre">772fb9d</span></code></a>)</p></li>
+<li><p>Merge pull request #13 from InfoMusCP/feature/win_installation_script</p></li>
+</ul>
+<p>Create TD demo installation script (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/97edd16ff49bcf10f6843c11adcccc210f615332"><code class="docutils literal notranslate"><span class="pre">97edd16</span></code></a>)</p>
+<ul class="simple">
+<li><p>Create setup.bat (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/136673077f586ddce2db728a7c27bdf5f663d5da"><code class="docutils literal notranslate"><span class="pre">1366730</span></code></a>)</p></li>
+<li><p>Merge pull request #9 from InfoMusCP/develop/td_synch_demo</p></li>
+</ul>
+<p>Add TD demo draft (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/861b49f417418a7441c62adbe92a4b32e5a2f661"><code class="docutils literal notranslate"><span class="pre">861b49f</span></code></a>)</p>
+<ul class="simple">
+<li><p>remove Lib folder (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/1133775a1ba6cb5b8a11e6cb3d571d997daa01dd"><code class="docutils literal notranslate"><span class="pre">1133775</span></code></a>)</p></li>
+<li><p>add Lib to .gitignore and remove action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/016bffab42b3d37f1859896cb6339fc639ee9253"><code class="docutils literal notranslate"><span class="pre">016bffa</span></code></a>)</p></li>
+<li><p>fix actions (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/44fd9d25a19618ab624e3c22fecc2d88cb251e04"><code class="docutils literal notranslate"><span class="pre">44fd9d2</span></code></a>)</p></li>
+<li><p>fix build.yml action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/dc102834f49549cfb784e418ddc10ffa391882a5"><code class="docutils literal notranslate"><span class="pre">dc10283</span></code></a>)</p></li>
+<li><p>fix build.yml action (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/0960b5bd17da4d59adeb4bb13ffb400190eab56e"><code class="docutils literal notranslate"><span class="pre">0960b5b</span></code></a>)</p></li>
+<li><p>add pyproject.toml for TD demo and installed Lib (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/a8c9504853d82457be9c543281fcf844ad550024"><code class="docutils literal notranslate"><span class="pre">a8c9504</span></code></a>)</p></li>
+<li><p>add pyproject.toml for TD demo (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/fb6a8bdb4e6291abe044c27543780525bd6d8caa"><code class="docutils literal notranslate"><span class="pre">fb6a8bd</span></code></a>)</p></li>
+<li><p>This TSV reader is currently designed starting from exported files from Qualisys Motion Capture. Future versions will support reading generic TSV files with different headers (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/bd726a3a9c3a0af7c9aec10850c2735269f75969"><code class="docutils literal notranslate"><span class="pre">bd726a3</span></code></a>)</p></li>
+<li><p>Merge pull request #8 from InfoMusCP/develop/sliding_window</p></li>
+</ul>
+<p>Implement <code class="docutils literal notranslate"><span class="pre">SlidingWindow</span></code> (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/6de887299f767b82d874ffef5cbb2abc09cab0ba"><code class="docutils literal notranslate"><span class="pre">6de8872</span></code></a>)</p>
+<ul class="simple">
+<li><p>add type checking and empty init (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/40df64a63ef3e2a657938f3aedd3636d47b9372f"><code class="docutils literal notranslate"><span class="pre">40df64a</span></code></a>)</p></li>
+<li><p>add sliding_window.py and refactor features (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/4c305378f577fccce2a22f2fb6e0acb6069951ce"><code class="docutils literal notranslate"><span class="pre">4c30537</span></code></a>)</p></li>
+</ul>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="developer/building_the_docs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Building the docs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="migration.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Migrating from 1.x</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Changelog</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased-pre-release">2.0.0 (unreleased, pre-release)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-changes">Breaking Changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#behaviour-changes">Behaviour changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v1-0-1-2026-04-07">v1.0.1 (2026-04-07)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bug-fixes">Bug Fixes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#refactoring-improvements">Refactoring &amp; Improvements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maintenance">Maintenance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-1-0-2026-03-23">v0.1.0 (2026-03-23)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Bug Fixes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#refactoring">Refactoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unknown">Unknown</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#conflicts">Conflicts:</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#docs-user-guide-theoretical-framework-analysis-primitives-synchronization-md">docs/user_guide/theoretical_framework/analysis_primitives/synchronization.md</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#docs-user-guide-theoretical-framework-low-level-contraction-expansion-md">docs/user_guide/theoretical_framework/low_level/contraction_expansion.md</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#docs-user-guide-theoretical-framework-low-level-smoothness-md-72f2ea5">docs/user_guide/theoretical_framework/low_level/smoothness.md (<code class="docutils literal notranslate"><span class="pre">72f2ea5</span></code>)</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/changelog.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

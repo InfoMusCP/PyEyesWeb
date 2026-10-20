@@ -1,0 +1,90 @@
+.. _feature-Videogram:
+
+Videogram
+=========
+
+Videogram or motiongram: each frame collapsed to one line, the lines stacked over time.
+
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: video\_gram (VideoGram)`
+
+Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Imaging </theory/imaging>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``window``
+     - ``500``
+     - ``int``
+   * - ``mode``
+     - ``'horizontal'``
+     - ``Literal['horizontal', 'vertical']``
+   * - ``direction``
+     - ``'left_to_right'``
+     - ``Literal['left_to_right', 'right_to_left']``
+   * - ``end_of_image_mode``
+     - ``'loop'``
+     - ``Literal['loop', 'scroll']``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``frame``
+     - image
+     - (n, n, n)
+     - 
+     - grayscale or colour frame
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``videogram``
+     - ``int``
+     - (n, n, n)
+     - 
+     - the videogram image, channels last
+
+.. py:currentmodule:: pyeyesweb.physical_signals
+
+Description
+-----------
+
+.. autoclass:: Videogram
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.physical_signals.Videogram.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

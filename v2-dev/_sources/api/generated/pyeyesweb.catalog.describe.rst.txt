@@ -1,0 +1,6 @@
+﻿pyeyesweb.catalog.describe
+==========================
+
+.. currentmodule:: pyeyesweb.catalog
+
+.. autofunction:: describe

@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Impulsivity and suddenness &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/impulsivity_suddenness';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Gesture segmentation" href="gesture_segmentation.html" />
+    <link rel="prev" title="Shape, symmetry and balance" href="shape_symmetry_balance.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Impulsivity and suddenness</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="impulsivity-and-suddenness">
+<h1>Impulsivity and suddenness<a class="headerlink" href="#impulsivity-and-suddenness" title="Link to this heading">#</a></h1>
+<p>An impulsive movement is one that starts abruptly and without preparation, like a flick of the hand or a strike; a sudden
+movement is one whose speed changes in bursts, a quick start and stop in the middle of calm. Both are mid-level qualities
+of movement in the conceptual model (<a class="reference internal" href="framework.html"><span class="doc">Conceptual framework</span></a>): they describe a movement unit of about a second, not one frame, and
+they have been studied as qualities that observers perceive and that interactive systems can recognise
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id16" title="B. Mazzarino and M. Mancini. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored). 2009. DRAFT: publisher, place, pages unknown.">5</a>, <a class="reference internal" href="../references.html#id21" title="R. Niewiadomski, M. Mancini, G. Volpe, and A. Camurri. Automated detection of impulsive movements in hci. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter, 166–169. 2015.">17</a>, <a class="reference internal" href="../references.html#id10" title="R. Niewiadomski, M. Mancini, A. Cera, S. Piana, C. Canepa, and A. Camurri. Does embodied training improve the recognition of mid-level expressive movement qualities sonification? Journal on Multimodal User Interfaces, 13:191–203, 2019.">18</a>]</span>.</p>
+<p>The family has three features. <a class="reference internal" href="../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><code class="xref py py-class docutils literal notranslate"><span class="pre">Suddenness</span></code></a> classifies the distribution of the speed of a
+trajectory over a window. <a class="reference internal" href="../api/generated/mid_level/SuddennessImpulsivity.html#pyeyesweb.mid_level.SuddennessImpulsivity" title="pyeyesweb.mid_level.SuddennessImpulsivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code></a> combines the suddenness with the sharpness of
+a turn of the path to give an impulsivity index of the trajectory. <a class="reference internal" href="../api/generated/mid_level/ContractionImpulsivity.html#pyeyesweb.mid_level.ContractionImpulsivity" title="pyeyesweb.mid_level.ContractionImpulsivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code></a>
+takes another route: it detects short energetic gestures from the quantity of motion of the whole body and measures how fast
+the body contracts or expands during them. The symbols are those of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>.</p>
+<section id="suddenness">
+<h2>Suddenness<a class="headerlink" href="#suddenness" title="Link to this heading">#</a></h2>
+<section id="definition">
+<h3>Definition<a class="headerlink" href="#definition" title="Link to this heading">#</a></h3>
+<p>The speed of a point between two consecutive samples is <span class="math notranslate nohighlight">\(v_t = \lVert \mathbf{p}_{t+1} - \mathbf{p}_t \rVert\)</span>. A movement
+made of sudden starts and stops does not have a Gaussian distribution of speed: most of the time the point is slow or at rest,
+and now and then it is very fast, so the distribution has a heavy tail. The <span class="math notranslate nohighlight">\(\alpha\)</span>-stable distributions are the family
+that has the Gaussian as one member and describes heavy-tailed and skewed distributions in general. They are parametrised by</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha \in (0, 2]\)</span>, the <strong>stability</strong> index, which sets the thickness of the tails: <span class="math notranslate nohighlight">\(\alpha = 2\)</span> is the Gaussian and a
+smaller <span class="math notranslate nohighlight">\(\alpha\)</span> gives heavier tails;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>, the <strong>skewness</strong>, positive for a heavier tail on the side of large values;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>, the <strong>scale</strong>, a positive number of the order of the spread of the distribution.</p></li>
+</ul>
+<p><a class="reference internal" href="../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><code class="xref py py-class docutils literal notranslate"><span class="pre">Suddenness</span></code></a> fits these parameters to the speeds of a window by McCulloch’s quantile method
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id26" title="J. H. McCulloch. Simple consistent estimators of stable distribution parameters. Communications in Statistics - Simulation and Computation, 1986. DRAFT: volume, number and pages absent in the source.">19</a>]</span>. With <span class="math notranslate nohighlight">\(x_5, x_{25}, x_{50}, x_{75}, x_{95}\)</span> the quantiles of the speeds of the window,</p>
+<div class="math notranslate nohighlight">
+\[
+\nu_\alpha = \frac{x_{95} - x_5}{x_{75} - x_{25}}, \qquad
+\nu_\beta = \frac{x_{95} + x_5 - 2 x_{50}}{x_{95} - x_5}, \qquad
+\gamma = \frac{x_{75} - x_{25}}{x_{75} - x_{50}},
+\]</div>
+<p>and <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are obtained from <span class="math notranslate nohighlight">\(\nu_\alpha\)</span> and <span class="math notranslate nohighlight">\(\nu_\beta\)</span> by interpolation in McCulloch’s tables. The window is
+classified as <strong>sudden</strong> when</p>
+<div class="math notranslate nohighlight">
+\[
+\gamma \left(1 - \frac{\alpha}{2}\right) \beta \ge 0 ,
+\]</div>
+<p>which, since <span class="math notranslate nohighlight">\(\gamma\)</span> is positive and <span class="math notranslate nohighlight">\(\alpha \le 2\)</span>, means a non-negative skewness <span class="math notranslate nohighlight">\(\beta\)</span>, or a Gaussian (<span class="math notranslate nohighlight">\(\alpha = 2\)</span>). In
+words: the movement is sudden when the speeds are mostly low with occasional bursts, so that the tail is on the side of the
+large values, and it is not sudden when the speeds are mostly high with occasional stops, a negative skew. A Gaussian
+distribution has no tail to speak of: a window whose speeds are all equal, a point at rest or at constant speed, gives the
+Gaussian fallback (<span class="math notranslate nohighlight">\(\alpha = 2\)</span>, <span class="math notranslate nohighlight">\(\beta = 0\)</span>, <span class="math notranslate nohighlight">\(\gamma = 0\)</span>) and is classified as sudden.</p>
+<p>The speeds are differences between consecutive samples, so timestamps do not enter the computation, and <span class="math notranslate nohighlight">\(\gamma\)</span> is a
+ratio of quantile differences, so it is dimensionless.</p>
+</section>
+<section id="the-feature">
+<h3>The feature<a class="headerlink" href="#the-feature" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> takes one position per call, the point of a trajectory in two or three dimensions (a frame with several
+markers is rejected: average the markers beforehand if one trajectory is wanted). It keeps <code class="docutils literal notranslate"><span class="pre">window</span></code> positions (at least 6,
+because five speeds are needed) and computes every <code class="docutils literal notranslate"><span class="pre">hop</span></code>. Its outputs are <code class="docutils literal notranslate"><span class="pre">is_sudden</span></code> (boolean), <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code> and
+<code class="docutils literal notranslate"><span class="pre">gamma</span></code>. The parameter <code class="docutils literal notranslate"><span class="pre">method</span></code> selects the fit: <code class="docutils literal notranslate"><span class="pre">&quot;constrained&quot;</span></code> (the default) restricts <span class="math notranslate nohighlight">\(\nu_\alpha\)</span> and <span class="math notranslate nohighlight">\(\nu_\beta\)</span> to the
+range of McCulloch’s tables and always gives a result; <code class="docutils literal notranslate"><span class="pre">&quot;quantile&quot;</span></code> uses the unrestricted values and linear percentiles, and
+gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>, with no outputs, when the window is outside the range of the tables. The status is <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code>
+until the first window is full and <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> between windows.</p>
+<p>Two trajectories of 20 steps along a line illustrate the classification. The first is slow, with two bursts; the second is
+fast and steady, with three brief stops:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.mid_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">Suddenness</span><span class="p">,</span> <span class="n">SuddennessImpulsivity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">corner</span><span class="p">(</span><span class="n">speeds</span><span class="p">,</span> <span class="n">turn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="gp">... </span><span class="w">    </span><span class="sd">"""A path that moves along x for half of the steps and then along y (or keeps going along x)."""</span>
+<span class="gp">... </span>    <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="n">steps</span><span class="p">[:</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">speeds</span><span class="p">[:</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="n">steps</span><span class="p">[</span><span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">turn</span> <span class="k">else</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">speeds</span><span class="p">[</span><span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:]</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slow</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">+</span> <span class="mf">0.003</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bursts</span> <span class="o">=</span> <span class="n">slow</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bursts</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">13</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>                              <span class="c1"># three fast steps in a slow movement</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">steady</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.003</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">steady</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">15</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.003</span>                                          <span class="c1"># three brief stops in a fast one</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">speeds</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"bursts"</span><span class="p">,</span> <span class="n">bursts</span><span class="p">),</span> <span class="p">(</span><span class="s2">"steady with stops"</span><span class="p">,</span> <span class="n">steady</span><span class="p">)]:</span>
+<span class="gp">... </span>    <span class="n">last</span> <span class="o">=</span> <span class="n">Suddenness</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">corner</span><span class="p">(</span><span class="n">speeds</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">18s</span><span class="si">}</span><span class="s2"> sudden=</span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">last</span><span class="o">.</span><span class="n">is_sudden</span><span class="p">)</span><span class="si">}</span><span class="s2">  alpha=</span><span class="si">{</span><span class="n">last</span><span class="o">.</span><span class="n">alpha</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  beta=</span><span class="si">{</span><span class="n">last</span><span class="o">.</span><span class="n">beta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">bursts             sudden=True  alpha=0.52  beta=1.24</span>
+<span class="go">steady with stops  sudden=False  alpha=0.52  beta=-1.19</span>
+</pre></div>
+</div>
+<p>Both have the same low <span class="math notranslate nohighlight">\(\alpha\)</span>, that is heavy tails, and the sign of the skewness separates them.</p>
+</section>
+</section>
+<section id="impulsivity-from-the-trajectory">
+<h2>Impulsivity from the trajectory<a class="headerlink" href="#impulsivity-from-the-trajectory" title="Link to this heading">#</a></h2>
+<p>An impulsive movement is not only sudden in time: it also changes direction sharply, like the stroke of a hammer that stops
+and returns. <a class="reference internal" href="../api/generated/mid_level/SuddennessImpulsivity.html#pyeyesweb.mid_level.SuddennessImpulsivity" title="pyeyesweb.mid_level.SuddennessImpulsivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code></a> captures this as the product of a spatial and a temporal
+term over a window of one trajectory <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id16" title="B. Mazzarino and M. Mancini. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored). 2009. DRAFT: publisher, place, pages unknown.">5</a>, <a class="reference internal" href="../references.html#id21" title="R. Niewiadomski, M. Mancini, G. Volpe, and A. Camurri. Automated detection of impulsive movements in hci. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter, 166–169. 2015.">17</a>]</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+I = D \cdot \mathbf{1}[\text{sudden}],
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{1}[\text{sudden}]\)</span> is the classification of <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> on the speeds of the window and <span class="math notranslate nohighlight">\(D \in [0, 1]\)</span> is the
+direction change, computed from the first, the middle (index <span class="math notranslate nohighlight">\(N // 2\)</span>) and the last position of the window, <span class="math notranslate nohighlight">\(\mathbf{p}_0\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{p}_m\)</span> and <span class="math notranslate nohighlight">\(\mathbf{p}_{N-1}\)</span>. With <span class="math notranslate nohighlight">\(\theta\)</span> the angle between <span class="math notranslate nohighlight">\(\mathbf{p}_m - \mathbf{p}_0\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{p}_{N-1} - \mathbf{p}_m\)</span> (0 for a straight path, <span class="math notranslate nohighlight">\(\pi\)</span> for a reversal) and <span class="math notranslate nohighlight">\(a = 1 - \theta / \pi\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+D = \begin{cases} 1 - \lvert a - 0.5 \rvert / \varepsilon &amp; \lvert a - 0.5 \rvert &lt; \varepsilon, \\
+0 &amp; \text{otherwise,} \end{cases}
+\end{split}\]</div>
+<p>so that <span class="math notranslate nohighlight">\(D\)</span> is 1 for a right-angle turn and falls to 0 for a straight path or a reversal, with the default
+<span class="math notranslate nohighlight">\(\varepsilon = 0.5\)</span> (<code class="docutils literal notranslate"><span class="pre">direction_change_epsilon</span></code>); a smaller <span class="math notranslate nohighlight">\(\varepsilon\)</span> keeps only the turns close to a right angle. This is
+the cosine measure of <a class="reference internal" href="../api/generated/low_level/DirectionChange.html#pyeyesweb.low_level.DirectionChange" title="pyeyesweb.low_level.DirectionChange"><code class="xref py py-class docutils literal notranslate"><span class="pre">DirectionChange</span></code></a>, described in <a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>. Either factor
+being zero makes the index zero: a sharp corner traced slowly and evenly is not sudden, and a sudden movement along a straight
+line does not turn. The output <code class="docutils literal notranslate"><span class="pre">impulsivity_index</span></code> is dimensionless, in <span class="math notranslate nohighlight">\([0, 1]\)</span>. Both terms are evaluated on the same single
+trajectory. Corrected in the core: the original block took the direction change of the mean of all the signals and the
+suddenness of the first signal only.</p>
+<p>The inputs, parameters and statuses are those of <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> (<code class="docutils literal notranslate"><span class="pre">window</span></code> of at least 6, <code class="docutils literal notranslate"><span class="pre">hop</span></code>, <code class="docutils literal notranslate"><span class="pre">dims</span></code>, <code class="docutils literal notranslate"><span class="pre">method</span></code>). With the
+paths of the example above:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">impulsivity</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">SuddennessImpulsivity</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">impulsivity_index</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">impulsivity</span><span class="p">(</span><span class="n">corner</span><span class="p">(</span><span class="n">bursts</span><span class="p">)),</span> <span class="n">impulsivity</span><span class="p">(</span><span class="n">corner</span><span class="p">(</span><span class="n">bursts</span><span class="p">,</span> <span class="n">turn</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span> <span class="n">impulsivity</span><span class="p">(</span><span class="n">corner</span><span class="p">(</span><span class="n">steady</span><span class="p">))</span>
+<span class="go">(1.0, 0.0, 0.0)</span>
+</pre></div>
+</div>
+<p>The bursts that turn at a right angle give the largest value. The same bursts along a straight line give 0, because
+there is no turn, and the steady movement with stops gives 0 because it is not sudden.</p>
+</section>
+<section id="impulsivity-from-the-body-the-contraction-index">
+<h2>Impulsivity from the body: the contraction index<a class="headerlink" href="#impulsivity-from-the-body-the-contraction-index" title="Link to this heading">#</a></h2>
+<p>The second approach uses the whole body instead of one trajectory. It needs two signals that other software supplies
+and that are normalised to <span class="math notranslate nohighlight">\([0, 1]\)</span>: the <strong>quantity of motion</strong>, how much the body moves in a frame, and the <strong>contraction
+index</strong>, how contracted or expanded the posture is (high when the limbs are close to the body). A gesture is a run of frames
+with the quantity of motion above <code class="docutils literal notranslate"><span class="pre">motion_threshold</span></code> (0.01 by default), closed by the first frame at or below it. It is
+impulsive when it lasts at most <code class="docutils literal notranslate"><span class="pre">gesture_duration</span></code> frames (25 by default) and its peak quantity of motion reaches
+<code class="docutils literal notranslate"><span class="pre">peak_threshold</span></code> (0.02). On the frame that closes an impulsive gesture,
+<a class="reference internal" href="../api/generated/mid_level/ContractionImpulsivity.html#pyeyesweb.mid_level.ContractionImpulsivity" title="pyeyesweb.mid_level.ContractionImpulsivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code></a> gives the range of the contraction index over the gesture divided by
+its duration,</p>
+<div class="math notranslate nohighlight">
+\[
+I = \frac{\max_t CI_t - \min_t CI_t}{T / f_s},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(CI_t\)</span> is the contraction index, <span class="math notranslate nohighlight">\(T\)</span> the number of frames from the start of the gesture to the closing frame, inclusive,
+and <span class="math notranslate nohighlight">\(f_s\)</span> the <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>. It is the rate, per second, at which the body contracts or expands during the gesture, and it
+is not negative; without a sampling rate it is per frame. On every other frame both outputs, <code class="docutils literal notranslate"><span class="pre">impulsivity_index</span></code> and
+<code class="docutils literal notranslate"><span class="pre">gesture_duration</span></code> (the length of the gesture, in frames), are 0. A pair of inputs outside <span class="math notranslate nohighlight">\([0, 1]\)</span> is ignored and gives
+zeros. The status is <code class="docutils literal notranslate"><span class="pre">OK</span></code> for every sample and <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> for a timestamp that does not increase.</p>
+<p>In the example a short energetic gesture of five frames contracts the body from 0.5 to 0.8 and back. It is closed on the
+sixth frame, and the index is the range 0.3 over <span class="math notranslate nohighlight">\(5 / 25 = 0.2\)</span> s, that is 1.5 per second:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.mid_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContractionImpulsivity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quantity_of_motion</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contraction_index</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">record</span> <span class="o">=</span> <span class="n">ContractionImpulsivity</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">quantity_of_motion</span><span class="p">,</span> <span class="n">contraction_index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">record</span><span class="o">.</span><span class="n">impulsivity_index</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">record</span><span class="o">.</span><span class="n">gesture_duration</span>
+<span class="go">(array([0. , 0. , 0. , 0. , 0. , 1.5, 0. ]), array([0., 0., 0., 0., 0., 5., 0.]))</span>
+</pre></div>
+</div>
+<p>A gesture that goes on for more than <code class="docutils literal notranslate"><span class="pre">gesture_duration</span></code> frames, however energetic, is not impulsive, and the index stays
+at 0.</p>
+</section>
+<section id="how-to-read-the-outputs">
+<h2>How to read the outputs<a class="headerlink" href="#how-to-read-the-outputs" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Output</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Range</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Suddenness</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_sudden</span></code></p></td>
+<td><p>none</p></td>
+<td><p>boolean</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p>none</p></td>
+<td><p><span class="math notranslate nohighlight">\((0, 2]\)</span>; 2 is Gaussian</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">beta</span></code></p></td>
+<td><p>none</p></td>
+<td><p>skewness; non-negative when sudden</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code></p></td>
+<td><p>none</p></td>
+<td><p>0 or more</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">impulsivity_index</span></code></p></td>
+<td><p>none</p></td>
+<td><p><span class="math notranslate nohighlight">\([0, 1]\)</span>; 0 when not sudden</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">impulsivity_index</span></code></p></td>
+<td><p>1/s (1/frame without a rate)</p></td>
+<td><p>0 or more</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gesture_duration</span></code></p></td>
+<td><p>frames</p></td>
+<td><p>0 except on the closing frame</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code> has a value only on the frame that closes an impulsive gesture, and the stream is zero between
+gestures. For a time series
+of the impulsivity of a performance, take the maximum over a stretch or the number of non-zero values.</p>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Window length.</strong> The window of the two trajectory features holds one movement: the quantiles of the speeds, and the
+first, the middle and the last position, only make sense on a unit. With 21 positions at 50 Hz the window is 0.4 s. A
+window that holds several turns takes only the turn between the first, middle and last position.</p></li>
+<li><p><strong>Hop.</strong> With a hop of 1 the classification is renewed at every sample; a hop of the length of the window gives one
+value per window, with <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> between them.</p></li>
+<li><p><strong>Noise.</strong> The speed is a difference of positions, and noise in the position changes its distribution. A trajectory with
+jitter should be smoothed beforehand (<a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>).</p></li>
+<li><p><strong>Rest.</strong> A window at rest or at constant speed is classified as sudden by the Gaussian fallback, but its direction change
+is 0, so its impulsivity is 0 (status <code class="docutils literal notranslate"><span class="pre">OK</span></code>). Use the energy or the motion duration
+(<a class="reference internal" href="gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>) to ignore stillness.</p></li>
+<li><p><strong>Several markers.</strong> Both trajectory features take one point. Average the markers of a body, or choose one, before the
+call.</p></li>
+</ul>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The two motion qualities of impulsivity and smoothness: <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id16" title="B. Mazzarino and M. Mancini. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored). 2009. DRAFT: publisher, place, pages unknown.">5</a>]</span>. Automated detection of
+impulsive movements: <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../references.html#id21" title="R. Niewiadomski, M. Mancini, G. Volpe, and A. Camurri. Automated detection of impulsive movements in hci. In Proceedings of the 11th Biannual Conference of the Italian SIGCHI Chapter, 166–169. 2015.">17</a>]</span>. The estimator of the stable-distribution parameters:
+<span class="bibtex-citation" id="id6">[<a class="reference internal" href="../references.html#id26" title="J. H. McCulloch. Simple consistent estimators of stable distribution parameters. Communications in Statistics - Simulation and Computation, 1986. DRAFT: volume, number and pages absent in the source.">19</a>]</span>. Mid-level qualities and their sonification: <span class="bibtex-citation" id="id7">[<a class="reference internal" href="../references.html#id10" title="R. Niewiadomski, M. Mancini, A. Cera, S. Piana, C. Canepa, and A. Camurri. Does embodied training improve the recognition of mid-level expressive movement qualities sonification? Journal on Multimodal User Interfaces, 13:191–203, 2019.">18</a>]</span>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="shape_symmetry_balance.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Shape, symmetry and balance</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="gesture_segmentation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Gesture segmentation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#suddenness">Suddenness</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-feature">The feature</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#impulsivity-from-the-trajectory">Impulsivity from the trajectory</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#impulsivity-from-the-body-the-contraction-index">Impulsivity from the body: the contraction index</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-the-outputs">How to read the outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/impulsivity_suddenness.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

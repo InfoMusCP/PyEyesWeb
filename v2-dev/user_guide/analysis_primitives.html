@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Analysis primitives &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/analysis_primitives';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API overview" href="../api/overview.html" />
+    <link rel="prev" title="High-level features" href="high_level.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Analysis primitives</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="analysis-primitives">
+<h1>Analysis primitives<a class="headerlink" href="#analysis-primitives" title="Link to this heading">#</a></h1>
+<p>The analysis primitives are the measures that belong to no layer of the conceptual model (<a class="reference internal" href="../theory/framework.html"><span class="doc">Conceptual framework</span></a>) because
+they know nothing of bodies, skeletons or geometry: they take any scalar, vector or event signal and describe it. How regular a
+signal is, how periodic, how rare its latest value is, how two signals move together. They can be applied to a layer-1
+signal, to the output of a low-level feature or to a mid-level one, and they have no timescale of their own; the timescale is
+that of the signal and of the window you give. The group has 19 features; this page helps to
+choose among them. The groups are described in <a class="reference internal" href="../concepts/layers.html"><span class="doc">Layers and the catalog</span></a>.</p>
+<p>.. list-table::
+:header-rows: 1
+:widths: 20 38 10 20 12</p>
+<ul class="simple">
+<li><ul>
+<li><p>Feature</p></li>
+<li><p>Summary</p></li>
+<li><p>Timescale</p></li>
+<li><p>Family</p></li>
+<li><p>Link</p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code></p></li>
+<li><p>Sample entropy of a single-channel window, for template lengths 1 to ``embedding_dimension``.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/SampleEntropy&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code></p></li>
+<li><p>Coarse-grained series of a window: means of non-overlapping groups of ``factor`` samples.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/CoarseGraining&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Rarity</span></code></p></li>
+<li><p>Rarity of the newest value of a signal within a memory of past values, by ``method``.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/Rarity&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code></p></li>
+<li><p>Whether the pulses of a window are equally spaced.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/BinaryPulsesRegularity&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></p></li>
+<li><p>Multi-scale entropy curve and complexity index of one or several signals.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/MultiScaleEntropy&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Periodicity</span></code></p></li>
+<li><p>Periods and their normalised power for each channel of a window, by the Periodicity Transform.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/Periodicity&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></p></li>
+<li><p>Peak detection on a scalar signal: flags the samples at which a peak has been found.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Gesture</span> <span class="pre">segmentation</span> <span class="pre">&lt;/theory/gesture_segmentation&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/ScalarPeakDetector&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></p></li>
+<li><p>Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/PhaseLockingValue&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code></p></li>
+<li><p>Matrix of positive Pearson correlations between the signals of a group over a sliding window.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/CorrelationsMatrix&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code></p></li>
+<li><p>Partial correlation of a correlation matrix: the direct synchronization between each pair of signals.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/PartialRecurrenceSynchronization&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></p></li>
+<li><p>Recurrence rate of a multichannel series as a function of the lag: how self-similar a movement is in time.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/GeneralisedAutoCorrelation&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code></p></li>
+<li><p>Event synchronization of two event trains: how often events of one series follow those of the other.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/EventSynchronization&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></p></li>
+<li><p>Multi-event-class synchronization of several event series (MECS), one index per event class.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/EventSynchronizationMECS&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></p></li>
+<li><p>Nonlinear interdependence between two signals: how much the neighbours of one reflect those of the other.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/NonlinearInterdependence&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code></p></li>
+<li><p>SPIKE-synchronization of several spike trains: the share of spikes that have a coincident partner.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/SpikeSynchronization&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code></p></li>
+<li><p>Detector of a given sequence of integer events in a stream, one sample per call.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/SequenceDetector&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></p></li>
+<li><p>Recurrence plot of a window of states: when a movement returns close to a state it has visited before.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/RecurrencePlot&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></p></li>
+<li><p>Cross-recurrence plot of two windows of states: when one movement visits states of the other.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/CrossRecurrencePlot&gt;</span></code></p></li>
+</ul>
+</li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></p></li>
+<li><p>Progression of a staged synchronization process, from a chain of synchronization values, one sample per call.</p></li>
+<li><p>any</p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
+<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/TemporalSynchronization&gt;</span></code></p></li>
+</ul>
+</li>
+</ul>
+<section id="which-feature-for-which-question">
+<h2>Which feature for which question<a class="headerlink" href="#which-feature-for-which-question" title="Link to this heading">#</a></h2>
+<p><strong>How regular or complex is the signal?</strong> <a class="reference internal" href="../api/generated/analysis_primitives/SampleEntropy.html#pyeyesweb.analysis_primitives.SampleEntropy" title="pyeyesweb.analysis_primitives.SampleEntropy"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleEntropy</span></code></a> measures the irregularity of a
+window; <a class="reference internal" href="../api/generated/analysis_primitives/CoarseGraining.html#pyeyesweb.analysis_primitives.CoarseGraining" title="pyeyesweb.analysis_primitives.CoarseGraining"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoarseGraining</span></code></a> produces the same signal at a slower scale;
+<a class="reference internal" href="../api/generated/analysis_primitives/MultiScaleEntropy.html#pyeyesweb.analysis_primitives.MultiScaleEntropy" title="pyeyesweb.analysis_primitives.MultiScaleEntropy"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></a> combines both into a curve over scales and a complexity index
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id27" title="M. Costa, A. L. Goldberger, and C.-K. Peng. Multiscale entropy analysis of biological signals. Physical Review E, 71(2):021906, 2005. DRAFT: found only in a source docstring, not in docs.">21</a>]</span>, the input of the dominance analysis of <a class="reference internal" href="high_level.html"><span class="doc">High-level features</span></a>.
+<a class="reference internal" href="../api/generated/analysis_primitives/Rarity.html#pyeyesweb.analysis_primitives.Rarity" title="pyeyesweb.analysis_primitives.Rarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rarity</span></code></a> tells how rare the newest value is within a memory of past values.
+Theory: <a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a>.</p>
+<p><strong>Is it periodic, and are the pulses regular?</strong> <a class="reference internal" href="../api/generated/analysis_primitives/Periodicity.html#pyeyesweb.analysis_primitives.Periodicity" title="pyeyesweb.analysis_primitives.Periodicity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Periodicity</span></code></a> finds the periods of
+each channel of a window by the Periodicity Transform, with their normalised power;
+<a class="reference internal" href="../api/generated/analysis_primitives/BinaryPulsesRegularity.html#pyeyesweb.analysis_primitives.BinaryPulsesRegularity" title="pyeyesweb.analysis_primitives.BinaryPulsesRegularity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code></a> tells whether the pulses of a window are equally spaced. For
+the peaks of a signal use <a class="reference internal" href="../api/generated/analysis_primitives/ScalarPeakDetector.html#pyeyesweb.analysis_primitives.ScalarPeakDetector" title="pyeyesweb.analysis_primitives.ScalarPeakDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></a>, which flags the samples at which a peak
+has been found (a maximum, reported up to <code class="docutils literal notranslate"><span class="pre">window</span></code> samples late; <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is the swing of the signal, not a level). Theory: <a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a> and <a class="reference internal" href="../theory/gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>.</p>
+<p><strong>Do two or more signals move together?</strong> The synchronization measures are the largest family and are chosen by the kind of
+signal.</p>
+<ul class="simple">
+<li><p>Continuous signals: <a class="reference internal" href="../api/generated/analysis_primitives/PhaseLockingValue.html#pyeyesweb.analysis_primitives.PhaseLockingValue" title="pyeyesweb.analysis_primitives.PhaseLockingValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></a> for the phase relation of two signals in a
+band, <a class="reference internal" href="../api/generated/analysis_primitives/CorrelationsMatrix.html#pyeyesweb.analysis_primitives.CorrelationsMatrix" title="pyeyesweb.analysis_primitives.CorrelationsMatrix"><code class="xref py py-class docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code></a> and
+<a class="reference internal" href="../api/generated/analysis_primitives/PartialRecurrenceSynchronization.html#pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization" title="pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code></a> for the correlation of a group and the direct
+link of each pair, and <a class="reference internal" href="../api/generated/analysis_primitives/NonlinearInterdependence.html#pyeyesweb.analysis_primitives.NonlinearInterdependence" title="pyeyesweb.analysis_primitives.NonlinearInterdependence"><code class="xref py py-class docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></a> when the relation is not linear.</p></li>
+<li><p>Recurrence: <a class="reference internal" href="../api/generated/analysis_primitives/RecurrencePlot.html#pyeyesweb.analysis_primitives.RecurrencePlot" title="pyeyesweb.analysis_primitives.RecurrencePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></a> for when a movement returns to a state it visited,
+<a class="reference internal" href="../api/generated/analysis_primitives/CrossRecurrencePlot.html#pyeyesweb.analysis_primitives.CrossRecurrencePlot" title="pyeyesweb.analysis_primitives.CrossRecurrencePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></a> for when one movement visits states of another, and
+<a class="reference internal" href="../api/generated/analysis_primitives/GeneralisedAutoCorrelation.html#pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation" title="pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></a> for the recurrence rate as a function of the lag.</p></li>
+<li><p>Events: <a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronization.html#pyeyesweb.analysis_primitives.EventSynchronization" title="pyeyesweb.analysis_primitives.EventSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventSynchronization</span></code></a>,
+<a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronizationMECS.html#pyeyesweb.analysis_primitives.EventSynchronizationMECS" title="pyeyesweb.analysis_primitives.EventSynchronizationMECS"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></a> and
+<a class="reference internal" href="../api/generated/analysis_primitives/SpikeSynchronization.html#pyeyesweb.analysis_primitives.SpikeSynchronization" title="pyeyesweb.analysis_primitives.SpikeSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code></a> for trains of events, and
+<a class="reference internal" href="../api/generated/analysis_primitives/SequenceDetector.html#pyeyesweb.analysis_primitives.SequenceDetector" title="pyeyesweb.analysis_primitives.SequenceDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceDetector</span></code></a> for a given sequence of integer events in a stream.</p></li>
+<li><p>Staged processes: <a class="reference internal" href="../api/generated/analysis_primitives/TemporalSynchronization.html#pyeyesweb.analysis_primitives.TemporalSynchronization" title="pyeyesweb.analysis_primitives.TemporalSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></a> follows the progression of a
+synchronization process from a chain of synchronization values.</p></li>
+</ul>
+<p>Theory: <a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a>. The synchronization of a group of musicians is the setting of
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id8" title="S. R. Sabharwal, M. Varlet, M. Breaden, G. Volpe, A. Camurri, and P. E. Keller. huSync—a model and system for the measure of synchronization in small groups: a case study on musical joint action. IEEE Access, 10:92357–92372, 2022.">22</a>]</span>.</p>
+</section>
+<section id="a-typical-pipeline">
+<h2>A typical pipeline<a class="headerlink" href="#a-typical-pipeline" title="Link to this heading">#</a></h2>
+<p>A primitive takes any series, such as the output of another feature, a joint coordinate or a respiration trace. Here a sine
+and white noise are measured by the sample entropy of the last window, for template length 2: the regular signal has the
+lower entropy.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleEntropy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">regular</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">40</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">irregular</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">entropy</span> <span class="o">=</span> <span class="n">SampleEntropy</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">embedding_dimension</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">entropy</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">regular</span><span class="p">)</span><span class="o">.</span><span class="n">sample_entropy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>               <span class="c1"># template length 2, last window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">entropy</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">irregular</span><span class="p">)</span><span class="o">.</span><span class="n">sample_entropy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">(0.39, 2.19)</span>
+</pre></div>
+</div>
+</section>
+<section id="what-to-know-before-choosing">
+<h2>What to know before choosing<a class="headerlink" href="#what-to-know-before-choosing" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>A window feature takes <code class="docutils literal notranslate"><span class="pre">window</span></code> samples and <code class="docutils literal notranslate"><span class="pre">hop</span></code>, and is <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> until the window is full
+(<a class="reference internal" href="../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a>). Choose the window in seconds first and multiply by the sampling rate: some metrics have
+minimum lengths, which the constructors check.</p></li>
+<li><p>Primitives work on arrays and know nothing of units: the unit of the output follows from the input and is stated on each
+API page.</p></li>
+<li><p>Synchronization measures take several signals in one call; event measures take trains of events, not continuous signals:
+build them first, for instance with <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code>.</p></li>
+<li><p>Time is in seconds, and a feature that needs a rate takes <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> (<a class="reference internal" href="../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>).</p></li>
+</ul>
+<p>Hands-on: see <a class="reference internal" href="../tutorials/05_analysis_primitives/plot_08_primitives.html#sphx-glr-tutorials-05-analysis-primitives-plot-08-primitives-py"><span class="std std-ref">Analysis primitives: complexity, rarity, periodicity</span></a>, <a class="reference internal" href="../tutorials/05_analysis_primitives/plot_09a_synchronization_signals.html#sphx-glr-tutorials-05-analysis-primitives-plot-09a-synchronization-signals-py"><span class="std std-ref">Synchronization of continuous signals</span></a> and <a class="reference internal" href="../tutorials/05_analysis_primitives/plot_09b_synchronization_events.html#sphx-glr-tutorials-05-analysis-primitives-plot-09b-synchronization-events-py"><span class="std std-ref">Synchronization of events</span></a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="high_level.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">High-level features</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../api/overview.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API overview</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-feature-for-which-question">Which feature for which question</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-typical-pipeline">A typical pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-know-before-choosing">What to know before choosing</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/user_guide/analysis_primitives.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

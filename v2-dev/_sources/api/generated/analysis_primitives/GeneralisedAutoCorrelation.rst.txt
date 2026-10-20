@@ -1,0 +1,104 @@
+.. _feature-GeneralisedAutoCorrelation:
+
+GeneralisedAutoCorrelation
+==========================
+
+Recurrence rate of a multichannel series as a function of the lag: how self-similar a movement is in time.
+
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: generalised\_auto\_correlation`
+
+Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``window``
+     - *required*
+     - ``int``
+   * - ``hop``
+     - ``1``
+     - ``int``
+   * - ``epsilon``
+     - ``0.1``
+     - ``float``
+   * - ``output_type``
+     - ``'function_of_tau'``
+     - ``Literal['scalar', 'function_of_tau']``
+   * - ``tau``
+     - ``1``
+     - ``int``
+   * - ``tau_min``
+     - ``1``
+     - ``int``
+   * - ``tau_spread``
+     - ``10``
+     - ``int``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``signal``
+     - sample
+     - (n,)
+     - 
+     - one value per channel
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``recurrence_rate``
+     - ``float``
+     - (n,)
+     - 
+     - fraction of recurring samples per lag
+   * - ``taus``
+     - ``int``
+     - (n,)
+     - samples
+     - lag of each recurrence rate
+
+.. py:currentmodule:: pyeyesweb.analysis_primitives
+
+Description
+-----------
+
+.. autoclass:: GeneralisedAutoCorrelation
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

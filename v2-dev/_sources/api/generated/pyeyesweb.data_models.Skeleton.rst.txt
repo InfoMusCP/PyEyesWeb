@@ -1,0 +1,30 @@
+﻿pyeyesweb.data\_models.Skeleton
+===============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Skeleton
+   :members: index, missing, weights_or_uniform, pairs, reference, weights, name, joints
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Skeleton.index
+      ~Skeleton.missing
+      ~Skeleton.weights_or_uniform
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Skeleton.pairs
+      ~Skeleton.reference
+      ~Skeleton.weights
+      ~Skeleton.name
+      ~Skeleton.joints

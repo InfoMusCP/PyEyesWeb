@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>A real-time loop with live parameters &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/realtime_live_parameters';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Batch a recording to pandas" href="batch_to_pandas.html" />
+    <link rel="prev" title="Map your marker set to a skeleton" href="map_skeleton.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">A real-time loop with live parameters</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="a-real-time-loop-with-live-parameters">
+<h1>A real-time loop with live parameters<a class="headerlink" href="#a-real-time-loop-with-live-parameters" title="Link to this heading">#</a></h1>
+<p>In a live set-up there is no recording to hand to <code class="docutils literal notranslate"><span class="pre">run</span></code>: a frame arrives, the features are updated, the next frame arrives. This
+page shows the loop, how to give it time, and how to change a parameter of a running feature without stopping the stream. The
+tutorial <a class="reference internal" href="../tutorials/06_capstone/plot_10_capstone.html#sphx-glr-tutorials-06-capstone-plot-10-capstone-py"><span class="std std-ref">Capstone: a pipeline</span></a> builds a longer chain on a motion-capture recording and
+checks it against <code class="docutils literal notranslate"><span class="pre">run</span></code>; the rules behind this page are in <a class="reference internal" href="../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a> and
+<a class="reference internal" href="../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>.</p>
+<section id="the-loop">
+<h2>The loop<a class="headerlink" href="#the-loop" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">process</span></code> takes one sample (or one frame) and returns a <a class="reference internal" href="../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result" title="pyeyesweb.data_models.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>. A feature keeps what it needs
+between calls, so the loop only has to call it in order. The stream below is a hand moving on an ellipse, sampled at 100 Hz;
+in your program the values come from the sensor, a file reader or a network socket.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kinematics</span><span class="p">,</span> <span class="n">SpectralArcLength</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rate</span> <span class="o">=</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">600</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">stamp</span> <span class="o">=</span> <span class="n">index</span> <span class="o">/</span> <span class="n">rate</span>                                   <span class="c1"># seconds</span>
+<span class="gp">... </span>        <span class="k">yield</span> <span class="n">stamp</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">stamp</span><span class="p">),</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">stamp</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">latest</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The first feature turns the position into a speed, the second measures the smoothness of the speed over the last 100 samples (one
+second) and produces a value every 10 samples. Between two values the feature has nothing new to say, and during the first
+second it has not seen enough samples: those calls are not errors, they are results with a status other than <code class="docutils literal notranslate"><span class="pre">OK</span></code>
+(<a class="reference internal" href="../api/generated/pyeyesweb.data_models.Status.html#pyeyesweb.data_models.Status" title="pyeyesweb.data_models.Status"><code class="xref py py-class docutils literal notranslate"><span class="pre">Status</span></code></a>).</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">statuses</span><span class="p">,</span> <span class="n">held</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(),</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">stamp</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">speed</span> <span class="o">=</span> <span class="n">kinematics</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">arc</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">statuses</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">held</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arc</span><span class="o">.</span><span class="n">latest</span><span class="o">.</span><span class="n">spectral_arc_length</span> <span class="k">if</span> <span class="n">arc</span><span class="o">.</span><span class="n">latest</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">statuses</span>
+<span class="go">Counter({'NO_OUTPUT': 180, 'WARMING_UP': 99, 'OK': 21})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">SpectralArcLengthResult(status=OK, spectral_arc_length=-2.69518)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">latest</span><span class="o">.</span><span class="n">timestamp</span>
+<span class="go">2.99</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">feature.latest</span></code> is the last result whose status was <code class="docutils literal notranslate"><span class="pre">OK</span></code>, and <code class="docutils literal notranslate"><span class="pre">None</span></code> before the first one and after <code class="docutils literal notranslate"><span class="pre">reset()</span></code>. A loop that needs
+a continuous signal, such as a parameter sent to a synthesiser, holds it: <code class="docutils literal notranslate"><span class="pre">value</span> <span class="pre">=</span> <span class="pre">result</span> <span class="pre">if</span> <span class="pre">result.ok</span> <span class="pre">else</span> <span class="pre">feature.latest</span></code>. The
+list <code class="docutils literal notranslate"><span class="pre">held</span></code> above does exactly that, and is <code class="docutils literal notranslate"><span class="pre">NaN</span></code> until the first window is complete.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">held</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="mi">6</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">98</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">110</span><span class="p">)]</span>
+<span class="go">[nan, -2.686722, -2.686722, -2.766859, -2.766859]</span>
+</pre></div>
+</div>
+</section>
+<section id="time-timestamp-or-sampling-rate">
+<h2>Time: <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> or <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code><a class="headerlink" href="#time-timestamp-or-sampling-rate" title="Link to this heading">#</a></h2>
+<p>All time is in seconds, and the library never reads a clock: a feature knows the time only from what you give it. The step
+between two samples is, in this order,</p>
+<ol class="arabic simple">
+<li><p>the difference between the <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> of this call and the previous one, when both were given;</p></li>
+<li><p>otherwise <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code>, when the feature has a rate;</p></li>
+<li><p>otherwise one second per sample, and the <code class="docutils literal notranslate"><span class="pre">reason</span></code> of the result says “no time given: per-sample derivatives”.</p></li>
+</ol>
+<p>With a steady stream <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> is enough. With a stream that arrives with jitter, give the timestamps of the samples,
+because they are the true times. The example is a hand that moves at exactly 1 m/s along a line, sampled at about 100 Hz with
+irregular intervals; the kinetic energy of a joint of weight 1 is <span class="math notranslate nohighlight">\(\tfrac12 v^2 = 0.5\)</span> at every call.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">KineticEnergy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clock</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>          <span class="c1"># seconds, jittered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">clock</span><span class="p">,</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">clock</span><span class="p">,</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">clock</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>            <span class="c1"># 1 m/s along x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">KineticEnergy</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"hand"</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">{</span><span class="s2">"hand"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timed</span> <span class="o">=</span> <span class="n">energy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">timed</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span><span class="p">,</span> <span class="n">stamp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">points</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">clock</span><span class="p">[:</span><span class="mi">5</span><span class="p">])]</span>
+<span class="go">[0.0, 0.5, 0.5, 0.5, 0.5]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">untimed</span> <span class="o">=</span> <span class="n">energy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">untimed</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">)</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[:</span><span class="mi">5</span><span class="p">]]</span>
+<span class="go">[0.0, 0.271, 0.847, 0.586, 0.176]</span>
+</pre></div>
+</div>
+<p>Without timestamps the feature assumes that samples are 10 ms apart, so the energy follows the jitter. Take the timestamp from the
+source of the data when it has one (a frame counter or the time of the sensor). Otherwise take it from a monotonic clock, and
+count from the start of the stream so that the numbers stay small:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">read_sample</span><span class="p">()</span>                       <span class="c1"># blocks until the next frame</span>
+    <span class="n">stamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>          <span class="c1"># seconds since the start</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A timestamp must be finite and larger than the previous one. A call that breaks the rule returns <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> and changes
+nothing, so the loop goes on with the next sample:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repeated</span> <span class="o">=</span> <span class="n">timed</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">clock</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">repeated</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">repeated</span><span class="o">.</span><span class="n">reason</span>
+<span class="go">('INVALID_INPUT', 'non-increasing timestamp')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timed</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">clock</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span><span class="o">.</span><span class="n">kinetic_energy</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+<p>A call that has no previous timestamp (the first call, the first one after <code class="docutils literal notranslate"><span class="pre">reset()</span></code>, and the first one after a call made without a
+timestamp) uses <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code>, or one second without a rate. The absolute value of a timestamp, seconds since the epoch for
+example, never enters the step.</p>
+</section>
+<section id="changing-a-parameter-while-the-stream-runs">
+<h2>Changing a parameter while the stream runs<a class="headerlink" href="#changing-a-parameter-while-the-stream-runs" title="Link to this heading">#</a></h2>
+<p>A parameter is set by assigning the attribute, <code class="docutils literal notranslate"><span class="pre">feature.name</span> <span class="pre">=</span> <span class="pre">value</span></code>. It is validated as in the constructor and takes effect on
+the next call. What happens to the state depends on the parameter.</p>
+<dl class="simple myst">
+<dt>Live</dt><dd><p>applied in place, the accumulated state is kept. Thresholds, weights and the sampling rate are live.</p>
+</dd>
+<dt>Structural</dt><dd><p>the parameter sizes or shapes the state (a filter length, the number of channels, a mode). The state restarts and the
+<code class="docutils literal notranslate"><span class="pre">reason</span></code> of the next result says “parameters changed: state reset”, once.</p>
+</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> of a windowed feature are in neither class: the feature keeps the newest samples. A shorter window gives a
+result at once, a longer one reports <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> until it is full again. Both can be changed together with
+<code class="docutils literal notranslate"><span class="pre">configure(window=...,</span> <span class="pre">hop=...)</span></code>.</p>
+<p>The loop below changes one live and one structural parameter while it runs, at samples 300 and 400, and records every <code class="docutils literal notranslate"><span class="pre">reason</span></code>
+that is not empty.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">reset</span><span class="p">();</span> <span class="n">arc</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">stamp</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stream</span><span class="p">(</span><span class="mi">600</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">300</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">arc</span><span class="o">.</span><span class="n">amplitude_threshold</span> <span class="o">=</span> <span class="mf">0.1</span>                  <span class="c1"># live</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">400</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">kinematics</span><span class="o">.</span><span class="n">filter_window_length</span> <span class="o">=</span> <span class="mi">9</span>            <span class="c1"># structural</span>
+<span class="gp">... </span>    <span class="n">speed</span> <span class="o">=</span> <span class="n">kinematics</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">arc</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"kinematics"</span><span class="p">,</span> <span class="n">speed</span><span class="p">),</span> <span class="p">(</span><span class="s2">"arc"</span><span class="p">,</span> <span class="n">result</span><span class="p">)):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">reason</span> <span class="ow">and</span> <span class="n">step</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"NO_OUTPUT"</span> <span class="ow">and</span> <span class="n">step</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"WARMING_UP"</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
+<span class="go">[(0, 'kinematics', 'parameters changed: state reset'), (400, 'kinematics', 'parameters changed: state reset')]</span>
+</pre></div>
+</div>
+<p>The note at sample 0 is the one that follows <code class="docutils literal notranslate"><span class="pre">reset()</span></code>; the one at sample 400 is the structural change, and it appears only on the feature it was applied to. The smoothness of the second feature kept its
+window through the live change. A change of <code class="docutils literal notranslate"><span class="pre">window</span></code> on a running feature:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span><span class="o">.</span><span class="n">reason</span>
+<span class="go">'101 of 200 samples'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">6.01</span><span class="p">)</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span>
+<span class="go">'OK'</span>
+</pre></div>
+</div>
+<p>A value that the constructor would refuse is refused by the setter too, and the feature is left as it was:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">amplitude_threshold</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">SpectralArcLength: amplitudeThreshold must be in [0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"amplitude_threshold"</span><span class="p">]</span>
+<span class="go">0.1</span>
+</pre></div>
+</div>
+<section id="which-parameters-are-live">
+<span id="id1"></span><h3>Which parameters are live<a class="headerlink" href="#which-parameters-are-live" title="Link to this heading">#</a></h3>
+<p>The classification was made parameter by parameter from the original EyesWeb block: a value read at every call is live, one read
+when the block is created is structural, and when in doubt the parameter is structural. The class documentation of each
+feature marks its parameters <em>(live)</em> or <em>(structural)</em> where the distinction applies. The table is taken from the test suite
+(<code class="docutils literal notranslate"><span class="pre">tests/unit_tests/test_live_parameters*.py</span></code>), which changes each listed parameter on a running feature and checks the result
+against a feature built with the new value.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Live</p></th>
+<th class="head"><p>Structural</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">add_intermediate_centroids</span></code>, <code class="docutils literal notranslate"><span class="pre">parts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">silhouette</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">arm_percentage</span></code>, <code class="docutils literal notranslate"><span class="pre">parts</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Videogram</span></code></p></td>
+<td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>, <code class="docutils literal notranslate"><span class="pre">window</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">x_max</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Kinematics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">movement_threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code>, <code class="docutils literal notranslate"><span class="pre">output_type</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">KineticEnergy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">weights</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">input_mode</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BoundingBoxFilledArea</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PointsDensity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">distance_type</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Symmetry</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">aggregation</span></code>, <code class="docutils literal notranslate"><span class="pre">reference_point</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SpectralArcLength</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">amplitude_threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">maximum_cutoff_frequency</span></code>, <code class="docutils literal notranslate"><span class="pre">minimum_cutoff_frequency</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">input_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Harmonicity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prominence_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">upper_limit</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">margin</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DirectionChange</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FilterContour</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gaussian_sigma</span></code>, <code class="docutils literal notranslate"><span class="pre">window</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ConvexHull</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">integer_coordinates</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minimum_distance</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">radius</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">firing_threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">direction_change_epsilon</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">motion_threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">peak_threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gaussian_sigma_x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">potential_type</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">parts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">potential_type</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relative_tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">tolerance</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code></p></td>
+<td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">factor</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Rarity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">measure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">window</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Periodicity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">window</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">low_frequency</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code>, <code class="docutils literal notranslate"><span class="pre">tau_spread</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tau</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reset_every_buffer</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kernel</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">number_of_event_classes</span></code>, <code class="docutils literal notranslate"><span class="pre">tau</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">neighbours</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inter_event_time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sequence</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thresholds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A parameter that is not in the table belongs to a feature whose parameters are not changed one by one by those tests, or has no
+live meaning; the class documentation says which. In the humanoid and generic-model features every tested parameter is live
+(<code class="docutils literal notranslate"><span class="pre">damping</span></code>, <code class="docutils literal notranslate"><span class="pre">viscosity</span></code>, <code class="docutils literal notranslate"><span class="pre">gravity</span></code>, the forces, <code class="docutils literal notranslate"><span class="pre">integration_step</span></code>, <code class="docutils literal notranslate"><span class="pre">floor_position</span></code>, the predictor and estimator parameters,
+<code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>), except the <code class="docutils literal notranslate"><span class="pre">seed</span></code> of <code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code>, the replacement of the <code class="docutils literal notranslate"><span class="pre">model</span></code> by one with another topology, and
+the <code class="docutils literal notranslate"><span class="pre">reference_direction</span></code> of <code class="docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code>, which are structural. Four features have a structural <code class="docutils literal notranslate"><span class="pre">window</span></code>, because the state of the core is sized by it: <code class="docutils literal notranslate"><span class="pre">Rarity(method=&quot;information&quot;)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Videogram</span></code> and <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code>, and <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code>, whose <code class="docutils literal notranslate"><span class="pre">hop</span></code> and <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> are structural too
+(its filters need the same length and overlap in consecutive windows).
+<code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code> and <code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code> change <code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> together, with <code class="docutils literal notranslate"><span class="pre">configure(window=,</span> <span class="pre">hop=)</span></code>.</p>
+</section>
+</section>
+<section id="the-loop-gives-the-numbers-of-run">
+<h2>The loop gives the numbers of <code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#the-loop-gives-the-numbers-of-run" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">run</span></code> is a loop over <code class="docutils literal notranslate"><span class="pre">process</span></code>, and the two give the same numbers. A program that prototypes on a recording and then goes live does
+not change its results.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">point</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">(</span><span class="mi">300</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">offline</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">recording</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="n">stamps</span><span class="p">)</span><span class="o">.</span><span class="n">velocity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">live</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">online</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">live</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">stamp</span><span class="p">)</span><span class="o">.</span><span class="n">velocity</span> <span class="k">for</span> <span class="n">point</span><span class="p">,</span> <span class="n">stamp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">recording</span><span class="p">,</span> <span class="n">stamps</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">offline</span><span class="p">,</span> <span class="n">online</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">run</span></code> starts from a fresh state unless it is called with <code class="docutils literal notranslate"><span class="pre">reset=False</span></code>, which continues from the state left by the previous call:
+a long recording can be processed in chunks, and a loop can be mixed with a <code class="docutils literal notranslate"><span class="pre">run</span></code> on the data that were buffered meanwhile.</p>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>One feature object holds the state of one stream. Two performers, or two sensors, need two objects; do not share one.</p></li>
+<li><p>Keep the call in the loop cheap: build the features before the loop, never inside it. The parameters are read back with
+<code class="docutils literal notranslate"><span class="pre">feature.parameters</span></code>, a read-only mapping.</p></li>
+<li><p>A call that returns <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> (a dropped marker, NaN, a timestamp that goes back) leaves the state unchanged, so the stream
+recovers by itself with the next good sample; check <code class="docutils literal notranslate"><span class="pre">result.ok</span></code> or <code class="docutils literal notranslate"><span class="pre">result.status</span></code> before using a value.</p></li>
+<li><p>Images arrive as arrays too: see <a class="reference internal" href="images.html"><span class="doc">Work with images</span></a> for the memory they need.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="map_skeleton.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Map your marker set to a skeleton</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="batch_to_pandas.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Batch a recording to pandas</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-loop">The loop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-timestamp-or-sampling-rate">Time: <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> or <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-a-parameter-while-the-stream-runs">Changing a parameter while the stream runs</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-parameters-are-live">Which parameters are live</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-loop-gives-the-numbers-of-run">The loop gives the numbers of <code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/howto/realtime_live_parameters.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

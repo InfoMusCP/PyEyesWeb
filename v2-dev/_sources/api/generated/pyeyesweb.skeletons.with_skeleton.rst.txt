@@ -1,0 +1,6 @@
+﻿pyeyesweb.skeletons.with\_skeleton
+==================================
+
+.. currentmodule:: pyeyesweb.skeletons
+
+.. autofunction:: with_skeleton

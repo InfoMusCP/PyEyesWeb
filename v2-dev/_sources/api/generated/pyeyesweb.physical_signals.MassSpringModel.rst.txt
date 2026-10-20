@@ -1,0 +1,21 @@
+﻿pyeyesweb.physical\_signals.MassSpringModel
+===========================================
+
+.. currentmodule:: pyeyesweb.physical_signals
+
+
+
+.. autoclass:: MassSpringModel
+   :members: from_xml_file, from_xml_string, save_xml_file, to_xml
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~MassSpringModel.from_xml_file
+      ~MassSpringModel.from_xml_string
+      ~MassSpringModel.save_xml_file
+      ~MassSpringModel.to_xml
+

@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.physical_signals.humanoid &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/physical_signals/humanoid';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.physical_signals.humanoid</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.physical_signals.humanoid</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Mass-spring models of a body (EyesWeb HumanoidModel catalog): virtual sensors that turn a captured skeleton into a</span>
+<span class="sd">physically simulated one, into bone directions or into a prediction.</span>
+
+<span class="sd">* :class:`HumanoidSimulator`, :class:`HumanoidOrientations`: a fixed 21-joint humanoid (the joints of the Kinect SDK v1</span>
+<span class="sd">  as EyesWeb names them); ``HUMANOID_JOINTS`` and ``HUMANOID_BONES`` list its joint and bone names.</span>
+<span class="sd">* :class:`GenericModelOrientations`, :class:`GenericModelSimulator`, :class:`GenericModelPredictor`,</span>
+<span class="sd">  :class:`GenericModelEstimator`: the same features for a model of your own, a :class:`MassSpringModel` (also loaded</span>
+<span class="sd">  from an EyesWeb XML file). Positions are in the unit of the model.</span>
+<span class="sd">* :class:`PointsPredictor`: one-step linear extrapolation of any labelled points.</span>
+
+<span class="sd">A frame is a dict ``label -&gt; (x, y, z)`` or an ``(N, 3)`` array in the order of ``labels``. The model has its own joint</span>
+<span class="sd">names; ``joint_map`` maps each of them to the label of your data (``{"head": "Head", ...}``; the names you do not list</span>
+<span class="sd">keep their own name) and the constructor raises when the labels do not hold a joint the model needs. A joint that is</span>
+<span class="sd">missing in a frame (absent from the dict, or a row with a NaN) is a dropout the model handles (its bones stay as they</span>
+<span class="sd">were); infinite values and a frame without any joint are ``INVALID_INPUT``. Outputs are labelled by the names of the</span>
+<span class="sd">model.</span>
+
+<span class="sd">Time: the simulators, the predictor and the estimator advance the model by the time step of the call in seconds (the</span>
+<span class="sd">library rule: ``timestamp``, else ``sampling_rate`` in Hz, default ``None``, else 1 s per call and the ``reason`` says</span>
+<span class="sd">``"no time given: per-sample derivatives"``).</span>
+
+<span class="sd">Units: ``units="m"|"mm"`` (default ``"m"``) is the unit of your frames, of ``gravity`` / ``floor_position`` and of the</span>
+<span class="sd">outputs. :class:`HumanoidSimulator` works internally in millimetres (the EyesWeb body is defined in mm) and converts at</span>
+<span class="sd">the boundary, the one place where the library rescales data; the generic models run in the unit of their own model and</span>
+<span class="sd">``units`` names it (stiffness and damping are in that unit).</span>
+
+<span class="sd">Known limitation of the simulators: the rotation springs make chains of four or five bones flutter at a low ``damping``</span>
+<span class="sd">and the model is not a noise filter; the default ``damping=10`` (EyesWeb: 0.3, which diverges) is stable, 3 follows</span>
+<span class="sd">clean data with less lag.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYZ</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">,</span> <span class="n">FrameFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">points_input</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.labels</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelGuard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals._humanoid_model</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HUMANOID_BONES</span><span class="p">,</span> <span class="n">HUMANOID_JOINTS</span><span class="p">,</span> <span class="n">NAME_PARAMS</span><span class="p">,</span> <span class="n">MassSpringModel</span><span class="p">,</span> <span class="n">core_model</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.skeletons</span><span class="w"> </span><span class="kn">import</span> <span class="n">with_skeleton</span>
+
+<span class="n">_humanoid</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">humanoid</span>
+
+<span class="n">_NAN_POINT</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">3</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_rate</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">sampling_rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+                                          <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sampling_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"sampling_rate must be a positive number of Hz or None, got </span><span class="si">{</span><span class="n">sampling_rate</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_switch</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be True or False, got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ModelInput</span><span class="p">(</span><span class="n">LabelGuard</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Mixin: the frames of the user, with their own labels, become the frames of the model (`names` of the model, in</span>
+<span class="sd">    its order); `_input_names()` gives the names the input must hold."""</span>
+
+    <span class="n">_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_dropouts</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># missing joints and NaN rows are dropouts of the model, not bad data</span>
+    <span class="n">_given_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"reference_direction"</span><span class="p">:</span> <span class="s2">"ref_dir"</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_input_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""`model name -&gt; label of the user's data`, the names not in `joint_map` keeping their own."""</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_given_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">()</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">names</span><span class="p">)}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_label_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+                   <span class="n">names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Take `labels` and `joint_map` after checking them against the model names; nothing changes on an error."""</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">()</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">names</span><span class="p">)</span>
+        <span class="n">given</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">joint_map</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">owner</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="n">unknown</span> <span class="o">:=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">given</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">owner</span><span class="si">}</span><span class="s2">: joint_map names that are not model names: </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2">; the model has </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wanted</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">given</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">missing</span> <span class="o">:=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">label</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">wanted</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">}:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">owner</span><span class="si">}</span><span class="s2">: labels do not contain </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="si">}</span><span class="s2">, which the model reads as "</span>
+                                 <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">; map the model names to your labels with joint_map="</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_given_map</span> <span class="o">=</span> <span class="n">labels</span><span class="p">,</span> <span class="n">given</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_changed</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Names of the rows of array frames; `None`: the rows are in the order of the model names (`inputs`)."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+    <span class="nd">@labels</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_given_map</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">joint_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Model name -&gt; label of the data, for the names that differ."""</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_given_map</span><span class="p">)</span>
+
+    <span class="nd">@joint_map</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">joint_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_outputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"_row_cache"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_outputs_changed</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Row of each model name in an array frame, `None` when the frame is in the order of the model names."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_row_cache"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">()</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_row_cache"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapping</span><span class="p">[</span><span class="n">name</span><span class="p">])</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rows</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_frame_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Input</span><span class="p">:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">points_input</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">names</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">accepts</span><span class="o">=</span><span class="p">(</span><span class="nb">dict</span><span class="p">,),</span>
+                            <span class="n">allow_non_finite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Result</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""The frame as the `(len(names), 3)` array of the model (NaN rows for the missing points), or the</span>
+<span class="sd">        `INVALID_INPUT` result."""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">problem</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_problem</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">problem</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">()),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+                    <span class="n">points</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"empty frame"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rows</span><span class="p">()</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">points</span> <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">points</span><span class="p">[</span><span class="n">rows</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"infinite values"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"no joint present in the frame"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">points</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Timed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Mixin of the blocks that advance a model by the time step of each call: the library rule of `CoreFeature` (the</span>
+<span class="sd">    timestamp, else `sampling_rate` Hz, default None, else 1 s per call with the per-sample note in `reason`)."""</span>
+
+    <span class="n">_timed</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"sampling_rate"</span><span class="p">:</span>
+            <span class="n">_check_rate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_set_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Units</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Mixin of the features with length-valued parameters (`gravity`, `floor_position`): `units="m"|"mm"` (default</span>
+<span class="sd">    "m") is the unit of the data, of those parameters and of the outputs. The block gets them in `_core_factor`</span>
+<span class="sd">    units of its own: see `_block_params`."""</span>
+
+    <span class="n">_unit_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"gravity"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"floor_position"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">_internal_mm</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_block_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># The shared mechanism scales metres to the data unit (m -&gt; 1, mm -&gt; 1000). The humanoid core works in mm</span>
+        <span class="c1"># whatever the data is, so its parameters go from the data unit to mm (m -&gt; 1000, mm -&gt; 1): the same</span>
+        <span class="c1"># mechanism with the unit flipped. The generic models run in the unit of their own model: no scaling.</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"units"</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">)</span>
+        <span class="n">flipped</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"m"</span><span class="p">:</span> <span class="s2">"mm"</span><span class="p">,</span> <span class="s2">"mm"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">}[</span><span class="n">units</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_mm</span> <span class="k">else</span> <span class="s2">"m"</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_block_params</span><span class="p">({</span><span class="o">**</span><span class="n">params</span><span class="p">,</span> <span class="s2">"units"</span><span class="p">:</span> <span class="n">flipped</span><span class="p">})</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_core</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Millimetres in one data unit for the features that run in mm; 1 for the others."""</span>
+        <span class="k">return</span> <span class="mf">1000.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_mm</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"units"</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"m"</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_units_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"units"</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Simulator</span><span class="p">(</span><span class="n">_Timed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Mixin of the simulators: `start_from_input` puts the model on the first frame instead of letting it settle there</span>
+<span class="sd">    from its rest pose."""</span>
+
+    <span class="n">_fresh</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_start_from_input</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_from_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Whether the first frame after construction or `reset()` is put on the input (EyesWeb's reset trigger: the</span>
+<span class="sd">        present joints take the input position and the rest lengths become the input bone lengths) and returned as it</span>
+<span class="sd">        is. A change applies from the next `reset()`."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_from_input</span>
+
+    <span class="nd">@start_from_input</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_from_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_from_input</span> <span class="o">=</span> <span class="n">_switch</span><span class="p">(</span><span class="s2">"start_from_input"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_teleport</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">teleport</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_from_input</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fresh</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">teleport</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fresh</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ModelFeature</span><span class="p">(</span><span class="n">_ModelInput</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Mixin of the features built on a `MassSpringModel`: `model`, which is a parameter like the others (structural)."""</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_choices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_coerce_choices</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"model"</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span> <span class="o">=</span> <span class="n">core_model</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s2">"model"</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_names_of</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_input_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names_of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"model"</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MassSpringModel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""A copy of the model in its current state (an estimator: with the estimated parameters). Setting it changes</span>
+<span class="sd">        the model; the state restarts and the labels are checked against the new names."""</span>
+        <span class="n">block_model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MassSpringModel</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span> <span class="k">if</span> <span class="n">block_model</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">block_model</span><span class="p">)</span>
+
+    <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">core_model</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_given_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names_of</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>  <span class="c1"># checks before anything changes</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_param</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_given_map</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_output_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">output_labels</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_positions_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"positions"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_labels</span><span class="p">()),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_labels</span><span class="p">(),</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span>
+                      <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"units"</span><span class="p">],</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"positions of the masses of the model, in `units`"</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># the humanoid</span>
+
+
+<div class="viewcode-block" id="HumanoidSimulator">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/HumanoidSimulator.html#pyeyesweb.physical_signals.HumanoidSimulator">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"HumanoidSimulator (MassSpringHumanoidSimulator)"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HumanoidSimulator</span><span class="p">(</span><span class="n">_Units</span><span class="p">,</span> <span class="n">_Simulator</span><span class="p">,</span> <span class="n">_ModelInput</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A physically based humanoid that follows a captured skeleton.</span>
+
+<span class="sd">    The captured joints are replaced by the pose of a virtual body: a humanoid of 21 masses (the joints of</span>
+<span class="sd">    ``HUMANOID_JOINTS``) joined by 20 springs (the bones of ``HUMANOID_BONES``) is integrated in time. Every bone is a</span>
+<span class="sd">    spring with a length force, which keeps its rest length, and a rotation force, which turns it towards the direction</span>
+<span class="sd">    observed in the input; the head is the (very heavy) root. The simulated pose is smooth and always articulated, with the</span>
+<span class="sd">    proportions of the model body, so the feature acts as a virtual sensor that removes the jitter and the dropouts of a</span>
+<span class="sd">    captured skeleton and yields a physically plausible joint trajectory. It is not a noise filter in the</span>
+<span class="sd">    signal-processing sense (see Notes).</span>
+
+<span class="sd">    ``process(skeleton, control=None, *, timestamp=None)`` takes the captured joints, a dict ``label -&gt; (x, y, z)`` or a</span>
+<span class="sd">    ``(21, 3)`` array in the order of ``labels``. The optional ``control`` holds bone directions, a ``(20, 3)`` array in the</span>
+<span class="sd">    order of ``HUMANOID_BONES`` or a dict ``"&lt;joint1&gt;-&lt;joint2&gt;" -&gt; (x, y, z)``; the bones then follow them instead of the</span>
+<span class="sd">    directions seen in the joints. They are directions *relative to the parent bone*, the convention of the output of</span>
+<span class="sd">    :class:`HumanoidOrientations`: passing that output as ``control`` reproduces the pose of the joints it came from.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``HUMANOID_JOINTS``.</span>
+<span class="sd">    joint_map : dict, optional</span>
+<span class="sd">        ``joint of the model -&gt; label of your data`` *(live)*; the model names are those of ``HUMANOID_JOINTS`` and the</span>
+<span class="sd">        names you leave out keep their own. The constructor raises ``ValueError`` when ``labels`` lack a joint the model</span>
+<span class="sd">        needs.</span>
+<span class="sd">    start_from_input : bool, default False</span>
+<span class="sd">        Put the model on the first frame after construction or ``reset()`` instead of letting it settle there from its</span>
+<span class="sd">        T-pose *(live)*. The present joints take the input positions, the rest lengths of the bones become the bone</span>
+<span class="sd">        lengths of the input, and that first frame is returned as it is. A change applies from the next ``reset()``.</span>
+<span class="sd">    reference_direction : tuple of float, default (1.0, 0.0, 0.0)</span>
+<span class="sd">        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are</span>
+<span class="sd">        measured (dimensionless; the x axis by default).</span>
+<span class="sd">    integration_step : float, default 0.001</span>
+<span class="sd">        Step of the numerical integration in seconds, &gt; 0 *(live)*. A call that advances the model by ``dt`` seconds runs</span>
+<span class="sd">        ``int(dt / integration_step)`` steps.</span>
+<span class="sd">    gravity : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.</span>
+<span class="sd">    damping : float, default 10.0</span>
+<span class="sd">        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;</span>
+<span class="sd">        10 is stable with noisy input and 3 follows clean data with less lag.</span>
+<span class="sd">    viscosity : float, default 0.0</span>
+<span class="sd">        Viscous friction of the masses *(live)*.</span>
+<span class="sd">    length_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that keep each spring at its rest length *(live)*.</span>
+<span class="sd">    rotation_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that turn each spring towards its target direction *(live)*.</span>
+<span class="sd">    ground_interaction : bool, default False</span>
+<span class="sd">        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is</span>
+<span class="sd">        pushed back along the normal.</span>
+<span class="sd">    floor_position : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        A point of the floor plane, in ``units`` *(live)*.</span>
+<span class="sd">    sampling_rate : float, optional</span>
+<span class="sd">        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no</span>
+<span class="sd">        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.</span>
+<span class="sd">    units : {"m", "mm"}, default "m"</span>
+<span class="sd">        Unit of your frames, of the outputs, of ``gravity`` and of ``floor_position`` *(live)*. See Notes.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``joints``: ``(21, 3)`` array of ``(x, y, z)`` in ``units``, labelled by ``HUMANOID_JOINTS``; a joint</span>
+<span class="sd">    the model did not produce is NaN. The result is ``OK`` on every valid call (there is no warm-up). A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame</span>
+<span class="sd">    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint</span>
+<span class="sd">    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.</span>
+
+<span class="sd">    **Time.** The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A</span>
+<span class="sd">    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it</span>
+<span class="sd">    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses</span>
+<span class="sd">    ``1 / sampling_rate`` (or 1 s), never the absolute time.</span>
+
+<span class="sd">    **Units.** This is the one feature that rescales data. The EyesWeb body is defined in millimetres and the spring forces</span>
+<span class="sd">    depend on the length unit, so the feature works internally in millimetres and converts at the boundary: with</span>
+<span class="sd">    ``units="m"`` frames are multiplied by 1000 on the way in and joints divided by 1000 on the way out, with ``"mm"``</span>
+<span class="sd">    nothing is converted. A body driven in metres reproduces the millimetre run up to rounding; metres declared as</span>
+<span class="sd">    ``"mm"`` give a different motion, because the model is not scale free.</span>
+
+<span class="sd">    **Behaviour.** The head is pinned: the output is the pose of a body hanging from where its head starts, the T-pose at</span>
+<span class="sd">    the origin or, with ``start_from_input``, the first frame; the translation of the person is not followed, as in</span>
+<span class="sd">    EyesWeb. Bone lengths stay those of the body and only the directions follow the input. A joint missing in a frame</span>
+<span class="sd">    leaves its bones unchanged. Every parameter is live; ``reset()`` puts the body back in the T-pose.</span>
+
+<span class="sd">    **Known limitation.** The rotation springs make chains of four or five bones flutter at a low ``damping``, and the</span>
+<span class="sd">    model is not a noise filter: it follows the input with a lag that grows with ``damping``.</span>
+
+<span class="sd">    **Differences from EyesWeb.** The default ``damping`` is 10 (EyesWeb: 0.3, which diverges); time is in seconds per</span>
+<span class="sd">    call; ``control`` is read as directions relative to the parent bone (EyesWeb read world directions, so there the output</span>
+<span class="sd">    of its orientation extractor gave another pose).</span>
+
+<span class="sd">    **Corrected in the core.** The damping force is proportional to the relative velocity of the two masses (the original</span>
+<span class="sd">    used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in, so the</span>
+<span class="sd">    body at rest is in equilibrium; the reset to the input, which the original could never reach, works and moves only the</span>
+<span class="sd">    joints that are present.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import HumanoidSimulator</span>
+<span class="sd">    &gt;&gt;&gt; simulator = HumanoidSimulator(sampling_rate=25.0)</span>
+<span class="sd">    &gt;&gt;&gt; result = simulator.process({"head": (0.0, 1.7, 0.0)})    # a lone joint: the body hangs from it, in its T-pose</span>
+<span class="sd">    &gt;&gt;&gt; result.joints.shape</span>
+<span class="sd">    (21, 3)</span>
+<span class="sd">    &gt;&gt;&gt; follower = HumanoidSimulator(sampling_rate=25.0, start_from_input=True)</span>
+<span class="sd">    &gt;&gt;&gt; bool(np.allclose(follower.process(result.joints).joints, result.joints))</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">HumanoidSimulator</span>
+    <span class="n">_hidden_params</span> <span class="o">=</span> <span class="n">NAME_PARAMS</span>
+    <span class="n">_internal_mm</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span> <span class="n">start_from_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">_check_rate</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sampling_rate"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_from_input</span> <span class="o">=</span> <span class="n">_switch</span><span class="p">(</span><span class="s2">"start_from_input"</span><span class="p">,</span> <span class="n">start_from_input</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">SkeletonLayout</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_input_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">HUMANOID_JOINTS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_input</span><span class="p">(</span><span class="s2">"skeleton"</span><span class="p">,</span> <span class="s2">"captured joints, in `units`"</span><span class="p">),</span>
+                      <span class="n">Input</span><span class="p">(</span><span class="s2">"control"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">POINTS</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">HUMANOID_BONES</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">HUMANOID_BONES</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="p">(</span>
+                          <span class="s2">"bone directions relative to the parent bone (the output of HumanoidOrientations) replacing those seen in the joints"</span><span class="p">),</span> <span class="n">accepts</span><span class="o">=</span><span class="p">(</span><span class="nb">dict</span><span class="p">,),</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">allow_non_finite</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"joints"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">HUMANOID_JOINTS</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span>
+                             <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units_output</span><span class="p">(),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"simulated joint positions"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">Result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">points</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">teleport</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_teleport</span><span class="p">()</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_core</span>
+        <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>  <span class="c1"># metres in, the core works in mm</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">points</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="k">if</span> <span class="n">control</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">teleport</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_with_control</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">teleport</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span> <span class="o">/</span> <span class="n">scale</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">joints</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_with_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">teleport</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">joints</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">,</span> <span class="n">points</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">control</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">HUMANOID_BONES</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+        <span class="n">directions</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">control</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()}</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">joints</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">directions</span><span class="p">,</span> <span class="n">teleport</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_NAN_POINT</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">output_labels</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="HumanoidOrientations">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/HumanoidOrientations.html#pyeyesweb.physical_signals.HumanoidOrientations">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"HumanoidOrientationsExtractor"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HumanoidOrientations</span><span class="p">(</span><span class="n">_ModelInput</span><span class="p">,</span> <span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The orientation of every bone of a skeleton relative to its parent bone.</span>
+
+<span class="sd">    A posture is described by the direction of each of the 20 bones of ``HUMANOID_BONES`` (named</span>
+<span class="sd">    ``"&lt;joint1&gt;-&lt;joint2&gt;"``) expressed in the frame of the previous bone of the chain, so that the description does not</span>
+<span class="sd">    depend on where the body is or how its parent segments are oriented. The output is the convention of the ``control``</span>
+<span class="sd">    input of :class:`HumanoidSimulator`, which takes it as it is.</span>
+
+<span class="sd">    ``process(skeleton, *, timestamp=None)`` takes the captured joints, a dict ``label -&gt; (x, y, z)`` or a ``(21, 3)`` array</span>
+<span class="sd">    in the order of ``labels``. The feature is stateful (``reset()``) but has no time axis: ``timestamp`` is only copied</span>
+<span class="sd">    into ``result.timestamp``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``HUMANOID_JOINTS``.</span>
+<span class="sd">    joint_map : dict, optional</span>
+<span class="sd">        ``joint of the model -&gt; label of your data`` *(live)*, as in :class:`HumanoidSimulator`; names left out keep their</span>
+<span class="sd">        own.</span>
+<span class="sd">    reference_direction : tuple of float, default (1.0, 0.0, 0.0)</span>
+<span class="sd">        Reference direction of the root bones (dimensionless; the x axis by default) *(structural)*: the rotation of a</span>
+<span class="sd">        root bone is the shortest arc from this direction.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``directions``: ``(20, 3)`` array of unit vectors, dimensionless, labelled by ``HUMANOID_BONES``. A</span>
+<span class="sd">    bone of zero length gives the zero vector. A joint missing in a frame keeps the position it had in the previous frame</span>
+<span class="sd">    (the T-pose before the first), so a bone whose joint was never seen is still computed. The result is ``OK`` on every</span>
+<span class="sd">    valid call. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame</span>
+<span class="sd">    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint</span>
+<span class="sd">    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import HumanoidOrientations, HumanoidSimulator</span>
+<span class="sd">    &gt;&gt;&gt; pose = HumanoidSimulator().process({"head": (0.0, 0.0, 0.0)}).joints    # the T-pose, (21, 3)</span>
+<span class="sd">    &gt;&gt;&gt; directions = HumanoidOrientations().process(pose).directions</span>
+<span class="sd">    &gt;&gt;&gt; directions.shape</span>
+<span class="sd">    (20, 3)</span>
+<span class="sd">    &gt;&gt;&gt; bool(np.allclose(np.linalg.norm(directions, axis=1), 1.0))</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">HumanoidOrientationsExtractor</span>
+    <span class="n">_hidden_params</span> <span class="o">=</span> <span class="n">NAME_PARAMS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">SkeletonLayout</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_input_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">HUMANOID_JOINTS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_input</span><span class="p">(</span><span class="s2">"skeleton"</span><span class="p">,</span> <span class="s2">"captured joints"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"directions"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">HUMANOID_BONES</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">HUMANOID_BONES</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span>
+                             <span class="n">doc</span><span class="o">=</span><span class="s2">"unit direction of each bone in the frame of its previous bone"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">Result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">points</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">,</span> <span class="n">points</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># generic models</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_GenericFeature</span><span class="p">(</span><span class="n">_ModelFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Mixin of the features of a model of your own: `model` is the first argument and `labels` / `joint_map` follow."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MassSpringModel</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+                 <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_outputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"_layout"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_outputs_changed</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_layout"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_layout"</span><span class="p">]</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">SkeletonLayout</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">layout</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mass_names</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">mass_names</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_spring_names</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">spring_names</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GenericModelOrientations">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/GenericModelOrientations.html#pyeyesweb.physical_signals.GenericModelOrientations">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"GenericModelOrientationsExtractor"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericModelOrientations</span><span class="p">(</span><span class="n">_GenericFeature</span><span class="p">,</span> <span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The bone vectors of a mass-spring model from the positions of its masses.</span>
+
+<span class="sd">    For every spring :math:`s` of ``model``, the feature gives the vector from its first mass (the hinge) to its second</span>
+<span class="sd">    mass (the tip),</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mathbf{b}_s = \mathbf{p}_{\mathrm{tip}(s)} - \mathbf{p}_{\mathrm{hinge}(s)},</span>
+
+<span class="sd">    not normalised and in the unit of the data. It is the front end of :class:`GenericModelSimulator` and</span>
+<span class="sd">    :class:`GenericModelPredictor`, which take these vectors as the directions the springs have to follow.</span>
+
+<span class="sd">    ``process(skeleton, *, timestamp=None)`` takes the positions of the masses, one point per mass of ``model`` named like</span>
+<span class="sd">    the mass (or mapped with ``joint_map``), as a dict ``label -&gt; (x, y, z)`` or an ``(n_masses, 3)`` array in the order of</span>
+<span class="sd">    ``labels``. The feature is stateless and has no time axis: ``timestamp`` is only copied into ``result.timestamp``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : MassSpringModel or str</span>
+<span class="sd">        The model, or the path of an EyesWeb XML model file *(structural)*. Only the mass and spring names matter here.</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.mass_names``.</span>
+<span class="sd">    joint_map : dict, optional</span>
+<span class="sd">        ``mass name of the model -&gt; label of your data`` *(live)*; names left out keep their own.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``directions``: ``(n_springs, 3)`` array of ``(x, y, z)``, in the unit of the data, labelled by the spring</span>
+<span class="sd">    names of the model. A spring with a missing mass is NaN. The result is ``OK`` on every valid call. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame</span>
+<span class="sd">    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint</span>
+<span class="sd">    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import GenericModelOrientations, MassSpringModel</span>
+<span class="sd">    &gt;&gt;&gt; model = MassSpringModel()</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("root", 1e10)</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))</span>
+<span class="sd">    &gt;&gt;&gt; model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)</span>
+<span class="sd">    &gt;&gt;&gt; GenericModelOrientations(model).process([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]).directions</span>
+<span class="sd">    array([[0., 1., 0.]])</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">GenericModelOrientationsExtractor</span>
+    <span class="n">_names_of</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_mass_names</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_input</span><span class="p">(</span><span class="s2">"skeleton"</span><span class="p">,</span> <span class="s2">"positions of the masses of the model"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_labels</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"directions"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span>
+                             <span class="n">doc</span><span class="o">=</span><span class="s2">"vector from the first to the second mass of each spring"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">Result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">points</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_layout</span><span class="p">(),</span> <span class="n">points</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Directions</span><span class="p">(</span><span class="n">_GenericFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The input of the simulator and the predictor: one direction per spring of the model."""</span>
+
+    <span class="n">_names_of</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_spring_names</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_input</span><span class="p">(</span><span class="s2">"directions"</span><span class="p">,</span> <span class="s2">"bone directions of the springs of the model, e.g. the output of "</span>
+                                                      <span class="s2">"GenericModelOrientations"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positions_output</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="GenericModelSimulator">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/GenericModelSimulator.html#pyeyesweb.physical_signals.GenericModelSimulator">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"GenericModelSimulator"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericModelSimulator</span><span class="p">(</span><span class="n">_Units</span><span class="p">,</span> <span class="n">_Simulator</span><span class="p">,</span> <span class="n">_Directions</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A mass-spring model that follows bone directions.</span>
+
+<span class="sd">    A model of your own, a :class:`MassSpringModel` of masses joined by springs, is integrated in time while each spring is</span>
+<span class="sd">    pulled towards the direction given in the input. The result is a smooth, always articulated trajectory of the masses of</span>
+<span class="sd">    the model that follows a captured or generated movement: a virtual sensor for any articulated structure (a limb, a</span>
+<span class="sd">    puppet, a whole body of your own design).</span>
+
+<span class="sd">    ``process(directions, *, timestamp=None)`` takes one direction per spring of ``model`` (a dict ``label -&gt; (x, y, z)``,</span>
+<span class="sd">    labelled by the spring names or mapped with ``joint_map``, or a ``(n_springs, 3)`` array in the order of ``labels``;</span>
+<span class="sd">    typically the output of :class:`GenericModelOrientations`) as the rest targets of the springs. It advances the model by</span>
+<span class="sd">    the time step of the call and returns ``positions``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : MassSpringModel or str</span>
+<span class="sd">        The model, or the path of an EyesWeb XML model file *(structural)*.</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.spring_names``.</span>
+<span class="sd">    joint_map : dict, optional</span>
+<span class="sd">        ``spring name of the model -&gt; label of your data`` *(live)*; names left out keep their own.</span>
+<span class="sd">    start_from_input : bool, default False</span>
+<span class="sd">        Move the tips of the springs onto the input at the first frame after construction or ``reset()`` *(live)*; a</span>
+<span class="sd">        change applies from the next ``reset()``.</span>
+<span class="sd">    reference_direction : tuple of float, default (1.0, 0.0, 0.0)</span>
+<span class="sd">        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are</span>
+<span class="sd">        measured (dimensionless; the x axis by default).</span>
+<span class="sd">    integration_step : float, default 0.001</span>
+<span class="sd">        Step of the numerical integration in seconds, &gt; 0 *(live)*. A call that advances the model by ``dt`` seconds runs</span>
+<span class="sd">        ``int(dt / integration_step)`` steps.</span>
+<span class="sd">    gravity : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.</span>
+<span class="sd">    damping : float, default 10.0</span>
+<span class="sd">        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;</span>
+<span class="sd">        10 is stable with noisy input and 3 follows clean data with less lag.</span>
+<span class="sd">    viscosity : float, default 0.0</span>
+<span class="sd">        Viscous friction of the masses *(live)*.</span>
+<span class="sd">    length_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that keep each spring at its rest length *(live)*.</span>
+<span class="sd">    rotation_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that turn each spring towards its target direction *(live)*.</span>
+<span class="sd">    ground_interaction : bool, default False</span>
+<span class="sd">        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is</span>
+<span class="sd">        pushed back along the normal.</span>
+<span class="sd">    floor_position : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        A point of the floor plane, in ``units`` *(live)*.</span>
+<span class="sd">    use_input_lengths : bool, default False</span>
+<span class="sd">        Take the rest length of each spring from the length of the input vector instead of the length of the model *(live)*.</span>
+<span class="sd">    sampling_rate : float, optional</span>
+<span class="sd">        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no</span>
+<span class="sd">        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.</span>
+<span class="sd">    units : {"m", "mm"}, default "m"</span>
+<span class="sd">        Name of the unit of the model, of the data, of ``gravity``, ``floor_position`` and of the outputs *(live)*.</span>
+<span class="sd">        Nothing is rescaled (see Notes).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``positions``: ``(n_masses, 3)`` array of ``(x, y, z)`` in ``units``, labelled by the mass names of the</span>
+<span class="sd">    model. The result is ``OK`` on every valid call (no warm-up). A direction missing in a frame leaves its spring</span>
+<span class="sd">    unchanged. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame</span>
+<span class="sd">    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint</span>
+<span class="sd">    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.</span>
+
+<span class="sd">    **Time.** The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A</span>
+<span class="sd">    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it</span>
+<span class="sd">    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses</span>
+<span class="sd">    ``1 / sampling_rate`` (or 1 s), never the absolute time.</span>
+
+<span class="sd">    **Units.** The model, the data, ``gravity``, ``floor_position`` and the outputs are in one and the same length unit, the</span>
+<span class="sd">    unit of your model; ``units`` only names it (an EyesWeb XML model is usually in millimetres: ``units="mm"``). Nothing is</span>
+<span class="sd">    rescaled, so the numbers are identical for ``"m"`` and ``"mm"``. The dynamics are those of the model in its own unit,</span>
+<span class="sd">    and its stiffness and damping are expressed in that unit too: the same model written in another unit moves</span>
+<span class="sd">    differently. :class:`HumanoidSimulator` is the exception that does convert.</span>
+
+<span class="sd">    **Known limitation.** The rotation springs make chains of four or five bones flutter at a low ``damping``; see</span>
+<span class="sd">    :class:`HumanoidSimulator`.</span>
+
+<span class="sd">    **Corrected in the core.** The damping is proportional to the relative velocity of the two masses (the original</span>
+<span class="sd">    injected energy); a spring is skipped by the length force only when its direction is the zero vector; after the reset</span>
+<span class="sd">    to the input the spring directions are refreshed; the zero vector normalises to the zero vector instead of NaN.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import GenericModelSimulator, MassSpringModel</span>
+<span class="sd">    &gt;&gt;&gt; model = MassSpringModel()</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("root", 1e10)</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))</span>
+<span class="sd">    &gt;&gt;&gt; model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)</span>
+<span class="sd">    &gt;&gt;&gt; simulator = GenericModelSimulator(model, sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(3):</span>
+<span class="sd">    ...     result = simulator.process([[0.0, 1.0, 0.0]])    # the rod is asked to point along y</span>
+<span class="sd">    &gt;&gt;&gt; result.positions[1].round(3)</span>
+<span class="sd">    array([1.   , 0.042, 0.   ])</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">GenericModelSimulator</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MassSpringModel</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+                 <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span> <span class="n">start_from_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">_check_rate</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sampling_rate"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_from_input</span> <span class="o">=</span> <span class="n">_switch</span><span class="p">(</span><span class="s2">"start_from_input"</span><span class="p">,</span> <span class="n">start_from_input</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">directions</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">Result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">points</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_layout</span><span class="p">(),</span> <span class="n">points</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">reset_to_input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_teleport</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">positions</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="GenericModelPredictor">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/GenericModelPredictor.html#pyeyesweb.physical_signals.GenericModelPredictor">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"GenericModelPredictor"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericModelPredictor</span><span class="p">(</span><span class="n">_Units</span><span class="p">,</span> <span class="n">_Timed</span><span class="p">,</span> <span class="n">_Directions</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The positions a mass-spring model will have a short time ahead.</span>
+
+<span class="sd">    Like :class:`GenericModelSimulator` the model follows the bone directions of each frame. ``positions`` is where its</span>
+<span class="sd">    masses will be ``prediction_interval`` seconds later when the model is left to move on its own, which gives a</span>
+<span class="sd">    short-term forecast of the movement of an articulated structure. With ``mode="masses_inertia"`` the masses keep their</span>
+<span class="sd">    velocity; with ``"directions_linear"`` the bone directions are extrapolated linearly. The state of the model is the one</span>
+<span class="sd">    of the follower: the prediction does not disturb it.</span>
+
+<span class="sd">    ``process(directions, *, timestamp=None)`` takes one direction per spring of ``model`` (a dict or a ``(n_springs, 3)``</span>
+<span class="sd">    array, typically the output of :class:`GenericModelOrientations`) and returns ``positions``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : MassSpringModel or str</span>
+<span class="sd">        The model, or the path of an EyesWeb XML model file *(structural)*.</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.spring_names``.</span>
+<span class="sd">    joint_map : dict, optional</span>
+<span class="sd">        ``spring name of the model -&gt; label of your data`` *(live)*; names left out keep their own.</span>
+<span class="sd">    reference_direction : tuple of float, default (1.0, 0.0, 0.0)</span>
+<span class="sd">        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are</span>
+<span class="sd">        measured (dimensionless; the x axis by default).</span>
+<span class="sd">    integration_step : float, default 0.001</span>
+<span class="sd">        Step of the numerical integration in seconds, &gt; 0 *(live)*. A call that advances the model by ``dt`` seconds runs</span>
+<span class="sd">        ``int(dt / integration_step)`` steps.</span>
+<span class="sd">    gravity : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.</span>
+<span class="sd">    damping : float, default 10.0</span>
+<span class="sd">        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;</span>
+<span class="sd">        10 is stable with noisy input and 3 follows clean data with less lag.</span>
+<span class="sd">    viscosity : float, default 0.0</span>
+<span class="sd">        Viscous friction of the masses *(live)*.</span>
+<span class="sd">    length_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that keep each spring at its rest length *(live)*.</span>
+<span class="sd">    rotation_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that turn each spring towards its target direction *(live)*.</span>
+<span class="sd">    ground_interaction : bool, default False</span>
+<span class="sd">        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is</span>
+<span class="sd">        pushed back along the normal.</span>
+<span class="sd">    floor_position : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        A point of the floor plane, in ``units`` *(live)*.</span>
+<span class="sd">    use_input_lengths : bool, default False</span>
+<span class="sd">        Take the rest length of each spring from the length of the input vector instead of the length of the model *(live)*.</span>
+<span class="sd">    prediction_interval : float, default 0.2</span>
+<span class="sd">        How far ahead to predict, in seconds *(live)*.</span>
+<span class="sd">    mode : {"masses_inertia", "directions_linear"}, default "masses_inertia"</span>
+<span class="sd">        How the future is computed *(live)*: ``"masses_inertia"`` lets the masses keep their velocity,</span>
+<span class="sd">        ``"directions_linear"`` extrapolates the bone directions linearly.</span>
+<span class="sd">    damping_factor : float, default 1.0</span>
+<span class="sd">        Factor applied to ``damping`` while predicting (dimensionless) *(live)*.</span>
+<span class="sd">    viscosity_factor : float, default 1.0</span>
+<span class="sd">        Factor applied to ``viscosity`` while predicting (dimensionless) *(live)*.</span>
+<span class="sd">    sampling_rate : float, optional</span>
+<span class="sd">        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no</span>
+<span class="sd">        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.</span>
+<span class="sd">    units : {"m", "mm"}, default "m"</span>
+<span class="sd">        Name of the unit of the model, of the data, of ``gravity``, ``floor_position`` and of the outputs *(live)*; nothing</span>
+<span class="sd">        is rescaled, as in :class:`GenericModelSimulator`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``positions``: ``(n_masses, 3)`` array of ``(x, y, z)`` in ``units``, the predicted positions of the</span>
+<span class="sd">    masses, labelled by the mass names of the model. The result is ``OK`` on every valid call (no warm-up). A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame</span>
+<span class="sd">    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint</span>
+<span class="sd">    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.</span>
+
+<span class="sd">    **Time and units.** As in :class:`GenericModelSimulator`. The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A</span>
+<span class="sd">    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it</span>
+<span class="sd">    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses</span>
+<span class="sd">    ``1 / sampling_rate`` (or 1 s), never the absolute time.</span>
+
+<span class="sd">    **Differences from EyesWeb.** ``prediction_interval`` is in seconds (EyesWeb: a time in 100 ns ticks); the propulsion</span>
+<span class="sd">    factor of the original, which no force ever used, is not offered; ``length_forces``, ``rotation_forces``,</span>
+<span class="sd">    ``ground_interaction`` and ``floor_position`` are parameters here.</span>
+
+<span class="sd">    **Corrected in the core.** In ``"directions_linear"`` the z component of the extrapolated direction is its own z (the</span>
+<span class="sd">    original used x), and the rest directions and lengths changed by the prediction are restored afterwards; the damping</span>
+<span class="sd">    formulation is that of :class:`GenericModelSimulator`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import GenericModelPredictor, MassSpringModel</span>
+<span class="sd">    &gt;&gt;&gt; model = MassSpringModel()</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("root", 1e10)</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))</span>
+<span class="sd">    &gt;&gt;&gt; model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)</span>
+<span class="sd">    &gt;&gt;&gt; predictor = GenericModelPredictor(model, sampling_rate=100.0, prediction_interval=0.2)</span>
+<span class="sd">    &gt;&gt;&gt; predictor.process([[0.0, 1.0, 0.0]]).positions[1].round(3)</span>
+<span class="sd">    array([0.977, 0.231, 0.   ])</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">GenericModelPredictor</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MassSpringModel</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+                 <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">_check_rate</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sampling_rate"</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">directions</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">Result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">points</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_layout</span><span class="p">(),</span> <span class="n">points</span><span class="p">,</span> <span class="n">step</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="GenericModelEstimator">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/GenericModelEstimator.html#pyeyesweb.physical_signals.GenericModelEstimator">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"GenericModelEstimator"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericModelEstimator</span><span class="p">(</span><span class="n">_Units</span><span class="p">,</span> <span class="n">_Timed</span><span class="p">,</span> <span class="n">_GenericFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Adaptive estimation of the parameters of a mass-spring model from observed joints.</span>
+
+<span class="sd">    The model follows the observed positions of its masses and, while ``enable_adaptation`` is on, one parameter per frame</span>
+<span class="sd">    is perturbed (a stochastic coordinate descent on a cost that weighs position, direction and speed errors); the change is</span>
+<span class="sd">    kept when it lowers the cost. Over a recording the model therefore learns the masses and the spring stiffnesses and</span>
+<span class="sd">    dampings that explain the observed movement, a way to identify the physical parameters of an articulated body.</span>
+
+<span class="sd">    ``process(skeleton, *, timestamp=None)`` takes the observed positions of the masses of ``model`` (a dict</span>
+<span class="sd">    ``label -&gt; (x, y, z)`` or an ``(n_masses, 3)`` array in the order of ``labels``) and returns the simulated ``positions``</span>
+<span class="sd">    and the ``error``. ``feature.model`` is a copy of the model with the parameters estimated so far</span>
+<span class="sd">    (``feature.model.export_configuration()`` and ``feature.model.save_xml_file(path)``); ``feature.reset_step()`` sends the</span>
+<span class="sd">    perturbation step back to ``initial_step`` and ``feature.current_step`` reads it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : MassSpringModel or str</span>
+<span class="sd">        The initial model, or the path of an EyesWeb XML model file *(structural)*; replacing it restarts the state.</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.mass_names``.</span>
+<span class="sd">    joint_map : dict, optional</span>
+<span class="sd">        ``mass name of the model -&gt; label of your data`` *(live)*; names left out keep their own.</span>
+<span class="sd">    reference_direction : tuple of float, default (1.0, 0.0, 0.0)</span>
+<span class="sd">        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are</span>
+<span class="sd">        measured (dimensionless; the x axis by default).</span>
+<span class="sd">    integration_step : float, default 0.001</span>
+<span class="sd">        Step of the numerical integration in seconds, &gt; 0 *(live)*. A call that advances the model by ``dt`` seconds runs</span>
+<span class="sd">        ``int(dt / integration_step)`` steps.</span>
+<span class="sd">    gravity : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.</span>
+<span class="sd">    damping : float, default 10.0</span>
+<span class="sd">        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;</span>
+<span class="sd">        10 is stable with noisy input and 3 follows clean data with less lag.</span>
+<span class="sd">    viscosity : float, default 0.0</span>
+<span class="sd">        Viscous friction of the masses *(live)*.</span>
+<span class="sd">    length_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that keep each spring at its rest length *(live)*.</span>
+<span class="sd">    rotation_forces : bool, default True</span>
+<span class="sd">        Switch on the forces that turn each spring towards its target direction *(live)*.</span>
+<span class="sd">    ground_interaction : bool, default False</span>
+<span class="sd">        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is</span>
+<span class="sd">        pushed back along the normal.</span>
+<span class="sd">    floor_position : tuple of float, default (0.0, 0.0, 0.0)</span>
+<span class="sd">        A point of the floor plane, in ``units`` *(live)*.</span>
+<span class="sd">    use_input_lengths : bool, default False</span>
+<span class="sd">        Take the rest length of each spring from the length of the input vector instead of the length of the model *(live)*.</span>
+<span class="sd">    enable_adaptation : bool, default True</span>
+<span class="sd">        Adapt the parameters *(live)*; off, the model only follows the input.</span>
+<span class="sd">    estimate_masses : bool, default False</span>
+<span class="sd">        Adapt the masses *(live)*.</span>
+<span class="sd">    estimate_length_springs : bool, default False</span>
+<span class="sd">        Adapt the length stiffness and the length damping of the springs *(live)*.</span>
+<span class="sd">    estimate_direction_springs : bool, default False</span>
+<span class="sd">        Adapt the direction stiffness and the direction damping of the springs *(live)*. With none of the three</span>
+<span class="sd">        ``estimate_*`` switches on, nothing is adapted.</span>
+<span class="sd">    step_is_absolute : bool, default False</span>
+<span class="sd">        The perturbation is an absolute amount, in the unit of the parameter, instead of a fraction of the parameter</span>
+<span class="sd">        *(live)*.</span>
+<span class="sd">    initial_step : float, default 0.05</span>
+<span class="sd">        Size of the perturbation at the start *(live)*; ``reset_step()`` returns to it.</span>
+<span class="sd">    step_adaptation_factor : float, default 0.0001</span>
+<span class="sd">        How fast the size of the perturbation adapts (dimensionless) *(live)*.</span>
+<span class="sd">    cost_distance : float, default 1.0</span>
+<span class="sd">        Weight of the position error in the cost (dimensionless) *(live)*.</span>
+<span class="sd">    cost_directions : float, default 1.0</span>
+<span class="sd">        Weight of the direction error in the cost *(live)*.</span>
+<span class="sd">    cost_speed : float, default 1.0</span>
+<span class="sd">        Weight of the speed error in the cost *(live)*.</span>
+<span class="sd">    cost_length_stiffness : float, default 0.0</span>
+<span class="sd">        Weight of the regulariser on the length stiffness *(live)*.</span>
+<span class="sd">    cost_direction_stiffness : float, default 0.0</span>
+<span class="sd">        Weight of the regulariser on the direction stiffness *(live)*.</span>
+<span class="sd">    cost_length_damping : float, default 0.0</span>
+<span class="sd">        Weight of the regulariser on the length damping *(live)*.</span>
+<span class="sd">    cost_direction_damping : float, default 0.0</span>
+<span class="sd">        Weight of the regulariser on the direction damping *(live)*.</span>
+<span class="sd">    seed : int, default 12345</span>
+<span class="sd">        Seed of the random draws, which makes a run reproducible (it replaces the unseeded ``rand()`` of EyesWeb)</span>
+<span class="sd">        *(structural)*.</span>
+<span class="sd">    sampling_rate : float, optional</span>
+<span class="sd">        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no</span>
+<span class="sd">        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.</span>
+<span class="sd">    units : {"m", "mm"}, default "m"</span>
+<span class="sd">        Name of the unit of the model, of the data, of ``gravity``, ``floor_position`` and of the outputs *(live)*; nothing</span>
+<span class="sd">        is rescaled, as in :class:`GenericModelSimulator`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``positions``: ``(n_masses, 3)`` array of ``(x, y, z)`` in ``units``, the simulated masses, labelled by</span>
+<span class="sd">    the mass names of the model. ``error``: the cost of the frame, a weighted sum of the position, direction and speed</span>
+<span class="sd">    errors (the weights are the ``cost_*`` parameters); it mixes quantities in the unit of the model, so its trend over a</span>
+<span class="sd">    recording is more meaningful than its value. The result is ``OK`` on every valid call, and ``INVALID_INPUT`` with the</span>
+<span class="sd">    reason ``"the result is not finite"`` when the simulation diverged. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame</span>
+<span class="sd">    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint</span>
+<span class="sd">    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.</span>
+
+<span class="sd">    **Time and units.** As in :class:`GenericModelSimulator`. The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A</span>
+<span class="sd">    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it</span>
+<span class="sd">    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses</span>
+<span class="sd">    ``1 / sampling_rate`` (or 1 s), never the absolute time.</span>
+
+<span class="sd">    **Differences from EyesWeb.** ``seed``, ``length_forces``, ``rotation_forces``, ``ground_interaction`` and</span>
+<span class="sd">    ``floor_position`` are parameters here; the model is saved on request instead of at every frame.</span>
+
+<span class="sd">    **Corrected in the core.** The regularisers of the length and direction damping have their own weights (the original</span>
+<span class="sd">    enabled them with the stiffness weights); the direction springs are adapted only when ``estimate_direction_springs``</span>
+<span class="sd">    asks for it (the original always adapted them); the damping formulation is that of :class:`GenericModelSimulator`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import GenericModelEstimator, MassSpringModel</span>
+<span class="sd">    &gt;&gt;&gt; model = MassSpringModel()</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("root", 1e10)</span>
+<span class="sd">    &gt;&gt;&gt; model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))</span>
+<span class="sd">    &gt;&gt;&gt; model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)</span>
+<span class="sd">    &gt;&gt;&gt; estimator = GenericModelEstimator(model, sampling_rate=100.0, estimate_masses=True)</span>
+<span class="sd">    &gt;&gt;&gt; result = estimator.process([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]])    # the observed masses</span>
+<span class="sd">    &gt;&gt;&gt; result.positions.shape, bool(result.error &gt; 0)</span>
+<span class="sd">    ((2, 3), True)</span>
+<span class="sd">    &gt;&gt;&gt; sorted(estimator.model.export_configuration())[:2]               # the model as estimated so far</span>
+<span class="sd">    ['mass::root::mass', 'mass::tip::mass']</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">GenericModelEstimator</span>
+    <span class="n">_names_of</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_mass_names</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MassSpringModel</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+                 <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">_check_rate</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sampling_rate"</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">joint_map</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_input</span><span class="p">(</span><span class="s2">"skeleton"</span><span class="p">,</span> <span class="s2">"observed positions of the masses of the model"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positions_output</span><span class="p">(),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"error"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"cost of the frame"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">Result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">points</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">positions</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_layout</span><span class="p">(),</span> <span class="n">points</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finite_result</span><span class="p">(</span><span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># points</span>
+
+
+<div class="viewcode-block" id="PointsPredictor">
+<a class="viewcode-back" href="../../../api/generated/physical_signals/PointsPredictor.html#pyeyesweb.physical_signals.PointsPredictor">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">PHYSICAL_SIGNALS</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"PointsPredictor"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointsPredictor</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""One-step linear extrapolation of labelled points.</span>
+
+<span class="sd">    Each point is predicted one frame ahead by extending its last displacement,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \hat{\mathbf{p}}(t) = \mathbf{p}(t) + \left(\mathbf{p}(t) - \mathbf{p}(t-1)\right),</span>
+
+<span class="sd">    a constant-velocity forecast of where every tracked point will be at the next frame.</span>
+
+<span class="sd">    ``process(points, *, timestamp=None)`` takes the points, a dict ``label -&gt; (x, y, z)`` or an ``(N, 3)`` array in the</span>
+<span class="sd">    order of ``labels``. The step is one frame: the feature has no time axis and ``timestamp`` is only copied into</span>
+<span class="sd">    ``result.timestamp``. It is stateful (``reset()``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    labels : sequence of str, optional</span>
+<span class="sd">        Names of the points, in the order of array frames; a dict frame is read by them. Fixed at construction. One of</span>
+<span class="sd">        ``labels`` and ``skeleton`` is required, otherwise ``ValueError``.</span>
+<span class="sd">    skeleton : str or Skeleton, optional</span>
+<span class="sd">        A lab preset that gives the ``labels`` (``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``, ``"openpose"``;</span>
+<span class="sd">        see :mod:`pyeyesweb.skeletons`). Fixed at construction.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Outputs.** ``predicted``: ``(N, 3)`` array of ``(x, y, z)`` in the unit of the data, labelled by ``labels``. A point</span>
+<span class="sd">    seen for the first time (or after a gap) is returned unchanged. A point missing in a frame (absent from the dict, or a</span>
+<span class="sd">    row with a NaN) is NaN in the output and forgotten. An infinite value, an empty frame and a frame without any point</span>
+<span class="sd">    are ``INVALID_INPUT``; otherwise the result is ``OK`` (no warm-up).</span>
+
+<span class="sd">    **Corrected in the core.** The original never stored the previous values and so never predicted anything; the output</span>
+<span class="sd">    set is rebuilt at every call, so a label that disappears does not stay.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.physical_signals import PointsPredictor</span>
+<span class="sd">    &gt;&gt;&gt; predictor = PointsPredictor(labels=["a", "b"])</span>
+<span class="sd">    &gt;&gt;&gt; predictor.process([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]).predicted</span>
+<span class="sd">    array([[0., 0., 0.],</span>
+<span class="sd">           [1., 1., 1.]])</span>
+<span class="sd">    &gt;&gt;&gt; predictor.process([[1.0, 0.0, 0.0], [1.0, 2.0, 1.0]]).predicted</span>
+<span class="sd">    array([[2., 0., 0.],</span>
+<span class="sd">           [1., 3., 1.]])</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_humanoid</span><span class="o">.</span><span class="n">PointsPredictor</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">labels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">with_skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"PointsPredictor: no points given; pass labels= or skeleton="</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"PointsPredictor: repeated labels"</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">SkeletonLayout</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Names of the points."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">points_input</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="s2">"labelled points"</span><span class="p">,</span> <span class="n">accepts</span><span class="o">=</span><span class="p">(</span><span class="nb">dict</span><span class="p">,),</span> <span class="n">allow_non_finite</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"predicted"</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XYZ</span><span class="p">,</span>
+                             <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"linear extrapolation of each point one frame ahead"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+                    <span class="n">points</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"empty frame"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"infinite values"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"no point present in the frame"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">predicted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">,</span> <span class="n">points</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"HumanoidSimulator"</span><span class="p">,</span> <span class="s2">"HumanoidOrientations"</span><span class="p">,</span> <span class="s2">"GenericModelOrientations"</span><span class="p">,</span> <span class="s2">"GenericModelSimulator"</span><span class="p">,</span>
+           <span class="s2">"GenericModelPredictor"</span><span class="p">,</span> <span class="s2">"GenericModelEstimator"</span><span class="p">,</span> <span class="s2">"PointsPredictor"</span><span class="p">,</span> <span class="s2">"MassSpringModel"</span><span class="p">,</span> <span class="s2">"HUMANOID_JOINTS"</span><span class="p">,</span>
+           <span class="s2">"HUMANOID_BONES"</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

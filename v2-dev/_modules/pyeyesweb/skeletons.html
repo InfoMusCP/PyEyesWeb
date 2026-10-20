@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.skeletons &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/skeletons';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.skeletons</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.skeletons</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Skeletons of the capture devices of the lab: presets of :class:`~pyeyesweb.data_models.Skeleton`.</span>
+
+<span class="sd">The features that must know the joints (``KineticEnergy``, ``MotionNoiseDetector``, ``Symmetry``, ``PointsDensity``,</span>
+<span class="sd">``PointsPredictor``) refuse to be built without joint information (they would silently read nothing). Give them</span>
+<span class="sd">``skeleton=`` (a ``Skeleton`` or its name: ``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``, ``"openpose"``;</span>
+<span class="sd">case-insensitive, ``-`` and spaces count as ``_``) to describe the joints of your device, or explicit ``labels=`` /</span>
+<span class="sd">``weights=`` / ``pairs=``. A parameter given explicitly always wins over the skeleton.</span>
+
+<span class="sd">========================  ==========================================================================================</span>
+<span class="sd">feature                   fields of the skeleton it reads</span>
+<span class="sd">========================  ==========================================================================================</span>
+<span class="sd">``KineticEnergy``         ``joints`` (labels of the array input), ``weights_or_uniform()`` (weight of each joint)</span>
+<span class="sd">``MotionNoiseDetector``   ``joints``</span>
+<span class="sd">``Symmetry``              ``joints``, ``pairs`` (the couples), ``reference`` (ratio method)</span>
+<span class="sd">``PointsDensity``         ``joints`` (names of the points; they do not enter the maths)</span>
+<span class="sd">``PointsPredictor``       ``joints``</span>
+<span class="sd">========================  ==========================================================================================</span>
+
+<span class="sd">Presets and their completeness:</span>
+
+<span class="sd">* ``kinect_v2``: complete (25 joints, 10 pairs, reference ``SpineShoulder``, weights).</span>
+<span class="sd">* ``qualisys_sport``, ``mediapipe``, ``openpose``: **incomplete**, kept as documented starting points. The fields still</span>
+<span class="sd">  empty are listed by ``Skeleton.missing()`` and, for every preset, by ``SKELETON_TODO``; they are marked</span>
+<span class="sd">  ``TODO(fill)`` in the source. Missing: ``reference`` and ``weights`` for ``qualisys_sport`` and ``mediapipe``;</span>
+<span class="sd">  ``weights`` for ``openpose``. A missing ``weights`` becomes uniform weights of 1.0, so kinetic-energy values on these</span>
+<span class="sd">  presets are not comparable with ``kinect_v2``; a missing ``reference`` means the barycentre for the reflection</span>
+<span class="sd">  symmetry, and the ratio symmetry raises ``ValueError`` at construction asking for ``reference_point=``.</span>
+
+<span class="sd">The joint names keep the spelling of each device (``L*/R*``, ``*Left/*Right``, ``left_*/right_*``; ``RelbowOut`` keeps</span>
+<span class="sd">the spelling of the marker files of the lab): they are not normalised.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.skeleton</span><span class="w"> </span><span class="kn">import</span> <span class="n">Skeleton</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Skeleton"</span><span class="p">,</span> <span class="s2">"KINECT_V2"</span><span class="p">,</span> <span class="s2">"QUALISYS_SPORT"</span><span class="p">,</span> <span class="s2">"MEDIAPIPE"</span><span class="p">,</span> <span class="s2">"OPENPOSE"</span><span class="p">,</span> <span class="s2">"SKELETONS"</span><span class="p">,</span> <span class="s2">"SKELETON_TODO"</span><span class="p">,</span>
+           <span class="s2">"get_skeleton"</span><span class="p">,</span> <span class="s2">"with_skeleton"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">__all__</span><span class="p">)</span>
+
+
+<span class="c1"># Kinect v2 (Kinect SDK 2.0 JointType names). Weights: the EyesWeb Kinect SDK table (KineticEnergyIndex.h) through</span>
+<span class="c1"># the correspondence v1 -&gt; v2: head -&gt; Head, shoulder_center -&gt; SpineShoulder, spine -&gt; SpineMid,</span>
+<span class="c1"># hip_center -&gt; SpineBase, the others by name. The joints without a v1 counterpart weigh 0, as an unlisted joint</span>
+<span class="c1"># does in EyesWeb.</span>
+<span class="n">KINECT_V2</span> <span class="o">=</span> <span class="n">Skeleton</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"kinect_v2"</span><span class="p">,</span>
+    <span class="n">joints</span><span class="o">=</span><span class="p">(</span><span class="s2">"SpineBase"</span><span class="p">,</span> <span class="s2">"SpineMid"</span><span class="p">,</span> <span class="s2">"Neck"</span><span class="p">,</span> <span class="s2">"Head"</span><span class="p">,</span> <span class="s2">"ShoulderLeft"</span><span class="p">,</span> <span class="s2">"ElbowLeft"</span><span class="p">,</span> <span class="s2">"WristLeft"</span><span class="p">,</span> <span class="s2">"HandLeft"</span><span class="p">,</span>
+            <span class="s2">"ShoulderRight"</span><span class="p">,</span> <span class="s2">"ElbowRight"</span><span class="p">,</span> <span class="s2">"WristRight"</span><span class="p">,</span> <span class="s2">"HandRight"</span><span class="p">,</span> <span class="s2">"HipLeft"</span><span class="p">,</span> <span class="s2">"KneeLeft"</span><span class="p">,</span> <span class="s2">"AnkleLeft"</span><span class="p">,</span> <span class="s2">"FootLeft"</span><span class="p">,</span>
+            <span class="s2">"HipRight"</span><span class="p">,</span> <span class="s2">"KneeRight"</span><span class="p">,</span> <span class="s2">"AnkleRight"</span><span class="p">,</span> <span class="s2">"FootRight"</span><span class="p">,</span> <span class="s2">"SpineShoulder"</span><span class="p">,</span> <span class="s2">"HandTipLeft"</span><span class="p">,</span> <span class="s2">"ThumbLeft"</span><span class="p">,</span>
+            <span class="s2">"HandTipRight"</span><span class="p">,</span> <span class="s2">"ThumbRight"</span><span class="p">),</span>
+    <span class="n">pairs</span><span class="o">=</span><span class="p">((</span><span class="s2">"ShoulderLeft"</span><span class="p">,</span> <span class="s2">"ShoulderRight"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"ElbowLeft"</span><span class="p">,</span> <span class="s2">"ElbowRight"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"WristLeft"</span><span class="p">,</span> <span class="s2">"WristRight"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"HandLeft"</span><span class="p">,</span> <span class="s2">"HandRight"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"HipLeft"</span><span class="p">,</span> <span class="s2">"HipRight"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"KneeLeft"</span><span class="p">,</span> <span class="s2">"KneeRight"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"AnkleLeft"</span><span class="p">,</span> <span class="s2">"AnkleRight"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"FootLeft"</span><span class="p">,</span> <span class="s2">"FootRight"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"HandTipLeft"</span><span class="p">,</span> <span class="s2">"HandTipRight"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"ThumbLeft"</span><span class="p">,</span> <span class="s2">"ThumbRight"</span><span class="p">)),</span>
+    <span class="n">reference</span><span class="o">=</span><span class="s2">"SpineShoulder"</span><span class="p">,</span>  <span class="c1"># shoulder_center, the reference of the Kinect SDK preset</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">{</span><span class="s2">"Head"</span><span class="p">:</span> <span class="mf">0.081</span><span class="p">,</span> <span class="s2">"SpineShoulder"</span><span class="p">:</span> <span class="mf">0.081</span><span class="p">,</span> <span class="s2">"SpineMid"</span><span class="p">:</span> <span class="mf">0.216</span><span class="p">,</span> <span class="s2">"SpineBase"</span><span class="p">:</span> <span class="mf">0.139</span><span class="p">,</span>
+             <span class="s2">"ShoulderLeft"</span><span class="p">:</span> <span class="mf">0.0158</span><span class="p">,</span> <span class="s2">"ShoulderRight"</span><span class="p">:</span> <span class="mf">0.0158</span><span class="p">,</span> <span class="s2">"ElbowLeft"</span><span class="p">:</span> <span class="mf">0.028</span><span class="p">,</span> <span class="s2">"ElbowRight"</span><span class="p">:</span> <span class="mf">0.028</span><span class="p">,</span>
+             <span class="s2">"WristLeft"</span><span class="p">:</span> <span class="mf">0.016</span><span class="p">,</span> <span class="s2">"WristRight"</span><span class="p">:</span> <span class="mf">0.016</span><span class="p">,</span> <span class="s2">"HandLeft"</span><span class="p">:</span> <span class="mf">0.006</span><span class="p">,</span> <span class="s2">"HandRight"</span><span class="p">:</span> <span class="mf">0.006</span><span class="p">,</span>
+             <span class="s2">"HipLeft"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">"HipRight"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">"KneeLeft"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">"KneeRight"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+             <span class="s2">"AnkleLeft"</span><span class="p">:</span> <span class="mf">0.0465</span><span class="p">,</span> <span class="s2">"AnkleRight"</span><span class="p">:</span> <span class="mf">0.0465</span><span class="p">,</span> <span class="s2">"FootLeft"</span><span class="p">:</span> <span class="mf">0.0145</span><span class="p">,</span> <span class="s2">"FootRight"</span><span class="p">:</span> <span class="mf">0.0145</span><span class="p">,</span>
+             <span class="s2">"Neck"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"HandTipLeft"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"HandTipRight"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"ThumbLeft"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"ThumbRight"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="c1"># Qualisys "sport" marker set: the names of the MARKER_NAMES of the TSV files, spelling included.</span>
+<span class="n">QUALISYS_SPORT</span> <span class="o">=</span> <span class="n">Skeleton</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"qualisys_sport"</span><span class="p">,</span>
+    <span class="n">joints</span><span class="o">=</span><span class="p">(</span><span class="s2">"HeadFront"</span><span class="p">,</span> <span class="s2">"HeadL"</span><span class="p">,</span> <span class="s2">"HeadR"</span><span class="p">,</span> <span class="s2">"Chest"</span><span class="p">,</span> <span class="s2">"LShoulderTop"</span><span class="p">,</span> <span class="s2">"RShoulderTop"</span><span class="p">,</span> <span class="s2">"SpineThoracic2"</span><span class="p">,</span>
+            <span class="s2">"SpineThoracic12"</span><span class="p">,</span> <span class="s2">"WaistBack"</span><span class="p">,</span> <span class="s2">"WaistLFront"</span><span class="p">,</span> <span class="s2">"WaistRFront"</span><span class="p">,</span> <span class="s2">"WaistL"</span><span class="p">,</span> <span class="s2">"WaistR"</span><span class="p">,</span> <span class="s2">"LArm"</span><span class="p">,</span> <span class="s2">"RArm"</span><span class="p">,</span>
+            <span class="s2">"LElbowOut"</span><span class="p">,</span> <span class="s2">"LElbowIn"</span><span class="p">,</span> <span class="s2">"RelbowOut"</span><span class="p">,</span> <span class="s2">"RElbowIn"</span><span class="p">,</span> <span class="s2">"LWristIn"</span><span class="p">,</span> <span class="s2">"LWristOut"</span><span class="p">,</span> <span class="s2">"LHand2"</span><span class="p">,</span> <span class="s2">"RWristIn"</span><span class="p">,</span>
+            <span class="s2">"RWristOut"</span><span class="p">,</span> <span class="s2">"RHand2"</span><span class="p">,</span> <span class="s2">"LThighFrontLow"</span><span class="p">,</span> <span class="s2">"RThighFrontLow"</span><span class="p">,</span> <span class="s2">"LKneeOut"</span><span class="p">,</span> <span class="s2">"LKneeIn"</span><span class="p">,</span> <span class="s2">"RKneeIn"</span><span class="p">,</span> <span class="s2">"RKneeOut"</span><span class="p">,</span>
+            <span class="s2">"LShinFrontHigh"</span><span class="p">,</span> <span class="s2">"RShinFrontHigh"</span><span class="p">,</span> <span class="s2">"LHeelBack"</span><span class="p">,</span> <span class="s2">"RHeelBack"</span><span class="p">,</span> <span class="s2">"LAnkleOut"</span><span class="p">,</span> <span class="s2">"RAnkleOut"</span><span class="p">,</span> <span class="s2">"LForefoot5"</span><span class="p">,</span>
+            <span class="s2">"RForefoot5"</span><span class="p">,</span> <span class="s2">"LForefoot2"</span><span class="p">,</span> <span class="s2">"RForefoot2"</span><span class="p">),</span>
+    <span class="n">pairs</span><span class="o">=</span><span class="p">((</span><span class="s2">"HeadL"</span><span class="p">,</span> <span class="s2">"HeadR"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LShoulderTop"</span><span class="p">,</span> <span class="s2">"RShoulderTop"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"WaistLFront"</span><span class="p">,</span> <span class="s2">"WaistRFront"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"WaistL"</span><span class="p">,</span> <span class="s2">"WaistR"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LArm"</span><span class="p">,</span> <span class="s2">"RArm"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LElbowOut"</span><span class="p">,</span> <span class="s2">"RelbowOut"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LElbowIn"</span><span class="p">,</span> <span class="s2">"RElbowIn"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"LWristIn"</span><span class="p">,</span> <span class="s2">"RWristIn"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LWristOut"</span><span class="p">,</span> <span class="s2">"RWristOut"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LHand2"</span><span class="p">,</span> <span class="s2">"RHand2"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"LThighFrontLow"</span><span class="p">,</span> <span class="s2">"RThighFrontLow"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LKneeOut"</span><span class="p">,</span> <span class="s2">"RKneeOut"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LKneeIn"</span><span class="p">,</span> <span class="s2">"RKneeIn"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"LShinFrontHigh"</span><span class="p">,</span> <span class="s2">"RShinFrontHigh"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LHeelBack"</span><span class="p">,</span> <span class="s2">"RHeelBack"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LAnkleOut"</span><span class="p">,</span> <span class="s2">"RAnkleOut"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"LForefoot5"</span><span class="p">,</span> <span class="s2">"RForefoot5"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LForefoot2"</span><span class="p">,</span> <span class="s2">"RForefoot2"</span><span class="p">)),</span>
+    <span class="n">reference</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO(fill): the marker used as origin (pelvis / spine base / neck)</span>
+    <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO(fill): kinetic-energy weight of each marker</span>
+<span class="p">)</span>
+
+<span class="c1"># MediaPipe Pose, 33 landmarks in the order of the model. There is no pelvis or neck landmark.</span>
+<span class="n">MEDIAPIPE</span> <span class="o">=</span> <span class="n">Skeleton</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"mediapipe"</span><span class="p">,</span>
+    <span class="n">joints</span><span class="o">=</span><span class="p">(</span><span class="s2">"nose"</span><span class="p">,</span> <span class="s2">"left_eye_inner"</span><span class="p">,</span> <span class="s2">"left_eye"</span><span class="p">,</span> <span class="s2">"left_eye_outer"</span><span class="p">,</span> <span class="s2">"right_eye_inner"</span><span class="p">,</span> <span class="s2">"right_eye"</span><span class="p">,</span> <span class="s2">"right_eye_outer"</span><span class="p">,</span>
+            <span class="s2">"left_ear"</span><span class="p">,</span> <span class="s2">"right_ear"</span><span class="p">,</span> <span class="s2">"mouth_left"</span><span class="p">,</span> <span class="s2">"mouth_right"</span><span class="p">,</span> <span class="s2">"left_shoulder"</span><span class="p">,</span> <span class="s2">"right_shoulder"</span><span class="p">,</span> <span class="s2">"left_elbow"</span><span class="p">,</span>
+            <span class="s2">"right_elbow"</span><span class="p">,</span> <span class="s2">"left_wrist"</span><span class="p">,</span> <span class="s2">"right_wrist"</span><span class="p">,</span> <span class="s2">"left_pinky"</span><span class="p">,</span> <span class="s2">"right_pinky"</span><span class="p">,</span> <span class="s2">"left_index"</span><span class="p">,</span> <span class="s2">"right_index"</span><span class="p">,</span>
+            <span class="s2">"left_thumb"</span><span class="p">,</span> <span class="s2">"right_thumb"</span><span class="p">,</span> <span class="s2">"left_hip"</span><span class="p">,</span> <span class="s2">"right_hip"</span><span class="p">,</span> <span class="s2">"left_knee"</span><span class="p">,</span> <span class="s2">"right_knee"</span><span class="p">,</span> <span class="s2">"left_ankle"</span><span class="p">,</span>
+            <span class="s2">"right_ankle"</span><span class="p">,</span> <span class="s2">"left_heel"</span><span class="p">,</span> <span class="s2">"right_heel"</span><span class="p">,</span> <span class="s2">"left_foot_index"</span><span class="p">,</span> <span class="s2">"right_foot_index"</span><span class="p">),</span>
+    <span class="n">pairs</span><span class="o">=</span><span class="p">((</span><span class="s2">"left_eye_inner"</span><span class="p">,</span> <span class="s2">"right_eye_inner"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_eye"</span><span class="p">,</span> <span class="s2">"right_eye"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_eye_outer"</span><span class="p">,</span> <span class="s2">"right_eye_outer"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"left_ear"</span><span class="p">,</span> <span class="s2">"right_ear"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"mouth_left"</span><span class="p">,</span> <span class="s2">"mouth_right"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_shoulder"</span><span class="p">,</span> <span class="s2">"right_shoulder"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"left_elbow"</span><span class="p">,</span> <span class="s2">"right_elbow"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_wrist"</span><span class="p">,</span> <span class="s2">"right_wrist"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_pinky"</span><span class="p">,</span> <span class="s2">"right_pinky"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"left_index"</span><span class="p">,</span> <span class="s2">"right_index"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_thumb"</span><span class="p">,</span> <span class="s2">"right_thumb"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_hip"</span><span class="p">,</span> <span class="s2">"right_hip"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"left_knee"</span><span class="p">,</span> <span class="s2">"right_knee"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_ankle"</span><span class="p">,</span> <span class="s2">"right_ankle"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"left_heel"</span><span class="p">,</span> <span class="s2">"right_heel"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"left_foot_index"</span><span class="p">,</span> <span class="s2">"right_foot_index"</span><span class="p">)),</span>
+    <span class="n">reference</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO(fill): no joint plays the pelvis / neck; choose one, or a derived point</span>
+    <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO(fill)</span>
+<span class="p">)</span>
+
+<span class="c1"># OpenPose BODY_25.</span>
+<span class="n">OPENPOSE</span> <span class="o">=</span> <span class="n">Skeleton</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"openpose"</span><span class="p">,</span>
+    <span class="n">joints</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nose"</span><span class="p">,</span> <span class="s2">"Neck"</span><span class="p">,</span> <span class="s2">"RShoulder"</span><span class="p">,</span> <span class="s2">"RElbow"</span><span class="p">,</span> <span class="s2">"RWrist"</span><span class="p">,</span> <span class="s2">"LShoulder"</span><span class="p">,</span> <span class="s2">"LElbow"</span><span class="p">,</span> <span class="s2">"LWrist"</span><span class="p">,</span> <span class="s2">"MidHip"</span><span class="p">,</span> <span class="s2">"RHip"</span><span class="p">,</span>
+            <span class="s2">"RKnee"</span><span class="p">,</span> <span class="s2">"RAnkle"</span><span class="p">,</span> <span class="s2">"LHip"</span><span class="p">,</span> <span class="s2">"LKnee"</span><span class="p">,</span> <span class="s2">"LAnkle"</span><span class="p">,</span> <span class="s2">"REye"</span><span class="p">,</span> <span class="s2">"LEye"</span><span class="p">,</span> <span class="s2">"REar"</span><span class="p">,</span> <span class="s2">"LEar"</span><span class="p">,</span> <span class="s2">"LBigToe"</span><span class="p">,</span> <span class="s2">"LSmallToe"</span><span class="p">,</span>
+            <span class="s2">"LHeel"</span><span class="p">,</span> <span class="s2">"RBigToe"</span><span class="p">,</span> <span class="s2">"RSmallToe"</span><span class="p">,</span> <span class="s2">"RHeel"</span><span class="p">),</span>
+    <span class="n">pairs</span><span class="o">=</span><span class="p">((</span><span class="s2">"LEye"</span><span class="p">,</span> <span class="s2">"REye"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LEar"</span><span class="p">,</span> <span class="s2">"REar"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LShoulder"</span><span class="p">,</span> <span class="s2">"RShoulder"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LElbow"</span><span class="p">,</span> <span class="s2">"RElbow"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"LWrist"</span><span class="p">,</span> <span class="s2">"RWrist"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LHip"</span><span class="p">,</span> <span class="s2">"RHip"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LKnee"</span><span class="p">,</span> <span class="s2">"RKnee"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LAnkle"</span><span class="p">,</span> <span class="s2">"RAnkle"</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">"LBigToe"</span><span class="p">,</span> <span class="s2">"RBigToe"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LSmallToe"</span><span class="p">,</span> <span class="s2">"RSmallToe"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"LHeel"</span><span class="p">,</span> <span class="s2">"RHeel"</span><span class="p">)),</span>
+    <span class="n">reference</span><span class="o">=</span><span class="s2">"Neck"</span><span class="p">,</span>  <span class="c1"># the shoulder centre, as the Kinect SDK reference; MidHip is the pelvis alternative</span>
+    <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO(fill)</span>
+<span class="p">)</span>
+
+<span class="n">SKELETONS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Skeleton</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">skeleton</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">skeleton</span> <span class="k">for</span> <span class="n">skeleton</span> <span class="ow">in</span> <span class="p">(</span><span class="n">KINECT_V2</span><span class="p">,</span> <span class="n">QUALISYS_SPORT</span><span class="p">,</span> <span class="n">MEDIAPIPE</span><span class="p">,</span> <span class="n">OPENPOSE</span><span class="p">)}</span>
+
+<span class="c1"># What is still to fill, per skeleton.</span>
+<span class="n">SKELETON_TODO</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">missing</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">skeleton</span> <span class="ow">in</span> <span class="n">SKELETONS</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<div class="viewcode-block" id="get_skeleton">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.skeletons.get_skeleton.html#pyeyesweb.skeletons.get_skeleton">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A :class:`~pyeyesweb.data_models.Skeleton`, or the preset of that name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skeleton : Skeleton or str</span>
+<span class="sd">        A skeleton, returned as it is, or the name of a preset: ``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``</span>
+<span class="sd">        or ``"openpose"``. The name is case-insensitive; ``-`` and spaces count as ``_``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Skeleton</span>
+<span class="sd">        The preset, or ``skeleton`` itself when a ``Skeleton`` is given.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        For a name that is not a preset (the message lists the valid names), or any other type.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.skeletons import get_skeleton</span>
+<span class="sd">    &gt;&gt;&gt; skeleton = get_skeleton("Kinect-V2")</span>
+<span class="sd">    &gt;&gt;&gt; skeleton.name, len(skeleton.joints), skeleton.reference</span>
+<span class="sd">    ('kinect_v2', 25, 'SpineShoulder')</span>
+<span class="sd">    &gt;&gt;&gt; get_skeleton("openpose").missing()</span>
+<span class="sd">    ('weights',)</span>
+<span class="sd">    &gt;&gt;&gt; get_skeleton(skeleton) is skeleton</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">Skeleton</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">skeleton</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SKELETONS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SKELETONS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"skeleton: invalid value </span><span class="si">{</span><span class="n">skeleton</span><span class="si">!r}</span><span class="s2">; choose one of "</span>
+                     <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">SKELETONS</span><span class="p">)</span><span class="si">}</span><span class="s2"> (or a Skeleton)"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="with_skeleton">
+<a class="viewcode-back" href="../../api/generated/pyeyesweb.skeletons.with_skeleton.html#pyeyesweb.skeletons.with_skeleton">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">with_skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">defaults</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Resolve the ``skeleton=`` parameter of a feature into its ``labels`` and parameters.</span>
+
+<span class="sd">    Used by the features that accept a skeleton; a parameter given explicitly always wins over the skeleton.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skeleton : Skeleton or str or None</span>
+<span class="sd">        The skeleton or the name of a preset; ``None`` leaves ``labels`` and ``params`` unchanged.</span>
+<span class="sd">    labels : sequence of str or None</span>
+<span class="sd">        The labels given explicitly, if any.</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        The parameters given explicitly.</span>
+<span class="sd">    defaults : callable, optional</span>
+<span class="sd">        ``defaults(skeleton)`` returns the parameters the skeleton fills (``weights``, ``pairs``, ...).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    labels : sequence of str or None</span>
+<span class="sd">        ``labels``, or the joints of the skeleton when ``labels`` is ``None``.</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        The parameters of the skeleton, updated with ``params``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.skeletons import with_skeleton</span>
+<span class="sd">    &gt;&gt;&gt; labels, params = with_skeleton("kinect_v2", None, {"pairs": ()}, lambda skeleton: {"pairs": skeleton.pairs})</span>
+<span class="sd">    &gt;&gt;&gt; len(labels), params</span>
+<span class="sd">    (25, {'pairs': ()})</span>
+<span class="sd">    &gt;&gt;&gt; with_skeleton(None, ("a", "b"), {"pairs": ()})</span>
+<span class="sd">    (('a', 'b'), {'pairs': ()})</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">skeleton</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">params</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">get_skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">joints</span> <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">labels</span><span class="p">),</span> <span class="p">{</span><span class="o">**</span><span class="p">(</span><span class="n">defaults</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span> <span class="k">if</span> <span class="n">defaults</span> <span class="k">else</span> <span class="p">{}),</span> <span class="o">**</span><span class="n">params</span><span class="p">}</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

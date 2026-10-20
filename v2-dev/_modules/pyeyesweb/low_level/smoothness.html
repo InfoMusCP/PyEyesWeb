@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyeyesweb.low_level.smoothness &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyeyesweb/low_level/smoothness';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyeyesweb.low_level.smoothness</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyeyesweb.low_level.smoothness</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoreFeature</span><span class="p">,</span> <span class="n">check_range</span><span class="p">,</span> <span class="n">require_rate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.minimum_window</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinimumWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">input_mode_factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindowedFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_finite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level.kinematics</span><span class="w"> </span><span class="kn">import</span> <span class="n">_InferredDimsBlock</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SpeedProfileMetric</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""What the four metrics of a speed profile share: one value per call, a buffered window of at least 10 samples,</span>
+<span class="sd">    one scalar output, and ``sampling_rate`` (required: the window has no time axis of its own)."""</span>
+
+    <span class="n">MIN_WINDOW</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">_rate_required</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_window</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"speed"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"units/s"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"speed of the movement"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MIN_WINDOW</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"fewer than </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MIN_WINDOW</span><span class="si">}</span><span class="s2"> samples"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_OUTPUTS</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
+        <span class="n">finite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">OK</span> <span class="k">if</span> <span class="n">finite</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span>
+                           <span class="n">reason</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">finite</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is NaN: the profile cannot support it"</span><span class="p">,</span>
+                           <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+
+
+<div class="viewcode-block" id="SpectralArcLength">
+<a class="viewcode-back" href="../../../api/generated/low_level/SpectralArcLength.html#pyeyesweb.low_level.SpectralArcLength">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpectralArcLength</span><span class="p">(</span><span class="n">_SpeedProfileMetric</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Spectral arc length (SPARC) of a speed profile: smoothness from the shape of its amplitude spectrum.</span>
+
+<span class="sd">    A smooth movement has a speed profile with a single bell-shaped peak, whose amplitude spectrum is concentrated at</span>
+<span class="sd">    low frequencies; a movement made of several corrections, or with tremor, has a spectrum with extra peaks and a</span>
+<span class="sd">    longer tail. SPARC measures the length of the normalised amplitude spectrum :math:`\hat{V}(f)` of the speed over the</span>
+<span class="sd">    band :math:`[0, f_c]`, with the frequency also normalised by the cut-off :math:`f_c`,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mathrm{SPARC} = -\int_{0}^{f_c} \sqrt{\left(\frac{1}{f_c}\right)^{2}</span>
+<span class="sd">        + \left(\frac{d\hat{V}(f)}{df}\right)^{2}} \, df, \qquad \hat{V}(f) = \frac{V(f)}{\max_f V(f)},</span>
+
+<span class="sd">    where :math:`V(f)` is the magnitude of the Fourier transform of the (zero-padded) speed of the window. The cut-off</span>
+<span class="sd">    is adaptive: the highest frequency at which :math:`\hat{V}` is still above ``amplitude_threshold``, limited to</span>
+<span class="sd">    ``[minimum_cutoff_frequency, maximum_cutoff_frequency]``. The measure is dimensionless and independent of the</span>
+<span class="sd">    amplitude and duration of the movement; it is negative, and closer to 0 means smoother.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to</span>
+<span class="sd">        ``60``. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
+<span class="sd">    sampling_rate : float</span>
+<span class="sd">        Sampling rate of the speed in Hz. Required: the window carries no time axis of its own. *(live)*</span>
+<span class="sd">    amplitude_threshold : float, optional</span>
+<span class="sd">        Fraction of the spectrum maximum, in [0, 1], above which a frequency counts for the cut-off (dimensionless).</span>
+<span class="sd">        Defaults to ``0.05``. *(live)*</span>
+<span class="sd">    minimum_cutoff_frequency : float, optional</span>
+<span class="sd">        Lower limit of the cut-off frequency, in Hz (positive). Defaults to ``2.0``. *(live)*</span>
+<span class="sd">    maximum_cutoff_frequency : float, optional</span>
+<span class="sd">        Upper limit of the cut-off frequency, in Hz (not below the minimum). Defaults to ``20.0``. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** One speed value per call, ``process(speed, *, timestamp=None)``, in any unit of length per second; the</span>
+<span class="sd">    speed is used as given (no filtering). ``run(speeds, *, timestamps=None)`` takes a whole 1-D recording. Compute the</span>
+<span class="sd">    speed beforehand, for example with ``Kinematics(output_type="velocity")``. ``timestamp`` only labels the result: it</span>
+<span class="sd">    does not enter the computation and is not checked.</span>
+
+<span class="sd">    **Outputs.** ``spectral_arc_length`` (dimensionless, negative; closer to 0 is smoother) of the last complete</span>
+<span class="sd">    window.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` while fewer than 10 samples are available (``"k of N samples"``), ``NO_OUTPUT``</span>
+<span class="sd">    between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when the profile cannot support the measure (a constant</span>
+<span class="sd">    or null speed, for example) or a sample is NaN or infinite.</span>
+
+<span class="sd">    The value depends on the zero-padding and cut-off choices: compare windows of the same length and parameters.</span>
+<span class="sd">    Speed derived from positions is noisy: filter or smooth it first.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :cite:`balasubramanian2015smoothness`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import SpectralArcLength</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(100) / 100.0</span>
+<span class="sd">    &gt;&gt;&gt; bell = np.sin(np.pi * t) ** 2  # one smooth bell-shaped speed peak</span>
+<span class="sd">    &gt;&gt;&gt; feature = SpectralArcLength(window=100, sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(feature.run(bell).spectral_arc_length[-1]), 2)</span>
+<span class="sd">    -1.43</span>
+<span class="sd">    """</span>
+
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"spectral_arc_length"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Spectral arc length (SPARC); closer to 0 is smoother."</span><span class="p">))</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">SpectralArcLength</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">amplitude_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">minimum_cutoff_frequency</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+                 <span class="n">maximum_cutoff_frequency</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">amplitude_threshold</span><span class="o">=</span><span class="n">amplitude_threshold</span><span class="p">,</span>
+                         <span class="n">minimum_cutoff_frequency</span><span class="o">=</span><span class="n">minimum_cutoff_frequency</span><span class="p">,</span>
+                         <span class="n">maximum_cutoff_frequency</span><span class="o">=</span><span class="n">maximum_cutoff_frequency</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LogDimensionlessJerk">
+<a class="viewcode-back" href="../../../api/generated/low_level/LogDimensionlessJerk.html#pyeyesweb.low_level.LogDimensionlessJerk">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LogDimensionlessJerk</span><span class="p">(</span><span class="n">_SpeedProfileMetric</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Log dimensionless jerk of a speed or acceleration profile: smoothness from the jerk of the movement.</span>
+
+<span class="sd">    The jerk, the rate of change of the acceleration, is large for a jerky movement and small for a smooth one. The</span>
+<span class="sd">    log dimensionless jerk (LDLJ) normalises its squared integral by the duration and the peak amplitude of the</span>
+<span class="sd">    movement, so that movements of different size and speed can be compared, and takes the negative logarithm. For a</span>
+<span class="sd">    speed profile :math:`v(t)` over a window of duration :math:`T`,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mathrm{LDLJ} = -\ln\left( \frac{T^{3}}{v_{\max}^{2}} \int_{0}^{T}</span>
+<span class="sd">        \left( \frac{d^{2}v}{dt^{2}} \right)^{2} dt \right),</span>
+
+<span class="sd">    with the derivatives taken by finite differences. In ``"acceleration"`` mode the input is the acceleration</span>
+<span class="sd">    magnitude and the jerk is its first difference, normalised by the duration and the peak of the acceleration. The</span>
+<span class="sd">    measure is dimensionless and negative; closer to 0 means smoother, and a flat signal gives 0.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to</span>
+<span class="sd">        ``60``. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
+<span class="sd">    sampling_rate : float</span>
+<span class="sd">        Sampling rate of the signal in Hz. Required: the window carries no time axis of its own. *(live)*</span>
+<span class="sd">    input_mode : {"velocity", "acceleration"}, optional</span>
+<span class="sd">        What the input holds: the speed (default) or the acceleration magnitude.</span>
+<span class="sd">        ``LogDimensionlessJerk.from_velocity(...)`` and ``LogDimensionlessJerk.from_acceleration(...)`` build one or</span>
+<span class="sd">        the other. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** One value per call, ``process(value, *, timestamp=None)``: the speed (length/s) or the acceleration</span>
+<span class="sd">    magnitude (length/s^2), used as given (no filtering); ``run(values, *, timestamps=None)`` takes a whole 1-D</span>
+<span class="sd">    recording. Compute it beforehand, for example with ``Kinematics``. ``timestamp`` only labels the result: it does</span>
+<span class="sd">    not enter the computation and is not checked.</span>
+
+<span class="sd">    **Outputs.** ``log_dimensionless_jerk`` (dimensionless, negative; closer to 0 is smoother) of the last complete</span>
+<span class="sd">    window.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` while fewer than 10 samples are available (``"k of N samples"``), ``NO_OUTPUT``</span>
+<span class="sd">    between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when the profile cannot support the measure or a sample is</span>
+<span class="sd">    NaN or infinite.</span>
+
+<span class="sd">    Differentiating a noisy signal amplifies the noise: filter or smooth the speed first.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :cite:`balasubramanian2015smoothness`, :cite:`melendez2021imu`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import LogDimensionlessJerk</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(100) / 100.0</span>
+<span class="sd">    &gt;&gt;&gt; bell = np.sin(np.pi * t) ** 2  # one smooth bell-shaped speed peak</span>
+<span class="sd">    &gt;&gt;&gt; feature = LogDimensionlessJerk(window=100, sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(feature.run(bell).log_dimensionless_jerk[-1]), 1)</span>
+<span class="sd">    -5.3</span>
+<span class="sd">    """</span>
+
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"log_dimensionless_jerk"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Log dimensionless jerk; closer to 0 is smoother."</span><span class="p">))</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">LogDimensionlessJerk</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">input_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="s2">"acceleration"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"velocity"</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">input_mode</span><span class="o">=</span><span class="n">input_mode</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LogDimensionlessJerk.from_velocity">
+<a class="viewcode-back" href="../../../api/generated/low_level/LogDimensionlessJerk.html#pyeyesweb.low_level.LogDimensionlessJerk.from_velocity">[docs]</a>
+    <span class="nd">@input_mode_factory</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_velocity</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"LogDimensionlessJerk"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Log dimensionless jerk of a speed profile.</span>
+
+<span class="sd">        One speed value (length/s) per call, buffered over ``window`` samples; the jerk is the second difference of the</span>
+<span class="sd">        speed. Takes the parameters of ``LogDimensionlessJerk`` except ``input_mode``.</span>
+<span class="sd">        """</span></div>
+
+
+<div class="viewcode-block" id="LogDimensionlessJerk.from_acceleration">
+<a class="viewcode-back" href="../../../api/generated/low_level/LogDimensionlessJerk.html#pyeyesweb.low_level.LogDimensionlessJerk.from_acceleration">[docs]</a>
+    <span class="nd">@input_mode_factory</span><span class="p">(</span><span class="s2">"acceleration"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_acceleration</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"LogDimensionlessJerk"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Log dimensionless jerk of an acceleration profile.</span>
+
+<span class="sd">        One acceleration magnitude (length/s^2) per call, buffered over ``window`` samples; the jerk is the first</span>
+<span class="sd">        difference of the acceleration. Takes the parameters of ``LogDimensionlessJerk`` except ``input_mode``.</span>
+<span class="sd">        """</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"signal"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"units/s or units/s^2"</span><span class="p">,</span>
+                            <span class="n">doc</span><span class="o">=</span><span class="s2">"speed or acceleration magnitude of the movement, as `input_mode` says"</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="Harmonicity">
+<a class="viewcode-back" href="../../../api/generated/low_level/Harmonicity.html#pyeyesweb.low_level.Harmonicity">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Harmonicity</span><span class="p">(</span><span class="n">_SpeedProfileMetric</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Harmonicity of a speed profile: 1 for a single bell-shaped speed peak, lower for an irregular speed.</span>
+
+<span class="sd">    A smooth, ballistic movement has one peak of speed; a repeated movement alternates peaks and valleys. The</span>
+<span class="sd">    harmonicity compares the number of peaks of the speed in the window with the number of sign changes of its</span>
+<span class="sd">    gradient (the turning points of the speed): it is 1 when peaks and valleys alternate regularly, as in a single</span>
+<span class="sd">    bell-shaped profile or in a regular oscillation, and lower when the speed has turning points that do not belong to</span>
+<span class="sd">    that pattern (a maximum at the border of the window is not counted as a peak, for example). The measure is</span>
+<span class="sd">    dimensionless and lies in [0, 1].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to</span>
+<span class="sd">        ``60``. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
+<span class="sd">    sampling_rate : float</span>
+<span class="sd">        Sampling rate of the speed in Hz. Required: the window carries no time axis of its own. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** One speed value per call, ``process(speed, *, timestamp=None)``, in any unit of length per second;</span>
+<span class="sd">    ``run(speeds, *, timestamps=None)`` takes a whole 1-D recording. The speed is used as given (no filtering).</span>
+<span class="sd">    ``timestamp`` only labels the result: it does not enter the computation and is not checked.</span>
+
+<span class="sd">    **Outputs.** ``harmonicity`` (dimensionless, in [0, 1]; 1 is the most harmonic) of the last complete window.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` while fewer than 10 samples are available (``"k of N samples"``), ``NO_OUTPUT``</span>
+<span class="sd">    between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when a sample is NaN or infinite.</span>
+
+<span class="sd">    Known limitation: on the synthetic profiles tried (bell, oscillation, noise) the index is 1, so it separates</span>
+<span class="sd">    conditions poorly; check it on your data before relying on it.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import Harmonicity</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(100) / 100.0</span>
+<span class="sd">    &gt;&gt;&gt; bell = np.sin(np.pi * t) ** 2  # one smooth bell-shaped speed peak</span>
+<span class="sd">    &gt;&gt;&gt; feature = Harmonicity(window=100, sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(feature.run(bell).harmonicity[-1]), 2)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    """</span>
+
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"harmonicity"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Harmonicity index of the speed profile, in [0, 1]."</span><span class="p">))</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">Harmonicity</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SubmovementCount">
+<a class="viewcode-back" href="../../../api/generated/low_level/SubmovementCount.html#pyeyesweb.low_level.SubmovementCount">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmovementCount</span><span class="p">(</span><span class="n">_SpeedProfileMetric</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Number of sub-movements of a speed profile: its prominent speed peaks, at least 100 ms apart.</span>
+
+<span class="sd">    A simple reaching movement has one peak of speed; corrections and hesitations add further peaks, called</span>
+<span class="sd">    sub-movements. The feature counts the peaks of the speed in the window whose prominence is at least</span>
+<span class="sd">    ``prominence_factor`` times the maximum of the window and that are separated by at least 100 ms. The count is</span>
+<span class="sd">    dimensionless; fewer sub-movements means a smoother movement.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        Samples per window (at least 10). Changing it on a running feature keeps the newest samples. Defaults to</span>
+<span class="sd">        ``60``. *(live)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
+<span class="sd">    sampling_rate : float</span>
+<span class="sd">        Sampling rate of the speed in Hz, which turns the 100 ms separation into samples. Required: the window</span>
+<span class="sd">        carries no time axis of its own. *(live)*</span>
+<span class="sd">    prominence_factor : float, optional</span>
+<span class="sd">        Minimum prominence of a peak, as a fraction of the speed maximum of the window (not negative,</span>
+<span class="sd">        dimensionless). Defaults to ``0.1``. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** One speed value per call, ``process(speed, *, timestamp=None)``, in any unit of length per second;</span>
+<span class="sd">    ``run(speeds, *, timestamps=None)`` takes a whole 1-D recording. The speed is used as given (no filtering).</span>
+<span class="sd">    ``timestamp`` only labels the result: it does not enter the computation and is not checked.</span>
+
+<span class="sd">    **Outputs.** ``submovement_count`` (integer, 0 or more) of the last complete window; 0 for a speed below 1e-6.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` while fewer than 10 samples are available (``"k of N samples"``), ``NO_OUTPUT``</span>
+<span class="sd">    between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when a sample is NaN or infinite.</span>
+
+<span class="sd">    Noise creates spurious peaks: filter or smooth the speed first, or raise ``prominence_factor``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import SubmovementCount</span>
+<span class="sd">    &gt;&gt;&gt; t = np.linspace(0.0, 1.0, 200)</span>
+<span class="sd">    &gt;&gt;&gt; speed = sum(np.exp(-(((t - c) / 0.04) ** 2)) for c in (0.25, 0.75))  # two separate bell-shaped peaks</span>
+<span class="sd">    &gt;&gt;&gt; feature = SubmovementCount(window=200, sampling_rate=200.0)</span>
+<span class="sd">    &gt;&gt;&gt; int(feature.run(speed).submovement_count[-1])</span>
+<span class="sd">    2</span>
+<span class="sd">    """</span>
+
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"submovement_count"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"Number of detected sub-movements."</span><span class="p">))</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">SubmovementCount</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">prominence_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">prominence_factor</span><span class="o">=</span><span class="n">prominence_factor</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CurvatureDispersion">
+<a class="viewcode-back" href="../../../api/generated/low_level/CurvatureDispersion.html#pyeyesweb.low_level.CurvatureDispersion">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CurvatureDispersion</span><span class="p">(</span><span class="n">_InferredDimsBlock</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Curvature-based smoothness index of a movement, from its velocity and acceleration vectors.</span>
+
+<span class="sd">    The index relates the curvature of the path to the distance covered over the last ``window`` calls: it compares how</span>
+<span class="sd">    much the path bends with how far the point travelled, and it is 1 while the movement is slower than</span>
+<span class="sd">    ``movement_threshold`` (a still point has no smoothness to measure). It is computed from the velocity</span>
+<span class="sd">    :math:`\mathbf{v}` and the acceleration :math:`\mathbf{a}` of the point, from which the feature derives the</span>
+<span class="sd">    curvature :math:`\kappa` of the path and the arc length :math:`\lVert\mathbf{v}\rVert\,dt` covered at each call; it</span>
+<span class="sd">    keeps both over a ring of ``window`` calls and returns one dimensionless value per call, from the first call on.</span>
+<span class="sd">    The two rings fill over ``window`` calls and their empty entries (zeros) weigh in until then.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dims : int, optional</span>
+<span class="sd">        Number of components of the vectors: 1, 2 or 3. ``None`` (default) takes it from the first frame. In 1D the</span>
+<span class="sd">        curvature is 0, so the index is NaN (``INVALID_INPUT``) above the threshold. *(structural)*</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        Calls held by the curvature and arc-length rings (at least 2). Defaults to ``50``. *(structural)*</span>
+<span class="sd">    movement_threshold : float, optional</span>
+<span class="sd">        Speed below which the movement counts as still and the index is 1, in m/s (scaled by ``units``). Defaults to</span>
+<span class="sd">        ``0.005``. *(live)*</span>
+<span class="sd">    sampling_rate : float, optional</span>
+<span class="sd">        Sampling rate in Hz, used when no timestamp is given. Defaults to ``None`` (one second per call, and the</span>
+<span class="sd">        ``reason`` says so). *(live)*</span>
+<span class="sd">    units : {"m", "mm"}, optional</span>
+<span class="sd">        Unit of the data: scales ``movement_threshold`` (the vectors and the output are never scaled). Defaults to</span>
+<span class="sd">        ``"m"``. *(live)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** ``process(velocity, acceleration, *, timestamp=None)``: the velocity vector (length/s) and the</span>
+<span class="sd">    acceleration vector (length/s^2) of the movement at this call, ``dims`` components each. Compute them beforehand</span>
+<span class="sd">    with two ``Kinematics(output_dims="components")``, one with ``output_type="velocity"`` and one with</span>
+<span class="sd">    ``output_type="acceleration"``, with the same filter parameters and time rule, and feed both to every call.</span>
+<span class="sd">    ``reset()`` clears the rings. ``timestamp`` is in seconds.</span>
+
+<span class="sd">    **Outputs.** ``curvature_dispersion`` (dimensionless; 1 when the movement is below the threshold).</span>
+
+<span class="sd">    **Statuses.** ``OK`` from the first call; ``INVALID_INPUT`` when an input is NaN or infinite, the timestamp does</span>
+<span class="sd">    not increase, or the index is not finite (for example a perfectly straight path, whose curvature is 0).</span>
+
+<span class="sd">    Corrected in the core: the arc length added the speed alone above the movement threshold but the speed times the</span>
+<span class="sd">    time step below it; every call now adds the speed times the time step. This index was the ``smoothness`` output</span>
+<span class="sd">    of ``Kinematics``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import CurvatureDispersion, Kinematics</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(200) / 100.0</span>
+<span class="sd">    &gt;&gt;&gt; path = np.c_[np.cos(2 * np.pi * t), np.sin(2 * np.pi * t)]  # a circle of radius 1 m</span>
+<span class="sd">    &gt;&gt;&gt; speed = Kinematics(output_type="velocity", output_dims="components", sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; acceleration = Kinematics(output_type="acceleration", output_dims="components", sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; feature = CurvatureDispersion(window=50, sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; for point in path:</span>
+<span class="sd">    ...     result = feature.process(speed.process(point).velocity, acceleration.process(point).acceleration)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(result.curvature_dispersion), 2)</span>
+<span class="sd">    0.06</span>
+<span class="sd">    """</span>
+
+    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"curvature_dispersion"</span><span class="p">,</span>
+                            <span class="n">doc</span><span class="o">=</span><span class="s2">"Curvature-based smoothness index; 1 when the movement is below the threshold."</span><span class="p">))</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">CurvatureDispersion</span>
+    <span class="n">_timed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_unit_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"movement_threshold"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># a speed threshold: length per time</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dims</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"units/s"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"velocity vector"</span><span class="p">),</span>
+                      <span class="n">Input</span><span class="p">(</span><span class="s2">"acceleration"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dims</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"units/s^2"</span><span class="p">,</span>
+                            <span class="n">doc</span><span class="o">=</span><span class="s2">"acceleration vector"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_frame_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">velocity</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_dims</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">check</span><span class="p">((</span><span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>  <span class="c1"># the declared shapes now know `dims`</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">vectors</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="o">*</span><span class="n">vectors</span><span class="p">,</span> <span class="n">dt</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CurvatureVelocityCorrelation">
+<a class="viewcode-back" href="../../../api/generated/low_level/CurvatureVelocityCorrelation.html#pyeyesweb.low_level.CurvatureVelocityCorrelation">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"smoothnessindex (Smoothness)"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CurvatureVelocityCorrelation</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.</span>
+
+<span class="sd">    A smooth movement slows down where its path bends: curvature and speed are negatively related. The feature</span>
+<span class="sd">    measures that coupling inside a window of the trajectory. The samples of the window are</span>
+<span class="sd">    smoothed and differentiated by a Savitzky-Golay filter, which gives the velocity :math:`v_k` and the curvature</span>
+<span class="sd">    :math:`\kappa_k` at every sample :math:`k`; the ``smoothness`` output is then, by default, their Pearson</span>
+<span class="sd">    correlation coefficient over the window,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}</span>
+<span class="sd">        {\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],</span>
+
+<span class="sd">    which is strongly negative for a smooth movement (high curvature, low speed). With ``correlation_type="simplified"``</span>
+<span class="sd">    the index is a simplified form of the original block, bounded above by ``upper_limit``. The outputs also hold the</span>
+<span class="sd">    per-sample ``curvature`` and ``velocity`` series of the window and their standard deviations.</span>
+
+<span class="sd">    The filters keep their history between windows (the previous window feeds the start of the next one), so</span>
+<span class="sd">    consecutive windows overlap by ``window - hop`` samples; ``hop=window`` means no overlap.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    window : int</span>
+<span class="sd">        Samples per window, at least ``filter_window_length + 1`` (10 with the default filter). Changing it, or</span>
+<span class="sd">        ``hop`` or ``sampling_rate``, on a running feature restarts the filters with an empty history. *(structural)*</span>
+<span class="sd">    hop : int, optional</span>
+<span class="sd">        New samples between two windows. Defaults to ``1``. *(structural)*</span>
+<span class="sd">    sampling_rate : float</span>
+<span class="sd">        Sampling rate of the series in Hz. Required: the window carries no time axis of its own. *(structural)*</span>
+<span class="sd">    velocity_threshold : float, optional</span>
+<span class="sd">        Velocity threshold of the original block. It has no effect: the block validates it and never reads it.</span>
+<span class="sd">        Defaults to ``0.001``. *(live)*</span>
+<span class="sd">    standard_deviation_threshold : float, optional</span>
+<span class="sd">        Threshold of the original block on the standard deviations of the curvature and the velocity, used by the</span>
+<span class="sd">        ``"simplified"`` index only. It acts on the quantities the filters give, so on the velocity per sample</span>
+<span class="sd">        (not per second) unless ``differentiate`` is set; the ``velocity`` outputs are always per second. Defaults to</span>
+<span class="sd">        ``0.0001``. *(live)*</span>
+<span class="sd">    upper_limit : float, optional</span>
+<span class="sd">        Upper bound of the index (dimensionless); the ``"simplified"`` index is capped at it. Defaults to ``100.0``.</span>
+<span class="sd">        *(live)*</span>
+<span class="sd">    filter_polyorder : int, optional</span>
+<span class="sd">        Order of the Savitzky-Golay polynomial (at least 3). Defaults to ``3``. *(structural)*</span>
+<span class="sd">    filter_window_length : int, optional</span>
+<span class="sd">        Samples of the Savitzky-Golay window (odd, greater than ``filter_polyorder``). Defaults to ``9``.</span>
+<span class="sd">        *(structural)*</span>
+<span class="sd">    correlation_type : {"pearson", "simplified"}, optional</span>
+<span class="sd">        ``"pearson"`` (default): the Pearson correlation coefficient. ``"simplified"``: the simplified index of the</span>
+<span class="sd">        original block, at most ``upper_limit``. *(live)*</span>
+<span class="sd">    differentiate : bool, optional</span>
+<span class="sd">        Whether the derivatives of the filter are taken with respect to time in seconds. With the default</span>
+<span class="sd">        ``False`` they are taken per sample and the velocity outputs are multiplied by ``sampling_rate``, so they</span>
+<span class="sd">        are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and the Pearson correlation do</span>
+<span class="sd">        not depend on it; the ``"simplified"`` index and ``standard_deviation_threshold`` do, because they act on the</span>
+<span class="sd">        velocity before that conversion. *(structural)*</span>
+<span class="sd">    input_kind : {"static", "dynamic"}, optional</span>
+<span class="sd">        ``"static"`` (default): every window has the shape of the first one. ``"dynamic"``: the series may change</span>
+<span class="sd">        length from window to window; a window of another length or channel count rebuilds the filters with an empty</span>
+<span class="sd">        history. *(structural)*</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Inputs.** One sample per call, ``process(sample, *, timestamp=None)``, with the channels of the trajectory: 1</span>
+<span class="sd">    value (y), 2 (x, y) or 3 (x, y, z). The feature buffers ``window`` samples and computes every ``hop`` samples.</span>
+<span class="sd">    ``run(samples, *, timestamps=None)`` takes a whole ``(T, channels)`` recording. ``timestamp`` only labels the</span>
+<span class="sd">    result: it does not enter the computation and is not checked.</span>
+
+<span class="sd">    **Outputs.** ``smoothness`` (dimensionless; in [-1, 1] for ``"pearson"``); ``curvature``: the per-sample curvature</span>
+<span class="sd">    of the window (``window`` values, 1/length); ``velocity``: the per-sample velocity of the window (``window``</span>
+<span class="sd">    values, length/s); ``curvature_std`` and ``velocity_std``: their sample standard deviations of the window.</span>
+
+<span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills (``"k of N samples"``) and for the first window after</span>
+<span class="sd">    it, because the filters need a previous window (``smoothness`` is then NaN); ``NO_OUTPUT`` between two windows</span>
+<span class="sd">    when ``hop &gt; 1``; ``INVALID_INPUT`` when the data does not support the index (a null movement, for example) or a</span>
+<span class="sd">    sample is NaN or infinite.</span>
+
+<span class="sd">    Corrected in the core: the curvature used half of the second derivative of the Savitzky-Golay fit. With</span>
+<span class="sd">    ``input_kind="dynamic"``, the window after a change of length or channel count is ``WARMING_UP`` (it was reported</span>
+<span class="sd">    as ``INVALID_INPUT``) and the windows after it are valid again.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :cite:`mazzarino2009impulsivity`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import CurvatureVelocityCorrelation</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(300) / 100.0</span>
+<span class="sd">    &gt;&gt;&gt; ellipse = np.c_[2 * np.cos(np.pi * t), np.sin(np.pi * t)]</span>
+<span class="sd">    &gt;&gt;&gt; feature = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0)</span>
+<span class="sd">    &gt;&gt;&gt; round(float(feature.run(ellipse).smoothness[-1]), 2)</span>
+<span class="sd">    -0.94</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">SmoothnessIndex</span>
+    <span class="n">_DEFAULT_FILTER_WINDOW_LENGTH</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">_warmed_shape</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># shape of the last window processed, None while the filters have no history</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_window</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">sampling_rate</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sampling_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Sampling rate of the series in Hz; a change gives the filters an empty history."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_rate</span>
+
+    <span class="nd">@sampling_rate</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sampling_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_rate</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">check_range</span><span class="p">(</span><span class="s2">"sampling_rate"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_sampling_rate"</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_restart_filters</span><span class="p">()</span>  <span class="c1"># the filters take the rate of the series at their first call</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_rate</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_restart_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_built</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_lost</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_window_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_restart_filters</span><span class="p">()</span>  <span class="c1"># the filters are built for the length and overlap of the series</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_state_lost</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_state_lost</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_warmed_shape</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_window_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"filter_window_length"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_FILTER_WINDOW_LENGTH</span><span class="p">))</span>
+
+    <span class="nd">@filter_window_length</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_window_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_window</span><span class="p">(</span><span class="n">filter_window_length</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_param</span><span class="p">(</span><span class="s2">"filter_window_length"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_minimum_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"filter_window_length"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_window_length</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_warmed_shape</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"series"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"y, (x, y) or (x, y, z) of the signal"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"smoothness"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"curvature"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"1/&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"curvature per sample"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;/s"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"velocity per sample"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"curvature_std"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"1/&lt;length&gt;"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"velocity_std"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;/s"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">smoothness</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">curvature_std</span><span class="p">,</span> <span class="n">velocity_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span>
+                <span class="n">series</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">hop</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"differentiate"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>  <span class="c1"># the filters give a velocity per sample: the output is per second</span>
+            <span class="n">velocity</span><span class="p">,</span> <span class="n">velocity_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">velocity_std</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span>
+        <span class="n">warming_up</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_warmed_shape</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_warmed_shape</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># a new shape: empty history</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">smoothness</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">curvature_std</span><span class="p">):</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="s2">"the filters need a previous window"</span><span class="p">)</span> <span class="k">if</span> <span class="n">warming_up</span> <span class="k">else</span> <span class="p">(</span>
+                <span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"the data does not support smoothness (NaN)"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="n">smoothness</span><span class="p">,</span>
+                           <span class="n">curvature</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">curvature</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">velocity</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                           <span class="n">curvature_std</span><span class="o">=</span><span class="n">curvature_std</span><span class="p">,</span> <span class="n">velocity_std</span><span class="o">=</span><span class="n">velocity_std</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SpectralArcLength"</span><span class="p">,</span> <span class="s2">"LogDimensionlessJerk"</span><span class="p">,</span> <span class="s2">"Harmonicity"</span><span class="p">,</span> <span class="s2">"SubmovementCount"</span><span class="p">,</span> <span class="s2">"CurvatureDispersion"</span><span class="p">,</span>
+           <span class="s2">"CurvatureVelocityCorrelation"</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

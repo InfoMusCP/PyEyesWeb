@@ -1,0 +1,101 @@
+.. _feature-CrossRecurrencePlot:
+
+CrossRecurrencePlot
+===================
+
+Cross-recurrence plot of two windows of states: when one movement visits states of the other.
+
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: CrossRecurrencePlot (CrossRecurrenceMatrix)`
+
+Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``window``
+     - *required*
+     - ``int``
+   * - ``hop``
+     - ``1``
+     - ``int``
+   * - ``multiple_epsilons``
+     - ``None``
+     - ``Optional[Sequence[float]]``
+   * - ``order``
+     - ``2.0``
+     - ``float``
+   * - ``epsilon``
+     - ``0.5``
+     - ``float``
+   * - ``use_multiple_epsilons``
+     - ``False``
+     - ``bool``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``first_series``
+     - sample
+     - (n,)
+     - 
+     - state vector, one value per channel
+   * - ``second_series``
+     - sample
+     - (n,)
+     - 
+     - state vector, one value per channel
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``cross_recurrence_matrix``
+     - ``float``
+     - (n, n)
+     - 
+     - cross-recurrence matrix, 1 = recurrence
+
+.. py:currentmodule:: pyeyesweb.analysis_primitives
+
+Description
+-----------
+
+.. autoclass:: CrossRecurrencePlot
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.analysis_primitives.CrossRecurrencePlot.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

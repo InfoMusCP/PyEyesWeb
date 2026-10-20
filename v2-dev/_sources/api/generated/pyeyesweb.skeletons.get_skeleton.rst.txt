@@ -1,0 +1,6 @@
+﻿pyeyesweb.skeletons.get\_skeleton
+=================================
+
+.. currentmodule:: pyeyesweb.skeletons
+
+.. autofunction:: get_skeleton

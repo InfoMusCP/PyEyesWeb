@@ -1,0 +1,24 @@
+﻿pyeyesweb.catalog.Layer
+=======================
+
+.. currentmodule:: pyeyesweb.catalog
+
+
+
+.. autoclass:: Layer
+   :members: package, title, PHYSICAL_SIGNALS, LOW_LEVEL, MID_LEVEL, HIGH_LEVEL, ANALYSIS_PRIMITIVE
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Layer.package
+      ~Layer.title
+      ~Layer.PHYSICAL_SIGNALS
+      ~Layer.LOW_LEVEL
+      ~Layer.MID_LEVEL
+      ~Layer.HIGH_LEVEL
+      ~Layer.ANALYSIS_PRIMITIVE

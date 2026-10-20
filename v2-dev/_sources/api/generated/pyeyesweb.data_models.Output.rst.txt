@@ -1,0 +1,33 @@
+﻿pyeyesweb.data\_models.Output
+=============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Output
+   :members: to_dict, name, shape, kind, axis_names, unit, doc, labelled, fixed, flat_names, size
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Output.to_dict
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Output.name
+      ~Output.shape
+      ~Output.kind
+      ~Output.axis_names
+      ~Output.unit
+      ~Output.doc
+      ~Output.labelled
+      ~Output.fixed
+      ~Output.flat_names
+      ~Output.size

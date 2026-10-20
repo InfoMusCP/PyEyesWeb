@@ -1,0 +1,6 @@
+﻿pyeyesweb.datasets.available\_trials
+====================================
+
+.. currentmodule:: pyeyesweb.datasets
+
+.. autofunction:: available_trials

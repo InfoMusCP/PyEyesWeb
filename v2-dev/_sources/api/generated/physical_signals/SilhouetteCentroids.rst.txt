@@ -1,0 +1,98 @@
+.. _feature-SilhouetteCentroids:
+
+SilhouetteCentroids
+===================
+
+Hierarchical centroids of a human silhouette: centre of gravity, head, shoulders, limbs.
+
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: centroids\_calc (Centroids Calc)`
+
+Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Imaging </theory/imaging>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``silhouette``
+     - ``'full'``
+     - ``Literal['full', 'upper', 'lower', 'left', 'right']``
+   * - ``filter_centroids``
+     - ``False``
+     - ``bool``
+   * - ``alpha``
+     - ``0.75``
+     - ``float``
+   * - ``add_intermediate_centroids``
+     - ``False``
+     - ``bool``
+   * - ``parts``
+     - ``('center_of_gravity', 'head', 'left_shoulder', 'left_elbow', 'left_forearm', 'left_hand', 'right_shoulder', 'right_elbow', 'right_forearm', 'right_hand', 'left_knee', 'left_foot', 'right_knee', 'right_foot')``
+     - ``Sequence[Literal['center_of_gravity', 'head', 'left_shoulder', 'left_elbow', 'left_forearm', 'left_hand', 'right_shoulder', 'right_elbow', 'right_forearm', 'right_hand', 'left_knee', 'left_foot', 'right_knee', 'right_foot']]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``silhouette``
+     - image
+     - (n, n)
+     - 
+     - mask of the body: every non-zero pixel is foreground
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``centroids``
+     - ``float``
+     - (14, 2)
+     - px
+     - centroid coordinates in the frame; NaN where absent
+   * - ``normalized``
+     - ``float``
+     - (14, 2)
+     - 
+     - the centroids divided by the frame width and height
+
+.. py:currentmodule:: pyeyesweb.physical_signals
+
+Description
+-----------
+
+.. autoclass:: SilhouetteCentroids
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.physical_signals.SilhouetteCentroids.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

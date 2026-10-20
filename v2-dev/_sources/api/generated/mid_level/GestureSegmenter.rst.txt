@@ -1,0 +1,104 @@
+.. _feature-GestureSegmenter:
+
+GestureSegmenter
+================
+
+Start and end of gestures from an intensity signal, with optional noise gating.
+
+:bdg-primary:`Layer 3: mid-level features` :bdg-secondary:`timescale: \0.5-3 s` :bdg-info:`EyesWeb: GestureSegmenter`
+
+Layer: :doc:`Layer 3: mid-level features </api/mid_level>`. Family: :doc:`Gesture segmentation </theory/gesture_segmentation>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``firing_threshold``
+     - ``0.1``
+     - ``float``
+   * - ``filter_window_length``
+     - ``9``
+     - ``int``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``intensity``
+     - sample
+     - (1,)
+     - 
+     - intensity of the motion, e.g. its kinetic energy
+   * - ``noise``
+     - sample (optional)
+     - (1,)
+     - 
+     - 1 while the motion is judged to be noise (no gesture) (default 0)
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``smoothed_intensity``
+     - ``float``
+     - scalar
+     - \<input\>
+     - filtered intensity, once the window is full
+   * - ``is_gesturing``
+     - ``bool``
+     - scalar
+     - 
+     - 
+   * - ``is_gesture_start``
+     - ``bool``
+     - scalar
+     - 
+     - 
+   * - ``is_gesture_end``
+     - ``bool``
+     - scalar
+     - 
+     - 
+
+.. py:currentmodule:: pyeyesweb.mid_level
+
+Description
+-----------
+
+.. autoclass:: GestureSegmenter
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.mid_level.GestureSegmenter.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

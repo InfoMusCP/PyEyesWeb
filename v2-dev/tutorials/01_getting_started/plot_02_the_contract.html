@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The contract every feature follows &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/01_getting_started/plot_02_the_contract';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Physical signals" href="../02_physical_signals/index.html" />
+    <link rel="prev" title="Your first feature" href="plot_01_first_feature.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Getting started</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_01_first_feature.html">Your first feature</a></li>
+<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">The contract every feature follows</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02_physical_signals/index.html">Physical signals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02_physical_signals/plot_03_points.html">Physical signals: points and models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_physical_signals/plot_04_images.html">Physical signals: images</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03_low_level/index.html">Low-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03_low_level/plot_05_motion.html">Low level: motion and smoothness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03_low_level/plot_06_shape.html">Low level: shape and posture</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04_mid_level/index.html">Mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04_mid_level/plot_07_gestures.html">Gestures and qualities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05_analysis_primitives/index.html">Analysis primitives</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05_analysis_primitives/plot_08_primitives.html">Analysis primitives: complexity, rarity, periodicity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05_analysis_primitives/plot_09a_synchronization_signals.html">Synchronization of continuous signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05_analysis_primitives/plot_09b_synchronization_events.html">Synchronization of events</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06_capstone/index.html">Capstone</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06_capstone/plot_10_capstone.html">Capstone: a pipeline</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Tutorials</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Getting started</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">The contract every feature follows</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-tutorials-01-getting-started-plot-02-the-contract-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="the-contract-every-feature-follows">
+<span id="sphx-glr-tutorials-01-getting-started-plot-02-the-contract-py"></span><h1>The contract every feature follows<a class="headerlink" href="#the-contract-every-feature-follows" title="Link to this heading">#</a></h1>
+<p>Every PyEyesWeb feature takes its input and returns its output in the same way. This tutorial goes through those rules one
+at a time, with <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> for a point, <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> for a window of samples and <code class="docutils literal notranslate"><span class="pre">KineticEnergy</span></code> for a skeleton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Goals<span class="colon">:</span></dt>
+<dd class="field-odd"><p>use <code class="docutils literal notranslate"><span class="pre">process</span></code> (live) and <code class="docutils literal notranslate"><span class="pre">run</span></code> (offline) and know what <code class="docutils literal notranslate"><span class="pre">reset</span></code> does; read a <code class="docutils literal notranslate"><span class="pre">Result</span></code> and its <code class="docutils literal notranslate"><span class="pre">Schema</span></code>;
+interpret <code class="docutils literal notranslate"><span class="pre">Status</span></code> and the warm-up; give time and units correctly; change a parameter while a feature runs; build a
+feature from a preset; list the catalog.</p>
+</dd>
+<dt class="field-even">Prerequisites<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="plot_01_first_feature.html#sphx-glr-tutorials-01-getting-started-plot-01-first-feature-py"><span class="std std-ref">Your first feature</span></a>.</p>
+</dd>
+<dt class="field-odd">Data<span class="colon">:</span></dt>
+<dd class="field-odd"><p>trial 7 of the example session (clapping hands), seconds 5 to 15.</p>
+</dd>
+<dt class="field-even">Time<span class="colon">:</span></dt>
+<dd class="field-even"><p>about 25 minutes.</p>
+</dd>
+</dl>
+<section id="data-used-in-this-tutorial">
+<h2>Data used in this tutorial<a class="headerlink" href="#data-used-in-this-tutorial" title="Link to this heading">#</a></h2>
+<p>We use the right hand of trial 7, in <strong>metres</strong> (the recording is in millimetres: <code class="docutils literal notranslate"><span class="pre">to_units(&quot;m&quot;)</span></code> converts it; the section
+on units shows the alternative). Time is in seconds.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_recorder</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="nn">.</span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-function reference internal" href="../../api/generated/pyeyesweb.datasets.load_qualisys_trial.html#pyeyesweb.datasets.load_qualisys_trial" title="pyeyesweb.datasets.load_qualisys_trial"><span class="n">load_qualisys_trial</span></a><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial" title="pyeyesweb.datasets.QualisysTrial"><span class="n">trial</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-function reference internal" href="../../api/generated/pyeyesweb.datasets.load_qualisys_trial.html#pyeyesweb.datasets.load_qualisys_trial" title="pyeyesweb.datasets.load_qualisys_trial"><span class="n">load_qualisys_trial</span></a><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial" title="pyeyesweb.datasets.QualisysTrial"><span class="n">metres</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.to_units" title="pyeyesweb.datasets.QualisysTrial.to_units"><span class="n">trial</span><span class="o">.</span><span class="n">to_units</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">m</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.joint" title="pyeyesweb.datasets.QualisysTrial.joint"><span class="n">metres</span><span class="o">.</span><span class="n">joint</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Right_Hand</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.timestamps" title="pyeyesweb.datasets.QualisysTrial.timestamps"><span class="n">metres</span><span class="o">.</span><span class="n">timestamps</span></a><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="tuple"><span class="n">hand</span><span class="o">.</span><span class="n">shape</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">samples of (x, y, z) in</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">metres</span><span class="o">.</span><span class="n">units</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| duration</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.duration" title="pyeyesweb.datasets.QualisysTrial.duration"><span class="n">metres</span><span class="o">.</span><span class="n">duration</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">s</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(1000, 3) samples of (x, y, z) in m | duration 10.0 s
+</pre></div>
+</div>
+</section>
+<section id="live-and-offline-process-and-run">
+<h2>Live and offline: <code class="docutils literal notranslate"><span class="pre">process</span></code> and <code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#live-and-offline-process-and-run" title="Link to this heading">#</a></h2>
+<p>A feature has two ways to be used. <code class="docutils literal notranslate"><span class="pre">process(sample,</span> <span class="pre">timestamp=...)</span></code> takes <strong>one</strong> sample and returns a
+<a class="reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result" title="pyeyesweb.data_models.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>; the feature remembers what it needs between calls, as in a live loop.
+<code class="docutils literal notranslate"><span class="pre">run(samples,</span> <span class="pre">timestamps=...)</span></code> takes a whole recording and returns a <a class="reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Recorder</span></code></a>. <code class="docutils literal notranslate"><span class="pre">run</span></code> is
+defined as <code class="docutils literal notranslate"><span class="pre">reset()</span></code> followed by a loop of <code class="docutils literal notranslate"><span class="pre">process</span></code> calls, so the numbers are the same.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="nn">.</span><span class="nn">data_models</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">Recorder</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="nn">.</span><span class="nn">low_level</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">kinematics</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># positions in metres (the default unit)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">streamed</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">Recorder</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">kinematics</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.reset" title="pyeyesweb.data_models.Feature.reset"><span class="n">kinematics</span><span class="o">.</span><span class="n">reset</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">sample</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">stamp</span></a> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.append" title="pyeyesweb.data_models.Recorder.append"><span class="n">streamed</span><span class="o">.</span><span class="n">append</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">kinematics</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">sample</span></a><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">stamp</span></a><span class="p">)</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">offline</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">kinematics</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">process loop equals run:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array_equal.html#numpy.array_equal" title="numpy.array_equal"><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">streamed</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">offline</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>process loop equals run: True
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">reset()</span></code> forgets everything the feature has seen. <code class="docutils literal notranslate"><span class="pre">run</span></code> resets first; <code class="docutils literal notranslate"><span class="pre">run(...,</span> <span class="pre">reset=False)</span></code> continues from the
+current state, so a recording can be processed in chunks that add up to the whole.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">first</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">kinematics</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="p">:</span><span class="mi">300</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="p">:</span><span class="mi">300</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">second</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">kinematics</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="p">]</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">chunks</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.concatenate.html#numpy.concatenate" title="numpy.concatenate"><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span></a><span class="p">(</span><span class="p">[</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">first</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">second</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">two chunks equal the whole:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array_equal.html#numpy.array_equal" title="numpy.array_equal"><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">chunks</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">offline</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">cold</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">kinematics</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>  <span class="c1"># reset=True: the second chunk starts cold</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">restarted second chunk, first row:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">cold</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">instead of</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">second</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>two chunks equal the whole: True
+restarted second chunk, first row: [0.] instead of [0.7654]
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> <code class="docutils literal notranslate"><span class="pre">process</span></code> is for streams and <code class="docutils literal notranslate"><span class="pre">run</span></code> for recordings; they give the same numbers; <code class="docutils literal notranslate"><span class="pre">reset</span></code> starts over.</p>
+</section>
+<section id="the-result-and-its-schema">
+<h2>The result and its schema<a class="headerlink" href="#the-result-and-its-schema" title="Link to this heading">#</a></h2>
+<p>What a feature returns is declared before any data arrives: <code class="docutils literal notranslate"><span class="pre">feature.outputs</span></code> is a <code class="docutils literal notranslate"><span class="pre">Schema</span></code>, a list of <code class="docutils literal notranslate"><span class="pre">Output</span></code>
+declarations with name, shape and unit. A <a class="reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result" title="pyeyesweb.data_models.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> holds one value per output, and the
+<code class="docutils literal notranslate"><span class="pre">status</span></code> of the call (see <a class="reference internal" href="../../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a>). With <code class="docutils literal notranslate"><span class="pre">output_dims=&quot;components&quot;</span></code> the velocity has one value per
+coordinate; its shape <code class="docutils literal notranslate"><span class="pre">(None,)</span></code> means that the length (2 or 3) is read from the first sample.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">components</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">output_dims</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">components</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.OutputsMixin.html#pyeyesweb.data_models.OutputsMixin.outputs" title="pyeyesweb.data_models.OutputsMixin.outputs"><span class="n">components</span><span class="o">.</span><span class="n">outputs</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Output.html#pyeyesweb.data_models.Output" title="pyeyesweb.data_models.Output"><span class="n">output</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.OutputsMixin.html#pyeyesweb.data_models.OutputsMixin.outputs" title="pyeyesweb.data_models.OutputsMixin.outputs"><span class="n">components</span><span class="o">.</span><span class="n">outputs</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">velocity</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">output:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">output</span><span class="o">.</span><span class="n">name</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| shape:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="tuple"><span class="n">output</span><span class="o">.</span><span class="n">shape</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| unit:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">output</span><span class="o">.</span><span class="n">unit</span></a><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.reset" title="pyeyesweb.data_models.Feature.reset"><span class="n">components</span><span class="o">.</span><span class="n">reset</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">result</span> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">components</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Schema(Output('velocity', shape=(None,), unit='m/s'))
+output: velocity | shape: (None,) | unit: m/s
+KinematicsResult(status=OK, velocity=[-0.0391,  0.0078, -0.0055])
+</pre></div>
+</div>
+<p>Every output is an attribute (<code class="docutils literal notranslate"><span class="pre">result.velocity</span></code>) and a key (<code class="docutils literal notranslate"><span class="pre">result[&quot;velocity&quot;]</span></code>); <code class="docutils literal notranslate"><span class="pre">valid</span></code> says, for each output,
+whether it holds a value; <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> and <code class="docutils literal notranslate"><span class="pre">to_array()</span></code> give plain Python and NumPy objects.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">velocity:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">=</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">velocity</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">valid:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result.valid" title="pyeyesweb.data_models.Result.valid"><span class="n">result</span><span class="o">.</span><span class="n">valid</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">status:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Status.html#pyeyesweb.data_models.Status" title="pyeyesweb.data_models.Status"><span class="n">result</span><span class="o">.</span><span class="n">status</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| ok:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result.ok" title="pyeyesweb.data_models.Result.ok"><span class="n">result</span><span class="o">.</span><span class="n">ok</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| as integer:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Status.html#pyeyesweb.data_models.Status" title="pyeyesweb.data_models.Status"><span class="n">result</span><span class="o">.</span><span class="n">status</span></a><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">to_dict:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result.to_dict" title="pyeyesweb.data_models.Result.to_dict"><span class="n">result</span><span class="o">.</span><span class="n">to_dict</span></a><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">to_array:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result.to_array" title="pyeyesweb.data_models.Result.to_array"><span class="n">result</span><span class="o">.</span><span class="n">to_array</span></a><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>velocity: [-0.0391  0.0078 -0.0055] = [-0.0391  0.0078 -0.0055]
+valid: {'velocity': True}
+status: OK | ok: True | as integer: 0
+to_dict: {'velocity': array([-0.0391,  0.0078, -0.0055])}
+to_array: [-0.0391  0.0078 -0.0055]
+</pre></div>
+</div>
+<p>A result never changes after it is made: its arrays are read-only. A missing value is never <code class="docutils literal notranslate"><span class="pre">None</span></code>: it is <code class="docutils literal notranslate"><span class="pre">NaN</span></code>
+(<code class="docutils literal notranslate"><span class="pre">0</span></code> for an integer, <code class="docutils literal notranslate"><span class="pre">False</span></code> for a boolean), so a column of results is always a plain array.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span><span class="w">
+</span>    <span class="n">result</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="w">
+</span><span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">ValueError:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>ValueError: assignment destination is read-only
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> Outputs are declared by a <code class="docutils literal notranslate"><span class="pre">Schema</span></code> before data arrives; a <code class="docutils literal notranslate"><span class="pre">Result</span></code> holds one value per output and never
+contains <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</section>
+<section id="status-and-warm-up">
+<h2>Status and warm-up<a class="headerlink" href="#status-and-warm-up" title="Link to this heading">#</a></h2>
+<p>A feature that works on a window of samples cannot answer before the window is full. The <code class="docutils literal notranslate"><span class="pre">status</span></code> of a result tells why
+a value is absent. <a class="reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><code class="xref py py-class docutils literal notranslate"><span class="pre">Suddenness</span></code></a> looks at <code class="docutils literal notranslate"><span class="pre">window</span></code> samples of a trajectory and reports a new
+result every <code class="docutils literal notranslate"><span class="pre">hop</span></code> samples. With <code class="docutils literal notranslate"><span class="pre">window=8</span></code> and <code class="docutils literal notranslate"><span class="pre">hop=3</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code>: fewer than 8 samples so far; the <code class="docutils literal notranslate"><span class="pre">reason</span></code> counts them;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OK</span></code>: a window was computed;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>: between two windows (<code class="docutils literal notranslate"><span class="pre">hop</span></code>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>: the sample was not data (next section).</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="nn">.</span><span class="nn">mid_level</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyeyesweb-mid_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><span class="n">Suddenness</span></a><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-mid_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><span class="n">suddenness</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-mid_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><span class="n">Suddenness</span></a><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">hop</span></a><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">rows</span></a> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">result</span> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.WindowedFeature.html#pyeyesweb.data_models.WindowedFeature.process" title="pyeyesweb.data_models.WindowedFeature.process"><span class="n">suddenness</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">]</span><span class="p">)</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">rows</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">sample </span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span></a><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">result</span><span class="o">.</span><span class="n">reason</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>sample  0: WARMING_UP 1 of 8 samples
+sample  1: WARMING_UP 2 of 8 samples
+sample  2: WARMING_UP 3 of 8 samples
+sample  3: WARMING_UP 4 of 8 samples
+sample  4: WARMING_UP 5 of 8 samples
+sample  5: WARMING_UP 6 of 8 samples
+sample  6: WARMING_UP 7 of 8 samples
+sample  7: OK
+sample  8: NO_OUTPUT  between windows
+sample  9: NO_OUTPUT  between windows
+sample 10: OK
+sample 11: NO_OUTPUT  between windows
+sample 12: NO_OUTPUT  between windows
+sample 13: OK
+</pre></div>
+</div>
+<p>sphinx_gallery_thumbnail_number = 1</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">colors</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="s2">OK</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="s2">#3a9d5d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">WARMING_UP</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="s2">#e0b04a</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">NO_OUTPUT</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="s2">#9aa8b6</span><span class="s2">&quot;</span><span class="p">}</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">rows</span></a><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.bar.html#matplotlib.axes.Axes.bar" title="matplotlib.axes.Axes.bar"><span class="n">ax</span><span class="o">.</span><span class="n">bar</span></a><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">colors</span></a><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span></a><span class="p">]</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">white</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_yticks.html#matplotlib.axes.Axes.set_yticks" title="matplotlib.axes.Axes.set_yticks"><span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span></a><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xticks.html#matplotlib.axes.Axes.set_xticks" title="matplotlib.axes.Axes.set_xticks"><span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span></a><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">sample number</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title"><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Suddenness(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid"><span class="n">ax</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_plot_02_the_contract_001.png" srcset="../../_images/sphx_glr_plot_02_the_contract_001.png" alt="Suddenness(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT" class = "sphx-glr-single-img"/><p><code class="docutils literal notranslate"><span class="pre">feature.latest</span></code> keeps the last result that was <code class="docutils literal notranslate"><span class="pre">OK</span></code>. It is <code class="docutils literal notranslate"><span class="pre">None</span></code> before the first one and after <code class="docutils literal notranslate"><span class="pre">reset()</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">latest:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.latest" title="pyeyesweb.data_models.Feature.latest"><span class="n">suddenness</span><span class="o">.</span><span class="n">latest</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.WindowedFeature.html#pyeyesweb.data_models.WindowedFeature.reset" title="pyeyesweb.data_models.WindowedFeature.reset"><span class="n">suddenness</span><span class="o">.</span><span class="n">reset</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">latest after reset:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.latest" title="pyeyesweb.data_models.Feature.latest"><span class="n">suddenness</span><span class="o">.</span><span class="n">latest</span></a><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>latest: SuddennessResult(status=OK, is_sudden=True, alpha=2, beta=1, gamma=1.34499)
+latest after reset: None
+</pre></div>
+</div>
+<p>On a whole recording the same statuses are columns of the recorder. <code class="docutils literal notranslate"><span class="pre">plot_recorder</span></code> draws the rows that are <code class="docutils literal notranslate"><span class="pre">OK</span></code> and shades the warm-up
+(yellow: warming up; red: invalid input), here for a window of one second that moves every 0.1 s.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">slow_window</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-mid_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><span class="n">Suddenness</span></a><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">hop</span></a><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">slow_window</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a> <span class="o">=</span> <span class="n">plot_recorder</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">slow_window</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">names</span></a><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">alpha</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Suddenness, window 100 samples (1 s), hop 10</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_plot_02_the_contract_002.png" srcset="../../_images/sphx_glr_plot_02_the_contract_002.png" alt="Suddenness, window 100 samples (1 s), hop 10" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Recorder(Suddenness, rows=1000, columns=['is_sudden', 'alpha', 'beta', 'gamma'], status={'OK': 91, 'WARMING_UP': 99, 'NO_OUTPUT': 810})
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> The status says why a value is missing; the first <code class="docutils literal notranslate"><span class="pre">OK</span></code> comes when the window is full, then every <code class="docutils literal notranslate"><span class="pre">hop</span></code>
+samples.</p>
+</section>
+<section id="data-that-is-not-data">
+<h2>Data that is not data<a class="headerlink" href="#data-that-is-not-data" title="Link to this heading">#</a></h2>
+<p>A sample with NaN or infinity, an empty sample, or a time that goes backwards does not raise an error: the result has the
+status <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>, every output empty, and the explanation in <code class="docutils literal notranslate"><span class="pre">reason</span></code>. The rejected sample is not remembered, so
+the next good sample carries on. A sample of the <strong>wrong shape</strong> is a programming error and raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.reset" title="pyeyesweb.data_models.Feature.reset"><span class="n">kinematics</span><span class="o">.</span><span class="n">reset</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">kinematics</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="n">broken</span> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">kinematics</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">np</span><span class="o">.</span><span class="n">nan</span></a><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">broken</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">valid:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result.valid" title="pyeyesweb.data_models.Result.valid"><span class="n">broken</span><span class="o">.</span><span class="n">valid</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| value:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">broken</span><span class="o">.</span><span class="n">velocity</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">next good sample:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">kinematics</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">)</span><span class="o">.</span><span class="n">status</span><span class="p">)</span><span class="w">
+</span><span class="k">try</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">kinematics</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">ValueError:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>KinematicsResult(status=INVALID_INPUT, reason='NaN or infinite values', velocity=nan)
+valid: {'velocity': False} | value: nan
+next good sample: OK
+ValueError: Kinematics: input 'point' expects sample of shape (3,), got shape (2,)
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> Bad data gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> and a <code class="docutils literal notranslate"><span class="pre">reason</span></code>; a wrong shape raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+</section>
+<section id="time-is-in-seconds">
+<h2>Time is in seconds<a class="headerlink" href="#time-is-in-seconds" title="Link to this heading">#</a></h2>
+<p>Every quantity with time in it is in seconds. A feature that needs the step between two samples takes it from the
+<code class="docutils literal notranslate"><span class="pre">timestamp</span></code> of the calls; if there is none, from <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code>; if there is neither, it counts one second per
+sample and says so in <code class="docutils literal notranslate"><span class="pre">reason</span></code> (see <a class="reference internal" href="../../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>). Stamping the same positions at twice the
+time doubles the time between samples and halves the velocity.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">real</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">slow</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">ratio</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.median.html#numpy.median" title="numpy.median"><span class="n">np</span><span class="o">.</span><span class="n">median</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc"><span class="n">np</span><span class="o">.</span><span class="n">abs</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">real</span><span class="o">.</span><span class="n">velocity</span></a><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="p">]</span><span class="p">)</span> <span class="o">/</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc"><span class="n">np</span><span class="o">.</span><span class="n">abs</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">slow</span><span class="o">.</span><span class="n">velocity</span></a><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">velocity with real timestamps / velocity with doubled timestamps = </span><span class="si">{</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">ratio</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">untimed</span> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">no time given:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">untimed</span><span class="o">.</span><span class="n">reason</span></a><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>velocity with real timestamps / velocity with doubled timestamps = 2.00
+no time given: 'no time given: per-sample derivatives'
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> Give <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> or <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>; time is in seconds, never in frames.</p>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Link to this heading">#</a></h2>
+<p>Lengths are in <strong>metres</strong> by default. A feature whose result depends on the length unit has a <code class="docutils literal notranslate"><span class="pre">units</span></code> parameter
+(<code class="docutils literal notranslate"><span class="pre">&quot;m&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code>); the parameters are rescaled and your data and its outputs are not. The unit of every output is in
+its <code class="docutils literal notranslate"><span class="pre">Output</span></code>. The same hand in millimetres, with <code class="docutils literal notranslate"><span class="pre">units=&quot;mm&quot;</span></code>, gives the same velocity in mm/s.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">in_mm</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">mm</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">velocity_mm</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">in_mm</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.joint" title="pyeyesweb.datasets.QualisysTrial.joint"><span class="n">trial</span><span class="o">.</span><span class="n">joint</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Right_Hand</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">velocity_m</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">units of the outputs:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.OutputsMixin.html#pyeyesweb.data_models.OutputsMixin.outputs" title="pyeyesweb.data_models.OutputsMixin.outputs"><span class="n">in_mm</span><span class="o">.</span><span class="n">outputs</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">velocity</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">and</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">velocity</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">ratio of the two velocities:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.median.html#numpy.median" title="numpy.median"><span class="n">np</span><span class="o">.</span><span class="n">median</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">velocity_mm</span><span class="o">.</span><span class="n">velocity</span></a><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="p">]</span> <span class="o">/</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">velocity_m</span><span class="o">.</span><span class="n">velocity</span></a><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>units of the outputs: mm/s and m/s
+ratio of the two velocities: 1000.0
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> Say which unit your positions are in, by converting them or by setting <code class="docutils literal notranslate"><span class="pre">units</span></code>; the outputs follow the input.</p>
+</section>
+<section id="choices-are-strings">
+<h2>Choices are strings<a class="headerlink" href="#choices-are-strings" title="Link to this heading">#</a></h2>
+<p>A parameter that offers a choice takes a lower-case string, in any case; an on/off parameter takes a real <code class="docutils literal notranslate"><span class="pre">bool</span></code>. A wrong
+value raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> and lists the valid ones, also when the value is changed later.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">output_dims</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Components</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">output_dims</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <span class="n">make</span> <span class="ow">in</span> <span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">output_dims</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">radial</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">components</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">output_type</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">snap</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="k">try</span><span class="p">:</span><span class="w">
+</span>        <span class="n">make</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span>    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span><span class="w">
+</span>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">ValueError:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>components
+ValueError: output_dims: invalid value 'radial'; choose one of 'components', 'tangential'
+ValueError: output_type: invalid value 'snap'; choose one of 'smoothed', 'velocity', 'acceleration', 'jerk', 'curvature', 'direction'
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> Choices are strings, and a wrong one tells you the right ones.</p>
+</section>
+<section id="live-and-structural-parameters">
+<h2>Live and structural parameters<a class="headerlink" href="#live-and-structural-parameters" title="Link to this heading">#</a></h2>
+<p>A parameter can be changed while a feature runs, by assignment. A <strong>live</strong> parameter takes effect at once and the state is
+kept. A <strong>structural</strong> parameter changes what the feature is computing, so the state restarts, and the next <code class="docutils literal notranslate"><span class="pre">reason</span></code> says
+so. <a class="reference internal" href="../../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><code class="xref py py-class docutils literal notranslate"><span class="pre">KineticEnergy</span></code></a> has both: <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> is live, <code class="docutils literal notranslate"><span class="pre">input_mode</span></code> is structural.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="nn">.</span><span class="nn">low_level</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><span class="n">KineticEnergy</span></a><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><span class="n">energy</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><span class="n">KineticEnergy</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Skeleton.html#pyeyesweb.data_models.Skeleton" title="pyeyesweb.data_models.Skeleton"><span class="n">skeleton</span></a><span class="o">=</span><a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.skeleton" title="pyeyesweb.datasets.QualisysTrial.skeleton"><span class="n">metres</span><span class="o">.</span><span class="n">skeleton</span></a><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">energy</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">metres</span><span class="o">.</span><span class="n">positions</span></a><span class="p">[</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">index</span></a><span class="p">]</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">energy</span><span class="o">.</span><span class="n">sampling_rate</span></a> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># live: the previous frame is still there</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">after a live change:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">energy</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">metres</span><span class="o">.</span><span class="n">positions</span></a><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="p">)</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">energy</span><span class="o">.</span><span class="n">input_mode</span></a> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">velocity</span><span class="s2">&quot;</span>  <span class="c1"># structural: velocities have no previous frame</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">after a structural change:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">energy</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.zeros.html#numpy.zeros" title="numpy.zeros"><span class="n">np</span><span class="o">.</span><span class="n">zeros</span></a><span class="p">(</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">the note appears once:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">energy</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.zeros.html#numpy.zeros" title="numpy.zeros"><span class="n">np</span><span class="o">.</span><span class="n">zeros</span></a><span class="p">(</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>after a live change: ''
+after a structural change: 'parameters changed: state reset'
+the note appears once: ''
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> the newest samples are kept: <code class="docutils literal notranslate"><span class="pre">suddenness.window</span> <span class="pre">=</span> <span class="pre">12</span></code> keeps the latest 12 samples and the
+feature goes on. Which parameter of which feature is live is listed in <a class="reference internal" href="../../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>.</p>
+<p><strong>Takeaway.</strong> Assign a parameter to change it while running; a structural change restarts the state and says so.</p>
+</section>
+<section id="other-ways-to-build-a-feature">
+<h2>Other ways to build a feature<a class="headerlink" href="#other-ways-to-build-a-feature" title="Link to this heading">#</a></h2>
+<p>Three classes have named constructors for the form of the input: <code class="docutils literal notranslate"><span class="pre">KineticEnergy.from_position</span></code> and <code class="docutils literal notranslate"><span class="pre">from_velocity</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Kinematics.from_point</span></code> and <code class="docutils literal notranslate"><span class="pre">from_series</span></code>, <code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk.from_velocity</span></code> and <code class="docutils literal notranslate"><span class="pre">from_acceleration</span></code>. They are
+the same feature set up for one form of data. For example, the energy of velocities that you computed yourself:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">velocity</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.gradient.html#numpy.gradient" title="numpy.gradient"><span class="n">np</span><span class="o">.</span><span class="n">gradient</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">metres</span><span class="o">.</span><span class="n">positions</span></a><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">metres</span><span class="o">.</span><span class="n">sampling_rate</span></a><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (frames, joints, 3) in m/s</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><span class="n">from_velocity</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level-KineticEnergy sphx-glr-backref-type-py-method reference internal" href="../../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy.from_velocity" title="pyeyesweb.low_level.KineticEnergy.from_velocity"><span class="n">KineticEnergy</span><span class="o">.</span><span class="n">from_velocity</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Skeleton.html#pyeyesweb.data_models.Skeleton" title="pyeyesweb.data_models.Skeleton"><span class="n">skeleton</span></a><span class="o">=</span><a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.skeleton" title="pyeyesweb.datasets.QualisysTrial.skeleton"><span class="n">metres</span><span class="o">.</span><span class="n">skeleton</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">by_hand</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">from_velocity</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">velocity</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">by_hand</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">peak energy:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">by_hand</span></a><span class="o">.</span><span class="n">kinetic_energy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">J/kg</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Recorder(KineticEnergy, rows=1000, columns=['kinetic_energy'], status={'OK': 1000})
+peak energy: 6.84 J/kg
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> The <code class="docutils literal notranslate"><span class="pre">from_*</span></code> constructors fix the form of the input; the contract is the same.</p>
+</section>
+<section id="skeletons-and-presets">
+<h2>Skeletons and presets<a class="headerlink" href="#skeletons-and-presets" title="Link to this heading">#</a></h2>
+<p>A feature that must know the joints takes a <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>: a preset by name or a
+<a class="reference internal" href="../../api/generated/pyeyesweb.data_models.Skeleton.html#pyeyesweb.data_models.Skeleton" title="pyeyesweb.data_models.Skeleton"><code class="xref py py-class docutils literal notranslate"><span class="pre">Skeleton</span></code></a> you build. <a class="reference internal" href="../../api/skeletons.html#module-pyeyesweb.skeletons" title="pyeyesweb.skeletons"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyeyesweb.skeletons</span></code></a> has the presets of the lab devices;
+the 20 joints of the example data are in <code class="docutils literal notranslate"><span class="pre">trial.skeleton</span></code>. The feature takes its joint names, the left-right pairs
+and the weights from it.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="nn">.</span><span class="nn">skeletons</span><span class="w"> </span><span class="kn">import</span> <span class="n">SKELETONS</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">name</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Skeleton.html#pyeyesweb.data_models.Skeleton" title="pyeyesweb.data_models.Skeleton"><span class="n">skeleton</span></a> <span class="ow">in</span> <span class="n">SKELETONS</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">name</span></a><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="tuple"><span class="n">skeleton</span><span class="o">.</span><span class="n">joints</span></a><span class="p">)</span><span class="si">:</span><span class="s2">&gt;2</span><span class="si">}</span><span class="s2"> joints, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="tuple"><span class="n">skeleton</span><span class="o">.</span><span class="n">pairs</span></a><span class="p">)</span><span class="si">:</span><span class="s2">&gt;2</span><span class="si">}</span><span class="s2"> pairs, reference joint: </span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">skeleton</span><span class="o">.</span><span class="n">reference</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">trial.skeleton:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.skeleton" title="pyeyesweb.datasets.QualisysTrial.skeleton"><span class="n">metres</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">name</span></a><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.skeleton" title="pyeyesweb.datasets.QualisysTrial.skeleton"><span class="n">metres</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">joints</span></a><span class="p">)</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">joints, missing:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-datasets sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.datasets.QualisysTrial.html#pyeyesweb.datasets.QualisysTrial.skeleton" title="pyeyesweb.datasets.QualisysTrial.skeleton"><span class="n">metres</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">missing</span></a><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>kinect_v2       25 joints, 10 pairs, reference joint: SpineShoulder
+qualisys_sport  41 joints, 18 pairs, reference joint: None
+mediapipe       33 joints, 16 pairs, reference joint: None
+openpose        25 joints, 11 pairs, reference joint: Neck
+trial.skeleton: standard20 20 joints, missing: ()
+</pre></div>
+</div>
+<p>A preset can be incomplete (<code class="docutils literal notranslate"><span class="pre">Skeleton.missing()</span></code> lists what is still to be filled in). A few humanoid features take a
+<code class="docutils literal notranslate"><span class="pre">joint_map</span></code> instead, which maps the joint names of a model to the labels of your data; they come with the tutorial on
+physical signals (<a class="reference internal" href="../02_physical_signals/plot_03_points.html#sphx-glr-tutorials-02-physical-signals-plot-03-points-py"><span class="std std-ref">Physical signals: points and models</span></a>).</p>
+</section>
+<section id="the-catalog">
+<h2>The catalog<a class="headerlink" href="#the-catalog" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../../api/catalog.html#module-pyeyesweb.catalog" title="pyeyesweb.catalog"><code class="xref py py-func docutils literal notranslate"><span class="pre">catalog()</span></code></a> lists every feature with its layer, timescale and the EyesWeb block it comes from. The layers
+are described in <a class="reference internal" href="../../concepts/layers.html"><span class="doc">Layers and the catalog</span></a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">pyeyesweb</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">entries</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb sphx-glr-backref-type-py-module reference internal" href="../../api/catalog.html#module-pyeyesweb.catalog" title="pyeyesweb.catalog"><span class="n">pyeyesweb</span><span class="o">.</span><span class="n">catalog</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">entries</span></a><span class="p">)</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">features</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-pyeyesweb sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.catalog.Layer.html#pyeyesweb.catalog.Layer" title="pyeyesweb.Layer"><span class="n">layer</span></a> <span class="ow">in</span> <a class="sphx-glr-backref-module-pyeyesweb sphx-glr-backref-type-py-class reference internal" href="../../api/generated/pyeyesweb.catalog.Layer.html#pyeyesweb.catalog.Layer" title="pyeyesweb.Layer"><span class="n">pyeyesweb</span><span class="o">.</span><span class="n">Layer</span></a><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">names</span></a> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">entries</span></a> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">layer</span> <span class="ow">is</span> <a class="sphx-glr-backref-module-pyeyesweb sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.catalog.Layer.html#pyeyesweb.catalog.Layer" title="pyeyesweb.Layer"><span class="n">layer</span></a><span class="p">]</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a class="sphx-glr-backref-module-pyeyesweb sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.catalog.Layer.html#pyeyesweb.catalog.Layer.title" title="pyeyesweb.Layer.title"><span class="n">layer</span><span class="o">.</span><span class="n">title</span></a><span class="si">:</span><span class="s2">&lt;26</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">names</span></a><span class="p">)</span><span class="si">:</span><span class="s2">&gt;2</span><span class="si">}</span><span class="s2">  e.g. </span><span class="si">{</span><span class="s1">'</span><span class="s1">, </span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">names</span></a><span class="p">[</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>60 features
+Layer 1: physical signals  11  e.g. HumanoidSimulator, HumanoidOrientations, GenericModelOrientations
+Layer 2: low-level features 22  e.g. Kinematics, KineticEnergy, BoundingBoxFilledArea
+Layer 3: mid-level features  7  e.g. GestureSegmenter, MotionDuration, Suddenness
+Layer 4: qualities communicated  1  e.g. EnsembleDominance
+Analysis primitives        19  e.g. SampleEntropy, CoarseGraining, Rarity
+</pre></div>
+</div>
+<p><strong>Takeaway.</strong> Every feature is in the catalog with its layer, and the same contract applies to all of them.</p>
+</section>
+<section id="try-it">
+<h2>Try it<a class="headerlink" href="#try-it" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> can return the velocity, the acceleration and the jerk of the same hand in one call: give <code class="docutils literal notranslate"><span class="pre">output_type</span></code>
+a list. How many outputs does the schema have? Run it and print the status counts of the recorder.</p></li>
+<li><p>Feed <code class="docutils literal notranslate"><span class="pre">Suddenness(window=8,</span> <span class="pre">hop=3)</span></code> the first 20 samples of the hand with <code class="docutils literal notranslate"><span class="pre">process</span></code> and list the sample numbers
+where the status is <code class="docutils literal notranslate"><span class="pre">OK</span></code>. Then change <code class="docutils literal notranslate"><span class="pre">hop</span></code> to 1 and do it again. What changed?</p></li>
+<li><p>Break the contract on purpose: give <code class="docutils literal notranslate"><span class="pre">process</span></code> a timestamp that does not increase. What are the status and the reason, and
+does the next valid sample work?</p></li>
+</ol>
+</section>
+<section id="solutions">
+<h2>Solutions<a class="headerlink" href="#solutions" title="Link to this heading">#</a></h2>
+<p>Exercise 1. <code class="docutils literal notranslate"><span class="pre">output_type</span></code> takes a name or a list of names; the schema has one output per name.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">multi</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">velocity</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">acceleration</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">jerk</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">recorder</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.run" title="pyeyesweb.data_models.Feature.run"><span class="n">multi</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.OutputsMixin.html#pyeyesweb.data_models.OutputsMixin.outputs" title="pyeyesweb.data_models.OutputsMixin.outputs"><span class="n">multi</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">names</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| rows:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">recorder</span></a><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="p">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">name</span></a><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.status" title="pyeyesweb.data_models.Recorder.status"><span class="n">recorder</span><span class="o">.</span><span class="n">status</span></a> <span class="o">==</span> <span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="p">)</span><span class="p">)</span> <span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">name</span></a><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="p">(</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">OK</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;</span><span class="s2">WARMING_UP</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;</span><span class="s2">INVALID_INPUT</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="p">)</span><span class="p">}</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>('velocity', 'acceleration', 'jerk') | rows: 1000
+{'OK': 1000, 'WARMING_UP': 0, 'INVALID_INPUT': 0}
+</pre></div>
+</div>
+<p>Exercise 2. The first window ends at sample 7; <code class="docutils literal notranslate"><span class="pre">hop</span></code> sets how often a result follows.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="k">for</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">hop</span></a> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-pyeyesweb-mid_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><span class="n">feature</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-mid_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/mid_level/Suddenness.html#pyeyesweb.mid_level.Suddenness" title="pyeyesweb.mid_level.Suddenness"><span class="n">Suddenness</span></a><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">hop</span></a><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">hop</span></a><span class="p">)</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">ok</span></a> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">if</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.WindowedFeature.html#pyeyesweb.data_models.WindowedFeature.process" title="pyeyesweb.data_models.WindowedFeature.process"><span class="n">feature</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">time</span></a><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">)</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="s2">OK</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">hop=</span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">hop</span></a><span class="si">}</span><span class="s2">: OK at samples </span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">ok</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>hop=3: OK at samples [7, 10, 13, 16, 19]
+hop=1: OK at samples [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+</pre></div>
+</div>
+<p>Exercise 3. A repeated time is data that is not valid: the call is rejected and not remembered.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">check</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-low_level sphx-glr-backref-type-py-class reference internal" href="../../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><span class="n">Kinematics</span></a><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">check</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="w">
+</span><span class="n">repeated</span> <span class="o">=</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">check</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Status.html#pyeyesweb.data_models.Status" title="pyeyesweb.data_models.Status"><span class="n">repeated</span><span class="o">.</span><span class="n">status</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">-</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">repeated</span><span class="o">.</span><span class="n">reason</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">next valid sample:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.process" title="pyeyesweb.data_models.Feature.process"><span class="n">check</span><span class="o">.</span><span class="n">process</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">hand</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span><span class="o">.</span><span class="n">status</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>INVALID_INPUT - non-increasing timestamp
+next valid sample: OK
+</pre></div>
+</div>
+</section>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a>, <a class="reference internal" href="../../concepts/inputs.html"><span class="doc">Inputs</span></a> and <a class="reference internal" href="../../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>: these rules in reference
+form.</p></li>
+<li><p><a class="reference internal" href="../../api/data_models.html"><span class="doc">Data models</span></a>: <code class="docutils literal notranslate"><span class="pre">Feature</span></code>, <code class="docutils literal notranslate"><span class="pre">Result</span></code>, <code class="docutils literal notranslate"><span class="pre">Schema</span></code>, <code class="docutils literal notranslate"><span class="pre">Status</span></code> and <code class="docutils literal notranslate"><span class="pre">Recorder</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api/catalog.html"><span class="doc">Catalog</span></a>: the catalog and its types.</p></li>
+<li><p>The tutorials by layer start with <a class="reference internal" href="../02_physical_signals/plot_03_points.html#sphx-glr-tutorials-02-physical-signals-plot-03-points-py"><span class="std std-ref">Physical signals: points and models</span></a> (physical signals: points).</p></li>
+</ul>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-01-getting-started-plot-02-the-contract-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/ffabc15e68a1adb54f4cbc1c83ad3488/plot_02_the_contract.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_02_the_contract.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/1fc239f0ddac202691c48385277221fe/plot_02_the_contract.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_02_the_contract.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/ad83d8b6577251b8811634ff28e34643/plot_02_the_contract.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_02_the_contract.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="plot_01_first_feature.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Your first feature</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../02_physical_signals/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Physical signals</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-used-in-this-tutorial">Data used in this tutorial</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-and-offline-process-and-run">Live and offline: <code class="docutils literal notranslate"><span class="pre">process</span></code> and <code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-result-and-its-schema">The result and its schema</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status-and-warm-up">Status and warm-up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-that-is-not-data">Data that is not data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-is-in-seconds">Time is in seconds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#units">Units</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choices-are-strings">Choices are strings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-and-structural-parameters">Live and structural parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-ways-to-build-a-feature">Other ways to build a feature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#skeletons-and-presets">Skeletons and presets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-catalog">The catalog</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it">Try it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next steps</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/tutorials/01_getting_started/plot_02_the_contract.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

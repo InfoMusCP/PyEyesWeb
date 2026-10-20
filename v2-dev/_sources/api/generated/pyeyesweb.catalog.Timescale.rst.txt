@@ -1,0 +1,22 @@
+﻿pyeyesweb.catalog.Timescale
+===========================
+
+.. currentmodule:: pyeyesweb.catalog
+
+
+
+.. autoclass:: Timescale
+   :members: FRAME, SHORT, MEDIUM, LONG, ANY
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Timescale.FRAME
+      ~Timescale.SHORT
+      ~Timescale.MEDIUM
+      ~Timescale.LONG
+      ~Timescale.ANY

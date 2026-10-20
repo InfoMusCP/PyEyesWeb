@@ -1,0 +1,33 @@
+﻿pyeyesweb.data\_models.Result
+=============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Result
+   :members: to_array, to_dict, to_flat_dict, with_time, status, reason, timestamp, is_valid, ok, schema, valid
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Result.to_array
+      ~Result.to_dict
+      ~Result.to_flat_dict
+      ~Result.with_time
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Result.status
+      ~Result.reason
+      ~Result.timestamp
+      ~Result.is_valid
+      ~Result.ok
+      ~Result.schema
+      ~Result.valid

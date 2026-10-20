@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Kinematics &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/low_level/Kinematics';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="KineticEnergy" href="KineticEnergy.html" />
+    <link rel="prev" title="Harmonicity" href="Harmonicity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../../overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../physical_signals.html">Layer 1: physical signals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.MassSpringModel.html">pyeyesweb.physical_signals.MassSpringModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.TimeWindowSynchronizer.html">pyeyesweb.physical_signals.TimeWindowSynchronizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.SynchronizedWindow.html">pyeyesweb.physical_signals.SynchronizedWindow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelEstimator.html">GenericModelEstimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelOrientations.html">GenericModelOrientations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelPredictor.html">GenericModelPredictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelSimulator.html">GenericModelSimulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/HitCellDetector.html">HitCellDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/HumanoidOrientations.html">HumanoidOrientations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/HumanoidSimulator.html">HumanoidSimulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/PointsPredictor.html">PointsPredictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/SilhouetteBodyParts.html">SilhouetteBodyParts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/SilhouetteCentroids.html">SilhouetteCentroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physical_signals/Videogram.html">Videogram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../low_level.html">Layer 2: low-level features</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BodyPartsFromCurvature.html">BodyPartsFromCurvature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoundingBoxFilledArea.html">BoundingBoxFilledArea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ContourCurvature.html">ContourCurvature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ConvexHull.html">ConvexHull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CurvatureDispersion.html">CurvatureDispersion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CurvatureVelocityCorrelation.html">CurvatureVelocityCorrelation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DirectionChange.html">DirectionChange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Directness.html">Directness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="EllipsoidSphericity.html">EllipsoidSphericity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Equilibrium.html">Equilibrium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FilterContour.html">FilterContour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Harmonicity.html">Harmonicity</a></li>
+<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">Kinematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="KineticEnergy.html">KineticEnergy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LogDimensionlessJerk.html">LogDimensionlessJerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MotionNoiseDetector.html">MotionNoiseDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PointsDensity.html">PointsDensity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SpectralArcLength.html">SpectralArcLength</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SubmovementCount.html">SubmovementCount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Symmetry.html">Symmetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TrajectoryNonPlanarity.html">TrajectoryNonPlanarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TriangleSymmetry.html">TriangleSymmetry</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../mid_level.html">Layer 3: mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/ContractionImpulsivity.html">ContractionImpulsivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/GestureSegmenter.html">GestureSegmenter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/MotionDuration.html">MotionDuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/PositionDependingPotentials.html">PositionDependingPotentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/RegionDependingPotentials.html">RegionDependingPotentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/Suddenness.html">Suddenness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mid_level/SuddennessImpulsivity.html">SuddennessImpulsivity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../high_level.html">Layer 4: qualities communicated</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../high_level/EnsembleDominance.html">EnsembleDominance</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../analysis_primitives.html">Analysis primitives</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/BinaryPulsesRegularity.html">BinaryPulsesRegularity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CoarseGraining.html">CoarseGraining</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CorrelationsMatrix.html">CorrelationsMatrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CrossRecurrencePlot.html">CrossRecurrencePlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/EventSynchronization.html">EventSynchronization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/EventSynchronizationMECS.html">EventSynchronizationMECS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/GeneralisedAutoCorrelation.html">GeneralisedAutoCorrelation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/MultiScaleEntropy.html">MultiScaleEntropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/NonlinearInterdependence.html">NonlinearInterdependence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/PartialRecurrenceSynchronization.html">PartialRecurrenceSynchronization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/Periodicity.html">Periodicity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/PhaseLockingValue.html">PhaseLockingValue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/Rarity.html">Rarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/RecurrencePlot.html">RecurrencePlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SampleEntropy.html">SampleEntropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/ScalarPeakDetector.html">ScalarPeakDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SequenceDetector.html">SequenceDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SpikeSynchronization.html">SpikeSynchronization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/TemporalSynchronization.html">TemporalSynchronization</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data_models.html">Data models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Feature.html">pyeyesweb.data_models.Feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.WindowedFeature.html">pyeyesweb.data_models.WindowedFeature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Inputs.html">pyeyesweb.data_models.Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Input.html">pyeyesweb.data_models.Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.InputKind.html">pyeyesweb.data_models.InputKind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Schema.html">pyeyesweb.data_models.Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Output.html">pyeyesweb.data_models.Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Result.html">pyeyesweb.data_models.Result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Status.html">pyeyesweb.data_models.Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Recorder.html">pyeyesweb.data_models.Recorder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.Skeleton.html">pyeyesweb.data_models.Skeleton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.data_models.OutputsMixin.html">pyeyesweb.data_models.OutputsMixin</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../skeletons.html">Skeletons</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.skeletons.get_skeleton.html">pyeyesweb.skeletons.get_skeleton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.skeletons.with_skeleton.html">pyeyesweb.skeletons.with_skeleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../catalog.html">Catalog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.catalog.Layer.html">pyeyesweb.catalog.Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.catalog.Timescale.html">pyeyesweb.catalog.Timescale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.catalog.FeatureInfo.html">pyeyesweb.catalog.FeatureInfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.catalog.describe.html">pyeyesweb.catalog.describe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.catalog.catalog.html">pyeyesweb.catalog.catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.catalog.catalog_table.html">pyeyesweb.catalog.catalog_table</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../overview.html" class="nav-link">API overview</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../low_level.html" class="nav-link">Layer 2: low-level features</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Kinematics</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="kinematics">
+<span id="feature-kinematics"></span><h1>Kinematics<a class="headerlink" href="#kinematics" title="Link to this heading">#</a></h1>
+<p>Velocity, acceleration, jerk, curvature or direction of a moving point, from a Savitzky-Golay fit.</p>
+<p><span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">Layer 2: low-level features</span> <span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">timescale: up to ~0.5 s</span> <span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">EyesWeb: TrajectoryFeatures-1D/2D/3D (Kinematics1D/2D/3D)</span></p>
+<p>Layer: <a class="reference internal" href="../../low_level.html"><span class="doc">Layer 2: low-level features</span></a>. Family: <a class="reference internal" href="../../../theory/kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 35.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dims</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Optional[int]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'point'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal['point',</span> <span class="pre">'time_series']</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_dims</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'tangential'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal['components',</span> <span class="pre">'tangential']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'velocity'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Union[Literal['smoothed',</span> <span class="pre">'velocity',</span> <span class="pre">'acceleration',</span> <span class="pre">'jerk',</span> <span class="pre">'curvature',</span> <span class="pre">'direction'],</span> <span class="pre">Sequence[Literal['smoothed',</span> <span class="pre">'velocity',</span> <span class="pre">'acceleration',</span> <span class="pre">'jerk',</span> <span class="pre">'curvature',</span> <span class="pre">'direction']]]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">15</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">movement_threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.005</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Optional[float]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'m'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal['m',</span> <span class="pre">'mm']</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 14.0%" />
+<col style="width: 12.0%" />
+<col style="width: 12.0%" />
+<col style="width: 44.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Kind</p></th>
+<th class="head"><p>Shape</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">point</span></code></p></td>
+<td><p>sample</p></td>
+<td><p>(n,)</p></td>
+<td></td>
+<td><p>position of the point (or value of the signal)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 12.0%" />
+<col style="width: 14.0%" />
+<col style="width: 46.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Kind</p></th>
+<th class="head"><p>Shape</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>scalar</p></td>
+<td><p>m/s</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="alternative-constructors">
+<h2>Alternative constructors<a class="headerlink" href="#alternative-constructors" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyeyesweb.low_level.Kinematics.from_point">
+<span class="sig-prename descclassname"><span class="pre">Kinematics.</span></span><span class="sig-name descname"><span class="pre">from_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tangential'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'velocity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">movement_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/kinematics.html#Kinematics.from_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.Kinematics.from_point" title="Link to this definition">#</a></dt>
+<dd><p>Kinematics of a point streamed one sample per call.</p>
+<p><code class="docutils literal notranslate"><span class="pre">process(point)</span></code> takes a <code class="docutils literal notranslate"><span class="pre">(D,)</span></code> position (or signal value), <code class="docutils literal notranslate"><span class="pre">run</span></code> a <code class="docutils literal notranslate"><span class="pre">(T,</span> <span class="pre">D)</span></code> recording. Stateful: the
+feature keeps its sliding Savitzky-Golay window. Takes the parameters of <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> except <code class="docutils literal notranslate"><span class="pre">input_mode</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyeyesweb.low_level.Kinematics.from_series">
+<span class="sig-prename descclassname"><span class="pre">Kinematics.</span></span><span class="sig-name descname"><span class="pre">from_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tangential'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'velocity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">movement_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/kinematics.html#Kinematics.from_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.Kinematics.from_series" title="Link to this definition">#</a></dt>
+<dd><p>Kinematics of a series buffered by the caller.</p>
+<p><code class="docutils literal notranslate"><span class="pre">process(series)</span></code> takes a <code class="docutils literal notranslate"><span class="pre">(D,</span> <span class="pre">N)</span></code> matrix (<code class="docutils literal notranslate"><span class="pre">N</span></code> at least <code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code>, the same <code class="docutils literal notranslate"><span class="pre">N</span></code> at every
+call, newest sample last) and describes its newest sample. Takes the parameters of <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> except
+<code class="docutils literal notranslate"><span class="pre">input_mode</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyeyesweb.low_level.Kinematics">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.low_level.</span></span><span class="sig-name descname"><span class="pre">Kinematics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'point'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tangential'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'velocity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">movement_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/kinematics.html#Kinematics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.Kinematics" title="Link to this definition">#</a></dt>
+<dd><p>Velocity, acceleration, jerk, curvature or direction of a moving point, from a Savitzky-Golay fit.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> describes how a point (a joint, a marker, the centre of mass) moves along its path; with one
+component it describes a scalar signal. The position samples are smoothed and differentiated in one step by a
+Savitzky-Golay filter: the newest <code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code> samples are fitted by a polynomial of order
+<code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code> and the estimate is the fit, or one of its derivatives, evaluated at the centre of that window.
+With <span class="math notranslate nohighlight">\(\mathbf{x}(t)\)</span> the smoothed position, the derivatives are taken with respect to time in seconds,</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{v} = \frac{d\mathbf{x}}{dt}, \qquad \mathbf{a} = \frac{d^2\mathbf{x}}{dt^2}, \qquad
+\mathbf{j} = \frac{d^3\mathbf{x}}{dt^3},\]</div>
+<p>and the curvature is that of the path (<span class="math notranslate nohighlight">\(1/r\)</span> for a circle of radius <span class="math notranslate nohighlight">\(r\)</span>); the direction is the unit
+vector of the velocity. Because the estimate is centred in the window it lags the newest sample by
+<code class="docutils literal notranslate"><span class="pre">(filter_window_length</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> samples (70 ms at 100 Hz with the default window of 15). The step <span class="math notranslate nohighlight">\(dt\)</span> of
+a call is the difference to the previous <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> if given, else <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code>, else one second per
+sample.</p>
+<p><code class="docutils literal notranslate"><span class="pre">output_type</span></code> may be a list; the result then holds one output per type, in that order, all computed in the same
+pass and each identical to a <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> built for that type alone. The curvature-based smoothness index of
+a movement is a separate feature, <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, fed with the velocity and acceleration vectors of this
+one (<code class="docutils literal notranslate"><span class="pre">output_dims=&quot;components&quot;</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dims</strong><span class="classifier">int, optional</span></dt><dd><p>Number of components of a point: 1, 2 or 3. <code class="docutils literal notranslate"><span class="pre">None</span></code> (default) takes it from the first frame; a later frame
+of another size raises. <em>(structural)</em></p>
+</dd>
+<dt><strong>input_mode</strong><span class="classifier">{“point”, “time_series”}, optional</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;point&quot;</span></code> (default): one position per call, the feature keeps its own window. <code class="docutils literal notranslate"><span class="pre">&quot;time_series&quot;</span></code>: a series
+of positions buffered by the caller per call. <code class="docutils literal notranslate"><span class="pre">Kinematics.from_point(...)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Kinematics.from_series(...)</span></code> build one or the other. <em>(structural)</em></p>
+</dd>
+<dt><strong>output_dims</strong><span class="classifier">{“tangential”, “components”}, optional</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;tangential&quot;</span></code> (default): each output is a scalar, the magnitude of the vector (the speed, for the
+velocity). <code class="docutils literal notranslate"><span class="pre">&quot;components&quot;</span></code>: a <code class="docutils literal notranslate"><span class="pre">(dims,)</span></code> vector with the components x, y, z. A <code class="docutils literal notranslate"><span class="pre">&quot;direction&quot;</span></code> output is
+always a vector. <em>(structural)</em></p>
+</dd>
+<dt><strong>output_type</strong><span class="classifier">str or sequence of str, optional</span></dt><dd><p>What to compute: <code class="docutils literal notranslate"><span class="pre">&quot;smoothed&quot;</span></code> (the filtered position), <code class="docutils literal notranslate"><span class="pre">&quot;velocity&quot;</span></code> (default), <code class="docutils literal notranslate"><span class="pre">&quot;acceleration&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;jerk&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;curvature&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;direction&quot;</span></code>, or a list of them. <em>(structural)</em></p>
+</dd>
+<dt><strong>filter_window_length</strong><span class="classifier">int, optional</span></dt><dd><p>Samples of the Savitzky-Golay window; odd, greater than 3 and than <code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">15</span></code>.
+<em>(structural)</em></p>
+</dd>
+<dt><strong>filter_polyorder</strong><span class="classifier">int, optional</span></dt><dd><p>Order of the fitted polynomial. Defaults to <code class="docutils literal notranslate"><span class="pre">3</span></code>. <em>(structural)</em></p>
+</dd>
+<dt><strong>movement_threshold</strong><span class="classifier">float, optional</span></dt><dd><p>Speed below which the point counts as still and the curvature is reported as 0, in m/s (scaled by
+<code class="docutils literal notranslate"><span class="pre">units</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">0.005</span></code>. <em>(live)</em></p>
+</dd>
+<dt><strong>sampling_rate</strong><span class="classifier">float, optional</span></dt><dd><p>Sampling rate in Hz, used when no timestamp is given. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code> (one second per sample, and the
+<code class="docutils literal notranslate"><span class="pre">reason</span></code> says so). <em>(live)</em></p>
+</dd>
+<dt><strong>units</strong><span class="classifier">{“m”, “mm”}, optional</span></dt><dd><p>Unit of the position data. It scales <code class="docutils literal notranslate"><span class="pre">movement_threshold</span></code> and names the output units (<code class="docutils literal notranslate"><span class="pre">m/s</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mm/s</span></code>, …); the data and the outputs are never scaled. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;m&quot;</span></code>. <em>(live)</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><strong>Inputs.</strong> In <code class="docutils literal notranslate"><span class="pre">&quot;point&quot;</span></code> mode <code class="docutils literal notranslate"><span class="pre">process(point,</span> <span class="pre">*,</span> <span class="pre">timestamp=None)</span></code> takes one <code class="docutils literal notranslate"><span class="pre">(D,)</span></code> position per call and
+<code class="docutils literal notranslate"><span class="pre">run(points,</span> <span class="pre">*,</span> <span class="pre">timestamps=None)</span></code> a <code class="docutils literal notranslate"><span class="pre">(T,</span> <span class="pre">D)</span></code> recording. In <code class="docutils literal notranslate"><span class="pre">&quot;time_series&quot;</span></code> mode <code class="docutils literal notranslate"><span class="pre">process(series)</span></code> takes a
+<code class="docutils literal notranslate"><span class="pre">(D,</span> <span class="pre">N)</span></code> matrix, newest sample last, with <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">&gt;=</span> <span class="pre">filter_window_length</span></code> and the same <code class="docutils literal notranslate"><span class="pre">N</span></code> at every call; it
+describes the newest sample. <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> is in seconds.</p>
+<p><strong>Outputs.</strong> One output per requested type, named after it: <code class="docutils literal notranslate"><span class="pre">smoothed</span></code> (unit of the data), <code class="docutils literal notranslate"><span class="pre">velocity</span></code> (unit/s),
+<code class="docutils literal notranslate"><span class="pre">acceleration</span></code> (unit/s^2), <code class="docutils literal notranslate"><span class="pre">jerk</span></code> (unit/s^3), <code class="docutils literal notranslate"><span class="pre">curvature</span></code> (1/unit; 0 below <code class="docutils literal notranslate"><span class="pre">movement_threshold</span></code>),
+<code class="docutils literal notranslate"><span class="pre">direction</span></code> (dimensionless unit vector). A scalar for <code class="docutils literal notranslate"><span class="pre">output_dims=&quot;tangential&quot;</span></code>, a <code class="docutils literal notranslate"><span class="pre">(dims,)</span></code> vector for
+<code class="docutils literal notranslate"><span class="pre">&quot;components&quot;</span></code> (<code class="docutils literal notranslate"><span class="pre">direction</span></code> always a vector).</p>
+<p><strong>Statuses.</strong> <code class="docutils literal notranslate"><span class="pre">OK</span></code> from the first sample on (the window is filled from the first call); <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> when
+the input or a result is not finite, or the timestamp does not increase. The first estimates, before the window
+holds <code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code> real samples, are those of a partly filled window.</p>
+<p>Corrected in the core: acceleration and jerk are the true second and third derivatives (they were the polynomial
+coefficients, half and a sixth of them); the 2D tangential curvature was too large by a factor
+<span class="math notranslate nohighlight">\(\sqrt{2}\)</span>; the component curvature used a wrong normalisation. The estimate is the fit to the newest
+<code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code> samples read at their centre; EyesWeb leaves the newest sample out of the fit, so its
+estimate lags one sample more.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kinematics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>  <span class="c1"># 0.5 m/s along x, sampled at 100 Hz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s2">"velocity"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="examples-using-pyeyesweb-low-level-kinematics">
+<h3>Examples using <code class="docutils literal notranslate"><span class="pre">pyeyesweb.low_level.Kinematics</span></code><a class="headerlink" href="#examples-using-pyeyesweb-low-level-kinematics" title="Link to this heading">#</a></h3>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Load a motion-capture recording, compute the speed of a hand and the kinetic energy of the whole body, and look at the results as a table and as figures."><img alt="" src="../../../_images/sphx_glr_plot_01_first_feature_thumb.png" />
+<p><a class="reference internal" href="../../../tutorials/01_getting_started/plot_01_first_feature.html"><span class="doc">Your first feature</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Your first feature</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Every PyEyesWeb feature takes its input and returns its output in the same way. This tutorial goes through those rules one at a time, with Kinematics for a point, Suddenness for a window of samples and KineticEnergy for a skeleton."><img alt="" src="../../../_images/sphx_glr_plot_02_the_contract_thumb.png" />
+<p><a class="reference internal" href="../../../tutorials/01_getting_started/plot_02_the_contract.html"><span class="doc">The contract every feature follows</span></a></p>
+  <div class="sphx-glr-thumbnail-title">The contract every feature follows</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="How fast, how energetic and how smooth a movement is. This tutorial computes the velocity, acceleration, jerk and curvature of a hand, the kinetic energy of the whole body, six smoothness metrics (first on synthetic reaches whose smoothness we control, then on recordings), two shape measures of a path, and a test that tells a tracking error from a movement."><img alt="" src="../../../_images/sphx_glr_plot_05_motion_thumb.png" />
+<p><a class="reference internal" href="../../../tutorials/03_low_level/plot_05_motion.html"><span class="doc">Low level: motion and smoothness</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Low level: motion and smoothness</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial puts the previous ones together in two ways. First a live loop: a chain of four features is fed one frame at a time, as it would be from a motion-capture stream, and a parameter is changed while it runs. Then a batch analysis: features from three layers are computed for a set of recordings, collected in a table with pandas, and used to compare the conditions of the example session with a plain nearest-centroid rule and a plot."><img alt="" src="../../../_images/sphx_glr_plot_10_capstone_thumb.png" />
+<p><a class="reference internal" href="../../../tutorials/06_capstone/plot_10_capstone.html"><span class="doc">Capstone: a pipeline</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Capstone: a pipeline</div>
+</div></div><div class="clearer"></div></section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Harmonicity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonicity</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="KineticEnergy.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">KineticEnergy</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alternative-constructors">Alternative constructors</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyeyesweb.low_level.Kinematics.from_point"><code class="docutils literal notranslate"><span class="pre">Kinematics.from_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyeyesweb.low_level.Kinematics.from_series"><code class="docutils literal notranslate"><span class="pre">Kinematics.from_series()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyeyesweb.low_level.Kinematics"><code class="docutils literal notranslate"><span class="pre">Kinematics</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-using-pyeyesweb-low-level-kinematics">Examples using <code class="docutils literal notranslate"><span class="pre">pyeyesweb.low_level.Kinematics</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/generated/low_level/Kinematics.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

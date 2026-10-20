@@ -1,0 +1,106 @@
+.. _feature-SilhouetteBodyParts:
+
+SilhouetteBodyParts
+===================
+
+Head, trunk, arms and legs of a human silhouette, from its projection histograms.
+
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: BlobSubRegions`
+
+Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Imaging </theory/imaging>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``arm_percentage``
+     - ``0.8``
+     - ``float``
+   * - ``legs_search``
+     - ``0.5``
+     - ``float``
+   * - ``legs_offset``
+     - ``0.2``
+     - ``float``
+   * - ``arms_min_threshold``
+     - ``0.2``
+     - ``float``
+   * - ``arms_max_threshold``
+     - ``0.5``
+     - ``float``
+   * - ``parts``
+     - ``('right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head')``
+     - ``Sequence[Literal['right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head']]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``silhouette``
+     - image
+     - (n, n)
+     - 
+     - mask of the body: every non-zero pixel is foreground
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``regions``
+     - ``int``
+     - (6, 4)
+     - px
+     - bounding box of each part in the frame; zeros where not found
+   * - ``is_found``
+     - ``bool``
+     - (6,)
+     - 
+     - the part was found
+   * - ``masks``
+     - ``int``
+     - (n, n)
+     - 
+     - 0 / 255 mask of each part found
+
+.. py:currentmodule:: pyeyesweb.physical_signals
+
+Description
+-----------
+
+.. autoclass:: SilhouetteBodyParts
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.physical_signals.SilhouetteBodyParts.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

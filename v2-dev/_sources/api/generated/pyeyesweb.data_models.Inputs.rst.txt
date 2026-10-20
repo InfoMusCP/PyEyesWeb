@@ -1,0 +1,27 @@
+﻿pyeyesweb.data\_models.Inputs
+=============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Inputs
+   :members: check, check_windows, describe, problem, names
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Inputs.check
+      ~Inputs.check_windows
+      ~Inputs.describe
+      ~Inputs.problem
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Inputs.names

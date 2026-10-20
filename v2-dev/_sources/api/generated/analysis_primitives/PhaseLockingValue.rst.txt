@@ -1,0 +1,98 @@
+.. _feature-PhaseLockingValue:
+
+PhaseLockingValue
+=================
+
+Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.
+
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any`
+
+Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``window``
+     - *required*
+     - ``int``
+   * - ``hop``
+     - ``1``
+     - ``int``
+   * - ``low_frequency``
+     - ``None``
+     - ``Optional[float]``
+   * - ``high_frequency``
+     - ``None``
+     - ``Optional[float]``
+   * - ``sampling_rate``
+     - ``None``
+     - ``Optional[float]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``first_signal``
+     - sample
+     - (1,)
+     - 
+     - one value per call
+   * - ``second_signal``
+     - sample
+     - (1,)
+     - 
+     - one value per call
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``phase_locking_value``
+     - ``float``
+     - scalar
+     - 
+     - Phase Locking Value in [0, 1]; 1 is perfect phase synchronization.
+
+.. py:currentmodule:: pyeyesweb.analysis_primitives
+
+Description
+-----------
+
+.. autoclass:: PhaseLockingValue
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.analysis_primitives.PhaseLockingValue.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

@@ -1,0 +1,6 @@
+﻿pyeyesweb.datasets.cache\_dir
+=============================
+
+.. currentmodule:: pyeyesweb.datasets
+
+.. autofunction:: cache_dir

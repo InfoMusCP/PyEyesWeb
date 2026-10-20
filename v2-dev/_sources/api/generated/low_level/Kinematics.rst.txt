@@ -1,0 +1,112 @@
+.. _feature-Kinematics:
+
+Kinematics
+==========
+
+Velocity, acceleration, jerk, curvature or direction of a moving point, from a Savitzky-Golay fit.
+
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: TrajectoryFeatures-1D/2D/3D (Kinematics1D/2D/3D)`
+
+Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Kinematics and energy </theory/kinematics_energy>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``dims``
+     - ``None``
+     - ``Optional[int]``
+   * - ``input_mode``
+     - ``'point'``
+     - ``Literal['point', 'time_series']``
+   * - ``output_dims``
+     - ``'tangential'``
+     - ``Literal['components', 'tangential']``
+   * - ``output_type``
+     - ``'velocity'``
+     - ``Union[Literal['smoothed', 'velocity', 'acceleration', 'jerk', 'curvature', 'direction'], Sequence[Literal['smoothed', 'velocity', 'acceleration', 'jerk', 'curvature', 'direction']]]``
+   * - ``filter_window_length``
+     - ``15``
+     - ``int``
+   * - ``filter_polyorder``
+     - ``3``
+     - ``int``
+   * - ``movement_threshold``
+     - ``0.005``
+     - ``float``
+   * - ``sampling_rate``
+     - ``None``
+     - ``Optional[float]``
+   * - ``units``
+     - ``'m'``
+     - ``Literal['m', 'mm']``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``point``
+     - sample
+     - (n,)
+     - 
+     - position of the point (or value of the signal)
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``velocity``
+     - ``float``
+     - scalar
+     - m/s
+     - 
+
+.. py:currentmodule:: pyeyesweb.low_level
+
+Alternative constructors
+------------------------
+
+.. automethod:: Kinematics.from_point
+
+.. automethod:: Kinematics.from_series
+
+Description
+-----------
+
+.. autoclass:: Kinematics
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.low_level.Kinematics.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

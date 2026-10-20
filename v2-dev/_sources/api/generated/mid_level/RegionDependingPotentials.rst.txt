@@ -1,0 +1,120 @@
+.. _feature-RegionDependingPotentials:
+
+RegionDependingPotentials
+=========================
+
+One potential per region of a cell mask, driven by hit cells or hit regions.
+
+:bdg-primary:`Layer 3: mid-level features` :bdg-secondary:`timescale: \0.5-3 s` :bdg-info:`EyesWeb: RegionDependingPotentials`
+
+Layer: :doc:`Layer 3: mid-level features </api/mid_level>`. Family: :doc:`Shape, symmetry and balance </theory/shape_symmetry_balance>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``cells_along_x``
+     - ``10``
+     - ``int``
+   * - ``cells_along_y``
+     - ``10``
+     - ``int``
+   * - ``potential_type``
+     - ``'increment_decrement'``
+     - ``Literal['increment_decrement', 'occupation_rates_linear', 'occupation_rates_exponential']``
+   * - ``input_kind``
+     - ``'cells'``
+     - ``Literal['cells', 'hit_regions']``
+   * - ``mask``
+     - ``None``
+     - ``numpy.ndarray | None``
+   * - ``number_of_regions``
+     - ``10``
+     - ``int``
+   * - ``initialization_matrix``
+     - ``None``
+     - ``numpy.ndarray | None``
+   * - ``region_initial_values``
+     - ``None``
+     - ``Sequence[float] | None``
+   * - ``increment_factor``
+     - ``1.0``
+     - ``float``
+   * - ``decrement_factor``
+     - ``1.0``
+     - ``float``
+   * - ``in_percentage``
+     - ``True``
+     - ``bool``
+   * - ``max_value``
+     - ``1.0``
+     - ``float``
+   * - ``time_constant``
+     - ``1.0``
+     - ``float``
+   * - ``parts``
+     - ``('potential',)``
+     - ``Sequence[Literal['potential', 'hit_regions', 'hit_region_indexes', 'region_values']]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``cells``
+     - points
+     - (n, 2)
+     - 
+     - hit cells (i, j) = (row, column)
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``potential``
+     - ``float``
+     - (10, 10)
+     - 
+     - value of the region of each cell
+
+.. py:currentmodule:: pyeyesweb.mid_level
+
+Description
+-----------
+
+.. autoclass:: RegionDependingPotentials
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.mid_level.RegionDependingPotentials.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

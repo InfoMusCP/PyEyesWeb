@@ -1,0 +1,35 @@
+﻿pyeyesweb.data\_models.Schema
+=============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Schema
+   :members: describe, empty_values, result_type, select, to_dict, fixed_outputs, flat_index, flat_names, is_fixed, layout, names, size, variable_outputs
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Schema.describe
+      ~Schema.empty_values
+      ~Schema.result_type
+      ~Schema.select
+      ~Schema.to_dict
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Schema.fixed_outputs
+      ~Schema.flat_index
+      ~Schema.flat_names
+      ~Schema.is_fixed
+      ~Schema.layout
+      ~Schema.names
+      ~Schema.size
+      ~Schema.variable_outputs

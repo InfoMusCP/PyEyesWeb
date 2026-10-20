@@ -1,0 +1,21 @@
+﻿pyeyesweb.data\_models.Status
+=============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Status
+   :members: OK, WARMING_UP, NO_OUTPUT, INVALID_INPUT
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Status.OK
+      ~Status.WARMING_UP
+      ~Status.NO_OUTPUT
+      ~Status.INVALID_INPUT

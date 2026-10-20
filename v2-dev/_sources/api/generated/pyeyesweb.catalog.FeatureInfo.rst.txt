@@ -1,0 +1,24 @@
+﻿pyeyesweb.catalog.FeatureInfo
+=============================
+
+.. currentmodule:: pyeyesweb.catalog
+
+
+
+.. autoclass:: FeatureInfo
+   :members: name, layer, timescale, eyesweb_block, module, summary, cls
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~FeatureInfo.name
+      ~FeatureInfo.layer
+      ~FeatureInfo.timescale
+      ~FeatureInfo.eyesweb_block
+      ~FeatureInfo.module
+      ~FeatureInfo.summary
+      ~FeatureInfo.cls

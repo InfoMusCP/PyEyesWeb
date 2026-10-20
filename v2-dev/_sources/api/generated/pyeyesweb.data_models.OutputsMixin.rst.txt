@@ -1,0 +1,18 @@
+﻿pyeyesweb.data\_models.OutputsMixin
+===================================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: OutputsMixin
+   :members: outputs
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~OutputsMixin.outputs

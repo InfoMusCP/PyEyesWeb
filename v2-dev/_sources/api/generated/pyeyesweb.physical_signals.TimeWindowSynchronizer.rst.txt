@@ -1,0 +1,30 @@
+﻿pyeyesweb.physical\_signals.TimeWindowSynchronizer
+==================================================
+
+.. currentmodule:: pyeyesweb.physical_signals
+
+
+
+.. autoclass:: TimeWindowSynchronizer
+   :members: pop, push, push_frame, ready, reset, samples_per_window, start_time, window
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~TimeWindowSynchronizer.pop
+      ~TimeWindowSynchronizer.push
+      ~TimeWindowSynchronizer.push_frame
+      ~TimeWindowSynchronizer.ready
+      ~TimeWindowSynchronizer.reset
+      ~TimeWindowSynchronizer.samples_per_window
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~TimeWindowSynchronizer.start_time
+      ~TimeWindowSynchronizer.window

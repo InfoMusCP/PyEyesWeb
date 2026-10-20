@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Imaging &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/imaging';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Physical signals" href="../user_guide/physical_signals.html" />
+    <link rel="prev" title="Humanoid and mass-spring models" href="humanoid_models.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Imaging</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="imaging">
+<h1>Imaging<a class="headerlink" href="#imaging" title="Link to this heading">#</a></h1>
+<p>Not every recording of a body is a skeleton. A video camera gives images, and the first step of an image-based analysis is
+to separate the body from the background and to reduce it to a few quantities that follow the movement. This page covers the
+features that do so, from the silhouette of a person: where its centre and its parts are, how its images evolve over time,
+and how the shape of its outline can be measured. They are the image-side counterpart of the skeleton features, and their
+outputs (points in the image, regions, contours) can feed the low-level features of <a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a> and
+<a class="reference internal" href="shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>. The EyesWeb platform <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">2</a>]</span> offered the same operations as blocks of its
+imaging library.</p>
+<section id="notation-and-conventions">
+<h2>Notation and conventions<a class="headerlink" href="#notation-and-conventions" title="Link to this heading">#</a></h2>
+<p>An image is an array with <span class="math notranslate nohighlight">\(H\)</span> rows and <span class="math notranslate nohighlight">\(W\)</span> columns. A pixel is at column <span class="math notranslate nohighlight">\(x\)</span> (counted from the left, from 0) and row <span class="math notranslate nohighlight">\(y\)</span> (from
+the top, from 0), so the <span class="math notranslate nohighlight">\(y\)</span> axis points down. Coordinates are in pixels of the frame of the image you give, never in the frame
+of a cropped region. A <strong>silhouette</strong> is a binary mask <span class="math notranslate nohighlight">\(S(x, y)\)</span> in which every non-zero pixel is foreground, the body. A <code class="docutils literal notranslate"><span class="pre">bool</span></code>
+array is a 0 / 1 mask; any other numeric array must hold whole numbers in 0 to 255. “Left” and “right” are those of the image:
+left means the smaller <span class="math notranslate nohighlight">\(x\)</span> (so the right arm and the right leg of the body parts are on the smaller <span class="math notranslate nohighlight">\(x\)</span>).</p>
+<p>A <strong>contour</strong> is a closed sequence of <span class="math notranslate nohighlight">\(N\)</span> points <span class="math notranslate nohighlight">\(\mathbf{p}_i = (x_i, y_i)\)</span>, an <span class="math notranslate nohighlight">\((N, 2)\)</span> array in which the last point is
+a neighbour of the first. The contour of a silhouette comes from any contour-finding step of your image pipeline; the features
+here take the points, in the unit you give them.</p>
+<p>The frame index is <span class="math notranslate nohighlight">\(n\)</span> (symbols as in <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>). None of the image features needs the time, so none takes a <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>.</p>
+</section>
+<section id="where-the-body-is-centroids">
+<h2>Where the body is: centroids<a class="headerlink" href="#where-the-body-is-centroids" title="Link to this heading">#</a></h2>
+<p>The centre of gravity of the silhouette is the mean position of its <span class="math notranslate nohighlight">\(M\)</span> foreground pixels,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{c} = \left(\frac{1}{M}\sum_{k} x_k,\ \frac{1}{M}\sum_{k} y_k\right),
+\]</div>
+<p>truncated to whole pixels. It is a cheap proxy of the position of the body and, followed in time, of its displacement.
+<a class="reference internal" href="../api/generated/physical_signals/SilhouetteCentroids.html#pyeyesweb.physical_signals.SilhouetteCentroids" title="pyeyesweb.physical_signals.SilhouetteCentroids"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></a> goes further and splits the silhouette recursively into rectangles
+around the centre of gravity, taking the centre of gravity of the foreground of each rectangle. The result is a hierarchy of 14
+points: the centre of gravity (the root), the head and the two shoulders, then the elbows, the forearms and the hands, and the
+knees and the feet, each computed from the one it depends on. It is a body model that needs no skeleton.</p>
+<p><code class="docutils literal notranslate"><span class="pre">silhouette</span></code> tells which part of the body the mask shows (<code class="docutils literal notranslate"><span class="pre">&quot;full&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;upper&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;lower&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;left&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code>), and the
+centroids of the missing half are not computed. <code class="docutils literal notranslate"><span class="pre">parts</span></code> selects the centroids to output; one is computed when it, or one
+that depends on it, is requested. With <code class="docutils literal notranslate"><span class="pre">filter_centroids=True</span></code> each centroid is smoothed in time by</p>
+<div class="math notranslate nohighlight">
+\[
+\tilde{\mathbf{c}}(n) = \tilde{\mathbf{c}}(n-1) + \alpha\,\bigl(\mathbf{c}(n) - \tilde{\mathbf{c}}(n-1)\bigr),
+\]</div>
+<p>a first-order filter with the dimensionless coefficient <span class="math notranslate nohighlight">\(\alpha\in[0,1]\)</span> (<code class="docutils literal notranslate"><span class="pre">alpha</span></code>, 0.75 by default): 1 does not filter, 0 keeps
+the first value. As in EyesWeb the filter works on the position inside the bounding box of the silhouette, not on the movement
+of the box.</p>
+</section>
+<section id="where-the-parts-are-body-parts-from-projections">
+<h2>Where the parts are: body parts from projections<a class="headerlink" href="#where-the-parts-are-body-parts-from-projections" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../api/generated/physical_signals/SilhouetteBodyParts.html#pyeyesweb.physical_signals.SilhouetteBodyParts" title="pyeyesweb.physical_signals.SilhouetteBodyParts"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code></a> divides the silhouette into six parts (the head, the trunk, the two
+arms and the two legs), each with its bounding box and its mask, so that single parts can be analysed from a plain image. It
+uses the projection histograms of the mask, the count of foreground pixels along each column and each row. The columns that hold
+the arms are found by accumulating the area from each side until the fraction <code class="docutils literal notranslate"><span class="pre">arm_percentage</span></code> of the area is not arm; the legs
+by the horizontal extent of the lower rows, starting <code class="docutils literal notranslate"><span class="pre">legs_search</span></code> of the way between the barycentre and the feet; the neck by
+the first row, going up from the barycentre, where the body narrows; each arm starts at the first row that holds more
+than <code class="docutils literal notranslate"><span class="pre">arms_max_threshold</span></code> of its width in foreground pixels and ends at the first row with fewer than <code class="docutils literal notranslate"><span class="pre">arms_min_threshold</span></code>. A part is dropped when it is empty or touches the first
+column or the first row of the frame. The detection is a set of thresholds on projection histograms, which is why the
+parameters are fractions of the area and of the width.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">SilhouetteBodyParts</span><span class="p">,</span> <span class="n">SilhouetteCentroids</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[:</span><span class="mi">240</span><span class="p">,</span> <span class="p">:</span><span class="mi">320</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">columns</span> <span class="o">-</span> <span class="mi">160</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">28</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rows</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">140</span><span class="p">)</span>             <span class="c1"># trunk</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">|=</span> <span class="p">((</span><span class="n">columns</span> <span class="o">-</span> <span class="mi">160</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">18</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">rows</span> <span class="o">-</span> <span class="mi">40</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">22</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1"># head</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">|=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">rows</span> <span class="o">-</span> <span class="mi">75</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">columns</span> <span class="o">&gt;=</span> <span class="mi">80</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">columns</span> <span class="o">&lt;=</span> <span class="mi">240</span><span class="p">)</span>           <span class="c1"># arms, a horizontal bar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">|=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">columns</span> <span class="o">-</span> <span class="mi">147</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rows</span> <span class="o">&gt;</span> <span class="mi">140</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">225</span><span class="p">)</span>             <span class="c1"># legs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">body</span> <span class="o">|=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">columns</span> <span class="o">-</span> <span class="mi">173</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rows</span> <span class="o">&gt;</span> <span class="mi">140</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">225</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span> <span class="o">=</span> <span class="n">SilhouetteCentroids</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span><span class="o">.</span><span class="n">centroids</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>                  <span class="c1"># centre of gravity and head, (x, y) in pixels</span>
+<span class="go">[[160.0, 114.0], [159.0, 48.0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>                  <span class="c1"># the centre of gravity, as a fraction of the frame</span>
+<span class="go">[0.5, 0.475]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span> <span class="o">=</span> <span class="n">SilhouetteBodyParts</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>                            <span class="c1"># (x, y, width, height) of each part</span>
+<span class="go">[[138, 136, 22, 90], [160, 136, 22, 90], [142, 59, 36, 77], [80, 68, 62, 15], [178, 68, 63, 15], [142, 19, 36, 40]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span><span class="o">.</span><span class="n">is_found</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[True, True, True, True, True, True]</span>
+</pre></div>
+</div>
+<p>The rows of <code class="docutils literal notranslate"><span class="pre">regions</span></code> are in the order right leg, left leg, trunk, right arm, left arm, head (zeros for a part that was not
+found). The figure shows the centroids and the boxes on this synthetic silhouette.</p>
+<figure class="align-default">
+<img alt="../_images/imaging-1.png" class="plot-directive" src="../_images/imaging-1.png" />
+</figure>
+</section>
+<section id="how-the-image-evolves-the-videogram">
+<h2>How the image evolves: the videogram<a class="headerlink" href="#how-the-image-evolves-the-videogram" title="Link to this heading">#</a></h2>
+<p>A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line and the lines of
+successive frames are placed side by side, so that a movement becomes a visible trace. With a motion image (a frame
+difference) the result is called a motiongram <strong>[citation needed]</strong> (Jensenius, 2006, the motiongram). For a grayscale frame
+<span class="math notranslate nohighlight">\(I(h, w)\)</span> and <code class="docutils literal notranslate"><span class="pre">mode=&quot;horizontal&quot;</span></code>, the line of a frame is the sum of each row, scaled by its maximum to 0 to 255,</p>
+<div class="math notranslate nohighlight">
+\[
+v(h) = 255\,\frac{\sum_w I(h, w)}{\max_h \sum_w I(h, w)},
+\]</div>
+<p>each channel of a colour frame being summed and scaled on its own; <code class="docutils literal notranslate"><span class="pre">mode=&quot;vertical&quot;</span></code> sums the columns instead.
+<a class="reference internal" href="../api/generated/physical_signals/Videogram.html#pyeyesweb.physical_signals.Videogram" title="pyeyesweb.physical_signals.Videogram"><code class="xref py py-class docutils literal notranslate"><span class="pre">Videogram</span></code></a> keeps the last <code class="docutils literal notranslate"><span class="pre">window</span></code> lines (500 by default). The newest line is written
+at a position that wraps around, so the oldest is overwritten (<code class="docutils literal notranslate"><span class="pre">direction</span></code> sets where it goes), and <code class="docutils literal notranslate"><span class="pre">end_of_image_mode=&quot;scroll&quot;</span></code>
+rotates the image once it is full so that the oldest line comes first. The output is an integer image in 0 to 255 with channels
+last; the lines not written yet are 0, and so is the line of a black frame. A frame of another size restarts the videogram (the
+<code class="docutils literal notranslate"><span class="pre">reason</span></code> says so).</p>
+<p>A bar that moves up and down in front of a still background draws a sine in the videogram:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">Videogram</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">videogram</span> <span class="o">=</span> <span class="n">Videogram</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">30</span> <span class="o">+</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">50</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="n">frame</span><span class="p">[</span><span class="n">y</span> <span class="o">-</span> <span class="mi">3</span><span class="p">:</span><span class="n">y</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">videogram</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="o">.</span><span class="n">shape</span>                            <span class="c1"># (rows of the frame, window, channels)</span>
+<span class="go">(60, 100, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="go">255</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="p">[:,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">37</span><span class="p">)]</span>   <span class="c1"># row of the bar at four instants</span>
+<span class="go">[27, 46, 27, 7]</span>
+</pre></div>
+</div>
+</section>
+<section id="the-shape-of-the-outline-contours">
+<h2>The shape of the outline: contours<a class="headerlink" href="#the-shape-of-the-outline-contours" title="Link to this heading">#</a></h2>
+<p>The four contour features act on an <span class="math notranslate nohighlight">\((N, 2)\)</span> contour, one per call, and keep no state, except the labels of
+<a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a>. They are low-level features: they measure one frame.</p>
+<p><strong>Smoothing.</strong> The outline of a silhouette is jagged because it follows the pixel grid.
+<a class="reference internal" href="../api/generated/low_level/FilterContour.html#pyeyesweb.low_level.FilterContour" title="pyeyesweb.low_level.FilterContour"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterContour</span></code></a> convolves each coordinate with a Gaussian kernel of <code class="docutils literal notranslate"><span class="pre">window</span></code> samples centred on the
+sample being filtered, with weights proportional to <span class="math notranslate nohighlight">\(\exp\bigl(-(i-\lfloor w/2\rfloor)^2/(2\sigma^2)\bigr)\)</span> for
+<span class="math notranslate nohighlight">\(i=0,\dots,w-1\)</span>, normalised to sum 1, where <span class="math notranslate nohighlight">\(w\)</span> is <code class="docutils literal notranslate"><span class="pre">window</span></code> and <span class="math notranslate nohighlight">\(\sigma\)</span> is <code class="docutils literal notranslate"><span class="pre">gaussian_sigma</span></code>. The contour is treated as closed:
+the neighbours of the first point include the last ones. <span class="math notranslate nohighlight">\(\sigma\)</span> is in samples, not in length units, and the window must be
+shorter than the contour, otherwise the status is <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>.</p>
+<p><strong>Curvature.</strong> <a class="reference internal" href="../api/generated/low_level/ContourCurvature.html#pyeyesweb.low_level.ContourCurvature" title="pyeyesweb.low_level.ContourCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContourCurvature</span></code></a> estimates the curvature at every point from the point and its
+two neighbours. With <span class="math notranslate nohighlight">\((x', y')\)</span> the step from the previous point to this one and <span class="math notranslate nohighlight">\((x'', y'')\)</span> the difference between the next
+step and this one,</p>
+<div class="math notranslate nohighlight">
+\[
+\kappa = \frac{x' y'' - y' x''}{\left(x'^2 + y'^2\right)^{3/2}},
+\]</div>
+<p>which is <span class="math notranslate nohighlight">\(1/R\)</span> for a circle of radius <span class="math notranslate nohighlight">\(R\)</span> and 0 for a straight run of equally spaced points. The sign says which way the contour
+turns, counter-clockwise (positive) or clockwise, in the coordinate frame of the input; in image coordinates, where <span class="math notranslate nohighlight">\(y\)</span> points
+down, the orientation on the screen is reversed. Value <span class="math notranslate nohighlight">\(i\)</span> belongs to point <span class="math notranslate nohighlight">\(i\)</span> (the values used to be rotated by one point in
+the original, which is corrected in the core). The unit is the inverse of the unit of the contour.</p>
+<p><strong>Convex hull.</strong> <a class="reference internal" href="../api/generated/low_level/ConvexHull.html#pyeyesweb.low_level.ConvexHull" title="pyeyesweb.low_level.ConvexHull"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvexHull</span></code></a> gives the smallest convex polygon that contains the contour, as the
+list of its vertices; only strictly convex vertices are kept, so collinear points on an edge are dropped. The vertices run
+clockwise when <span class="math notranslate nohighlight">\(y\)</span> points up, starting from the point with the smallest <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p><strong>Body parts from curvature.</strong> <a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a> finds the salient points of the outline
+(the head, the hands and the feet of a silhouette) as the extrema of its curvature. The contour is cut at the zero crossings
+of the curvature, at least <code class="docutils literal notranslate"><span class="pre">minimum_distance</span></code> points apart, and in every piece the extremum of larger magnitude is a minimum
+point when it is negative and a maximum point when it is positive. With <code class="docutils literal notranslate"><span class="pre">track_points=True</span></code> the labels of the previous call are
+carried over to the nearest new points, up to <code class="docutils literal notranslate"><span class="pre">number_of_points</span></code> of them, so a label stays with the same body part from frame to
+frame. The idea of reading the extremities of a body from the curvature of its silhouette is that of <strong>[citation needed]</strong>
+(curvature-based body-part detection, the EyesWeb silhouette analysis).</p>
+<p>A contour with five lobes shows the chain. Without smoothing, noise of standard deviation 0.05 in the coordinates (the radius is about 10)
+multiplies the largest curvature by about six and creates spurious extrema; after the Gaussian filter the five lobes and five
+valleys are found.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">BodyPartsFromCurvature</span><span class="p">,</span> <span class="n">ContourCurvature</span><span class="p">,</span> <span class="n">ConvexHull</span><span class="p">,</span> <span class="n">FilterContour</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">noisy</span> <span class="o">=</span> <span class="n">clean</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">clean</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curvature</span> <span class="o">=</span> <span class="n">ContourCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">curvature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">curvature</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">7.7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">smooth</span> <span class="o">=</span> <span class="n">FilterContour</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">gaussian_sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">contour</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">smooth_curvature</span> <span class="o">=</span> <span class="n">ContourCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">smooth</span><span class="p">)</span><span class="o">.</span><span class="n">curvature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">smooth_curvature</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">1.3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">BodyPartsFromCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">curvature</span><span class="p">,</span> <span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">minimums</span><span class="p">)</span>
+<span class="go">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span> <span class="o">=</span> <span class="n">BodyPartsFromCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">smooth_curvature</span><span class="p">,</span> <span class="n">smooth</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">minimums</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">maximums</span><span class="p">)</span>
+<span class="go">(5, 5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">maximums</span><span class="p">)</span>
+<span class="go">['label_max0', 'label_max1', 'label_max2', 'label_max3', 'label_max4']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ConvexHull</span><span class="p">(</span><span class="n">integer_coordinates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(35, 2)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="../_images/imaging-1.png" class="plot-directive" src="../_images/imaging-1.png" />
+</figure>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<p><strong>Input images.</strong> The image features take one 8-bit array per call, <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W)</span></code> for a grayscale image or a mask and <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W,</span> <span class="pre">C)</span></code> for
+colour; <code class="docutils literal notranslate"><span class="pre">run</span></code> takes <code class="docutils literal notranslate"><span class="pre">(T,</span> <span class="pre">H,</span> <span class="pre">W[,</span> <span class="pre">C])</span></code> or a list of images. An empty image is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>, and so is a mask without
+foreground. The result of these features is otherwise <code class="docutils literal notranslate"><span class="pre">OK</span></code> on every call: there is no warm-up. Outputs that are images have a
+shape known only from the first frame.</p>
+<p><strong>Units.</strong> Centroids and regions are in pixels; <code class="docutils literal notranslate"><span class="pre">normalized</span></code> divides by the frame size and is dimensionless in <span class="math notranslate nohighlight">\([0, 1]\)</span>. The
+contour features keep the unit of the contour. To go from pixels to metres, scale the input: the library does not know the
+scale of your camera.</p>
+<p><strong>Known limitation.</strong> The tests of the body-parts detector read pixels outside the mask or the region of interest in some
+cases (the neck test and the walk over the arm columns, in particular when <code class="docutils literal notranslate"><span class="pre">arm_percentage</span></code> is above 1); such pixels count as
+background.</p>
+<p><strong>Corrected in the core.</strong> The barycentre of the body-parts detector is the centroid of the mask truncated to whole pixels, and
+the channel sums of the videogram are independent (the original aliased them).</p>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The platform that the imaging features come from is described in <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">2</a>]</span> and <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id4" title="G. Volpe, P. Alborno, A. Camurri, P. Coletta, S. Ghisio, M. Mancini, others, and R. Sagoleo. Designing multimodal interactive systems using eyesweb xmi. In CEUR Workshop Proceedings, 49–56. CEUR-WS, 2016. DRAFT: author list truncated in the source; workshop name and volume unknown.">4</a>]</span>. For the
+parameters of each feature see its API page, for example <a class="reference internal" href="../api/generated/physical_signals/SilhouetteCentroids.html#pyeyesweb.physical_signals.SilhouetteCentroids" title="pyeyesweb.physical_signals.SilhouetteCentroids"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="humanoid_models.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Humanoid and mass-spring models</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../user_guide/physical_signals.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Physical signals</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notation-and-conventions">Notation and conventions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-body-is-centroids">Where the body is: centroids</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-parts-are-body-parts-from-projections">Where the parts are: body parts from projections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-image-evolves-the-videogram">How the image evolves: the videogram</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-shape-of-the-outline-contours">The shape of the outline: contours</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/imaging.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

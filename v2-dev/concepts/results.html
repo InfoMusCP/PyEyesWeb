@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Results, statuses and recorders &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/results';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Time, units and parameters" href="time_units_parameters.html" />
+    <link rel="prev" title="Inputs" href="inputs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Results, statuses and recorders</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="results-statuses-and-recorders">
+<h1>Results, statuses and recorders<a class="headerlink" href="#results-statuses-and-recorders" title="Link to this heading">#</a></h1>
+<p>A feature answers every call with the same kind of object, whatever it computes. This page describes the objects:
+what a feature declares it will return (<a class="reference internal" href="../api/generated/pyeyesweb.data_models.Schema.html#pyeyesweb.data_models.Schema" title="pyeyesweb.data_models.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></a>), what one call returns
+(<a class="reference internal" href="../api/generated/pyeyesweb.data_models.Result.html#pyeyesweb.data_models.Result" title="pyeyesweb.data_models.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>), why a call may return no value
+(<a class="reference internal" href="../api/generated/pyeyesweb.data_models.Status.html#pyeyesweb.data_models.Status" title="pyeyesweb.data_models.Status"><code class="xref py py-class docutils literal notranslate"><span class="pre">Status</span></code></a>), and how a whole recording is stored
+(<a class="reference internal" href="../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Recorder</span></code></a>).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Call</p></th>
+<th class="head"><p>Returns</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">feature.process(*sample,</span> <span class="pre">timestamp=None)</span></code></p></td>
+<td><p>a <code class="docutils literal notranslate"><span class="pre">Result</span></code></p></td>
+<td><p>streaming: one sample or frame at a time, state kept between calls</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feature.run(*recording,</span> <span class="pre">timestamps=None,</span> <span class="pre">reset=True)</span></code></p></td>
+<td><p>a <code class="docutils literal notranslate"><span class="pre">Recorder</span></code></p></td>
+<td><p>offline: a whole recording, one row per sample</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">feature.outputs</span></code></p></td>
+<td><p>a <code class="docutils literal notranslate"><span class="pre">Schema</span></code></p></td>
+<td><p>what the feature returns, known before any data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feature.latest</span></code></p></td>
+<td><p>a <code class="docutils literal notranslate"><span class="pre">Result</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>the last result that was <code class="docutils literal notranslate"><span class="pre">OK</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">feature.reset()</span></code></p></td>
+<td><p>nothing</p></td>
+<td><p>forget the accumulated state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">run</span></code> gives the same numbers as a loop of <code class="docutils literal notranslate"><span class="pre">process</span></code> calls. It starts from a fresh state unless <code class="docutils literal notranslate"><span class="pre">reset=False</span></code> is passed,
+which continues from the previous call (for a long recording processed in chunks).</p>
+<section id="what-a-feature-returns-the-schema">
+<h2>What a feature returns: the schema<a class="headerlink" href="#what-a-feature-returns-the-schema" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">feature.outputs</span></code> is a <code class="docutils literal notranslate"><span class="pre">Schema</span></code>, an ordered, read-only collection of <a class="reference internal" href="../api/generated/pyeyesweb.data_models.Output.html#pyeyesweb.data_models.Output" title="pyeyesweb.data_models.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output</span></code></a>
+declarations: name, shape, kind (<code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">bool</span></code>), the names of the components or labels, a unit and a one-line
+description. It is fixed when the feature is built.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kinematics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seconds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">])</span>     <span class="c1"># a point moving at the constant velocity (0.5, 0, 0.25) m/s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">output_type</span><span class="o">=</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="s2">"direction"</span><span class="p">],</span> <span class="n">output_dims</span><span class="o">=</span><span class="s2">"components"</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">positions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">outputs</span>
+<span class="go">Schema(Output('velocity', shape=(3,), unit='m/s'), Output('direction', shape=(3,)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">kinematics</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span>
+<span class="go">((3,), 'm/s')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"direction"</span><span class="p">]</span><span class="o">.</span><span class="n">axis_names</span>
+<span class="go">(('x', 'y', 'z'),)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">flat_names</span>
+<span class="go">('velocity_x', 'velocity_y', 'velocity_z', 'direction_x', 'direction_y', 'direction_z')</span>
+</pre></div>
+</div>
+<p>The <strong>flat names</strong> are the scalar columns that the outputs make up, in a fixed order: they are the columns of a table of
+results, and of <code class="docutils literal notranslate"><span class="pre">Result.to_array()</span></code>. Outputs whose size depends on the data (an image, a variable-length list, joints
+labelled at run time) have no flat names; they are available on each result but are not part of the numeric table.</p>
+<p>Units are written in terms of the data. <code class="docutils literal notranslate"><span class="pre">&lt;length&gt;</span></code> stands for the length unit of the data, and a feature given <code class="docutils literal notranslate"><span class="pre">units=&quot;mm&quot;</span></code>
+writes the concrete unit (<code class="docutils literal notranslate"><span class="pre">mm/s</span></code>). An empty unit means a dimensionless quantity. See <a class="reference internal" href="time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>.</p>
+</section>
+<section id="one-call-the-result">
+<h2>One call: the result<a class="headerlink" href="#one-call-the-result" title="Link to this heading">#</a></h2>
+<p>A result has the same fields on every call. For each output it has one read-only attribute with the output’s name, and it also
+carries the call’s status and timing.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">positions</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">kinematics</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">index</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">KinematicsResult(status=OK, velocity=[0.5 , 0.  , 0.25], direction=[0.8944, 0.    , 0.4472])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ok</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">timestamp</span>
+<span class="go">('OK', True, 0.29)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[0.5, 0.0, 0.25]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">"direction"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[0.894, 0.0, 0.447]</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
+<td><p>a <a class="reference internal" href="../api/generated/pyeyesweb.data_models.Status.html#pyeyesweb.data_models.Status" title="pyeyesweb.data_models.Status"><code class="xref py py-class docutils literal notranslate"><span class="pre">Status</span></code></a>: why the call did or did not produce output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reason</span></code></p></td>
+<td><p>text that explains a status other than <code class="docutils literal notranslate"><span class="pre">OK</span></code>; empty when <code class="docutils literal notranslate"><span class="pre">OK</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></p></td>
+<td><p>the time of the call in seconds as given, <code class="docutils literal notranslate"><span class="pre">NaN</span></code> when none was given</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">valid</span></code></p></td>
+<td><p>for each output, whether it holds a value</p></td>
+</tr>
+<tr class="row-even"><td><p>the outputs</p></td>
+<td><p>one attribute per output, also readable as <code class="docutils literal notranslate"><span class="pre">result[&quot;name&quot;]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ok</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the status is <code class="docutils literal notranslate"><span class="pre">OK</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A result is immutable, and the arrays it holds are read-only. It converts to plain Python and NumPy objects in three ways:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[0.5, 0.0, 0.25, 0.894, 0.0, 0.447]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="go">['direction', 'velocity']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">to_flat_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">)}</span>
+<span class="go">{'velocity_x': 0.5, 'velocity_y': 0.0, 'velocity_z': 0.25}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_flat_dict</span><span class="p">()[</span><span class="s2">"status"</span><span class="p">],</span> <span class="n">result</span><span class="o">.</span><span class="n">to_flat_dict</span><span class="p">()[</span><span class="s2">"timestamp"</span><span class="p">]</span>
+<span class="go">(0, 0.29)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">with_time</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">timestamp</span>
+<span class="go">2.0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">to_array()</span></code> is the vector of the flat names; <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> maps each output to its value; <code class="docutils literal notranslate"><span class="pre">to_flat_dict()</span></code> maps each flat name
+to a number, with the status as an integer (<code class="docutils literal notranslate"><span class="pre">0</span></code> for <code class="docutils literal notranslate"><span class="pre">OK</span></code>), for logging or a data frame row. <code class="docutils literal notranslate"><span class="pre">with_time()</span></code> returns a copy with
+another timestamp.</p>
+<p>A value that was not produced is never <code class="docutils literal notranslate"><span class="pre">None</span></code>. It is <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for a float output, <code class="docutils literal notranslate"><span class="pre">0</span></code> for an integer and <code class="docutils literal notranslate"><span class="pre">False</span></code> for a boolean;
+an array output has its declared shape filled that way, and an output whose labels are only known at run time is an empty dict.
+This makes results safe to stack in arrays without checks.</p>
+</section>
+<section id="status-why-a-call-may-have-no-value">
+<h2>Status: why a call may have no value<a class="headerlink" href="#status-why-a-call-may-have-no-value" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Status</span></code> has four members. It is an integer enumeration, so a status can be stored in a numeric column (<code class="docutils literal notranslate"><span class="pre">0</span></code> is <code class="docutils literal notranslate"><span class="pre">OK</span></code>);
+<code class="docutils literal notranslate"><span class="pre">str(status)</span></code> is the name.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Status</p></th>
+<th class="head"><p>When</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">reason</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OK</span></code></p></td>
+<td><p>the call produced output</p></td>
+<td><p>empty</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code></p></td>
+<td><p>a window is still filling; some outputs may already be valid</p></td>
+<td><p>the sample count, <code class="docutils literal notranslate"><span class="pre">&quot;k</span> <span class="pre">of</span> <span class="pre">N</span> <span class="pre">samples&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code></p></td>
+<td><p>the feature emits only on some calls, and this was not one of them</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;between</span> <span class="pre">windows&quot;</span></code> for a windowed feature with <code class="docutils literal notranslate"><span class="pre">hop</span> <span class="pre">&gt;</span> <span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code></p></td>
+<td><p>the call is not data</p></td>
+<td><p>what is wrong</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="warming-up">
+<h3>Warming up<a class="headerlink" href="#warming-up" title="Link to this heading">#</a></h3>
+<p>A windowed feature needs <code class="docutils literal notranslate"><span class="pre">window</span></code> samples before its first value. Until then every call has status <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code>, the outputs
+are empty and the <code class="docutils literal notranslate"><span class="pre">reason</span></code> counts the samples collected. The first complete window gives the first <code class="docutils literal notranslate"><span class="pre">OK</span></code>, at call number
+<code class="docutils literal notranslate"><span class="pre">window</span></code>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpectralArcLength</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mi">14</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="p">),</span> <span class="n">result</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">signal</span><span class="p">[:</span><span class="mi">11</span><span class="p">])][</span><span class="mi">8</span><span class="p">:]</span>
+<span class="go">[('WARMING_UP', '9 of 10 samples'), ('OK', ''), ('OK', '')]</span>
+</pre></div>
+</div>
+</section>
+<section id="between-windows">
+<h3>Between windows<a class="headerlink" href="#between-windows" title="Link to this heading">#</a></h3>
+<p>A windowed feature also has a <code class="docutils literal notranslate"><span class="pre">hop</span></code>: the number of new samples between two windows (default 1). With a larger hop, the calls
+between two windows have nothing new to say, and return <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span>
+<span class="go">Recorder(SpectralArcLength, rows=30, columns=['spectral_arc_length'], status={'OK': 5, 'WARMING_UP': 9, 'NO_OUTPUT': 16})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">recording</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">status</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">)]</span>
+<span class="go">['WARMING_UP', 'OK', 'NO_OUTPUT', 'NO_OUTPUT', 'OK']</span>
+</pre></div>
+</div>
+</section>
+<section id="input-that-is-not-data">
+<h3>Input that is not data<a class="headerlink" href="#input-that-is-not-data" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> means that the call itself cannot be processed: NaN or infinity in the values, an empty frame, a joint missing
+from a dict frame, a timestamp that goes back or is not a finite number, a result that overflows. The result has every output
+empty and <code class="docutils literal notranslate"><span class="pre">valid</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code> for all of them, whatever the feature could have computed; the explanation is only in <code class="docutils literal notranslate"><span class="pre">reason</span></code>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bad</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bad</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bad</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">bad</span><span class="o">.</span><span class="n">spectral_arc_length</span><span class="p">,</span> <span class="n">bad</span><span class="o">.</span><span class="n">valid</span>
+<span class="go">('INVALID_INPUT', 'NaN or infinite values', nan, {'spectral_arc_length': False})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))</span><span class="o">.</span><span class="n">reason</span>
+<span class="go">'non-finite timestamp'</span>
+</pre></div>
+</div>
+<p>A rejected call changes nothing: the sample is not buffered, the counters do not move and <code class="docutils literal notranslate"><span class="pre">latest</span></code> is untouched, so the next
+valid call behaves as if the rejected one had never happened.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">signal</span><span class="p">[:</span><span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span>
+<span class="go">'INVALID_INPUT'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">reason</span>
+<span class="go">'4 of 10 samples'</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="the-last-good-result-latest">
+<h2>The last good result: <code class="docutils literal notranslate"><span class="pre">latest</span></code><a class="headerlink" href="#the-last-good-result-latest" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">feature.latest</span></code> is the last result whose status was <code class="docutils literal notranslate"><span class="pre">OK</span></code>. It is <code class="docutils literal notranslate"><span class="pre">None</span></code> until there is one, and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> clears it.
+<code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code>, <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> and <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> calls do not touch it, so it is the value to display or hold in a live loop
+when the current call has no value.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">latest</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">signal</span><span class="p">[:</span><span class="mi">10</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">latest</span>
+<span class="go">SpectralArcLengthResult(status=OK, spectral_arc_length=-1.5415)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">latest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span><span class="o">.</span><span class="n">latest</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="a-whole-recording-the-recorder">
+<h2>A whole recording: the recorder<a class="headerlink" href="#a-whole-recording-the-recorder" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">run</span></code> applies <code class="docutils literal notranslate"><span class="pre">process</span></code> to every sample and stores the results as columns, with one row per call. A <code class="docutils literal notranslate"><span class="pre">Recorder</span></code> keeps one
+NumPy column per output and the status, reason and timestamp of each row, so a long recording is not a list of objects.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span> <span class="o">=</span> <span class="n">kinematics</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="n">seconds</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span>
+<span class="go">Recorder(Kinematics, rows=30, columns=['velocity', 'direction'], status={'OK': 29, 'INVALID_INPUT': 1})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">recording</span><span class="p">),</span> <span class="n">recording</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(30, (30, 3))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[0.0, 0.01, 0.02]</span>
+</pre></div>
+</div>
+<p>A recorder reads like a table and like a list.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Expression</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec[&quot;velocity&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">rec.velocity</span></code></p></td>
+<td><p>the column of an output: an array of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span> <span class="pre">+</span> <span class="pre">output</span> <span class="pre">shape</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec[&quot;velocity_x&quot;]</span></code></p></td>
+<td><p>one flat column, shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec[3]</span></code>, <code class="docutils literal notranslate"><span class="pre">rec[-1]</span></code></p></td>
+<td><p>one row as a <code class="docutils literal notranslate"><span class="pre">Result</span></code>, with its <code class="docutils literal notranslate"><span class="pre">reason</span></code> and <code class="docutils literal notranslate"><span class="pre">valid</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec[2:5]</span></code></p></td>
+<td><p>a list of results</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.status</span></code></p></td>
+<td><p>the integer status of each row</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.ok</span></code></p></td>
+<td><p>a boolean mask of the rows that are <code class="docutils literal notranslate"><span class="pre">OK</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.valid[&quot;velocity&quot;]</span></code></p></td>
+<td><p>whether that output was produced in each row</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.timestamps</span></code></p></td>
+<td><p>the timestamp of each row in seconds, <code class="docutils literal notranslate"><span class="pre">NaN</span></code> where unknown</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.to_frame()</span></code></p></td>
+<td><p>a pandas DataFrame, with the status names in <code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.to_numpy()</span></code></p></td>
+<td><p>the numeric columns as one array, in the order of the flat names</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span><span class="p">[</span><span class="s2">"velocity_x"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">recording</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">((30,), (30, 3))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[0.5, 0.0, 0.25]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">recording</span><span class="o">.</span><span class="n">ok</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span> <span class="n">recording</span><span class="o">.</span><span class="n">status</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">(29, [3, 0, 0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">recording</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="go">['status', 'timestamp', 'velocity_x', 'velocity_y', 'velocity_z', 'direction_x', 'direction_y', 'direction_z']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span><span class="p">[[</span><span class="s2">"velocity_x"</span><span class="p">,</span> <span class="s2">"velocity_z"</span><span class="p">]]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{'velocity_x': 0.5, 'velocity_z': 0.25}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">'OK'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(30, 6)</span>
+</pre></div>
+</div>
+<p>Only the fixed outputs enter <code class="docutils literal notranslate"><span class="pre">to_numpy()</span></code> and <code class="docutils literal notranslate"><span class="pre">to_frame()</span></code>. An image output, or one with labels known only at run time, stays
+in <code class="docutils literal notranslate"><span class="pre">rec[&quot;name&quot;]</span></code> as a list, one entry per row. The recorder has no <code class="docutils literal notranslate"><span class="pre">to_array()</span></code>; that name belongs to a single result.</p>
+<p>A recorder is the right object to filter on status: <code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">rec.velocity[rec.ok]</span></code> keeps the rows that have a value.</p>
+</section>
+<section id="errors-in-short">
+<h2>Errors, in short<a class="headerlink" href="#errors-in-short" title="Link to this heading">#</a></h2>
+<p>Three mechanisms cover everything that can go wrong, and each has its own place.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Situation</p></th>
+<th class="head"><p>What happens</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>a sample of the wrong shape or kind</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code> naming the feature and the input</p></td>
+</tr>
+<tr class="row-odd"><td><p>values that are not data (NaN, infinity, an empty frame, a missing joint, a timestamp that goes back or is not finite)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>, with the <code class="docutils literal notranslate"><span class="pre">reason</span></code>; nothing raised</p></td>
+</tr>
+<tr class="row-even"><td><p>too few samples yet</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>an invalid parameter, at construction or when set</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code>; a feature whose setter failed is left as it was</p></td>
+</tr>
+<tr class="row-even"><td><p>a misspelled keyword, or a required argument left out</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TypeError</span></code> naming the feature and listing the valid parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p>a dict frame with a key that is not one of the configured labels</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ValueError</span></code> listing the expected joints</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The rule is that code which is wrong raises, and data which is bad is reported in the result, so that a live loop does not stop
+because of a dropout.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">windw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">SpectralArcLength() got unexpected keyword argument(s) 'windw' (did you mean 'window'?); valid parameters: window, hop, sampling_rate, amplitude_threshold, minimum_cutoff_frequency, maximum_cutoff_frequency</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">SpectralArcLength: window must be &gt;= 10 (got 5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">SpectralArcLength needs sampling_rate (Hz): the window it works on carries no time of its own</span>
+</pre></div>
+</div>
+</section>
+<section id="behaviours-worth-knowing">
+<h2>Behaviours worth knowing<a class="headerlink" href="#behaviours-worth-knowing" title="Link to this heading">#</a></h2>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">A result can be invalid although the data are finite</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">An overflow is an <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> with the reason <code class="docutils literal notranslate"><span class="pre">&quot;the</span> <span class="pre">result</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">finite&quot;</span></code>. Unlike every other rejection it is only
+detected after the feature has taken the sample into its state, and the state cannot be undone. A stateful feature can
+therefore return <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> on the following valid call too (and a windowed feature until the sample leaves its window).</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">KineticEnergy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">energy</span> <span class="o">=</span> <span class="n">KineticEnergy</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"a"</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">{</span><span class="s2">"a"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">energy</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"a"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)},</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">0.00</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">huge</span> <span class="o">=</span> <span class="n">energy</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"a"</span><span class="p">:</span> <span class="p">(</span><span class="mf">1e300</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)},</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">huge</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">huge</span><span class="o">.</span><span class="n">reason</span>
+<span class="go">('INVALID_INPUT', 'the result is not finite')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">energy</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"a"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)},</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span>
+<span class="go">'INVALID_INPUT'</span>
+</pre></div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><code class="docutils literal notranslate"><span class="pre">run</span></code> starts from scratch</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Calling <code class="docutils literal notranslate"><span class="pre">run</span></code> twice does not carry the window over from the first call, because <code class="docutils literal notranslate"><span class="pre">run</span></code> resets the feature first. Pass
+<code class="docutils literal notranslate"><span class="pre">reset=False</span></code> to continue.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">SpectralArcLength</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">signal</span><span class="p">[:</span><span class="mi">7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">status</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="mi">7</span><span class="p">:])][</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+<span class="go">['WARMING_UP', 'WARMING_UP']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">signal</span><span class="p">[:</span><span class="mi">7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">status</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="mi">7</span><span class="p">:],</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)][</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+<span class="go">['OK', 'OK']</span>
+</pre></div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">The timestamp is keyword-only</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">process(frame,</span> <span class="pre">0.0)</span></code> is read as a second input and raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>; write <code class="docutils literal notranslate"><span class="pre">process(frame,</span> <span class="pre">timestamp=0.0)</span></code>. See
+<a class="reference internal" href="inputs.html"><span class="doc">Inputs</span></a>.</p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">A <code class="docutils literal notranslate"><span class="pre">NaN</span></code> is data for some features</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">The humanoid models and the ensemble features take a missing joint, or a participant without a value, as part of the data: one
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> joint is a dropout the model handles, and the call is <code class="docutils literal notranslate"><span class="pre">OK</span></code>. Infinity and a frame that is all <code class="docutils literal notranslate"><span class="pre">NaN</span></code> are still
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>. The page of each feature says which rule applies.</p>
+</div>
+</details></section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="inputs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Inputs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="time_units_parameters.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Time, units and parameters</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-a-feature-returns-the-schema">What a feature returns: the schema</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-call-the-result">One call: the result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status-why-a-call-may-have-no-value">Status: why a call may have no value</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warming-up">Warming up</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#between-windows">Between windows</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-that-is-not-data">Input that is not data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-last-good-result-latest">The last good result: <code class="docutils literal notranslate"><span class="pre">latest</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-whole-recording-the-recorder">A whole recording: the recorder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#errors-in-short">Errors, in short</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#behaviours-worth-knowing">Behaviours worth knowing</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/concepts/results.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

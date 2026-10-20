@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Synchronization &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/synchronization';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dominance" href="dominance.html" />
+    <link rel="prev" title="Entropy, rarity and periodicity" href="entropy_rarity_periodicity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Synchronization</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="synchronization">
+<h1>Synchronization<a class="headerlink" href="#synchronization" title="Link to this heading">#</a></h1>
+<p>Two dancers who move in unison, a quartet that breathes together, two hands that keep the same rhythm: synchronization is the
+degree to which the movements of several participants, or of several parts of the same body, are coordinated in time. There is
+no single measure of it, because coordination can mean different things: the signals rise and fall together, their phases
+stay locked, their discrete events occur at the same moments, their trajectories visit the same states. The twelve features of
+this family are organised here by <strong>what is compared</strong>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>What is compared</p></th>
+<th class="head"><p>Quantity</p></th>
+<th class="head"><p>Features</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Two signals</p></td>
+<td><p>nonlinear interdependence</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/NonlinearInterdependence.html#pyeyesweb.analysis_primitives.NonlinearInterdependence" title="pyeyesweb.analysis_primitives.NonlinearInterdependence"><code class="xref py py-class docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>The phases of two signals</p></td>
+<td><p>phase locking value</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/PhaseLockingValue.html#pyeyesweb.analysis_primitives.PhaseLockingValue" title="pyeyesweb.analysis_primitives.PhaseLockingValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Two or more series of events</p></td>
+<td><p>event synchronization</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronization.html#pyeyesweb.analysis_primitives.EventSynchronization" title="pyeyesweb.analysis_primitives.EventSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventSynchronization</span></code></a>, <a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronizationMECS.html#pyeyesweb.analysis_primitives.EventSynchronizationMECS" title="pyeyesweb.analysis_primitives.EventSynchronizationMECS"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Several spike trains</p></td>
+<td><p>SPIKE-synchronization</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/SpikeSynchronization.html#pyeyesweb.analysis_primitives.SpikeSynchronization" title="pyeyesweb.analysis_primitives.SpikeSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>The states visited by one or two movements</p></td>
+<td><p>recurrence</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/RecurrencePlot.html#pyeyesweb.analysis_primitives.RecurrencePlot" title="pyeyesweb.analysis_primitives.RecurrencePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></a>, <a class="reference internal" href="../api/generated/analysis_primitives/CrossRecurrencePlot.html#pyeyesweb.analysis_primitives.CrossRecurrencePlot" title="pyeyesweb.analysis_primitives.CrossRecurrencePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></a>, <a class="reference internal" href="../api/generated/analysis_primitives/GeneralisedAutoCorrelation.html#pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation" title="pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>A series of event identifiers against a pattern</p></td>
+<td><p>sequence detection</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/SequenceDetector.html#pyeyesweb.analysis_primitives.SequenceDetector" title="pyeyesweb.analysis_primitives.SequenceDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceDetector</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>The members of a group</p></td>
+<td><p>correlation, partial correlation, staged progression</p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/CorrelationsMatrix.html#pyeyesweb.analysis_primitives.CorrelationsMatrix" title="pyeyesweb.analysis_primitives.CorrelationsMatrix"><code class="xref py py-class docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code></a>, <a class="reference internal" href="../api/generated/analysis_primitives/PartialRecurrenceSynchronization.html#pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization" title="pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code></a>, <a class="reference internal" href="../api/generated/analysis_primitives/TemporalSynchronization.html#pyeyesweb.analysis_primitives.TemporalSynchronization" title="pyeyesweb.analysis_primitives.TemporalSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Notation is that of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>: samples are indexed by <span class="math notranslate nohighlight">\(n\)</span>, a window has <span class="math notranslate nohighlight">\(N\)</span> samples and slides by a hop <span class="math notranslate nohighlight">\(H\)</span>. With one
+exception that is stated below, the measures work on such a window, return <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> until it is full and <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> between
+two hops (see <a class="reference internal" href="../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a>), and count time in samples (<code class="docutils literal notranslate"><span class="pre">tau</span></code>, lags and event intervals), not in seconds. A pair
+of signals is passed to <code class="docutils literal notranslate"><span class="pre">process</span></code> one sample of each per call, and to <code class="docutils literal notranslate"><span class="pre">run</span></code> as two series of the same length. Inputs to
+the measures are one signal per participant: for 2D or 3D data, reduce each participant to a scalar first, for example the
+speed from <a class="reference internal" href="../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><code class="xref py py-class docutils literal notranslate"><span class="pre">Kinematics</span></code></a>.</p>
+<p>Synchronization measures assume that the coordination is stationary over the window. Choose the window so that it contains
+several cycles of the movement and so that the coordination does not change within it.</p>
+<section id="two-signals">
+<h2>Two signals<a class="headerlink" href="#two-signals" title="Link to this heading">#</a></h2>
+<p>Linear correlation (see the group matrix below) sees only relations of the form <span class="math notranslate nohighlight">\(y\approx ax+b\)</span>. The nonlinear
+interdependence of Arnhold and colleagues <strong>[citation needed]</strong> (nonlinear interdependence, Arnhold et al.) detects any
+dependence in which the state of one signal determines the state of the other. Each signal is embedded in a state space of
+dimension <span class="math notranslate nohighlight">\(m\)</span> (<code class="docutils literal notranslate"><span class="pre">embedding_dimension</span></code>): the state at sample <span class="math notranslate nohighlight">\(n\)</span> is a vector of <span class="math notranslate nohighlight">\(m\)</span> delayed samples. For each state of the
+first signal <span class="math notranslate nohighlight">\(X\)</span>, the <span class="math notranslate nohighlight">\(k\)</span> nearest states in time (<code class="docutils literal notranslate"><span class="pre">neighbours</span></code>) are found, and the interdependence <span class="math notranslate nohighlight">\(S(X|Y)\)</span> compares the
+distances of these states in the space of <span class="math notranslate nohighlight">\(X\)</span> with the distances of the states that have the same time indices in the space of
+<span class="math notranslate nohighlight">\(Y\)</span>. It is close to 1 for two signals that determine each other (identical signals give 1) and close to 0 for independent
+signals. The two directions <span class="math notranslate nohighlight">\(S(X|Y)\)</span> and <span class="math notranslate nohighlight">\(S(Y|X)\)</span> are generally different, and their asymmetry is read as the direction of the
+coupling.</p>
+<p><a class="reference internal" href="../api/generated/analysis_primitives/NonlinearInterdependence.html#pyeyesweb.analysis_primitives.NonlinearInterdependence" title="pyeyesweb.analysis_primitives.NonlinearInterdependence"><code class="xref py py-class docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></a> returns both values, <code class="docutils literal notranslate"><span class="pre">first_to_second_interdependence</span></code> and
+<code class="docutils literal notranslate"><span class="pre">second_to_first_interdependence</span></code>, and <code class="docutils literal notranslate"><span class="pre">threshold</span></code>, the value <span class="math notranslate nohighlight">\((k/m)^{2/m}\)</span> that the block computes from its parameters. A
+correction of the core is that this threshold used an exclusive-or instead of the power. The result is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> when a
+value is not finite.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">NonlinearInterdependence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dependent</span> <span class="o">=</span> <span class="n">NonlinearInterdependence</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">neighbours</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>             <span class="c1"># a nonlinear function of x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">independent</span> <span class="o">=</span> <span class="n">NonlinearInterdependence</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">neighbours</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dependent</span><span class="o">.</span><span class="n">first_to_second_interdependence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">independent</span><span class="o">.</span><span class="n">first_to_second_interdependence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">(0.93, 0.01)</span>
+</pre></div>
+</div>
+</section>
+<section id="phase">
+<h2>Phase<a class="headerlink" href="#phase" title="Link to this heading">#</a></h2>
+<p>For oscillatory movement, such as the swing of two arms or the steps of two walkers, synchronization is often a matter of
+phase: the signals may have different amplitudes and a constant lag and still be perfectly coordinated. The phase locking
+value (PLV) measures this <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id7" title="G. Varni, G. Volpe, and A. Camurri. A system for real-time multimodal analysis of nonverbal affective social interaction in user-centric media. IEEE Transactions on Multimedia, 12(6):576–590, 2010.">8</a>, <a class="reference internal" href="../references.html#id8" title="S. R. Sabharwal, M. Varlet, M. Breaden, G. Volpe, A. Camurri, and P. E. Keller. huSync—a model and system for the measure of synchronization in small groups: a case study on musical joint action. IEEE Access, 10:92357–92372, 2022.">22</a>]</span>. Each window of each signal is optionally band-pass
+filtered, the instantaneous phase <span class="math notranslate nohighlight">\(\phi(n)\)</span> is taken from the analytic signal obtained with the Hilbert transform,</p>
+<div class="math notranslate nohighlight">
+\[
+z_x(n)=x(n)+i\,\mathcal{H}[x(n)],\qquad \phi_x(n)=\arg z_x(n),\qquad \Delta\phi(n)=\phi_x(n)-\phi_y(n),
+\]</div>
+<p>and the PLV is the length of the mean phasor of the phase difference over the <span class="math notranslate nohighlight">\(N\)</span> samples of the window,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{PLV}=\left|\frac1N\sum_{n=1}^{N}e^{\,i\,\Delta\phi(n)}\right|\in[0,1].
+\]</div>
+<p>It is 1 when the phase difference is constant over the window (perfect locking, whatever the offset), and close to 0 when it is
+spread uniformly (no phase relation). <a class="reference internal" href="../api/generated/analysis_primitives/PhaseLockingValue.html#pyeyesweb.analysis_primitives.PhaseLockingValue" title="pyeyesweb.analysis_primitives.PhaseLockingValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></a> implements it and
+returns <code class="docutils literal notranslate"><span class="pre">phase_locking_value</span></code> for the last complete window.</p>
+<p>The Hilbert phase is only meaningful for <strong>narrow-band</strong> signals: on broadband movement data the PLV stays near 1 whatever the
+coupling. Nothing is filtered unless <code class="docutils literal notranslate"><span class="pre">low_frequency</span></code> and <code class="docutils literal notranslate"><span class="pre">high_frequency</span></code> (with the <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>) are given, so either
+band-limit the signals first or pass the band. A constant signal has no phase evolution, and the block reports 1 for two
+constant windows.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhaseLockingValue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">locked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">time</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>                 <span class="c1"># same rhythm, shifted by 0.5 rad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drifting</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">4.3</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span>                     <span class="c1"># a different rhythm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plv</span> <span class="o">=</span> <span class="n">PhaseLockingValue</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">low_frequency</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">high_frequency</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">plv</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">locked</span><span class="p">)</span><span class="o">.</span><span class="n">phase_locking_value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">0.98</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plv</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">plv</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">drifting</span><span class="p">)</span><span class="o">.</span><span class="n">phase_locking_value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">0.15</span>
+</pre></div>
+</div>
+</section>
+<section id="event-series">
+<h2>Event series<a class="headerlink" href="#event-series" title="Link to this heading">#</a></h2>
+<p>Many movement data are discrete events rather than signals: the onsets of gestures, the beats of a performer, the peaks found
+by <a class="reference internal" href="../api/generated/analysis_primitives/ScalarPeakDetector.html#pyeyesweb.analysis_primitives.ScalarPeakDetector" title="pyeyesweb.analysis_primitives.ScalarPeakDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></a>. Event synchronization measures the coordination of two such
+series without assuming a fixed rhythm <strong>[citation needed]</strong> (event synchronization, Quian Quiroga et al.). In the input a
+non-zero sample is an event. With <span class="math notranslate nohighlight">\(m_x\)</span> and <span class="math notranslate nohighlight">\(m_y\)</span> events in the first and in the second series, and <span class="math notranslate nohighlight">\(c(y|x)\)</span> the number of events
+of the second series that follow an event of the first within <code class="docutils literal notranslate"><span class="pre">tau</span></code> samples (and <span class="math notranslate nohighlight">\(c(x|y)\)</span> the converse), the feature
+<a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronization.html#pyeyesweb.analysis_primitives.EventSynchronization" title="pyeyesweb.analysis_primitives.EventSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventSynchronization</span></code></a> reports</p>
+<div class="math notranslate nohighlight">
+\[
+Q=\frac{c(x|y)+c(y|x)}{\sqrt{m_x m_y}}\in[0,1],\qquad q=\frac{c(y|x)-c(x|y)}{\sqrt{m_x m_y}}\in[-1,1].
+\]</div>
+<p><span class="math notranslate nohighlight">\(Q=1\)</span> means that every event of each series has a partner in the other. <span class="math notranslate nohighlight">\(q&gt;0\)</span> means that the first series leads, <span class="math notranslate nohighlight">\(q&lt;0\)</span> that the
+second does; simultaneous events count for <span class="math notranslate nohighlight">\(Q\)</span> but not for <span class="math notranslate nohighlight">\(q\)</span>. With <code class="docutils literal notranslate"><span class="pre">weighted=True</span></code> a pair at a lag of <span class="math notranslate nohighlight">\(d\)</span> samples counts with
+the weight <span class="math notranslate nohighlight">\(1-(d-1)/\tau\)</span> instead of 1. The outputs are <code class="docutils literal notranslate"><span class="pre">synchronization</span></code> (<span class="math notranslate nohighlight">\(Q\)</span>) and <code class="docutils literal notranslate"><span class="pre">delay</span></code> (<span class="math notranslate nohighlight">\(q\)</span>).</p>
+<p>The feature works on consecutive windows that do not overlap: <code class="docutils literal notranslate"><span class="pre">hop</span></code> equals <code class="docutils literal notranslate"><span class="pre">window</span></code> (its default) and any other value raises
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. It gives one result per window (<code class="docutils literal notranslate"><span class="pre">OK</span></code> once per window) and no <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>, the exception to the sliding windows of
+the family. By default the counts accumulate across windows, so the value of a window describes the whole recording up to its
+end; for the value of each window on its own, pass <code class="docutils literal notranslate"><span class="pre">reset_every_buffer=True</span></code>.</p>
+<p><span class="math notranslate nohighlight">\(Q\)</span> depends strongly on <code class="docutils literal notranslate"><span class="pre">tau</span></code>: the same two series give a low <span class="math notranslate nohighlight">\(Q\)</span> with a small <code class="docutils literal notranslate"><span class="pre">tau</span></code> and a <span class="math notranslate nohighlight">\(Q\)</span> close to 1 with a large one, so
+choose <code class="docutils literal notranslate"><span class="pre">tau</span></code> from the lags that count as simultaneous in your data.</p>
+<p>Corrected in the core: the result follows the definition above, with the coincidence window <span class="math notranslate nohighlight">\(0&lt;	ext{lag}\le	au\)</span>, the weight and
+the sign of the delay given here, and each event credited exactly once.</p>
+<p><a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronizationMECS.html#pyeyesweb.analysis_primitives.EventSynchronizationMECS" title="pyeyesweb.analysis_primitives.EventSynchronizationMECS"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></a> (multi-event-class synchronization) extends the measure
+to <code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code> series that carry events of several classes (for example one channel per type of gesture) <strong>[citation needed]</strong>
+(multi-event-class event synchronization, MECS). For every class and every pair of series, the coincidences <span class="math notranslate nohighlight">\(S_{ij}\)</span> are
+the pairs of events within <code class="docutils literal notranslate"><span class="pre">tau</span></code> samples, weighted by the <code class="docutils literal notranslate"><span class="pre">kernel</span></code>; with <span class="math notranslate nohighlight">\(m_i\)</span> and <span class="math notranslate nohighlight">\(m_j\)</span> the event counts of the two series the
+pair term is <span class="math notranslate nohighlight">\(\min\!\big(1,S_{ij}/\sqrt{m_im_j}\big)\)</span>, and the synchronization of the class is the mean of the pair terms over
+the <span class="math notranslate nohighlight">\(M(M-1)/2\)</span> pairs of the <span class="math notranslate nohighlight">\(M\)</span> series. It returns the <code class="docutils literal notranslate"><span class="pre">synchronization</span></code> of each class and the number of <code class="docutils literal notranslate"><span class="pre">events</span></code> of each class
+in the window, summed over the series, and also needs non-overlapping windows. It has no <code class="docutils literal notranslate"><span class="pre">reset_every_buffer</span></code>: its values and counts are those of
+each window on its own (checked on random trains), and it depends on <code class="docutils literal notranslate"><span class="pre">tau</span></code> in the same way. Only the former “version 2” of the algorithm is
+provided.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventSynchronization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first</span><span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">45</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>                    <span class="c1"># three events of the first performer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">second</span><span class="p">[[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">56</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>                   <span class="c1"># the second follows two of them within 3 samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">record</span> <span class="o">=</span> <span class="n">EventSynchronization</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">synchronization</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">delay</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">(0.67, 0.67)</span>
+</pre></div>
+</div>
+</section>
+<section id="spike-trains">
+<h2>Spike trains<a class="headerlink" href="#spike-trains" title="Link to this heading">#</a></h2>
+<p>A spike train is an event series for which a good coincidence window is not known in advance, as in the firing of neurons or
+in irregular gestures. SPIKE-synchronization <strong>[citation needed]</strong> (SPIKE-synchronization, Kreuz et al.) has no time-scale
+parameter: coincidence is decided adaptively from the local spike intervals. Each spike receives a coincidence
+indicator, 1 if it coincides with a spike of another train and 0 if it does not; the degree of synchronization is the mean of
+the indicator over all the spikes of all the trains (a spike shared by two trains counts twice), and the distance is
+<span class="math notranslate nohighlight">\(1-\text{degree}\)</span>. <a class="reference internal" href="../api/generated/analysis_primitives/SpikeSynchronization.html#pyeyesweb.analysis_primitives.SpikeSynchronization" title="pyeyesweb.analysis_primitives.SpikeSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code></a> takes <code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code> trains in one of two
+modes. In <code class="docutils literal notranslate"><span class="pre">&quot;binary&quot;</span></code> mode each call gives one sample with a channel per train (non-zero is a spike), and the feature also
+returns the <code class="docutils literal notranslate"><span class="pre">profile</span></code>, the coincidence indicator of the merged spikes at each sample (-1 where no train has a spike). In
+<code class="docutils literal notranslate"><span class="pre">&quot;timings&quot;</span></code> mode each call takes a matrix whose rows are the spike times of the trains (positive and increasing, in any unit)
+and nothing is carried from one call to the next; it is <code class="docutils literal notranslate"><span class="pre">OK</span></code> for every call. The core fixed in this feature the swap of the
+degree and the distance in binary mode and the use of distinct spike positions instead of all spikes in the mean.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpikeSynchronization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trains</span><span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">35</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trains</span><span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">record</span> <span class="o">=</span> <span class="n">SpikeSynchronization</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">trains</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">float</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">degree</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">(1.0, 0.0)</span>
+</pre></div>
+</div>
+</section>
+<section id="recurrence">
+<h2>Recurrence<a class="headerlink" href="#recurrence" title="Link to this heading">#</a></h2>
+<p>Recurrence analysis compares a movement with itself or with another movement in the space of states <strong>[citation needed]</strong>
+(recurrence plots, Eckmann et al.; cross-recurrence, Marwan et al.). For a window of states <span class="math notranslate nohighlight">\(\mathbf{x}_n\)</span> (one value per
+channel, for example the posture of a participant), the recurrence plot is the binary matrix</p>
+<div class="math notranslate nohighlight">
+\[
+R_{ij}=\Theta\big(\epsilon_i-\lVert\mathbf{x}_i-\mathbf{x}_j\rVert_p\big),\qquad
+\lVert\mathbf{v}\rVert_p=\Big(\sum_c|v_c|^p\Big)^{1/p},
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(\Theta\)</span> the Heaviside step (a distance equal to <span class="math notranslate nohighlight">\(\epsilon\)</span> is not a recurrence), <span class="math notranslate nohighlight">\(p\)</span> the <code class="docutils literal notranslate"><span class="pre">order</span></code> and <span class="math notranslate nohighlight">\(\epsilon_i\)</span> the
+threshold of row <span class="math notranslate nohighlight">\(i\)</span> (<code class="docutils literal notranslate"><span class="pre">epsilon</span></code>, or one per row with <code class="docutils literal notranslate"><span class="pre">use_multiple_epsilons</span></code>). The diagonal is 1. A periodic movement draws
+diagonal lines, whose spacing is the period; a movement that stays in one posture draws blocks.
+<a class="reference internal" href="../api/generated/analysis_primitives/RecurrencePlot.html#pyeyesweb.analysis_primitives.RecurrencePlot" title="pyeyesweb.analysis_primitives.RecurrencePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></a> returns the matrix of the last complete window as
+<code class="docutils literal notranslate"><span class="pre">recurrence_matrix</span></code>, of shape <span class="math notranslate nohighlight">\((N,N)\)</span>.</p>
+<p>The cross-recurrence plot compares two multichannel signals with the same channels, for example two participants performing
+the same gesture: <span class="math notranslate nohighlight">\(R_{ij}=\Theta(\epsilon_i-\lVert\mathbf{x}_i-\mathbf{y}_j\rVert_p)\)</span>, with <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> from the first signal
+and <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> from the second. Long diagonal lines mean that the two follow the same trajectory, possibly with a time shift, and
+the offset of the line from the main diagonal is that shift. <a class="reference internal" href="../api/generated/analysis_primitives/CrossRecurrencePlot.html#pyeyesweb.analysis_primitives.CrossRecurrencePlot" title="pyeyesweb.analysis_primitives.CrossRecurrencePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></a>
+returns <code class="docutils literal notranslate"><span class="pre">cross_recurrence_matrix</span></code>. In both, the core corrected the <code class="docutils literal notranslate"><span class="pre">order</span></code>, which used to be ignored (the distance was always
+Euclidean).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">CrossRecurrencePlot</span><span class="p">,</span> <span class="n">RecurrencePlot</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">25</span>
+<span class="n">leader</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">)])</span>                          <span class="c1"># a circular movement, 2 channels</span>
+<span class="n">follower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">)])</span>            <span class="c1"># the same, 0.8 rad (about 3 samples) later</span>
+
+<span class="n">self_plot</span> <span class="o">=</span> <span class="n">RecurrencePlot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">leader</span><span class="p">)</span><span class="o">.</span><span class="n">recurrence_matrix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">cross_plot</span> <span class="o">=</span> <span class="n">CrossRecurrencePlot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">leader</span><span class="p">,</span> <span class="n">follower</span><span class="p">)</span><span class="o">.</span><span class="n">cross_recurrence_matrix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">))</span>
+<span class="n">left</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">self_plot</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"Greys"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"recurrence plot"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cross_plot</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"Greys"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"cross-recurrence plot"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"sample j"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"sample i"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="../_images/synchronization-1.png" class="plot-directive" src="../_images/synchronization-1.png" />
+</figure>
+<p>The first plot shows diagonal lines spaced by the period of 25 samples; in the second the diagonals are displaced from the
+main one by the delay between the two movements (0.8 rad of a cycle of 25 samples, about 3 samples).</p>
+<p>The recurrence plot is a picture. <a class="reference internal" href="../api/generated/analysis_primitives/GeneralisedAutoCorrelation.html#pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation" title="pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></a> reduces the
+recurrence of a window of <span class="math notranslate nohighlight">\(N\)</span> multichannel states to a number as a function of the lag <span class="math notranslate nohighlight">\(\tau\)</span> in samples: the recurrence rate</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{RR}(\tau)=\frac1{N-\tau}\,\#\big\{\,i&lt;N-\tau:\ \lVert\mathbf{x}_i-\mathbf{x}_{i+\tau}\rVert\le\epsilon\,\big\},
+\]</div>
+<p>the fraction of states that return within <span class="math notranslate nohighlight">\(\epsilon\)</span> after <span class="math notranslate nohighlight">\(\tau\)</span> samples. A periodic movement has peaks of <span class="math notranslate nohighlight">\(\mathrm{RR}\)</span> at
+the multiples of its period. With <code class="docutils literal notranslate"><span class="pre">output_type=&quot;function_of_tau&quot;</span></code> the feature returns the rates for <code class="docutils literal notranslate"><span class="pre">tau_spread</span></code> consecutive
+lags from <code class="docutils literal notranslate"><span class="pre">tau_min</span></code> (and the lags in <code class="docutils literal notranslate"><span class="pre">taus</span></code>); with <code class="docutils literal notranslate"><span class="pre">output_type=&quot;scalar&quot;</span></code> it returns the rate at the single lag <code class="docutils literal notranslate"><span class="pre">tau</span></code>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneralisedAutoCorrelation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>      <span class="c1"># a movement with a period of 50 samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">rate</span> <span class="o">=</span> <span class="n">GeneralisedAutoCorrelation</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s2">"scalar"</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">lag</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">recurrence_rate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">lag</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">25 0.04</span>
+<span class="go">50 1.0</span>
+</pre></div>
+</div>
+</section>
+<section id="sequences">
+<h2>Sequences<a class="headerlink" href="#sequences" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../api/generated/analysis_primitives/SequenceDetector.html#pyeyesweb.analysis_primitives.SequenceDetector" title="pyeyesweb.analysis_primitives.SequenceDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceDetector</span></code></a> recognises when a short ordered pattern is performed, for example the
+successive gestures of an exercise, each coded with an integer identifier. At each sample the input is the identifier of the
+event that happens (0 when none); the sequence is completed when its identifiers occur in order with at most <code class="docutils literal notranslate"><span class="pre">inter_event_time</span></code>
+samples between two consecutive ones, and a longer gap breaks it. It returns <code class="docutils literal notranslate"><span class="pre">is_completed</span></code>, true on the sample that completes
+the sequence, and <code class="docutils literal notranslate"><span class="pre">sequence_count</span></code>, the number completed so far. It is always <code class="docutils literal notranslate"><span class="pre">OK</span></code>. The core corrected the detection of the
+reversed order (a lone first element used to be detected) and the double count of a palindromic sequence.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceDetector</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">detector</span> <span class="o">=</span> <span class="n">SequenceDetector</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="s2">"1 2 3"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">detector</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">sequence_count</span><span class="p">)</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="go">[0, 0, 1, 1, 1, 1, 2]</span>
+</pre></div>
+</div>
+</section>
+<section id="group-synchronization">
+<h2>Group synchronization<a class="headerlink" href="#group-synchronization" title="Link to this heading">#</a></h2>
+<p>For a group of <span class="math notranslate nohighlight">\(M\)</span> participants the question is how the members are coordinated pair by pair, and how the coordination
+builds up. Three features work in chain.</p>
+<p><strong>Correlation.</strong> <a class="reference internal" href="../api/generated/analysis_primitives/CorrelationsMatrix.html#pyeyesweb.analysis_primitives.CorrelationsMatrix" title="pyeyesweb.analysis_primitives.CorrelationsMatrix"><code class="xref py py-class docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code></a> computes, over a window of <code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code>
+signals (one per participant or per body segment), the matrix</p>
+<div class="math notranslate nohighlight">
+\[
+C_{kl}=\max\big(0,\rho(s_k,s_l)\big)\ (k\ne l),\qquad C_{kk}=1,
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(\rho\)</span> the Pearson correlation over the window. Anti-correlation is reported as 0, so every entry lies in <span class="math notranslate nohighlight">\([0,1]\)</span>. A
+signal that is constant over the window has no defined correlation: its row and column are 0 off the diagonal.</p>
+<p><strong>Direct synchronization.</strong> Two participants can correlate only because both follow a third one. With <span class="math notranslate nohighlight">\(P=C^{-1}\)</span>,
+<a class="reference internal" href="../api/generated/analysis_primitives/PartialRecurrenceSynchronization.html#pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization" title="pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code></a> removes the part of each correlation that the other
+signals explain and returns the absolute partial correlation</p>
+<div class="math notranslate nohighlight">
+\[
+S_{kl}=\frac{|P_{kl}|}{\sqrt{P_{kk}P_{ll}}},
+\]</div>
+<p>an entry being 0 when a diagonal entry of <span class="math notranslate nohighlight">\(P\)</span> is not positive, and the whole matrix 0 when <span class="math notranslate nohighlight">\(C\)</span> is singular (constant or
+perfectly collinear signals). It takes the matrix as input, so it is applied to the output of <code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code>; it has no
+window of its own.</p>
+<p><strong>Progression.</strong> When the members synchronize one after the other, <a class="reference internal" href="../api/generated/analysis_primitives/TemporalSynchronization.html#pyeyesweb.analysis_primitives.TemporalSynchronization" title="pyeyesweb.analysis_primitives.TemporalSynchronization"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></a>
+follows how far the group has got. It takes <code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code> synchronization values per call (for example the entries of the
+matrix above, or one phase locking value per participant) and compares each with its threshold: <code class="docutils literal notranslate"><span class="pre">state</span></code> is the number of
+leading inputs, in order, that are at or above their threshold, and <code class="docutils literal notranslate"><span class="pre">progression</span></code> rises from 0 to 1 as the stages are completed
+(with the weights <code class="docutils literal notranslate"><span class="pre">stage_weights</span></code>), reaching 1 when all inputs are above their thresholds. <code class="docutils literal notranslate"><span class="pre">step</span></code> counts the calls, and
+<code class="docutils literal notranslate"><span class="pre">efficiency_step</span></code> (valid only when the progression is 1) says how quickly the group completed the process: 1 when it takes
+<code class="docutils literal notranslate"><span class="pre">number_of_inputs</span> <span class="pre">+</span> <span class="pre">1</span></code> steps. It works one sample per call, so there is no window.</p>
+<p>In the example the signal <span class="math notranslate nohighlight">\(b\)</span> follows <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(c\)</span> follows <span class="math notranslate nohighlight">\(b\)</span> with noise. All three are correlated, but <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(c\)</span> only through
+<span class="math notranslate nohighlight">\(b\)</span>, which the partial correlation shows.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.analysis_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">CorrelationsMatrix</span><span class="p">,</span> <span class="n">PartialRecurrenceSynchronization</span><span class="p">,</span> <span class="n">TemporalSynchronization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlations</span> <span class="o">=</span> <span class="n">CorrelationsMatrix</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">number_of_inputs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]))</span><span class="o">.</span><span class="n">correlations_matrix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlations</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[1.  , 0.81, 0.68],</span>
+<span class="go">       [0.81, 1.  , 0.85],</span>
+<span class="go">       [0.68, 0.85, 1.  ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PartialRecurrenceSynchronization</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">correlations</span><span class="p">)</span><span class="o">.</span><span class="n">synchronization_matrix</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[1.  , 0.61, 0.04],</span>
+<span class="go">       [0.61, 1.  , 0.7 ],</span>
+<span class="go">       [0.04, 0.7 , 1.  ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">progress</span> <span class="o">=</span> <span class="n">TemporalSynchronization</span><span class="p">(</span><span class="n">thresholds</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">progression</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">state</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">progress</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="p">[(</span><span class="mf">.6</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">.6</span><span class="p">,</span> <span class="mf">.6</span><span class="p">,</span> <span class="mf">.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">.6</span><span class="p">,</span> <span class="mf">.6</span><span class="p">,</span> <span class="mf">.6</span><span class="p">)])]</span>
+<span class="go">[(0.4, 1), (0.73, 2), (1.0, 3)]</span>
+</pre></div>
+</div>
+</section>
+<section id="choosing-a-measure">
+<h2>Choosing a measure<a class="headerlink" href="#choosing-a-measure" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Continuous signals, oscillatory and narrow-band: the phase locking value. Continuous signals with an arbitrary coupling:
+the nonlinear interdependence, or the correlation matrix for a group.</p></li>
+<li><p>Discrete events with a known tolerance in samples: event synchronization (two series) or MECS (several classes). Events
+without a natural tolerance: SPIKE-synchronization.</p></li>
+<li><p>Whole-body or multichannel states, to see where and when two movements revisit the same posture: cross-recurrence.</p></li>
+<li><p>A fixed order of gestures: the sequence detector.</p></li>
+</ul>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Reduce every participant to a scalar signal (or one vector per sample for the recurrence measures) and give all participants
+the same sampling rate, preferably from one clock. Resample before the measure if the streams differ.</p></li>
+<li><p>The window should hold several cycles of the movement. <code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">tau</span></code> are in samples: <span class="math notranslate nohighlight">\(N=\lceil T f_s\rceil\)</span> for a
+window of <span class="math notranslate nohighlight">\(T\)</span> seconds.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">NaN</span></code> or infinite value gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> and no output; the Notes of each feature in the API reference give the
+exact rule.</p></li>
+<li><p>All values are dimensionless. The synchronization of surrogate signals (shuffled, or shifted by more than a cycle) gives a
+baseline for a significance threshold that no measure provides on its own.</p></li>
+</ul>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The phase locking value and its use for the analysis of group behaviour are described in <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id7" title="G. Varni, G. Volpe, and A. Camurri. A system for real-time multimodal analysis of nonverbal affective social interaction in user-centric media. IEEE Transactions on Multimedia, 12(6):576–590, 2010.">8</a>]</span> and
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id8" title="S. R. Sabharwal, M. Varlet, M. Breaden, G. Volpe, A. Camurri, and P. E. Keller. huSync—a model and system for the measure of synchronization in small groups: a case study on musical joint action. IEEE Access, 10:92357–92372, 2022.">22</a>]</span>; the generated pages of the API reference list every parameter of the features.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="entropy_rarity_periodicity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Entropy, rarity and periodicity</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="dominance.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dominance</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-signals">Two signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase">Phase</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#event-series">Event series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-trains">Spike trains</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recurrence">Recurrence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sequences">Sequences</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#group-synchronization">Group synchronization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-a-measure">Choosing a measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/synchronization.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

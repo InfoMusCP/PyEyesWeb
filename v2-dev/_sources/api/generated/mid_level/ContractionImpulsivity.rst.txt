@@ -1,0 +1,100 @@
+.. _feature-ContractionImpulsivity:
+
+ContractionImpulsivity
+======================
+
+Change of the contraction index over a short, energetic gesture, per second.
+
+:bdg-primary:`Layer 3: mid-level features` :bdg-secondary:`timescale: \0.5-3 s` :bdg-info:`EyesWeb: Impulsivity`
+
+Layer: :doc:`Layer 3: mid-level features </api/mid_level>`. Family: :doc:`Impulsivity and suddenness </theory/impulsivity_suddenness>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``gesture_duration``
+     - ``25.0``
+     - ``float``
+   * - ``peak_threshold``
+     - ``0.02``
+     - ``float``
+   * - ``motion_threshold``
+     - ``0.01``
+     - ``float``
+   * - ``sampling_rate``
+     - ``None``
+     - ``Optional[float]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``quantity_of_motion``
+     - sample
+     - (1,)
+     - 
+     - quantity of motion
+   * - ``contraction_index``
+     - sample
+     - (1,)
+     - 
+     - contraction index
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``impulsivity_index``
+     - ``float``
+     - scalar
+     - 1/frame
+     - contraction-index change per second
+   * - ``gesture_duration``
+     - ``float``
+     - scalar
+     - frames
+     - 
+
+.. py:currentmodule:: pyeyesweb.mid_level
+
+Description
+-----------
+
+.. autoclass:: ContractionImpulsivity
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.mid_level.ContractionImpulsivity.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

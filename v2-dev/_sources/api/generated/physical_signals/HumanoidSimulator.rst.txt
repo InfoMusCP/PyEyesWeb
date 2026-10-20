@@ -1,0 +1,125 @@
+.. _feature-HumanoidSimulator:
+
+HumanoidSimulator
+=================
+
+A physically based humanoid that follows a captured skeleton.
+
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: HumanoidSimulator (MassSpringHumanoidSimulator)`
+
+Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Humanoid and mass-spring models </theory/humanoid_models>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``labels``
+     - ``None``
+     - ``Optional[Sequence[str]]``
+   * - ``joint_map``
+     - ``None``
+     - ``Optional[Mapping[str, str]]``
+   * - ``start_from_input``
+     - ``False``
+     - ``bool``
+   * - ``reference_direction``
+     - ``(1.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+   * - ``integration_step``
+     - ``0.001``
+     - ``float``
+   * - ``gravity``
+     - ``(0.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+   * - ``damping``
+     - ``10.0``
+     - ``float``
+   * - ``viscosity``
+     - ``0.0``
+     - ``float``
+   * - ``length_forces``
+     - ``True``
+     - ``bool``
+   * - ``rotation_forces``
+     - ``True``
+     - ``bool``
+   * - ``ground_interaction``
+     - ``False``
+     - ``bool``
+   * - ``floor_position``
+     - ``(0.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+   * - ``sampling_rate``
+     - ``None``
+     - ``Optional[float]``
+   * - ``units``
+     - ``'m'``
+     - ``Literal['m', 'mm']``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``skeleton``
+     - points
+     - (21, 3)
+     - 
+     - captured joints, in \`units\`; 21 labels
+   * - ``control``
+     - points (optional)
+     - (20, 3)
+     - 
+     - bone directions relative to the parent bone (the output of HumanoidOrientations) replacing those seen in the joints; 20 labels
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``joints``
+     - ``float``
+     - (21, 3)
+     - m
+     - simulated joint positions
+
+.. py:currentmodule:: pyeyesweb.physical_signals
+
+Description
+-----------
+
+.. autoclass:: HumanoidSimulator
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.physical_signals.HumanoidSimulator.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

@@ -1,0 +1,21 @@
+﻿pyeyesweb.physical\_signals.SynchronizedWindow
+==============================================
+
+.. currentmodule:: pyeyesweb.physical_signals
+
+
+
+.. autoclass:: SynchronizedWindow
+   :members: start_time, duration, samples, frames
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~SynchronizedWindow.start_time
+      ~SynchronizedWindow.duration
+      ~SynchronizedWindow.samples
+      ~SynchronizedWindow.frames

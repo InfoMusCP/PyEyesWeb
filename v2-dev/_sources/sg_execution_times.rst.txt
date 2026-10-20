@@ -1,0 +1,67 @@
+
+:orphan:
+
+.. _sphx_glr_sg_execution_times:
+
+
+Computation times
+=================
+**00:31.379** total execution time for 11 files **from all galleries**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_tutorials_04_mid_level_plot_07_gestures.py` (``../examples/04_mid_level/plot_07_gestures.py``)
+     - 00:06.552
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_06_capstone_plot_10_capstone.py` (``../examples/06_capstone/plot_10_capstone.py``)
+     - 00:05.370
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_03_low_level_plot_06_shape.py` (``../examples/03_low_level/plot_06_shape.py``)
+     - 00:03.855
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (``../examples/05_analysis_primitives/plot_08_primitives.py``)
+     - 00:03.464
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_03_low_level_plot_05_motion.py` (``../examples/03_low_level/plot_05_motion.py``)
+     - 00:03.132
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` (``../examples/05_analysis_primitives/plot_09a_synchronization_signals.py``)
+     - 00:02.404
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_02_physical_signals_plot_03_points.py` (``../examples/02_physical_signals/plot_03_points.py``)
+     - 00:02.264
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py` (``../examples/05_analysis_primitives/plot_09b_synchronization_events.py``)
+     - 00:01.778
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_01_getting_started_plot_01_first_feature.py` (``../examples/01_getting_started/plot_01_first_feature.py``)
+     - 00:01.345
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_02_physical_signals_plot_04_images.py` (``../examples/02_physical_signals/plot_04_images.py``)
+     - 00:00.821
+     - 0.0
+   * - :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py` (``../examples/01_getting_started/plot_02_the_contract.py``)
+     - 00:00.394
+     - 0.0

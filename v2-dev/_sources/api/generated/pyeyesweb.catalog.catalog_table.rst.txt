@@ -1,0 +1,6 @@
+﻿pyeyesweb.catalog.catalog\_table
+================================
+
+.. currentmodule:: pyeyesweb.catalog
+
+.. autofunction:: catalog_table

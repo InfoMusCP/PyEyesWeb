@@ -1,0 +1,37 @@
+﻿pyeyesweb.datasets.QualisysTrial
+================================
+
+.. currentmodule:: pyeyesweb.datasets
+
+
+
+.. autoclass:: QualisysTrial
+   :members: joint, to_units, window, condition, duration, offset, sampling_rate, skeleton, standardized, task, timestamps, units, trial, positions, labels
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~QualisysTrial.joint
+      ~QualisysTrial.to_units
+      ~QualisysTrial.window
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~QualisysTrial.condition
+      ~QualisysTrial.duration
+      ~QualisysTrial.offset
+      ~QualisysTrial.sampling_rate
+      ~QualisysTrial.skeleton
+      ~QualisysTrial.standardized
+      ~QualisysTrial.task
+      ~QualisysTrial.timestamps
+      ~QualisysTrial.units
+      ~QualisysTrial.trial
+      ~QualisysTrial.positions
+      ~QualisysTrial.labels

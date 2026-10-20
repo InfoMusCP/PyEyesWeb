@@ -1,0 +1,103 @@
+.. _feature-KineticEnergy:
+
+KineticEnergy
+=============
+
+Weighted kinetic energy of a set of labelled 3D points, such as the joints of a skeleton.
+
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: KineticEnergyIndex (KineticEnergy)`
+
+Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Kinematics and energy </theory/kinematics_energy>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``labels``
+     - ``None``
+     - ``Optional[Sequence[str]]``
+   * - ``skeleton``
+     - ``None``
+     - ``Any``
+   * - ``input_mode``
+     - ``'position'``
+     - ``Literal['position', 'velocity']``
+   * - ``weights``
+     - ``None``
+     - ``Mapping[str, float] | None``
+   * - ``reference_point``
+     - ``''``
+     - ``str``
+   * - ``sampling_rate``
+     - ``None``
+     - ``Optional[float]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``skeleton``
+     - points
+     - (25, 3)
+     - 
+     - joint positions or velocities; 25 labels
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``kinetic_energy``
+     - ``float``
+     - scalar
+     - \<length\>^2/s^2
+     - weighted kinetic energy of the skeleton
+
+.. py:currentmodule:: pyeyesweb.low_level
+
+Alternative constructors
+------------------------
+
+.. automethod:: KineticEnergy.from_position
+
+.. automethod:: KineticEnergy.from_velocity
+
+Description
+-----------
+
+.. autoclass:: KineticEnergy
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.low_level.KineticEnergy.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

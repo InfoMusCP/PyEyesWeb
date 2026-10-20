@@ -1,0 +1,36 @@
+﻿pyeyesweb.data\_models.Input
+============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Input
+   :members: check, check_window, describe, problem, accepts, allow_non_finite, doc, integer, labels, optional, shape, unit, name, kind
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Input.check
+      ~Input.check_window
+      ~Input.describe
+      ~Input.problem
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Input.accepts
+      ~Input.allow_non_finite
+      ~Input.doc
+      ~Input.integer
+      ~Input.labels
+      ~Input.optional
+      ~Input.shape
+      ~Input.unit
+      ~Input.name
+      ~Input.kind

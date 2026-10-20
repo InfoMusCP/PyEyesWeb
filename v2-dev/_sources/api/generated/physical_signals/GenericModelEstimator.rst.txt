@@ -1,0 +1,173 @@
+.. _feature-GenericModelEstimator:
+
+GenericModelEstimator
+=====================
+
+Adaptive estimation of the parameters of a mass-spring model from observed joints.
+
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: GenericModelEstimator`
+
+Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Humanoid and mass-spring models </theory/humanoid_models>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``model``
+     - *required*
+     - ``Union[pyeyesweb.physical_signals._humanoid_model.MassSpringModel, str, os.PathLike]``
+   * - ``labels``
+     - ``None``
+     - ``Optional[Sequence[str]]``
+   * - ``joint_map``
+     - ``None``
+     - ``Optional[Mapping[str, str]]``
+   * - ``reference_direction``
+     - ``(1.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+   * - ``integration_step``
+     - ``0.001``
+     - ``float``
+   * - ``gravity``
+     - ``(0.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+   * - ``damping``
+     - ``10.0``
+     - ``float``
+   * - ``viscosity``
+     - ``0.0``
+     - ``float``
+   * - ``length_forces``
+     - ``True``
+     - ``bool``
+   * - ``rotation_forces``
+     - ``True``
+     - ``bool``
+   * - ``ground_interaction``
+     - ``False``
+     - ``bool``
+   * - ``floor_position``
+     - ``(0.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+   * - ``use_input_lengths``
+     - ``False``
+     - ``bool``
+   * - ``enable_adaptation``
+     - ``True``
+     - ``bool``
+   * - ``estimate_masses``
+     - ``False``
+     - ``bool``
+   * - ``estimate_length_springs``
+     - ``False``
+     - ``bool``
+   * - ``estimate_direction_springs``
+     - ``False``
+     - ``bool``
+   * - ``step_is_absolute``
+     - ``False``
+     - ``bool``
+   * - ``initial_step``
+     - ``0.05``
+     - ``float``
+   * - ``step_adaptation_factor``
+     - ``0.0001``
+     - ``float``
+   * - ``cost_distance``
+     - ``1.0``
+     - ``float``
+   * - ``cost_directions``
+     - ``1.0``
+     - ``float``
+   * - ``cost_speed``
+     - ``1.0``
+     - ``float``
+   * - ``cost_length_stiffness``
+     - ``0.0``
+     - ``float``
+   * - ``cost_direction_stiffness``
+     - ``0.0``
+     - ``float``
+   * - ``cost_length_damping``
+     - ``0.0``
+     - ``float``
+   * - ``cost_direction_damping``
+     - ``0.0``
+     - ``float``
+   * - ``seed``
+     - ``12345``
+     - ``int``
+   * - ``sampling_rate``
+     - ``None``
+     - ``Optional[float]``
+   * - ``units``
+     - ``'m'``
+     - ``Literal['m', 'mm']``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``skeleton``
+     - points
+     - (2, 3)
+     - 
+     - observed positions of the masses of the model; 2 labels
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``positions``
+     - ``float``
+     - (2, 3)
+     - m
+     - positions of the masses of the model, in \`units\`
+   * - ``error``
+     - ``float``
+     - scalar
+     - 
+     - cost of the frame
+
+.. py:currentmodule:: pyeyesweb.physical_signals
+
+Description
+-----------
+
+.. autoclass:: GenericModelEstimator
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.physical_signals.GenericModelEstimator.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

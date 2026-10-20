@@ -1,0 +1,21 @@
+﻿pyeyesweb.data\_models.InputKind
+================================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: InputKind
+   :members: SAMPLE, POINTS, MATRIX, IMAGE
+   :undoc-members:
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~InputKind.SAMPLE
+      ~InputKind.POINTS
+      ~InputKind.MATRIX
+      ~InputKind.IMAGE

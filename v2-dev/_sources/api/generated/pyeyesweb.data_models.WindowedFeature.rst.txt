@@ -1,0 +1,27 @@
+﻿pyeyesweb.data\_models.WindowedFeature
+======================================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: WindowedFeature
+   :members: configure, process, reset, hop, window
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~WindowedFeature.configure
+      ~WindowedFeature.process
+      ~WindowedFeature.reset
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~WindowedFeature.hop
+      ~WindowedFeature.window

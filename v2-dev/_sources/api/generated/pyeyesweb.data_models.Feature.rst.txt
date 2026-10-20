@@ -1,0 +1,28 @@
+﻿pyeyesweb.data\_models.Feature
+==============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Feature
+   :members: process, reset, run, inputs, latest, parameters
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Feature.process
+      ~Feature.reset
+      ~Feature.run
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Feature.inputs
+      ~Feature.latest
+      ~Feature.parameters

@@ -1,0 +1,101 @@
+.. _feature-MultiScaleEntropy:
+
+MultiScaleEntropy
+=================
+
+Multi-scale entropy curve and complexity index of one or several signals.
+
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any`
+
+Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Entropy, rarity and periodicity </theory/entropy_rarity_periodicity>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``window``
+     - ``3000``
+     - ``int``
+   * - ``hop``
+     - ``1``
+     - ``int``
+   * - ``embedding_dimension``
+     - ``2``
+     - ``int``
+   * - ``tolerance``
+     - ``0.15``
+     - ``float``
+   * - ``max_scale``
+     - ``6``
+     - ``int``
+   * - ``minimum_points``
+     - ``500``
+     - ``int``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``signal``
+     - sample
+     - (n,)
+     - 
+     - one value per signal
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``complexity_index``
+     - ``float``
+     - (n,)
+     - 
+     - complexity index of each signal
+   * - ``scale_entropies``
+     - ``float``
+     - (n, 6)
+     - 
+     - sample entropy of each signal at the scales 1..max\_scale, NaN for a scale not used
+
+.. py:currentmodule:: pyeyesweb.analysis_primitives
+
+Description
+-----------
+
+.. autoclass:: MultiScaleEntropy
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.analysis_primitives.MultiScaleEntropy.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

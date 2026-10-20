@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Humanoid and mass-spring models &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/humanoid_models';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Imaging" href="imaging.html" />
+    <link rel="prev" title="Dominance" href="dominance.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="smoothness.html">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Humanoid and mass-spring models</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="humanoid-and-mass-spring-models">
+<h1>Humanoid and mass-spring models<a class="headerlink" href="#humanoid-and-mass-spring-models" title="Link to this heading">#</a></h1>
+<p>A captured skeleton is a noisy, incomplete record of a body: joints jitter, drop out for a few frames, and move in ways
+a real body could not (a forearm that changes length). A <strong>mass-spring model</strong> is a small physical simulation that is driven
+by the captured movement and gives back the movement of a body that obeys simple mechanics. Its joints are masses, its
+bones are springs, and the output is a smooth, always articulated pose with constant bone lengths. The same model can
+also be run ahead of the data, to forecast a movement a fraction of a second early, or fitted to a recording, to find the
+masses and the stiffnesses that explain it.</p>
+<p>Seven features implement this family (all in layer 1, see <a class="reference internal" href="../user_guide/physical_signals.html"><span class="doc">Physical signals</span></a>). They are virtual sensors
+in the sense of the conceptual model (<a class="reference internal" href="framework.html"><span class="doc">Conceptual framework</span></a>): they take a signal (a skeleton) and give a signal again. The
+body-model approach follows the HumanoidModel blocks of the EyesWeb platform <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">2</a>, <a class="reference internal" href="../references.html#id4" title="G. Volpe, P. Alborno, A. Camurri, P. Coletta, S. Ghisio, M. Mancini, others, and R. Sagoleo. Designing multimodal interactive systems using eyesweb xmi. In CEUR Workshop Proceedings, 49–56. CEUR-WS, 2016. DRAFT: author list truncated in the source; workshop name and volume unknown.">4</a>]</span>;
+for the original formulation of mass-spring humanoid models in the EyesWeb libraries <strong>[citation needed]</strong> (the
+publication that introduced the HumanoidModel blocks).</p>
+<section id="the-model">
+<h2>The model<a class="headerlink" href="#the-model" title="Link to this heading">#</a></h2>
+<p>The notation is that of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>. A model has <span class="math notranslate nohighlight">\(K\)</span> masses and a set of springs. The mass <span class="math notranslate nohighlight">\(k\)</span> has weight <span class="math notranslate nohighlight">\(w_k\)</span> and position <span class="math notranslate nohighlight">\(\mathbf{p}_k(t)\in\mathbb{R}^3\)</span>;
+a spring joins two masses, the <strong>hinge</strong> and the <strong>tip</strong>, and plays the role of a bone. The model is integrated in time with
+steps of <code class="docutils literal notranslate"><span class="pre">integration_step</span></code> seconds (0.001 s by default): a call that advances it by <span class="math notranslate nohighlight">\(\Delta t\)</span> seconds runs
+<span class="math notranslate nohighlight">\(\lfloor \Delta t / \text{integration\_step} \rfloor\)</span> steps. The motion of each mass follows Newton’s law,</p>
+<div class="math notranslate nohighlight">
+\[
+w_k\,\ddot{\mathbf{p}}_k = \sum \mathbf{F}_k ,
+\]</div>
+<p>where the forces on a mass come from the springs it belongs to, and optionally from gravity and from a floor. Each spring
+exerts two forces:</p>
+<ul class="simple">
+<li><p>a <strong>length force</strong>, which keeps the bone at its rest length (switch <code class="docutils literal notranslate"><span class="pre">length_forces</span></code>);</p></li>
+<li><p>a <strong>rotation force</strong>, which turns the bone towards the direction given by the input (switch <code class="docutils literal notranslate"><span class="pre">rotation_forces</span></code>).</p></li>
+</ul>
+<p>Both have a stiffness and a damping. The damping force is proportional to the relative velocity of the two masses it
+connects, so it removes energy. <code class="docutils literal notranslate"><span class="pre">gravity</span></code> is a vector in length units per second squared (zero by default), and
+<code class="docutils literal notranslate"><span class="pre">ground_interaction</span></code> adds a floor, the plane through <code class="docutils literal notranslate"><span class="pre">floor_position</span></code> whose normal is opposite to gravity: a mass below it is
+pushed back along the normal.</p>
+<p>Because only the <em>directions</em> of the input drive the rotation forces, the model keeps its own bone lengths. This is the
+property that makes the simulated skeleton plausible, and also the reason it does not reproduce the captured one exactly:
+if a captured forearm gets longer for a frame, the model’s forearm does not.</p>
+</section>
+<section id="bone-directions">
+<h2>Bone directions<a class="headerlink" href="#bone-directions" title="Link to this heading">#</a></h2>
+<p>The input of a simulator is a set of bone directions. <a class="reference internal" href="../api/generated/physical_signals/HumanoidOrientations.html#pyeyesweb.physical_signals.HumanoidOrientations" title="pyeyesweb.physical_signals.HumanoidOrientations"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code></a> computes
+them from joint positions for the fixed humanoid: for each of its 20 bones it gives the unit direction expressed in the frame
+of the previous bone of the chain, so it does not depend on where the body is or on how its parent segments are oriented. The
+output is a <span class="math notranslate nohighlight">\((20, 3)\)</span> array labelled by <code class="docutils literal notranslate"><span class="pre">HUMANOID_BONES</span></code> and is the form of the <code class="docutils literal notranslate"><span class="pre">control</span></code> input of
+<a class="reference internal" href="../api/generated/physical_signals/HumanoidSimulator.html#pyeyesweb.physical_signals.HumanoidSimulator" title="pyeyesweb.physical_signals.HumanoidSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code></a>, which takes it as it is. A joint missing in a frame keeps the
+position it had in the previous frame.</p>
+<p><a class="reference internal" href="../api/generated/physical_signals/GenericModelOrientations.html#pyeyesweb.physical_signals.GenericModelOrientations" title="pyeyesweb.physical_signals.GenericModelOrientations"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code></a> is the same step for a model of your own: for each spring
+<span class="math notranslate nohighlight">\(s\)</span> it gives the vector from the hinge to the tip,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{b}_s = \mathbf{p}_{\mathrm{tip}(s)} - \mathbf{p}_{\mathrm{hinge}(s)},
+\]</div>
+<p>not normalised and in the unit of the data. It is the front end of the generic simulator and predictor.</p>
+</section>
+<section id="following-a-movement-the-simulators">
+<h2>Following a movement: the simulators<a class="headerlink" href="#following-a-movement-the-simulators" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../api/generated/physical_signals/HumanoidSimulator.html#pyeyesweb.physical_signals.HumanoidSimulator" title="pyeyesweb.physical_signals.HumanoidSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code></a> integrates a fixed humanoid of 21 masses (the joints of
+<code class="docutils literal notranslate"><span class="pre">HUMANOID_JOINTS</span></code>, those of the first Kinect SDK as EyesWeb names them) joined by 20 springs. The head is the root: it is
+very heavy and pinned, so the output is the pose of a body that hangs from where its head starts (a T-pose at the origin,
+or, with <code class="docutils literal notranslate"><span class="pre">start_from_input=True</span></code>, the first frame) and the translation of the person is not followed. The simulator takes
+the captured joints and, optionally, <code class="docutils literal notranslate"><span class="pre">control</span></code> bone directions that replace the ones seen in the joints.
+<a class="reference internal" href="../api/generated/physical_signals/GenericModelSimulator.html#pyeyesweb.physical_signals.GenericModelSimulator" title="pyeyesweb.physical_signals.GenericModelSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelSimulator</span></code></a> does the same for any
+<code class="docutils literal notranslate"><span class="pre">MassSpringModel</span></code>, also loaded from an EyesWeb XML file, and takes bone directions as input.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">HUMANOID_BONES</span><span class="p">,</span> <span class="n">HUMANOID_JOINTS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanoidOrientations</span><span class="p">,</span> <span class="n">HumanoidSimulator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">HUMANOID_BONES</span><span class="p">)</span>
+<span class="go">(21, 20)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tpose</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"head"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)})</span><span class="o">.</span><span class="n">joints</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tpose</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(21, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">captured</span> <span class="o">=</span> <span class="n">tpose</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">captured</span><span class="p">[</span><span class="n">HUMANOID_JOINTS</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"left_hand"</span><span class="p">)]</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>    <span class="c1"># move the left hand by 0.1 m along x and z</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">directions</span> <span class="o">=</span> <span class="n">HumanoidOrientations</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">captured</span><span class="p">)</span><span class="o">.</span><span class="n">directions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">directions</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(20, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">follower</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">start_from_input</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">follower</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">captured</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="n">directions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">joints</span><span class="p">,</span> <span class="n">captured</span><span class="p">))</span>
+<span class="go">('OK', True)</span>
+</pre></div>
+</div>
+<p>The first call after construction or <code class="docutils literal notranslate"><span class="pre">reset()</span></code> with <code class="docutils literal notranslate"><span class="pre">start_from_input=True</span></code> puts the model on the input and returns it
+unchanged, as the last line shows. From then on the model moves by its dynamics.</p>
+</section>
+<section id="looking-ahead-the-predictors">
+<h2>Looking ahead: the predictors<a class="headerlink" href="#looking-ahead-the-predictors" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../api/generated/physical_signals/GenericModelPredictor.html#pyeyesweb.physical_signals.GenericModelPredictor" title="pyeyesweb.physical_signals.GenericModelPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code></a> follows the bone directions like the generic simulator
+and gives <code class="docutils literal notranslate"><span class="pre">positions</span></code>, where the masses will be <code class="docutils literal notranslate"><span class="pre">prediction_interval</span></code> seconds later (0.2 s by default) when the model is left
+to move on its own. With <code class="docutils literal notranslate"><span class="pre">mode=&quot;masses_inertia&quot;</span></code> the masses keep their velocity; with <code class="docutils literal notranslate"><span class="pre">&quot;directions_linear&quot;</span></code> the bone
+directions are extrapolated linearly. The forecast does not disturb the state of the model that follows the data.</p>
+<p><a class="reference internal" href="../api/generated/physical_signals/PointsPredictor.html#pyeyesweb.physical_signals.PointsPredictor" title="pyeyesweb.physical_signals.PointsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsPredictor</span></code></a> is the simplest forecast and needs no model: each labelled point is
+extended by its last displacement,</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\mathbf{p}}(t) = \mathbf{p}(t) + \bigl(\mathbf{p}(t) - \mathbf{p}(t-1)\bigr),
+\]</div>
+<p>a constant-velocity prediction one frame ahead. The step is one frame, whatever the sampling rate: the feature has no time axis.
+A point seen for the first time, or after a gap, is returned unchanged.</p>
+</section>
+<section id="learning-the-body-the-estimator">
+<h2>Learning the body: the estimator<a class="headerlink" href="#learning-the-body-the-estimator" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../api/generated/physical_signals/GenericModelEstimator.html#pyeyesweb.physical_signals.GenericModelEstimator" title="pyeyesweb.physical_signals.GenericModelEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code></a> follows the observed positions of the masses of a model and,
+while <code class="docutils literal notranslate"><span class="pre">enable_adaptation</span></code> is on, perturbs one parameter per frame (a stochastic coordinate descent). It keeps the change when
+it lowers a cost that weighs position, direction and speed errors, with weights <code class="docutils literal notranslate"><span class="pre">cost_distance</span></code>, <code class="docutils literal notranslate"><span class="pre">cost_directions</span></code> and
+<code class="docutils literal notranslate"><span class="pre">cost_speed</span></code>. Which parameters are adapted is chosen by <code class="docutils literal notranslate"><span class="pre">estimate_masses</span></code>, <code class="docutils literal notranslate"><span class="pre">estimate_length_springs</span></code> and
+<code class="docutils literal notranslate"><span class="pre">estimate_direction_springs</span></code>; with none of them on, nothing is adapted. Over a recording the model learns the masses, and the
+stiffnesses and dampings of the springs, that explain the observed movement, and <code class="docutils literal notranslate"><span class="pre">feature.model</span></code> is a copy of the model with
+the estimated parameters (it can be saved as an XML file). The random draws are seeded (<code class="docutils literal notranslate"><span class="pre">seed</span></code>, 12345 by default), so a run is
+reproducible.</p>
+<p>Its second output, <code class="docutils literal notranslate"><span class="pre">error</span></code>, is the cost of the frame. It mixes quantities in the unit of the model, so its trend over a
+recording says more than its value: it should fall as the model adapts. The result is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> with the reason
+<code class="docutils literal notranslate"><span class="pre">&quot;the</span> <span class="pre">result</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">finite&quot;</span></code> when the simulation diverged.</p>
+</section>
+<section id="how-to-read-the-outputs">
+<h2>How to read the outputs<a class="headerlink" href="#how-to-read-the-outputs" title="Link to this heading">#</a></h2>
+<p>The positions are in <code class="docutils literal notranslate"><span class="pre">units</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;m&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code>, default <code class="docutils literal notranslate"><span class="pre">&quot;m&quot;</span></code>), labelled by the names of the masses; a joint the model did not
+produce is NaN. Orientation outputs are dimensionless unit vectors, except those of <code class="docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code>, which are
+in the unit of the data. Every feature of the family is <code class="docutils literal notranslate"><span class="pre">OK</span></code> on every valid call, with no warm-up. An infinite value, an empty
+frame and a frame with no joint at all are <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>; a joint that is missing (absent from the dict, or a row with a
+NaN) is a dropout the model handles: the bones that depend on it stay as they were.</p>
+<p>The effect of the damping is the quantity to understand. The figure shows a rod of one metre, with its hinge fixed, that is
+asked to turn from the x axis to the y axis. A low damping follows the target fast and overshoots it; a high damping is slower,
+which is the lag of the simulated body behind the captured one.</p>
+<figure class="align-default">
+<img alt="../_images/humanoid_models-1.png" class="plot-directive" src="../_images/humanoid_models-1.png" />
+</figure>
+<p>Numerically, the angle of the rod after 0.05, 0.1, 0.2, 0.5 and 1 s:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericModelSimulator</span><span class="p">,</span> <span class="n">MassSpringModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">MassSpringModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">add_mass</span><span class="p">(</span><span class="s2">"root"</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">add_mass</span><span class="p">(</span><span class="s2">"tip"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">add_spring</span><span class="p">(</span><span class="s2">"rod"</span><span class="p">,</span> <span class="s2">"root"</span><span class="p">,</span> <span class="s2">"tip"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">angles</span><span class="p">(</span><span class="n">damping</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">simulator</span> <span class="o">=</span> <span class="n">GenericModelSimulator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="n">damping</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">degrees</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_z</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">process</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">... </span>        <span class="n">degrees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">))))</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">degrees</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">99</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">angles</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="go">[8.1, 24.4, 56.0, 91.9, 89.8]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">angles</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="go">[5.2, 12.6, 26.2, 55.1, 77.6]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">angles</span><span class="p">(</span><span class="mf">30.0</span><span class="p">)</span>
+<span class="go">[2.4, 5.0, 10.0, 23.7, 41.9]</span>
+</pre></div>
+</div>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<p><strong>Time.</strong> The simulators, the predictor and the estimator advance the model by the time step of the call, in seconds: the
+difference of <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> from the previous call, else <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code>, else one second per call with the <code class="docutils literal notranslate"><span class="pre">reason</span></code>
+<code class="docutils literal notranslate"><span class="pre">&quot;no</span> <span class="pre">time</span> <span class="pre">given:</span> <span class="pre">per-sample</span> <span class="pre">derivatives&quot;</span></code> (see <a class="reference internal" href="../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>). The first timed call after
+construction or <code class="docutils literal notranslate"><span class="pre">reset()</span></code> uses <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code> (or 1 s), never the absolute time. A timestamp that does not increase gives
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> and leaves the model where it was.</p>
+<p><strong>Units: the one exception.</strong> The library never rescales data, with one exception. The EyesWeb body is defined in millimetres
+and its spring forces depend on the length unit, so <code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code> works internally in millimetres and converts at the
+boundary: with <code class="docutils literal notranslate"><span class="pre">units=&quot;m&quot;</span></code> frames are multiplied by 1000 on the way in and the joints divided by 1000 on the way out; with
+<code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code> nothing is converted. A body driven in metres reproduces the millimetre run up to rounding, while metres declared as
+<code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code> give a different motion, because the model is not scale free. The generic models do not convert: they run in the unit of
+their own model, <code class="docutils literal notranslate"><span class="pre">units</span></code> only names it, and stiffness and damping are expressed in that unit too, so the same model written in
+another unit moves differently.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metres</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">millimetres</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">"mm"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mislabelled</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">"mm"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">in_m</span> <span class="o">=</span> <span class="n">metres</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">captured</span><span class="p">)</span><span class="o">.</span><span class="n">joints</span>
+<span class="gp">... </span>    <span class="n">in_mm</span> <span class="o">=</span> <span class="n">millimetres</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">captured</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">)</span><span class="o">.</span><span class="n">joints</span>
+<span class="gp">... </span>    <span class="n">wrong</span> <span class="o">=</span> <span class="n">mislabelled</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">captured</span><span class="p">)</span><span class="o">.</span><span class="n">joints</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">in_m</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">in_mm</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">in_m</span><span class="p">,</span> <span class="n">wrong</span><span class="p">))</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p><strong>Damping.</strong> The default <code class="docutils literal notranslate"><span class="pre">damping</span></code> is 10. EyesWeb’s default, 0.3, makes chains of four or five bones diverge; 10 is stable with
+noisy input and 3 follows clean data with less lag.</p>
+<p><strong>Known limitation.</strong> The rotation springs make chains of four or five bones flutter at a low <code class="docutils literal notranslate"><span class="pre">damping</span></code>, and the model is not
+a noise filter in the signal-processing sense: it follows the input with a lag that grows with <code class="docutils literal notranslate"><span class="pre">damping</span></code>, and it is not tuned
+to remove a given frequency band.</p>
+<p><strong>Labels.</strong> The model has its own joint names; <code class="docutils literal notranslate"><span class="pre">joint_map</span></code> maps each of them to the label of your data, and the names you do not
+list keep their own. The constructor raises when the labels do not hold a joint the model needs (see
+<a class="reference internal" href="../howto/map_skeleton.html"><span class="doc">Map your marker set to a skeleton</span></a>).</p>
+<p><strong>Corrected in the core.</strong> The damping force of the simulators is proportional to the relative velocity of the two masses (the
+original used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in, so the
+body at rest is in equilibrium.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="dominance.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Dominance</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="imaging.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Imaging</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model">The model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bone-directions">Bone directions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#following-a-movement-the-simulators">Following a movement: the simulators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looking-ahead-the-predictors">Looking ahead: the predictors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-the-body-the-estimator">Learning the body: the estimator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-the-outputs">How to read the outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/humanoid_models.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

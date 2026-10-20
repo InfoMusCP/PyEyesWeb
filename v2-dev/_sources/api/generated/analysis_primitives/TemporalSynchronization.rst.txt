@@ -1,0 +1,105 @@
+.. _feature-TemporalSynchronization:
+
+TemporalSynchronization
+=======================
+
+Progression of a staged synchronization process, from a chain of synchronization values, one sample per call.
+
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: TemporalSynchronization`
+
+Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``number_of_inputs``
+     - ``3``
+     - ``int``
+   * - ``max_steps``
+     - ``0``
+     - ``int``
+   * - ``stage_weights``
+     - ``None``
+     - ``Sequence[int] | None``
+   * - ``thresholds``
+     - ``None``
+     - ``Sequence[float] | None``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``synchronization``
+     - sample
+     - (3,)
+     - 
+     - one synchronisation value per input
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``progression``
+     - ``float``
+     - scalar
+     - 
+     - 
+   * - ``step``
+     - ``int``
+     - scalar
+     - 
+     - 
+   * - ``state``
+     - ``int``
+     - scalar
+     - 
+     - 
+   * - ``efficiency_step``
+     - ``float``
+     - scalar
+     - 
+     - only when progression == 1
+
+.. py:currentmodule:: pyeyesweb.analysis_primitives
+
+Description
+-----------
+
+.. autoclass:: TemporalSynchronization
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.analysis_primitives.TemporalSynchronization.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

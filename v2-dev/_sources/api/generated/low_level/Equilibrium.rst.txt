@@ -1,0 +1,102 @@
+.. _feature-Equilibrium:
+
+Equilibrium
+===========
+
+Equilibrium of a barycenter within the elliptical support region between two feet.
+
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s`
+
+Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Shape, symmetry and balance </theory/shape_symmetry_balance>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``margin``
+     - ``0.1``
+     - ``float``
+   * - ``y_weight``
+     - ``0.5``
+     - ``float``
+   * - ``units``
+     - ``'m'``
+     - ``Literal['m', 'mm']``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``left_foot``
+     - sample
+     - (2,)
+     - 
+     - left\_foot (x, y) on the floor plane
+   * - ``right_foot``
+     - sample
+     - (2,)
+     - 
+     - right\_foot (x, y) on the floor plane
+   * - ``barycenter``
+     - sample
+     - (2,)
+     - 
+     - barycenter (x, y) on the floor plane
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``equilibrium``
+     - ``float``
+     - scalar
+     - 
+     - Equilibrium in [0, 1]: 1 is perfectly centred, 0 is outside the support ellipse.
+   * - ``angle``
+     - ``float``
+     - scalar
+     - deg
+     - Angle of the foot-to-foot support vector.
+
+.. py:currentmodule:: pyeyesweb.low_level
+
+Description
+-----------
+
+.. autoclass:: Equilibrium
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.low_level.Equilibrium.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

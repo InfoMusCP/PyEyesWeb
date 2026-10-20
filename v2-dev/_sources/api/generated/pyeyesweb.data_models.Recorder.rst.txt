@@ -1,0 +1,33 @@
+﻿pyeyesweb.data\_models.Recorder
+===============================
+
+.. currentmodule:: pyeyesweb.data_models
+
+
+
+.. autoclass:: Recorder
+   :members: append, column, extend, from_arrays, run, to_frame, to_numpy, ok, status, timestamps, valid
+   :undoc-members:
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~Recorder.append
+      ~Recorder.column
+      ~Recorder.extend
+      ~Recorder.from_arrays
+      ~Recorder.run
+      ~Recorder.to_frame
+      ~Recorder.to_numpy
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~Recorder.ok
+      ~Recorder.status
+      ~Recorder.timestamps
+      ~Recorder.valid

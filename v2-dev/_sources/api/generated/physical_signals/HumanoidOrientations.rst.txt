@@ -1,0 +1,87 @@
+.. _feature-HumanoidOrientations:
+
+HumanoidOrientations
+====================
+
+The orientation of every bone of a skeleton relative to its parent bone.
+
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: HumanoidOrientationsExtractor`
+
+Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Humanoid and mass-spring models </theory/humanoid_models>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``labels``
+     - ``None``
+     - ``Optional[Sequence[str]]``
+   * - ``joint_map``
+     - ``None``
+     - ``Optional[Mapping[str, str]]``
+   * - ``reference_direction``
+     - ``(1.0, 0.0, 0.0)``
+     - ``tuple[float, float, float]``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``skeleton``
+     - points
+     - (21, 3)
+     - 
+     - captured joints; 21 labels
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``directions``
+     - ``float``
+     - (20, 3)
+     - 
+     - unit direction of each bone in the frame of its previous bone
+
+.. py:currentmodule:: pyeyesweb.physical_signals
+
+Description
+-----------
+
+.. autoclass:: HumanoidOrientations
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.physical_signals.HumanoidOrientations.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>

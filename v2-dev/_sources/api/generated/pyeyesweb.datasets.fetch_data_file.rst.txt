@@ -1,0 +1,6 @@
+﻿pyeyesweb.datasets.fetch\_data\_file
+====================================
+
+.. currentmodule:: pyeyesweb.datasets
+
+.. autofunction:: fetch_data_file

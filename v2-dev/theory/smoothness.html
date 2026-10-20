@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Smoothness &#8212; PyEyesWeb 2.0.0a1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/smoothness';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Shape, symmetry and balance" href="shape_symmetry_balance.html" />
+    <link rel="prev" title="Kinematics and energy" href="kinematics_energy.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/eyesweb-logo.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/eyesweb-logo-dark.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyEyesWeb</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Smoothness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/layers.html">
+    Layers and the catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/inputs.html">
+    Inputs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/results.html">
+    Results, statuses and recorders
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
+    Time, units and parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="framework.html">
+    Conceptual framework
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="notation.html">
+    Notation, units and conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="kinematics_energy.html">
+    Kinematics and energy
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Smoothness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="shape_symmetry_balance.html">
+    Shape, symmetry and balance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="impulsivity_suddenness.html">
+    Impulsivity and suddenness
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="gesture_segmentation.html">
+    Gesture segmentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="entropy_rarity_periodicity.html">
+    Entropy, rarity and periodicity
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="synchronization.html">
+    Synchronization
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dominance.html">
+    Dominance
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="humanoid_models.html">
+    Humanoid and mass-spring models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="imaging.html">
+    Imaging
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/physical_signals.html">
+    Physical signals
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/low_level.html">
+    Low-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/mid_level.html">
+    Mid-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/high_level.html">
+    High-level features
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/analysis_primitives.html">
+    Analysis primitives
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/data_models.html">
+    Data models
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/skeletons.html">
+    Skeletons
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/datasets.html">
+    Datasets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/catalog.html">
+    Catalog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/load_data.html">
+    Load the example data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
+    Map your marker set to a skeleton
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
+    A real-time loop with live parameters
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
+    Batch a recording to pandas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../howto/images.html">
+    Work with images
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/architecture.html">
+    Architecture and contract
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/conventions.html">
+    Conventions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/porting_status.html">
+    Porting status
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
+    Adding a feature
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
+    Building the docs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../migration.html">
+    Migrating from 1.x
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/InfoMusCP/PyEyesWeb" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Smoothness</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="smoothness">
+<h1>Smoothness<a class="headerlink" href="#smoothness" title="Link to this heading">#</a></h1>
+<p>A smooth movement is continuous and well coordinated, made of one flowing action without hesitations or corrections; a
+non-smooth one is jerky, interrupted or made of several attempts. Smoothness is one of the properties of movement that
+observers perceive most readily, and it is a component of the quality that is called fluidity in movement analysis and in
+the study of expressive movement <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id24" title="S. Piana, P. Alborno, R. Niewiadomski, M. Mancini, G. Volpe, and A. Camurri. Movement fluidity analysis based on performance and perception. In Proceedings of the 2016 CHI conference extended abstracts on human factors in computing systems, 1629–1636. 2016.">6</a>, <a class="reference internal" href="../references.html#id25" title="P. Alborno, A. Cera, S. Piana, M. Mancini, R. Niewiadomski, C. Canepa, G. Volpe, and A. Camurri. Interactive sonification of movement qualities – a case study on fluidity. In Proceedings of ISon, 35. 2016. DRAFT: `pages = 35` is the source text `Proceedings of ISon, 35` (first page or article number: unknown).">10</a>]</span>. The metrics for it come from research on motor control, and are now used for movement in general
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id19" title="S. Balasubramanian, A. Melendez-Calderon, A. Roby-Brami, and E. Burdet. On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1):112, 2015. DRAFT: consistent with DOCS_PLAN 4.3 (J NeuroEng Rehabil 12:112).">14</a>]</span>.</p>
+<p>No single number is the smoothness of a movement: the metrics below capture different aspects, and they do not rank
+movements in the same way. This page defines the six features of the family and says what each one measures:
+<a class="reference internal" href="../api/generated/low_level/SpectralArcLength.html#pyeyesweb.low_level.SpectralArcLength" title="pyeyesweb.low_level.SpectralArcLength"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralArcLength</span></code></a>, <a class="reference internal" href="../api/generated/low_level/LogDimensionlessJerk.html#pyeyesweb.low_level.LogDimensionlessJerk" title="pyeyesweb.low_level.LogDimensionlessJerk"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogDimensionlessJerk</span></code></a>,
+<a class="reference internal" href="../api/generated/low_level/Harmonicity.html#pyeyesweb.low_level.Harmonicity" title="pyeyesweb.low_level.Harmonicity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Harmonicity</span></code></a>, <a class="reference internal" href="../api/generated/low_level/SubmovementCount.html#pyeyesweb.low_level.SubmovementCount" title="pyeyesweb.low_level.SubmovementCount"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmovementCount</span></code></a>,
+<a class="reference internal" href="../api/generated/low_level/CurvatureDispersion.html#pyeyesweb.low_level.CurvatureDispersion" title="pyeyesweb.low_level.CurvatureDispersion"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code></a> and <a class="reference internal" href="../api/generated/low_level/CurvatureVelocityCorrelation.html#pyeyesweb.low_level.CurvatureVelocityCorrelation" title="pyeyesweb.low_level.CurvatureVelocityCorrelation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code></a>. The
+symbols are those of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>.</p>
+<section id="what-is-a-smooth-movement">
+<h2>What is a smooth movement<a class="headerlink" href="#what-is-a-smooth-movement" title="Link to this heading">#</a></h2>
+<p>The reference of the smoothness metrics is the point-to-point reach of a healthy adult: the hand moves from one position to
+another along a nearly straight path, with a speed profile <span class="math notranslate nohighlight">\(v(t)\)</span> that has <strong>one bell-shaped peak</strong>, rising from zero,
+reaching a maximum in the middle of the movement and falling back to zero. The ideal bell shape is the one that minimises the
+squared jerk over the movement <strong>[citation needed]</strong> (minimum-jerk model of reaching movements, Flash and Hogan). A movement that is made of several parts, with an interruption between them, has a speed
+profile with several peaks, called <strong>sub-movements</strong>; tremor and measurement noise add small oscillations on top. Two
+properties follow, and the metrics are built on them:</p>
+<ul class="simple">
+<li><p>the <strong>frequency content</strong> of a smooth speed profile is concentrated at low frequencies, while a profile with
+corrections or tremor has a longer tail at high frequencies;</p></li>
+<li><p>the <strong>jerk</strong>, the derivative of the acceleration, is small for a smooth profile and large for an interrupted one.</p></li>
+</ul>
+<p>A third group of metrics looks at the path instead of the speed profile: when a hand follows a curve, it slows down where
+the curve bends, so that curvature and speed are negatively related in a smooth movement.</p>
+<p>The speed profile of a movement is not available directly from a motion capture or a sensor: it has to be derived from the
+position, and differentiating amplifies noise. The four metrics of the speed profile take the speed as an input and do not
+filter it; compute it with <a class="reference internal" href="../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><code class="xref py py-class docutils literal notranslate"><span class="pre">Kinematics</span></code></a> (<a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>), which smooths and
+differentiates in one step, or smooth it beforehand.</p>
+</section>
+<section id="the-four-metrics-of-the-speed-profile">
+<h2>The four metrics of the speed profile<a class="headerlink" href="#the-four-metrics-of-the-speed-profile" title="Link to this heading">#</a></h2>
+<p>Four features take the speed of a point (or, for one of them, its acceleration) as a stream of scalars, keep a window of
+the last <span class="math notranslate nohighlight">\(N\)</span> samples and compute a metric of the last full window, every <span class="math notranslate nohighlight">\(H\)</span> samples. They share the constructor
+parameters <code class="docutils literal notranslate"><span class="pre">window</span></code> (60 samples by default, at least 10), <code class="docutils literal notranslate"><span class="pre">hop</span></code> (1 by default) and <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>, which is required,
+because the window carries no time axis of its own. The <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> of a call only labels the result: it does not enter the
+computation. Their statuses are <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> until 10 samples have arrived, <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> between two windows when <span class="math notranslate nohighlight">\(H &gt; 1\)</span>, and
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> for a value that is not finite or for a profile that cannot support the measure (a constant or null speed, for
+the first two).</p>
+<section id="spectral-arc-length">
+<h3>Spectral arc length<a class="headerlink" href="#spectral-arc-length" title="Link to this heading">#</a></h3>
+<p>The spectral arc length (SPARC) measures the length of the amplitude spectrum of the speed profile
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id19" title="S. Balasubramanian, A. Melendez-Calderon, A. Roby-Brami, and E. Burdet. On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1):112, 2015. DRAFT: consistent with DOCS_PLAN 4.3 (J NeuroEng Rehabil 12:112).">14</a>]</span>. Let <span class="math notranslate nohighlight">\(V(f)\)</span> be the magnitude of the Fourier transform of the (zero-padded) speed of
+the window, normalised to its maximum, <span class="math notranslate nohighlight">\(\hat{V}(f) = V(f) / \max_f V(f)\)</span>. Then</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{SPARC} = -\int_{0}^{f_c} \sqrt{\left(\frac{1}{f_c}\right)^{2} + \left(\frac{d\hat{V}(f)}{df}\right)^{2}} \, df,
+\]</div>
+<p>the negative of the length of the curve <span class="math notranslate nohighlight">\(\hat{V}\)</span> over the band <span class="math notranslate nohighlight">\([0, f_c]\)</span>, with the frequency also normalised by the
+cut-off <span class="math notranslate nohighlight">\(f_c\)</span>. A smooth profile has a spectrum that is a single peak at low frequencies and a short curve; a profile with
+several peaks or with tremor has a spectrum with extra peaks and a longer curve. The cut-off is adaptive: the highest
+frequency at which <span class="math notranslate nohighlight">\(\hat{V}\)</span> is still above <code class="docutils literal notranslate"><span class="pre">amplitude_threshold</span></code> (0.05 by default), limited to the interval from
+<code class="docutils literal notranslate"><span class="pre">minimum_cutoff_frequency</span></code> (2 Hz) to <code class="docutils literal notranslate"><span class="pre">maximum_cutoff_frequency</span></code> (20 Hz). The adaptation makes the measure independent of
+the amplitude and of the duration of the movement, which is the reason for its use. The value is dimensionless and negative:
+the closer to 0, the smoother the movement. It depends on the zero-padding and on the cut-off choice, so compare windows of the
+same length and with the same parameters.</p>
+</section>
+<section id="log-dimensionless-jerk">
+<h3>Log dimensionless jerk<a class="headerlink" href="#log-dimensionless-jerk" title="Link to this heading">#</a></h3>
+<p>The jerk is the rate of change of the acceleration, and its squared integral grows with the amplitude and the speed of the
+movement and decreases with its duration. The dimensionless jerk divides it by a combination of the duration <span class="math notranslate nohighlight">\(T\)</span> of the
+window and the peak speed <span class="math notranslate nohighlight">\(v_{\max}\)</span> that removes the dimensions, and the log dimensionless jerk (LDLJ) takes the negative
+logarithm <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id19" title="S. Balasubramanian, A. Melendez-Calderon, A. Roby-Brami, and E. Burdet. On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1):112, 2015. DRAFT: consistent with DOCS_PLAN 4.3 (J NeuroEng Rehabil 12:112).">14</a>, <a class="reference internal" href="../references.html#id20" title="A. Melendez-Calderon, C. Shirota, and S. Balasubramanian. Estimating movement smoothness from inertial measurement units. Frontiers in bioengineering and biotechnology, 8:558771, 2021.">15</a>]</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{LDLJ} = -\ln\left( \frac{T^{3}}{v_{\max}^{2}} \int_{0}^{T}
+\left( \frac{d^{2}v}{dt^{2}} \right)^{2} dt \right),
+\]</div>
+<p>where the derivatives are taken by finite differences. With <code class="docutils literal notranslate"><span class="pre">input_mode=&quot;acceleration&quot;</span></code> the input is the magnitude of the
+acceleration, the jerk is its first difference, and the normalisation uses the duration and the peak of the acceleration
+(<code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk.from_acceleration</span></code>). The measure is dimensionless and negative, closer to 0 for a smoother movement, and
+a flat signal gives 0. It is the more sensitive of the two to noise, because it differentiates twice: filter the speed first.</p>
+</section>
+<section id="harmonicity">
+<h3>Harmonicity<a class="headerlink" href="#harmonicity" title="Link to this heading">#</a></h3>
+<p>A smooth ballistic movement has one peak of speed, and a repeated movement alternates peaks and valleys.
+<a class="reference internal" href="../api/generated/low_level/Harmonicity.html#pyeyesweb.low_level.Harmonicity" title="pyeyesweb.low_level.Harmonicity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Harmonicity</span></code></a> compares the number of peaks of the speed in the window with the number of sign
+changes of its gradient, the turning points of the speed. It is 1 when peaks and valleys alternate regularly, as in a single
+bell-shaped profile or in a regular oscillation, and lower when the speed has turning points that do not belong to that
+pattern; a maximum at the border of the window is not counted as a peak. The measure is dimensionless and lies in <span class="math notranslate nohighlight">\([0, 1]\)</span>.
+Unlike SPARC and LDLJ it does not compare the movement with a reference shape: it says whether the peaks and the valleys
+are regular.</p>
+</section>
+<section id="sub-movements">
+<h3>Sub-movements<a class="headerlink" href="#sub-movements" title="Link to this heading">#</a></h3>
+<p>A simple reaching movement has one speed peak, and corrections and hesitations add further peaks, the sub-movements.
+<a class="reference internal" href="../api/generated/low_level/SubmovementCount.html#pyeyesweb.low_level.SubmovementCount" title="pyeyesweb.low_level.SubmovementCount"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmovementCount</span></code></a> counts the peaks of the speed in the window whose prominence is at least
+<code class="docutils literal notranslate"><span class="pre">prominence_factor</span></code> (0.1 by default) times the maximum of the window, and which are separated by at least 100 ms (that is
+why the sampling rate is needed). The output is an integer, 0 or more, and 0 for a speed that is below <span class="math notranslate nohighlight">\(10^{-6}\)</span> throughout.
+A smoother movement has fewer sub-movements.</p>
+</section>
+<section id="an-example">
+<h3>An example<a class="headerlink" href="#an-example" title="Link to this heading">#</a></h3>
+<p>Three speed profiles of one second, sampled at 100 Hz, show the metrics at work: one bell-shaped peak, three separate peaks,
+and the bell with measurement noise added. One window holds the whole movement.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpectralArcLength</span><span class="p">,</span> <span class="n">LogDimensionlessJerk</span><span class="p">,</span> <span class="n">Harmonicity</span><span class="p">,</span> <span class="n">SubmovementCount</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rate</span> <span class="o">=</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bump</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">centre</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">height</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">time</span> <span class="o">-</span> <span class="n">centre</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profiles</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">"one bell"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">"three corrections"</span><span class="p">:</span> <span class="n">bump</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">bump</span><span class="p">(</span><span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">bump</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s2">"bell with noise"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"SPARC"</span><span class="p">:</span> <span class="p">(</span><span class="n">SpectralArcLength</span><span class="p">,</span> <span class="s2">"spectral_arc_length"</span><span class="p">),</span> <span class="s2">"LDLJ"</span><span class="p">:</span> <span class="p">(</span><span class="n">LogDimensionlessJerk</span><span class="p">,</span> <span class="s2">"log_dimensionless_jerk"</span><span class="p">),</span>
+<span class="gp">... </span>           <span class="s2">"harmonicity"</span><span class="p">:</span> <span class="p">(</span><span class="n">Harmonicity</span><span class="p">,</span> <span class="s2">"harmonicity"</span><span class="p">),</span> <span class="s2">"sub-movements"</span><span class="p">:</span> <span class="p">(</span><span class="n">SubmovementCount</span><span class="p">,</span> <span class="s2">"submovement_count"</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">speed</span> <span class="ow">in</span> <span class="n">profiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">speed</span><span class="p">),</span> <span class="n">output</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">... </span>              <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">18s</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+<span class="go">one bell           {'SPARC': -1.43, 'LDLJ': -5.25, 'harmonicity': 1.0, 'sub-movements': 1.0}</span>
+<span class="go">three corrections  {'SPARC': -2.89, 'LDLJ': -10.45, 'harmonicity': 1.0, 'sub-movements': 3.0}</span>
+<span class="go">bell with noise    {'SPARC': -1.42, 'LDLJ': -14.67, 'harmonicity': 1.0, 'sub-movements': 4.0}</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="../_images/smoothness-1.png" class="plot-directive" src="../_images/smoothness-1.png" />
+</figure>
+<p>The single bell is the smoothest by both measures. The corrections lower SPARC from <span class="math notranslate nohighlight">\(-1.43\)</span> to <span class="math notranslate nohighlight">\(-2.89\)</span> and the LDLJ from
+<span class="math notranslate nohighlight">\(-5.25\)</span> to <span class="math notranslate nohighlight">\(-10.45\)</span>, and the count finds the three peaks. In this example the measurement noise leaves the spectral arc length nearly
+unchanged, but it lowers the LDLJ strongly, from <span class="math notranslate nohighlight">\(-5.25\)</span> to <span class="math notranslate nohighlight">\(-14.67\)</span>, since the second derivative of the noise is large,
+and it adds spurious peaks to the count. The two
+metrics answer different questions, and the choice between them is a choice of what to be sensitive to.</p>
+</section>
+</section>
+<section id="the-two-metrics-of-the-path">
+<h2>The two metrics of the path<a class="headerlink" href="#the-two-metrics-of-the-path" title="Link to this heading">#</a></h2>
+<p>Two features take the path of the point instead of its speed profile.</p>
+<section id="curvature-and-speed">
+<h3>Curvature and speed<a class="headerlink" href="#curvature-and-speed" title="Link to this heading">#</a></h3>
+<p>A hand that follows a curve slows down where the curve bends, and speeds up where it straightens. For a smooth movement the
+curvature <span class="math notranslate nohighlight">\(\kappa\)</span> and the speed <span class="math notranslate nohighlight">\(v\)</span> are therefore negatively correlated, and the correlation is a smoothness index
+<span class="bibtex-citation" id="id5">[<a class="reference internal" href="../references.html#id16" title="B. Mazzarino and M. Mancini. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored). 2009. DRAFT: publisher, place, pages unknown.">5</a>]</span>. In a window of the trajectory,
+<a class="reference internal" href="../api/generated/low_level/CurvatureVelocityCorrelation.html#pyeyesweb.low_level.CurvatureVelocityCorrelation" title="pyeyesweb.low_level.CurvatureVelocityCorrelation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code></a> smooths and differentiates the samples by a Savitzky-Golay
+filter <strong>[citation needed]</strong> (Savitzky and Golay), which gives the velocity <span class="math notranslate nohighlight">\(v_k\)</span> and the curvature <span class="math notranslate nohighlight">\(\kappa_k\)</span> at every sample
+<span class="math notranslate nohighlight">\(k\)</span> of the window, and its <code class="docutils literal notranslate"><span class="pre">smoothness</span></code> output is by default their Pearson correlation,</p>
+<div class="math notranslate nohighlight">
+\[
+S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}
+{\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],
+\]</div>
+<p>strongly negative for a smooth movement. It takes a trajectory of one, two or three channels, one sample per call, and
+needs the sampling rate. The outputs also hold the per-sample <code class="docutils literal notranslate"><span class="pre">curvature</span></code> and <code class="docutils literal notranslate"><span class="pre">velocity</span></code> of the window and their standard
+deviations. The filters keep their history between windows, so consecutive windows share <span class="math notranslate nohighlight">\(N - H\)</span> samples, and the status is
+<code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> while the first window fills and for the first window after it, because the filters need a previous window
+(<code class="docutils literal notranslate"><span class="pre">smoothness</span></code> is then NaN). A null movement
+gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>. The default <code class="docutils literal notranslate"><span class="pre">correlation_type=&quot;pearson&quot;</span></code> is the coefficient above; <code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code> is a simplified
+index of the original block, capped at <code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>. Corrected in the core: the curvature used half of the second
+derivative of the fit.</p>
+<p>An ellipse traced at constant angular speed slows down at the ends of its long axis, where the curvature is largest, and
+the correlation is strongly negative:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">CurvatureVelocityCorrelation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ellipse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">time</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">time</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">CurvatureVelocityCorrelation</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span><span class="o">.</span><span class="n">smoothness</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">-0.94</span>
+</pre></div>
+</div>
+</section>
+<section id="curvature-dispersion">
+<h3>Curvature dispersion<a class="headerlink" href="#curvature-dispersion" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../api/generated/low_level/CurvatureDispersion.html#pyeyesweb.low_level.CurvatureDispersion" title="pyeyesweb.low_level.CurvatureDispersion"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code></a> is a curvature-based index of a movement that relates how much the path
+bends to the distance that the point travelled over the last <code class="docutils literal notranslate"><span class="pre">window</span></code> calls (50 by default). It is computed from the
+velocity and the acceleration vectors of the point, from which the feature derives the curvature <span class="math notranslate nohighlight">\(\kappa\)</span> and the arc
+length <span class="math notranslate nohighlight">\(\lVert\mathbf{v}\rVert \, \Delta t\)</span> of each call, keeps both over a ring of <code class="docutils literal notranslate"><span class="pre">window</span></code> calls, and returns one
+dimensionless value per call, from the first call on. The index is 1 while the movement is slower than <code class="docutils literal notranslate"><span class="pre">movement_threshold</span></code>:
+a point at rest has no smoothness to measure. A path with curvature 0 everywhere, a perfectly straight one, has no finite
+index and gives <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>. The empty entries of the rings weigh in until they have filled, so the first <code class="docutils literal notranslate"><span class="pre">window</span></code>
+values are not comparable with the later ones. Corrected in the core: every call now adds the speed times the time step to
+the arc length (above and below the threshold). This index was the <code class="docutils literal notranslate"><span class="pre">smoothness</span></code> output of <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> in earlier versions.</p>
+<p>The velocity and the acceleration come from two <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> features with the same filter parameters and time rule, one for
+each, with <code class="docutils literal notranslate"><span class="pre">output_dims=&quot;components&quot;</span></code>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">CurvatureDispersion</span><span class="p">,</span> <span class="n">Kinematics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">time</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">time</span><span class="p">)]</span>     <span class="c1"># a circle of radius 1 m</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">velocity</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">output_type</span><span class="o">=</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="n">output_dims</span><span class="o">=</span><span class="s2">"components"</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">acceleration</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">output_type</span><span class="o">=</span><span class="s2">"acceleration"</span><span class="p">,</span> <span class="n">output_dims</span><span class="o">=</span><span class="s2">"components"</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">CurvatureDispersion</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">circle</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">velocity</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">)</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">point</span><span class="p">)</span><span class="o">.</span><span class="n">acceleration</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">curvature_dispersion</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">0.06</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="how-to-read-the-outputs">
+<h2>How to read the outputs<a class="headerlink" href="#how-to-read-the-outputs" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Output</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Smoother means</p></th>
+<th class="head"><p>Range</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SpectralArcLength</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">spectral_arc_length</span></code></p></td>
+<td><p>none</p></td>
+<td><p>closer to 0</p></td>
+<td><p>negative</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">log_dimensionless_jerk</span></code></p></td>
+<td><p>none</p></td>
+<td><p>closer to 0</p></td>
+<td><p>negative; 0 for a flat signal</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Harmonicity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">harmonicity</span></code></p></td>
+<td><p>none</p></td>
+<td><p>closer to 1</p></td>
+<td><p><span class="math notranslate nohighlight">\([0, 1]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">submovement_count</span></code></p></td>
+<td><p>none</p></td>
+<td><p>lower</p></td>
+<td><p>integer, 0 or more</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">smoothness</span></code></p></td>
+<td><p>none</p></td>
+<td><p>closer to <span class="math notranslate nohighlight">\(-1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\([-1, 1]\)</span> for <code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">curvature_dispersion</span></code></p></td>
+<td><p>none</p></td>
+<td><p>see the example</p></td>
+<td><p>1 below the movement threshold</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The metrics are dimensionless and independent of the unit of the data, which makes them comparable between movements of
+different size and speed, but a value is only meaningful relative to the same metric on a comparable movement: the absolute
+numbers depend on the parameters (the cut-off of SPARC, the duration of the window) as the text above says.</p>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>What a window holds.</strong> The metrics describe the movement in the window. For one reach the window should contain the
+whole movement, from the start to the end: a window that cuts the movement in the middle measures the cut. For a
+continuous movement, windows of the length of the phrase that you want to describe give a time series of smoothness.
+With the default of 60 samples at 100 Hz the window is 0.6 s.</p></li>
+<li><p><strong>Sampling rate.</strong> The four speed metrics need <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> and raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> at construction without it. The
+jerk-based metric needs a sampling rate high enough to resolve the movement, and the cut-offs of SPARC (2 to 20 Hz by
+default) must lie below the Nyquist frequency <span class="math notranslate nohighlight">\(f_s / 2\)</span>.</p></li>
+<li><p><strong>Noise.</strong> Differentiation amplifies noise. Smooth the speed or compute it with <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code>; the noise sensitivity of the
+metrics differs, as the example shows.</p></li>
+<li><p><strong>Several metrics.</strong> Report more than one when the movement is not a single reach: SPARC and the count of sub-movements
+say different things about a movement with several parts.</p></li>
+<li><p><strong>From a skeleton.</strong> The usual chain is skeleton, <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> (speed of a joint), one or more of the metrics above and,
+to get a value for each gesture, the segmentation of <a class="reference internal" href="gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>.</p></li>
+</ul>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The definitions and the comparison of the metrics: <span class="bibtex-citation" id="id6">[<a class="reference internal" href="../references.html#id19" title="S. Balasubramanian, A. Melendez-Calderon, A. Roby-Brami, and E. Burdet. On the analysis of movement smoothness. Journal of neuroengineering and rehabilitation, 12(1):112, 2015. DRAFT: consistent with DOCS_PLAN 4.3 (J NeuroEng Rehabil 12:112).">14</a>]</span>. Their computation from inertial
+sensors: <span class="bibtex-citation" id="id7">[<a class="reference internal" href="../references.html#id20" title="A. Melendez-Calderon, C. Shirota, and S. Balasubramanian. Estimating movement smoothness from inertial measurement units. Frontiers in bioengineering and biotechnology, 8:558771, 2021.">15</a>]</span>. The curvature-velocity index and the motion qualities of impulsivity and smoothness:
+<span class="bibtex-citation" id="id8">[<a class="reference internal" href="../references.html#id16" title="B. Mazzarino and M. Mancini. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored). 2009. DRAFT: publisher, place, pages unknown.">5</a>]</span>. Fluidity as a perceived quality: <span class="bibtex-citation" id="id9">[<a class="reference internal" href="../references.html#id24" title="S. Piana, P. Alborno, R. Niewiadomski, M. Mancini, G. Volpe, and A. Camurri. Movement fluidity analysis based on performance and perception. In Proceedings of the 2016 CHI conference extended abstracts on human factors in computing systems, 1629–1636. 2016.">6</a>]</span>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="kinematics_energy.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Kinematics and energy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="shape_symmetry_balance.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Shape, symmetry and balance</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-smooth-movement">What is a smooth movement</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-four-metrics-of-the-speed-profile">The four metrics of the speed profile</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral-arc-length">Spectral arc length</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#log-dimensionless-jerk">Log dimensionless jerk</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonicity">Harmonicity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sub-movements">Sub-movements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example">An example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-metrics-of-the-path">The two metrics of the path</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#curvature-and-speed">Curvature and speed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#curvature-dispersion">Curvature dispersion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-the-outputs">How to read the outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-notes">Practical notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/theory/smoothness.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Casa Paganini - InfoMus.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

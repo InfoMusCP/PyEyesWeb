@@ -1,0 +1,138 @@
+.. _feature-PositionDependingPotentials:
+
+PositionDependingPotentials
+===========================
+
+Potential over a grid of cells driven by the cells that are hit, with memory of past hits.
+
+:bdg-primary:`Layer 3: mid-level features` :bdg-secondary:`timescale: \0.5-3 s` :bdg-info:`EyesWeb: PositionDependingPotentials`
+
+Layer: :doc:`Layer 3: mid-level features </api/mid_level>`. Family: :doc:`Shape, symmetry and balance </theory/shape_symmetry_balance>`.
+
+Parameters
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Name
+     - Default
+     - Type
+   * - ``cells_along_x``
+     - ``10``
+     - ``int``
+   * - ``cells_along_y``
+     - ``10``
+     - ``int``
+   * - ``potential_type``
+     - ``'increment_decrement'``
+     - ``Literal['increment_decrement', 'polynomial', 'occupation_rates', 'gaussian', 'logarithmic']``
+   * - ``initialization_matrix``
+     - ``None``
+     - ``numpy.ndarray | None``
+   * - ``increment_factor``
+     - ``1.0``
+     - ``float``
+   * - ``decrement_factor``
+     - ``1.0``
+     - ``float``
+   * - ``norm_exponent``
+     - ``2.0``
+     - ``float``
+   * - ``decay_exponent``
+     - ``1.0``
+     - ``float``
+   * - ``in_percentage``
+     - ``True``
+     - ``bool``
+   * - ``on_window``
+     - ``False``
+     - ``bool``
+   * - ``window``
+     - ``250``
+     - ``int``
+   * - ``gaussian_sigma_x``
+     - ``1.0``
+     - ``float``
+   * - ``gaussian_sigma_y``
+     - ``1.0``
+     - ``float``
+   * - ``gaussian_correlation``
+     - ``0.0``
+     - ``float``
+   * - ``use_custom_amplitude``
+     - ``False``
+     - ``bool``
+   * - ``custom_amplitude``
+     - ``1.0``
+     - ``float``
+   * - ``amplitude``
+     - ``1.0``
+     - ``float``
+   * - ``log_scale``
+     - ``1.0``
+     - ``float``
+   * - ``use_custom_distance``
+     - ``False``
+     - ``bool``
+   * - ``custom_distance``
+     - ``100.0``
+     - ``float``
+
+Inputs
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 14 12 12 44
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``cells``
+     - points
+     - (n, 2)
+     - 
+     - hit cells (i, j) = (row, column)
+
+Outputs
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 10 12 14 46
+
+   * - Name
+     - Kind
+     - Shape
+     - Unit
+     - Description
+   * - ``potential``
+     - ``float``
+     - (10, 10)
+     - 
+     - potential of each cell (rows from y, columns from x)
+
+.. py:currentmodule:: pyeyesweb.mid_level
+
+Description
+-----------
+
+.. autoclass:: PositionDependingPotentials
+   :no-members:
+   :no-special-members:
+
+
+..
+   Gallery back-references: sphinx-gallery writes api/generated/backreferences/<module>.<Class>.examples (the
+   thumbnails of the tutorials that use the class) and touches an empty one for every documented class, so the
+   include below never fails.
+
+.. include:: /api/generated/backreferences/pyeyesweb.mid_level.PositionDependingPotentials.examples
+
+.. raw:: html
+
+   <div class="clearer"></div>
