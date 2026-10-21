@@ -809,11 +809,6 @@ Next steps
 * The mid-level features build on these quantities: the next layer segments gestures and measures their qualities.
 
 
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 6.422 seconds)
-
-
 .. _sphx_glr_download_tutorials_03_low_level_plot_06_shape.py:
 
 .. only:: html
