@@ -1,7 +1,9 @@
 """Base classes of the features that wrap a block of the compiled core."""
 
+import functools
 import inspect
 import re
+from contextlib import contextmanager
 from numbers import Real
 from abc import ABCMeta
 from enum import Enum
@@ -47,6 +49,21 @@ _SIGNATURE_PARAM = re.compile(r"[(,]\s*(\w+)\s*:")
 
 # A parameter annotated with a core type in a nanobind signature: "name: [container[]eyesweb_core.path.Type".
 _SIGNATURE_CORE_TYPE = re.compile(r"[(,]\s*(\w+)\s*:\s*([\w.]+\[)?eyesweb_core\.([\w.]+)")
+
+# An identifier of the core in a message: a word that has a capital inside (camelCase) or is a block name listed in `_core_names`.
+_IDENTIFIER = re.compile(r"\b[A-Za-z_]\w*\b")
+_CAMEL_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
+
+
+def _translating(method):
+    """`method` (a `process` of a feature) with the names of the core in the errors it raises turned into public names."""
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        with self._public_errors():
+            return method(self, *args, **kwargs)
+
+    return wrapper
 
 
 class _SealedMeta(ABCMeta):
@@ -148,6 +165,10 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
             cls._hidden_params = cls._hidden_params | frozenset(cls._parts.values())
         if cls._core_class is not None:
             cls.__signature__ = core_signature(cls, core)
+        for name in ("process", "_process_window"):  # an error of the block names the parameters as the user does
+            method = cls.__dict__.get(name)
+            if callable(method) and not getattr(method, "__isabstractmethod__", False):
+                setattr(cls, name, _translating(method))
 
     def __init__(self, **params: Any):
         if self._unit_params:
@@ -221,13 +242,35 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         previous = self.__dict__.get("_previous_t")
         return "non-increasing timestamp" if self._timed and timestamp is not None and previous is not None and timestamp <= previous else ""
 
+    @contextmanager
+    def _public_errors(self):
+        """Inside, an error of the core that names a parameter by its core name (`amplitudeThreshold`, `ges_dur`) is
+        re-raised, same type, with its public name (`amplitude_threshold`, `gesture_duration`). Only the identifiers of the
+        message that are public parameters of this feature are touched: the reverse of `_core_names`, else camelCase to snake_case."""
+        try:
+            yield
+        except (ValueError, TypeError, RuntimeError) as error:
+            if error.args and isinstance(error.args[0], str):
+                shown = inspect.signature(type(self)).parameters
+                renamed = self._public_names()
+
+                def public(match: "re.Match") -> str:
+                    word = match.group()
+                    snake = _CAMEL_BOUNDARY.sub("_", word).lower()
+                    name = renamed.get(word) or renamed.get(snake) or snake  # the core says `nInputs` for `n_inputs`
+                    return name if name in shown and name != word else word
+
+                error.args = (_IDENTIFIER.sub(public, error.args[0]),) + error.args[1:]
+            raise
+
     @property
     def _block(self) -> Any:
         """The C++ block, built on first use from the current parameters."""
         if self._built is None:
             self.__dict__["_building"] = True
             try:
-                self._built = self._build_block()
+                with self._public_errors():
+                    self._built = self._build_block()
             finally:
                 self.__dict__["_building"] = False
         return self._built
@@ -245,12 +288,13 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         """
         params = {**self._params, **self._coerce_choices({name: value})}
         if self._built is not None:
-            fresh = self._build_block(params)  # validates before anything changes
-            adopt = getattr(self._built, "adopt_params", None)
-            if adopt is None:
-                self._built = fresh
-            if adopt is None or adopt(fresh):
-                self._state_lost()
+            with self._public_errors():
+                fresh = self._build_block(params)  # validates before anything changes
+                adopt = getattr(self._built, "adopt_params", None)
+                if adopt is None:
+                    self._built = fresh
+                if adopt is None or adopt(fresh):
+                    self._state_lost()
         self._params = params
         self._outputs_changed()
 
@@ -343,8 +387,9 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
         return self._params.get(name, default)
 
     def reset(self) -> None:
-        """Forget the state accumulated since construction."""
+        """Forget the state accumulated since construction. A reset is not a parameter change: no note follows it."""
         self._previous_t = None
+        self._state_lost_pending = False
         reset = getattr(self._built, "reset", None)
         if reset is not None:
             reset()

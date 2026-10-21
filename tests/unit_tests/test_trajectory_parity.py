@@ -16,6 +16,7 @@ REFERENCE = Path(__file__).resolve().parents[1] / "data" / "trajectory_reference
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.low_level import Kinematics  # noqa: E402
 from pyeyesweb.low_level import Directness, TrajectoryNonPlanarity  # noqa: E402
 
@@ -124,12 +125,6 @@ def _pack(outcomes):
     return values, meta
 
 
-def _bits(values):
-    values = np.asarray(values, dtype=float).copy()
-    values[np.isnan(values)] = 0.123456789  # every NaN equal
-    return values.view(np.uint64)
-
-
 def test_outputs_match_the_frozen_reference_bit_for_bit():
     values, meta = _pack(compute())
     with np.load(REFERENCE) as data:
@@ -137,6 +132,5 @@ def test_outputs_match_the_frozen_reference_bit_for_bit():
         frozen = data["values"]
     assert meta == frozen_meta  # same cases, statuses, reasons and value counts
     assert values.shape == frozen.shape
-    different = np.flatnonzero(_bits(values) != _bits(frozen))
-    assert not different.size, f"{different.size} values differ, first at {different[:10]}: {values[different[:3]]} vs {frozen[different[:3]]}"
+    assert_same_floats(values, frozen)
 

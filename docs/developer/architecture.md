@@ -113,7 +113,7 @@ The classes that carry the contract are in {py:mod}`pyeyesweb.data_models`.
   `INVALID_INPUT`. Each schema makes its own result class, `<Feature>Result`.
 
 {py:class}`~pyeyesweb.data_models.Recorder`
-: The columns of a recording: one row per sample, a NumPy column per output, `status`, `timestamps`, `to_frame()`, `to_numpy()`.
+: The columns of a recording: one row per sample, a NumPy column per output, `status`, `reasons`, `timestamps`, `to_frame()`, `to_numpy()`.
 
 ### Error policy (decided)
 

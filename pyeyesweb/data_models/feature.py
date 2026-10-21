@@ -43,7 +43,16 @@ def _recording(series: Any, declared: Input) -> Any:
     """One input's recording, indexed by time: float64 for the numeric kinds, the frames as they are for images."""
     if declared.kind is InputKind.IMAGE:
         return series if isinstance(series, (np.ndarray, list, tuple)) else list(series)
-    return np.asarray(series, dtype=float)
+    if declared.accepts and not isinstance(series, np.ndarray):
+        frames = list(series)
+        if frames and all(isinstance(frame, declared.accepts) for frame in frames):
+            return frames  # frames in a form the input takes as they are (dicts of labelled points): `process` reads them
+    try:
+        return np.asarray(series, dtype=float)
+    except (TypeError, ValueError):
+        raise ValueError(f"input '{declared.name}': a recording must be an array (first axis = time) of numbers; "
+                         "a sequence of dict frames is accepted only by the features that take dict frames: pass an array "
+                         "in label order, or loop over process") from None
 
 
 def _checked(method, window: bool):

@@ -12,7 +12,6 @@ from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
 from pyeyesweb.data_models.skeleton import Skeleton
-from pyeyesweb.base.choices import choice_name
 from pyeyesweb.base.inputs import labelled_set, points_input
 from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.skeletons import get_skeleton, with_skeleton
@@ -88,16 +87,16 @@ class Symmetry(VariantFeature, FrameFeature):
     normalize_skeleton : bool, optional
         ``"ratio"`` only. Divide each joint of a couple by its distance to the reference. Defaults to ``True``. *(live)*
     pairs : sequence of (str, str)
-        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). *(live)*
-    reference_type : {"label"}, optional
-        ``"ratio"`` only. ``"label"`` translates the frame so that ``reference_point`` is the origin. The other two
-        values of the original block, ``"barycenter"`` and ``"point"``, did nothing there and are rejected with
-        ``ValueError``; to take the barycenter as the centre, subtract it from the frame before the call. Defaults to
-        ``"label"``. *(live)*
+        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). An entry
+        that is not two joint names, or a name that is not among the labels, raises ``ValueError``. *(live)*
     reference_point : str, optional
-        ``"ratio"``: the joint taken as the origin of the coordinates, ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).
-        ``"reflection"``: the joint about which the right joint is reflected; ``None``, the default for this method, is
-        the barycenter (mean position) of the frame. *(live)*
+        The reference joint: the origin to which the whole frame is translated (every joint minus this joint) before the
+        formulas are applied, so that only the posture counts, not where the body stands. It is one of the joints of
+        ``labels`` (or of the dict frame), and comes from this argument or, when absent, from the ``skeleton``.
+        ``"ratio"``: ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at
+        construction otherwise). ``"reflection"``: the joint about which the right joint is reflected; ``None``, the
+        default for this method, is the barycenter (mean position) of the frame. To use another centre with ``"ratio"``,
+        subtract it from the frame before the call. *(live)*
 
     Notes
     -----
@@ -132,6 +131,13 @@ class Symmetry(VariantFeature, FrameFeature):
     """
     _SWITCH = ("method", "ratio")
     _variants = {}
+
+    @classmethod
+    def _coerce_choices(cls, params: dict) -> dict:
+        for pair in params.get("pairs") or ():
+            if isinstance(pair, str) or not hasattr(pair, "__len__") or len(pair) != 2 or not all(isinstance(name, str) for name in pair):
+                raise ValueError(f"Symmetry: a pair is two joint names (left, right), got {pair!r} in pairs=")
+        return super()._coerce_choices(params)
 
     @property
     def method(self) -> Literal["ratio", "reflection"]:
@@ -190,6 +196,7 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
     """
     _core_class = core.motion.SymmetryIndex3D
     _core_names = {"pairs": "couples", "aggregation": "algorithm", "output_dims": "output_type"}
+    _hidden_params = frozenset({"reference_type"})  # the core translates the frame only for "label", its default
 
     def __init__(self, labels: Optional[Sequence[str]] = None, skeleton: Any = None, *,
                  method: str = "ratio", **params: Any):
@@ -200,14 +207,6 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
             raise ValueError(f"Symmetry(method='ratio'): the skeleton {get_skeleton(skeleton).name!r} defines no reference joint; "
                              "pass reference_point= (a joint of the skeleton)")
         self._set_labels(labels)
-
-    @classmethod
-    def _coerce_choices(cls, params: dict) -> dict:
-        out = super()._coerce_choices(params)
-        if "reference_type" in out and out["reference_type"] != core.motion.SymmetryIndex3DReferenceType.LABEL:
-            raise ValueError(f"Symmetry(method='ratio'): reference_type={choice_name(out['reference_type'])!r} is not supported: the core "
-                             "does not translate the frame for it (the original block did nothing); only 'label' is")
-        return out
 
     def _label_names(self):
         return {name for couple in self._param("pairs", None) or () for name in couple}

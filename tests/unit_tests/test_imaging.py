@@ -15,6 +15,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
 from imaging_inputs import PULSE_WINDOWS, VIDEO_COLOUR, VIDEO_GRAY, silhouette  # noqa: E402
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb import Layer, catalog  # noqa: E402
 from pyeyesweb.analysis_primitives import BinaryPulsesRegularity  # noqa: E402
 from pyeyesweb.data_models import Input, InputKind, Status  # noqa: E402
@@ -238,8 +239,7 @@ def test_binary_pulses_regularity_validation():
 def test_centroids_equal_the_reference_port_with_the_filter():
     feature = SilhouetteCentroids(filter_centroids=True, alpha=0.5)
     for step in range(3):
-        assert np.array_equal(feature.process(silhouette(shift=3 * step)).centroids, REFERENCE["centroids_filtered"][step],
-                              equal_nan=True)
+        assert_same_floats(feature.process(silhouette(shift=3 * step)).centroids, REFERENCE["centroids_filtered"][step])
 
 
 def test_body_parts_equal_the_reference_port():

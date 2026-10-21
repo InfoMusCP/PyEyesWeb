@@ -126,7 +126,7 @@ read from the result of that row, or from `rec["videogram"]`, a list with one ar
 
 ```{doctest}
 >>> list(recording.to_frame().columns), recording.to_numpy().shape
-(['status', 'timestamp'], (10, 0))
+(['status', 'reason', 'timestamp'], (10, 0))
 >>> len(recording["videogram"]), recording[0].videogram.shape
 (10, (240, 50, 1))
 ```

@@ -11,6 +11,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level.direction_change import DirectionChange  # noqa: E402
 
@@ -82,8 +83,8 @@ def _bits(values):
 
 
 def _frame(recorder):
-    """`to_frame()` with the status codes of the frozen file in place of the names."""
-    return recorder.to_frame().replace({"status": {status.name: int(status) for status in Status}})
+    """`to_frame()` with the status codes of the frozen file in place of the names (and without the reasons, it has none)."""
+    return recorder.to_frame().drop(columns="reason").replace({"status": {status.name: int(status) for status in Status}})
 
 
 def _points(recording):
@@ -111,7 +112,7 @@ def test_one_point_per_frame_reproduces_the_frozen_outputs_of_the_signals_form()
             columns = _frame(DirectionChange(**params).run(points))
             assert [c for c in columns.columns] == [c.split("|")[-1] for c in reference.files if c.startswith(key + "|") and not c.endswith("|stat")]
             for column in columns.columns:
-                np.testing.assert_array_equal(_bits(columns[column].to_numpy()), _bits(reference[f"{key}|{column}"]))
+                assert_same_floats(columns[column].to_numpy(), reference[f"{key}|{column}"], err_msg=f"{key} {column}")
             feature = DirectionChange(**params)
             assert [feature.process(point).status.name for point in points] == list(reference[f"{key}|stat"])
             if recording.shape[1] == 1:  # a single signal is its own trajectory
@@ -131,7 +132,7 @@ def test_a_non_finite_point_is_rejected_and_not_buffered():
             else:
                 expected = never_saw_it.process(point)
                 assert result.status == expected.status
-                assert np.array_equal(result.to_array(), expected.to_array(), equal_nan=True)
+                assert np.array_equal(result.to_array(), expected.to_array(), equal_nan=True)  # two runs of this build: exact
 
 
 def test_a_frame_is_one_point():

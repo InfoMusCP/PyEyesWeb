@@ -57,6 +57,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest>=8.0.0",
+    "pandas>=2.0.0",  # Recorder.to_frame() is exercised by the tests
     "tomli>=2.0; python_version < '3.11'",  # tests/unit_tests/test_packaging.py reads pyproject.toml
 ]
 pandas = [

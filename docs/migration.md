@@ -363,7 +363,10 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | every feature | NaN or infinite input is `INVALID_INPUT` and does not enter the window; a timestamp that does not increase is `INVALID_INPUT`; a missing value is `NaN`, not `None` |
 | every feature | the step between samples is the difference of timestamps in seconds, the first call of a sequence uses `1 / sampling_rate`, and without a rate it is one second per sample (the result says so in `reason`) |
 | `Symmetry(method="ratio")` on a preset without a reference joint | 2.0 asks for `reference_point=`; the development default `"neck"` was no joint of `mediapipe` or `qualisys_sport` and the translation to the reference was silently skipped |
-| `Symmetry(method="ratio")` | `reference_type` accepts only `"label"`: `"barycenter"` and `"point"` raise `ValueError` |
+| `Symmetry(method="ratio")` | there is no `reference_type` parameter (the core only translates the frame by `reference_point`; `"barycenter"` and `"point"` did nothing in the original block): passing it raises `TypeError` |
+| `Symmetry` | `pairs` is validated: an entry that is not two joint names, or a name that is not among the labels, raises `ValueError` |
+| `ConvexHull` | `integer_coordinates` defaults to `False`: float contours are accepted (`True` rejects fractions, as the core does) |
+| `KineticEnergy(labels=[...])` | without `weights=` every joint weighs 1.0 (it used to raise); a joint missing from an explicit mapping weighs 0 |
 | `CurvatureVelocityCorrelation` (development) | `velocity` and `velocity_std` are per second in both modes of `differentiate`; the development values with `differentiate=False` were per sample |
 | `MotionNoiseDetector` (development) | `is_noisy` is `True` for noisy (random, jumpy) motion; it was the reverse |
 | `MassSpringModel.to_xml()` (development) | the damping is written as relative damping, so a saved model reloads to the same configuration |

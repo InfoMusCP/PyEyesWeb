@@ -107,12 +107,13 @@ True
 
 A `Recorder` indexes like a list of results and like a table of columns. `recording[99]` is the `Result` of sample 99,
 `recording["spectral_arc_length"]` (or the attribute of the same name) is the column as a NumPy array. `to_frame()`
-returns a pandas DataFrame with the status names, and `to_numpy()` the numeric columns.
+returns a pandas DataFrame with the status names, the `reason` of each row and the timestamps, and `to_numpy()` the numeric
+columns.
 
 ```{doctest}
 >>> recording[99]
 SpectralArcLengthResult(status=OK, spectral_arc_length=-1.50196)
->>> recording.to_frame().iloc[[0, 98, 99, 250]].round(3)
+>>> recording.to_frame().drop(columns="reason").iloc[[0, 98, 99, 250]].round(3)
          status  timestamp  spectral_arc_length
 0    WARMING_UP       0.00                  NaN
 98   WARMING_UP       0.98                  NaN

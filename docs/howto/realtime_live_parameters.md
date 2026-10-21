@@ -121,14 +121,16 @@ Live
 
 Structural
 : the parameter sizes or shapes the state (a filter length, the number of channels, a mode). The state restarts and the
-  `reason` of the next result says "parameters changed: state reset", once.
+  `reason` of the next result says "parameters changed: state reset", once. A plain `reset()` is not a parameter change: its
+  next result carries no such note.
 
 `window` and `hop` of a windowed feature are in neither class: the feature keeps the newest samples. A shorter window gives a
 result at once, a longer one reports `WARMING_UP` until it is full again. Both can be changed together with
 `configure(window=..., hop=...)`.
 
 The loop below changes one live and one structural parameter while it runs, at samples 300 and 400, and records every `reason`
-that is not empty.
+that is not empty. (`run` keeps the reason of every row in `recording.reasons`, and as the `reason` column of
+`recording.to_frame()`; a loop that calls `process` can append its results to a `Recorder` to get the same.)
 
 ```{doctest}
 >>> kinematics.reset(); arc.reset()
@@ -144,10 +146,11 @@ that is not empty.
 ...         if step.reason and step.status.name != "NO_OUTPUT" and step.status.name != "WARMING_UP":
 ...             notes.append((index, name, step.reason))
 >>> notes
-[(0, 'kinematics', 'parameters changed: state reset'), (400, 'kinematics', 'parameters changed: state reset')]
+[(400, 'kinematics', 'parameters changed: state reset')]
 ```
 
-The note at sample 0 is the one that follows `reset()`; the one at sample 400 is the structural change, and it appears only on the feature it was applied to. The smoothness of the second feature kept its
+The note at sample 400 is the structural change, and it appears only on the feature it was applied to; the first call after
+`reset()` (sample 0) has none. The smoothness of the second feature kept its
 window through the live change. A change of `window` on a running feature:
 
 ```{doctest}
@@ -165,7 +168,7 @@ A value that the constructor would refuse is refused by the setter too, and the 
 >>> arc.amplitude_threshold = -1.0
 Traceback (most recent call last):
   ...
-ValueError: SpectralArcLength: amplitudeThreshold must be in [0, 1]
+ValueError: SpectralArcLength: amplitude_threshold must be in [0, 1]
 >>> arc.parameters["amplitude_threshold"]
 0.1
 ```

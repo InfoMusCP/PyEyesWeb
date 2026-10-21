@@ -9,7 +9,7 @@ from typing import Any, Mapping, Optional, Sequence
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.base.core_feature import FrameFeature
+from pyeyesweb.base.core_feature import _PER_SAMPLE_NOTE, FrameFeature
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.base.inputs import non_finite, points_input
 from pyeyesweb.base.signatures import input_mode_factory
@@ -44,7 +44,7 @@ class KineticEnergy(LabelGuard, FrameFeature):
 
         E = \frac{1}{2} \sum_{i} w_i \, \lVert \mathbf{v}_i \rVert^2 .
 
-    Only the joints listed in ``weights`` contribute. If ``reference_point`` names a joint, the positions are taken
+    Only the joints listed in ``weights`` contribute (a joint missing from an explicit ``weights`` mapping weighs 0). If ``reference_point`` names a joint, the positions are taken
     relative to it (position mode), so that the translation of the whole body does not count. The time step of a call
     is the difference to the previous ``timestamp`` if given, else ``1 / sampling_rate``, else one second per frame.
 
@@ -65,7 +65,9 @@ class KineticEnergy(LabelGuard, FrameFeature):
     weights : mapping of str to float or sequence of float, optional
         Weight :math:`w_i` of each joint (dimensionless, or a mass in the unit of your choice; the energy is in that
         unit times the squared speed). A mapping ``joint -> weight`` or a sequence with one weight per label (a
-        different length raises ``ValueError``). Needed unless ``skeleton`` is given. *(live)*
+        different length raises ``ValueError``). Defaults to 1.0 for every joint of ``labels``, or to the preset weights of
+        ``skeleton``; a joint missing from an explicit mapping weighs 0. Without ``labels``, ``skeleton`` or ``weights``
+        the constructor raises ``ValueError``. *(live)*
     reference_point : str, optional
         Joint the positions are taken relative to, in position mode. Defaults to ``""`` (none). *(live)*
     sampling_rate : float, optional
@@ -109,6 +111,8 @@ class KineticEnergy(LabelGuard, FrameFeature):
 
     def __init__(self, labels: Optional[Sequence[str]] = None, skeleton: Any = None, **params: Any):
         labels, params = with_skeleton(skeleton, labels, params, lambda resolved: {"weights": resolved.weights_or_uniform()})
+        if params.get("weights") is None and labels is not None:
+            params["weights"] = dict.fromkeys(labels, 1.0)  # labels alone: every joint counts the same
         if params.get("weights") is not None and not isinstance(params["weights"], Mapping):
             params["weights"] = _weights_by_label(params["weights"], labels)
         super().__init__(**params)
@@ -156,6 +160,8 @@ class KineticEnergy(LabelGuard, FrameFeature):
         return self._finite_result(kinetic_energy=raw, timestamp=timestamp)
 
     def run(self, data: Any, *, timestamps: Optional[Any] = None, reset: bool = True) -> Recorder:
+        if not isinstance(data, np.ndarray) and any(isinstance(frame, dict) for frame in data):
+            return super().run(data, timestamps=timestamps, reset=reset)  # dict frames: the loop of `process`
         data = np.asarray(data, dtype=float)
         stamps = None if timestamps is None else np.asarray(timestamps, dtype=float)
         if not np.isfinite(data).all() or (stamps is not None and not (np.isfinite(stamps).all() and (np.diff(stamps) > 0).all())):
@@ -163,9 +169,12 @@ class KineticEnergy(LabelGuard, FrameFeature):
         if reset:
             self.reset()
         self._check_recording([data])
-        steps = np.array([self._time_step(timestamp) for timestamp in ([None] * len(data) if stamps is None else stamps)])
-        energy = self._block.run(self._need_layout(), data, steps)
-        return Recorder.from_arrays(self, {"kinetic_energy": energy}, timestamps=timestamps)
+        steps, reasons = [], []
+        for timestamp in [None] * len(data) if stamps is None else stamps:
+            steps.append(self._time_step(timestamp))
+            reasons.append(_PER_SAMPLE_NOTE if self._untimed else "")  # what `process` says of the same call
+        energy = self._block.run(self._need_layout(), data, np.array(steps))
+        return Recorder.from_arrays(self, {"kinetic_energy": energy}, timestamps=timestamps, reasons=reasons)
 
     def _need_layout(self):
         if self._layout is None:

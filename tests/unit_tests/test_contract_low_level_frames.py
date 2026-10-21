@@ -16,6 +16,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
 from symmetry_inputs import reflection  # noqa: E402
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models import InputKind, Status  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
     BoundingBoxFilledArea, DirectionChange, Equilibrium, EllipsoidSphericity, PointsDensity, CurvatureVelocityCorrelation, Symmetry,
@@ -198,4 +199,4 @@ def test_triangle_symmetry_is_one_minus_the_frozen_asymmetry():
         # the central finite check says it before the feature: NaN or infinity is not "empty vertex or NaN / infinite coordinates"
         assert result.reason in (reference["reason"][index], "NaN or infinite values")
         expected = np.float64(np.nan) if result.status is Status.INVALID_INPUT else 1.0 - np.float64(reference["asymmetry"][index])
-        assert np.float64(result.symmetry).view(np.int64) == expected.view(np.int64)  # no number when invalid
+        assert_same_floats(result.symmetry, expected)  # no number when invalid; platform rounding of the frozen file tolerated

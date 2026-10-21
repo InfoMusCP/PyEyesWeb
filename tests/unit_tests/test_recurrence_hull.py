@@ -70,12 +70,17 @@ def test_convex_hull_contract_and_convention():
     np.testing.assert_array_equal(block.process([(2, 2), (0, 0), (1, 1)]).hull, [[0, 0], [2, 2]])
 
 
-def test_convex_hull_real_coordinates_are_exact():
+def test_convex_hull_accepts_real_coordinates_by_default_and_exactly():
     pts = [(0.0015, 0.0), (1.23456, 0.0), (0.5, 0.99999)]
-    exact = ConvexHull(integer_coordinates=False)
-    np.testing.assert_array_equal(exact.process(pts).hull, [[0.0015, 0.0], [0.5, 0.99999], [1.23456, 0.0]])
+    np.testing.assert_array_equal(ConvexHull().process(pts).hull, [[0.0015, 0.0], [0.5, 0.99999], [1.23456, 0.0]])
+    assert ConvexHull().integer_coordinates is False
+
+
+def test_convex_hull_integer_coordinates_option_rejects_fractions():
+    strict = ConvexHull(integer_coordinates=True)
+    assert strict.process([(0, 0), (4, 0), (0, 4)]).status is Status.OK
     with pytest.raises(ValueError):
-        ConvexHull().process([(0.5, 0.0)])  # integer coordinates
+        strict.process([(0.5, 0.0)])
 
 
 def test_convex_hull_empty_contour_is_invalid_input():

@@ -132,6 +132,16 @@ def test_without_skeleton_information_the_constructor_raises(make):
         make()
 
 
+def test_kinetic_energy_labels_alone_weigh_every_joint_one_and_a_missing_joint_zero():
+    assert KineticEnergy(labels=["a", "b"]).parameters["weights"] == {"a": 1.0, "b": 1.0}
+    frames = np.zeros((2, 2, 3))
+    frames[1, :, 0] = 1.0
+    both = KineticEnergy(labels=["a", "b"]).run(frames).kinetic_energy
+    only_a = KineticEnergy(labels=["a", "b"], weights={"a": 1.0}).run(frames).kinetic_energy
+    np.testing.assert_allclose(both, [0.0, 1.0])
+    np.testing.assert_allclose(only_a, [0.0, 0.5])
+
+
 @pytest.mark.parametrize("make, key", [
     (lambda: KineticEnergy(labels=["a", "b"], weights={"a": 1.0, "c": 1.0}), "c"),
     (lambda: Symmetry(labels=["a", "b"], pairs=[("a", "z")]), "z"),

@@ -214,9 +214,10 @@ class ConvexHull(ContourFeature):
     Parameters
     ----------
     integer_coordinates : bool, optional
-        The contour holds integer coordinates, as the pixel contours of an image do. When ``True``, a contour with
-        fractional coordinates raises ``ValueError``; when ``False`` any real coordinates are accepted. It only
-        validates the input: the hull is the same in both cases. Defaults to ``True``. *(live)*
+        Require integer coordinates, as the pixel contours of an image have. When ``True``, a contour with fractional
+        coordinates raises ``ValueError``; when ``False`` any real coordinates are accepted. It only validates the
+        input: the hull is the same in both cases (the core's own default is ``True``, the EyesWeb integer contour
+        datatype). Defaults to ``False``. *(live)*
 
     Notes
     -----
@@ -240,6 +241,9 @@ class ConvexHull(ContourFeature):
      [4. 0.]]
     """
     _core_class = _motion.ConvexHull
+
+    def __init__(self, integer_coordinates: bool = False):
+        super().__init__(integer_coordinates=integer_coordinates)
 
     def _schema(self) -> Schema:
         return Schema(Output("hull", (None, 2), components=XY, unit="<length>", doc="convex hull vertices"))

@@ -17,6 +17,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.analysis_primitives import SampleEntropy  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 
@@ -40,7 +41,7 @@ def _speed_mm_per_s():
 @pytest.mark.parametrize("entry,signal,expected", _frozen_cases())
 def test_explicit_tolerance_gives_the_numbers_of_the_old_default_bit_for_bit(entry, signal, expected):
     feature = SampleEntropy(window=len(signal), embedding_dimension=entry["embedding_dimension"], tolerance=entry["tolerance"])
-    assert np.array_equal(feature._process_window(signal)["sample_entropy"], expected, equal_nan=True)
+    assert_same_floats(feature._process_window(signal)["sample_entropy"], expected)
 
 
 def test_the_tolerance_defaults_to_none_and_relative_tolerance_to_0_2():

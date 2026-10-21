@@ -32,6 +32,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import KineticEnergy  # noqa: E402
 from pyeyesweb.low_level import MotionNoiseDetector  # noqa: E402
@@ -132,10 +133,6 @@ def compute(scenario):
     return rows
 
 
-def _bits(values):
-    return np.where(np.isnan(values), np.nan, values).view(np.int64)
-
-
 @pytest.mark.parametrize("scenario", SCENARIOS, ids=[scenario["name"] for scenario in SCENARIOS])
 def test_composition_reproduces_the_block_bit_for_bit(scenario):
     name = scenario["name"]
@@ -151,7 +148,7 @@ def test_composition_reproduces_the_block_bit_for_bit(scenario):
         assert reason == REFERENCE[name + "_reason"][index], where
         assert np.array_equal(valid, REFERENCE[name + "_valid"][index]), where
         expected = np.where(valid, REFERENCE[name + "_values"][index], np.nan)
-        assert np.array_equal(_bits(np.where(valid, values, np.nan)), _bits(expected)), (where, values, expected)
+        assert_same_floats(np.where(valid, values, np.nan), expected, err_msg=where)
 
 
 def test_the_reference_exercises_the_block():

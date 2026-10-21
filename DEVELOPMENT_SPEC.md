@@ -74,7 +74,7 @@ feature.outputs                                        # the Schema of the resul
 - `Schema`/`Output` declare names, shapes, kinds, units and docs. Schemas that depend on parameters are computed by
   `_schema()`; call `_outputs_changed()` from a setter that changes them.
 - `run` is a loop over `process` and must give identical numbers. `Recorder` holds one row per sample (columns,
-  `to_frame()`, `timestamps`).
+  `to_frame()`, `status`, `reasons`, `timestamps`).
 - Windowed features derive from `WindowedFeature`: they own their buffer, take `window` and `hop`, report `WARMING_UP`
   then `NO_OUTPUT` between hops, and implement the private hook `_process_window(*series)` for one full
   `(channels, window)` series. `_process_window` is never public API.
@@ -196,7 +196,7 @@ Results, recorder and discoverability.
 - **`Status`.** `str(Status.OK)` is `"OK"` (also in f-strings); `int(Status.OK)` is still 0.
 - **`Recorder`.** `repr` shows the feature, rows, columns and status counts; `rec[3]` and `rec[-1]` are `Result`s (`reason`
   and `valid` included), `rec[2:5]` is a list of them, `rec["name"]` is still a column; `rec.<output>` (or a flat name) is a
-  column; `to_frame()` has the status names in `status`. `latest` stays on `Feature`; there are no `computed()` / `held()` views.
+  column; `to_frame()` has the columns `status` (the names), `reason` and `timestamp` in front, and `rec.reasons` is the list of the `reason` of each row (`""` where none; as `rec[i].reason`). `latest` stays on `Feature`; there are no `computed()` / `held()` views.
 - **Units of the outputs.** `Output.unit` is documentation in terms of the data: `"<length>"` is the length unit of the
   data, `"<input>"` the unit of the input, `"samples"`, `"frames"`, `"px"`, `"deg"`, `"s"`; a feature with `units=` writes the
   unit it was given (`"mm/s"`; `Kinematics`, `TrajectoryNonPlanarity`, the humanoid features). An empty unit means dimensionless
@@ -288,7 +288,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   depends on the mode (`|y''| / (1 + y'^2)^1.5`).
 - **`Symmetry(method="ratio")` `reference_type`.** The core translates the frame only for `"label"`; `"barycenter"` and `"point"` are
   unimplemented there (the original did nothing, and `"point"` has no point parameter). They raise `ValueError` at construction and on
-  assignment (`_coerce_choices`); `"label"` stays. The `Literal` of the signature still lists the two removed values (backlog B1). A skeleton without reference joint now only suggests `reference_point=`.
+  assignment (`_coerce_choices`); `"label"` stays. Since J-a the parameter is gone altogether (B1). A skeleton without reference joint now only suggests `reference_point=`.
 
 #### I-b
 
@@ -309,6 +309,32 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   activation 0, so with `hop` the series is produced on the first full window and then every `factor * hop`
   samples; the other windows are `NO_OUTPUT` "not recomputed on this activation". Not a defect: kept, described in the docstring and pinned by
   `test_coarse_graining_is_computed_every_factor_th_window`.
+
+### Contract changes of work package J (2026-10-21)
+
+#### J-a
+
+- **`Symmetry` has no `reference_type`.** The core translates the frame only for `"label"`, so the parameter is hidden (`_hidden_params`): not in the signature, the setter or `parameters`; passing it is a `TypeError`. The reference joint is `reference_point=` or the skeleton's reference.
+- **`Symmetry(pairs=...)` is validated** (constructor and setter, both methods): an entry that is not two joint names raises `ValueError` ("a pair is two joint names (left, right), got ..."); an unknown joint raises as before.
+- **`ConvexHull(integer_coordinates=False)`** is the default: float contours are accepted; `True` (the core default) rejects fractions.
+- **`KineticEnergy(labels=[...])`** without `weights=` weighs every joint 1.0; a joint missing from an explicit mapping weighs 0.
+
+#### J-b
+
+- **A reset is not a parameter change (B2).** `CoreFeature.reset()` clears the pending "parameters changed: state reset" note: the
+  dimension forgotten by `reset()` (`InferredDims`) used to flag it. A structural change after the reset still reports it.
+- **Errors of the core name the public parameters (B3).** `CoreFeature._public_errors()` wraps the constructor and lazy build, the
+  setters (`_set_param`) and every `process` / `_process_window` of a core-backed class: in the message of a `ValueError`,
+  `TypeError` or `RuntimeError` an identifier that is a public parameter of the feature once turned from camelCase to snake_case, or
+  mapped back through the reverse of `_core_names`, is replaced (`amplitudeThreshold` -> `amplitude_threshold`, `nInputs` ->
+  `number_of_inputs`). Same exception type. Messages that name no parameter (`EventSynchronizationMECS`, `SpikeSynchronization`
+  `number_of_inputs`) are unchanged.
+- **`Recorder.reasons` and the `reason` column (B5).** `rec.reasons` is a list of `n` strings; `to_frame()` has `status`, `reason`,
+  `timestamp` in front of the outputs; `Recorder.from_arrays(..., reasons=)` takes them (empty by default); `append`, `extend` and
+  `run` store the reason of every result. A fast-path `run` must give the reasons of a loop of `process` (`KineticEnergy.run` does).
+- **`run()` takes a sequence of dict frames (B17).** For an input that declares `accepts=(dict,)` a list of dict frames is passed
+  to `process` as it is (`_recording`), so the numbers equal a loop of `process`; for any other input a list of dicts raises
+  `ValueError` ("pass an array in label order, or loop over process"). `KineticEnergy.run` sends dict frames through the loop.
 
 ### Contract changes of the documentation work (2026-10-15/16)
 

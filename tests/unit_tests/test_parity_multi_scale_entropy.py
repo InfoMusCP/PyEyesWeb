@@ -18,6 +18,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 core_module = pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import same_floats  # noqa: E402
 from pyeyesweb.analysis_primitives import MultiScaleEntropy
 from pyeyesweb.high_level import EnsembleDominance  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
@@ -177,11 +178,11 @@ def test_split_reproduces_the_combined_block_bit_for_bit(entry, data):
         assert (int(result.status), result.reason) == (expected["status"], expected["reason"])
         assert _equal(result.timestamp, expected["timestamp"])
         outputs = expected["outputs"]
-        assert _equal(result.complexity_index, outputs["complexity_index"])
+        assert same_floats(result.complexity_index, outputs["complexity_index"])
         if result.status is Status.OK:
             composed = dominance.process(result.complexity_index)
-            assert _equal(composed.dominance_score, outputs["dominance_score"])
+            assert same_floats(composed.dominance_score, outputs["dominance_score"])
             assert composed.leader_index == outputs["leader_index"]
-            assert _equal(composed.leader_complexity, outputs["leader_complexity"])
+            assert same_floats(composed.leader_complexity, outputs["leader_complexity"])
         else:
             assert outputs["dominance_score"] == []

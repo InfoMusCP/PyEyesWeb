@@ -26,6 +26,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import DirectionChange  # noqa: E402
 from pyeyesweb.mid_level import ContractionImpulsivity, Suddenness, SuddennessImpulsivity  # noqa: E402
@@ -97,11 +98,6 @@ META = json.loads(str(REFERENCE["meta"]))
 RENAMED = {"threshold": "peak_threshold", "ges_dur": "gesture_duration", "frames": "sampling_rate", "algorithm": "method"}
 
 
-def _bits(values):
-    values = np.asarray(values, dtype=float)
-    return np.where(np.isnan(values), np.nan, values).view(np.int64)
-
-
 def _check_against_reference(prefix, scenario, feature, samples):
     """Feed `samples` one by one, applying the events of the scenario, and compare every result with the frozen one."""
     events = {int(key): value for key, value in scenario.get("events", {}).items()}
@@ -112,7 +108,7 @@ def _check_against_reference(prefix, scenario, feature, samples):
         result = feature.process(*sample)
         assert int(result.status) == status[index] and result.reason == reason[index], (prefix, index)
         got = [float(result[name]) for name in result.schema.names]
-        assert np.array_equal(_bits(got), _bits(np.atleast_1d(values[index]))), (prefix, index, got, values[index])
+        assert_same_floats(got, np.atleast_1d(values[index]), err_msg=f"{prefix} {index}")
     assert len(values) == len(samples)
 
 

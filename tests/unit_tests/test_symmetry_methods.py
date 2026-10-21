@@ -3,7 +3,10 @@ Needs the compiled core (EYESWEB_CORE_PATH)."""
 import os
 import sys
 
+import inspect
+
 import numpy as np
+
 import pytest
 
 if os.environ.get("EYESWEB_CORE_PATH"):
@@ -101,23 +104,35 @@ def test_ratio_on_a_preset_without_reference_asks_for_one(preset):
         Symmetry(skeleton=preset)
 
 
-@pytest.mark.parametrize("reference_type", ["barycenter", "point"])
-def test_ratio_rejects_the_reference_types_the_core_does_not_implement(reference_type):
-    match = f"reference_type='{reference_type}' is not supported"
-    with pytest.raises(ValueError, match=match):
-        Symmetry(**RATIO, reference_type=reference_type)
-    feature = Symmetry(**RATIO)
-    with pytest.raises(ValueError, match=match):
-        feature.reference_type = reference_type
-    assert feature.parameters.get("reference_type", "label") == "label"
+def test_ratio_has_no_reference_type_parameter():
+    assert "reference_type" not in inspect.signature(Symmetry).parameters
+    with pytest.raises(TypeError, match="reference_type"):
+        Symmetry(**RATIO, reference_type="point")
+    with pytest.raises(AttributeError):
+        Symmetry(**RATIO).reference_type = "point"
 
 
-@pytest.mark.parametrize("reference_type", ["label"])
-def test_ratio_of_a_shifted_frame_is_the_same_for_every_accepted_reference_type(reference_type):
+def test_ratio_of_a_shifted_frame_is_the_same():
     frame = {"torso": (0.1, 0.2, 0.3), "left_hip": (-0.6, -0.3, 0.1), "right_hip": (0.9, -0.1, 0.2)}
     shifted = {name: tuple(np.add(point, (5.0, -3.0, 2.0))) for name, point in frame.items()}
-    feature = Symmetry(**RATIO, reference_type=reference_type)
+    feature = Symmetry(**RATIO)
     assert feature.process(shifted).symmetry == pytest.approx(feature.process(frame).symmetry, abs=1e-12)
+
+
+@pytest.mark.parametrize("method, extra", [("ratio", {"reference_point": "a"}), ("reflection", {})])
+@pytest.mark.parametrize("pair", [("a",), ("a", "b", "c"), "ab", (1, 2)])
+def test_a_malformed_pair_names_what_a_pair_is(method, extra, pair):
+    with pytest.raises(ValueError, match="a pair is two joint names"):
+        Symmetry(["a", "b", "c"], pairs=[pair], method=method, **extra)
+    feature = Symmetry(["a", "b", "c"], pairs=[("a", "b")], method=method, **extra)
+    with pytest.raises(ValueError, match="a pair is two joint names"):
+        feature.pairs = [pair]
+
+
+@pytest.mark.parametrize("method, extra", [("ratio", {"reference_point": "a"}), ("reflection", {})])
+def test_a_pair_naming_an_unknown_joint_raises(method, extra):
+    with pytest.raises(ValueError, match="'z'"):
+        Symmetry(["a", "b", "c"], pairs=[("a", "z")], method=method, **extra)
 
 
 @pytest.mark.parametrize("preset", ["mediapipe", "qualisys_sport"])

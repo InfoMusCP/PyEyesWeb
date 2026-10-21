@@ -179,4 +179,4 @@ def test_position_potentials_recorder():
         rec.append(block.process(cells))
     assert rec["potential"].shape == (3, 2, 2)
     np.testing.assert_allclose(rec["potential"][-1], [[100 / 3, 0], [0, 200 / 3]])
-    assert list(rec.to_frame().columns[2:]) == list(block.outputs.flat_names)
+    assert list(rec.to_frame().columns[3:]) == list(block.outputs.flat_names)

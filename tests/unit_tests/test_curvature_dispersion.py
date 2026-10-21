@@ -19,6 +19,7 @@ import pytest
 from contract_suite import check_feature_contract
 from live_param_suite import NOTE, check_invalid, check_live, check_structural, feed, ids
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.catalog import catalog
 from pyeyesweb.data_models import Status
 from pyeyesweb.low_level import CurvatureDispersion, Kinematics
@@ -58,11 +59,10 @@ def _reference_cases():
 
 @pytest.mark.parametrize("name, points, timestamps, expected, params", _reference_cases(),
                          ids=lambda value: value if isinstance(value, str) else "")
-def test_composition_reproduces_the_frozen_output_exactly(name, points, timestamps, expected, params):
+def test_composition_reproduces_the_frozen_output(name, points, timestamps, expected, params):
     actual = _composition(points, params, timestamps)
     assert actual.shape == expected.shape
-    assert np.array_equal(actual.view(np.int64)[~np.isnan(actual)], expected.view(np.int64)[~np.isnan(expected)])
-    assert np.array_equal(np.isnan(actual), np.isnan(expected))
+    assert_same_floats(actual, expected)  # NaN positions exact, values to platform rounding (the file comes from MSVC)
 
 
 # -------------------------------------------------------------------------------------------------------- contract

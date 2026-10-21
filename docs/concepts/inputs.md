@@ -87,7 +87,12 @@ A feature that works on named joints (such as {py:class}`~pyeyesweb.low_level.Ki
 the rows, in the order of the arrays it will receive. A frame can then be passed either as an `(N, 3)` array in that order, or
 as a dict `label -> (x, y, z)`, in any order.
 
+Weights are optional: `KineticEnergy(labels=[...])` weighs every joint 1.0, `weights=` is a mapping or a sequence with one
+weight per label, and a joint missing from an explicit mapping weighs 0 (it does not contribute).
+
 ```{doctest}
+>>> KineticEnergy(labels=["head", "hand"]).parameters["weights"]
+{'head': 1.0, 'hand': 1.0}
 >>> energy = KineticEnergy(labels=["head", "hand"], weights=[1.0, 2.0], sampling_rate=100.0)
 >>> energy.inputs
 Inputs(skeleton: points (2, 3) - joint positions or velocities)
@@ -110,14 +115,18 @@ Traceback (most recent call last):
 ValueError: KineticEnergy: unknown joint names ['foot']; expected ['head', 'hand']
 ```
 
-Dict frames are a convenience of `process`. `run` takes arrays: a recording of `T` frames of `N` labelled points is a
-`(T, N, 3)` array in the order of `labels`.
+A recording of `T` frames of `N` labelled points is given to `run` as a `(T, N, 3)` array in the order of `labels`, or, for
+the features that take dict frames, as a list of dict frames; the numbers are those of a loop of `process`. A feature that
+takes no dict frames raises `ValueError` for a list of dicts.
 
 ```{doctest}
 >>> recording = np.zeros((4, 2, 3))
 >>> recording[:, 1, 0] = np.arange(4) * 0.01
 >>> energy.run(recording)
 Recorder(KineticEnergy, rows=4, columns=['kinetic_energy'], status={'OK': 4})
+>>> frames = [{"head": (0.0, 0.0, 0.0), "hand": (0.01 * k, 0.0, 0.0)} for k in range(4)]
+>>> energy.run(frames).kinetic_energy.tolist() == energy.run(recording).kinetic_energy.tolist()
+True
 ```
 
 ## Skeletons
@@ -128,7 +137,8 @@ pairs, a reference joint and the weights of the joints. `skeleton=` is accepted 
 {py:class}`~pyeyesweb.low_level.KineticEnergy` (joints and weights), {py:class}`~pyeyesweb.low_level.MotionNoiseDetector`,
 {py:class}`~pyeyesweb.low_level.Symmetry` (joints, pairs and reference), {py:class}`~pyeyesweb.low_level.PointsDensity` and
 {py:class}`~pyeyesweb.physical_signals.PointsPredictor`. An explicit `labels=`, `weights=` or `pairs=` always wins over the
-skeleton, and a feature given no joint information at all raises `ValueError`.
+skeleton, and a feature given no joint information at all raises `ValueError`. (`KineticEnergy(labels=[...])` alone is joint
+information: it weighs every joint 1.0.)
 
 The presets are in `pyeyesweb.skeletons` (see {doc}`../api/skeletons`). Names are case-insensitive, and `-` or a space counts as `_`.
 
@@ -165,6 +175,27 @@ ValueError: Symmetry(method='ratio'): the skeleton 'mediapipe' defines no refere
 The joint names differ between presets (`L*`/`R*`, `*Left`/`*Right`, `left_*`/`right_*`) and are used exactly as the
 preset spells them; they are not normalised. A frame given as a dict must use the preset's names; a frame given as an array
 must have as many rows as the preset has joints.
+
+### The reference joint of `Symmetry`
+
+The reference joint is the origin to which `Symmetry` translates the whole frame (every joint minus that joint) before it
+computes anything, so that only the posture counts, not where the body stands. It comes from `reference_point=` or, when
+that is absent, from the skeleton (`Skeleton.reference`). With `method="ratio"` it is needed (`"neck"` is the default
+without a skeleton); with `method="reflection"` a frame without a reference joint is reflected about its barycentre (the mean
+position of the joints). The `"label"` rule is the only one the core implements, so there is no `reference_type` parameter:
+to centre a ratio on something else, subtract that point from the frame yourself.
+
+```{doctest}
+>>> labels = ["neck", "left_hand", "right_hand", "foot"]
+>>> frame = np.array([[0.0, 0.0, 0.0], [-1.0, 1.0, 0.0], [2.0, 1.0, 0.0], [5.0, 5.0, 5.0]])
+>>> pairs = [("left_hand", "right_hand")]
+>>> ratio = Symmetry(labels, pairs=pairs, reference_point="foot")
+>>> bool(np.isclose(ratio.process(frame).symmetry, ratio.process(frame + 10.0).symmetry))
+True
+>>> mirror = Symmetry(labels, pairs=pairs, method="reflection")
+>>> bool(np.isclose(mirror.process(frame).pair_symmetry[0], mirror.process(frame + 10.0).pair_symmetry[0]))
+True
+```
 
 You can build a skeleton for your own marker set:
 

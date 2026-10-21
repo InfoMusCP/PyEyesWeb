@@ -352,7 +352,7 @@ def test_recorder_to_frame():
     rec.append(centroid.compute(POINTS).with_time(1.0))
     rec.append(centroid.compute(np.empty((0, 3))).with_time(2.0))
     frame = rec.to_frame()
-    assert list(frame.columns) == ["status", "timestamp", *centroid.outputs.flat_names]
+    assert list(frame.columns) == ["status", "reason", "timestamp", *centroid.outputs.flat_names]
     assert list(frame["status"]) == ["OK", "INVALID_INPUT"]
     assert list(frame["status"] == "OK") == [True, False]
     assert frame.loc[0, "centroid_x"] == 1.0 and np.isnan(frame.loc[1, "centroid_x"])

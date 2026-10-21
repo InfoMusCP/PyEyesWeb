@@ -14,6 +14,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.analysis_primitives.synchronization import PhaseLockingValue  # noqa: E402
 from pyeyesweb.data_models import InputKind  # noqa: E402
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 
 
@@ -102,4 +103,4 @@ def test_two_input_feature_reproduces_the_frozen_outputs_of_the_list_input_featu
     for result, expected in zip(results, entry["records"]):
         assert (int(result.status), result.reason) == (expected["status"], expected["reason"])
         assert np.array_equal(result.timestamp, expected["timestamp"], equal_nan=True)
-        assert np.array_equal(result["phase_locking_value"], expected["outputs"]["phase_locking_value"], equal_nan=True)
+        assert_same_floats(result["phase_locking_value"], expected["outputs"]["phase_locking_value"])

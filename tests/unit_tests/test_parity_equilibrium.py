@@ -11,6 +11,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
+from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level.equilibrium import Equilibrium  # noqa: E402
 
@@ -82,7 +83,6 @@ def test_the_three_point_form_reproduces_the_frozen_outputs_of_the_frame_form():
                 if result.status is Status.INVALID_INPUT:  # the old feature kept the numbers next to INVALID_INPUT; now they are empty
                     assert np.isnan([result.equilibrium, result.angle]).all() and np.isnan(recorded["equilibrium"][frame_index])
                     continue
-                np.testing.assert_array_equal(np.float64([result.equilibrium, result.angle]).view(np.int64),
-                                              np.float64([reference[f"{key}|equilibrium"][frame_index],
-                                                          reference[f"{key}|angle"][frame_index]]).view(np.int64))
+                assert_same_floats([result.equilibrium, result.angle],
+                                   [reference[f"{key}|equilibrium"][frame_index], reference[f"{key}|angle"][frame_index]])
                 assert recorded["equilibrium"][frame_index].view(np.int64) == np.float64(result.equilibrium).view(np.int64)

@@ -43,6 +43,8 @@ class Recorder:
         Status code of each row (the values of :class:`Status`), shape ``(n,)``.
     ok : numpy.ndarray of bool
         Mask of the rows whose status is ``OK``.
+    reasons : list of str
+        The ``reason`` of each row, ``""`` where there is none (the same as ``rec[i].reason``).
     timestamps : numpy.ndarray of float
         Timestamp of each row in seconds, ``NaN`` where unknown, shape ``(n,)``.
     valid : dict of str to numpy.ndarray
@@ -71,7 +73,9 @@ class Recorder:
     >>> rec[-1].speed, len(rec[0:2]), bool(rec.ok.all()), rec.timestamps.tolist()
     (3.0, 2, True, [0.0, 0.01, 0.02])
     >>> rec.to_numpy().shape, list(rec.to_frame().columns)
-    ((3, 3), ['status', 'timestamp', 'speed', 'direction_x', 'direction_y'])
+    ((3, 3), ['status', 'reason', 'timestamp', 'speed', 'direction_x', 'direction_y'])
+    >>> rec.reasons, rec[0].reason
+    (['', '', ''], '')
     """
 
     def __init__(self, source: Union[Schema, Any], capacity: int = 1024):
@@ -96,7 +100,7 @@ class Recorder:
 
     @classmethod
     def from_arrays(cls, source: Union[Schema, Any], columns: Dict[str, Any], timestamps: Any = None,
-                    status: Any = None) -> "Recorder":
+                    status: Any = None, reasons: Any = None) -> "Recorder":
         """A recorder filled in one go from whole-recording arrays (the result of a batch ``run``).
 
         Parameters
@@ -110,6 +114,8 @@ class Recorder:
             Timestamps in seconds, one per row; ``NaN`` for every row when omitted.
         status : int or array-like, optional
             A status code per row, or one for all rows; ``Status.OK`` when omitted. Every output counts as produced.
+        reasons : sequence of str, optional
+            The reason of each row; empty for every row when omitted.
         """
         rec = cls(source, capacity=1)
         names = [output.name for output in rec.schema]
@@ -129,7 +135,9 @@ class Recorder:
         rec._status = np.broadcast_to(status, (row_count,)).astype(np.int8)
         rec._timestamps = timestamps
         rec._valid = np.ones((row_count, len(names)), dtype=np.bool_)
-        rec._reasons = [""] * row_count
+        rec._reasons = [""] * row_count if reasons is None else [str(reason) for reason in reasons]
+        if len(rec._reasons) != row_count:
+            raise ValueError(f"reasons must have one entry per row ({row_count}), got {len(rec._reasons)}")
         return rec
 
     def __len__(self) -> int:
@@ -195,6 +203,11 @@ class Recorder:
         return self._status[:self._n] == Status.OK
 
     @property
+    def reasons(self) -> List[str]:
+        """The reason of each row (``""`` where there is none), a list of ``n`` strings."""
+        return self._reasons[:self._n]
+
+    @property
     def timestamps(self) -> np.ndarray:
         """Timestamp of each row in seconds (``NaN`` where unknown), shape ``(n,)``."""
         return self._timestamps[:self._n]
@@ -252,13 +265,13 @@ class Recorder:
         return np.concatenate(parts, axis=1) if parts else np.empty((self._n, 0))
 
     def to_frame(self, meta: bool = True):
-        """A pandas DataFrame: one column per flat name, plus ``status`` and ``timestamp`` when ``meta``.
+        """A pandas DataFrame: one column per flat name, plus ``status``, ``reason`` and ``timestamp`` when ``meta``.
 
         Parameters
         ----------
         meta : bool, optional
             Add the columns ``status`` (the :class:`Status` names, ``"OK"``, ``"WARMING_UP"``, ...: ``frame.status ==
-            "OK"`` selects the rows that produced output) and ``timestamp`` (seconds), in front. Default ``True``.
+            "OK"`` selects the rows that produced output) ``reason`` (the text, empty when none) and ``timestamp`` (seconds), in front. Default ``True``.
 
         Raises
         ------
@@ -270,5 +283,6 @@ class Recorder:
         frame = pd.DataFrame(self.to_numpy(), columns=list(self.schema.flat_names))
         if meta:
             frame.insert(0, "timestamp", self.timestamps)
+            frame.insert(0, "reason", self.reasons)
             frame.insert(0, "status", [Status(code).name for code in self.status])
         return frame
