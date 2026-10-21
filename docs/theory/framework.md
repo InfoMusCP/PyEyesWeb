@@ -2,7 +2,7 @@
 
 PyEyesWeb organises its features after the multi-layered computational framework of expressive movement qualities developed
 by Camurri and colleagues {cite}`camurri2016dancer`, which builds on the EyesWeb expressive gesture processing library
-{cite}`camurri2003eyesweb,camurri2004eyesweb4,volpe2016xmi`. This page presents the model, explains the idea of a
+{cite}`camurri2003eyesweb,camurri2004toward,volpe2016designing`. This page presents the model, explains the idea of a
 timescale that runs through it, and shows how each layer is realised in the library. It is the background to the choice of a
 feature: the {doc}`user guide <../user_guide/low_level>` of each layer says which feature to use, and the family pages of the
 theory section define the quantities.
@@ -37,7 +37,7 @@ this moment. Neither a movement unit nor an interpretation is needed to compute 
 
 **Layer 3, mid-level features.** Descriptors of a movement unit, or of a longer window: a gesture, a movement phase, a
 fragment of a choreography. Examples are the segmentation of a stream into gestures, the impulsivity and the suddenness of a
-movement, its fluidity, and the space it occupies over time {cite}`mazzarino2009impulsivity,piana2016fluidity`. These
+movement, its fluidity, and the space it occupies over time {cite}`mazzarino2009need,piana2016fluidity`. These
 features are called **amodal** because the same quality can be perceived and described in several modalities: a sudden
 movement can also be a sudden sound. Mid-level features summarise a stretch of low-level features, so they are usually
 discrete, one value for each unit.
@@ -184,7 +184,7 @@ The model is a conceptual one, and three limits matter in practice.
 - **A perceived quality is not a number.** The features of layers 2 and 3 are candidates for the correlates of what an
   observer perceives. Whether a given measure of smoothness predicts the fluidity that observers rate depends on the movement
   and on the observers, and has to be established for each use, as in the studies of fluidity
-  {cite}`piana2016fluidity,alborno2016fluidity`.
+  {cite}`piana2016fluidity,alborno2016interactive`.
 - **Groups are handled at the top.** In the library, the measures that relate two or more signals (synchronization) are
   analysis primitives, and the features that need several people are high-level; their theory is in {doc}`synchronization`
   and {doc}`dominance`.
@@ -192,5 +192,5 @@ The model is a conceptual one, and three limits matter in practice.
 ## Further reading
 
 The model: {cite}`camurri2016dancer`. The library and the platform that it comes from: {cite}`camurri2003eyesweb`,
-{cite}`volpe2016xmi`. The library itself: {cite}`sabharwal2026pyeyesweb`. The notation of the equations, the units, and the
+{cite}`volpe2016designing`. The library itself: {cite}`sabharwal2026pyeyesweb`. The notation of the equations, the units, and the
 meaning of windows and hops are in {doc}`notation`.

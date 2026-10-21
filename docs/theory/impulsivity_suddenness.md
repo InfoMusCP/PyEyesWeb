@@ -4,7 +4,7 @@ An impulsive movement is one that starts abruptly and without preparation, like 
 movement is one whose speed changes in bursts, a quick start and stop in the middle of calm. Both are mid-level qualities
 of movement in the conceptual model ({doc}`framework`): they describe a movement unit of about a second, not one frame, and
 they have been studied as qualities that observers perceive and that interactive systems can recognise
-{cite}`mazzarino2009impulsivity,niewiadomski2015impulsive,niewiadomski2019embodied`.
+{cite}`mazzarino2009need,niewiadomski2015impulsive,niewiadomski2019embodied`.
 
 The family has three features. {py:class}`~pyeyesweb.mid_level.Suddenness` classifies the distribution of the speed of a
 trajectory over a window. {py:class}`~pyeyesweb.mid_level.SuddennessImpulsivity` combines the suddenness with the sharpness of
@@ -92,7 +92,7 @@ Both have the same low $\alpha$, that is heavy tails, and the sign of the skewne
 
 An impulsive movement is not only sudden in time: it also changes direction sharply, like the stroke of a hammer that stops
 and returns. {py:class}`~pyeyesweb.mid_level.SuddennessImpulsivity` captures this as the product of a spatial and a temporal
-term over a window of one trajectory {cite}`mazzarino2009impulsivity,niewiadomski2015impulsive`,
+term over a window of one trajectory {cite}`mazzarino2009need,niewiadomski2015impulsive`,
 
 $$
 I = D \cdot \mathbf{1}[\text{sudden}],
@@ -198,6 +198,6 @@ of the impulsivity of a performance, take the maximum over a stretch or the numb
 
 ## Further reading
 
-The two motion qualities of impulsivity and smoothness: {cite}`mazzarino2009impulsivity`. Automated detection of
+The two motion qualities of impulsivity and smoothness: {cite}`mazzarino2009need`. Automated detection of
 impulsive movements: {cite}`niewiadomski2015impulsive`. The estimator of the stable-distribution parameters:
 {cite}`mcculloch1986stable`. Mid-level qualities and their sonification: {cite}`niewiadomski2019embodied`.

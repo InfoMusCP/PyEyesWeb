@@ -29,7 +29,7 @@ several cycles of the movement and so that the coordination does not change with
 ## Two signals
 
 Linear correlation (see the group matrix below) sees only relations of the form $y\approx ax+b$. The nonlinear
-interdependence of Arnhold and colleagues **[citation needed]** (nonlinear interdependence, Arnhold et al.) detects any
+interdependence measure detects any
 dependence in which the state of one signal determines the state of the other. Each signal is embedded in a state space of
 dimension $m$ (`embedding_dimension`): the state at sample $n$ is a vector of $m$ delayed samples. For each state of the
 first signal $X$, the $k$ nearest states in time (`neighbours`) are found, and the interdependence $S(X|Y)$ compares the
@@ -97,7 +97,7 @@ constant windows.
 
 Many movement data are discrete events rather than signals: the onsets of gestures, the beats of a performer, the peaks found
 by {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector`. Event synchronization measures the coordination of two such
-series without assuming a fixed rhythm **[citation needed]** (event synchronization, Quian Quiroga et al.). In the input a
+series without assuming a fixed rhythm {cite}`quiroga2002event`. In the input a
 non-zero sample is an event. With $m_x$ and $m_y$ events in the first and in the second series, and $c(y|x)$ the number of events
 of the second series that follow an event of the first within `tau` samples (and $c(x|y)$ the converse), the feature
 {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization` reports
@@ -122,8 +122,7 @@ Corrected in the core: the result follows the definition above, with the coincid
 the sign of the delay given here, and each event credited exactly once.
 
 {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` (multi-event-class synchronization) extends the measure
-to `number_of_inputs` series that carry events of several classes (for example one channel per type of gesture) **[citation needed]**
-(multi-event-class event synchronization, MECS). For every class and every pair of series, the coincidences $S_{ij}$ are
+to `number_of_inputs` series that carry events of several classes (for example one channel per type of gesture) {cite}`alborno2019multi`. For every class and every pair of series, the coincidences $S_{ij}$ are
 the pairs of events within `tau` samples, weighted by the `kernel`; with $m_i$ and $m_j$ the event counts of the two series the
 pair term is $\min\!\big(1,S_{ij}/\sqrt{m_im_j}\big)$, and the synchronization of the class is the mean of the pair terms over
 the $M(M-1)/2$ pairs of the $M$ series. It returns the `synchronization` of each class and the number of `events` of each class
@@ -144,7 +143,7 @@ provided.
 ## Spike trains
 
 A spike train is an event series for which a good coincidence window is not known in advance, as in the firing of neurons or
-in irregular gestures. SPIKE-synchronization **[citation needed]** (SPIKE-synchronization, Kreuz et al.) has no time-scale
+in irregular gestures. SPIKE-synchronization has no time-scale
 parameter: coincidence is decided adaptively from the local spike intervals. Each spike receives a coincidence
 indicator, 1 if it coincides with a spike of another train and 0 if it does not; the degree of synchronization is the mean of
 the indicator over all the spikes of all the trains (a spike shared by two trains counts twice), and the distance is
@@ -167,8 +166,7 @@ degree and the distance in binary mode and the use of distinct spike positions i
 
 ## Recurrence
 
-Recurrence analysis compares a movement with itself or with another movement in the space of states **[citation needed]**
-(recurrence plots, Eckmann et al.; cross-recurrence, Marwan et al.). For a window of states $\mathbf{x}_n$ (one value per
+Recurrence analysis compares a movement with itself or with another movement in the space of states {cite}`varni2017computational`. For a window of states $\mathbf{x}_n$ (one value per
 channel, for example the posture of a participant), the recurrence plot is the binary matrix
 
 $$

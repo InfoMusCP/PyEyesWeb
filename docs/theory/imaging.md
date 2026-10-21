@@ -120,7 +120,7 @@ found). The figure shows the centroids and the boxes on this synthetic silhouett
 
 A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line and the lines of
 successive frames are placed side by side, so that a movement becomes a visible trace. With a motion image (a frame
-difference) the result is called a motiongram **[citation needed]** (Jensenius, 2006, the motiongram). For a grayscale frame
+difference) the result is called a motiongram {cite}`jensenius2006using`. For a grayscale frame
 $I(h, w)$ and `mode="horizontal"`, the line of a frame is the sum of each row, scaled by its maximum to 0 to 255,
 
 $$
@@ -186,8 +186,7 @@ clockwise when $y$ points up, starting from the point with the smallest $x$.
 of the curvature, at least `minimum_distance` points apart, and in every piece the extremum of larger magnitude is a minimum
 point when it is negative and a maximum point when it is positive. With `track_points=True` the labels of the previous call are
 carried over to the nearest new points, up to `number_of_points` of them, so a label stays with the same body part from frame to
-frame. The idea of reading the extremities of a body from the curvature of its silhouette is that of **[citation needed]**
-(curvature-based body-part detection, the EyesWeb silhouette analysis).
+frame. The extremities of a body are read from the curvature of its silhouette, as in the EyesWeb silhouette analysis.
 
 A contour with five lobes shows the chain. Without smoothing, noise of standard deviation 0.05 in the coordinates (the radius is about 10)
 multiplies the largest curvature by about six and creates spurious extrema; after the Gaussian filter the five lobes and five
@@ -270,5 +269,5 @@ the channel sums of the videogram are independent (the original aliased them).
 
 ## Further reading
 
-The platform that the imaging features come from is described in {cite}`camurri2003eyesweb` and {cite}`volpe2016xmi`. For the
+The platform that the imaging features come from is described in {cite}`camurri2003eyesweb` and {cite}`volpe2016designing`. For the
 parameters of each feature see its API page, for example {py:class}`~pyeyesweb.physical_signals.SilhouetteCentroids`.

@@ -96,7 +96,7 @@ class SpectralArcLength(_SpeedProfileMetric):
 
     References
     ----------
-    :cite:`balasubramanian2015smoothness`
+    :cite:`balasubramanian2015analysis`
 
     Examples
     --------
@@ -170,7 +170,7 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
 
     References
     ----------
-    :cite:`balasubramanian2015smoothness`, :cite:`melendez2021imu`
+    :cite:`balasubramanian2015analysis`, :cite:`melendez2021imu`
 
     Examples
     --------
@@ -488,7 +488,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
 
     References
     ----------
-    :cite:`mazzarino2009impulsivity`
+    :cite:`mazzarino2009need`
 
     Examples
     --------

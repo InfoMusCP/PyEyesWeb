@@ -71,7 +71,7 @@ class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreF
 
     References
     ----------
-    :cite:`mazzarino2009impulsivity`, :cite:`niewiadomski2015impulsive`
+    :cite:`mazzarino2009need`, :cite:`niewiadomski2015impulsive`
 
     Examples
     --------
@@ -162,7 +162,7 @@ class ContractionImpulsivity(CoreFeature):
 
     References
     ----------
-    :cite:`mazzarino2009impulsivity`, :cite:`niewiadomski2015impulsive`
+    :cite:`mazzarino2009need`, :cite:`niewiadomski2015impulsive`
 
     Examples
     --------

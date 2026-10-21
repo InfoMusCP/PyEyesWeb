@@ -209,7 +209,7 @@ second, `Symmetry` `reference_type` limited to `"label"`, `SpikeSynchronization(
 Execute after B1 to B7 (they change wording) and, ideally, after E6 (so the install pages are true). Details and acceptance
 criteria are in `DOCS_PLAN.md` section 11; in short: (1) references: **[maintainer]** supplies the sources for the 15
 `**[citation needed]**` markers in the theory pages and for the features whose docstrings cite nothing, checks
-`mazzarino2009impulsivity` and the 12 bib entries marked DRAFT (listed in `DOCS_PLAN.md` section 11.1); then `docs/references.bib` is completed and the gate fails on any
+`mazzarino2009need` and the 12 bib entries marked DRAFT (listed in `DOCS_PLAN.md` section 11.1); then `docs/references.bib` is completed and the gate fails on any
 remaining marker; (2) identity (SVG logo, palette, footer logos, dark mode, mobile); (3) automated checks: catalog coverage from the
 gallery back-references, stale-name grep, `linkcheck`, numpydoc validation, spelling; (4) known text issues (clumsy paragraph in
 `theory/synchronization.md`, plain "next tutorial" sentences at the end of tutorials 05 and 07, the live/structural table duplicated

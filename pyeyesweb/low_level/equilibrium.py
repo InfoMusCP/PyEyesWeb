@@ -73,7 +73,7 @@ class Equilibrium(CoreFeature):
 
     References
     ----------
-    :cite:`ghisio2015exergames`
+    :cite:`ghisio2015open`
 
     Examples
     --------

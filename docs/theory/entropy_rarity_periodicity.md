@@ -21,7 +21,7 @@ it represents. Except for the instantaneous rarity they work on a window of $N$ 
 ## Sample entropy
 
 Sample entropy measures how unlikely it is that two stretches of the signal that are close to each other for $k$ samples are
-still close at the next sample **[citation needed]** (sample entropy, Richman and Moorman). Take the templates $u_k(i)=(x_i,\dots,x_{i+k-1})$ of
+still close at the next sample {cite}`glowinski2013creative,glowinski2013movements,glowinski2013action`. Take the templates $u_k(i)=(x_i,\dots,x_{i+k-1})$ of
 length $k$ in a window. Two templates match when every pair of corresponding samples differs by less than a tolerance $r$
 (Chebyshev distance). With $B_k$ the number of matching pairs of templates of length $k$, and $A_k$ the number of those pairs
 that still match when both are extended by one sample (that is, the number of matching pairs of length $k+1$), the entry for
@@ -113,8 +113,7 @@ $$
 R=-\ln(AB+10^{-16}),
 $$
 
-where $A$ and $B$ are two probability terms estimated from the occupancy of the bins **[citation needed]** (the EyesWeb rarity
-and contrast measures). With `measure="rarity"` they are estimated from a memory of the last `window` values of the same
+where $A$ and $B$ are two probability terms estimated from the occupancy of the bins {cite}`mancas2008real`. With `measure="rarity"` they are estimated from a memory of the last `window` values of the same
 input, so $R$ is a rarity across time; with `measure="contrast"` they are estimated across the inputs, so $R$ is a contrast
 between signals. A rare value gives a large $R$. The feature keeps its own memory, one sample per call; the memory starts
 filled with zeros, so until `window` samples have been seen the status is `WARMING_UP` and the numbers are artefacts.
@@ -148,7 +147,7 @@ array([0. , 0. , 2.7])
 
 Periodic movements, such as steady steps or a repeated gesture, repeat after a fixed number of samples.
 {py:class}`~pyeyesweb.analysis_primitives.Periodicity` finds the periods of each channel of a window with the Periodicity
-Transform **[citation needed]** (Periodicity Transform, Sethares and Staley), which decomposes a signal into periodic components. It returns two arrays of
+Transform, which decomposes a signal into periodic components. It returns two arrays of
 shape `(channels, columns)`: the detected `periods` in samples and their normalised `powers`, where a perfectly periodic signal
 has a power of 1 and unused entries are $-1$. The number of columns depends on the method (`"small2large"`, from the smallest
 period upward, or `"mbest"`, the `best_periods` best periods) and on the window, so these two outputs are not part of the

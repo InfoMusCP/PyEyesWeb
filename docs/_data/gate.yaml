@@ -22,14 +22,7 @@ allowed:
 open:
   docs/conf.py: {'\bTODO\b': 2}  # footer logos and version switcher, helpers URL pinned at the release
   docs/_static/custom.css: {'\bTODO\b': 1}  # palette confirmed by the maintainer (11.3)
-  docs/references.bib: {'\bDRAFT\b': 13}  # 12 entries and the header comment (11.1)
-  docs/theory/entropy_rarity_periodicity.md: {'\[citation needed\]': 3}
-  docs/theory/gesture_segmentation.md: {'\[citation needed\]': 1}
-  docs/theory/humanoid_models.md: {'\[citation needed\]': 1}
-  docs/theory/imaging.md: {'\[citation needed\]': 2}
-  docs/theory/kinematics_energy.md: {'\[citation needed\]': 1}
-  docs/theory/smoothness.md: {'\[citation needed\]': 2}
-  docs/theory/synchronization.md: {'\[citation needed\]': 5}
+  docs/references.bib: {'\bDRAFT\b': 3}  # header comment and two entries still to be completed (DOCS_PLAN.md 11.1)
 
 # --- names of the 1.x library: never in the published text -------------------------------------------------------------------
 # Scanned in docs/**/*.md|rst, README.md, examples/**/plot_*.py, examples/helpers.py and the public docstrings of pyeyesweb.
