@@ -40,13 +40,12 @@ openpose        25 joints, 11 pairs, reference Neck, missing ('weights',)
 'kinect_v2'
 ```
 
-```{warning}
-Only `kinect_v2` is complete. `qualisys_sport`, `mediapipe` and `openpose` are **incomplete**: they are starting points whose
-empty fields are marked `TODO(fill)` in the source and listed by `Skeleton.missing()` and by `skeletons.SKELETON_TODO`. They
-have no weights (and `qualisys_sport` and `mediapipe` have no reference joint either), and nobody has filled them in yet. What this means in practice:
+```{note}
+`qualisys_sport`, `mediapipe` and `openpose` define the joints and the pairs of their device, and leave some fields empty,
+which `Skeleton.missing()` and `skeletons.SKELETON_TODO` list: no weights, and for `qualisys_sport` and `mediapipe` no reference
+joint either. What this means in practice:
 
-- a missing `weights` becomes a weight of 1.0 for every joint, silently, so the kinetic energy computed on these three presets is
-  not comparable with the one computed on `kinect_v2`, and is not the value that the original EyesWeb block gives;
+- a missing `weights` becomes a weight of 1.0 for every joint;
 - a missing `reference` is harmless for `Symmetry(method="reflection")`, which then reflects about the barycentre, but
   `Symmetry(method="ratio")` raises `ValueError` at construction and asks for `reference_point=`.
 

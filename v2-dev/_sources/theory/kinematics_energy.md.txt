@@ -53,7 +53,7 @@ A recording gives the position at the instants $t = n \, \Delta t$ only, and its
 of consecutive samples are the simplest estimate, and amplify measurement noise at every order: the noise of the speed is of
 the order of the noise of the position divided by $\Delta t$, and that of the jerk is larger by a further factor
 $1/\Delta t^{2}$. The usual remedy is to fit a polynomial to a few samples and to differentiate the fit, the
-Savitzky-Golay filter **[citation needed]** (Savitzky and Golay, smoothing and differentiation of data by least squares).
+Savitzky-Golay filter.
 
 {py:class}`~pyeyesweb.low_level.Kinematics` does so. The newest `filter_window_length` samples (15 by default) are fitted by a
 polynomial of order `filter_polyorder` (3 by default), and the estimate is the fit, or one of its derivatives, evaluated at

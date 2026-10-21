@@ -37,7 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0f3fd005" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;600&display=swap" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=58325c5d" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
@@ -55,9 +56,10 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/pyeyesweb.skeletons.with_skeleton';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../_static/favicon-32x32.png"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Catalog" href="../catalog.html" />
+    <link rel="next" title="Datasets" href="../datasets.html" />
     <link rel="prev" title="pyeyesweb.skeletons.get_skeleton" href="pyeyesweb.skeletons.get_skeleton.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -115,7 +117,7 @@
   </button>
   
   
-  <div class="col-lg-3 navbar-header-items__start">
+  <div class=" navbar-header-items__start">
     
       <div class="navbar-item">
 
@@ -144,7 +146,7 @@
     
   </div>
   
-  <div class="col-lg-9 navbar-header-items">
+  <div class=" navbar-header-items">
     
     <div class="me-auto navbar-header-items__center">
       
@@ -153,36 +155,36 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../getting_started/install.html">
-    Installation
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
-    Quickstart
+  <a class="nav-link nav-internal" href="../../theory/index.html">
+    Theory
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/layers.html">
-    Layers and the catalog
+  <a class="nav-link nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../overview.html">
+    API reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
-    Inputs
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/results.html">
-    Results, statuses and recorders
+  <a class="nav-link nav-internal" href="../../developer/index.html">
+    Development
   </a>
 </li>
 
@@ -195,260 +197,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../concepts/time_units_parameters.html">
-    Time, units and parameters
+  <a class="nav-link dropdown-item nav-internal" href="../../release_notes.html">
+    Release notes
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/framework.html">
-    Conceptual framework
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/notation.html">
-    Notation, units and conventions
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/kinematics_energy.html">
-    Kinematics and energy
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/smoothness.html">
-    Smoothness
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/shape_symmetry_balance.html">
-    Shape, symmetry and balance
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/impulsivity_suddenness.html">
-    Impulsivity and suddenness
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/gesture_segmentation.html">
-    Gesture segmentation
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/entropy_rarity_periodicity.html">
-    Entropy, rarity and periodicity
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/synchronization.html">
-    Synchronization
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/dominance.html">
-    Dominance
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/humanoid_models.html">
-    Humanoid and mass-spring models
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../theory/imaging.html">
-    Imaging
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/physical_signals.html">
-    Physical signals
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/low_level.html">
-    Low-level features
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/mid_level.html">
-    Mid-level features
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/high_level.html">
-    High-level features
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../user_guide/analysis_primitives.html">
-    Analysis primitives
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../overview.html">
-    API overview
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../data_models.html">
-    Data models
-  </a>
-</li>
-
-
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="../skeletons.html">
-    Skeletons
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../datasets.html">
-    Datasets
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../catalog.html">
-    Catalog
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/index.html">
-    Tutorials
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../howto/load_data.html">
-    Load the example data
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../howto/map_skeleton.html">
-    Map your marker set to a skeleton
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../howto/realtime_live_parameters.html">
-    A real-time loop with live parameters
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../howto/batch_to_pandas.html">
-    Batch a recording to pandas
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../howto/images.html">
-    Work with images
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../developer/architecture.html">
-    Architecture and contract
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../developer/conventions.html">
-    Conventions
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../developer/porting_status.html">
-    Porting status
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../developer/adding_a_feature.html">
-    Adding a feature
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../developer/building_the_docs.html">
-    Building the docs
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
-    Changelog
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../migration.html">
-    Migrating from 1.x
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../references.html">
-    References
+  <a class="nav-link dropdown-item nav-internal" href="../../about.html">
+    About
   </a>
 </li>
 
@@ -551,197 +308,15 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../getting_started/install.html">
-    Installation
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../getting_started/quickstart.html">
-    Quickstart
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/layers.html">
-    Layers and the catalog
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/inputs.html">
-    Inputs
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/results.html">
-    Results, statuses and recorders
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/time_units_parameters.html">
-    Time, units and parameters
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/framework.html">
-    Conceptual framework
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/notation.html">
-    Notation, units and conventions
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/kinematics_energy.html">
-    Kinematics and energy
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/smoothness.html">
-    Smoothness
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/shape_symmetry_balance.html">
-    Shape, symmetry and balance
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/impulsivity_suddenness.html">
-    Impulsivity and suddenness
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/gesture_segmentation.html">
-    Gesture segmentation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/entropy_rarity_periodicity.html">
-    Entropy, rarity and periodicity
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/synchronization.html">
-    Synchronization
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/dominance.html">
-    Dominance
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/humanoid_models.html">
-    Humanoid and mass-spring models
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../theory/imaging.html">
-    Imaging
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_guide/physical_signals.html">
-    Physical signals
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_guide/low_level.html">
-    Low-level features
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_guide/mid_level.html">
-    Mid-level features
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_guide/high_level.html">
-    High-level features
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_guide/analysis_primitives.html">
-    Analysis primitives
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../overview.html">
-    API overview
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../data_models.html">
-    Data models
-  </a>
-</li>
-
-
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../skeletons.html">
-    Skeletons
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../datasets.html">
-    Datasets
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../catalog.html">
-    Catalog
+  <a class="nav-link nav-internal" href="../../theory/index.html">
+    Theory
   </a>
 </li>
 
@@ -753,93 +328,30 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../howto/load_data.html">
-    Load the example data
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../overview.html">
+    API reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../howto/map_skeleton.html">
-    Map your marker set to a skeleton
+  <a class="nav-link nav-internal" href="../../developer/index.html">
+    Development
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../howto/realtime_live_parameters.html">
-    A real-time loop with live parameters
+  <a class="nav-link nav-internal" href="../../release_notes.html">
+    Release notes
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../howto/batch_to_pandas.html">
-    Batch a recording to pandas
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../howto/images.html">
-    Work with images
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../developer/architecture.html">
-    Architecture and contract
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../developer/conventions.html">
-    Conventions
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../developer/porting_status.html">
-    Porting status
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../developer/adding_a_feature.html">
-    Adding a feature
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../developer/building_the_docs.html">
-    Building the docs
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../changelog.html">
-    Changelog
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../migration.html">
-    Migrating from 1.x
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../references.html">
-    References
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
   </a>
 </li>
 
@@ -901,8 +413,121 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="pyeyesweb.skeletons.get_skeleton.html">pyeyesweb.skeletons.get_skeleton</a></li>
-<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">pyeyesweb.skeletons.with_skeleton</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physical_signals.html">Layer 1: physical signals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.physical_signals.MassSpringModel.html">pyeyesweb.physical_signals.MassSpringModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.physical_signals.TimeWindowSynchronizer.html">pyeyesweb.physical_signals.TimeWindowSynchronizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.physical_signals.SynchronizedWindow.html">pyeyesweb.physical_signals.SynchronizedWindow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelEstimator.html">GenericModelEstimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelOrientations.html">GenericModelOrientations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelPredictor.html">GenericModelPredictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelSimulator.html">GenericModelSimulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/HitCellDetector.html">HitCellDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/HumanoidOrientations.html">HumanoidOrientations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/HumanoidSimulator.html">HumanoidSimulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/PointsPredictor.html">PointsPredictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/SilhouetteBodyParts.html">SilhouetteBodyParts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/SilhouetteCentroids.html">SilhouetteCentroids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physical_signals/Videogram.html">Videogram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../low_level.html">Layer 2: low-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="low_level/BodyPartsFromCurvature.html">BodyPartsFromCurvature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/BoundingBoxFilledArea.html">BoundingBoxFilledArea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/ContourCurvature.html">ContourCurvature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/ConvexHull.html">ConvexHull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/CurvatureDispersion.html">CurvatureDispersion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/CurvatureVelocityCorrelation.html">CurvatureVelocityCorrelation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/DirectionChange.html">DirectionChange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/Directness.html">Directness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/EllipsoidSphericity.html">EllipsoidSphericity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/Equilibrium.html">Equilibrium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/FilterContour.html">FilterContour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/Harmonicity.html">Harmonicity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/Kinematics.html">Kinematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/KineticEnergy.html">KineticEnergy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/LogDimensionlessJerk.html">LogDimensionlessJerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/MotionNoiseDetector.html">MotionNoiseDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/PointsDensity.html">PointsDensity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/SpectralArcLength.html">SpectralArcLength</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/SubmovementCount.html">SubmovementCount</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/Symmetry.html">Symmetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/TrajectoryNonPlanarity.html">TrajectoryNonPlanarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low_level/TriangleSymmetry.html">TriangleSymmetry</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../mid_level.html">Layer 3: mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/ContractionImpulsivity.html">ContractionImpulsivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/GestureSegmenter.html">GestureSegmenter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/MotionDuration.html">MotionDuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/PositionDependingPotentials.html">PositionDependingPotentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/RegionDependingPotentials.html">RegionDependingPotentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/Suddenness.html">Suddenness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mid_level/SuddennessImpulsivity.html">SuddennessImpulsivity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../high_level.html">Layer 4: qualities communicated</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="high_level/EnsembleDominance.html">EnsembleDominance</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../analysis_primitives.html">Analysis primitives</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/BinaryPulsesRegularity.html">BinaryPulsesRegularity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/CoarseGraining.html">CoarseGraining</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/CorrelationsMatrix.html">CorrelationsMatrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/CrossRecurrencePlot.html">CrossRecurrencePlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/EventSynchronization.html">EventSynchronization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/EventSynchronizationMECS.html">EventSynchronizationMECS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/GeneralisedAutoCorrelation.html">GeneralisedAutoCorrelation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/MultiScaleEntropy.html">MultiScaleEntropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/NonlinearInterdependence.html">NonlinearInterdependence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/PartialRecurrenceSynchronization.html">PartialRecurrenceSynchronization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/Periodicity.html">Periodicity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/PhaseLockingValue.html">PhaseLockingValue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/Rarity.html">Rarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/RecurrencePlot.html">RecurrencePlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/SampleEntropy.html">SampleEntropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/ScalarPeakDetector.html">ScalarPeakDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/SequenceDetector.html">SequenceDetector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/SpikeSynchronization.html">SpikeSynchronization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/TemporalSynchronization.html">TemporalSynchronization</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data_models.html">Data models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Feature.html">pyeyesweb.data_models.Feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.WindowedFeature.html">pyeyesweb.data_models.WindowedFeature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Inputs.html">pyeyesweb.data_models.Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Input.html">pyeyesweb.data_models.Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.InputKind.html">pyeyesweb.data_models.InputKind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Schema.html">pyeyesweb.data_models.Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Output.html">pyeyesweb.data_models.Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Result.html">pyeyesweb.data_models.Result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Status.html">pyeyesweb.data_models.Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Recorder.html">pyeyesweb.data_models.Recorder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.Skeleton.html">pyeyesweb.data_models.Skeleton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.data_models.OutputsMixin.html">pyeyesweb.data_models.OutputsMixin</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../skeletons.html">Skeletons</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.skeletons.get_skeleton.html">pyeyesweb.skeletons.get_skeleton</a></li>
+<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">pyeyesweb.skeletons.with_skeleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets.html">Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.datasets.load_qualisys_trial.html">pyeyesweb.datasets.load_qualisys_trial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.datasets.QualisysTrial.html">pyeyesweb.datasets.QualisysTrial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.datasets.fetch_data_file.html">pyeyesweb.datasets.fetch_data_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.datasets.available_trials.html">pyeyesweb.datasets.available_trials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.datasets.cache_dir.html">pyeyesweb.datasets.cache_dir</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../catalog.html">Catalog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.catalog.Layer.html">pyeyesweb.catalog.Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.catalog.Timescale.html">pyeyesweb.catalog.Timescale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.catalog.FeatureInfo.html">pyeyesweb.catalog.FeatureInfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.catalog.describe.html">pyeyesweb.catalog.describe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.catalog.catalog.html">pyeyesweb.catalog.catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.catalog.catalog_table.html">pyeyesweb.catalog.catalog_table</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -944,7 +569,7 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">API overview</a></li>
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">API reference</a></li>
     
     
     <li class="breadcrumb-item"><a href="../skeletons.html" class="nav-link">Skeletons</a></li>
@@ -1028,11 +653,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="../catalog.html"
+       href="../datasets.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Catalog</p>
+        <p class="prev-next-title">Datasets</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1093,7 +718,7 @@
 
   <p class="copyright">
     
-      © Copyright 2026, Casa Paganini - InfoMus.
+      © Copyright 2026, InfoMus Lab - Casa Paganini, University of Genoa.
       <br/>
     
   </p>
@@ -1107,17 +732,9 @@
   
     <div class="footer-items__end">
       
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-  </p>
-</div>
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+        <div class="footer-item"><p class="pew-footer-funding">
+  <a href="https://resilence.eu/"><img src="../../_static/resilence-logo.png" alt="Resilence project"></a>
+  <img src="../../_static/eu-logo.png" alt="Funded by the European Union">
 </p></div>
       
     </div>

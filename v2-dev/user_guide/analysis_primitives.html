@@ -37,7 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0f3fd005" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;600&display=swap" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=58325c5d" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
@@ -55,9 +56,10 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/analysis_primitives';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API overview" href="../api/overview.html" />
+    <link rel="next" title="Load the example data" href="../howto/load_data.html" />
     <link rel="prev" title="High-level features" href="high_level.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -115,7 +117,7 @@
   </button>
   
   
-  <div class="col-lg-3 navbar-header-items__start">
+  <div class=" navbar-header-items__start">
     
       <div class="navbar-item">
 
@@ -144,7 +146,7 @@
     
   </div>
   
-  <div class="col-lg-9 navbar-header-items">
+  <div class=" navbar-header-items">
     
     <div class="me-auto navbar-header-items__center">
       
@@ -152,37 +154,37 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../getting_started/install.html">
-    Installation
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
-    Quickstart
+  <a class="nav-link nav-internal" href="../theory/index.html">
+    Theory
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/layers.html">
-    Layers and the catalog
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/inputs.html">
-    Inputs
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/results.html">
-    Results, statuses and recorders
+  <a class="nav-link nav-internal" href="../developer/index.html">
+    Development
   </a>
 </li>
 
@@ -195,260 +197,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../concepts/time_units_parameters.html">
-    Time, units and parameters
+  <a class="nav-link dropdown-item nav-internal" href="../release_notes.html">
+    Release notes
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/framework.html">
-    Conceptual framework
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/notation.html">
-    Notation, units and conventions
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/kinematics_energy.html">
-    Kinematics and energy
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/smoothness.html">
-    Smoothness
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/shape_symmetry_balance.html">
-    Shape, symmetry and balance
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/impulsivity_suddenness.html">
-    Impulsivity and suddenness
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/gesture_segmentation.html">
-    Gesture segmentation
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/entropy_rarity_periodicity.html">
-    Entropy, rarity and periodicity
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/synchronization.html">
-    Synchronization
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/dominance.html">
-    Dominance
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/humanoid_models.html">
-    Humanoid and mass-spring models
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../theory/imaging.html">
-    Imaging
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="physical_signals.html">
-    Physical signals
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="low_level.html">
-    Low-level features
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="mid_level.html">
-    Mid-level features
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="high_level.html">
-    High-level features
-  </a>
-</li>
-
-
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
-    Analysis primitives
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api/overview.html">
-    API overview
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api/data_models.html">
-    Data models
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api/skeletons.html">
-    Skeletons
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api/datasets.html">
-    Datasets
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api/catalog.html">
-    Catalog
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../tutorials/index.html">
-    Tutorials
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../howto/load_data.html">
-    Load the example data
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../howto/map_skeleton.html">
-    Map your marker set to a skeleton
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../howto/realtime_live_parameters.html">
-    A real-time loop with live parameters
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../howto/batch_to_pandas.html">
-    Batch a recording to pandas
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../howto/images.html">
-    Work with images
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../developer/architecture.html">
-    Architecture and contract
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../developer/conventions.html">
-    Conventions
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../developer/porting_status.html">
-    Porting status
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../developer/adding_a_feature.html">
-    Adding a feature
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../developer/building_the_docs.html">
-    Building the docs
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
-    Changelog
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../migration.html">
-    Migrating from 1.x
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../references.html">
-    References
+  <a class="nav-link dropdown-item nav-internal" href="../about.html">
+    About
   </a>
 </li>
 
@@ -550,198 +307,16 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../getting_started/install.html">
-    Installation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../getting_started/quickstart.html">
-    Quickstart
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/layers.html">
-    Layers and the catalog
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/inputs.html">
-    Inputs
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/results.html">
-    Results, statuses and recorders
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/time_units_parameters.html">
-    Time, units and parameters
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/framework.html">
-    Conceptual framework
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/notation.html">
-    Notation, units and conventions
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/kinematics_energy.html">
-    Kinematics and energy
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/smoothness.html">
-    Smoothness
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/shape_symmetry_balance.html">
-    Shape, symmetry and balance
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/impulsivity_suddenness.html">
-    Impulsivity and suddenness
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/gesture_segmentation.html">
-    Gesture segmentation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/entropy_rarity_periodicity.html">
-    Entropy, rarity and periodicity
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/synchronization.html">
-    Synchronization
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/dominance.html">
-    Dominance
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/humanoid_models.html">
-    Humanoid and mass-spring models
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../theory/imaging.html">
-    Imaging
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="physical_signals.html">
-    Physical signals
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="low_level.html">
-    Low-level features
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="mid_level.html">
-    Mid-level features
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="high_level.html">
-    High-level features
-  </a>
-</li>
-
-
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#" aria-current="page">
-    Analysis primitives
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api/overview.html">
-    API overview
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api/data_models.html">
-    Data models
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api/skeletons.html">
-    Skeletons
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api/datasets.html">
-    Datasets
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../api/catalog.html">
-    Catalog
+  <a class="nav-link nav-internal" href="../theory/index.html">
+    Theory
   </a>
 </li>
 
@@ -754,92 +329,29 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../howto/load_data.html">
-    Load the example data
+  <a class="nav-link nav-internal" href="../api/overview.html">
+    API reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../howto/map_skeleton.html">
-    Map your marker set to a skeleton
+  <a class="nav-link nav-internal" href="../developer/index.html">
+    Development
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../howto/realtime_live_parameters.html">
-    A real-time loop with live parameters
+  <a class="nav-link nav-internal" href="../release_notes.html">
+    Release notes
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../howto/batch_to_pandas.html">
-    Batch a recording to pandas
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../howto/images.html">
-    Work with images
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../developer/architecture.html">
-    Architecture and contract
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../developer/conventions.html">
-    Conventions
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../developer/porting_status.html">
-    Porting status
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../developer/adding_a_feature.html">
-    Adding a feature
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../developer/building_the_docs.html">
-    Building the docs
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../changelog.html">
-    Changelog
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../migration.html">
-    Migrating from 1.x
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../references.html">
-    References
+  <a class="nav-link nav-internal" href="../about.html">
+    About
   </a>
 </li>
 
@@ -900,7 +412,35 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../concepts/layers.html">Layers and the catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/inputs.html">Inputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/results.html">Results, statuses and recorders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/time_units_parameters.html">Time, units and parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Choosing a feature, layer by layer</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="physical_signals.html">Physical signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_level.html">Low-level features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mid_level.html">Mid-level features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level features</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Analysis primitives</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../howto/load_data.html">Load the example data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/map_skeleton.html">Map your marker set to a skeleton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/realtime_live_parameters.html">A real-time loop with live parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/batch_to_pandas.html">Batch a recording to pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/images.html">Work with images</a></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -939,6 +479,9 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">User guide</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Analysis primitives</span></li>
   </ul>
 </nav>
@@ -964,177 +507,146 @@ signal is, how periodic, how rare its latest value is, how two signals move toge
 signal, to the output of a low-level feature or to a mid-level one, and they have no timescale of their own; the timescale is
 that of the signal and of the window you give. The group has 19 features; this page helps to
 choose among them. The groups are described in <a class="reference internal" href="../concepts/layers.html"><span class="doc">Layers and the catalog</span></a>.</p>
-<p>.. list-table::
-:header-rows: 1
-:widths: 20 38 10 20 12</p>
-<ul class="simple">
-<li><ul>
-<li><p>Feature</p></li>
-<li><p>Summary</p></li>
-<li><p>Timescale</p></li>
-<li><p>Family</p></li>
-<li><p>Link</p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code></p></li>
-<li><p>Sample entropy of a single-channel window, for template lengths 1 to ``embedding_dimension``.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/SampleEntropy&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code></p></li>
-<li><p>Coarse-grained series of a window: means of non-overlapping groups of ``factor`` samples.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/CoarseGraining&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">Rarity</span></code></p></li>
-<li><p>Rarity of the newest value of a signal within a memory of past values, by ``method``.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/Rarity&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code></p></li>
-<li><p>Whether the pulses of a window are equally spaced.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/BinaryPulsesRegularity&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></p></li>
-<li><p>Multi-scale entropy curve and complexity index of one or several signals.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/MultiScaleEntropy&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">Periodicity</span></code></p></li>
-<li><p>Periods and their normalised power for each channel of a window, by the Periodicity Transform.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Entropy,</span> <span class="pre">rarity</span> <span class="pre">and</span> <span class="pre">periodicity</span> <span class="pre">&lt;/theory/entropy_rarity_periodicity&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/Periodicity&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></p></li>
-<li><p>Peak detection on a scalar signal: flags the samples at which a peak has been found.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Gesture</span> <span class="pre">segmentation</span> <span class="pre">&lt;/theory/gesture_segmentation&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/ScalarPeakDetector&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></p></li>
-<li><p>Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/PhaseLockingValue&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code></p></li>
-<li><p>Matrix of positive Pearson correlations between the signals of a group over a sliding window.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/CorrelationsMatrix&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code></p></li>
-<li><p>Partial correlation of a correlation matrix: the direct synchronization between each pair of signals.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/PartialRecurrenceSynchronization&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></p></li>
-<li><p>Recurrence rate of a multichannel series as a function of the lag: how self-similar a movement is in time.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/GeneralisedAutoCorrelation&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code></p></li>
-<li><p>Event synchronization of two event trains: how often events of one series follow those of the other.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/EventSynchronization&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></p></li>
-<li><p>Multi-event-class synchronization of several event series (MECS), one index per event class.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/EventSynchronizationMECS&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></p></li>
-<li><p>Nonlinear interdependence between two signals: how much the neighbours of one reflect those of the other.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/NonlinearInterdependence&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code></p></li>
-<li><p>SPIKE-synchronization of several spike trains: the share of spikes that have a coincident partner.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/SpikeSynchronization&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code></p></li>
-<li><p>Detector of a given sequence of integer events in a stream, one sample per call.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/SequenceDetector&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></p></li>
-<li><p>Recurrence plot of a window of states: when a movement returns close to a state it has visited before.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/RecurrencePlot&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></p></li>
-<li><p>Cross-recurrence plot of two windows of states: when one movement visits states of the other.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/CrossRecurrencePlot&gt;</span></code></p></li>
-</ul>
-</li>
-<li><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></p></li>
-<li><p>Progression of a staged synchronization process, from a chain of synchronization values, one sample per call.</p></li>
-<li><p>any</p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">Synchronization</span> <span class="pre">&lt;/theory/synchronization&gt;</span></code></p></li>
-<li><p>:doc:<code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">&lt;/api/generated/analysis_primitives/TemporalSynchronization&gt;</span></code></p></li>
-</ul>
-</li>
-</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 38.0%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 12.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Summary</p></th>
+<th class="head"><p>Timescale</p></th>
+<th class="head"><p>Family</p></th>
+<th class="head"><p>Link</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code></p></td>
+<td><p>Sample entropy of a single-channel window, for template lengths 1 to ``embedding_dimension``.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/SampleEntropy.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code></p></td>
+<td><p>Coarse-grained series of a window: means of non-overlapping groups of ``factor`` samples.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/CoarseGraining.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Rarity</span></code></p></td>
+<td><p>Rarity of the newest value of a signal within a memory of past values, by ``method``.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/Rarity.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code></p></td>
+<td><p>Whether the pulses of a window are equally spaced.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/BinaryPulsesRegularity.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></p></td>
+<td><p>Multi-scale entropy curve and complexity index of one or several signals.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/MultiScaleEntropy.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Periodicity</span></code></p></td>
+<td><p>Periods and their normalised power for each channel of a window, by the Periodicity Transform.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/Periodicity.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code></p></td>
+<td><p>Peak detection on a scalar signal: flags the samples at which a peak has been found.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/ScalarPeakDetector.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code></p></td>
+<td><p>Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/PhaseLockingValue.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code></p></td>
+<td><p>Matrix of positive Pearson correlations between the signals of a group over a sliding window.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/CorrelationsMatrix.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code></p></td>
+<td><p>Partial correlation of a correlation matrix: the direct synchronization between each pair of signals.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/PartialRecurrenceSynchronization.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></p></td>
+<td><p>Recurrence rate of a multichannel series as a function of the lag: how self-similar a movement is in time.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/GeneralisedAutoCorrelation.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code></p></td>
+<td><p>Event synchronization of two event trains: how often events of one series follow those of the other.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronization.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></p></td>
+<td><p>Multi-event-class synchronization of several event series (MECS), one index per event class.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/EventSynchronizationMECS.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></p></td>
+<td><p>Nonlinear interdependence between two signals: how much the neighbours of one reflect those of the other.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/NonlinearInterdependence.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code></p></td>
+<td><p>SPIKE-synchronization of several spike trains: the share of spikes that have a coincident partner.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/SpikeSynchronization.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code></p></td>
+<td><p>Detector of a given sequence of integer events in a stream, one sample per call.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/SequenceDetector.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></p></td>
+<td><p>Recurrence plot of a window of states: when a movement returns close to a state it has visited before.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/RecurrencePlot.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code></p></td>
+<td><p>Cross-recurrence plot of two windows of states: when one movement visits states of the other.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/CrossRecurrencePlot.html"><span class="doc">API</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></p></td>
+<td><p>Progression of a staged synchronization process, from a chain of synchronization values, one sample per call.</p></td>
+<td><p>any</p></td>
+<td><p><a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a></p></td>
+<td><p><a class="reference internal" href="../api/generated/analysis_primitives/TemporalSynchronization.html"><span class="doc">API</span></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <section id="which-feature-for-which-question">
 <h2>Which feature for which question<a class="headerlink" href="#which-feature-for-which-question" title="Link to this heading">#</a></h2>
 <p><strong>How regular or complex is the signal?</strong> <a class="reference internal" href="../api/generated/analysis_primitives/SampleEntropy.html#pyeyesweb.analysis_primitives.SampleEntropy" title="pyeyesweb.analysis_primitives.SampleEntropy"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleEntropy</span></code></a> measures the irregularity of a
 window; <a class="reference internal" href="../api/generated/analysis_primitives/CoarseGraining.html#pyeyesweb.analysis_primitives.CoarseGraining" title="pyeyesweb.analysis_primitives.CoarseGraining"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoarseGraining</span></code></a> produces the same signal at a slower scale;
 <a class="reference internal" href="../api/generated/analysis_primitives/MultiScaleEntropy.html#pyeyesweb.analysis_primitives.MultiScaleEntropy" title="pyeyesweb.analysis_primitives.MultiScaleEntropy"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></a> combines both into a curve over scales and a complexity index
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id27" title="M. Costa, A. L. Goldberger, and C.-K. Peng. Multiscale entropy analysis of biological signals. Physical Review E, 71(2):021906, 2005. DRAFT: found only in a source docstring, not in docs.">21</a>]</span>, the input of the dominance analysis of <a class="reference internal" href="high_level.html"><span class="doc">High-level features</span></a>.
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id25" title="Donald Glowinski, Paolo Coletta, Gualtiero Volpe, Antonio Camurri, Carlo Chiorri, and Andrea Schenone. Multi-scale entropy analysis of dominance in social creative activities. In Proceedings of the 18th ACM international conference on Multimedia, 1035–1038. 2010.">4</a>]</span>, the input of the dominance analysis of <a class="reference internal" href="high_level.html"><span class="doc">High-level features</span></a>.
 <a class="reference internal" href="../api/generated/analysis_primitives/Rarity.html#pyeyesweb.analysis_primitives.Rarity" title="pyeyesweb.analysis_primitives.Rarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rarity</span></code></a> tells how rare the newest value is within a memory of past values.
 Theory: <a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a>.</p>
 <p><strong>Is it periodic, and are the pulses regular?</strong> <a class="reference internal" href="../api/generated/analysis_primitives/Periodicity.html#pyeyesweb.analysis_primitives.Periodicity" title="pyeyesweb.analysis_primitives.Periodicity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Periodicity</span></code></a> finds the periods of
@@ -1160,7 +672,7 @@ link of each pair, and <a class="reference internal" href="../api/generated/anal
 synchronization process from a chain of synchronization values.</p></li>
 </ul>
 <p>Theory: <a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a>. The synchronization of a group of musicians is the setting of
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id8" title="S. R. Sabharwal, M. Varlet, M. Breaden, G. Volpe, A. Camurri, and P. E. Keller. huSync—a model and system for the measure of synchronization in small groups: a case study on musical joint action. IEEE Access, 10:92357–92372, 2022.">22</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id8" title="S. R. Sabharwal, M. Varlet, M. Breaden, G. Volpe, A. Camurri, and P. E. Keller. huSync—a model and system for the measure of synchronization in small groups: a case study on musical joint action. IEEE Access, 10:92357–92372, 2022.">5</a>]</span>.</p>
 </section>
 <section id="a-typical-pipeline">
 <h2>A typical pipeline<a class="headerlink" href="#a-typical-pipeline" title="Link to this heading">#</a></h2>
@@ -1217,11 +729,11 @@ build them first, for instance with <code class="docutils literal notranslate"><
       </div>
     </a>
     <a class="right-next"
-       href="../api/overview.html"
+       href="../howto/load_data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">API overview</p>
+        <p class="prev-next-title">Load the example data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1284,7 +796,7 @@ build them first, for instance with <code class="docutils literal notranslate"><
 
   <p class="copyright">
     
-      © Copyright 2026, Casa Paganini - InfoMus.
+      © Copyright 2026, InfoMus Lab - Casa Paganini, University of Genoa.
       <br/>
     
   </p>
@@ -1298,17 +810,9 @@ build them first, for instance with <code class="docutils literal notranslate"><
   
     <div class="footer-items__end">
       
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-  </p>
-</div>
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+        <div class="footer-item"><p class="pew-footer-funding">
+  <a href="https://resilence.eu/"><img src="../_static/resilence-logo.png" alt="Resilence project"></a>
+  <img src="../_static/eu-logo.png" alt="Funded by the European Union">
 </p></div>
       
     </div>

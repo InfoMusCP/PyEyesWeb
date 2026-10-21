@@ -16,7 +16,7 @@ members: the participant whose movement is the least complex, the most regular a
 the others behave more reactively. It takes one complexity index per participant, for example the `complexity_index` of
 {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy`, and returns a dominance score in $[0, 1]$ for each participant, the
 position of the leader and its complexity. The method follows the study of social creative activities in
-{cite}`glowinski2010mse`. Theory: {doc}`../theory/dominance`.
+{cite}`glowinski2010multi`. Theory: {doc}`../theory/dominance`.
 
 The measures of the interaction itself, such as how synchronised a group is, are not in this layer. They are
 analysis primitives, because they take any signal, and are found in {doc}`analysis_primitives`; applied to the outputs of

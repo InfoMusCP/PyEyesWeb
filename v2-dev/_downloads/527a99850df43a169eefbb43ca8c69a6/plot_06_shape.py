@@ -121,7 +121,7 @@ fig.tight_layout()
 #   couple, also between 0 and 1.
 #
 # The ratio method needs a reference joint, the neck by default. A skeleton can carry its own: ``trial.skeleton`` has the pelvis.
-# We name the neck explicitly. The preset ``"qualisys_sport"`` of the 41 raw markers is incomplete and has no reference, so
+# We name the neck explicitly. The preset ``"qualisys_sport"`` of the 41 raw markers defines no reference joint, so
 # for it ``reference_point=`` is required (:doc:`/concepts/inputs`).
 
 from pyeyesweb.low_level import Symmetry

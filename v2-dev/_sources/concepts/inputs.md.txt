@@ -144,12 +144,10 @@ openpose        25 joints, 11 pairs, reference Neck, missing: ('weights',)
 'kinect_v2'
 ```
 
-```{warning}
-Only `kinect_v2` is complete. The other three presets are documented as incomplete, and `Skeleton.missing()` and
-`skeletons.SKELETON_TODO` list what is absent. A missing weight silently becomes 1.0 for every joint, so kinetic-energy values
-on `qualisys_sport`, `mediapipe` and `openpose` are not comparable with those of `kinect_v2` and are not the EyesWeb numbers.
-A missing reference joint is harmless for `Symmetry(method="reflection")`, which then reflects about the barycentre, but
-`Symmetry(method="ratio")` needs one and raises `ValueError` at construction, asking for `reference_point=`.
+```{note}
+`Skeleton.missing()` and `skeletons.SKELETON_TODO` list the fields that a preset does not define. A missing weight becomes
+1.0 for every joint. A missing reference joint is harmless for `Symmetry(method="reflection")`, which then reflects about the
+barycentre, but `Symmetry(method="ratio")` needs one and raises `ValueError` at construction, asking for `reference_point=`.
 ```
 
 ```{doctest}

@@ -1,10 +1,10 @@
 # Layers and the catalog
 
-PyEyesWeb organises its features after the multi-layer conceptual model of expressive gesture of Camurri and colleagues
-(see {doc}`../theory/framework`). The model describes movement at increasing levels of abstraction, from the signals a
-sensor gives to the qualities an observer perceives, and attaches to each level a time span over which a quantity is
-meaningful. The library has one package for each level, and a fifth package for measures that do not belong to any one level.
-Every feature belongs to exactly one package.
+The features are grouped after the multi-layered conceptual model of expressive gesture {cite}`camurri2016dancer` (see
+{doc}`../theory/framework`). The model describes movement at increasing levels of abstraction, from the signals a sensor
+gives to the qualities an observer perceives, and attaches to each level a time span over which a quantity is meaningful.
+Each level corresponds to one package, and a fifth package holds the measures that do not belong to any one level. Every
+feature belongs to exactly one package.
 
 ## The five groups
 

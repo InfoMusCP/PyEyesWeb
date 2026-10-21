@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:34.683** total execution time for 11 files **from all galleries**:
+**00:52.059** total execution time for 11 files **from all galleries**:
 
 .. container::
 
@@ -33,35 +33,35 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_tutorials_04_mid_level_plot_07_gestures.py` (``../examples/04_mid_level/plot_07_gestures.py``)
-     - 00:07.016
+     - 00:11.087
      - 0.0
    * - :ref:`sphx_glr_tutorials_06_capstone_plot_10_capstone.py` (``../examples/06_capstone/plot_10_capstone.py``)
-     - 00:06.033
+     - 00:09.072
      - 0.0
    * - :ref:`sphx_glr_tutorials_03_low_level_plot_06_shape.py` (``../examples/03_low_level/plot_06_shape.py``)
-     - 00:04.466
+     - 00:06.460
      - 0.0
    * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (``../examples/05_analysis_primitives/plot_08_primitives.py``)
-     - 00:03.706
+     - 00:05.846
      - 0.0
    * - :ref:`sphx_glr_tutorials_03_low_level_plot_05_motion.py` (``../examples/03_low_level/plot_05_motion.py``)
-     - 00:03.476
+     - 00:05.247
      - 0.0
    * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` (``../examples/05_analysis_primitives/plot_09a_synchronization_signals.py``)
-     - 00:02.693
+     - 00:03.803
      - 0.0
    * - :ref:`sphx_glr_tutorials_02_physical_signals_plot_03_points.py` (``../examples/02_physical_signals/plot_03_points.py``)
-     - 00:02.634
+     - 00:03.644
      - 0.0
    * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py` (``../examples/05_analysis_primitives/plot_09b_synchronization_events.py``)
-     - 00:01.889
+     - 00:03.027
      - 0.0
    * - :ref:`sphx_glr_tutorials_01_getting_started_plot_01_first_feature.py` (``../examples/01_getting_started/plot_01_first_feature.py``)
-     - 00:01.520
+     - 00:02.054
      - 0.0
    * - :ref:`sphx_glr_tutorials_02_physical_signals_plot_04_images.py` (``../examples/02_physical_signals/plot_04_images.py``)
-     - 00:00.781
+     - 00:01.121
      - 0.0
    * - :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py` (``../examples/01_getting_started/plot_02_the_contract.py``)
-     - 00:00.469
+     - 00:00.697
      - 0.0

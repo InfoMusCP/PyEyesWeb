@@ -3,8 +3,8 @@
 A smooth movement is continuous and well coordinated, made of one flowing action without hesitations or corrections; a
 non-smooth one is jerky, interrupted or made of several attempts. Smoothness is one of the properties of movement that
 observers perceive most readily, and it is a component of the quality that is called fluidity in movement analysis and in
-the study of expressive movement {cite}`piana2016fluidity,alborno2016fluidity`. The metrics for it come from research on motor control, and are now used for movement in general
-{cite}`balasubramanian2015smoothness`.
+the study of expressive movement {cite}`piana2016fluidity,alborno2016interactive`. The metrics for it come from research on motor control, and are now used for movement in general
+{cite}`balasubramanian2015analysis`.
 
 No single number is the smoothness of a movement: the metrics below capture different aspects, and they do not rank
 movements in the same way. This page defines the six features of the family and says what each one measures:
@@ -18,7 +18,7 @@ symbols are those of {doc}`notation`.
 The reference of the smoothness metrics is the point-to-point reach of a healthy adult: the hand moves from one position to
 another along a nearly straight path, with a speed profile $v(t)$ that has **one bell-shaped peak**, rising from zero,
 reaching a maximum in the middle of the movement and falling back to zero. The ideal bell shape is the one that minimises the
-squared jerk over the movement **[citation needed]** (minimum-jerk model of reaching movements, Flash and Hogan). A movement that is made of several parts, with an interruption between them, has a speed
+squared jerk over the movement {cite}`glowinski2015towards,piana2016adaptive`. A movement that is made of several parts, with an interruption between them, has a speed
 profile with several peaks, called **sub-movements**; tremor and measurement noise add small oscillations on top. Two
 properties follow, and the metrics are built on them:
 
@@ -47,7 +47,7 @@ the first two).
 ### Spectral arc length
 
 The spectral arc length (SPARC) measures the length of the amplitude spectrum of the speed profile
-{cite}`balasubramanian2015smoothness`. Let $V(f)$ be the magnitude of the Fourier transform of the (zero-padded) speed of
+{cite}`balasubramanian2015analysis`. Let $V(f)$ be the magnitude of the Fourier transform of the (zero-padded) speed of
 the window, normalised to its maximum, $\hat{V}(f) = V(f) / \max_f V(f)$. Then
 
 $$
@@ -68,7 +68,7 @@ same length and with the same parameters.
 The jerk is the rate of change of the acceleration, and its squared integral grows with the amplitude and the speed of the
 movement and decreases with its duration. The dimensionless jerk divides it by a combination of the duration $T$ of the
 window and the peak speed $v_{\max}$ that removes the dimensions, and the log dimensionless jerk (LDLJ) takes the negative
-logarithm {cite}`balasubramanian2015smoothness,melendez2021imu`:
+logarithm {cite}`balasubramanian2015analysis,melendez2021imu`:
 
 $$
 \mathrm{LDLJ} = -\ln\left( \frac{T^{3}}{v_{\max}^{2}} \int_{0}^{T}
@@ -166,9 +166,9 @@ Two features take the path of the point instead of its speed profile.
 
 A hand that follows a curve slows down where the curve bends, and speeds up where it straightens. For a smooth movement the
 curvature $\kappa$ and the speed $v$ are therefore negatively correlated, and the correlation is a smoothness index
-{cite}`mazzarino2009impulsivity`. In a window of the trajectory,
+{cite}`mazzarino2009need`. In a window of the trajectory,
 {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation` smooths and differentiates the samples by a Savitzky-Golay
-filter **[citation needed]** (Savitzky and Golay), which gives the velocity $v_k$ and the curvature $\kappa_k$ at every sample
+filter, which gives the velocity $v_k$ and the curvature $\kappa_k$ at every sample
 $k$ of the window, and its `smoothness` output is by default their Pearson correlation,
 
 $$
@@ -258,6 +258,6 @@ numbers depend on the parameters (the cut-off of SPARC, the duration of the wind
 
 ## Further reading
 
-The definitions and the comparison of the metrics: {cite}`balasubramanian2015smoothness`. Their computation from inertial
+The definitions and the comparison of the metrics: {cite}`balasubramanian2015analysis`. Their computation from inertial
 sensors: {cite}`melendez2021imu`. The curvature-velocity index and the motion qualities of impulsivity and smoothness:
-{cite}`mazzarino2009impulsivity`. Fluidity as a perceived quality: {cite}`piana2016fluidity`.
+{cite}`mazzarino2009need`. Fluidity as a perceived quality: {cite}`piana2016fluidity`.

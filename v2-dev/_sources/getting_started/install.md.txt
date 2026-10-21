@@ -1,12 +1,8 @@
 # Installation
 
-```{admonition} Pre-release
-:class: note
-
-This documentation describes PyEyesWeb 2.0, which has not been released yet. The package on PyPI today is the 1.x series,
-which has a different and incompatible interface (it does not contain the compiled core and none of the code on these pages
-runs with it). The commands under "Install a release" are those that will apply when the first 2.0 pre-release is
-published; until then, follow "Development install".
+```{note}
+This documentation describes PyEyesWeb 2.0. The 1.x series has a different, incompatible interface: to keep a 1.x script
+running, install `pyeyesweb<2`, and to move it to 2.0 see {doc}`../migration`.
 ```
 
 ## Requirements
@@ -20,26 +16,23 @@ published; until then, follow "Development install".
   development build has so far been used on Windows only.
 
 PyEyesWeb is pure Python on top of a compiled core, which holds the numerical implementation of the EyesWeb blocks. The core
-is a separate wheel, `eyesweb-core`, that PyEyesWeb depends on (`eyesweb-core>=2.0.0a1,<2.1`, the series the library was
-written for): there is nothing to compile.
+is a separate wheel, `eyesweb-core`, that PyEyesWeb depends on (the 2.0 series of the core, the one the library was written
+for): there is nothing to compile.
 
-## Install a release
-
-A pre-release is not installed by default; ask for it explicitly:
+## Install
 
 ```bash
-pip install --pre pyeyesweb
+pip install pyeyesweb
 ```
 
-`pip install pyeyesweb` pulls the `eyesweb-core` wheel with it (and `--pre` lets `pip` take the pre-release of the core too).
-Once a stable 2.0 exists, `--pre` is no longer needed. Optional extras: `pyeyesweb[pandas]` (for `Recorder.to_frame()`),
+This pulls the `eyesweb-core` wheel with it. Optional extras: `pyeyesweb[pandas]` (for `Recorder.to_frame()`),
 `pyeyesweb[datasets]` (downloads of the example data) and `pyeyesweb[test]`. Use a virtual environment (`python -m venv .venv`) as for
 any scientific project.
 
 ## Development install
 
-Until the packages are published, the library runs from a clone of the repository together with a development build of the
-compiled core, which the maintainers provide as a folder holding the core module. Two things must be visible to Python: the
+To work on PyEyesWeb itself, the library runs from a clone of the repository together with a development build of the
+compiled core, a folder that holds the core module. Two things must be visible to Python: the
 folder of the repository (the library), and the folder of the core, named by the environment variable
 `EYESWEB_CORE_PATH`.
 

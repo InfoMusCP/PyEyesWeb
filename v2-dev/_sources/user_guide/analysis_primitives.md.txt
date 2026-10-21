@@ -15,7 +15,7 @@ choose among them. The groups are described in {doc}`../concepts/layers`.
 **How regular or complex is the signal?** {py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` measures the irregularity of a
 window; {py:class}`~pyeyesweb.analysis_primitives.CoarseGraining` produces the same signal at a slower scale;
 {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` combines both into a curve over scales and a complexity index
-{cite}`costa2005multiscale`, the input of the dominance analysis of {doc}`high_level`.
+{cite}`glowinski2010multi`, the input of the dominance analysis of {doc}`high_level`.
 {py:class}`~pyeyesweb.analysis_primitives.Rarity` tells how rare the newest value is within a memory of past values.
 Theory: {doc}`../theory/entropy_rarity_periodicity`.
 

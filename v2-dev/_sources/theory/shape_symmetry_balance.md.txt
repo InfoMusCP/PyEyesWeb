@@ -148,7 +148,7 @@ array([0.73692362])
 ## Balance
 
 {py:class}`~pyeyesweb.low_level.Equilibrium` estimates the postural balance from one snapshot of the floor plane
-{cite}`ghisio2015exergames`. The support region is an ellipse centred midway between the left foot $P_L$ and the right
+{cite}`ghisio2015open`. The support region is an ellipse centred midway between the left foot $P_L$ and the right
 foot $P_R$, with its major axis along the line through the feet. With $d=\lVert P_R-P_L\rVert$, a margin $m$ that accounts
 for the size of the foot and a weight $w_y$ for the depth of the stance, the semi-axes are
 
@@ -222,5 +222,5 @@ array([[50., 25.,  0.,  0.],
 ## Further reading
 
 The contraction and symmetry cues come from the study of affective gestures {cite}`camurri2003recognizing,glowinski2011minimal`;
-the equilibrium measure was introduced for an exergame platform {cite}`ghisio2015exergames`. For the output objects of the
+the equilibrium measure was introduced for an exergame platform {cite}`ghisio2015open`. For the output objects of the
 features see {doc}`../concepts/results`.

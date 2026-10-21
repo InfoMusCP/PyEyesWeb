@@ -13,7 +13,7 @@ signal, which locate events inside a gesture or between gestures. The symbols ar
 
 ## A threshold on the intensity of motion
 
-The approach of the library is the simplest one that works for a body in motion: a gesture is a period in which the body
+The simplest approach that works for a body in motion is this: a gesture is a period in which the body
 moves enough. The **intensity** $I(n)$ is a scalar that measures how much the body moves at sample $n$, such as the kinetic
 energy of a skeleton ({py:class}`~pyeyesweb.low_level.KineticEnergy`, {doc}`kinematics_energy`) or the quantity of motion
 of a video. The intensity is noisy, so it is first smoothed to $\bar{I}(n)$, and a gesture is declared while the smoothed
@@ -27,8 +27,7 @@ A gesture starts on the first sample at which the smoothed intensity reaches $\t
 is not set, and ends on the first sample at which it falls below $\theta$. Once a gesture has started, the noise flag has no
 effect on its end. Between two gestures the body is in a **pause**.
 
-The smoothing of {py:class}`~pyeyesweb.mid_level.GestureSegmenter` is a Savitzky-Golay filter **[citation needed]**
-(Savitzky and Golay) of polynomial order 3, applied to the last 10 samples with a window of `filter_window_length`
+The smoothing of {py:class}`~pyeyesweb.mid_level.GestureSegmenter` is a Savitzky-Golay filter of polynomial order 3, applied to the last 10 samples with a window of `filter_window_length`
 samples. This must be odd and shorter than the series of 10: 5, 7 or 9, the default being 9 (the window of 15 samples of
 the original EyesWeb block cannot be used with a series of 10, so the default is 9 here). The smoothing delays the
 detection by a few samples, and the filter needs 10 samples before it can produce a value: the status is `WARMING_UP` for the
@@ -185,5 +184,5 @@ from the recorder; in a stream, the output of each call is acted upon as it arri
 ## Further reading
 
 The framework in which segmentation is the step from layer 2 to layer 3: {cite}`camurri2016dancer`. A related method for the
-identification of salient moments in motion capture data: {cite}`romano2025salient`. The EyesWeb library from which these
+identification of salient moments in motion capture data: {cite}`romano2024computational`. The EyesWeb library from which these
 blocks come: {cite}`camurri2003eyesweb`.

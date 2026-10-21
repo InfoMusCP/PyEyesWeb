@@ -22,7 +22,7 @@ skeleton. {py:class}`~pyeyesweb.low_level.DirectionChange` measures the sharp tu
 
 **How smooth is it?** Start from a speed profile and pick the metric that suits the question.
 {py:class}`~pyeyesweb.low_level.SpectralArcLength` and {py:class}`~pyeyesweb.low_level.LogDimensionlessJerk` are the two
-established metrics {cite}`balasubramanian2015smoothness`; {py:class}`~pyeyesweb.low_level.SubmovementCount` counts the
+established metrics {cite}`balasubramanian2015analysis`; {py:class}`~pyeyesweb.low_level.SubmovementCount` counts the
 speed peaks, {py:class}`~pyeyesweb.low_level.Harmonicity` compares a profile with a single bell-shaped peak, and
 {py:class}`~pyeyesweb.low_level.CurvatureDispersion` and {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`
 work on the vectors of the movement. Theory: {doc}`../theory/smoothness`.
