@@ -96,5 +96,4 @@ can be checked:
 ## What is still open
 
 The skeleton presets `qualisys_sport`, `mediapipe` and `openpose` are incomplete: their empty fields are documented as such and are
-to be filled by the maintainers ({doc}`../howto/map_skeleton`). The compiled core is released as its own package; the packaging
-has not been done yet ({doc}`architecture`).
+to be filled by the maintainers ({doc}`../howto/map_skeleton`). The compiled core is its own package, `eyesweb-core` ({doc}`architecture`).

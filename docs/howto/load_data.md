@@ -6,14 +6,14 @@ the positions as a NumPy array with the names of the joints, the sampling rate a
 signals belong to the code that uses them. The module is a convenience for the examples, not part of the feature API, and it
 needs no dependency beyond NumPy to read a local file.
 
-```{admonition} The recordings are not available online yet
-:class: warning
+```{admonition} The recordings come with the repository
+:class: note
 
-Where the recordings will be hosted has not been decided, so `pyeyesweb.datasets.BASE_URL` is `None` and nothing is
-downloaded. The recordings are in the `examples/data` folder of the repository: they are found when you work from a checkout, or
+The recordings are not downloaded: `pyeyesweb.datasets.BASE_URL` is `None`. They are in the `examples/data` folder of the
+repository: they are found when you work from a checkout, or
 when `PYEYESWEB_DATA` points to a folder that holds them. With a package installed from PyPI and neither of these, loading a
 trial raises `FileNotFoundError` with a message that says so (shown at the end of this page). The download itself (with checksums,
-using the optional dependency `pooch`) is written and will be switched on once there is an address.
+using the optional dependency `pooch`) is in place for a hosting address, which is set in `BASE_URL`.
 ```
 
 The code on this page needs the recordings. The documentation checks skip these blocks (`:skipif:` on the `doctest` directive, which tests

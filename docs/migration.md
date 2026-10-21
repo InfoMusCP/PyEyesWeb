@@ -2,11 +2,11 @@
 
 PyEyesWeb 2.0 is a new library with the same aim as 1.x. It keeps the names of some features, but the call contract, the
 results, the parameters and the installation are different, and several features were removed. This page lists what changed
-and how to translate a 1.x script. "1.x" is the released 1.1.1; "development" is any unreleased state of the 2.0 branch (some
+and how to translate a 1.x script. "1.x" is the 1.1.1 release; "development" is an intermediate state of the work on 2.0 (some
 names that were in use only there are listed too, because notebooks and notes written during the development use them).
 
 ```{note}
-PyEyesWeb 2.0 is a pre-release. The 2.0 packages are not on PyPI yet, and `pip install pyeyesweb` still installs 1.x.
+`pip install pyeyesweb` installs 2.x. To keep a 1.x script running unchanged, install `pyeyesweb<2`.
 ```
 
 ## What changed in one page
@@ -32,8 +32,8 @@ Choices are lower-case strings, not enums. Joints are named (`labels=` or a `ske
 one spelling in the whole library. See {doc}`concepts/time_units_parameters`.
 
 **The install.** The features run in a compiled core, the Python module `eyesweb_core`, which is a separate package from
-`pyeyesweb`. At release `pip install pyeyesweb` brings both. Until then the core is built from its sources and
-`EYESWEB_CORE_PATH` points at it; see {doc}`getting_started/install`. `import pyeyesweb`, `pyeyesweb.data_models` and the
+`pyeyesweb`. `pip install pyeyesweb` brings both; to work from a clone with a development build of the core,
+`EYESWEB_CORE_PATH` points at it (see {doc}`getting_started/install`). `import pyeyesweb`, `pyeyesweb.data_models` and the
 enumerations `Layer` and `Timescale` work without the core; `pyeyesweb.catalog()` and the layer packages do not.
 
 ## Five common usages, before and after
@@ -197,8 +197,8 @@ Presets are `kinect_v2`, `qualisys_sport`, `mediapipe` and `openpose`; see {doc}
 
 ## Renamed and removed names
 
-"1.x" in the second column means the name existed in the released 1.1.1; "development" that it existed only in an unreleased
-state of the 2.0 branch. Every old name was checked: it is not importable from 2.0, and every new name exists in the current
+"1.x" in the second column means the name existed in the 1.1.1 release; "development" that it existed only in an intermediate
+state of the work on 2.0. Every old name was checked: it is not importable from 2.0, and every new name exists in the current
 release.
 
 ### The call contract and the data model

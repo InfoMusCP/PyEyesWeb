@@ -11,16 +11,16 @@ live stream and on a recorded file.
 
 ## Installation
 
-PyEyesWeb 2.0 is a **pre-release** and is **not on PyPI yet**: the latest release on PyPI is 1.x, which has a different API
-(see [Migrating from 1.x](https://infomuscp.github.io/PyEyesWeb/migration.html)). At release the installation will be
-
 ```bash
 pip install pyeyesweb
 ```
 
-which also installs the compiled core, the separate `eyesweb-core` wheel (Python 3.10 or later).
-Until then, build the core from its sources and install PyEyesWeb from a clone, pointing `EYESWEB_CORE_PATH` at the folder
-that contains the built `eyesweb_core` module:
+This also installs the compiled core, the separate `eyesweb-core` wheel (Python 3.10 or later). PyEyesWeb 2.0 has a different
+API from the 1.x series: see [Migrating from 1.x](https://infomuscp.github.io/PyEyesWeb/migration.html), and install
+`pyeyesweb<2` to keep a 1.x script running.
+
+To work on PyEyesWeb itself, install it from a clone and point `EYESWEB_CORE_PATH` at the folder that contains a development
+build of the `eyesweb_core` module:
 
 ```bash
 git clone https://github.com/InfoMusCP/PyEyesWeb.git

@@ -1,9 +1,8 @@
 # CHANGELOG
 
-## 2.0.0 (unreleased, pre-release)
+## 2.0.0
 
-PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Gesture Analysis library. It is not released:
-the packages are not on PyPI yet. The migration table for every removed or renamed name is in the migration guide
+PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Gesture Analysis library. The migration table for every removed or renamed name is in the migration guide
 (`docs/migration.md`, "Migrating from 1.x").
 
 ### Breaking Changes

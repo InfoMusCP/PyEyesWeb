@@ -43,13 +43,13 @@ package.
 (`low_level`, ...) do, because they import the features. Without the core the test suite collects only the tests of the pure Python
 data model.
 
-```{admonition} Packaging status
+```{admonition} Packaging
 :class: note
 
-The decision is that the core is published as a binary wheel `eyesweb-core` on PyPI and that `pyeyesweb` depends on it, so that
-`pip install pyeyesweb` brings both (`pyproject.toml` depends on `numpy` and `eyesweb-core>=2.0.0a1,<2.1`; the library is a pure
-Python wheel). The packages are not published yet; until they are, a development install needs a build of the
-core and `EYESWEB_CORE_PATH`, as described in {doc}`building_the_docs`.
+The core is published as a binary wheel `eyesweb-core` on PyPI and `pyeyesweb` depends on it, so that `pip install pyeyesweb`
+brings both (`pyproject.toml` depends on `numpy` and on the 2.0 series of `eyesweb-core`; the library is a pure Python wheel).
+A development install from a clone needs a build of the core and `EYESWEB_CORE_PATH`, as described in
+{doc}`building_the_docs`.
 ```
 
 ## Packages
