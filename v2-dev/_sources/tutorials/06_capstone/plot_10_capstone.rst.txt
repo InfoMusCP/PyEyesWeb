@@ -108,13 +108,13 @@ The loop is four calls per frame. At 3 s we make the segmenter less sensitive by
 state of the filter, so the segmenter restarts, and the ``reason`` of the next result says so). The rule is in
 :doc:`/concepts/time_units_parameters`, and the page of each feature marks its parameters *(live)* or *(structural)*.
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-96
+.. GENERATED FROM PYTHON SOURCE LINES 72-95
 
 .. code-block:: Python
 
 
     log = Recorder(segmenter)
-    reasons, thresholds, motion = [], [], []
+    thresholds, motion = [], []
     for frame, stamp in zip(trial.positions, time):
         if np.isclose(stamp, 3.0):
             segmenter.firing_threshold = 4.0          # live: used from the next call, the state is kept
@@ -125,11 +125,10 @@ state of the filter, so the segmenter restarts, and the ``reason`` of the next r
         gesture = segmenter.process(ke.kinetic_energy, flag.is_noisy, timestamp=stamp)
         phase = durations.process(float(gesture.is_gesturing), timestamp=stamp)
         log.append(gesture)
-        reasons.append(gesture.reason)
         thresholds.append(segmenter.firing_threshold)
         motion.append(phase.motion_duration)
 
-    changed = [(round(float(time[i]), 2), reason) for i, reason in enumerate(reasons) if "state reset" in reason]
+    changed = [(round(float(time[i]), 2), reason) for i, reason in enumerate(log.reasons) if "state reset" in reason]
     print("results with a state reset:", changed)
     print("WARMING_UP rows after the restart:", int(((log.status == 1) & (time > 6.0)).sum()))
     print("parameters now:", segmenter.parameters)
@@ -152,13 +151,13 @@ state of the filter, so the segmenter restarts, and the ``reason`` of the next r
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-100
+.. GENERATED FROM PYTHON SOURCE LINES 96-99
 
 The figure shows the smoothed intensity that the segmenter thresholds, the threshold, and the gestures it finds (green). After
 the first dashed line, the raised threshold lets only the strongest stretches count as gestures, with no gap in the signal; after
 the second the segmenter warms up again for a few samples (yellow).
 
-.. GENERATED FROM PYTHON SOURCE LINES 100-116
+.. GENERATED FROM PYTHON SOURCE LINES 99-115
 
 .. code-block:: Python
 
@@ -196,19 +195,19 @@ the second the segmenter warms up again for a few samples (yellow).
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-120
+.. GENERATED FROM PYTHON SOURCE LINES 117-119
 
 **Takeaway.** A live parameter changes a running feature at once and keeps its state; a structural one restarts it, and the
 ``reason`` of the first result after the change says so.
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-126
+.. GENERATED FROM PYTHON SOURCE LINES 121-125
 
 The loop and ``run`` agree
 --------------------------
 ``run`` is defined as ``reset()`` followed by a loop of ``process``, so a live loop must give the numbers of the batch call
 as long as no parameter changes. We check it on the first three seconds, before the first change, with a fresh pipeline.
 
-.. GENERATED FROM PYTHON SOURCE LINES 126-135
+.. GENERATED FROM PYTHON SOURCE LINES 125-134
 
 .. code-block:: Python
 
@@ -235,12 +234,12 @@ as long as no parameter changes. We check it on the first three seconds, before 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-138
+.. GENERATED FROM PYTHON SOURCE LINES 135-137
 
 **Takeaway.** Develop a pipeline on recordings with ``run``; the same features give the same numbers when they are fed one
 frame at a time.
 
-.. GENERATED FROM PYTHON SOURCE LINES 140-158
+.. GENERATED FROM PYTHON SOURCE LINES 139-157
 
 From recordings to a table
 --------------------------
@@ -261,7 +260,7 @@ To compare conditions we need one row of numbers per recording. Each column belo
 
 One function returns the row of a trial. It builds fresh features for every trial, so no state is shared between trials.
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-200
+.. GENERATED FROM PYTHON SOURCE LINES 157-199
 
 .. code-block:: Python
 
@@ -334,14 +333,14 @@ One function returns the row of a trial. It builds fresh features for every tria
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 201-205
+.. GENERATED FROM PYTHON SOURCE LINES 200-204
 
 Two comparisons of the session: the first six trials differ in whether the two arms act together (**synchronized**) or not
 (**unsynchronized**), in three different tasks; the last four in whether the movement is smooth or not, in two tasks. The
 tasks differ in speed and in how much of the body moves, so the columns are not comparable across tasks and a single trial
 is never a measure of a condition. The next step puts each column on a common scale.
 
-.. GENERATED FROM PYTHON SOURCE LINES 207-212
+.. GENERATED FROM PYTHON SOURCE LINES 206-211
 
 Standardised features
 ---------------------
@@ -349,7 +348,7 @@ The columns have different units and sizes. A **z-score** subtracts the mean of 
 divides by their standard deviation, so each feature is in units of "spread across these trials" and 0 is the average
 trial. The z-score uses no condition labels. The figure draws one marker per trial and feature, coloured by condition.
 
-.. GENERATED FROM PYTHON SOURCE LINES 212-243
+.. GENERATED FROM PYTHON SOURCE LINES 211-242
 
 .. code-block:: Python
 
@@ -396,12 +395,12 @@ trial. The z-score uses no condition labels. The figure draws one marker per tri
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 244-246
+.. GENERATED FROM PYTHON SOURCE LINES 243-245
 
 **Takeaway.** On a common scale the features show, one by one, on which side of the average each trial lies; markers of a
 condition that sit together in a row are a feature that goes with that condition in these trials.
 
-.. GENERATED FROM PYTHON SOURCE LINES 248-255
+.. GENERATED FROM PYTHON SOURCE LINES 247-254
 
 A nearest-centroid comparison
 -----------------------------
@@ -411,7 +410,7 @@ avoid judging a trial with itself, each trial is left out in turn (**leave-one-o
 other trials. With so few trials this is a way to look at the features together, not an estimate of how well the conditions
 could be told apart in general.
 
-.. GENERATED FROM PYTHON SOURCE LINES 255-278
+.. GENERATED FROM PYTHON SOURCE LINES 254-277
 
 .. code-block:: Python
 
@@ -470,14 +469,14 @@ could be told apart in general.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 279-283
+.. GENERATED FROM PYTHON SOURCE LINES 278-282
 
 The printed counts are all the code claims: they are counts on a handful of takes by one performer. The distances show how
 clear each assignment is, and a trial whose two distances are close is a trial that the features do not settle. To see which
 features carry a comparison, repeat it with one feature at a time: the table lists, for each feature, how many trials its
 z-score alone assigns to their own condition with the same centroid rule.
 
-.. GENERATED FROM PYTHON SOURCE LINES 283-300
+.. GENERATED FROM PYTHON SOURCE LINES 282-299
 
 .. code-block:: Python
 
@@ -528,12 +527,12 @@ z-score alone assigns to their own condition with the same centroid rule.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 301-303
+.. GENERATED FROM PYTHON SOURCE LINES 300-302
 
 **Takeaway.** A table of features from several layers, standardised, is enough to compare conditions in a few lines; the
 counts say how the features behave on these trials, and more recordings are needed to say more.
 
-.. GENERATED FROM PYTHON SOURCE LINES 305-314
+.. GENERATED FROM PYTHON SOURCE LINES 304-313
 
 Try it
 ------
@@ -545,13 +544,13 @@ Try it
    print which centroid of the first comparison each is nearer to, with the z-scores made from the means and standard
    deviations of trials 3 to 8. What does the answer say about a rule that always names one of two conditions?
 
-.. GENERATED FROM PYTHON SOURCE LINES 316-319
+.. GENERATED FROM PYTHON SOURCE LINES 315-318
 
 Solutions
 ---------
 Exercise 1. The same loop with a third threshold; the gesture starts are counted per stretch.
 
-.. GENERATED FROM PYTHON SOURCE LINES 319-334
+.. GENERATED FROM PYTHON SOURCE LINES 318-333
 
 .. code-block:: Python
 
@@ -585,11 +584,11 @@ Exercise 1. The same loop with a third threshold; the gesture starts are counted
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 335-336
+.. GENERATED FROM PYTHON SOURCE LINES 334-335
 
 Exercise 2. Two extra columns, then the same leave-one-out rule over nine features.
 
-.. GENERATED FROM PYTHON SOURCE LINES 336-356
+.. GENERATED FROM PYTHON SOURCE LINES 335-355
 
 .. code-block:: Python
 
@@ -634,11 +633,11 @@ Exercise 2. Two extra columns, then the same leave-one-out rule over nine featur
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 357-358
+.. GENERATED FROM PYTHON SOURCE LINES 356-357
 
 Exercise 3. The centroids come from trials 3 to 8; a new trial is standardised with their means and spreads.
 
-.. GENERATED FROM PYTHON SOURCE LINES 358-368
+.. GENERATED FROM PYTHON SOURCE LINES 357-367
 
 .. code-block:: Python
 
@@ -666,12 +665,12 @@ Exercise 3. The centroids come from trials 3 to 8; a new trial is standardised w
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 369-371
+.. GENERATED FROM PYTHON SOURCE LINES 368-370
 
 The rule answers with one of the two conditions it knows, whatever the trial; the size of the distances is what shows how far
 a trial is from both, so read them and not only the label.
 
-.. GENERATED FROM PYTHON SOURCE LINES 373-392
+.. GENERATED FROM PYTHON SOURCE LINES 372-391
 
 Next steps
 ----------
@@ -696,7 +695,7 @@ layer in depth:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.072 seconds)
+   **Total running time of the script:** (0 minutes 5.168 seconds)
 
 
 .. _sphx_glr_download_tutorials_06_capstone_plot_10_capstone.py:

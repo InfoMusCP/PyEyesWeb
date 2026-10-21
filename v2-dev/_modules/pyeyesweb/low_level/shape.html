@@ -677,9 +677,10 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    integer_coordinates : bool, optional</span>
-<span class="sd">        The contour holds integer coordinates, as the pixel contours of an image do. When ``True``, a contour with</span>
-<span class="sd">        fractional coordinates raises ``ValueError``; when ``False`` any real coordinates are accepted. It only</span>
-<span class="sd">        validates the input: the hull is the same in both cases. Defaults to ``True``. *(live)*</span>
+<span class="sd">        Require integer coordinates, as the pixel contours of an image have. When ``True``, a contour with fractional</span>
+<span class="sd">        coordinates raises ``ValueError``; when ``False`` any real coordinates are accepted. It only validates the</span>
+<span class="sd">        input: the hull is the same in both cases (the core's own default is ``True``, the EyesWeb integer contour</span>
+<span class="sd">        datatype). Defaults to ``False``. *(live)*</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -703,6 +704,9 @@
 <span class="sd">     [4. 0.]]</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">ConvexHull</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">integer_coordinates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">integer_coordinates</span><span class="o">=</span><span class="n">integer_coordinates</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"hull"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"convex hull vertices"</span><span class="p">))</span>

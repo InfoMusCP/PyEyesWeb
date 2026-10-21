@@ -773,13 +773,16 @@ NumPy column per output and the status, reason and timestamp of each row, so a l
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.valid[&quot;velocity&quot;]</span></code></p></td>
 <td><p>whether that output was produced in each row</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.timestamps</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.reasons</span></code></p></td>
+<td><p>the <code class="docutils literal notranslate"><span class="pre">reason</span></code> of each row, a list of strings (<code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> where there is none)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.timestamps</span></code></p></td>
 <td><p>the timestamp of each row in seconds, <code class="docutils literal notranslate"><span class="pre">NaN</span></code> where unknown</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.to_frame()</span></code></p></td>
-<td><p>a pandas DataFrame, with the status names in <code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.to_frame()</span></code></p></td>
+<td><p>a pandas DataFrame: <code class="docutils literal notranslate"><span class="pre">status</span></code> (the names), <code class="docutils literal notranslate"><span class="pre">reason</span></code> and <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> in front of one column per flat name</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rec.to_numpy()</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rec.to_numpy()</span></code></p></td>
 <td><p>the numeric columns as one array, in the order of the flat names</p></td>
 </tr>
 </tbody>
@@ -793,7 +796,7 @@ NumPy column per output and the status, reason and timestamp of each row, so a l
 <span class="go">(29, [3, 0, 0])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="n">recording</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<span class="go">['status', 'timestamp', 'velocity_x', 'velocity_y', 'velocity_z', 'direction_x', 'direction_y', 'direction_z']</span>
+<span class="go">['status', 'reason', 'timestamp', 'velocity_x', 'velocity_y', 'velocity_z', 'direction_x', 'direction_y', 'direction_z']</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span><span class="p">[[</span><span class="s2">"velocity_x"</span><span class="p">,</span> <span class="s2">"velocity_z"</span><span class="p">]]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 <span class="go">{'velocity_x': 0.5, 'velocity_z': 0.25}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>

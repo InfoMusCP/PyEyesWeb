@@ -71,7 +71,7 @@ print(segmenter.inputs)
 # :doc:`/concepts/time_units_parameters`, and the page of each feature marks its parameters *(live)* or *(structural)*.
 
 log = Recorder(segmenter)
-reasons, thresholds, motion = [], [], []
+thresholds, motion = [], []
 for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 3.0):
         segmenter.firing_threshold = 4.0          # live: used from the next call, the state is kept
@@ -82,11 +82,10 @@ for frame, stamp in zip(trial.positions, time):
     gesture = segmenter.process(ke.kinetic_energy, flag.is_noisy, timestamp=stamp)
     phase = durations.process(float(gesture.is_gesturing), timestamp=stamp)
     log.append(gesture)
-    reasons.append(gesture.reason)
     thresholds.append(segmenter.firing_threshold)
     motion.append(phase.motion_duration)
 
-changed = [(round(float(time[i]), 2), reason) for i, reason in enumerate(reasons) if "state reset" in reason]
+changed = [(round(float(time[i]), 2), reason) for i, reason in enumerate(log.reasons) if "state reset" in reason]
 print("results with a state reset:", changed)
 print("WARMING_UP rows after the restart:", int(((log.status == 1) & (time > 6.0)).sum()))
 print("parameters now:", segmenter.parameters)

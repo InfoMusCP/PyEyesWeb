@@ -212,7 +212,7 @@ valleys are found.
 (5, 5)
 >>> sorted(parts.maximums)
 ['label_max0', 'label_max1', 'label_max2', 'label_max3', 'label_max4']
->>> ConvexHull(integer_coordinates=False).process(clean).hull.shape
+>>> ConvexHull().process(clean).hull.shape
 (35, 2)
 ```
 

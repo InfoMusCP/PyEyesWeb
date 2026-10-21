@@ -210,8 +210,9 @@ A recorder reads like a table and like a list.
 | `rec.status` | the integer status of each row |
 | `rec.ok` | a boolean mask of the rows that are `OK` |
 | `rec.valid["velocity"]` | whether that output was produced in each row |
+| `rec.reasons` | the `reason` of each row, a list of strings (`""` where there is none) |
 | `rec.timestamps` | the timestamp of each row in seconds, `NaN` where unknown |
-| `rec.to_frame()` | a pandas DataFrame, with the status names in `status` |
+| `rec.to_frame()` | a pandas DataFrame: `status` (the names), `reason` and `timestamp` in front of one column per flat name |
 | `rec.to_numpy()` | the numeric columns as one array, in the order of the flat names |
 
 ```{doctest}
@@ -223,7 +224,7 @@ A recorder reads like a table and like a list.
 (29, [3, 0, 0])
 >>> frame = recording.to_frame()
 >>> list(frame.columns)
-['status', 'timestamp', 'velocity_x', 'velocity_y', 'velocity_z', 'direction_x', 'direction_y', 'direction_z']
+['status', 'reason', 'timestamp', 'velocity_x', 'velocity_y', 'velocity_z', 'direction_x', 'direction_y', 'direction_z']
 >>> frame[["velocity_x", "velocity_z"]].iloc[-1].round(3).to_dict()
 {'velocity_x': 0.5, 'velocity_z': 0.25}
 >>> frame["status"].iloc[-1]

@@ -346,7 +346,7 @@ print("circle of radius 100: curvature", np.round(curvature_of.process(circle).c
 smoother = FilterContour(window=15, gaussian_sigma=4.0)
 smooth = smoother.process(outline).contour
 curvature = curvature_of.process(smooth).curvature
-hull = ConvexHull(integer_coordinates=False).process(smooth).hull
+hull = ConvexHull().process(smooth).hull
 parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(curvature, smooth)
 print("raw curvature range:", np.round([curvature_of.process(outline).curvature.min(), curvature_of.process(outline).curvature.max()], 2),
       "| smoothed:", np.round([curvature.min(), curvature.max()], 2))

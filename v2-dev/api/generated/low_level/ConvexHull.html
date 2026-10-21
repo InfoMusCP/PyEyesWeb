@@ -612,7 +612,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">integer_coordinates</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
 </tr>
 </tbody>
@@ -681,7 +681,7 @@
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyeyesweb.low_level.ConvexHull">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.low_level.</span></span><span class="sig-name descname"><span class="pre">ConvexHull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">integer_coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/shape.html#ConvexHull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.ConvexHull" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.low_level.</span></span><span class="sig-name descname"><span class="pre">ConvexHull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integer_coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/shape.html#ConvexHull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.ConvexHull" title="Link to this definition">#</a></dt>
 <dd><p>Convex hull polygon of a 2D contour.</p>
 <p>Gives the smallest convex polygon that contains all the points of a contour, for instance the outline of a
 silhouette, as the list of its vertices. Only strictly convex vertices are kept (collinear points on an edge are
@@ -693,9 +693,10 @@ coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>integer_coordinates</strong><span class="classifier">bool, optional</span></dt><dd><p>The contour holds integer coordinates, as the pixel contours of an image do. When <code class="docutils literal notranslate"><span class="pre">True</span></code>, a contour with
-fractional coordinates raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>; when <code class="docutils literal notranslate"><span class="pre">False</span></code> any real coordinates are accepted. It only
-validates the input: the hull is the same in both cases. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>. <em>(live)</em></p>
+<dt><strong>integer_coordinates</strong><span class="classifier">bool, optional</span></dt><dd><p>Require integer coordinates, as the pixel contours of an image have. When <code class="docutils literal notranslate"><span class="pre">True</span></code>, a contour with fractional
+coordinates raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>; when <code class="docutils literal notranslate"><span class="pre">False</span></code> any real coordinates are accepted. It only validates the
+input: the hull is the same in both cases (the core’s own default is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the EyesWeb integer contour
+datatype). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>. <em>(live)</em></p>
 </dd>
 </dl>
 </dd>

@@ -43,9 +43,6 @@ Parameters
    * - ``pairs``
      - ``None``
      - ``Sequence[tuple[str, str]] | None``
-   * - ``reference_type``
-     - ``'label'``
-     - ``Literal['label', 'barycenter', 'point']``
    * - ``reference_point``
      - ``'neck'``
      - ``str``

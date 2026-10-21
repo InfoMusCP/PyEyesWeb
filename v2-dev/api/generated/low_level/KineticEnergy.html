@@ -732,7 +732,7 @@ two consecutive frames divided by the time step; in <code class="docutils litera
 With <span class="math notranslate nohighlight">\(w_i\)</span> the weight of the joint (an approximation of its mass),</p>
 <div class="math notranslate nohighlight">
 \[E = \frac{1}{2} \sum_{i} w_i \, \lVert \mathbf{v}_i \rVert^2 .\]</div>
-<p>Only the joints listed in <code class="docutils literal notranslate"><span class="pre">weights</span></code> contribute. If <code class="docutils literal notranslate"><span class="pre">reference_point</span></code> names a joint, the positions are taken
+<p>Only the joints listed in <code class="docutils literal notranslate"><span class="pre">weights</span></code> contribute (a joint missing from an explicit <code class="docutils literal notranslate"><span class="pre">weights</span></code> mapping weighs 0). If <code class="docutils literal notranslate"><span class="pre">reference_point</span></code> names a joint, the positions are taken
 relative to it (position mode), so that the translation of the whole body does not count. The time step of a call
 is the difference to the previous <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> if given, else <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">sampling_rate</span></code>, else one second per frame.</p>
 <dl class="field-list simple">
@@ -752,7 +752,9 @@ weights, or 1.0 for every joint where a preset defines none).</p>
 </dd>
 <dt><strong>weights</strong><span class="classifier">mapping of str to float or sequence of float, optional</span></dt><dd><p>Weight <span class="math notranslate nohighlight">\(w_i\)</span> of each joint (dimensionless, or a mass in the unit of your choice; the energy is in that
 unit times the squared speed). A mapping <code class="docutils literal notranslate"><span class="pre">joint</span> <span class="pre">-&gt;</span> <span class="pre">weight</span></code> or a sequence with one weight per label (a
-different length raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>). Needed unless <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> is given. <em>(live)</em></p>
+different length raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>). Defaults to 1.0 for every joint of <code class="docutils literal notranslate"><span class="pre">labels</span></code>, or to the preset weights of
+<code class="docutils literal notranslate"><span class="pre">skeleton</span></code>; a joint missing from an explicit mapping weighs 0. Without <code class="docutils literal notranslate"><span class="pre">labels</span></code>, <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> or <code class="docutils literal notranslate"><span class="pre">weights</span></code>
+the constructor raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. <em>(live)</em></p>
 </dd>
 <dt><strong>reference_point</strong><span class="classifier">str, optional</span></dt><dd><p>Joint the positions are taken relative to, in position mode. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> (none). <em>(live)</em></p>
 </dd>

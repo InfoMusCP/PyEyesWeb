@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:11.707** total execution time for 2 files **from tutorials/03_low_level**:
+**00:06.915** total execution time for 2 files **from tutorials/03_low_level**:
 
 .. container::
 
@@ -33,8 +33,8 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_tutorials_03_low_level_plot_06_shape.py` (``plot_06_shape.py``)
-     - 00:06.460
+     - 00:03.964
      - 0.0
    * - :ref:`sphx_glr_tutorials_03_low_level_plot_05_motion.py` (``plot_05_motion.py``)
-     - 00:05.247
+     - 00:02.951
      - 0.0

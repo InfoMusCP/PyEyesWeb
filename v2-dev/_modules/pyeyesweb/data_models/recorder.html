@@ -497,6 +497,8 @@
 <span class="sd">        Status code of each row (the values of :class:`Status`), shape ``(n,)``.</span>
 <span class="sd">    ok : numpy.ndarray of bool</span>
 <span class="sd">        Mask of the rows whose status is ``OK``.</span>
+<span class="sd">    reasons : list of str</span>
+<span class="sd">        The ``reason`` of each row, ``""`` where there is none (the same as ``rec[i].reason``).</span>
 <span class="sd">    timestamps : numpy.ndarray of float</span>
 <span class="sd">        Timestamp of each row in seconds, ``NaN`` where unknown, shape ``(n,)``.</span>
 <span class="sd">    valid : dict of str to numpy.ndarray</span>
@@ -525,7 +527,9 @@
 <span class="sd">    &gt;&gt;&gt; rec[-1].speed, len(rec[0:2]), bool(rec.ok.all()), rec.timestamps.tolist()</span>
 <span class="sd">    (3.0, 2, True, [0.0, 0.01, 0.02])</span>
 <span class="sd">    &gt;&gt;&gt; rec.to_numpy().shape, list(rec.to_frame().columns)</span>
-<span class="sd">    ((3, 3), ['status', 'timestamp', 'speed', 'direction_x', 'direction_y'])</span>
+<span class="sd">    ((3, 3), ['status', 'reason', 'timestamp', 'speed', 'direction_x', 'direction_y'])</span>
+<span class="sd">    &gt;&gt;&gt; rec.reasons, rec[0].reason</span>
+<span class="sd">    (['', '', ''], '')</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">):</span>
@@ -552,7 +556,7 @@
 <a class="viewcode-back" href="../../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.from_arrays">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_arrays</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">timestamps</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="n">status</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Recorder"</span><span class="p">:</span>
+                    <span class="n">status</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reasons</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Recorder"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""A recorder filled in one go from whole-recording arrays (the result of a batch ``run``).</span>
 
 <span class="sd">        Parameters</span>
@@ -566,6 +570,8 @@
 <span class="sd">            Timestamps in seconds, one per row; ``NaN`` for every row when omitted.</span>
 <span class="sd">        status : int or array-like, optional</span>
 <span class="sd">            A status code per row, or one for all rows; ``Status.OK`` when omitted. Every output counts as produced.</span>
+<span class="sd">        reasons : sequence of str, optional</span>
+<span class="sd">            The reason of each row; empty for every row when omitted.</span>
 <span class="sd">        """</span>
         <span class="n">rec</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">capacity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">output</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">schema</span><span class="p">]</span>
@@ -585,7 +591,9 @@
         <span class="n">rec</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="n">row_count</span><span class="p">,))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
         <span class="n">rec</span><span class="o">.</span><span class="n">_timestamps</span> <span class="o">=</span> <span class="n">timestamps</span>
         <span class="n">rec</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">row_count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-        <span class="n">rec</span><span class="o">.</span><span class="n">_reasons</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span> <span class="o">*</span> <span class="n">row_count</span>
+        <span class="n">rec</span><span class="o">.</span><span class="n">_reasons</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span> <span class="o">*</span> <span class="n">row_count</span> <span class="k">if</span> <span class="n">reasons</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span> <span class="k">for</span> <span class="n">reason</span> <span class="ow">in</span> <span class="n">reasons</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">_reasons</span><span class="p">)</span> <span class="o">!=</span> <span class="n">row_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"reasons must have one entry per row (</span><span class="si">{</span><span class="n">row_count</span><span class="si">}</span><span class="s2">), got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">_reasons</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rec</span></div>
 
 
@@ -661,6 +669,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">OK</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reasons</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""The reason of each row (``""`` where there is none), a list of ``n`` strings."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reasons</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Timestamp of each row in seconds (``NaN`` where unknown), shape ``(n,)``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamps</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">]</span>
@@ -726,13 +739,13 @@
 <div class="viewcode-block" id="Recorder.to_frame">
 <a class="viewcode-back" href="../../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_frame">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""A pandas DataFrame: one column per flat name, plus ``status`` and ``timestamp`` when ``meta``.</span>
+<span class="w">        </span><span class="sd">"""A pandas DataFrame: one column per flat name, plus ``status``, ``reason`` and ``timestamp`` when ``meta``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        meta : bool, optional</span>
 <span class="sd">            Add the columns ``status`` (the :class:`Status` names, ``"OK"``, ``"WARMING_UP"``, ...: ``frame.status ==</span>
-<span class="sd">            "OK"`` selects the rows that produced output) and ``timestamp`` (seconds), in front. Default ``True``.</span>
+<span class="sd">            "OK"`` selects the rows that produced output) ``reason`` (the text, empty when none) and ``timestamp`` (seconds), in front. Default ``True``.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -744,6 +757,7 @@
         <span class="n">frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">flat_names</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">meta</span><span class="p">:</span>
             <span class="n">frame</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"timestamp"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="p">)</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"reason"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reasons</span><span class="p">)</span>
             <span class="n">frame</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">,</span> <span class="p">[</span><span class="n">Status</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">frame</span></div>
 </div>

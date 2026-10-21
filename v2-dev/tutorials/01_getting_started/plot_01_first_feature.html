@@ -678,18 +678,18 @@ outputs: Schema(Output('kinetic_energy', unit='&lt;length&gt;^2/s^2'))
 <section id="from-a-recorder-to-a-table">
 <h2>From a recorder to a table<a class="headerlink" href="#from-a-recorder-to-a-table" title="Link to this heading">#</a></h2>
 <p>A recorder is a table with one row per sample. <code class="docutils literal notranslate"><span class="pre">recorder[k]</span></code> is the result of sample <code class="docutils literal notranslate"><span class="pre">k</span></code>, <code class="docutils literal notranslate"><span class="pre">recorder[&quot;velocity&quot;]</span></code>
-(or <code class="docutils literal notranslate"><span class="pre">recorder.velocity</span></code>) is a column as a NumPy array, <code class="docutils literal notranslate"><span class="pre">to_frame()</span></code> a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with the status names and
+(or <code class="docutils literal notranslate"><span class="pre">recorder.velocity</span></code>) is a column as a NumPy array, <code class="docutils literal notranslate"><span class="pre">to_frame()</span></code> a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with the status names, the reasons and the timestamps, and
 <code class="docutils literal notranslate"><span class="pre">to_numpy()</span></code> the numbers. The last result that was <code class="docutils literal notranslate"><span class="pre">OK</span></code> stays in <code class="docutils literal notranslate"><span class="pre">feature.latest</span></code>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder" title="pyeyesweb.data_models.Recorder"><span class="n">speed</span></a><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="p">)</span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_frame" title="pyeyesweb.data_models.Recorder.to_frame"><span class="n">speed</span><span class="o">.</span><span class="n">to_frame</span></a><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">]</span><span class="p">]</span><span class="p">)</span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-method reference internal" href="../../api/generated/pyeyesweb.data_models.Recorder.html#pyeyesweb.data_models.Recorder.to_numpy" title="pyeyesweb.data_models.Recorder.to_numpy"><span class="n">speed</span><span class="o">.</span><span class="n">to_numpy</span></a><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">| latest:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-pyeyesweb-data_models sphx-glr-backref-type-py-property reference internal" href="../../api/generated/pyeyesweb.data_models.Feature.html#pyeyesweb.data_models.Feature.latest" title="pyeyesweb.data_models.Feature.latest"><span class="n">kinematics</span><span class="o">.</span><span class="n">latest</span></a><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>KinematicsResult(status=OK, velocity=1050.52)
-    status  timestamp      velocity
-0       OK       0.00  7.588600e-13
-1       OK       0.01  1.042670e+00
-100     OK       1.00  1.050517e+03
-500     OK       5.00  1.629216e+03
+    status reason  timestamp      velocity
+0       OK              0.00  7.588600e-13
+1       OK              0.01  1.042670e+00
+100     OK              1.00  1.050517e+03
+500     OK              5.00  1.629216e+03
 (1500, 1) | latest: KinematicsResult(status=OK, velocity=598.531)
 </pre></div>
 </div>
@@ -730,7 +730,7 @@ of trial 7 over the same seconds.</p></li>
 </span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">velocity (mm/s)</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend"><span class="n">ax</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_plot_01_first_feature_006.png" srcset="../../_images/sphx_glr_plot_01_first_feature_006.png" alt="plot 01 first feature" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend object at 0x7f439acd1e90&gt;
+<img src="../../_images/sphx_glr_plot_01_first_feature_006.png" srcset="../../_images/sphx_glr_plot_01_first_feature_006.png" alt="plot 01 first feature" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend object at 0x7f463799d5d0&gt;
 </pre></div>
 </div>
 <p>The two hands rise and fall together: in a clap they meet and part at the same instants.</p>

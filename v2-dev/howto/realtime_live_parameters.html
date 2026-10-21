@@ -610,14 +610,16 @@ the next call. What happens to the state depends on the parameter.</p>
 <dt>Live</dt><dd><p>applied in place, the accumulated state is kept. Thresholds, weights and the sampling rate are live.</p>
 </dd>
 <dt>Structural</dt><dd><p>the parameter sizes or shapes the state (a filter length, the number of channels, a mode). The state restarts and the
-<code class="docutils literal notranslate"><span class="pre">reason</span></code> of the next result says “parameters changed: state reset”, once.</p>
+<code class="docutils literal notranslate"><span class="pre">reason</span></code> of the next result says “parameters changed: state reset”, once. A plain <code class="docutils literal notranslate"><span class="pre">reset()</span></code> is not a parameter change: its
+next result carries no such note.</p>
 </dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> of a windowed feature are in neither class: the feature keeps the newest samples. A shorter window gives a
 result at once, a longer one reports <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> until it is full again. Both can be changed together with
 <code class="docutils literal notranslate"><span class="pre">configure(window=...,</span> <span class="pre">hop=...)</span></code>.</p>
 <p>The loop below changes one live and one structural parameter while it runs, at samples 300 and 400, and records every <code class="docutils literal notranslate"><span class="pre">reason</span></code>
-that is not empty.</p>
+that is not empty. (<code class="docutils literal notranslate"><span class="pre">run</span></code> keeps the reason of every row in <code class="docutils literal notranslate"><span class="pre">recording.reasons</span></code>, and as the <code class="docutils literal notranslate"><span class="pre">reason</span></code> column of
+<code class="docutils literal notranslate"><span class="pre">recording.to_frame()</span></code>; a loop that calls <code class="docutils literal notranslate"><span class="pre">process</span></code> can append its results to a <code class="docutils literal notranslate"><span class="pre">Recorder</span></code> to get the same.)</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">reset</span><span class="p">();</span> <span class="n">arc</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">stamp</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stream</span><span class="p">(</span><span class="mi">600</span><span class="p">)):</span>
@@ -631,10 +633,11 @@ that is not empty.</p>
 <span class="gp">... </span>        <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">reason</span> <span class="ow">and</span> <span class="n">step</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"NO_OUTPUT"</span> <span class="ow">and</span> <span class="n">step</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"WARMING_UP"</span><span class="p">:</span>
 <span class="gp">... </span>            <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
-<span class="go">[(0, 'kinematics', 'parameters changed: state reset'), (400, 'kinematics', 'parameters changed: state reset')]</span>
+<span class="go">[(400, 'kinematics', 'parameters changed: state reset')]</span>
 </pre></div>
 </div>
-<p>The note at sample 0 is the one that follows <code class="docutils literal notranslate"><span class="pre">reset()</span></code>; the one at sample 400 is the structural change, and it appears only on the feature it was applied to. The smoothness of the second feature kept its
+<p>The note at sample 400 is the structural change, and it appears only on the feature it was applied to; the first call after
+<code class="docutils literal notranslate"><span class="pre">reset()</span></code> (sample 0) has none. The smoothness of the second feature kept its
 window through the live change. A change of <code class="docutils literal notranslate"><span class="pre">window</span></code> on a running feature:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span><span class="o">.</span><span class="n">reason</span>
@@ -648,7 +651,7 @@ window through the live change. A change of <code class="docutils literal notran
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">amplitude_threshold</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">  </span><span class="c">...</span>
-<span class="gr">ValueError</span>: <span class="n">SpectralArcLength: amplitudeThreshold must be in [0, 1]</span>
+<span class="gr">ValueError</span>: <span class="n">SpectralArcLength: amplitude_threshold must be in [0, 1]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arc</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"amplitude_threshold"</span><span class="p">]</span>
 <span class="go">0.1</span>
 </pre></div>

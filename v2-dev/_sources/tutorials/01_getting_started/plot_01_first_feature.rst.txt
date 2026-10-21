@@ -395,7 +395,7 @@ energy is in the usual units (a weight of 1 for every joint makes it joules per 
 From a recorder to a table
 --------------------------
 A recorder is a table with one row per sample. ``recorder[k]`` is the result of sample ``k``, ``recorder["velocity"]``
-(or ``recorder.velocity``) is a column as a NumPy array, ``to_frame()`` a pandas ``DataFrame`` with the status names and
+(or ``recorder.velocity``) is a column as a NumPy array, ``to_frame()`` a pandas ``DataFrame`` with the status names, the reasons and the timestamps, and
 ``to_numpy()`` the numbers. The last result that was ``OK`` stays in ``feature.latest``.
 
 .. GENERATED FROM PYTHON SOURCE LINES 162-167
@@ -416,11 +416,11 @@ A recorder is a table with one row per sample. ``recorder[k]`` is the result of 
  .. code-block:: none
 
     KinematicsResult(status=OK, velocity=1050.52)
-        status  timestamp      velocity
-    0       OK       0.00  7.588600e-13
-    1       OK       0.01  1.042670e+00
-    100     OK       1.00  1.050517e+03
-    500     OK       5.00  1.629216e+03
+        status reason  timestamp      velocity
+    0       OK              0.00  7.588600e-13
+    1       OK              0.01  1.042670e+00
+    100     OK              1.00  1.050517e+03
+    500     OK              5.00  1.629216e+03
     (1500, 1) | latest: KinematicsResult(status=OK, velocity=598.531)
 
 
@@ -510,7 +510,7 @@ Exercise 1. The same feature object, another joint.
  .. code-block:: none
 
 
-    <matplotlib.legend.Legend object at 0x7f439acd1e90>
+    <matplotlib.legend.Legend object at 0x7f463799d5d0>
 
 
 

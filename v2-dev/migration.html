@@ -1219,15 +1219,24 @@ in 2.0 (each is also stated on the page of the feature, as “Corrected in the c
 <td><p>2.0 asks for <code class="docutils literal notranslate"><span class="pre">reference_point=</span></code>; the development default <code class="docutils literal notranslate"><span class="pre">&quot;neck&quot;</span></code> was no joint of <code class="docutils literal notranslate"><span class="pre">mediapipe</span></code> or <code class="docutils literal notranslate"><span class="pre">qualisys_sport</span></code> and the translation to the reference was silently skipped</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Symmetry(method=&quot;ratio&quot;)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">reference_type</span></code> accepts only <code class="docutils literal notranslate"><span class="pre">&quot;label&quot;</span></code>: <code class="docutils literal notranslate"><span class="pre">&quot;barycenter&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;point&quot;</span></code> raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code></p></td>
+<td><p>there is no <code class="docutils literal notranslate"><span class="pre">reference_type</span></code> parameter (the core only translates the frame by <code class="docutils literal notranslate"><span class="pre">reference_point</span></code>; <code class="docutils literal notranslate"><span class="pre">&quot;barycenter&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;point&quot;</span></code> did nothing in the original block): passing it raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code> (development)</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Symmetry</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pairs</span></code> is validated: an entry that is not two joint names, or a name that is not among the labels, raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ConvexHull</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">integer_coordinates</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>: float contours are accepted (<code class="docutils literal notranslate"><span class="pre">True</span></code> rejects fractions, as the core does)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">KineticEnergy(labels=[...])</span></code></p></td>
+<td><p>without <code class="docutils literal notranslate"><span class="pre">weights=</span></code> every joint weighs 1.0 (it used to raise); a joint missing from an explicit mapping weighs 0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code> (development)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code> and <code class="docutils literal notranslate"><span class="pre">velocity_std</span></code> are per second in both modes of <code class="docutils literal notranslate"><span class="pre">differentiate</span></code>; the development values with <code class="docutils literal notranslate"><span class="pre">differentiate=False</span></code> were per sample</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code> (development)</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code> (development)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">is_noisy</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> for noisy (random, jumpy) motion; it was the reverse</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MassSpringModel.to_xml()</span></code> (development)</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MassSpringModel.to_xml()</span></code> (development)</p></td>
 <td><p>the damping is written as relative damping, so a saved model reloads to the same configuration</p></td>
 </tr>
 </tbody>

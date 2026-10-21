@@ -464,7 +464,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.skeleton</span><span class="w"> </span><span class="kn">import</span> <span class="n">Skeleton</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">choice_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">labelled_set</span><span class="p">,</span> <span class="n">points_input</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.labels</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelGuard</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.skeletons</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_skeleton</span><span class="p">,</span> <span class="n">with_skeleton</span>
@@ -542,16 +541,16 @@
 <span class="sd">    normalize_skeleton : bool, optional</span>
 <span class="sd">        ``"ratio"`` only. Divide each joint of a couple by its distance to the reference. Defaults to ``True``. *(live)*</span>
 <span class="sd">    pairs : sequence of (str, str)</span>
-<span class="sd">        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). *(live)*</span>
-<span class="sd">    reference_type : {"label"}, optional</span>
-<span class="sd">        ``"ratio"`` only. ``"label"`` translates the frame so that ``reference_point`` is the origin. The other two</span>
-<span class="sd">        values of the original block, ``"barycenter"`` and ``"point"``, did nothing there and are rejected with</span>
-<span class="sd">        ``ValueError``; to take the barycenter as the centre, subtract it from the frame before the call. Defaults to</span>
-<span class="sd">        ``"label"``. *(live)*</span>
+<span class="sd">        The ``(left, right)`` joint names of each symmetric couple. Required (from ``skeleton`` or explicit). An entry</span>
+<span class="sd">        that is not two joint names, or a name that is not among the labels, raises ``ValueError``. *(live)*</span>
 <span class="sd">    reference_point : str, optional</span>
-<span class="sd">        ``"ratio"``: the joint taken as the origin of the coordinates, ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at construction otherwise).</span>
-<span class="sd">        ``"reflection"``: the joint about which the right joint is reflected; ``None``, the default for this method, is</span>
-<span class="sd">        the barycenter (mean position) of the frame. *(live)*</span>
+<span class="sd">        The reference joint: the origin to which the whole frame is translated (every joint minus this joint) before the</span>
+<span class="sd">        formulas are applied, so that only the posture counts, not where the body stands. It is one of the joints of</span>
+<span class="sd">        ``labels`` (or of the dict frame), and comes from this argument or, when absent, from the ``skeleton``.</span>
+<span class="sd">        ``"ratio"``: ``"neck"`` by default; a ``skeleton`` that defines no reference joint requires it (``ValueError`` at</span>
+<span class="sd">        construction otherwise). ``"reflection"``: the joint about which the right joint is reflected; ``None``, the</span>
+<span class="sd">        default for this method, is the barycenter (mean position) of the frame. To use another centre with ``"ratio"``,</span>
+<span class="sd">        subtract it from the frame before the call. *(live)*</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -586,6 +585,13 @@
 <span class="sd">    """</span>
     <span class="n">_SWITCH</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="s2">"ratio"</span><span class="p">)</span>
     <span class="n">_variants</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_choices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pairs"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="s2">"__len__"</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Symmetry: a pair is two joint names (left, right), got </span><span class="si">{</span><span class="n">pair</span><span class="si">!r}</span><span class="s2"> in pairs="</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_coerce_choices</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ratio"</span><span class="p">,</span> <span class="s2">"reflection"</span><span class="p">]:</span>
@@ -645,6 +651,7 @@
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">SymmetryIndex3D</span>
     <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pairs"</span><span class="p">:</span> <span class="s2">"couples"</span><span class="p">,</span> <span class="s2">"aggregation"</span><span class="p">:</span> <span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"output_dims"</span><span class="p">:</span> <span class="s2">"output_type"</span><span class="p">}</span>
+    <span class="n">_hidden_params</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"reference_type"</span><span class="p">})</span>  <span class="c1"># the core translates the frame only for "label", its default</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ratio"</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
@@ -655,14 +662,6 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Symmetry(method='ratio'): the skeleton </span><span class="si">{</span><span class="n">get_skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> defines no reference joint; "</span>
                              <span class="s2">"pass reference_point= (a joint of the skeleton)"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_choices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_coerce_choices</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">"reference_type"</span> <span class="ow">in</span> <span class="n">out</span> <span class="ow">and</span> <span class="n">out</span><span class="p">[</span><span class="s2">"reference_type"</span><span class="p">]</span> <span class="o">!=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">SymmetryIndex3DReferenceType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Symmetry(method='ratio'): reference_type=</span><span class="si">{</span><span class="n">choice_name</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s1">'reference_type'</span><span class="p">])</span><span class="si">!r}</span><span class="s2"> is not supported: the core "</span>
-                             <span class="s2">"does not translate the frame for it (the original block did nothing); only 'label' is"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_label_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">name</span> <span class="k">for</span> <span class="n">couple</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"pairs"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">couple</span><span class="p">}</span>

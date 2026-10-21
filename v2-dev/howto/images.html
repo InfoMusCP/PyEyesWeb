@@ -632,7 +632,7 @@ are 0. A frame of another size than the first one restarts the image, and the <c
 <p>An image output is never a column of <code class="docutils literal notranslate"><span class="pre">to_numpy()</span></code> or <code class="docutils literal notranslate"><span class="pre">to_frame()</span></code>, which hold the fixed numeric outputs only. The image of each row is
 read from the result of that row, or from <code class="docutils literal notranslate"><span class="pre">rec[&quot;videogram&quot;]</span></code>, a list with one array per row.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">recording</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">recording</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(['status', 'timestamp'], (10, 0))</span>
+<span class="go">(['status', 'reason', 'timestamp'], (10, 0))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">recording</span><span class="p">[</span><span class="s2">"videogram"</span><span class="p">]),</span> <span class="n">recording</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">videogram</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(10, (240, 50, 1))</span>
 </pre></div>

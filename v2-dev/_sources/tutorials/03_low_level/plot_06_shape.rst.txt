@@ -625,7 +625,7 @@ raw outline every pixel step is a corner. On a counter-clockwise contour the tip
     smoother = FilterContour(window=15, gaussian_sigma=4.0)
     smooth = smoother.process(outline).contour
     curvature = curvature_of.process(smooth).curvature
-    hull = ConvexHull(integer_coordinates=False).process(smooth).hull
+    hull = ConvexHull().process(smooth).hull
     parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(curvature, smooth)
     print("raw curvature range:", np.round([curvature_of.process(outline).curvature.min(), curvature_of.process(outline).curvature.max()], 2),
           "| smoothed:", np.round([curvature.min(), curvature.max()], 2))
@@ -807,11 +807,6 @@ Next steps
 * :doc:`/concepts/inputs`: skeletons, presets and the reference joint.
 * :doc:`/api/low_level`: the API of the features of this tutorial.
 * The mid-level features build on these quantities: the next layer segments gestures and measures their qualities.
-
-
-.. rst-class:: sphx-glr-timing
-
-   **Total running time of the script:** (0 minutes 6.460 seconds)
 
 
 .. _sphx_glr_download_tutorials_03_low_level_plot_06_shape.py:

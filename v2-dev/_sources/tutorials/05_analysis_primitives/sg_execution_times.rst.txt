@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:12.676** total execution time for 3 files **from tutorials/05_analysis_primitives**:
+**00:06.606** total execution time for 3 files **from tutorials/05_analysis_primitives**:
 
 .. container::
 
@@ -33,11 +33,11 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (``plot_08_primitives.py``)
-     - 00:05.846
+     - 00:02.990
      - 0.0
    * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` (``plot_09a_synchronization_signals.py``)
-     - 00:03.803
+     - 00:02.231
      - 0.0
    * - :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py` (``plot_09b_synchronization_events.py``)
-     - 00:03.027
+     - 00:01.385
      - 0.0

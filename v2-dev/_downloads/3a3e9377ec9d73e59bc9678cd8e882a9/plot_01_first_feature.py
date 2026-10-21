@@ -157,7 +157,7 @@ fig = plot_recorder(body, t=time, title="Kinetic energy of the whole body (Kinet
 # From a recorder to a table
 # --------------------------
 # A recorder is a table with one row per sample. ``recorder[k]`` is the result of sample ``k``, ``recorder["velocity"]``
-# (or ``recorder.velocity``) is a column as a NumPy array, ``to_frame()`` a pandas ``DataFrame`` with the status names and
+# (or ``recorder.velocity``) is a column as a NumPy array, ``to_frame()`` a pandas ``DataFrame`` with the status names, the reasons and the timestamps, and
 # ``to_numpy()`` the numbers. The last result that was ``OK`` stays in ``feature.latest``.
 
 print(speed[100])

@@ -34,24 +34,24 @@ timestamps, which is what makes them easy to put side by side.
 ## One table with `to_frame()`
 
 {py:meth}`~pyeyesweb.data_models.Recorder.to_frame` gives a DataFrame with one column per output (a vector output gets one column
-per component, such as `velocity_x`), preceded by `status` (the name of the status) and `timestamp` (seconds).
+per component, such as `velocity_x`), preceded by `status` (the name of the status), `reason` (the text, empty when there is none) and `timestamp` (seconds).
 
 ```{doctest}
->>> speed.to_frame().head(3)
-  status  timestamp      velocity
-0     OK       0.00  3.469447e-16
-1     OK       0.01  3.644258e-02
-2     OK       0.02  6.123992e-02
+>>> speed.to_frame(meta=False).head(3)
+       velocity
+0  3.469447e-16
+1  3.644258e-02
+2  6.123992e-02
 >>> list(arc.to_frame().columns)
-['status', 'timestamp', 'spectral_arc_length']
+['status', 'reason', 'timestamp', 'spectral_arc_length']
 ```
 
 To merge several recorders, give each frame the name of its feature as a prefix and join them on the row, since the rows
-correspond. The `timestamp` columns are equal and one of them is enough.
+correspond. The `timestamp` columns are equal and one of them is enough; the `reason` columns are left out here.
 
 ```{doctest}
 >>> frames = {"speed": speed, "arc": arc, "jerk": jerk}
->>> table = pd.concat([recorder.to_frame().add_prefix(name + "_") for name, recorder in frames.items()], axis=1)
+>>> table = pd.concat([recorder.to_frame().drop(columns="reason").add_prefix(name + "_") for name, recorder in frames.items()], axis=1)
 >>> table = table.drop(columns=["arc_timestamp", "jerk_timestamp"]).rename(columns={"speed_timestamp": "timestamp"})
 >>> table.shape
 (1000, 7)
@@ -82,8 +82,8 @@ mean                 -2.272982                    -6.264024
 ```
 
 The first value is stamped 1.99 s, the time of the last sample of the first window, and the next ones every 0.5 s (50 samples). A
-status of `INVALID_INPUT` also appears here when the recording had NaN or a time that went back; its `reason` is not in the frame, but is
-available on the rows of the recorder (`rec[row].reason`) when you need to know why.
+status of `INVALID_INPUT` also appears here when the recording had NaN or a time that went back; its `reason` is the `reason` column of
+`to_frame()` (and `rec.reasons`, `rec[row].reason`) when you need to know why.
 
 ## Features on different time grids
 

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:09.072** total execution time for 1 file **from tutorials/06_capstone**:
+**00:05.168** total execution time for 1 file **from tutorials/06_capstone**:
 
 .. container::
 
@@ -33,5 +33,5 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_tutorials_06_capstone_plot_10_capstone.py` (``plot_10_capstone.py``)
-     - 00:09.072
+     - 00:05.168
      - 0.0
