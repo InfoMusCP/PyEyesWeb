@@ -42,11 +42,11 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     Multi-scale entropy measures how irregular a signal is across time scales: a signal that stays irregular when it
     is observed more slowly (white noise excepted) is more complex than one whose irregularity vanishes at the
     slower scales. In the study of social creative activities the complexity index of the movement of each member of
-    a group is the input of the dominance analysis (see ``EnsembleDominance``) :cite:`glowinski2010mse`.
+    a group is the input of the dominance analysis (see ``EnsembleDominance``) :cite:`glowinski2010multi`.
 
     Each signal is normalised to unit standard deviation and coarse-grained at the scales
     :math:`\tau = 1 \dots` ``max_scale`` (means of non-overlapping groups of :math:`\tau` samples, as in
-    ``CoarseGraining``) :cite:`costa2005multiscale`. The sample entropy of every scale (as in ``SampleEntropy``, for
+    ``CoarseGraining``). The sample entropy of every scale (as in ``SampleEntropy``, for
     the template length ``embedding_dimension`` and a matching tolerance of ``tolerance`` times the standard deviation
     of the normalised series) forms the entropy curve :math:`E(\tau)`. The complexity index is the area under that
     curve, by the trapezoid rule over the scales used,
@@ -95,7 +95,7 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
 
     References
     ----------
-    :cite:`glowinski2010mse`, :cite:`costa2005multiscale`
+    :cite:`glowinski2010multi`
 
     Examples
     --------

@@ -107,7 +107,7 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
 
     References
     ----------
-    :cite:`mcculloch1986stable`, :cite:`mazzarino2009need`, :cite:`niewiadomski2015impulsive`
+    :cite:`mazzarino2009need`, :cite:`niewiadomski2015impulsive`
 
     Examples
     --------

@@ -10,7 +10,7 @@ masses and the stiffnesses that explain it.
 Seven features implement this family (all in layer 1, see {doc}`../user_guide/physical_signals`). They are virtual sensors
 in the sense of the conceptual model ({doc}`framework`): they take a signal (a skeleton) and give a signal again. The
 body-model approach follows the HumanoidModel blocks of the EyesWeb platform {cite}`camurri2003eyesweb,volpe2016designing`;
-for the original formulation of mass-spring humanoid models in the EyesWeb libraries {cite}`piana2016movement`.
+for the original formulation of mass-spring humanoid models in the EyesWeb libraries {cite}`piana2016fluidity`.
 
 ## The model
 

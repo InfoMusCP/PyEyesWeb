@@ -50,7 +50,7 @@ class EnsembleDominance(FrameFeature):
 
     References
     ----------
-    :cite:`glowinski2010mse`
+    :cite:`glowinski2010multi`
 
     Examples
     --------

@@ -2,7 +2,7 @@
 
 In a group that moves together (a string quartet, a dance ensemble, a team), some members lead and others follow. Dominance
 analysis asks which member acts as the leader, from the movement alone. The approach implemented in PyEyesWeb is the one of
-{cite}`glowinski2010mse`, in which the leader is the participant whose movement is the **least complex**: the most regular
+{cite}`glowinski2010multi`, in which the leader is the participant whose movement is the **least complex**: the most regular
 and predictable movement acts as an anchor around which the others behave more reactively, and therefore with higher
 complexity. The analysis has two stages, each a separate feature:
 
@@ -89,5 +89,4 @@ irregular movement has the highest index and the score 0, and the participant in
 
 ## Further reading
 
-The dominance analysis from multi-scale entropy is described in {cite}`glowinski2010mse`; the multi-scale entropy itself
-is introduced in {cite}`costa2005multiscale`.
+The dominance analysis from multi-scale entropy is described in {cite}`glowinski2010multi`.

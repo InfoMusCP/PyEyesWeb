@@ -1,6 +1,5 @@
-% citations_mined.bib -- DRAFT, mined 2026-10-15 (WP0). Every field is copied from the text of docs/*.md, pyeyesweb docstrings or CITATION.cff;
-% nothing was completed from memory. Fields the source did not give are absent. Fields in doubt: see the `note` field and citations_mined.md.
-% Truncated author lists (`...` in the source) are written `and others and <last author>`: a placeholder for the maintainer to complete.
+% Bibliography of the PyEyesWeb documentation (sphinxcontrib-bibtex, numeric labels).
+% Cite with {cite}`key` in the pages and :cite:`key` in the docstrings.
 
 @inproceedings{camurri2003eyesweb,
   author    = {Camurri, A. and Mazzarino, B. and Volpe, G.},
@@ -97,14 +96,6 @@
   number  = {1},
   pages   = {36--41},
   year    = {1990}
-}
-
-@inproceedings{glowinski2010mse,
-  author    = {Glowinski, D. and Coletta, P. and Volpe, G. and Camurri, A. and Chiorri, C. and Schenone, A.},
-  title     = {Multi-scale entropy analysis of dominance in social creative activities},
-  booktitle = {Proceedings of the 18th ACM international conference on Multimedia},
-  pages     = {1035--1038},
-  year      = {2010}
 }
 
 @inproceedings{romano2024computational,
@@ -220,25 +211,7 @@
   year    = {2016}
 }
 
-@article{mcculloch1986stable,
-  author  = {McCulloch, J. H.},
-  title   = {Simple consistent estimators of stable distribution parameters},
-  journal = {Communications in Statistics - Simulation and Computation},
-  year    = {1986},
-  note    = {DRAFT: volume, number and pages absent in the source}
-}
-
 % TODO: to be replaced with glowinski2010multi
-@article{costa2005multiscale,
-  author  = {Costa, M. and Goldberger, A. L. and Peng, C.-K.},
-  title   = {Multiscale entropy analysis of biological signals},
-  journal = {Physical Review E},
-  volume  = {71},
-  number  = {2},
-  pages   = {021906},
-  year    = {2005},
-  note    = {DRAFT: found only in a source docstring, not in docs}
-}
 @inproceedings{glowinski2010multi,
   title     = {Multi-scale entropy analysis of dominance in social creative activities},
   author    = {Glowinski, Donald and Coletta, Paolo and Volpe, Gualtiero and Camurri, Antonio and Chiorri, Carlo and Schenone, Andrea},
@@ -254,16 +227,6 @@
   pages     = {1--8},
   year      = {2026}
 }
-
-% ---- LOOSE mentions (not entries; no metadata to give) ----
-% LOOSE: Jensenius, 2006 -- pyeyesweb/physical_signals/imaging.py:152 -- Videogram: `a motiongram (Jensenius, 2006)`
-% LOOSE: Quian Quiroga's Q -- pyeyesweb/analysis_primitives/synchronization/events.py:61 -- EventSynchronization output `synchronization (Quian Quiroga's Q)`
-% LOOSE: Camurri et al. -- pyeyesweb/catalog.py:3 -- catalog docstring `The conceptual model (Camurri et al.)`, no year (presumably camurri2016dancer)
-% LOOSE: Savitzky-Golay -- docs/user_guide/theoretical_framework/low_level/smoothness.md:9; pyeyesweb/low_level/kinematics.py:74; mid_level/segmentation.py:64 -- algorithm named, no citation
-% LOOSE: McCulloch's quantile-based table -- docs/user_guide/theoretical_framework/mid_level/suddenness.md:22 -- named in prose; reference at line 36 = mcculloch1986stable
-% LOOSE: Glowinski et al. (2010) -- pyeyesweb/high_level/dominance.py:1,31; analysis_primitives/multi_scale_entropy.py:3,46,81 -- short-form citation of glowinski2010mse
-
-% References supplied by the maintainer on 2026-10-21 (verbatim).
 
 @article{glowinski2013movements,
   title={The movements made by performers in a skilled quartet: a distinctive pattern, and the function that it serves},
@@ -313,14 +276,6 @@
   pages={1--31},
   year={2016},
   publisher={ACM, New York, NY, USA}
-}
-
-@inproceedings{piana2016movement,
-  title={Movement fluidity analysis based on performance and perception},
-  author={Piana, Stefano and Alborno, Paolo and Niewiadomski, Radoslaw and Mancini, Maurizio and Volpe, Gualtiero and Camurri, Antonio},
-  booktitle={Proceedings of the 2016 CHI conference extended abstracts on human factors in computing systems},
-  pages={1629--1636},
-  year={2016}
 }
 
 @inproceedings{jensenius2006using,

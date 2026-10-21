@@ -26,8 +26,7 @@ that has the Gaussian as one member and describes heavy-tailed and skewed distri
 - $\beta$, the **skewness**, positive for a heavier tail on the side of large values;
 - $\gamma$, the **scale**, a positive number of the order of the spread of the distribution.
 
-{py:class}`~pyeyesweb.mid_level.Suddenness` fits these parameters to the speeds of a window by McCulloch's quantile method
-{cite}`mcculloch1986stable`. With $x_5, x_{25}, x_{50}, x_{75}, x_{95}$ the quantiles of the speeds of the window,
+{py:class}`~pyeyesweb.mid_level.Suddenness` fits these parameters to the speeds of a window by McCulloch's quantile method. With $x_5, x_{25}, x_{50}, x_{75}, x_{95}$ the quantiles of the speeds of the window,
 
 $$
 \nu_\alpha = \frac{x_{95} - x_5}{x_{75} - x_{25}}, \qquad
@@ -199,5 +198,4 @@ of the impulsivity of a performance, take the maximum over a stretch or the numb
 ## Further reading
 
 The two motion qualities of impulsivity and smoothness: {cite}`mazzarino2009need`. Automated detection of
-impulsive movements: {cite}`niewiadomski2015impulsive`. The estimator of the stable-distribution parameters:
-{cite}`mcculloch1986stable`. Mid-level qualities and their sonification: {cite}`niewiadomski2019embodied`.
+impulsive movements: {cite}`niewiadomski2015impulsive`. Mid-level qualities and their sonification: {cite}`niewiadomski2019embodied`.

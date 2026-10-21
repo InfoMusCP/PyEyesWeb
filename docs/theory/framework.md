@@ -44,7 +44,7 @@ discrete, one value for each unit.
 
 **Layer 4, high-level features.** The qualities that an observer perceives and communicates: emotional expression, saliency,
 hesitation, predictability, and for groups the dominance, the leadership or the cohesion of the people involved (for
-example {cite}`glowinski2010mse,varni2010system`). These need memory and context, because what is perceived depends on what
+example {cite}`glowinski2010multi,varni2010system`). These need memory and context, because what is perceived depends on what
 came before and on what is expected; in practice they are obtained by combining the lower layers, often with a learned
 mapping.
 

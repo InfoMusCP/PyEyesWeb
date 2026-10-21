@@ -48,7 +48,7 @@ quickly with $k$.
 
 A signal can be irregular only at the finest scale. White noise has a high sample entropy, but averaging it over longer and
 longer stretches destroys its structure and its entropy drops; a signal that remains irregular when observed more slowly
-(for example one with structure at several time scales) is called complex {cite}`costa2005multiscale`. Multi-scale entropy
+(for example one with structure at several time scales) is called complex {cite}`glowinski2010multi`. Multi-scale entropy
 makes this precise in two steps.
 
 **Coarse graining.** For a scale $\tau$ the window $x_1,\dots,x_N$ is replaced by the means of non-overlapping groups of $\tau$
@@ -75,7 +75,7 @@ $$
 
 so it is larger when the entropy stays high across scales. It is non-negative, and `NaN` for a constant signal, which has no
 entropy. The feature takes one value per signal per call (a frame of several signals gives one index each), and the indices
-of the members of a group are the input of the dominance analysis in {doc}`dominance` {cite}`glowinski2010mse`.
+of the members of a group are the input of the dominance analysis in {doc}`dominance` {cite}`glowinski2010multi`.
 The entropies come from the sample entropy of the core, so they differ from those of the pure-Python 1.x release by $O(1/N)$.
 
 The default window (3000 samples) and `minimum_points` (500) reflect how much data entropy estimates need; with smaller
@@ -204,6 +204,6 @@ False 4
 
 ## Further reading
 
-Multi-scale entropy was introduced for physiological signals {cite}`costa2005multiscale` and applied to movement in the
-study of dominance in social creative activities {cite}`glowinski2010mse`. The derived features are described in
+Multi-scale entropy was applied to movement in the study of dominance in social creative activities
+{cite}`glowinski2010multi`. The derived features are described in
 {doc}`dominance`; the generated pages of the API reference list every parameter.
