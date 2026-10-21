@@ -1,6 +1,6 @@
 # References
 
-To be written (WP6): the bibliography below lists every entry of `references.bib`, cited or not, while it is a draft.
+The works cited in the theory pages, the user guide and the docstrings.
 
 ```{bibliography}
 :all:

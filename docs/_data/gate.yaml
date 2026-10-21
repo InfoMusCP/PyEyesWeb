@@ -20,8 +20,7 @@ allowed:
 
 # Open work, tracked in DOCS_PLAN.md section 11: path -> {marker: count}.
 open:
-  docs/conf.py: {'\bTODO\b': 2}  # footer logos and version switcher, helpers URL pinned at the release
-  docs/_static/custom.css: {'\bTODO\b': 1}  # palette confirmed by the maintainer (11.3)
+  docs/conf.py: {'\bTODO\b': 1}  # helpers URL pinned at the release
 
 # --- names of the 1.x library: never in the published text -------------------------------------------------------------------
 # Scanned in docs/**/*.md|rst, README.md, examples/**/plot_*.py, examples/helpers.py and the public docstrings of pyeyesweb.

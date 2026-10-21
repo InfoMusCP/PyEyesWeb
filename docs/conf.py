@@ -30,7 +30,7 @@ core_build = getattr(_core.core, "__build__", "unknown")
 
 # --- project ---------------------------------------------------------------------------------------------------------
 project = "PyEyesWeb"
-author = "Casa Paganini - InfoMus"
+author = "InfoMus Lab - Casa Paganini, University of Genoa"
 copyright = f"{date.today().year}, {author}"
 try:
     from importlib.metadata import version as _dist_version
@@ -140,7 +140,10 @@ myst_substitutions["core_version"] = core_version
 html_theme = "pydata_sphinx_theme"
 html_title = f"PyEyesWeb {release}"
 html_static_path = ["_static", "assets"]  # assets/ is served so that the logo paths below resolve
-html_css_files = ["custom.css"]
+html_css_files = [
+    "https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;600&display=swap",
+    "custom.css",
+]
 html_favicon = "assets/favicon-32x32.png"
 html_theme_options = {
     # The PNG mark is dark grey on transparent: the dark variant is a light copy (docs/_static/eyesweb-logo-dark.png).
@@ -153,10 +156,13 @@ html_theme_options = {
         {"name": "GitHub", "url": "https://github.com/InfoMusCP/PyEyesWeb", "icon": "fa-brands fa-github"},
     ],
     "navigation_with_keys": False,
+    "navbar_align": "left",
+    "header_links_before_dropdown": 5,  # User guide, Theory, Tutorials, API reference, Development; then "More"
+    "secondary_sidebar_items": ["page-toc", "sourcelink"],
     "show_toc_level": 2,
     "footer_start": ["copyright", "core_version"],
-    "footer_end": ["sphinx-version", "theme-version"],
-    # TODO(WP9): footer logos (cp-logo, eu-logo, resilence-logo) and version switcher (decision open).
+    "footer_end": ["funding"],
+    # Version switcher: none until versioned deploys exist (DOCS_PLAN.md 11.3).
 }
 html_sidebars = {"index": []}
 html_context = {"core_version": core_version, "core_build": core_build}
