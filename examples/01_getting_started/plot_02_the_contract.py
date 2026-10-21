@@ -287,7 +287,7 @@ for name, skeleton in SKELETONS.items():
 print("trial.skeleton:", metres.skeleton.name, len(metres.skeleton.joints), "joints, missing:", metres.skeleton.missing())
 
 # %%
-# A preset can be incomplete (``Skeleton.missing()`` lists what is still to be filled in). A few humanoid features take a
+# A preset may leave fields empty (``Skeleton.missing()`` lists them). A few humanoid features take a
 # ``joint_map`` instead, which maps the joint names of a model to the labels of your data; they come with the tutorial on
 # physical signals (:ref:`sphx_glr_tutorials_02_physical_signals_plot_03_points.py`).
 

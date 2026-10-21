@@ -16,15 +16,14 @@ feature                   fields of the skeleton it reads
 ``PointsPredictor``       ``joints``
 ========================  ==========================================================================================
 
-Presets and their completeness:
+Presets and the fields they define:
 
-* ``kinect_v2``: complete (25 joints, 10 pairs, reference ``SpineShoulder``, weights).
-* ``qualisys_sport``, ``mediapipe``, ``openpose``: **incomplete**, kept as documented starting points. The fields still
-  empty are listed by ``Skeleton.missing()`` and, for every preset, by ``SKELETON_TODO``; they are marked
-  ``TODO(fill)`` in the source. Missing: ``reference`` and ``weights`` for ``qualisys_sport`` and ``mediapipe``;
-  ``weights`` for ``openpose``. A missing ``weights`` becomes uniform weights of 1.0, so kinetic-energy values on these
-  presets are not comparable with ``kinect_v2``; a missing ``reference`` means the barycentre for the reflection
-  symmetry, and the ratio symmetry raises ``ValueError`` at construction asking for ``reference_point=``.
+* ``kinect_v2``: 25 joints, 10 pairs, reference ``SpineShoulder`` and weights.
+* ``qualisys_sport``, ``mediapipe``, ``openpose``: the joints and the pairs of the device. The fields left empty are listed
+  by ``Skeleton.missing()`` and, for every preset, by ``SKELETON_TODO``; they are marked ``TODO(fill)`` in the source:
+  ``reference`` and ``weights`` for ``qualisys_sport`` and ``mediapipe``; ``weights`` for ``openpose``. A missing
+  ``weights`` becomes uniform weights of 1.0; a missing ``reference`` means the barycentre for the reflection symmetry,
+  and the ratio symmetry raises ``ValueError`` at construction asking for ``reference_point=``.
 
 The joint names keep the spelling of each device (``L*/R*``, ``*Left/*Right``, ``left_*/right_*``; ``RelbowOut`` keeps
 the spelling of the marker files of the lab): they are not normalised.
