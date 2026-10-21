@@ -124,9 +124,11 @@ html[data-theme="dark"] .bd-article table.table thead th { border-bottom-color: 
 html[data-theme="dark"] .sd-card { background: var(--pst-color-surface); }
 
 /* ---- landing page ---- */
-.pew-hero {
+/* The {container} directive also gives the Bootstrap class `container`, whose own padding and max-width would win: override them. */
+div.pew-hero.container, div.pew-credits.container { max-width: none; width: auto; }
+div.pew-hero.container {
   margin: 0.5rem 0 2rem;
-  padding: 2.6rem 2.2rem 2.2rem;
+  padding: 3.4rem 3.2rem 3rem;
   border-radius: 14px;
   color: #eef2fb;
   background:
@@ -171,3 +173,7 @@ html[data-theme="dark"] .sd-card { background: var(--pst-color-surface); }
 .bd-footer { border-top: 3px solid var(--pew-navy); }
 .pew-footer-funding { margin: 0; }
 .pew-footer-funding img { height: 34px; width: auto; margin-left: 0.6rem; background: #ffffff; border-radius: 5px; padding: 3px; vertical-align: middle; }
+@media (max-width: 720px) {
+  div.pew-hero.container { padding: 2.2rem 1.4rem 2rem; }
+  .pew-hero-tagline { font-size: 1.4rem; }
+}
