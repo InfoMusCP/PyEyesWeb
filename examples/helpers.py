@@ -1,6 +1,6 @@
 """Plotting and signal helpers shared by the tutorials (not part of the library, not installed).
 
-CONVENTIONS OF THE TUTORIALS (the long form is the section "WP7 stage 1 conventions" of DOCS_PLAN.md)
+CONVENTIONS OF THE TUTORIALS
 -----------------------------------------------------------------------------------------------------
 * A tutorial is ``examples/<NN_layer>/plot_<NN>_<name>.py``, a sphinx-gallery percent script: the module docstring is the
   title (underlined with ``=``) and the card text; ``# %%`` opens a cell; the comment lines under ``# %%`` are reStructuredText

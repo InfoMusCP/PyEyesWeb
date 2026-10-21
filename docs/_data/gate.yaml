@@ -1,4 +1,4 @@
-# Data of the documentation gate, docs/_ext/docs_gate.py (DOCS_PLAN.md 11.2). The gate scans the files tracked by git.
+# Data of the documentation gate, docs/_ext/docs_gate.py. The gate scans the files tracked by git.
 
 # --- markers: open work in the published sources -------------------------------------------------------------------------
 # A marker that is not listed below fails every build; a release build (PYEYESWEB_DOCS_RELEASE=1) fails while `open` is
@@ -18,13 +18,13 @@ allowed:
     contains: "empty fields are marked `TODO(fill)` in the source"
     reason: names the marker of the incomplete skeleton presets (pyeyesweb/skeletons.py)
 
-# Open work, tracked in DOCS_PLAN.md section 11: path -> {marker: count}.
+# Open work (see ROADMAP.md): path -> {marker: count}.
 open:
   docs/conf.py: {'\bTODO\b': 1}  # helpers URL pinned at the release
 
 # --- names of the 1.x library: never in the published text -------------------------------------------------------------------
 # Scanned in docs/**/*.md|rst, README.md, examples/**/plot_*.py, examples/helpers.py and the public docstrings of pyeyesweb.
-# `dims=3` of the first list of DOCS_PLAN 4.6 is not here: `Kinematics(dims=3)` is valid 2.0 code (facts.md section 12).
+# `dims=3` is not here: `Kinematics(dims=3)` is valid 2.0 code.
 stale_names: ['SpeedSmoothness', 'SlidingWindow', 'HistogramRarity', 'StatisticalMoment', '\bLightness\b', 'Clusterability',
               '\brate_hz\b', '\bfix_', '\btime_mode\b', '_process_window', 'TSVReader', 'SkeletonManipulator', 'ZeroCross',
               'GetKinematical']

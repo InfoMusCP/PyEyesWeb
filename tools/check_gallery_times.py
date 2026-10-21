@@ -1,4 +1,4 @@
-"""Fail when a tutorial of the gallery exceeds its run-time budget (DOCS_PLAN.md 4.5: 60 s per script, 10 min in total).
+"""Fail when a tutorial of the gallery exceeds its run-time budget (60 s per script, 10 min in total).
 
 Usage: python tools/check_gallery_times.py [docs/_build/html/sphinx-gallery/junit-results.xml] [--script 60] [--total 600]
 The file is written by sphinx-gallery during the HTML build (``junit`` in docs/conf.py).

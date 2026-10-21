@@ -12,6 +12,6 @@ def reset_tutorial_state(gallery_conf, fname):
 
     plt.close("all")
     matplotlib.rcdefaults()
-    plt.rcParams["figure.dpi"] = 90  # figures of the tutorials: dpi 80-100 (TEACHING_PLAN section 1)
+    plt.rcParams["figure.dpi"] = 90  # figures of the tutorials: dpi 80-100
     np.random.seed(0)
     np.set_printoptions(precision=4, suppress=True, linewidth=100)

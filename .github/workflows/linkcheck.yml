@@ -1,6 +1,6 @@
 name: Links
 
-# Weekly check of the external links of the documentation (DOCS_PLAN.md 11.2). Not a pull-request gate: a site that is down
+# Weekly check of the external links of the documentation. Not a pull-request gate: a site that is down
 # for a day must not block a merge. Needs the eyesweb-core wheel like docs.yml (TestPyPI while the variable CORE_FROM_TESTPYPI is true).
 
 on:

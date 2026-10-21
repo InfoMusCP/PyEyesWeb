@@ -1,6 +1,6 @@
 # Sphinx configuration of the PyEyesWeb documentation.
 #
-# Local build (from the PyEyesWeb root; the compiled core is a development build, see DOCS_PLAN.md section 4.5):
+# Local build (from the PyEyesWeb root; the compiled core is a development build; docs/developer/building_the_docs.md):
 #   MSYS_NO_PATHCONV=1 PYTHONPATH="<core build>;<PyEyesWeb>" EYESWEB_CORE_PATH=<core build> python -m sphinx -b html -W --keep-going docs docs/_build/html
 # In CI the core comes from the eyesweb-core wheel (`pip install .[docs]`), no path variables are needed.
 
@@ -57,19 +57,19 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "sphinx_gallery.gen_gallery",  # the tutorials: examples/*/plot_NN_*.py (settings in sphinx_gallery_conf below)
-    "feature_pages",  # docs/_ext/feature_pages.py: one page per catalog feature (DOCS_PLAN 4.2)
-    "docs_gate",  # docs/_ext/docs_gate.py: markers, stale names, catalog coverage (DOCS_PLAN 11.2; data in _data/gate.yaml)
+    "feature_pages",  # docs/_ext/feature_pages.py: one page per catalog feature
+    "docs_gate",  # docs/_ext/docs_gate.py: markers, stale names, catalog coverage (data in _data/gate.yaml)
 ]
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 root_doc = "index"
-exclude_patterns = ["_build", "_snippets", "Thumbs.db", ".DS_Store"]  # _snippets: internal fact sheet (docs/_snippets/facts.md), never published
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 autosummary_generate = True
 autodoc_typehints = "none"
 numpydoc_show_class_members = False  # member tables come from autosummary templates (WP3)
 numpydoc_class_members_toctree = False
-# Docstring validation (DOCS_PLAN 11.2): the checks of form (summary, sections, parameter and return entries), each failure a
+# Docstring validation: the checks of form (summary, sections, parameter and return entries), each failure a
 # warning, so -W fails. Not yet enabled, by count of failures on 2026-10-16: PR09 (182, a parameter text ends with a period),
 # SA01 (160, See Also), EX01 (80, Examples on every method), ES01 (77, extended summary), PR01 (30, undocumented parameters of
 # data-model methods), RT01 (28, Returns of small methods), SS05 (a noun summary such as "Names of ..." is read as a verb).
@@ -79,7 +79,7 @@ numpydoc_validation_checks = {"GL02", "GL03", "GL05", "GL06", "GL07", "GL09", "G
 # Fields and enum members without a docstring of their own: they are described in the Attributes section of their class.
 numpydoc_validation_exclude = {r"\.Output\.\w+$", r"\.Result\.(status|reason|timestamp)$", r"\.Status\.[A-Z_]+$"}
 
-# --- executed code in the prose pages (DOCS_PLAN WP5) ----------------------------------------------------------------------
+# --- executed code in the prose pages ----------------------------------------------------------------------
 # Text: {doctest} blocks, checked with `python -m sphinx -b doctest docs docs/_build/doctest`. Figures: {plot} blocks,
 # executed by the HTML build (a failing figure script is a warning, so -W fails). No other code block is Python.
 doctest_global_setup = """
@@ -96,7 +96,7 @@ plot_html_show_formats = False
 plot_formats = [("png", 110)]
 plot_rcparams = {"figure.figsize": (6.4, 3.0), "axes.spines.top": False, "axes.spines.right": False, "font.size": 9,
                  "figure.dpi": 110, "savefig.bbox": "tight"}
-nitpicky = True  # every cross-reference must resolve (DOCS_PLAN 11.2); nitpick_ignore lists the exceptions, with a reason
+nitpicky = True  # every cross-reference must resolve; nitpick_ignore lists the exceptions, with a reason
 nitpick_ignore = []
 
 # linkcheck (weekly workflow .github/workflows/linkcheck.yml): links that cannot be checked by a script, with the reason.
@@ -115,7 +115,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),
 }
 
-# --- references (docs/references.bib; any supported style is accepted, DOCS_PLAN 4.3) --------------------------------------
+# --- references (docs/references.bib; any supported style is accepted) --------------------------------------
 bibtex_bibfiles = ["references.bib"]
 bibtex_default_style = "unsrt"
 bibtex_reference_style = "label"  # numeric labels
@@ -162,13 +162,13 @@ html_theme_options = {
     "show_toc_level": 2,
     "footer_start": ["copyright", "core_version"],
     "footer_end": ["funding"],
-    # Version switcher: none until versioned deploys exist (DOCS_PLAN.md 11.3).
+    # Version switcher: none until versioned deploys exist.
 }
 html_sidebars = {"index": []}
 html_context = {"core_version": core_version, "core_build": core_build}
 templates_path = ["_templates"]
 
-# --- sphinx-gallery: the tutorials (TEACHING_PLAN.md; conventions: DOCS_PLAN.md, "WP7 stage 1 conventions") --------------------
+# --- sphinx-gallery: the tutorials (conventions: the docstring of examples/helpers.py) --------------------
 # The scripts of examples/ are run on every build; an error fails the build (abort_on_example_error). `import helpers` works
 # because examples/ is put on sys.path here (a downloaded notebook fetches helpers.py, see first_notebook_cell).
 sys.path.insert(0, os.path.abspath("../examples"))

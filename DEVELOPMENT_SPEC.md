@@ -6,9 +6,8 @@ to fix, unless the maintainer says otherwise. Rules marked **Decided** were chos
 them without asking.
 
 **Status (2026-10-16).** The contract below is implemented and tested for all 60 catalog features. **Remaining work:
-`ALPHA_REVIEW.md` section 8** (packaging and release, the code and core backlog, the final documentation pass, the example
-data). Section 11 of this file points to the backlog items that touch the contract; section 10 lists what must be removed or
-reworded before this file is published for contributors (done on 2026-10-16).
+`ROADMAP.md`** (release, open decisions, documentation still to do). Section 10 of this file says what must be removed before it
+is published for contributors.
 
 ## 1. What this is
 
@@ -288,7 +287,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   depends on the mode (`|y''| / (1 + y'^2)^1.5`).
 - **`Symmetry(method="ratio")` `reference_type`.** The core translates the frame only for `"label"`; `"barycenter"` and `"point"` are
   unimplemented there (the original did nothing, and `"point"` has no point parameter). They raise `ValueError` at construction and on
-  assignment (`_coerce_choices`); `"label"` stays. Since J-a the parameter is gone altogether (B1). A skeleton without reference joint now only suggests `reference_point=`.
+  assignment (`_coerce_choices`); `"label"` stays. Since J-a the parameter is gone altogether. A skeleton without reference joint now only suggests `reference_point=`.
 
 #### I-b
 
@@ -321,25 +320,25 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
 
 #### J-b
 
-- **A reset is not a parameter change (B2).** `CoreFeature.reset()` clears the pending "parameters changed: state reset" note: the
+- **A reset is not a parameter change.** `CoreFeature.reset()` clears the pending "parameters changed: state reset" note: the
   dimension forgotten by `reset()` (`InferredDims`) used to flag it. A structural change after the reset still reports it.
-- **Errors of the core name the public parameters (B3).** `CoreFeature._public_errors()` wraps the constructor and lazy build, the
+- **Errors of the core name the public parameters.** `CoreFeature._public_errors()` wraps the constructor and lazy build, the
   setters (`_set_param`) and every `process` / `_process_window` of a core-backed class: in the message of a `ValueError`,
   `TypeError` or `RuntimeError` an identifier that is a public parameter of the feature once turned from camelCase to snake_case, or
   mapped back through the reverse of `_core_names`, is replaced (`amplitudeThreshold` -> `amplitude_threshold`, `nInputs` ->
   `number_of_inputs`). Same exception type. Messages that name no parameter (`EventSynchronizationMECS`, `SpikeSynchronization`
   `number_of_inputs`) are unchanged.
-- **`Recorder.reasons` and the `reason` column (B5).** `rec.reasons` is a list of `n` strings; `to_frame()` has `status`, `reason`,
+- **`Recorder.reasons` and the `reason` column.** `rec.reasons` is a list of `n` strings; `to_frame()` has `status`, `reason`,
   `timestamp` in front of the outputs; `Recorder.from_arrays(..., reasons=)` takes them (empty by default); `append`, `extend` and
   `run` store the reason of every result. A fast-path `run` must give the reasons of a loop of `process` (`KineticEnergy.run` does).
-- **`run()` takes a sequence of dict frames (B17).** For an input that declares `accepts=(dict,)` a list of dict frames is passed
+- **`run()` takes a sequence of dict frames.** For an input that declares `accepts=(dict,)` a list of dict frames is passed
   to `process` as it is (`_recording`), so the numbers equal a loop of `process`; for any other input a list of dicts raises
   `ValueError` ("pass an array in label order, or loop over process"). `KineticEnergy.run` sends dict frames through the loop.
 
 ### Contract changes of the documentation work (2026-10-15/16)
 
 The documentation is built from the code, so these are rules for any later change; the mechanisms are described in
-`DOCS_PLAN.md` sections 4 and 10.
+`docs/developer/building_the_docs.md`.
 
 - **`pyeyesweb.datasets`** (new public module, needs no core): `load_qualisys_trial(n, start=, stop=)` returns a `QualisysTrial`
   (positions in mm, `labels`, `sampling_rate`, `joint`, `window`, `to_units`), plus `fetch_data_file`, `cache_dir`,
@@ -359,9 +358,9 @@ The documentation is built from the code, so these are rules for any later chang
   tolerated mismatches and **must stay empty** (the extension fails when a waiver is no longer needed). The number of generated
   pages must equal `len(catalog())`: `tests/unit_tests/test_docs_feature_pages.py`.
 - **References.** A `References` section of a docstring cites keys of `docs/references.bib` with `:cite:`; a source that is not in the
-  file is written `**[citation needed]**` in a page (never invented) and listed in `DOCS_PLAN.md` 11.1; the final gate refuses it.
+  file is written `**[citation needed]**` in a page (never invented); the release gate (`docs/_data/gate.yaml`) refuses it.
 - **Docstring and page conventions.** Parameters carry their unit and the mark *(live)* or *(structural)*; the facts the pages state are
-  those of `docs/_snippets/facts.md` (internal, verified by running code) or of the code.
+  those verified by running the code.
 
 ## 4. Parameters
 
@@ -559,23 +558,14 @@ Before you say a change is done:
 - Ask the maintainer when a decision is open (an unclear original behaviour, a block that may be retired, a name that
   could be read two ways) and do not choose silently.
 
-## 10. Public-safe pass (done 2026-10-16)
+## 10. Public-safe pass
 
-The sentences that named the private core repository, its files, C++ symbols or the build of the core were removed or
-reworded; the C++ procedure (core steps of adding a feature, C++ style, the core build and its tests, the core-side reasons of
-some contract changes) is kept by the maintainers with the core. Check again before publishing with
+Done on 2026-10-16: the sentences that named the private core repository, its files, C++ symbols or the core build were removed
+or reworded. Check again before publishing with
 `grep -n -E "EyesWebCore|PORTING_STATUS|CONVENTIONS|C\+\+|nanobind|\.cpp|bindings|CMake|cmake|ew_|::|Impl|adoptParams" DEVELOPMENT_SPEC.md`.
-Still to do when the file is published (the maintainer decides how: a "Contributing" page that includes it, or `CONTRIBUTING.md`):
-remove this section, the status paragraph at the top and the pointers to the internal notes (`ALPHA_REVIEW.md`, `DOCS_PLAN.md`,
-`docs/_snippets/facts.md`).
+When the file is published (a "Contributing" page that includes it, or `CONTRIBUTING.md`; open: see `ROADMAP.md`), remove this
+section, the status paragraph at the top and the pointer to `ROADMAP.md`.
 
 ## 11. Backlog and open decisions
 
-The full list, with recommended actions, is `ALPHA_REVIEW.md` section 8.2 (ids B1 to B21); packaging is 8.1 (E1 to E9), documentation
-8.3, data 8.4. Only pointers here.
-
-| Group | Items |
-|---|---|
-| Code (agent, Python layer) | B1 `Symmetry` signature lists removed `reference_type` values; B2 `Kinematics.reset()` reports "parameters changed"; B3 core camelCase names in setter errors; B5 `Recorder` has no `reason` column; B17 raw binding error for `Symmetry(pairs=[("a",)])`, bare `TypeError` for dict frames in `run()`; B20 the second review pass (complexity, duplication, live-parameter consistency, NaN in point and image inputs); B21 stale private notes |
-| Core (core change, then a regenerated reference where noted) | B8 `MotionNoiseDetector` with several joints (regenerate `gesture_segmenter_reference.npz` with `tools/regenerate_gesture_segmenter_reference.py`); B9 `CurvatureVelocityCorrelation` dead `velocity_threshold`; B10 humanoid flutter and `GenericModelEstimator`; B11 live windows for `Rarity(method="information")`, `Videogram`, `ScalarPeakDetector`; B12 ragged spike trains, MECS accumulation; B19 state rollback after an overflow |
-| Maintainer decisions | B4 `ConvexHull` default `integer_coordinates`; B6 `KineticEnergy(labels=...)` alone; B7 `Suddenness` classification rule (the docstring fix is the agent's); B8, B9, B12 the intent of the original blocks; B13 original definitions of `TemporalSynchronization`, `progression`, `stage_weights`, `CurvatureDispersion`, `Periodicity`, `ScalarPeakDetector`; B14 keep or drop `Harmonicity`; B15 `TrajectoryNonPlanarity` and `Equilibrium` defaults (decided: keep); B16 fill the skeleton presets; B18 `EllipsoidSphericity.process_axes`; the licence of `eyesweb-core` (E3) and of the example data (`TEACHING_PLAN.md` section 9) |
+See `ROADMAP.md` (open decisions on the original blocks, the core backlog, the release steps).

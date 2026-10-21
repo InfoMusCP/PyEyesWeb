@@ -7,7 +7,7 @@ name: Docs
 # Publishing: GitHub Pages is still served from the branch gh-pages (the documentation of 1.x is at its root and is not touched).
 # A push to dev builds the 2.x documentation and publishes it to the folder v2-dev/ of gh-pages (https://<owner>.github.io/
 # PyEyesWeb/v2-dev/), replacing only that folder. When 2.x is released: change the Pages source to "GitHub Actions" (Settings >
-# Pages), publish this build at the root (actions/upload-pages-artifact + actions/deploy-pages, see DOCS_PLAN.md section 11.6)
+# Pages), publish this build at the root (actions/upload-pages-artifact + actions/deploy-pages, see ROADMAP.md)
 # and decide what happens to the 1.x site (keep it in a versioned folder).
 
 on:

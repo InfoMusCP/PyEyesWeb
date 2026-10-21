@@ -1,4 +1,4 @@
-"""Trim the example recordings to what the tutorials need (TEACHING_PLAN section 5).
+"""Trim the example recordings to what the tutorials need.
 
 Reads ``examples/data/qualisys/trial*.tsv`` and writes smaller copies to ``examples/data_trimmed/`` (git-ignored for
 now): the same Qualisys TSV format, gzip-compressed (``trial7.tsv.gz``; ``pyeyesweb.datasets`` reads both), only the frames between two times and only the markers that the

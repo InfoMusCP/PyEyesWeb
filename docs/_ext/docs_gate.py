@@ -1,4 +1,4 @@
-"""The documentation gate (DOCS_PLAN.md 11.2): markers of open work, names of the 1.x library, catalog coverage.
+"""The documentation gate: markers of open work, names of the 1.x library, catalog coverage.
 
 The data are in ``docs/_data/gate.yaml``. The marker and stale-name checks run when the builder starts and the coverage check
 when the build has finished (it reads the back-references written by sphinx-gallery); each raises on a failure, so ``-W`` is
@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 DOCS = Path(__file__).resolve().parent.parent
 ROOT = DOCS.parent
 _EXTRA_SCANNED = ("examples/GALLERY_HEADER.rst", "examples/data/README.md")  # the data licence is open work too
+# "docs/_snippets/" is kept: internal notes placed there (git-ignored) are never scanned
 _SKIPPED = ("docs/_snippets/", "docs/_build/", "docs/api/generated/", "docs/tutorials/")
 
 
@@ -101,7 +102,7 @@ def public_docstrings(source):
 
 
 def _public_module(path):
-    """A module of the documented API: not private, not ``pyeyesweb.base`` or ``pyeyesweb.utils`` (internal, facts.md 13)."""
+    """A module of the documented API: not private, not ``pyeyesweb.base`` or ``pyeyesweb.utils`` (internal)."""
     if path.startswith(("pyeyesweb/base/", "pyeyesweb/utils/")):
         return False
     return path.startswith("pyeyesweb/") and path.endswith(".py") and not any(

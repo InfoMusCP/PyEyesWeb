@@ -70,3 +70,12 @@ docs/sg_execution_times.rst
 docs/_build_*/
 registrazione_kinect.mp4
 examples/data/videos/
+
+# Internal notes (kept outside the repository)
+ALPHA_REVIEW.md
+DOCS_PLAN.md
+TEACHING_PLAN.md
+OPEN_POINTS.md
+STRUCTURE_REVIEW.md
+DESIGN_PROPOSALS.md
+docs/_snippets/

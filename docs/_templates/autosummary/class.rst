@@ -4,7 +4,7 @@
 
 {# Members of the class itself only: the inherited ones (int methods of Status, dict methods, ...) are not part of the
    documented API. Every member of the tables is documented below them by :members:, so each entry of a table resolves
-   (nitpicky, DOCS_PLAN 11.2). #}
+   (nitpicky). #}
 {%- set own_methods = methods | reject("in", inherited_members) | reject("equalto", "__init__") | list %}
 {%- set own_attributes = attributes | reject("in", inherited_members) | list %}
 
