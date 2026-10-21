@@ -13,7 +13,7 @@ signal, which locate events inside a gesture or between gestures. The symbols ar
 
 ## A threshold on the intensity of motion
 
-The approach of the library is the simplest one that works for a body in motion: a gesture is a period in which the body
+The simplest approach that works for a body in motion is this: a gesture is a period in which the body
 moves enough. The **intensity** $I(n)$ is a scalar that measures how much the body moves at sample $n$, such as the kinetic
 energy of a skeleton ({py:class}`~pyeyesweb.low_level.KineticEnergy`, {doc}`kinematics_energy`) or the quantity of motion
 of a video. The intensity is noisy, so it is first smoothed to $\bar{I}(n)$, and a gesture is declared while the smoothed

@@ -7,7 +7,7 @@ the output that was produced.
 
 ## A movement signal
 
-A smoothness measure needs the speed of a movement. We build the speed of a hand at 100 Hz for three seconds: a single
+A smoothness measure needs the speed of a movement. The speed of a hand is built at 100 Hz for three seconds: a single
 smooth, bell-shaped reach, followed by a movement made of four short corrections (a jerky movement). Speeds are in
 metres per second and the time axis is in seconds.
 

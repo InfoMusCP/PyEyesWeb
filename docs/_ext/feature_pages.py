@@ -14,9 +14,9 @@ import shutil
 from pathlib import Path
 
 import yaml
-from docutils import nodes
+from docutils import utils
 from docutils.parsers.rst import Directive
-from docutils.statemachine import StringList
+from docutils.parsers.rst import Parser as RSTParser
 from numpydoc.docscrape import ClassDoc
 from sphinx.util import logging
 
@@ -234,9 +234,11 @@ class FeatureTable(Directive):
                  f":doc:`{_esc(families[owner[i.name]]['title'])} </{families[owner[i.name]]['doc']}>`",
                  f":doc:`API </{GENERATED}/{layer}/{i.name}>`"] for i in entries]
         text = _table(["Feature", "Summary", "Timescale", "Family", "Link"], rows, [20, 38, 10, 20, 12])
-        container = nodes.container()
-        self.state.nested_parse(StringList(text.splitlines(), source=self.state.document.current_source), 0, container)
-        return container.children
+        # The table is reStructuredText whatever the page is written in: parse it with the RST parser, not with the state
+        # machine of the page (on a MyST page that one reads Markdown and would print the list-table as a paragraph).
+        document = utils.new_document(self.state.document.current_source, self.state.document.settings)
+        RSTParser().parse(text, document)
+        return document.children
 
 
 def _builder_inited(app):

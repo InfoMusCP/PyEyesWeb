@@ -1,7 +1,7 @@
 # Dominance
 
 In a group that moves together (a string quartet, a dance ensemble, a team), some members lead and others follow. Dominance
-analysis asks which member acts as the leader, from the movement alone. The approach implemented in PyEyesWeb is the one of
+analysis asks which member acts as the leader, from the movement alone. The approach followed is the one of
 {cite}`glowinski2010multi`, in which the leader is the participant whose movement is the **least complex**: the most regular
 and predictable movement acts as an anchor around which the others behave more reactively, and therefore with higher
 complexity. The analysis has two stages, each a separate feature:

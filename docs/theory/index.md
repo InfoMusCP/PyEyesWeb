@@ -1,6 +1,6 @@
 # Theory
 
-The conceptual framework of expressive movement analysis that the library follows, the notation used in every page, and one
+The conceptual framework of expressive movement analysis on which the features are organised, the notation used in every page, and one
 page per family of measures: what each quantity means for movement, how it is defined and computed, how to read it, and the
 literature it comes from.
 

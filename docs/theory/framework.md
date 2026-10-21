@@ -1,15 +1,15 @@
 # Conceptual framework
 
-PyEyesWeb organises its features after the multi-layered computational framework of expressive movement qualities developed
-by Camurri and colleagues {cite}`camurri2016dancer`, which builds on the EyesWeb expressive gesture processing library
-{cite}`camurri2003eyesweb,camurri2004toward,volpe2016designing`. This page presents the model, explains the idea of a
-timescale that runs through it, and shows how each layer is realised in the library. It is the background to the choice of a
-feature: the {doc}`user guide <../user_guide/low_level>` of each layer says which feature to use, and the family pages of the
-theory section define the quantities.
+The features are organised after the multi-layered computational framework of expressive movement qualities
+{cite}`camurri2016dancer`, which builds on the EyesWeb expressive gesture processing library
+{cite}`camurri2003eyesweb,camurri2004toward,volpe2016designing`. The model, the idea of a timescale that runs through it, and
+the way each layer is realised in the package are presented below. They are the background to the choice of a feature: the
+{doc}`user guide <../user_guide/low_level>` of each layer says which feature to use, and the family pages of the theory
+section define the quantities.
 
 The model is the result of an open field of research. Some of its concepts are open to interpretation, its limits are still
-being worked out, and the layers describe how to think about movement, not a fixed processing chain. The library follows the
-model closely enough to be useful for movement analysis and does not claim that the model is complete.
+being worked out, and the layers describe how to think about movement, not a fixed processing chain. The features follow the
+model closely enough to be useful for movement analysis, without claiming that the model is complete.
 
 ## The model
 
@@ -110,7 +110,7 @@ a feature is the one for which the quantity was designed.
 
 ## How the library maps to the model
 
-The library has one package for each layer of the model and one for the analysis primitives, and every feature belongs to
+Each layer of the model has one package, and there is one more for the analysis primitives; every feature belongs to
 exactly one of them. {doc}`../concepts/layers` describes the packages and the catalog; the table gives the correspondence
 with the model, and the number of features in each group.
 
