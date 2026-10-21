@@ -6,7 +6,7 @@ Only what is still open or must be remembered. What was done is in git. Internal
 
 In this order:
 
-1. Core (private repository): add the macOS arm64 job to `wheels.yml` (dropped for the trial, no runner; GitHub Actions never ran macOS arm64).
+1. Core (private repository): the macOS arm64 wheel is cross-compiled on the Intel runner (no native arm64 runner was available for the private repository): check that the PyEyesWeb tests on `macos-latest` pass with it, and move it to a native arm64 job when one is available.
 2. PyPI and TestPyPI: real trusted publishers for `eyesweb-core` and `pyeyesweb` (workflow `pypi_deploy.yml` here, `wheels.yml` in the core), and the `pypi` environment in both repositories.
 3. Delete the repository variable `CORE_FROM_TESTPYPI` (read by `tests.yml`, `docs.yml`, `linkcheck.yml`); then the three workflows install the core from PyPI.
 4. Set the release date in the `CHANGELOG.md` heading and in `CITATION.cff` (`version`, and add `date-released`; there is none now).
@@ -63,7 +63,7 @@ Core backlog (changes in the core, some need a regenerated reference):
 ## 5. Facts to remember
 
 - Two repositories: the public pure-Python `PyEyesWeb` (MIT, `Copyright (c) 2025 InfoMusCP`) and the private core repository (C++, binary wheel `eyesweb-core`, licence `LicenseRef-InfoMus-Binary`). The public tree never contains C++ sources or the private URL. The core wheels are built by `wheels.yml` (cibuildwheel) in the private repository.
-- Tag flow: a pushed tag `v*` builds and uploads to TestPyPI (both repositories); a published GitHub release uploads to PyPI; a manual run needs the workflow file on the default branch. 2.0.0a1 was tried on TestPyPI for both packages (macOS arm64 core wheel missing).
+- Tag flow: a pushed tag `v*` builds and uploads to TestPyPI (both repositories); a published GitHub release uploads to PyPI; a manual run needs the workflow file on the default branch. 2.0.0a1 was tried on TestPyPI for both packages (the macOS arm64 core wheel was added afterwards, cross-built).
 - Docs preview: every push to `dev` publishes to `v2-dev/` of `gh-pages`; pull requests only build.
 - Known limits: the old videos (780 MB) are still in the git history before commit 29f3676 (no history rewrite decided; a clone is about 1.9 GB); the videos are private and `examples/data/videos/` is git-ignored. The data licence is the MIT licence of the repository.
 - Rules: no behaviour change without a test; docstrings stay true; the live/structural table lives only in `docs/howto/realtime_live_parameters.md`; a new catalog feature needs the contract test and its entries in `docs/_data/families.yaml` and `instantiation.yaml`.
