@@ -471,6 +471,22 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
 - Lab features (no EyesWeb block) are tested by behaviour, the catalog-wide suites and frozen data in `tests/data`; there
   are no legacy oracles.
 
+### Choosing a definition when the sources disagree (**Decided** 2026-10-30, algorithm review)
+
+The algorithm review (`EyesWebCore/dev-notes/algorithm_review/DECISIONS.md`) may change a feature away from the EyesWeb
+source, by maintainer decision as above. When the EyesWeb block, its paper and other implementations disagree or leave a
+detail open, the decision follows this order:
+
+1. **Shared definitions agree.** Features that compute the same quantity in different forms use the same rule
+   (e.g. RecurrencePlot, CrossRecurrencePlot and GeneralisedAutoCorrelation: the recurrence rate at lag tau is the density
+   of one diagonal of the recurrence plot). This overrides the points below within a family.
+2. **Otherwise follow the paper that defines the feature** (the one the docs cite).
+3. **If that paper is silent or ambiguous, follow the reference implementation** the original block was built from
+   (e.g. pyEntropy for EyesWeb's SampleEntropy), and say so.
+4. **Document the choice** in one sentence in the docstring or the theory page.
+
+There is no single library-wide convention (for example for `<` vs `<=` at a tolerance): each family follows its own reference.
+
 ## 6. How to add a feature
 
 1. Core: a feature that needs a new block of the compiled core starts there (the maintainers' procedure, outside this
