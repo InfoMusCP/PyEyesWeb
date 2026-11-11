@@ -37,10 +37,10 @@ _STATE_RESET_NOTE = "parameters changed: state reset"
 # (`x_min`, `gaussian_correlation`, `noise_threshold`...) are listed with the reason in `tests/unit_tests/test_live_validation_all_features.py`.
 _POSITIVE_PARAMS = frozenset({
     "sampling_rate", "upper_limit", "window", "gaussian_sigma_x", "gaussian_sigma_y", "log_scale", "custom_distance",
-    "time_constant", "gesture_duration", "number_of_points", "best_periods", "order", "low_frequency", "high_frequency"})
+    "time_constant", "gesture_duration", "best_periods", "order", "low_frequency", "high_frequency"})
 _NON_NEGATIVE_PARAMS = frozenset({
     "damping", "viscosity", "damping_factor", "viscosity_factor", "step_adaptation_factor", "seed", "arm_percentage",
-    "legs_search", "legs_offset", "arms_min_threshold", "arms_max_threshold", "movement_threshold", "velocity_threshold",
+    "number_of_points", "legs_search", "legs_offset", "arms_min_threshold", "arms_max_threshold", "movement_threshold", "velocity_threshold",
     "standard_deviation_threshold", "y_weight", "epsilon", "minimum_distance", "direction_change_epsilon",
     "firing_threshold", "amplitude", "custom_amplitude", "max_value", "threshold", "inter_event_time", "max_steps"})
 

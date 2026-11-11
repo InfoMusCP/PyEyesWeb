@@ -5,6 +5,15 @@
 PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Gesture Analysis library. The migration table for every removed or renamed name is in the migration guide
 (`docs/migration.md`, "Migrating from 1.x").
 
+### Corrections after the algorithm review (2026-10-28)
+
+* `BodyPartsFromCurvature(number_of_points=0)` is accepted, as the docstring and the core describe (no maxima tracked, all the
+  minima kept); only a negative count raises `ValueError`. It was rejected as a non-positive number.
+* `CurvatureDispersion`: the documentation no longer calls the output dimensionless. It is the mean distance covered per call
+  times `1 + 2 CV` of the curvature, so it has the unit of length; the values are unchanged.
+* `EllipsoidSphericity`: the migration table says that `sphericity` of a point cloud is not the 1.x ratio (now `axis_ratio`).
+* The records are in `EyesWebCore/dev-notes/algorithm_review/FIXES_APPLIED.md`.
+
 ### Breaking Changes
 
 * feat!: new call contract, shared by all features. A feature declares `inputs`, `outputs` (a `Schema`) and `parameters`;

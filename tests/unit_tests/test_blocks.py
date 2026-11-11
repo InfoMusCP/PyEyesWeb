@@ -275,6 +275,14 @@ def test_structured_outputs_flatten_with_meaningful_keys():
         assert all(array.shape == (2,) for array in labelled.values())
 
 
+def test_body_parts_from_curvature_accepts_zero_points_and_rejects_negative():
+    """0 is the documented "no maxima, all minima" value; only a negative count is meaningless."""
+    block = BodyPartsFromCurvature(minimum_distance=1, number_of_points=0)
+    assert len(block.process([1.0, -1, 1, -1, 1, -1, 1, -1], CIRCLE).maximums) == 0
+    with pytest.raises(ValueError, match="must not be negative"):
+        BodyPartsFromCurvature(number_of_points=-1)
+
+
 # ---------------------------------------------------------------------------- (d) parameter-dependent schemas
 
 def test_symmetry_global_and_components():

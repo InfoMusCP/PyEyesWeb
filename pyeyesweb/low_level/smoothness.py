@@ -328,7 +328,8 @@ class CurvatureDispersion(_InferredDimsBlock):
     ``movement_threshold`` (a still point has no smoothness to measure). It is computed from the velocity
     :math:`\mathbf{v}` and the acceleration :math:`\mathbf{a}` of the point, from which the feature derives the
     curvature :math:`\kappa` of the path and the arc length :math:`\lVert\mathbf{v}\rVert\,dt` covered at each call; it
-    keeps both over a ring of ``window`` calls and returns one dimensionless value per call, from the first call on.
+    keeps both over a ring of ``window`` calls and returns one value per call, from the first call on: a length (the mean
+    distance covered per call times a factor of at least 1), or 1 while the movement is below the threshold.
     The two rings fill over ``window`` calls and their empty entries (zeros) weigh in until then.
 
     Parameters
@@ -356,7 +357,10 @@ class CurvatureDispersion(_InferredDimsBlock):
     ``output_type="acceleration"``, with the same filter parameters and time rule, and feed both to every call.
     ``reset()`` clears the rings. ``timestamp`` is in seconds.
 
-    **Outputs.** ``curvature_dispersion`` (dimensionless; 1 when the movement is below the threshold).
+    **Outputs.** ``curvature_dispersion``: the mean distance covered per call times :math:`1 + 2\,s_\kappa/\bar{\kappa}` (the
+    coefficient of variation of the curvature over the window), so it has the unit of length and depends on the
+    sampling rate and the speed (a circle of radius 1 m at 1 Hz gives 0.063 at 100 Hz and 0.126 at 50 Hz); it is 1 when
+    the movement is below the threshold, a value on another scale. It is not dimensionless.
 
     **Statuses.** ``OK`` from the first call; ``INVALID_INPUT`` when an input is NaN or infinite, the timestamp does
     not increase, or the index is not finite (for example a perfectly straight path, whose curvature is 0).

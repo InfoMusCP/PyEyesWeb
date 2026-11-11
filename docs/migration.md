@@ -240,7 +240,7 @@ release.
 | `DirectionChange(epsilon, num_subsamples, metrics)` | `DirectionChange(window, hop, epsilon, number_of_subsamples, metrics)` | `window` and `hop` are parameters; one trajectory per call |
 | `Suddenness(algo="new")` | `Suddenness(window, hop, dims, method)`, `method` being `"constrained"` or `"quantile"` | `algo="new"` is `method="constrained"`, the default; one `(dims,)` point per call |
 | `Impulsivity(direction_change_epsilon, suddenness_algo)`; result `impulsivity_index`, `direction_change_val`, `is_sudden` | `SuddennessImpulsivity(window, hop, dims, direction_change_epsilon, method)`; output `impulsivity_index` | the intermediate values are gone; the EyesWeb `ImpulsivityIndex` is a different feature, `ContractionImpulsivity` |
-| `BoundingBoxFilledArea`, `EllipsoidSphericity`, `PointsDensity` (one shared `ContractionExpansionResult`) | same names | each feature declares its own outputs: `contraction_index`; `sphericity`, `axis_ratio`, `radii`; `density`, `centroid` |
+| `BoundingBoxFilledArea`, `EllipsoidSphericity`, `PointsDensity` (one shared `ContractionExpansionResult`) | same names | each feature declares its own outputs: `contraction_index`; `sphericity`, `axis_ratio`, `radii`; `density`, `centroid`. For a point cloud `EllipsoidSphericity.sphericity` is no longer the 1.x ratio of the smallest to the largest radius (that value is now `axis_ratio`): it is the sphericity of the ellipsoid with those radii (0.855 against 0.338 for radii 3, 2, 1) |
 
 ### Removed features
 

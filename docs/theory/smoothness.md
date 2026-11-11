@@ -203,7 +203,9 @@ the correlation is strongly negative:
 bends to the distance that the point travelled over the last `window` calls (50 by default). It is computed from the
 velocity and the acceleration vectors of the point, from which the feature derives the curvature $\kappa$ and the arc
 length $\lVert\mathbf{v}\rVert \, \Delta t$ of each call, keeps both over a ring of `window` calls, and returns one
-dimensionless value per call, from the first call on. The index is 1 while the movement is slower than `movement_threshold`:
+value per call, from the first call on. The value is a length, not a dimensionless number: the mean distance covered per call
+times $1 + 2\,s_\kappa/\bar{\kappa}$ (the coefficient of variation of the curvature over the window), so it depends on the
+sampling rate, the speed and the unit of the data (a circle of radius 1 m at 1 Hz gives 0.063 at 100 Hz and 0.126 at 50 Hz). The index is 1 while the movement is slower than `movement_threshold`:
 a point at rest has no smoothness to measure. A path with curvature 0 everywhere, a perfectly straight one, has no finite
 index and gives `INVALID_INPUT`. The empty entries of the rings weigh in until they have filled, so the first `window`
 values are not comparable with the later ones. Corrected in the core: every call now adds the speed times the time step to
@@ -234,7 +236,7 @@ each, with `output_dims="components"`:
 | `Harmonicity` | `harmonicity` | none | closer to 1 | $[0, 1]$ |
 | `SubmovementCount` | `submovement_count` | none | lower | integer, 0 or more |
 | `CurvatureVelocityCorrelation` | `smoothness` | none | closer to $-1$ | $[-1, 1]$ for `"pearson"` |
-| `CurvatureDispersion` | `curvature_dispersion` | none | see the example | 1 below the movement threshold |
+| `CurvatureDispersion` | `curvature_dispersion` | none | see the example | a length; 1 below the movement threshold |
 
 The metrics are dimensionless and independent of the unit of the data, which makes them comparable between movements of
 different size and speed, but a value is only meaningful relative to the same metric on a comparable movement: the absolute
