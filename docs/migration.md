@@ -257,6 +257,16 @@ release.
 | the trajectory datatype and its blocks (`Trajectory`, `TrajectoryBuilder`, `GetKinematicalFeatures`, `KinematicalFeatures`, `NumericDerivative`, the `Trajectory` input mode of `Kinematics`) | development | `Kinematics` on plain arrays (`from_point`, `from_series`); `Directness` and `TrajectoryNonPlanarity` take `(n, D)` arrays of points, row 0 the newest |
 | the transforms of `GeometricTrajectory3D` (`rotation_matrix`, `rotate_x`, `rotate_y`, `rotate_z`, `rotate`, `scale`, `translate`, `rescale_in_range`, `remap_axis`, `convert_on_2d`) | development | `numpy` |
 | `VelocityKineticEnergy`, `EllipsoidFitSphericity` | development | `KineticEnergy(input_mode="velocity")` (or `KineticEnergy.from_velocity`); `EllipsoidSphericity().process(points)`, where `axis_ratio` is the former value |
+| `PointsPredictor` | development | removed: it was a constant-velocity extrapolation, `2 * p[t] - p[t-1]` |
+| `GenericModelPredictor` | development | removed: it has no published definition |
+| `GenericModelEstimator` | development | removed: it has no published definition |
+| `CurvatureDispersion` | development | removed: it has no source, and its value depended on the speed, the sampling rate and the unit |
+| `ConvexHull` | development | SciPy: `contour[scipy.spatial.ConvexHull(contour).vertices]` |
+| `FilterContour` | development | SciPy: `scipy.ndimage.gaussian_filter1d(contour, sigma, axis=0, mode="wrap")` smooths a closed contour |
+| `CorrelationsMatrix` | development | `numpy.corrcoef`, the plain Pearson correlation (signed, in [-1, 1]); `PartialRecurrenceSynchronization` takes that matrix |
+| `CoarseGraining` | development | removed: it is an internal step of `MultiScaleEntropy`; in `numpy`, `x[:len(x)//f*f].reshape(-1, f).mean(axis=1)` |
+| `SequenceDetector` | development | removed: a generic state machine with no published definition |
+| `TemporalSynchronization` | development | removed: a generic state machine with no published definition |
 
 ### Names of the EyesWeb blocks
 
@@ -293,33 +303,33 @@ new spelling.
 
 | Old spelling | New spelling | Used by |
 |---|---|---|
-| `n_inputs` | `number_of_inputs` | `CorrelationsMatrix`, `EventSynchronizationMECS`, `Rarity` and 2 more |
-| `input_number` | `number_of_inputs` | `CorrelationsMatrix`, `EventSynchronizationMECS`, `Rarity` and 2 more |
-| `time_series_number` | `number_of_inputs` | `CorrelationsMatrix`, `EventSynchronizationMECS`, `Rarity` and 2 more |
-| `number_of_input_trains` | `number_of_inputs` | `CorrelationsMatrix`, `EventSynchronizationMECS`, `Rarity` and 2 more |
+| `n_inputs` | `number_of_inputs` | `EventSynchronizationMECS`, `Rarity`, `SpikeSynchronization` |
+| `input_number` | `number_of_inputs` | `EventSynchronizationMECS`, `Rarity`, `SpikeSynchronization` |
+| `time_series_number` | `number_of_inputs` | `EventSynchronizationMECS`, `Rarity`, `SpikeSynchronization` |
+| `number_of_input_trains` | `number_of_inputs` | `EventSynchronizationMECS`, `Rarity`, `SpikeSynchronization` |
 | `event_class_number` | `number_of_event_classes` | `EventSynchronizationMECS` |
 | `points_number` | `number_of_points` | `BodyPartsFromCurvature` |
 | `num_of_regions` | `number_of_regions` | `RegionDependingPotentials` |
 | `num_subsamples` | `number_of_subsamples` | `DirectionChange` |
-| `window_size` | `window` | `BinaryPulsesRegularity`, `CoarseGraining`, `CorrelationsMatrix` and 25 more |
-| `window_length` | `window` | `BinaryPulsesRegularity`, `CoarseGraining`, `CorrelationsMatrix` and 25 more |
-| `length` | `window` | `BinaryPulsesRegularity`, `CoarseGraining`, `CorrelationsMatrix` and 25 more |
-| `buffer_length` | `window` | `BinaryPulsesRegularity`, `CoarseGraining`, `CorrelationsMatrix` and 25 more |
-| `data_memory` | `window` | `BinaryPulsesRegularity`, `CoarseGraining`, `CorrelationsMatrix` and 25 more |
+| `window_size` | `window` | `BinaryPulsesRegularity`, `CrossRecurrencePlot`, `CurvatureVelocityCorrelation` and 21 more |
+| `window_length` | `window` | `BinaryPulsesRegularity`, `CrossRecurrencePlot`, `CurvatureVelocityCorrelation` and 21 more |
+| `length` | `window` | `BinaryPulsesRegularity`, `CrossRecurrencePlot`, `CurvatureVelocityCorrelation` and 21 more |
+| `buffer_length` | `window` | `BinaryPulsesRegularity`, `CrossRecurrencePlot`, `CurvatureVelocityCorrelation` and 21 more |
+| `data_memory` | `window` | `BinaryPulsesRegularity`, `CrossRecurrencePlot`, `CurvatureVelocityCorrelation` and 21 more |
 | `cells_x` | `cells_along_x` | `HitCellDetector`, `PositionDependingPotentials`, `RegionDependingPotentials` |
 | `cells_y` | `cells_along_y` | `HitCellDetector`, `PositionDependingPotentials`, `RegionDependingPotentials` |
-| `sigma_value` | `gaussian_sigma` | `EventSynchronizationMECS`, `FilterContour` |
+| `sigma_value` | `gaussian_sigma` | `EventSynchronizationMECS` |
 | `std_dev_x` | `gaussian_sigma_x` | `PositionDependingPotentials` |
 | `std_dev_y` | `gaussian_sigma_y` | `PositionDependingPotentials` |
 | `rho` | `gaussian_correlation` | `PositionDependingPotentials` |
 | `ges_dur` | `gesture_duration` | `ContractionImpulsivity` |
-| `frames` | `sampling_rate` | `ContractionImpulsivity`, `CurvatureDispersion`, `CurvatureVelocityCorrelation` and 13 more |
+| `frames` | `sampling_rate` | `ContractionImpulsivity`, `CurvatureVelocityCorrelation`, `GenericModelSimulator` and 10 more |
 | `use_cust_ampl` | `use_custom_amplitude` | `PositionDependingPotentials` |
 | `cust_ampl` | `custom_amplitude` | `PositionDependingPotentials` |
 | `use_cust_dist` | `use_custom_distance` | `PositionDependingPotentials` |
 | `cust_dist` | `custom_distance` | `PositionDependingPotentials` |
 | `reg_init_values` | `region_initial_values` | `RegionDependingPotentials` |
-| `ref_dir` | `reference_direction` | `GenericModelEstimator`, `GenericModelPredictor`, `GenericModelSimulator` and 2 more |
+| `ref_dir` | `reference_direction` | `GenericModelSimulator`, `HumanoidOrientations`, `HumanoidSimulator` |
 | `filter_params` | `low_frequency`, `high_frequency` | `PhaseLockingValue` |
 | `algorithm` | `method` | `Periodicity`, `Rarity`, `Suddenness` and 2 more |
 | `algo` | `method` | `Periodicity`, `Rarity`, `Suddenness` and 2 more |
@@ -329,7 +339,7 @@ new spelling.
 | `center_of_symmetry` | `reference_point` | `KineticEnergy`, `Symmetry` |
 | `sqom` | `quantity_of_motion` | `ContractionImpulsivity` |
 | `ci` | `contraction_index` | `BoundingBoxFilledArea`, `ContractionImpulsivity` |
-| `cpr` | `correlations_matrix` | `CorrelationsMatrix`, `PartialRecurrenceSynchronization` |
+| `cpr` | `correlations_matrix` | `PartialRecurrenceSynchronization` |
 | `ts1` | `first_signal` | `EventSynchronization`, `NonlinearInterdependence`, `PhaseLockingValue` |
 | `ts2` | `second_signal` | `EventSynchronization`, `NonlinearInterdependence`, `PhaseLockingValue` |
 | `x` | `first_signal` | `EventSynchronization`, `NonlinearInterdependence`, `PhaseLockingValue` |
@@ -338,9 +348,8 @@ new spelling.
 | `xy` | `first_to_second_interdependence` | `NonlinearInterdependence` |
 | `yx` | `second_to_first_interdependence` | `NonlinearInterdependence` |
 | `value` | `equilibrium` | `Equilibrium` |
-| `sequences` | `sequence_count` | `SequenceDetector` |
 | `plot` | `recurrence_matrix` | `RecurrencePlot` |
-| `synchronisation` | `synchronization` | `EventSynchronization`, `EventSynchronizationMECS`, `TemporalSynchronization` |
+| `synchronisation` | `synchronization` | `EventSynchronization`, `EventSynchronizationMECS` |
 
 ## Behaviour changes that alter numbers
 
@@ -365,7 +374,6 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `Symmetry(method="ratio")` on a preset without a reference joint | 2.0 asks for `reference_point=`; the development default `"neck"` was no joint of `mediapipe` or `qualisys_sport` and the translation to the reference was silently skipped |
 | `Symmetry(method="ratio")` | there is no `reference_type` parameter (the core only translates the frame by `reference_point`; `"barycenter"` and `"point"` did nothing in the original block): passing it raises `TypeError` |
 | `Symmetry` | `pairs` is validated: an entry that is not two joint names, or a name that is not among the labels, raises `ValueError` |
-| `ConvexHull` | `integer_coordinates` defaults to `False`: float contours are accepted (`True` rejects fractions, as the core does) |
 | `KineticEnergy(labels=[...])` | without `weights=` every joint weighs 1.0 (it used to raise); a joint missing from an explicit mapping weighs 0 |
 | `CurvatureVelocityCorrelation` (development) | `velocity` and `velocity_std` are per second in both modes of `differentiate`; the development values with `differentiate=False` were per sample |
 | `MotionNoiseDetector` (development) | `is_noisy` is `True` for noisy (random, jumpy) motion; it was the reverse |
@@ -375,7 +383,6 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 |---|---|
 | `Kinematics` | acceleration and jerk are the true second and third derivatives, and the curvature of the path has the right normalisation |
 | `CurvatureVelocityCorrelation` | the curvature used half of the second derivative of the fit |
-| `CurvatureDispersion` | every call adds the speed times the time step to the arc length, above and below the threshold |
 | `SuddennessImpulsivity` | both terms are evaluated on the same single trajectory (the original took the direction change of the mean of all the signals and the suddenness of the first signal) |
 | `MotionNoiseDetector` | `reset()` clears the speed windows |
 | `ScalarPeakDetector` | the running maximum was seeded with the smallest positive number, so a signal that stays at or below 0 never produced a peak |

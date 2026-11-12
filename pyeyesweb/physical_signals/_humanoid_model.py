@@ -30,8 +30,7 @@ class MassSpringModel:
     (``mass2``), with a rest length, a rest direction, a stiffness and a damping for the length and for the direction.
     Build the model from an EyesWeb XML file (``MassSpringModel.from_xml_file(path)``; ``<Model><Masses>...<Springs>...``) or
     by hand with ``add_mass`` and ``add_spring``, and give it to a feature as ``model=`` (a path to an XML file is accepted
-    there too). The features copy the model they get; ``feature.model`` returns a copy of its current state (the
-    estimated parameters of a :class:`GenericModelEstimator`, for instance). Lengths and positions are in the unit of your
+    there too). The features copy the model they get; ``feature.model`` returns a copy of its current state. Lengths and positions are in the unit of your
     data; the dynamics are those of the model in that unit (see :class:`GenericModelSimulator`).
 
     Parameters

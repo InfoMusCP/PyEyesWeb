@@ -19,31 +19,29 @@ import numpy as np
 import pytest
 
 from contract_suite import check_feature_contract
-from humanoid_inputs import CHAIN_XML, MASSES, REFERENCE, forearm
+from humanoid_inputs import CHAIN_XML, REFERENCE, forearm
 from imaging_inputs import silhouette
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb import catalog  # noqa: E402
 from pyeyesweb.analysis_primitives import (  # noqa: E402
-    BinaryPulsesRegularity, CoarseGraining, MultiScaleEntropy, Periodicity, Rarity, SampleEntropy
+    BinaryPulsesRegularity, MultiScaleEntropy, Periodicity, Rarity, SampleEntropy
 )
 from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    CorrelationsMatrix, CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation,
-    NonlinearInterdependence, PhaseLockingValue, RecurrencePlot, SpikeSynchronization,
-    TemporalSynchronization
-)
+    CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation,
+    NonlinearInterdependence, PhaseLockingValue, RecurrencePlot, SpikeSynchronization)
 from pyeyesweb.data_models import InputKind  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
-    BodyPartsFromCurvature, CurvatureDispersion, CurvatureVelocityCorrelation, DirectionChange, Harmonicity, Kinematics, KineticEnergy,
+    BodyPartsFromCurvature, CurvatureVelocityCorrelation, DirectionChange, Harmonicity, Kinematics, KineticEnergy,
     LogDimensionlessJerk, MotionNoiseDetector, SpectralArcLength, SubmovementCount, Symmetry
 )
 from pyeyesweb.mid_level import (  # noqa: E402
     GestureSegmenter, PositionDependingPotentials, RegionDependingPotentials, Suddenness, SuddennessImpulsivity
 )
 from pyeyesweb.physical_signals import (  # noqa: E402
-    GenericModelEstimator, GenericModelOrientations, GenericModelPredictor, GenericModelSimulator, HitCellDetector,
-    HumanoidOrientations, HumanoidSimulator, MassSpringModel, PointsPredictor,
+    GenericModelOrientations, GenericModelSimulator, HitCellDetector,
+    HumanoidOrientations, HumanoidSimulator, MassSpringModel,
     SilhouetteCentroids, Videogram
 )
 
@@ -141,9 +139,7 @@ def _chain(name):
 
 # name -> (factory, data); features not listed are built with no argument and driven by `from_inputs`
 OVERRIDES = {
-    "FilterContour": (None, _contours),
     "ContourCurvature": (None, _contours),
-    "ConvexHull": (None, _contours),
     "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1),
                                lambda: (_random(10).choice([-1.0, 1.0], size=(12, 8)), _contours()[0])),
     "HitCellDetector": (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=1.0, y_max=1.0), _hits),
@@ -151,10 +147,6 @@ OVERRIDES = {
     "HumanoidOrientations": (None, lambda: (forearm(30),)),
     "GenericModelOrientations": (lambda: GenericModelOrientations(MODEL), lambda: _chain("model_positions")),
     "GenericModelSimulator": (lambda: GenericModelSimulator(MODEL, **MILLIMETRES), lambda: _chain("bone_directions")),
-    "GenericModelPredictor": (lambda: GenericModelPredictor(MODEL, **MILLIMETRES), lambda: _chain("bone_directions")),
-    "GenericModelEstimator": (lambda: GenericModelEstimator(MODEL, **MILLIMETRES, estimate_masses=True),
-                              lambda: _chain("model_positions")),
-    "PointsPredictor": (lambda: PointsPredictor(labels=MASSES), lambda: _chain("model_positions")),
     "SilhouetteCentroids": (lambda: SilhouetteCentroids(filter_centroids=True, alpha=0.5), _moving_body),
     "SilhouetteBodyParts": (None, _moving_body),
     "Videogram": (lambda: Videogram(window=4), None),
@@ -165,9 +157,6 @@ OVERRIDES = {
     "LogDimensionlessJerk": (lambda: LogDimensionlessJerk(window=30, hop=7, sampling_rate=50.0), _speed),
     "Harmonicity": (lambda: Harmonicity(window=30, hop=7, sampling_rate=50.0), _speed),
     "SubmovementCount": (lambda: SubmovementCount(window=30, hop=7, sampling_rate=50.0), _speed),
-    "CurvatureDispersion": (lambda: CurvatureDispersion(dims=3),
-                            lambda: (np.gradient(_walk(80, 3, 13), axis=0),
-                                     np.gradient(np.gradient(_walk(80, 3, 13), axis=0), axis=0))),
     "CurvatureVelocityCorrelation": (lambda: CurvatureVelocityCorrelation(window=40, hop=20, sampling_rate=25.0),
                                      lambda: (_walk(120, 2, 14),)),
     "DirectionChange": (lambda: DirectionChange(window=10, hop=3), lambda: (_walk(60, 3, 15),)),
@@ -181,7 +170,6 @@ OVERRIDES = {
     "EnsembleDominance": (None, lambda: (np.abs(_random(18).standard_normal((150, 2))),)),
     "SampleEntropy": (lambda: SampleEntropy(window=40, hop=10, embedding_dimension=2, tolerance=0.5),
                       lambda: (np.sin(np.arange(120) / 5.0) + 0.1 * _random(19).standard_normal(120),)),
-    "CoarseGraining": (lambda: CoarseGraining(window=8, hop=4, factor=2), lambda: (_random(20).standard_normal((40, 2)),)),
     "Rarity": (lambda: Rarity(method="information"), lambda: (_random(21).standard_normal((30, 2)),)),
     "BinaryPulsesRegularity": (lambda: BinaryPulsesRegularity(window=12, hop=3, threshold=1), _pulses),
     "MultiScaleEntropy": (lambda: MultiScaleEntropy(window=100, hop=50, minimum_points=50, max_scale=2),
@@ -190,7 +178,6 @@ OVERRIDES = {
     "ScalarPeakDetector": (None, _signal),
     "PhaseLockingValue": (lambda: PhaseLockingValue(window=30, hop=10),
                           lambda: (_signals_with_phase()[:, 0], _signals_with_phase()[:, 1])),
-    "CorrelationsMatrix": (lambda: CorrelationsMatrix(window=20, hop=5, number_of_inputs=3), lambda: (_signals_with_phase(),)),
     "PartialRecurrenceSynchronization": (None, _correlation_matrices),
     "GeneralisedAutoCorrelation": (lambda: GeneralisedAutoCorrelation(window=20, hop=10),
                                    lambda: (_signals_with_phase()[:, 0],)),
@@ -201,9 +188,6 @@ OVERRIDES = {
                                  lambda: (_signals_with_phase()[:, 0], _signals_with_phase()[:, 2])),
     "SpikeSynchronization": (lambda: SpikeSynchronization(window=20, hop=10),
                              lambda: (np.where(_random(23).random((80, 2)) > 0.7, 1.0, -1.0),)),
-    "SequenceDetector": (None, lambda: (_random(24).integers(0, 3, 80).astype(float),)),
-    "TemporalSynchronization": (lambda: TemporalSynchronization(thresholds=[0.5, 0.5, 0.5]),
-                                lambda: (np.abs(_signals_with_phase()),)),
     "RecurrencePlot": (lambda: RecurrencePlot(window=10, hop=5, epsilon=0.5), lambda: (_signals_with_phase()[:, :2],)),
     "CrossRecurrencePlot": (lambda: CrossRecurrencePlot(window=10, hop=5, epsilon=0.5),
                             lambda: (_signals_with_phase()[:, :2], _signals_with_phase()[:, 1:])),

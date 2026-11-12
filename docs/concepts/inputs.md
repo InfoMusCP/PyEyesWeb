@@ -133,10 +133,9 @@ True
 
 Instead of listing joints by hand, a feature that works on a body takes `skeleton=`, either the name of a preset or a
 {py:class}`~pyeyesweb.data_models.Skeleton` that you build. A skeleton carries the joint names, optionally the symmetric
-pairs, a reference joint and the weights of the joints. `skeleton=` is accepted by five classes:
+pairs, a reference joint and the weights of the joints. `skeleton=` is accepted by four classes:
 {py:class}`~pyeyesweb.low_level.KineticEnergy` (joints and weights), {py:class}`~pyeyesweb.low_level.MotionNoiseDetector`,
-{py:class}`~pyeyesweb.low_level.Symmetry` (joints, pairs and reference), {py:class}`~pyeyesweb.low_level.PointsDensity` and
-{py:class}`~pyeyesweb.physical_signals.PointsPredictor`. An explicit `labels=`, `weights=` or `pairs=` always wins over the
+{py:class}`~pyeyesweb.low_level.Symmetry` (joints, pairs and reference) and {py:class}`~pyeyesweb.low_level.PointsDensity`. An explicit `labels=`, `weights=` or `pairs=` always wins over the
 skeleton, and a feature given no joint information at all raises `ValueError`. (`KineticEnergy(labels=[...])` alone is joint
 information: it weighs every joint 1.0.)
 
@@ -210,9 +209,8 @@ You can build a skeleton for your own marker set:
 
 The humanoid and generic-model features of the physical-signals layer follow a captured skeleton with a body model. The model
 has its own joint names (`pyeyesweb.physical_signals.HUMANOID_JOINTS`), and `joint_map` says which label of your data feeds
-each model joint, as `model joint -> your label`. The names you leave out keep their own. Only these six classes take
-`joint_map`: `HumanoidSimulator`, `HumanoidOrientations`, `GenericModelOrientations`, `GenericModelSimulator`,
-`GenericModelPredictor` and `GenericModelEstimator`.
+each model joint, as `model joint -> your label`. The names you leave out keep their own. Only these four classes take
+`joint_map`: `HumanoidSimulator`, `HumanoidOrientations`, `GenericModelOrientations` and `GenericModelSimulator`.
 
 ```{doctest}
 >>> from pyeyesweb.physical_signals import HumanoidSimulator
@@ -273,7 +271,7 @@ sets. What differs is what the feature declares as its input, and how it reads i
 
 ## The dimension of a signal: `dims`
 
-Four classes (`Kinematics`, `CurvatureDispersion`, `Suddenness` and `SuddennessImpulsivity`) work on a point or signal of
+Three classes (`Kinematics`, `Suddenness` and `SuddennessImpulsivity`) work on a point or signal of
 any dimension. Their `dims` parameter defaults to `None`, which means "taken from the first frame". The inferred value is
 fixed for the rest of the run, a later frame of another size raises `ValueError`, and `reset()` forgets it.
 

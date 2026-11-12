@@ -46,7 +46,7 @@ it was ported from.
 - **High-level** features need several people.
 - An **analysis primitive** takes any scalar, vector or event signal and knows nothing of bodies, skeletons or geometry.
 
-So `FilterContour`, `Directness` and `TrajectoryNonPlanarity` are low-level features, and the synchronization measures
+So `ContourCurvature`, `Directness` and `TrajectoryNonPlanarity` are low-level features, and the synchronization measures
 between signals are analysis primitives although they are mostly applied to movement.
 
 ## Browsing the catalog
@@ -85,7 +85,7 @@ The same metadata is on the class itself, so a feature can be asked where it bel
 
 ```{doctest}
 >>> [info.name for info in features if info.eyesweb_block is None]
-['BoundingBoxFilledArea', 'SpectralArcLength', 'LogDimensionlessJerk', 'Harmonicity', 'SubmovementCount', 'CurvatureDispersion', 'Equilibrium', 'DirectionChange', 'Suddenness', 'SuddennessImpulsivity', 'EnsembleDominance', 'MultiScaleEntropy', 'PhaseLockingValue']
+['BoundingBoxFilledArea', 'SpectralArcLength', 'LogDimensionlessJerk', 'Harmonicity', 'SubmovementCount', 'Equilibrium', 'DirectionChange', 'Suddenness', 'SuddennessImpulsivity', 'EnsembleDominance', 'MultiScaleEntropy', 'PhaseLockingValue']
 ```
 
 {py:func}`pyeyesweb.catalog.catalog_table` renders the features of one layer as a Markdown table. On this site, the

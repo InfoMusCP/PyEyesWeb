@@ -200,8 +200,6 @@ against a feature built with the new value.
 | `CurvatureVelocityCorrelation` | `upper_limit` | `filter_window_length` |
 | `Equilibrium` | `margin` | |
 | `DirectionChange` | `epsilon` | |
-| `FilterContour` | `gaussian_sigma`, `window` | |
-| `ConvexHull` | `integer_coordinates` | |
 | `BodyPartsFromCurvature` | `minimum_distance` | |
 | `TrajectoryNonPlanarity` | `radius` | |
 | `GestureSegmenter` | `firing_threshold` | `filter_window_length` |
@@ -211,7 +209,6 @@ against a feature built with the new value.
 | `PositionDependingPotentials` | `gaussian_sigma_x` | `potential_type` |
 | `RegionDependingPotentials` | `parts` | `potential_type` |
 | `SampleEntropy` | `relative_tolerance`, `tolerance` | |
-| `CoarseGraining` | | `factor` |
 | `Rarity` | `alpha`, `measure` | `window` |
 | `BinaryPulsesRegularity` | `threshold` | |
 | `MultiScaleEntropy` | `tolerance` | |
@@ -222,15 +219,13 @@ against a feature built with the new value.
 | `EventSynchronization` | `tau` | `reset_every_buffer` |
 | `EventSynchronizationMECS` | `kernel` | `number_of_event_classes`, `tau` |
 | `NonlinearInterdependence` | `neighbours` | |
-| `SequenceDetector` | `inter_event_time` | `sequence` |
 | `RecurrencePlot` | `epsilon` | |
 | `CrossRecurrencePlot` | `epsilon` | |
-| `TemporalSynchronization` | `thresholds` | `number_of_inputs` |
 
 A parameter that is not in the table belongs to a feature whose parameters are not changed one by one by those tests, or has no
 live meaning; the class documentation says which. In the humanoid and generic-model features every tested parameter is live
-(`damping`, `viscosity`, `gravity`, the forces, `integration_step`, `floor_position`, the predictor and estimator parameters,
-`sampling_rate`), except the `seed` of `GenericModelEstimator`, the replacement of the `model` by one with another topology, and
+(`damping`, `viscosity`, `gravity`, the forces, `integration_step`, `floor_position`,
+`sampling_rate`), except the replacement of the `model` by one with another topology and
 the `reference_direction` of `HumanoidOrientations`, which are structural. Four features have a structural `window`, because the state of the core is sized by it: `Rarity(method="information")`,
 `Videogram` and `ScalarPeakDetector`, and `CurvatureVelocityCorrelation`, whose `hop` and `sampling_rate` are structural too
 (its filters need the same length and overlap in consecutive windows).

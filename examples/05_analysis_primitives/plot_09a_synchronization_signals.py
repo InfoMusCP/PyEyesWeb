@@ -7,7 +7,7 @@ coordinated in time. This first of two tutorials compares **continuous signals**
 partial correlation, nonlinear interdependence and recurrence, on a performer who moves both arms together (synchronised) or
 not (unsynchronised).
 
-:Goals: measure the synchronization of two signals and of a group with seven features; read a recurrence plot; know what each
+:Goals: measure the synchronization of two signals and of a group with six features; read a recurrence plot; know what each
         measure compares and what its output looks like in time.
 :Prerequisites: :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (windows, statuses and the
                 analysis primitives).
@@ -121,35 +121,36 @@ fig.tight_layout()
 # %%
 # A group: correlation and direct synchronization
 # -----------------------------------------------
-# For more than two signals the question is who moves with whom.
-# :class:`~pyeyesweb.analysis_primitives.CorrelationsMatrix` computes, over a window, the Pearson correlation of every pair
-# of ``number_of_inputs`` signals, with negative values set to 0 (anti-correlation is not synchronization). Two signals can
+# For more than two signals the question is who moves with whom. The Pearson correlation of every pair of signals is
+# ``numpy.corrcoef``: +1 when two signals rise and fall together, -1 when one rises as the other falls. Two signals can
 # correlate only because both follow a third;
 # :class:`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` takes that matrix and removes what the other
-# signals explain, leaving the *direct* relation of each pair (it has no window of its own: one matrix in, one matrix out).
+# signals explain, leaving the strength of the *direct* relation of each pair, between 0 and 1 (it has no window of its own:
+# one matrix in, one matrix out).
 #
 # The four signals are the heights of both hands, the left knee and the head.
 
-from pyeyesweb.analysis_primitives import CorrelationsMatrix, PartialRecurrenceSynchronization
+from pyeyesweb.analysis_primitives import PartialRecurrenceSynchronization
 
 parts = ["Left_Hand", "Right_Hand", "Left_Knee", "Head"]
 matrices = {}
 for name, number in trials.items():
     trial = load_qualisys_trial(number, start=5, stop=21).to_units("m")
     group = np.column_stack([trial.joint(part)[:, 1] for part in parts])
-    correlations = CorrelationsMatrix(window=1600, number_of_inputs=4).run(group)[-1].correlations_matrix
+    correlations = np.corrcoef(group.T)  # (4, 4), over the 16 s
     direct = PartialRecurrenceSynchronization().process(correlations).synchronization_matrix
     matrices[name] = (correlations, direct)
 
 fig, axes = plt.subplots(2, 2, figsize=(7, 6.4))
 for row, (name, (correlations, direct)) in enumerate(matrices.items()):
-    for ax, matrix, title in zip(axes[row], (correlations, direct), ("correlation", "direct (partial)")):
-        image = ax.imshow(matrix, vmin=0, vmax=1, cmap="viridis")
+    for ax, matrix, title, limits in zip(axes[row], (correlations, direct), ("correlation", "direct (partial)"), ((-1, "coolwarm"), (0, "viridis"))):
+        image = ax.imshow(matrix, vmin=limits[0], vmax=1, cmap=limits[1])
+        if row == 1:
+            fig.colorbar(image, ax=axes[:, list(axes[row]).index(ax)], shrink=0.8, location="bottom", label="value (dimensionless)")
         ax.set_xticks(range(4), [part.replace("_", "\n") for part in parts], fontsize=7)
         ax.set_yticks(range(4), [part.replace("_", " ") for part in parts] if ax in axes[:, 0] else [], fontsize=7)
         ax.set_title(f"{name}: {title}", fontsize=8)
         ax.grid(False)
-fig.colorbar(image, ax=axes, shrink=0.8, label="value (dimensionless)")
 
 # sphinx_gallery_thumbnail_number = 6
 
@@ -230,7 +231,7 @@ for name, signal in heights.items():
     left, right = signal[:, 0], signal[:, 1]
     rows[name] = {
         "PLV": PhaseLockingValue(window=1600).run(left, right)[-1].phase_locking_value,
-        "correlation": CorrelationsMatrix(window=1600, number_of_inputs=2).run(signal)[-1].correlations_matrix[0, 1],
+        "correlation": np.corrcoef(left, right)[0, 1],
         "interdependence": NonlinearInterdependence(window=300, hop=100, embedding_dimension=3, neighbours=5).run(left, right).first_to_second_interdependence[-1],
         "cross-recurrence, diagonal": np.diag(CrossRecurrencePlot(window=500, epsilon=0.05).run(signal[:500, 0:1], signal[:500, 1:2])[-1].cross_recurrence_matrix).mean(),
     }
@@ -277,5 +278,4 @@ for name, position in clapping.items():
 # ----------
 # * :doc:`/theory/synchronization`: definitions, choosing a measure and practical notes.
 # * :doc:`/api/analysis_primitives`: every parameter of these features.
-# * :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`: synchronization of event trains, a
-#   sequence of events and several measures in a staged process.
+# * :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`: synchronization of event trains.

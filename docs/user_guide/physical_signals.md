@@ -13,7 +13,7 @@ among the {{ n_physical_signals }} features of the layer; the layers are describ
 
 The features fall in three groups, one for each kind of input.
 
-**You have a skeleton and want a cleaner or a forecast one.** The captured joints jitter and drop out; a mass-spring model
+**You have a skeleton and want a cleaner one.** The captured joints jitter and drop out; a mass-spring model
 follows them and gives a smooth, articulated pose with constant bone lengths.
 
 - {py:class}`~pyeyesweb.physical_signals.HumanoidSimulator` for the fixed 21-joint humanoid (the joints of the first Kinect
@@ -21,12 +21,8 @@ follows them and gives a smooth, articulated pose with constant bone lengths.
   {doc}`../howto/map_skeleton`).
 - {py:class}`~pyeyesweb.physical_signals.HumanoidOrientations` when you need the posture itself, the direction of each bone in
   the frame of its parent, which does not depend on where the body is.
-- {py:class}`~pyeyesweb.physical_signals.GenericModelSimulator`, {py:class}`~pyeyesweb.physical_signals.GenericModelOrientations`,
-  {py:class}`~pyeyesweb.physical_signals.GenericModelPredictor` and
-  {py:class}`~pyeyesweb.physical_signals.GenericModelEstimator` when the structure is not a human body (a limb, a puppet, an
-  instrument) or you want to predict a movement or identify the parameters of a body. They take a `MassSpringModel`.
-- {py:class}`~pyeyesweb.physical_signals.PointsPredictor` for the simplest forecast of any labelled points, a constant-velocity
-  extrapolation one frame ahead, with no model.
+- {py:class}`~pyeyesweb.physical_signals.GenericModelSimulator` and {py:class}`~pyeyesweb.physical_signals.GenericModelOrientations`
+  when the structure is not a human body (a limb, a puppet, an instrument). They take a `MassSpringModel`.
 
 Theory, assumptions and the units exception: {doc}`../theory/humanoid_models`.
 
@@ -77,7 +73,7 @@ The other pipeline of the layer goes from an image to the measures of an outline
 ## What to know before choosing
 
 - The features of this layer do not wait for data: every valid call is `OK`, with no warm-up (see {doc}`../concepts/results`).
-- Time is in seconds. The simulators, the predictor and the estimator advance their model by the time of the call
+- Time is in seconds. The simulators advance their model by the time of the call
   ({doc}`../concepts/time_units_parameters`); the image features and `HitCellDetector` have no time axis.
 - Units: `HumanoidSimulator` is the one feature of the library that converts data (its model is in millimetres and it converts at
   the boundary); the generic models do not. {doc}`../theory/humanoid_models` explains the difference.

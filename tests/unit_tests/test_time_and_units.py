@@ -7,7 +7,7 @@ import pytest
 
 pytest.importorskip("pyeyesweb._core")
 
-from pyeyesweb.low_level import CurvatureDispersion, Equilibrium, Kinematics, KineticEnergy
+from pyeyesweb.low_level import Equilibrium, Kinematics, KineticEnergy
 from pyeyesweb.low_level import MotionNoiseDetector, TrajectoryNonPlanarity
 from pyeyesweb.mid_level import GestureSegmenter
 from pyeyesweb.physical_signals import HitCellDetector
@@ -79,22 +79,6 @@ def test_sampling_rate_can_be_changed_live_and_removed():
 
 # ------------------------------------------------------------------------------------------------- the three traps
 POINTS = np.cumsum(np.random.default_rng(1).standard_normal((12, 3)), axis=0)[::-1]  # row 0 = newest
-
-
-@pytest.mark.parametrize("start", [0.0, 5.0])
-def test_a_first_timestamp_of_zero_is_like_any_start_time(start):
-    rng = np.random.default_rng(3)
-    velocity = np.cumsum(rng.normal(size=(40, 3)), axis=0)
-    velocity[0] = 0  # a first speed of 0 adds no arc length at the first step
-    acceleration = rng.normal(size=(40, 3))
-    smoothness = CurvatureDispersion()
-    values = [smoothness.process(*pair, timestamp=start + 0.02 * index).curvature_dispersion
-              for index, pair in enumerate(zip(velocity, acceleration))]
-    assert np.isfinite(values[1:]).all()
-    again = CurvatureDispersion()
-    shifted = [again.process(*pair, timestamp=7 + 0.02 * index).curvature_dispersion
-               for index, pair in enumerate(zip(velocity, acceleration))]
-    assert np.allclose(values[2:], shifted[2:])  # only the first step depends on where time starts
 
 
 # ----------------------------------------------------------------------------------------------------- units "mm"

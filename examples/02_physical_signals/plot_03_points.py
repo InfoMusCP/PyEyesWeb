@@ -4,12 +4,12 @@ Physical signals: points and models
 
 Layer 1 of PyEyesWeb holds the signals that are produced straight from the raw frames of a recording, before any statistics
 are computed. This tutorial covers the ones that take points: ``HitCellDetector`` tells in which cell of a grid each point
-is, a mass-spring humanoid turns a captured skeleton into a smooth, plausible one, ``PointsPredictor`` and the generic
-models look a moment ahead, and ``GenericModelEstimator`` fits a model to a movement.
+is, a mass-spring humanoid turns a captured skeleton into a smooth, plausible one, and the generic models do the same for
+a body that you describe yourself.
 
 :Goals: locate points in a grid of cells; follow a skeleton with a mass-spring humanoid and read the effect of the damping;
-        pass a real recording through ``joint_map``; extract bone directions and feed them back to a simulator; predict the
-        next positions of points; build, drive, forecast and fit a model of your own.
+        pass a real recording through ``joint_map``; extract bone directions and feed them back to a simulator; build and drive a
+        model of your own.
 :Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
 :Data: trial 10 of the example session (sumo squat with weight shift) for the hit cells, trial 7 (clapping hands) for the
        humanoid (seconds 3 to 5.5, a moderate arm movement); synthetic skeletons and chains elsewhere.
@@ -283,30 +283,6 @@ fig_real.tight_layout()
 # ``sampling_rate`` of the data, and check the simulated pose against the measured one.
 
 # %%
-# Looking one frame ahead: PointsPredictor
-# ----------------------------------------
-# :class:`~pyeyesweb.physical_signals.PointsPredictor` needs no model. It extends each labelled point by its last
-# displacement, :math:`\hat p(t) = p(t) + (p(t) - p(t-1))`, a constant-velocity forecast one **frame** ahead (the step is
-# one frame, whatever the sampling rate). A point seen for the first time is returned unchanged. We compare it with the
-# simplest alternative, "the hand stays where it is".
-
-from pyeyesweb.physical_signals import PointsPredictor
-
-hands = ["Left_Hand", "Right_Hand"]
-predictor = PointsPredictor(labels=hands)
-print(predictor.inputs)
-clapping = load_qualisys_trial(7, start=0, stop=10)
-points = np.stack([clapping.joint(name) for name in hands], axis=1)  # (frames, 2, 3) in millimetres
-predicted = predictor.run(points)["predicted"]
-error_linear = np.linalg.norm(predicted[:-1] - points[1:], axis=2)[1:]
-error_hold = np.linalg.norm(points[:-1] - points[1:], axis=2)[1:]
-print(f"error of the next frame (mm): linear extrapolation {error_linear.mean():.2f}, hold the last position {error_hold.mean():.2f}")
-print("a dict is accepted too:", PointsPredictor(labels=["a"]).process({"a": (1, 2, 3)}).predicted.tolist())
-
-# %%
-# **Takeaway.** Extrapolating the last displacement predicts the next frame of a smooth movement better than holding still.
-
-# %%
 # A model of your own: the generic blocks
 # ---------------------------------------
 # The humanoid is one :class:`~pyeyesweb.physical_signals.MassSpringModel`. You can describe another body, a tail, a rope
@@ -329,16 +305,13 @@ print(model)
 print("masses:", model.mass_names, "| springs:", model.spring_names)
 
 # %%
-# We move the chain with three joint angles that oscillate at different frequencies and record the four masses. Three
+# We move the chain with three joint angles that oscillate at different frequencies and record the four masses. Two
 # features work on a model:
 #
 # * :class:`~pyeyesweb.physical_signals.GenericModelOrientations` gives the vector of each bone, from the hinge to the tip;
-# * :class:`~pyeyesweb.physical_signals.GenericModelSimulator` follows the bone directions and gives the masses;
-# * :class:`~pyeyesweb.physical_signals.GenericModelPredictor` does the same and gives the masses ``prediction_interval``
-#   seconds later, with the model left to move on its own (``mode="masses_inertia"`` keeps the velocities,
-#   ``"directions_linear"`` extrapolates the bone directions).
+# * :class:`~pyeyesweb.physical_signals.GenericModelSimulator` follows the bone directions and gives the masses.
 
-from pyeyesweb.physical_signals import GenericModelOrientations, GenericModelPredictor, GenericModelSimulator
+from pyeyesweb.physical_signals import GenericModelOrientations, GenericModelSimulator
 
 CHAIN_RATE = 50.0
 steps = np.arange(750)
@@ -361,76 +334,17 @@ truth = chain[:, [chain_labels.index(name) for name in mass_order]]
 tip = mass_order.index("c")
 print("mean error of the simulated tip:", round(float(np.linalg.norm(followed[:, tip] - truth[:, tip], axis=1).mean()), 3))
 
-lag = int(0.2 * CHAIN_RATE)  # frames in 0.2 s
-hold = np.linalg.norm(truth[:-lag, tip] - truth[lag:, tip], axis=1).mean()
-print(f"if the tip stayed where it is, the error 0.2 s later would be {hold:.2f}")
-forecasts = {}
-for mode in ("masses_inertia", "directions_linear"):
-    chain_predictor = GenericModelPredictor(model, sampling_rate=CHAIN_RATE, damping=3.0, prediction_interval=0.2, mode=mode)
-    forecasts[mode] = chain_predictor.run(bones)["positions"]
-    ahead = np.linalg.norm(forecasts[mode][:-lag, tip] - truth[lag:, tip], axis=1).mean()
-    print(f"{mode:<18} error of the tip 0.2 s later: {ahead:.2f}")
-
 fig_chain, ax = plt.subplots(figsize=(8, 3))
 shown = slice(0, 300)  # the first 6 s
 ax.plot(steps[shown] / CHAIN_RATE, truth[shown, tip, 1], label="tip y (measured)")
 ax.plot(steps[shown] / CHAIN_RATE, followed[shown, tip, 1], "--", label="simulated")
-ax.plot(steps[shown] / CHAIN_RATE, forecasts["directions_linear"][shown, tip, 1], ":", label="predicted 0.2 s ahead")
 ax.set_xlabel("time (s)")
 ax.set_ylabel("y of the chain tip (model units)")
 ax.legend(fontsize=8)
 fig_chain.tight_layout()
 
 # %%
-# **Takeaway.** The generic blocks give any model the three steps of the humanoid: bone vectors, a simulated body and a forecast; with ``mode="directions_linear"`` the forecast is closer to the future than the position "stay where you are".
-
-# %%
-# Fitting a model: GenericModelEstimator
-# --------------------------------------
-# :class:`~pyeyesweb.physical_signals.GenericModelEstimator` follows the observed masses and, while ``enable_adaptation`` is
-# on, changes one parameter per frame and keeps the change when it lowers a cost made of position, direction and speed
-# errors (a stochastic coordinate descent). ``estimate_masses``, ``estimate_length_springs`` and
-# ``estimate_direction_springs`` choose what is adapted, and ``seed`` makes the random draws reproducible. The output
-# ``error`` is the cost of each frame; its trend says more than its value. We start from a model whose rotation springs are
-# far too soft and let the estimator stiffen them. How fast the cost falls, and how far, depends on the seed.
-
-from pyeyesweb.physical_signals import GenericModelEstimator
-
-soft = MassSpringModel()
-soft.add_mass("root", 1e10, (0.0, 0.0, 0.0))
-for index, name in enumerate("abc", start=1):
-    soft.add_mass(name, 1.0, (float(index), 0.0, 0.0))
-previous = "root"
-for name in "abc":
-    soft.add_spring(f"bone_{name}", previous, name, 1.0, 100.0, (1.0, 0.0, 0.0), 2.0)  # direction stiffness 2 instead of 100
-    previous = name
-
-fig_cost, ax = plt.subplots(figsize=(8, 3))
-fitted = {}
-per_second = int(CHAIN_RATE)
-for label, extra in (("frozen model", dict(enable_adaptation=False)),
-                     ("adapting, seed 1", dict(estimate_direction_springs=True, seed=1, initial_step=0.1)),
-                     ("adapting, seed 2", dict(estimate_direction_springs=True, seed=2, initial_step=0.1)),
-                     ("adapting, seed 3", dict(estimate_direction_springs=True, seed=3, initial_step=0.1))):
-    estimator = GenericModelEstimator(soft, labels=chain_labels, sampling_rate=CHAIN_RATE, damping=3.0, **extra)
-    fitted[label] = estimator
-    cost = estimator.run(chain)["error"]
-    seconds = cost[: len(cost) // per_second * per_second].reshape(-1, per_second).mean(axis=1)  # mean cost of each second
-    ax.plot(np.arange(len(seconds)) + 0.5, seconds, label=label)
-    print(f"{label:<18} mean cost, first 3 s {cost[:3 * per_second].mean():6.2f} | last 3 s {cost[-3 * per_second:].mean():6.2f}")
-ax.set_xlabel("time (s)")
-ax.set_ylabel("mean cost of each second")
-ax.legend(fontsize=8)
-fig_cost.tight_layout()
-
-before = soft.export_configuration()["spring::bone_a::dir_stiffness"]
-after = fitted["adapting, seed 1"].model.export_configuration()["spring::bone_a::dir_stiffness"]
-print(f"direction stiffness of bone_a: model {before}, estimated with seed 1 {after:.0f}")
-print("the model you passed is unchanged:", soft.export_configuration()["spring::bone_a::dir_stiffness"])
-
-# %%
-# **Takeaway.** The estimator tends to lower the cost of a model that does not fit; ``estimator.model`` is a copy with the fitted
-# parameters and the model you passed is not changed.
+# **Takeaway.** The generic blocks give any model the two steps of the humanoid: bone vectors and a simulated body.
 
 # %%
 # Try it
@@ -439,8 +353,6 @@ print("the model you passed is unchanged:", soft.export_configuration()["spring:
 #    cells over the area the hands cover. In how many frames is the left hand in each column?
 # 2. Change the damping of the forearm simulation to 30 and compare the error of the hand with clean input with the one at
 #    ``damping=10``. What does the change say about the lag?
-# 3. In the chain, ask the predictor for ``prediction_interval=0.4`` with ``mode="directions_linear"``. Is the forecast
-#    closer to the tip 0.4 s later than the position "stay where you are" is?
 
 # %%
 # Solutions
@@ -460,16 +372,6 @@ print("frames of the left hand in columns 0, 1, 2:", np.bincount(hand_cells[:, 0
 heavy = HumanoidSimulator(sampling_rate=RATE, damping=30.0).run(swing)["joints"]
 print(f"damping 30: mean error {np.linalg.norm(heavy[:, HAND] - swing[:, HAND], axis=1).mean() * 1000:.1f} mm,",
       f"damping 10: {errors[10.0, 'clean'].mean():.1f} mm")
-
-# %%
-# Exercise 3. The interval is in seconds; the baseline compares the tip now with the tip later. When the interval is long
-# compared with the time the movement takes to turn, extrapolating the directions no longer beats staying still.
-
-long_predictor = GenericModelPredictor(model, sampling_rate=CHAIN_RATE, damping=3.0, prediction_interval=0.4, mode="directions_linear")
-forecast = long_predictor.run(bones)["positions"]
-long_lag = int(0.4 * CHAIN_RATE)
-print("forecast error:", round(float(np.linalg.norm(forecast[:-long_lag, tip] - truth[long_lag:, tip], axis=1).mean()), 2),
-      "| stay where you are:", round(float(np.linalg.norm(truth[:-long_lag, tip] - truth[long_lag:, tip], axis=1).mean()), 2))
 
 # %%
 # Next steps

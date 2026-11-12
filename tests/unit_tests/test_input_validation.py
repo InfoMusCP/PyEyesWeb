@@ -3,9 +3,9 @@
 import numpy as np
 import pytest
 
-from pyeyesweb.analysis_primitives import CorrelationsMatrix, EventSynchronization
+from pyeyesweb.analysis_primitives import EventSynchronization
 from pyeyesweb.data_models import Input, InputKind, Status
-from pyeyesweb.low_level import (BodyPartsFromCurvature, ConvexHull, ContourCurvature, FilterContour, KineticEnergy,
+from pyeyesweb.low_level import (BodyPartsFromCurvature, ContourCurvature, KineticEnergy,
                                  PointsDensity)
 from pyeyesweb.low_level import MotionNoiseDetector
 from pyeyesweb.mid_level import (GestureSegmenter, PositionDependingPotentials,
@@ -29,14 +29,9 @@ def _impulsivity():
 
 # (feature factory, wrong sample(s) per input, name of the offending input)
 WRONG = [
-    (lambda: FilterContour(), [RNG.normal(size=(40, 3))], "contour"),
-    (lambda: FilterContour(), [RNG.normal(size=(40, 1))], "contour"),
-    (lambda: FilterContour(), [RNG.normal(size=80)], "contour"),
     (lambda: ContourCurvature(), [RNG.normal(size=(40, 3))], "contour"),
     (lambda: ContourCurvature(), [RNG.normal(size=(40, 1))], "contour"),
     (lambda: ContourCurvature(), [RNG.normal(size=80)], "contour"),
-    (lambda: ConvexHull(), [RNG.normal(size=(40, 3))], "contour"),
-    (lambda: ConvexHull(), [RNG.normal(size=80)], "contour"),
     (lambda: HitCellDetector(), [RNG.normal(size=(5, 3))], "points"),
     (lambda: PositionDependingPotentials(), [np.ones((4, 3))], "cells"),
     (lambda: MotionNoiseDetector(labels=LABELS), [SKELETON[:2]], "skeleton"),
@@ -46,7 +41,6 @@ WRONG = [
     (_suddenness, [RNG.normal(size=(2, 3))], "position"),
     (_impulsivity, [RNG.normal(size=(2, 3))], "position"),
     (lambda: EventSynchronization(window=8), [np.array([1.0, 0.0]), 0.0], "first_signal"),
-    (lambda: CorrelationsMatrix(window=8, number_of_inputs=3), [np.ones(4)], "signals"),
 ]
 
 
@@ -90,11 +84,8 @@ def test_frames_are_checked_before_the_buffer_flattens_them():
 
 
 def test_process_window_checks_the_channels_of_a_fixed_input():
-    with pytest.raises(ValueError, match="CorrelationsMatrix"):
-        CorrelationsMatrix(window=8, number_of_inputs=3)._process_window(np.ones((4, 8)))
     with pytest.raises(ValueError, match="Suddenness"):
         _suddenness()._process_window(np.ones((5, 8)))   # 5 channels are not 2 coordinates
-    assert CorrelationsMatrix(window=8, number_of_inputs=3)._process_window(RNG.normal(size=(3, 8))).ok
 
 
 def test_run_with_a_mis_shaped_recording_raises_before_looping():
@@ -106,7 +97,6 @@ def test_run_with_a_mis_shaped_recording_raises_before_looping():
         ke.run(RNG.normal(size=(5, 2, 3)))
     # nothing was processed: a mis-shaped recording does not leave a half-fed state behind
     seen = []
-    feature = ConvexHull()
     feature.process = lambda *args, **kwargs: seen.append(1)
     with pytest.raises(ValueError):
         feature.run(np.ones((5, 4, 3)))
@@ -117,24 +107,21 @@ def test_run_with_a_mis_shaped_recording_raises_before_looping():
 
 def test_valid_inputs_of_every_kind_are_accepted():
     assert ContourCurvature().process(CONTOUR).status is Status.OK
-    assert ConvexHull().process(np.round(CONTOUR * 10)).status is Status.OK
     assert KineticEnergy(labels=LABELS, weights=WEIGHTS).process(SKELETON).status is Status.OK
     suddenness = _suddenness()
     results = [suddenness.process(RNG.normal(size=2)) for _ in range(8)]
     assert results[-1].status in (Status.OK, Status.NO_OUTPUT)
     # a scalar sample, a vector sample
     assert EventSynchronization(window=8).process(1.0, np.array([0.0])).status in (Status.OK, Status.WARMING_UP)
-    assert CorrelationsMatrix(window=4, number_of_inputs=3).process(np.ones(3)).status is Status.WARMING_UP
 
 
-@pytest.mark.parametrize("make", [ContourCurvature, ConvexHull, FilterContour, HitCellDetector,
+@pytest.mark.parametrize("make", [ContourCurvature, HitCellDetector,
                                   lambda: PointsDensity()])
 def test_empty_frames_still_reach_the_feature(make):
     feature = make()
     for empty in (np.zeros((0, 2)), np.zeros(0), []):
         result = feature.process(empty)       # no ValueError: emptiness is data, not shape
         assert result.status in (Status.INVALID_INPUT, Status.NO_OUTPUT, Status.OK)
-    assert ConvexHull().process(np.zeros((0, 2))).status is Status.INVALID_INPUT
 
 
 def test_dict_inputs_are_still_accepted():

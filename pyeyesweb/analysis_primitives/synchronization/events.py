@@ -1,7 +1,7 @@
-"""Synchronization of events: event synchronization, MECS, SPIKE-synchronization, interdependence and sequences.
+"""Synchronization of events: event synchronization, MECS, SPIKE-synchronization, and interdependence.
 
 Event trains are sample streams in which a non-zero value is an event. The features that evaluate a window of samples
-(``window``, ``hop``) are windowed features; `SequenceDetector` is stateful per sample and takes one sample per call.
+(``window``, ``hop``) are windowed features.
 Their results are ``OK`` unless the docstring of the feature says otherwise.
 """
 
@@ -13,8 +13,6 @@ from pyeyesweb._core import core
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
-from pyeyesweb.base.core_feature import FrameFeature
-from pyeyesweb.base.inputs import train
 
 from ._blocks import _SeriesBlock, _TrainPairBlock, _train
 
@@ -393,57 +391,4 @@ class SpikeSynchronization(_SeriesBlock):
         return self._result(degree=degree, distance=distance, profile=None if profile is None else profile[0], timestamp=timestamp)
 
 
-@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="SequenceDetector")
-class SequenceDetector(FrameFeature):
-    r"""Detector of a given sequence of integer events in a stream, one sample per call.
-
-    Recognizes when a short ordered pattern of events (for example the successive gestures of an exercise, each coded
-    with an integer) is performed, and counts the completed patterns. At every sample the input is the id of the
-    event that happens (0 when none); the sequence is completed when its ids occur in order with at most
-    ``inter_event_time`` samples between two consecutive ones; a longer gap breaks it.
-
-    Parameters
-    ----------
-    sequence : str, optional
-        The ids of the sequence, integers separated by spaces (default ``"1 2"``). *(structural)*
-    inter_event_time : int, optional
-        Largest distance in samples between two consecutive events of the sequence (default 1: the events
-        are on consecutive samples; with 2 one sample without event may separate them). *(live)*
-    any_order : bool, optional
-        If ``True`` the sequence is also detected in the reversed order (default ``False``). *(structural)*
-
-    Notes
-    -----
-    **Inputs.** ``process(event, *, timestamp=None)`` takes the integer id of the event of this sample, 0 for none;
-    ``run(event, *, timestamps=None)`` takes a 1-D series of ids.
-
-    **Outputs.** ``is_completed`` (bool): the sequence was completed by this sample; ``sequence_count`` (count): the
-    number of sequences completed so far.
-
-    **Statuses.** Always ``OK``.
-
-    **Corrected in the core.** The detector of the reversed order started at the last position, so a lone first
-    element was detected; when both directions were completed by the same sample (a palindromic or one-element
-    sequence) the count rose by 2, it rises by 1.
-
-    Examples
-    --------
-    >>> detector = SequenceDetector(sequence="1 2 3")
-    >>> [int(detector.process(event).sequence_count) for event in [1, 2, 3, 0, 1, 2, 3]]
-    [0, 0, 1, 1, 1, 1, 2]
-    """
-    _core_class = _sync.SequenceDetector
-    _INPUTS = Inputs(Input("event", InputKind.SAMPLE, (1,), doc="event id, 0 = none", integer=True))
-
-    def _schema(self) -> Schema:
-        return Schema(Output("is_completed", kind=bool), Output("sequence_count", kind=int))
-
-    def _process(self, event: Any, timestamp: Optional[float]) -> Result:
-        return self._to_result(self._block.process(int(train(event)[0])), timestamp)
-
-    def _to_result(self, raw: bool, timestamp: float) -> Result:
-        return self._result(is_completed=raw, sequence_count=self._block.number_of_sequences, timestamp=timestamp)
-
-
-__all__ = ["EventSynchronization", "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization",
-           "SequenceDetector"]
+__all__ = ["EventSynchronization", "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization"]

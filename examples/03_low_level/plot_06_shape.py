@@ -4,10 +4,10 @@ Low level: shape and posture
 
 How a body occupies space at one instant, and how a path changes direction. This tutorial measures the contraction and
 expansion of a posture, its symmetry and its balance, the turns of a hand path, and the outline of a silhouette: its
-curvature, its convex hull and its salient points.
+curvature and its salient points.
 
 :Goals: measure how much space a posture fills; compare left and right; estimate balance on the floor; measure the changes of
-        direction of a path; go from a contour to its curvature, hull and body parts.
+        direction of a path; go from a contour to its curvature and body parts.
 :Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
 :Data: trials 3 to 8 (synchronized and unsynchronized arm movements), 10 (sumo squat), 11 to 14 (figure eight and caress),
        17 and 18 (hiding and opening up) and 19 (alternating balance) of the example session; a synthetic silhouette.
@@ -298,18 +298,19 @@ fig.tight_layout()
 # **Takeaway.** ``DirectionChange`` summarises the turns of a path in a window by a cosine in [0, 1] and an enclosed area.
 
 # %%
-# Contours: curvature, hull and body parts
-# ----------------------------------------
-# A **contour** is the closed outline of a shape, an ordered ``(N, 2)`` array of points. Four features work on a contour, one
+# Contours: curvature and body parts
+# -----------------------------------
+# A **contour** is the closed outline of a shape, an ordered ``(N, 2)`` array of points. Two features work on a contour, one
 # call per outline (see :doc:`/theory/imaging`):
 #
-# * :class:`~pyeyesweb.low_level.FilterContour` smooths each coordinate with a Gaussian kernel, because the outline of a
-#   silhouette is jagged, as it follows the pixels;
 # * :class:`~pyeyesweb.low_level.ContourCurvature` gives the signed curvature at every point, 1/r on a circle of radius r, positive
 #   where the contour turns left (counter-clockwise);
-# * :class:`~pyeyesweb.low_level.ConvexHull` gives the vertices of the smallest convex polygon around the contour;
 # * :class:`~pyeyesweb.low_level.BodyPartsFromCurvature` finds the salient points (head, hands, feet) as the extremes of the
 #   curvature.
+#
+# Two steps around them are done with SciPy: the outline of a silhouette is jagged, as it follows the pixels, so it is smoothed
+# first with a Gaussian filter along the contour (``scipy.ndimage.gaussian_filter1d`` with ``mode="wrap"``, because the contour
+# is closed), and the smallest convex polygon around it is ``scipy.spatial.ConvexHull``.
 #
 # The example data hold motion capture only, so we use a synthetic silhouette (a body with its arms out, from ``helpers``). Its
 # outline is found with the contour routine of matplotlib, resampled to 300 equally spaced points and given counter-clockwise
@@ -333,20 +334,22 @@ print("outline:", outline.shape, "(points, xy) in pixels")
 
 # %%
 # We check the curvature on shapes whose answer is known (a circle of radius 100 pixels has curvature 0.01), then smooth the
-# outline, take its curvature and hull, and look for the body parts. ``BodyPartsFromCurvature`` wants a smooth contour: on the
+# outline, take its curvature and its hull, and look for the body parts. ``BodyPartsFromCurvature`` wants a smooth contour: on the
 # raw outline every pixel step is a corner. On a counter-clockwise contour the tips are the curvature **maximums**.
 
-from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature, ConvexHull, FilterContour
+from scipy.ndimage import gaussian_filter1d
+from scipy.spatial import ConvexHull
+
+from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
 
 circle_angle = np.linspace(0, 2 * np.pi, 100, endpoint=False)
 circle = np.c_[100 * np.cos(circle_angle), 100 * np.sin(circle_angle)]
 curvature_of = ContourCurvature()
 print("circle of radius 100: curvature", np.round(curvature_of.process(circle).curvature[:3], 4))
 
-smoother = FilterContour(window=15, gaussian_sigma=4.0)
-smooth = smoother.process(outline).contour
+smooth = gaussian_filter1d(outline, sigma=4.0, axis=0, mode="wrap")  # each coordinate, along the closed contour
 curvature = curvature_of.process(smooth).curvature
-hull = ConvexHull().process(smooth).hull
+hull = smooth[ConvexHull(smooth).vertices]  # the hull vertices, in counter-clockwise order
 parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(curvature, smooth)
 print("raw curvature range:", np.round([curvature_of.process(outline).curvature.min(), curvature_of.process(outline).curvature.max()], 2),
       "| smoothed:", np.round([curvature.min(), curvature.max()], 2))
@@ -377,13 +380,12 @@ axes[2].legend(frameon=False, fontsize=7, loc="upper center", bbox_to_anchor=(0.
 fig.tight_layout()
 
 # %%
-# The maximums sit at the head, the two hands and one foot, which is what the detector is for; the second foot is not found,
-# because its corner is rounder after the smoothing. The number of parts found therefore depends on the smoothing and on
-# ``minimum_distance``. The hull touches the tips and bridges the concave parts (armpits and crotch), so the area between the
+# The maximums sit at the head, the two hands and the two feet, which is what the detector is for. The number of parts found
+# depends on the smoothing and on ``minimum_distance``: a stronger smoothing rounds a corner until it is no longer found. The hull touches the tips and bridges the concave parts (armpits and crotch), so the area between the
 # outline and the hull measures how far the body is from convex. With ``track_points=True`` (the default) the labels of one call
 # are carried over to the nearest points of the next, which is what a video needs.
 #
-# **Takeaway.** Smooth the contour, then read its curvature, hull and body parts; the orientation of the contour decides which
+# **Takeaway.** Smooth the contour, then read its curvature and body parts; the orientation of the contour decides which
 # extremes are the tips.
 
 # %%

@@ -18,9 +18,9 @@ from humanoid_inputs import CHAIN_XML, MASSES, REFERENCE, SPRINGS, forearm, tpos
 from pyeyesweb import Layer, catalog  # noqa: E402
 from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.data_models import Status  # noqa: E402
-from pyeyesweb.physical_signals import (HUMANOID_BONES, HUMANOID_JOINTS, GenericModelEstimator, GenericModelOrientations,  # noqa: E402
-                                        GenericModelPredictor, GenericModelSimulator, HumanoidOrientations,
-                                        HumanoidSimulator, MassSpringModel, PointsPredictor)
+from pyeyesweb.physical_signals import (HUMANOID_BONES, HUMANOID_JOINTS, GenericModelOrientations,  # noqa: E402
+                                        GenericModelSimulator, HumanoidOrientations,
+                                        HumanoidSimulator, MassSpringModel)
 
 DT = 0.04
 RATE = 25.0
@@ -167,31 +167,13 @@ def test_generic_blocks_reproduce_the_frozen_reference():
     assert tuple(MODEL.mass_names) == MASSES and tuple(MODEL.spring_names) == SPRINGS
     assert np.abs(GenericModelOrientations(MODEL).run(CHAIN_POSITIONS)["directions"] - CHAIN_DIRECTIONS).max() < 1e-9
     assert np.abs(GenericModelSimulator(MODEL, **MM).run(CHAIN_DIRECTIONS)["positions"] - REFERENCE["generic_simulated"]).max() < 1e-9
-    for mode, key in (("masses_inertia", "predicted_inertia"), ("directions_linear", "predicted_linear")):
-        predicted = GenericModelPredictor(MODEL, **MM, mode=mode, damping_factor=0.7).run(CHAIN_DIRECTIONS)["positions"]
-        assert np.abs(predicted - REFERENCE[key]).max() < 1e-9
-    estimator = GenericModelEstimator(MODEL, **MM, enable_adaptation=False).run(CHAIN_POSITIONS)
-    assert np.abs(estimator["positions"] - REFERENCE["estimated_positions"]).max() < 1e-9
-    assert np.abs(estimator["error"] - REFERENCE["estimated_errors"]).max() < 1e-9
-    assert np.abs(PointsPredictor(labels=MASSES).run(CHAIN_POSITIONS)["predicted"] - REFERENCE["points_predicted"]).max() < 1e-9
 
 
 def test_generic_blocks_are_the_raw_blocks():
     core_model = RAW.MassSpringModel.from_xml_string(CHAIN_XML)
     layout = core.SkeletonLayout(list(MASSES))
-    spring_layout = core.SkeletonLayout(list(SPRINGS))
     assert _same(GenericModelOrientations(MODEL).run(CHAIN_POSITIONS)["directions"],
                  RAW.GenericModelOrientationsExtractor(core_model).run(layout, CHAIN_POSITIONS))
-    for mode in ("masses_inertia", "directions_linear"):
-        raw = RAW.GenericModelPredictor(core_model, mode=RAW.PredictionMode.__members__[mode.upper()], prediction_interval=0.3)
-        feature = GenericModelPredictor(MODEL, **MM, mode=mode, prediction_interval=0.3)
-        assert _same(feature.run(CHAIN_DIRECTIONS)["positions"], raw.run(spring_layout, CHAIN_DIRECTIONS, dt=DT))
-    raw_estimator = RAW.GenericModelEstimator(core_model, estimate_direction_springs=True, seed=5)
-    positions, errors = raw_estimator.run(layout, CHAIN_POSITIONS, dt=DT)
-    recorded = GenericModelEstimator(MODEL, **MM, estimate_direction_springs=True, seed=5).run(CHAIN_POSITIONS)
-    assert _same(recorded["positions"], positions) and _same(recorded["error"], errors)
-    assert _same(PointsPredictor(labels=MASSES).run(CHAIN_POSITIONS)["predicted"],
-                 RAW.PointsPredictor().run(layout, CHAIN_POSITIONS))
 
 
 FEATURES = {
@@ -199,9 +181,6 @@ FEATURES = {
     "HumanoidOrientations": (lambda: HumanoidOrientations(), (forearm(30),)),
     "GenericModelOrientations": (lambda: GenericModelOrientations(MODEL), (CHAIN_POSITIONS[:30],)),
     "GenericModelSimulator": (lambda: GenericModelSimulator(MODEL, **MM), (CHAIN_DIRECTIONS[:30],)),
-    "GenericModelPredictor": (lambda: GenericModelPredictor(MODEL, **MM), (CHAIN_DIRECTIONS[:30],)),
-    "GenericModelEstimator": (lambda: GenericModelEstimator(MODEL, **MM, estimate_masses=True), (CHAIN_POSITIONS[:30],)),
-    "PointsPredictor": (lambda: PointsPredictor(labels=MASSES), (CHAIN_POSITIONS[:30],)),
 }
 
 
@@ -216,8 +195,7 @@ def test_the_features_are_catalogued_as_physical_signals():
     for name, block in (("HumanoidSimulator", "HumanoidSimulator (MassSpringHumanoidSimulator)"),
                         ("HumanoidOrientations", "HumanoidOrientationsExtractor"),
                         ("GenericModelOrientations", "GenericModelOrientationsExtractor"),
-                        ("GenericModelSimulator", "GenericModelSimulator"), ("GenericModelPredictor", "GenericModelPredictor"),
-                        ("GenericModelEstimator", "GenericModelEstimator"), ("PointsPredictor", "PointsPredictor")):
+                        ("GenericModelSimulator", "GenericModelSimulator"),                         ):
         assert found[name] == (Layer.PHYSICAL_SIGNALS, block)
     assert "MassSpringModel" not in found  # a helper, not a feature
 
@@ -230,11 +208,8 @@ def test_schemas_are_known_before_data():
     assert simulator.inputs["control"].optional and simulator.inputs["control"].labels == HUMANOID_BONES
     assert simulator.inputs["skeleton"].labels == HUMANOID_JOINTS
     assert HumanoidSimulator(**MM, labels=[f"j{index}" for index in range(30)] + list(HUMANOID_JOINTS)).inputs["skeleton"].shape == (51, 3)
-    estimator = GenericModelEstimator(MODEL, **MM)
-    assert estimator.outputs.names == ("positions", "error") and estimator.outputs["positions"].axis_names[0] == MASSES
     assert GenericModelSimulator(MODEL, **MM).inputs["directions"].labels == SPRINGS
     assert GenericModelOrientations(MODEL).outputs["directions"].axis_names[0] == SPRINGS
-    assert PointsPredictor(labels=MASSES).outputs["predicted"].axis_names[0] == MASSES
 
 
 # ------------------------------------------------------------------------------------------------------ joint map
@@ -289,8 +264,6 @@ def test_labels_that_miss_a_joint_of_the_model_raise_at_construction():
         HumanoidSimulator(**MM, joint_map={"skull": "head"})
     with pytest.raises(ValueError, match="a"):
         GenericModelSimulator(MODEL, **MM, labels=["s1", "s2"])
-    with pytest.raises(ValueError, match="no points"):
-        PointsPredictor()
 
 
 def test_labels_and_joint_map_can_be_changed_and_a_bad_value_changes_nothing():
@@ -329,8 +302,6 @@ def test_wrong_shapes_raise():
         simulator.process(tpose(), np.ones((19, 3)))
     with pytest.raises(ValueError, match="HumanoidSimulator"):
         simulator.run(np.ones((5, 20, 3)))
-    with pytest.raises(ValueError, match="PointsPredictor"):
-        PointsPredictor(labels=MASSES).process(np.ones((3, 3)))
 
 
 def test_bad_data_is_invalid_input_not_an_exception():
@@ -340,10 +311,9 @@ def test_bad_data_is_invalid_input_not_an_exception():
             result = feature.process(frame)
             assert result.status is Status.INVALID_INPUT and reason in result.reason, (feature, reason)
             assert np.isnan(result[feature.outputs.names[0]]).all()
-    for feature in (GenericModelSimulator(MODEL, **MM), GenericModelEstimator(MODEL, **MM), GenericModelOrientations(MODEL),
-                    GenericModelPredictor(MODEL, **MM), PointsPredictor(labels=MASSES)):
+    for feature in (GenericModelSimulator(MODEL, **MM), GenericModelOrientations(MODEL),
+                    ):
         assert feature.process(np.full((len(feature.inputs[0].labels), 3), np.nan)).status is Status.INVALID_INPUT
-    assert PointsPredictor(labels=MASSES).process(np.full((4, 3), np.inf)).status is Status.INVALID_INPUT
 
 
 def test_an_invalid_frame_does_not_disturb_the_state():
@@ -388,8 +358,7 @@ def test_time_is_the_timestamp_then_the_sampling_rate_then_per_sample():
 
 
 def test_every_time_stepped_feature_defaults_to_no_rate_and_says_so():
-    for feature, frame in ((GenericModelSimulator(MODEL), CHAIN_DIRECTIONS[0]), (GenericModelPredictor(MODEL), CHAIN_DIRECTIONS[0]),
-                           (GenericModelEstimator(MODEL), CHAIN_POSITIONS[0])):
+    for feature, frame in ((GenericModelSimulator(MODEL), CHAIN_DIRECTIONS[0]),                            ):
         assert feature.sampling_rate is None
         assert "no time given: per-sample derivatives" in feature.process(frame).reason
     timed = GenericModelSimulator(MODEL, sampling_rate=25.0)
@@ -420,8 +389,6 @@ def test_the_outputs_name_the_unit_of_the_data():
     assert HumanoidSimulator().outputs["joints"].unit == "m"
     assert HumanoidSimulator(units="mm").outputs["joints"].unit == "mm"
     assert GenericModelSimulator(MODEL).outputs["positions"].unit == "m"
-    assert GenericModelEstimator(MODEL, units="mm").outputs["positions"].unit == "mm"
-    assert GenericModelPredictor(MODEL, units="mm").outputs["positions"].unit == "mm"
     for build in (lambda: HumanoidSimulator(units="cm"), lambda: GenericModelSimulator(MODEL, units="cm")):
         with pytest.raises(ValueError, match="units"):
             build()
@@ -443,7 +410,7 @@ def test_a_timestamp_that_does_not_advance_is_invalid_input():
 @pytest.mark.parametrize("rate", [0, -5.0, float("nan"), "fast", True])
 def test_an_invalid_sampling_rate_raises(rate):
     for build in (lambda: HumanoidSimulator(sampling_rate=rate), lambda: GenericModelSimulator(MODEL, sampling_rate=rate),
-                  lambda: GenericModelPredictor(MODEL, sampling_rate=rate), lambda: GenericModelEstimator(MODEL, sampling_rate=rate)):
+                  ):
         with pytest.raises(ValueError, match="sampling_rate"):
             build()
     feature = HumanoidSimulator(**MM)
@@ -576,45 +543,8 @@ def test_the_model_is_a_structural_parameter():
     assert GenericModelSimulator(other, **MM, labels=["rod"]).outputs["positions"].axis_names[0] == ("root", "tip")
 
 
-def test_the_estimator_estimates_and_is_reproducible():
-    positions = CHAIN_POSITIONS
-    first = GenericModelEstimator(MODEL, **MM, estimate_direction_springs=True, seed=11)
-    again = GenericModelEstimator(MODEL, **MM, estimate_direction_springs=True, seed=11)
-    other = GenericModelEstimator(MODEL, **MM, estimate_direction_springs=True, seed=12)
-    recorded = first.run(positions)
-    assert _same(recorded["positions"], again.run(positions)["positions"]) and not _same(recorded["positions"], other.run(positions)["positions"])
-    assert recorded["error"][-1] < recorded["error"][0]
-    assert first.model.export_configuration() != MODEL.export_configuration()  # the estimated model
-    assert first.current_step < 0.05
-    first.reset_step()
-    assert first.current_step == 0.05
-    assert first.seed == 11
-
-
-def test_the_predictor_modes_differ_and_a_wrong_mode_names_the_options():
-    inertia = GenericModelPredictor(MODEL, **MM, mode="masses_inertia").run(CHAIN_DIRECTIONS)["positions"]
-    linear = GenericModelPredictor(MODEL, **MM, mode="directions-linear").run(CHAIN_DIRECTIONS)["positions"]
-    assert not _same(inertia, linear)
-    with pytest.raises(ValueError, match="masses_inertia"):
-        GenericModelPredictor(MODEL, **MM, mode="wrong")
-
-
-def test_points_predictor_extrapolates_and_handles_dropouts():
-    labels = ["a", "b"]
-    feature = PointsPredictor(labels=labels)
-    assert _same(feature.process({"a": (1, 0, 0), "b": (0, 1, 0)})["predicted"], [[1, 0, 0], [0, 1, 0]])  # first sight: unchanged
-    assert _same(feature.process({"a": (2, 0, 0), "b": (0, 3, 0)})["predicted"], [[3, 0, 0], [0, 5, 0]])
-    result = feature.process({"a": (3, 0, 0)})  # b is missing
-    assert _same(result.predicted, [[4, 0, 0], [np.nan] * 3])
-    assert PointsPredictor(skeleton="mediapipe").labels[0] == "nose"
-    with pytest.raises(ValueError, match="repeated"):
-        PointsPredictor(labels=["a", "a"])
-
-
 def test_unknown_parameters_are_type_errors_with_a_suggestion():
     with pytest.raises(TypeError, match="did you mean 'damping'"):
         HumanoidSimulator(**MM, dampin=3.0)
     with pytest.raises(TypeError, match="spine_names"):  # the joint names are `joint_map`
         HumanoidSimulator(**MM, spine_names=["a", "b", "c", "d", "e"])
-    with pytest.raises(TypeError, match="did you mean 'estimate_masses'"):
-        GenericModelEstimator(MODEL, **MM, estimate_mass=True)

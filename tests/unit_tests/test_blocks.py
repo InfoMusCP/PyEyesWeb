@@ -23,13 +23,11 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.analysis_primitives import (  # noqa: E402
-    CoarseGraining, Periodicity, Rarity, SampleEntropy, ScalarPeakDetector
+    Periodicity, Rarity, SampleEntropy, ScalarPeakDetector
 )
 from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    CorrelationsMatrix, EventSynchronization, NonlinearInterdependence, EventSynchronizationMECS,
-    GeneralisedAutoCorrelation, PartialRecurrenceSynchronization, SequenceDetector, SpikeSynchronization,
-    TemporalSynchronization
-)
+    EventSynchronization, NonlinearInterdependence, EventSynchronizationMECS,
+    GeneralisedAutoCorrelation, PartialRecurrenceSynchronization, SpikeSynchronization)
 from pyeyesweb.data_models.recorder import Recorder  # noqa: E402
 from pyeyesweb.data_models.results import Result, Schema, Status  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
@@ -38,7 +36,6 @@ from pyeyesweb.low_level import (  # noqa: E402
 )
 from pyeyesweb.low_level import MotionNoiseDetector  # noqa: E402
 from pyeyesweb.mid_level import ContractionImpulsivity, GestureSegmenter, MotionDuration  # noqa: E402
-from pyeyesweb.low_level import FilterContour  # noqa: E402
 
 DTYPES = {float: np.floating, int: np.integer, bool: np.bool_}
 
@@ -59,7 +56,6 @@ CASES = {
     "Periodicity": (lambda: Periodicity(window=len(PERIODIC)), lambda block: block._process_window(PERIODIC)),
     "ContractionImpulsivity": (lambda: ContractionImpulsivity(), lambda block: block.process(0.5, 0.5)),
     "MotionDuration": (lambda: MotionDuration(continuous_output=True), lambda block: block.process(1.0)),
-    "CoarseGraining": (lambda: CoarseGraining(window=4), lambda block: block._process_window(np.array([[1.0, 3, 5, 7]]))),
     "Rarity": (lambda: Rarity(method="information"), lambda block: block.process([0.1, 0.9])),
     "SampleEntropy": (lambda: SampleEntropy(window=len(SINE), embedding_dimension=2, tolerance=0.5), lambda block: block._process_window(SINE)),
     "CurvatureVelocityCorrelation": (lambda: CurvatureVelocityCorrelation(window=40, sampling_rate=25.0), lambda block: block._process_window(
@@ -72,12 +68,9 @@ CASES = {
     "TriangleSymmetry": (lambda: TriangleSymmetry(), lambda block: block.process((0, 1), (-1, 0), (1, 0))),
     "EllipsoidSphericity": (lambda: EllipsoidSphericity(), lambda block: block.process_axes(1, 2, 3)),
     "ContourCurvature": (lambda: ContourCurvature(), lambda block: block.process(SQUARE)),
-    "FilterContour": (lambda: FilterContour(), lambda block: block.process(SQUARE + [(0.5, 1.5)])),
     "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), lambda block: block.process(
         [1.0, -1, 1, -1, 1, -1, 1, -1], CIRCLE)),
     "Kinematics": (lambda: Kinematics(dims=2), lambda block: block.process([0.0, 1.0])),
-    "CorrelationsMatrix": (lambda: CorrelationsMatrix(window=50, number_of_inputs=2),
-                           lambda block: block._process_window(np.stack([signal_a, signal_b]))),
     "PartialRecurrenceSynchronization": (lambda: PartialRecurrenceSynchronization(), lambda block: block.process(np.eye(2))),
     "GeneralisedAutoCorrelation": (lambda: GeneralisedAutoCorrelation(window=50),
                                    lambda block: block._process_window(signal_a[None])),
@@ -88,9 +81,6 @@ CASES = {
     "SpikeSynchronization": (lambda: SpikeSynchronization(window=40), lambda block: block._process_window(np.where(EVENTS > 0, 1.0, -1.0)[None] * [[1], [1]])),
     "NonlinearInterdependence": (lambda: NonlinearInterdependence(window=50),
                                             lambda block: block._process_window(signal_a[None], signal_b[None])),
-    "SequenceDetector": (lambda: SequenceDetector(), lambda block: block.process(1)),
-    "TemporalSynchronization": (lambda: TemporalSynchronization(thresholds=[1, 1, 1]),
-                                lambda block: block.process([2, 0.5, 0])),
     "ScalarPeakDetector": (lambda: ScalarPeakDetector(), lambda block: block.process(1.0)),
 }
 
@@ -164,25 +154,6 @@ def test_scalar_results_are_named_after_the_feature():
 
 # ------------------------------------------------------------------------------------------ (c) no-output paths
 
-def test_coarse_graining_skipped_activation():
-    cg = CoarseGraining(window=4, factor=2)
-    assert cg._process_window(np.array([[1.0, 3, 5, 7]])).status is Status.OK
-    skipped = cg._process_window(np.array([[1.0, 3, 5, 7]]))
-    assert skipped.status is Status.NO_OUTPUT and skipped.reason
-    assert skipped.valid == {"coarse_grained": False} and skipped.coarse_grained.size == 0
-    assert skipped.to_array().shape == (0,)
-
-
-def test_coarse_graining_is_computed_every_factor_th_window():
-    """The EyesWeb block counts its activations modulo ``factor``: with hop 2 and factor 2, every 4th sample."""
-    feature = CoarseGraining(window=4, hop=2, factor=2)
-    results = [feature.process(float(value)) for value in range(1, 13)]
-    assert [result.status.name for result in results] == ["WARMING_UP"] * 3 + ["OK", "NO_OUTPUT", "NO_OUTPUT", "NO_OUTPUT", "OK"]         + ["NO_OUTPUT"] * 3 + ["OK"]
-    assert results[5].reason == "not recomputed on this activation" and results[4].reason == "between windows"
-    assert results[7].coarse_grained.tolist() == [[5.5, 7.5]]
-    every = CoarseGraining(window=4, hop=2, factor=1)
-    assert [every.process(float(value)).status.name for value in range(1, 8)] == ["WARMING_UP"] * 3 + ["OK", "NO_OUTPUT", "OK", "NO_OUTPUT"]
-
 
 def test_motion_duration_updates_one_output_or_none():
     md = MotionDuration()  # updates a field only on phase changes
@@ -236,13 +207,6 @@ def test_motion_noise_detector_flags_a_jumpy_joint_and_not_a_still_or_uniform_on
     assert not flags["jumpy"][:14].any() and flags["jumpy"][-1]
 
 
-def test_filter_contour_window_not_shorter_than_contour():
-    assert FilterContour().process(SQUARE).status is Status.OK
-    result = FilterContour(window=7).process(SQUARE)
-    assert result.status is Status.NO_OUTPUT and result.reason
-    assert result.valid == {"contour": False} and result.contour.shape == (0, 2)
-
-
 def test_spike_profile_only_in_binary_mode():
     trains = np.vstack([np.where(EVENTS > 0, 1.0, -1.0)] * 2)
     binary = SpikeSynchronization(window=40, mode="binary")._process_window(trains)
@@ -250,13 +214,6 @@ def test_spike_profile_only_in_binary_mode():
     timings = SpikeSynchronization(window=3, mode="timings", number_of_inputs=2).process(
         np.array([[1.0, 5.0, 9.0], [1.0, 5.0, 9.5]]))
     assert not timings.valid["profile"] and timings.valid["degree"]
-
-
-def test_temporal_synchronization_efficiency_step_only_at_full_progression():
-    ts = TemporalSynchronization(thresholds=[1, 1, 1])
-    result = ts.process([2, 0.5, 0])
-    assert result.progression < 1 and not result.valid["efficiency_step"] and math.isnan(result.efficiency_step)
-    assert isinstance(result.step, int) and isinstance(result.state, int)
 
 
 def test_structured_outputs_flatten_with_meaningful_keys():
@@ -341,13 +298,11 @@ def test_rarity_and_sample_entropy_and_mecs_sizes_follow_parameters():
     assert mecs.outputs["events"].shape == (2,)
     out = mecs._process_window(*[np.vstack([EVENTS] * 2)] * 2)
     assert out.synchronization.shape == (2,) and out.events.shape == (2,)
-    assert CorrelationsMatrix(window=50, number_of_inputs=3).outputs["correlations_matrix"].shape == (3, 3)
 
 
 @pytest.mark.parametrize("name,expected", [
     ("Rarity", {"rarity": (2,)}),
     ("SampleEntropy", {"sample_entropy": (12,)}),
-    ("CorrelationsMatrix", {"correlations_matrix": (4, 4)}),
     ("EventSynchronizationMECS", {"synchronization": (3,), "events": (3,)}),
     ("Symmetry", {"symmetry": ()}),
     ("PointsDensity", {"density": (), "centroid": (3,)}),
@@ -356,7 +311,6 @@ def test_rarity_and_sample_entropy_and_mecs_sizes_follow_parameters():
 def test_default_constructor_matches_declared_defaults(name, expected):
     """Block built with no arguments: the schema's duplicated C++ defaults must be what the core produces."""
     block = {"Rarity": Rarity, "SampleEntropy": lambda: SampleEntropy(window=200),
-             "CorrelationsMatrix": lambda: CorrelationsMatrix(window=50),
              "EventSynchronizationMECS": lambda: EventSynchronizationMECS(window=40, hop=40),
              "Symmetry": lambda: Symmetry(**RATIO), "PointsDensity": PointsDensity,
              "Kinematics": Kinematics}[name]()
@@ -367,21 +321,11 @@ def test_default_constructor_matches_declared_defaults(name, expected):
         assert block.process([0.1, 0.9]).rarity.shape == (2,)
     elif name == "SampleEntropy":
         assert block._process_window(np.sin(np.arange(200) / 3.0)).sample_entropy.shape == (12,)
-    elif name == "CorrelationsMatrix":
-        assert block._process_window(np.stack([signal_a, signal_b, signal_a, signal_b])).correlations_matrix.shape == (4, 4)
-    elif name == "EventSynchronizationMECS":
-        assert block._process_window(*[np.vstack([EVENTS] * 3)] * 2).events.shape == (3,)
-    elif name == "Symmetry":
-        assert isinstance(block.process(SKELETON).symmetry, float)
-    elif name == "PointsDensity":
-        assert isinstance(block.process({"a": (0, 0, 0)}).density, float)
-    elif name == "Kinematics":
-        assert isinstance(block.process([0.0, 0.0, 0.0]).velocity, float)
 
 
 # ----------------------------------------------------------------------------------- (e) immutability, (f) recorder
 
-@pytest.mark.parametrize("name", ["KineticEnergy", "CorrelationsMatrix", "Symmetry"])
+@pytest.mark.parametrize("name", ["KineticEnergy", "PartialRecurrenceSynchronization", "Symmetry"])
 def test_results_are_immutable(name):
     _, result = run(name)
     with pytest.raises(AttributeError):
@@ -415,7 +359,6 @@ def test_recorder_over_a_stream_of_one_block():
 def test_reset_exists_on_every_block_and_attributes_pass_through():
     for factory in (ContourCurvature, EllipsoidSphericity):
         factory().reset()  # stateless blocks: no-op
-    assert FilterContour().kernel is not None
 
 
 def test_time_is_nan_unless_a_creation_time_is_given():

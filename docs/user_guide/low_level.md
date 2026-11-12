@@ -24,8 +24,7 @@ skeleton. {py:class}`~pyeyesweb.low_level.DirectionChange` measures the sharp tu
 {py:class}`~pyeyesweb.low_level.SpectralArcLength` and {py:class}`~pyeyesweb.low_level.LogDimensionlessJerk` are the two
 established metrics {cite}`balasubramanian2015analysis`; {py:class}`~pyeyesweb.low_level.SubmovementCount` counts the
 speed peaks, {py:class}`~pyeyesweb.low_level.Harmonicity` compares a profile with a single bell-shaped peak, and
-{py:class}`~pyeyesweb.low_level.CurvatureDispersion` and {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`
-work on the vectors of the movement. Theory: {doc}`../theory/smoothness`.
+{py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation` works on the vectors of the movement. Theory: {doc}`../theory/smoothness`.
 
 **How is the posture shaped?** {py:class}`~pyeyesweb.low_level.BoundingBoxFilledArea`,
 {py:class}`~pyeyesweb.low_level.EllipsoidSphericity` and {py:class}`~pyeyesweb.low_level.PointsDensity` measure
@@ -33,9 +32,9 @@ contraction and expansion; {py:class}`~pyeyesweb.low_level.Symmetry` and {py:cla
 the left/right symmetry; {py:class}`~pyeyesweb.low_level.Equilibrium` the balance of the barycentre between the feet.
 Theory: {doc}`../theory/shape_symmetry_balance`.
 
-**What shape is an outline?** {py:class}`~pyeyesweb.low_level.FilterContour`, {py:class}`~pyeyesweb.low_level.ContourCurvature`,
-{py:class}`~pyeyesweb.low_level.ConvexHull` and {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` work on the closed
-contour of a silhouette, one frame at a time. Theory: {doc}`../theory/imaging`.
+**What shape is an outline?** {py:class}`~pyeyesweb.low_level.ContourCurvature` and
+{py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` work on the closed contour of a silhouette, one frame at a time; smooth
+the contour first. Theory: {doc}`../theory/imaging`.
 
 ## Frame features and window features
 

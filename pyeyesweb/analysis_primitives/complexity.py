@@ -14,7 +14,7 @@ from pyeyesweb.base.minimum_window import MinimumWindow
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.feature import WindowedFeature
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
-from pyeyesweb.data_models.results import Output, Result, Schema, Status
+from pyeyesweb.data_models.results import Output, Result, Schema
 
 _motion = core.motion
 
@@ -121,78 +121,4 @@ class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
         return self._result(sample_entropy=raw[0], timestamp=timestamp)
 
 
-@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="coarsegraining")
-class CoarseGraining(MinimumWindow, WindowedFeature, CoreFeature):
-    r"""Coarse-grained series of a window: means of non-overlapping groups of ``factor`` samples.
-
-    Coarse graining looks at a signal at a slower time scale: each group of ``factor`` consecutive samples of a
-    channel is replaced by its mean. It is the first step of multi-scale analyses of complexity (see
-    ``MultiScaleEntropy``). For a window :math:`x_1 \dots x_N` and a factor :math:`\tau`,
-
-    .. math::
-
-        y_j = \frac{1}{\tau} \sum_{i=(j-1)\tau+1}^{j\tau} x_i, \qquad j = 1 \dots \lfloor N / \tau \rfloor.
-
-    Parameters
-    ----------
-    window : int
-        Samples per window (at least ``factor``). *(live)*
-    hop : int, optional
-        New samples between two windows. Defaults to ``1``. *(live)*
-    factor : int, optional
-        Number of samples averaged into one (the scale), at least 1. Defaults to ``2``. *(structural)*
-
-    Notes
-    -----
-    **Inputs.** One sample per call, with one value per channel.
-
-    **Outputs.** ``coarse_grained``, shape ``(channels, window // factor)``, in the unit of the input; a trailing
-    remainder of fewer than ``factor`` samples is dropped.
-
-    **Statuses.** ``WARMING_UP`` while the first window fills; ``NO_OUTPUT`` between two hops, and on the windows
-    where the series is not recomputed (``coarse_grained`` is then not produced). As in the EyesWeb block, which
-    counts its activations modulo ``factor``, the series is computed on the first full window and then on every
-    ``factor``-th window, that is every ``factor * hop`` samples (the other windows say "not recomputed on this
-    activation"): with ``window=4, hop=2, factor=2`` the statuses of samples 1 to 8 are ``WARMING_UP`` (three times),
-    ``OK``, ``NO_OUTPUT``, ``NO_OUTPUT``, ``NO_OUTPUT``, ``OK``. With ``factor=1`` every window is computed.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from pyeyesweb.analysis_primitives import CoarseGraining
-    >>> feature = CoarseGraining(window=6, factor=2)
-    >>> feature.run(np.arange(6.0))[-1].coarse_grained
-    array([[0.5, 2.5, 4.5]])
-    """
-    _core_class = _motion.CoarseGraining
-
-    def __init__(self, window: int, hop: int = 1, **params: Any):
-        super().__init__(window=window, hop=hop, **params)
-        self._check_window()
-
-    @property
-    def factor(self) -> int:
-        return int(self._param("factor", 2))  # C++ default
-
-    @factor.setter
-    def factor(self, value: int) -> None:
-        self._check_window(factor=value)
-        self._set_param("factor", value)
-
-    def _minimum_window(self, **params: int) -> int:
-        return int(params.get("factor", self.factor))
-
-    def _inputs(self) -> Inputs:
-        return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per channel"))
-
-    def _schema(self) -> Schema:
-        return Schema(Output("coarse_grained", (None, None), unit="<input>", doc="coarse-grained series (channels, window // factor)"))
-
-    def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
-        raw = self._block.process(np.asarray(series, dtype=float))
-        if raw is None:
-            return self._no_output(Status.NO_OUTPUT, "not recomputed on this activation", timestamp)
-        return self._result(coarse_grained=raw, timestamp=timestamp)
-
-
-__all__ = ["SampleEntropy", "CoarseGraining"]
+__all__ = ["SampleEntropy"]

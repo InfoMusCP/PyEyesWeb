@@ -3,8 +3,8 @@ Analysis primitives: complexity, rarity, periodicity
 ====================================================
 
 An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate.
-It answers one question about any series of numbers. This tutorial uses six of them: how irregular a signal is at one and
-at several time scales (``SampleEntropy``, ``CoarseGraining``, ``MultiScaleEntropy``), who is the most regular of a group
+It answers one question about any series of numbers. This tutorial uses five of them: how irregular a signal is at one and
+at several time scales (``SampleEntropy``, ``MultiScaleEntropy``), who is the most regular of a group
 (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and
 which period repeats (``Periodicity``).
 
@@ -105,19 +105,16 @@ fig.tight_layout()
 # %%
 # Seeing a signal at a coarser scale
 # ----------------------------------
-# A signal can be irregular only at its finest scale. :class:`~pyeyesweb.analysis_primitives.CoarseGraining` replaces each
-# group of ``factor`` consecutive samples by their mean, which is the same signal sampled ``factor`` times more slowly. It is
-# the first step of the multi-scale analysis. Here a window of 0.5 s (50 samples) is reduced with ``factor=5``, to 10 values.
-
-from pyeyesweb.analysis_primitives import CoarseGraining
+# A signal can be irregular only at its finest scale. **Coarse graining** replaces each group of ``factor`` consecutive samples
+# by their mean, which is the same signal sampled ``factor`` times more slowly. It is the first step of the multi-scale
+# analysis, done inside ``MultiScaleEntropy``; in NumPy it is one line. Here the last 0.5 s (50 samples) are reduced with a
+# factor of 5, to 10 values.
 
 values = speeds["trial 12 (not smooth)"]
-coarse = CoarseGraining(window=50, factor=5).run(values, timestamps=time)
-print("calls with a result:", int(coarse.ok.sum()), "of", len(coarse), "| status of the first calls:", coarse.status[:3], "...")
-last = np.flatnonzero(coarse.ok)[-1]
+last = len(values) - 1
 window_time = time[last - 49:last + 1]
-means = ok_rows(coarse, "coarse_grained")[-1, 0]
-print("coarse series:", means.shape, "values; the same as the block means:", bool(np.allclose(means, values[last - 49:last + 1].reshape(10, 5).mean(axis=1))))
+means = values[last - 49:last + 1].reshape(10, 5).mean(axis=1)  # groups of 5 samples, averaged
+print("coarse series:", means.shape, "values from 50 samples")
 
 fig, ax = plt.subplots(figsize=(8, 2.8))
 ax.plot(window_time, values[last - 49:last + 1], "o-", ms=3, lw=0.8, label="speed, 50 samples")
@@ -128,9 +125,6 @@ ax.legend(fontsize=8)
 fig.tight_layout()
 
 # %%
-# The series is not recomputed on every window: after the first full window it comes every ``factor`` windows (here every
-# fifth sample), and the calls in between have the status ``NO_OUTPUT``.
-#
 # **Takeaway.** ``factor`` samples are averaged into one; a larger factor is a slower view of the same movement.
 
 # %%

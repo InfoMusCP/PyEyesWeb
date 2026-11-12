@@ -20,7 +20,7 @@ from pyeyesweb.data_models.inputs import InputKind  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import TrajectoryNonPlanarity  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
-    DirectionChange, Equilibrium, EllipsoidSphericity, FilterContour, Kinematics, CurvatureVelocityCorrelation, SpectralArcLength,
+    DirectionChange, Equilibrium, EllipsoidSphericity, Kinematics, CurvatureVelocityCorrelation, SpectralArcLength,
     LogDimensionlessJerk, Harmonicity, SubmovementCount,
     Symmetry, TriangleSymmetry
 )
@@ -194,13 +194,6 @@ def test_hop_defaults():
 def test_quantization_algorithm_is_a_string_not_an_export():
     import pyeyesweb.mid_level as mid
     assert not hasattr(mid, "QuantizationAlgorithm") and not hasattr(ps, "QuantizationAlgorithm")
-
-
-def test_filter_contour_window_is_a_parameter():
-    feature = FilterContour(window=3)
-    assert feature.window == 3
-    feature.window = 5
-    assert feature.window == 5
 
 
 def test_kinematics_savitzky_golay_parameters():

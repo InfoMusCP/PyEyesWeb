@@ -80,9 +80,7 @@ class Kinematics(_InferredDimsBlock):
     sample.
 
     ``output_type`` may be a list; the result then holds one output per type, in that order, all computed in the same
-    pass and each identical to a ``Kinematics`` built for that type alone. The curvature-based smoothness index of
-    a movement is a separate feature, ``CurvatureDispersion``, fed with the velocity and acceleration vectors of this
-    one (``output_dims="components"``).
+    pass and each identical to a ``Kinematics`` built for that type alone.
 
     Parameters
     ----------

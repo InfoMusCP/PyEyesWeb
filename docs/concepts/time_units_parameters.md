@@ -114,22 +114,21 @@ ValueError: SpectralArcLength: window must be >= 1 and 1 <= hop <= window (got w
 ```
 
 Some exceptions are worth knowing. `EventSynchronization` and `EventSynchronizationMECS` accumulate across windows, so
-`hop=None` means `hop = window` and no other value is accepted. Six classes have a `window` parameter without being windowed
-features: `Videogram`, `CurvatureDispersion`, `FilterContour`, `PositionDependingPotentials`, `Rarity` and
-`ScalarPeakDetector`. There `window` is a length of the feature's own, in samples, described on its page.
-`CurvatureDispersion` has no `hop` and returns a result for every call.
+`hop=None` means `hop = window` and no other value is accepted. Four classes have a `window` parameter without being windowed
+features: `Videogram`, `PositionDependingPotentials`, `Rarity` and `ScalarPeakDetector`. There `window` is a length of the
+feature's own, in samples, described on its page.
 
 ## Units
 
-Lengths, positions, and thresholds that are lengths are in **metres**, the unit of the EyesWeb blocks. Ten classes take
+Lengths, positions, and thresholds that are lengths are in **metres**, the unit of the EyesWeb blocks. Seven classes take
 `units="m"` (the default) or `units="mm"` for data recorded in millimetres:
 
 ```{doctest}
 >>> with_units = [info.name for info in pyeyesweb.catalog() if "units" in inspect.signature(info.cls).parameters]
 >>> len(with_units)
-10
+7
 >>> with_units
-['HumanoidSimulator', 'GenericModelSimulator', 'GenericModelPredictor', 'GenericModelEstimator', 'HitCellDetector', 'Kinematics', 'CurvatureDispersion', 'Equilibrium', 'MotionNoiseDetector', 'TrajectoryNonPlanarity']
+['HumanoidSimulator', 'GenericModelSimulator', 'HitCellDetector', 'Kinematics', 'Equilibrium', 'MotionNoiseDetector', 'TrajectoryNonPlanarity']
 ```
 
 The rule is that **parameters are scaled and data are not**. A threshold is always written in metres, whatever `units` says,

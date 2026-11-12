@@ -337,12 +337,10 @@ class WindowedFeature(Feature):
 
     Examples
     --------
-    >>> from pyeyesweb.analysis_primitives import CoarseGraining
-    >>> feature = CoarseGraining(window=4, hop=2, factor=2)
+    >>> from pyeyesweb.analysis_primitives import BinaryPulsesRegularity
+    >>> feature = BinaryPulsesRegularity(window=4, hop=2)
     >>> [feature.process(float(value)).status.name for value in range(1, 6)]
     ['WARMING_UP', 'WARMING_UP', 'WARMING_UP', 'OK', 'NO_OUTPUT']
-    >>> feature.latest.coarse_grained.tolist()
-    [[1.5, 3.5]]
     >>> feature.configure(window=6)
     >>> feature.window, feature.hop
     (6, 2)

@@ -3,7 +3,7 @@ Low level: motion and smoothness
 ================================
 
 How fast, how energetic and how smooth a movement is. This tutorial computes the velocity, acceleration, jerk and curvature of
-a hand, the kinetic energy of the whole body, six smoothness metrics (first on synthetic reaches whose smoothness we control,
+a hand, the kinetic energy of the whole body, five smoothness metrics (first on synthetic reaches whose smoothness we control,
 then on recordings), two shape measures of a path, and a test that tells a tracking error from a movement.
 
 :Goals: read the kinematics of a point; measure the energy of a skeleton; compare smoothness metrics on a smooth and a jerky
@@ -257,40 +257,7 @@ for name, path in (("speed follows the curvature", law), ("constant speed", unif
     print(f"{name:<30} mean correlation over {ok.sum()} windows: {np.nanmean(np.asarray(result.smoothness)[ok]):.2f}")
 
 # %%
-# :class:`~pyeyesweb.low_level.CurvatureDispersion` relates how much the path bends to the distance travelled, over the last
-# ``window`` calls. It takes the velocity and the acceleration **vectors** of the point, so we compute them with one
-# ``Kinematics`` with ``output_dims="components"``, and it returns one dimensionless value per call (1 while the hand is nearly
-# still). The first ``window`` values are not comparable with the later ones, so the figure starts after them.
-
-from pyeyesweb.low_level import CurvatureDispersion
-
-
-def curvature_dispersion(positions, window=100):
-    """Value of CurvatureDispersion at every sample of a trajectory (n, 3) in metres."""
-    both = Kinematics(sampling_rate=RATE, output_type=["velocity", "acceleration"], output_dims="components")
-    dispersion = CurvatureDispersion(window=window, sampling_rate=RATE)
-    values = []
-    for point in positions:
-        step = both.process(point)
-        values.append(dispersion.process(step.velocity, step.acceleration).curvature_dispersion)
-    return np.asarray(values, dtype=float)
-
-
-fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharey=True)
-for ax, (smooth_number, jerky_number, task) in zip(axes, ((11, 12, "figure eight"), (13, 14, "caress"))):
-    for number, label in ((smooth_number, "smooth"), (jerky_number, "jerky")):
-        values = curvature_dispersion(trials[number].joint("Right_Hand"))
-        ax.plot(trials[number].timestamps[100:], values[100:], lw=1, color=colors[label], label=f"trial {number}, {label}")
-        print(f"trial {number} ({label}): mean curvature_dispersion {np.nanmean(values[100:]):.3f}")
-    ax.set_title(task, fontsize=9)
-    ax.set_xlabel("time (s)")
-    ax.legend(frameon=False, fontsize=8)
-axes[0].set_ylabel("curvature dispersion")
-fig.tight_layout()
-
-# %%
-# **Takeaway.** ``CurvatureVelocityCorrelation`` is strongly negative when the speed follows the curvature of the path;
-# ``CurvatureDispersion`` is low for a path that bends little for the distance it travels.
+# **Takeaway.** ``CurvatureVelocityCorrelation`` is strongly negative when the speed follows the curvature of the path.
 
 # %%
 # How direct and how flat is a path

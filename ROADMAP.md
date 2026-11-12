@@ -25,7 +25,6 @@ Original blocks (ask the original authors):
 
 - `CurvatureVelocityCorrelation`: the intended thresholds and units; `velocity_threshold` is dead in the core.
 - `EventSynchronizationMECS`: should it accumulate across windows (it does not, and has no `reset_every_buffer`)?
-- `TemporalSynchronization`: the original formulas (`efficiency_step`, `progression`, `stage_weights`), and `CurvatureDispersion`.
 - `Periodicity`: `threshold` and `sort_by_power`.
 - `ScalarPeakDetector`: the exact delay semantics.
 
@@ -39,7 +38,7 @@ Other decisions:
 Core backlog (changes in the core, some need a regenerated reference):
 
 - `MotionNoiseDetector`: with several joints only the alphabetically last joint decides; regenerate `gesture_segmenter_reference.npz` with `tools/regenerate_gesture_segmenter_reference.py` after a change.
-- Humanoid integrator: flutters on real recordings (damping 5 to 30 worse, 60 gives `inf`); needs a stability review; `GenericModelEstimator` is fragile.
+- Humanoid integrator: flutters on real recordings (damping 5 to 30 worse, 60 gives `inf`); needs a stability review.
 - Live windows for `Rarity(method="information")`, `Videogram`, `ScalarPeakDetector` need a `resize` in the core (then move them to LIVE in `test_live_window_hop.py`).
 - Ragged spike trains in `SpikeSynchronization(mode="timings")` (equal counts required).
 - Overflow (`1e300`): the block has advanced when `INVALID_INPUT` is returned; optional snapshot and rollback.

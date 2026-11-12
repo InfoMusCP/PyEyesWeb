@@ -123,7 +123,7 @@ Schema(Output('velocity', unit='m/s'), Output('acceleration', unit='m/s^2'), Out
 ```
 
 The output of `Kinematics` is the input of several other features. The speed feeds the four window metrics of
-{doc}`smoothness`, and the velocity and acceleration vectors feed `CurvatureDispersion`. 
+{doc}`smoothness`.
 ### Kinetic energy
 
 {py:class}`~pyeyesweb.low_level.KineticEnergy` evaluates $E$ for the joints of a skeleton frame, one frame at a time. In its

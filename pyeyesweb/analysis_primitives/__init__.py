@@ -1,24 +1,24 @@
 """Analysis primitives: metrics applicable to any movement feature at any layer of the conceptual model
 (complexity, rarity, rhythm, periodicity, signal events, synchronization)."""
 
-from .complexity import SampleEntropy, CoarseGraining
+from .complexity import SampleEntropy
 from .rarity import Rarity
 from .rhythm import BinaryPulsesRegularity
 from .multi_scale_entropy import MultiScaleEntropy
 from .periodicity import Periodicity
 from .signal_events import ScalarPeakDetector
 from .synchronization import (
-    PhaseLockingValue, CorrelationsMatrix, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation,
+    PhaseLockingValue, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation,
     EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization,
-    SequenceDetector, RecurrencePlot, CrossRecurrencePlot, TemporalSynchronization
+    RecurrencePlot, CrossRecurrencePlot,
 )
 
 __all__ = [
-    "SampleEntropy", "CoarseGraining", "Rarity", "BinaryPulsesRegularity", "MultiScaleEntropy", "Periodicity",
-    "ScalarPeakDetector", "PhaseLockingValue", "CorrelationsMatrix",
+    "SampleEntropy", "Rarity", "BinaryPulsesRegularity", "MultiScaleEntropy", "Periodicity",
+    "ScalarPeakDetector", "PhaseLockingValue",
     "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation", "EventSynchronization",
-    "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization", "SequenceDetector",
-    "RecurrencePlot", "CrossRecurrencePlot", "TemporalSynchronization"
+    "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization",
+    "RecurrencePlot", "CrossRecurrencePlot",
 ]
 
 

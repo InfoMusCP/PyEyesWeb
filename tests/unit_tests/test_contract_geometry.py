@@ -16,7 +16,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 from contract_suite import check_feature_contract  # noqa: E402
 from pyeyesweb.data_models import InputKind  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
-    BodyPartsFromCurvature, ConvexHull, ContourCurvature, Directness, FilterContour, Kinematics, TrajectoryNonPlanarity
+    BodyPartsFromCurvature, ContourCurvature, Directness, Kinematics, TrajectoryNonPlanarity
 )
 from pyeyesweb.mid_level import PositionDependingPotentials, RegionDependingPotentials
 from pyeyesweb.physical_signals import HitCellDetector  # noqa: E402
@@ -35,10 +35,8 @@ POINT_2D = RNG.standard_normal((40, 2)).cumsum(axis=0)
 TRAJECTORIES = RNG.standard_normal((FRAME_COUNT, 5, 3))
 
 FACTORIES = {
-    "FilterContour": (lambda: FilterContour(), CONTOURS),
     "HitCellDetector": (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=1.0, y_max=1.0), UNIT_POINTS),
     "ContourCurvature": (lambda: ContourCurvature(), CONTOURS),
-    "ConvexHull": (lambda: ConvexHull(), CONTOURS),
     "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), CURVATURES, CONTOURS),
     "Kinematics": (lambda: Kinematics(dims=2), POINT_2D),
     "Kinematics several outputs": (lambda: Kinematics(dims=2, output_type=["velocity", "direction", "curvature"]), POINT_2D),
@@ -57,7 +55,6 @@ def test_contract(name):
 
 
 def test_declared_inputs():
-    assert FilterContour().inputs["contour"].kind is InputKind.POINTS
     assert BodyPartsFromCurvature().inputs.names == ("curvature", "contour")
     assert Kinematics(dims=2).inputs["point"].kind is InputKind.SAMPLE
     assert Directness().inputs["points"].shape == (None, None)

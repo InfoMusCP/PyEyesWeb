@@ -14,35 +14,33 @@ EXEMPT = {
         "SilhouetteCentroids.normalized BoundingBoxFilledArea.contraction_index EllipsoidSphericity.sphericity "
         "EllipsoidSphericity.axis_ratio Symmetry.symmetry TriangleSymmetry.symmetry "
         "SpectralArcLength.spectral_arc_length LogDimensionlessJerk.log_dimensionless_jerk Harmonicity.harmonicity "
-        "CurvatureDispersion.curvature_dispersion CurvatureVelocityCorrelation.smoothness Equilibrium.equilibrium "
+        "CurvatureVelocityCorrelation.smoothness Equilibrium.equilibrium "
         "DirectionChange.cosine Directness.directness_index SuddennessImpulsivity.impulsivity_index "
         "Suddenness.alpha Suddenness.beta Suddenness.gamma EnsembleDominance.dominance_score PhaseLockingValue.phase_locking_value "
-        "CorrelationsMatrix.correlations_matrix PartialRecurrenceSynchronization.synchronization_matrix "
+        "PartialRecurrenceSynchronization.synchronization_matrix "
         "GeneralisedAutoCorrelation.recurrence_rate EventSynchronization.synchronization EventSynchronization.delay "
         "EventSynchronizationMECS.synchronization NonlinearInterdependence.first_to_second_interdependence "
         "NonlinearInterdependence.second_to_first_interdependence NonlinearInterdependence.threshold "
         "SpikeSynchronization.degree SpikeSynchronization.distance SpikeSynchronization.profile "
         "RecurrencePlot.recurrence_matrix CrossRecurrencePlot.cross_recurrence_matrix "
-        "TemporalSynchronization.progression TemporalSynchronization.efficiency_step Periodicity.powers "
+        "Periodicity.powers "
         "HumanoidOrientations.directions"),
     "a logarithm of a ratio (an information measure)": (
         "SampleEntropy.sample_entropy Rarity.rarity MultiScaleEntropy.complexity_index MultiScaleEntropy.scale_entropies"),
     "a count or an index": (
         "SubmovementCount.submovement_count BinaryPulsesRegularity.pulse_count EnsembleDominance.leader_index "
-        "EventSynchronizationMECS.events SequenceDetector.sequence_count TemporalSynchronization.step "
-        "TemporalSynchronization.state"),
+        "EventSynchronizationMECS.events "),
     "a potential, defined by the potential type and not by a unit": (
         "PositionDependingPotentials.potential RegionDependingPotentials.potential"),
     "an image of pixel values (0-255)": "SilhouetteBodyParts.masks Videogram.videogram",
-    "a cost mixing direction, position and speed errors": "GenericModelEstimator.error",
 }
 EXEMPT = {tuple(entry.split(".")): reason for reason, entries in EXEMPT.items() for entry in entries.split()}
 
 # A feature with `units=`: the outputs that are a length (or a speed...) and must name the unit it was given.
 LENGTH_OUTPUTS = {
-    "HumanoidSimulator": ("joints",), "GenericModelSimulator": ("positions",), "GenericModelPredictor": ("positions",),
-    "GenericModelEstimator": ("positions",), "Kinematics": ("velocity",), "TrajectoryNonPlanarity": ("curvature_radius",),
-    "HitCellDetector": (), "CurvatureDispersion": (), "Equilibrium": (), "MotionNoiseDetector": (),
+    "HumanoidSimulator": ("joints",), "GenericModelSimulator": ("positions",),
+    "Kinematics": ("velocity",), "TrajectoryNonPlanarity": ("curvature_radius",),
+    "HitCellDetector": (), "Equilibrium": (), "MotionNoiseDetector": (),
 }
 
 

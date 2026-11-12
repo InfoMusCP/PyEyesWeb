@@ -1,7 +1,6 @@
 """Skeletons of the capture devices of the lab: presets of :class:`~pyeyesweb.data_models.Skeleton`.
 
-The features that must know the joints (``KineticEnergy``, ``MotionNoiseDetector``, ``Symmetry``, ``PointsDensity``,
-``PointsPredictor``) refuse to be built without joint information (they would silently read nothing). Give them
+The features that must know the joints (``KineticEnergy``, ``MotionNoiseDetector``, ``Symmetry``, ``PointsDensity``) refuse to be built without joint information (they would silently read nothing). Give them
 ``skeleton=`` (a ``Skeleton`` or its name: ``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``, ``"openpose"``;
 case-insensitive, ``-`` and spaces count as ``_``) to describe the joints of your device, or explicit ``labels=`` /
 ``weights=`` / ``pairs=``. A parameter given explicitly always wins over the skeleton.
@@ -13,7 +12,6 @@ feature                   fields of the skeleton it reads
 ``MotionNoiseDetector``   ``joints``
 ``Symmetry``              ``joints``, ``pairs`` (the couples), ``reference`` (ratio method)
 ``PointsDensity``         ``joints`` (names of the points; they do not enter the maths)
-``PointsPredictor``       ``joints``
 ========================  ==========================================================================================
 
 Presets and the fields they define:

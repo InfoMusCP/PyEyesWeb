@@ -1,12 +1,10 @@
 """Mass-spring models of a body (EyesWeb HumanoidModel catalog): virtual sensors that turn a captured skeleton into a
-physically simulated one, into bone directions or into a prediction.
+physically simulated one or into bone directions.
 
 * :class:`HumanoidSimulator`, :class:`HumanoidOrientations`: a fixed 21-joint humanoid (the joints of the Kinect SDK v1
   as EyesWeb names them); ``HUMANOID_JOINTS`` and ``HUMANOID_BONES`` list its joint and bone names.
-* :class:`GenericModelOrientations`, :class:`GenericModelSimulator`, :class:`GenericModelPredictor`,
-  :class:`GenericModelEstimator`: the same features for a model of your own, a :class:`MassSpringModel` (also loaded
+* :class:`GenericModelOrientations`, :class:`GenericModelSimulator`: the same features for a model of your own, a :class:`MassSpringModel` (also loaded
   from an EyesWeb XML file). Positions are in the unit of the model.
-* :class:`PointsPredictor`: one-step linear extrapolation of any labelled points.
 
 A frame is a dict ``label -> (x, y, z)`` or an ``(N, 3)`` array in the order of ``labels``. The model has its own joint
 names; ``joint_map`` maps each of them to the label of your data (``{"head": "Head", ...}``; the names you do not list
@@ -15,7 +13,7 @@ missing in a frame (absent from the dict, or a row with a NaN) is a dropout the 
 were); infinite values and a frame without any joint are ``INVALID_INPUT``. Outputs are labelled by the names of the
 model.
 
-Time: the simulators, the predictor and the estimator advance the model by the time step of the call in seconds (the
+Time: the simulators advance the model by the time step of the call in seconds (the
 library rule: ``timestamp``, else ``sampling_rate`` in Hz, default ``None``, else 1 s per call and the ``reason`` says
 ``"no time given: per-sample derivatives"``).
 
@@ -45,7 +43,6 @@ from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.physical_signals._humanoid_model import (
     HUMANOID_BONES, HUMANOID_JOINTS, NAME_PARAMS, MassSpringModel, core_model
 )
-from pyeyesweb.skeletons import with_skeleton
 
 _humanoid = core.humanoid
 
@@ -244,7 +241,7 @@ class _ModelFeature(_ModelInput):
 
     @property
     def model(self) -> MassSpringModel:
-        """A copy of the model in its current state (an estimator: with the estimated parameters). Setting it changes
+        """A copy of the model in its current state. Setting it changes
         the model; the state restarts and the labels are checked against the new names."""
         block_model = getattr(self._block, "model", None)
         return MassSpringModel._wrap(self._params["model"] if block_model is None else block_model)
@@ -539,8 +536,7 @@ class GenericModelOrientations(_GenericFeature, FrameFeature):
 
         \mathbf{b}_s = \mathbf{p}_{\mathrm{tip}(s)} - \mathbf{p}_{\mathrm{hinge}(s)},
 
-    not normalised and in the unit of the data. It is the front end of :class:`GenericModelSimulator` and
-    :class:`GenericModelPredictor`, which take these vectors as the directions the springs have to follow.
+    not normalised and in the unit of the data. It is the front end of :class:`GenericModelSimulator`, which takes these vectors as the directions the springs have to follow.
 
     ``process(skeleton, *, timestamp=None)`` takes the positions of the masses, one point per mass of ``model`` named like
     the mass (or mapped with ``joint_map``), as a dict ``label -> (x, y, z)`` or an ``(n_masses, 3)`` array in the order of
@@ -591,7 +587,7 @@ class GenericModelOrientations(_GenericFeature, FrameFeature):
 
 
 class _Directions(_GenericFeature):
-    """The input of the simulator and the predictor: one direction per spring of the model."""
+    """The input of the simulator: one direction per spring of the model."""
 
     _names_of = staticmethod(_spring_names)
 
@@ -716,352 +712,6 @@ class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
         return self._result(positions=raw, timestamp=timestamp)
 
 
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="GenericModelPredictor")
-class GenericModelPredictor(_Units, _Timed, _Directions, CoreFeature):
-    """The positions a mass-spring model will have a short time ahead.
-
-    Like :class:`GenericModelSimulator` the model follows the bone directions of each frame. ``positions`` is where its
-    masses will be ``prediction_interval`` seconds later when the model is left to move on its own, which gives a
-    short-term forecast of the movement of an articulated structure. With ``mode="masses_inertia"`` the masses keep their
-    velocity; with ``"directions_linear"`` the bone directions are extrapolated linearly. The state of the model is the one
-    of the follower: the prediction does not disturb it.
-
-    ``process(directions, *, timestamp=None)`` takes one direction per spring of ``model`` (a dict or a ``(n_springs, 3)``
-    array, typically the output of :class:`GenericModelOrientations`) and returns ``positions``.
-
-    Parameters
-    ----------
-    model : MassSpringModel or str
-        The model, or the path of an EyesWeb XML model file *(structural)*.
-    labels : sequence of str, optional
-        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.spring_names``.
-    joint_map : dict, optional
-        ``spring name of the model -> label of your data`` *(live)*; names left out keep their own.
-    reference_direction : tuple of float, default (1.0, 0.0, 0.0)
-        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are
-        measured (dimensionless; the x axis by default).
-    integration_step : float, default 0.001
-        Step of the numerical integration in seconds, > 0 *(live)*. A call that advances the model by ``dt`` seconds runs
-        ``int(dt / integration_step)`` steps.
-    gravity : tuple of float, default (0.0, 0.0, 0.0)
-        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.
-    damping : float, default 10.0
-        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;
-        10 is stable with noisy input and 3 follows clean data with less lag.
-    viscosity : float, default 0.0
-        Viscous friction of the masses *(live)*.
-    length_forces : bool, default True
-        Switch on the forces that keep each spring at its rest length *(live)*.
-    rotation_forces : bool, default True
-        Switch on the forces that turn each spring towards its target direction *(live)*.
-    ground_interaction : bool, default False
-        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is
-        pushed back along the normal.
-    floor_position : tuple of float, default (0.0, 0.0, 0.0)
-        A point of the floor plane, in ``units`` *(live)*.
-    use_input_lengths : bool, default False
-        Take the rest length of each spring from the length of the input vector instead of the length of the model *(live)*.
-    prediction_interval : float, default 0.2
-        How far ahead to predict, in seconds *(live)*.
-    mode : {"masses_inertia", "directions_linear"}, default "masses_inertia"
-        How the future is computed *(live)*: ``"masses_inertia"`` lets the masses keep their velocity,
-        ``"directions_linear"`` extrapolates the bone directions linearly.
-    damping_factor : float, default 1.0
-        Factor applied to ``damping`` while predicting (dimensionless) *(live)*.
-    viscosity_factor : float, default 1.0
-        Factor applied to ``viscosity`` while predicting (dimensionless) *(live)*.
-    sampling_rate : float, optional
-        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no
-        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.
-    units : {"m", "mm"}, default "m"
-        Name of the unit of the model, of the data, of ``gravity``, ``floor_position`` and of the outputs *(live)*; nothing
-        is rescaled, as in :class:`GenericModelSimulator`.
-
-    Notes
-    -----
-    **Outputs.** ``positions``: ``(n_masses, 3)`` array of ``(x, y, z)`` in ``units``, the predicted positions of the
-    masses, labelled by the mass names of the model. The result is ``OK`` on every valid call (no warm-up). A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame
-    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint
-    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.
-
-    **Time and units.** As in :class:`GenericModelSimulator`. The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A
-    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it
-    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses
-    ``1 / sampling_rate`` (or 1 s), never the absolute time.
-
-    **Differences from EyesWeb.** ``prediction_interval`` is in seconds (EyesWeb: a time in 100 ns ticks); the propulsion
-    factor of the original, which no force ever used, is not offered; ``length_forces``, ``rotation_forces``,
-    ``ground_interaction`` and ``floor_position`` are parameters here.
-
-    **Corrected in the core.** In ``"directions_linear"`` the z component of the extrapolated direction is its own z (the
-    original used x), and the rest directions and lengths changed by the prediction are restored afterwards; the damping
-    formulation is that of :class:`GenericModelSimulator`.
-
-    Examples
-    --------
-    >>> from pyeyesweb.physical_signals import GenericModelPredictor, MassSpringModel
-    >>> model = MassSpringModel()
-    >>> model.add_mass("root", 1e10)
-    >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
-    >>> model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
-    >>> predictor = GenericModelPredictor(model, sampling_rate=100.0, prediction_interval=0.2)
-    >>> predictor.process([[0.0, 1.0, 0.0]]).positions[1].round(3)
-    array([0.977, 0.231, 0.   ])
-    """
-    _core_class = _humanoid.GenericModelPredictor
-
-    def __init__(self, model: Union[MassSpringModel, str, os.PathLike],
-                 labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 **params: Any):
-        _check_rate(params.get("sampling_rate"))
-        super().__init__(model, labels, joint_map, **params)
-
-    def process(self, directions: Any, *, timestamp: Optional[float] = None) -> Result:
-        points = self._points(directions, timestamp)
-        if isinstance(points, Result):
-            return points
-        step = self._time_step(timestamp)
-        return self._result(positions=self._block.process_array(self._model_layout(), points, step), timestamp=timestamp)
-
-
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="GenericModelEstimator")
-class GenericModelEstimator(_Units, _Timed, _GenericFeature, CoreFeature):
-    """Adaptive estimation of the parameters of a mass-spring model from observed joints.
-
-    The model follows the observed positions of its masses and, while ``enable_adaptation`` is on, one parameter per frame
-    is perturbed (a stochastic coordinate descent on a cost that weighs position, direction and speed errors); the change is
-    kept when it lowers the cost. Over a recording the model therefore learns the masses and the spring stiffnesses and
-    dampings that explain the observed movement, a way to identify the physical parameters of an articulated body.
-
-    ``process(skeleton, *, timestamp=None)`` takes the observed positions of the masses of ``model`` (a dict
-    ``label -> (x, y, z)`` or an ``(n_masses, 3)`` array in the order of ``labels``) and returns the simulated ``positions``
-    and the ``error``. ``feature.model`` is a copy of the model with the parameters estimated so far
-    (``feature.model.export_configuration()`` and ``feature.model.save_xml_file(path)``); ``feature.reset_step()`` sends the
-    perturbation step back to ``initial_step`` and ``feature.current_step`` reads it.
-
-    Parameters
-    ----------
-    model : MassSpringModel or str
-        The initial model, or the path of an EyesWeb XML model file *(structural)*; replacing it restarts the state.
-    labels : sequence of str, optional
-        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.mass_names``.
-    joint_map : dict, optional
-        ``mass name of the model -> label of your data`` *(live)*; names left out keep their own.
-    reference_direction : tuple of float, default (1.0, 0.0, 0.0)
-        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are
-        measured (dimensionless; the x axis by default).
-    integration_step : float, default 0.001
-        Step of the numerical integration in seconds, > 0 *(live)*. A call that advances the model by ``dt`` seconds runs
-        ``int(dt / integration_step)`` steps.
-    gravity : tuple of float, default (0.0, 0.0, 0.0)
-        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.
-    damping : float, default 10.0
-        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;
-        10 is stable with noisy input and 3 follows clean data with less lag.
-    viscosity : float, default 0.0
-        Viscous friction of the masses *(live)*.
-    length_forces : bool, default True
-        Switch on the forces that keep each spring at its rest length *(live)*.
-    rotation_forces : bool, default True
-        Switch on the forces that turn each spring towards its target direction *(live)*.
-    ground_interaction : bool, default False
-        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is
-        pushed back along the normal.
-    floor_position : tuple of float, default (0.0, 0.0, 0.0)
-        A point of the floor plane, in ``units`` *(live)*.
-    use_input_lengths : bool, default False
-        Take the rest length of each spring from the length of the input vector instead of the length of the model *(live)*.
-    enable_adaptation : bool, default True
-        Adapt the parameters *(live)*; off, the model only follows the input.
-    estimate_masses : bool, default False
-        Adapt the masses *(live)*.
-    estimate_length_springs : bool, default False
-        Adapt the length stiffness and the length damping of the springs *(live)*.
-    estimate_direction_springs : bool, default False
-        Adapt the direction stiffness and the direction damping of the springs *(live)*. With none of the three
-        ``estimate_*`` switches on, nothing is adapted.
-    step_is_absolute : bool, default False
-        The perturbation is an absolute amount, in the unit of the parameter, instead of a fraction of the parameter
-        *(live)*.
-    initial_step : float, default 0.05
-        Size of the perturbation at the start *(live)*; ``reset_step()`` returns to it.
-    step_adaptation_factor : float, default 0.0001
-        How fast the size of the perturbation adapts (dimensionless) *(live)*.
-    cost_distance : float, default 1.0
-        Weight of the position error in the cost (dimensionless) *(live)*.
-    cost_directions : float, default 1.0
-        Weight of the direction error in the cost *(live)*.
-    cost_speed : float, default 1.0
-        Weight of the speed error in the cost *(live)*.
-    cost_length_stiffness : float, default 0.0
-        Weight of the regulariser on the length stiffness *(live)*.
-    cost_direction_stiffness : float, default 0.0
-        Weight of the regulariser on the direction stiffness *(live)*.
-    cost_length_damping : float, default 0.0
-        Weight of the regulariser on the length damping *(live)*.
-    cost_direction_damping : float, default 0.0
-        Weight of the regulariser on the direction damping *(live)*.
-    seed : int, default 12345
-        Seed of the random draws, which makes a run reproducible (it replaces the unseeded ``rand()`` of EyesWeb)
-        *(structural)*.
-    sampling_rate : float, optional
-        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no
-        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.
-    units : {"m", "mm"}, default "m"
-        Name of the unit of the model, of the data, of ``gravity``, ``floor_position`` and of the outputs *(live)*; nothing
-        is rescaled, as in :class:`GenericModelSimulator`.
-
-    Notes
-    -----
-    **Outputs.** ``positions``: ``(n_masses, 3)`` array of ``(x, y, z)`` in ``units``, the simulated masses, labelled by
-    the mass names of the model. ``error``: the cost of the frame, a weighted sum of the position, direction and speed
-    errors (the weights are the ``cost_*`` parameters); it mixes quantities in the unit of the model, so its trend over a
-    recording is more meaningful than its value. The result is ``OK`` on every valid call, and ``INVALID_INPUT`` with the
-    reason ``"the result is not finite"`` when the simulation diverged. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame
-    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint
-    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.
-
-    **Time and units.** As in :class:`GenericModelSimulator`. The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A
-    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it
-    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses
-    ``1 / sampling_rate`` (or 1 s), never the absolute time.
-
-    **Differences from EyesWeb.** ``seed``, ``length_forces``, ``rotation_forces``, ``ground_interaction`` and
-    ``floor_position`` are parameters here; the model is saved on request instead of at every frame.
-
-    **Corrected in the core.** The regularisers of the length and direction damping have their own weights (the original
-    enabled them with the stiffness weights); the direction springs are adapted only when ``estimate_direction_springs``
-    asks for it (the original always adapted them); the damping formulation is that of :class:`GenericModelSimulator`.
-
-    Examples
-    --------
-    >>> from pyeyesweb.physical_signals import GenericModelEstimator, MassSpringModel
-    >>> model = MassSpringModel()
-    >>> model.add_mass("root", 1e10)
-    >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
-    >>> model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
-    >>> estimator = GenericModelEstimator(model, sampling_rate=100.0, estimate_masses=True)
-    >>> result = estimator.process([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]])    # the observed masses
-    >>> result.positions.shape, bool(result.error > 0)
-    ((2, 3), True)
-    >>> sorted(estimator.model.export_configuration())[:2]               # the model as estimated so far
-    ['mass::root::mass', 'mass::tip::mass']
-    """
-    _core_class = _humanoid.GenericModelEstimator
-    _names_of = staticmethod(_mass_names)
-
-    def __init__(self, model: Union[MassSpringModel, str, os.PathLike],
-                 labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 **params: Any):
-        _check_rate(params.get("sampling_rate"))
-        super().__init__(model, labels, joint_map, **params)
-
-    def _inputs(self) -> Inputs:
-        return Inputs(self._frame_input("skeleton", "observed positions of the masses of the model"))
-
-    def _schema(self) -> Schema:
-        return Schema(self._positions_output(), Output("error", doc="cost of the frame"))
-
-    def process(self, skeleton: Any, *, timestamp: Optional[float] = None) -> Result:
-        points = self._points(skeleton, timestamp)
-        if isinstance(points, Result):
-            return points
-        step = self._time_step(timestamp)
-        positions, error = self._block.process_array(self._model_layout(), points, step)
-        return self._finite_result(positions=positions, error=error, timestamp=timestamp)
-
-
-# ---------------------------------------------------------------------------------------------------------------------
-# points
-
-
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="PointsPredictor")
-class PointsPredictor(FrameFeature):
-    r"""One-step linear extrapolation of labelled points.
-
-    Each point is predicted one frame ahead by extending its last displacement,
-
-    .. math::
-
-        \hat{\mathbf{p}}(t) = \mathbf{p}(t) + \left(\mathbf{p}(t) - \mathbf{p}(t-1)\right),
-
-    a constant-velocity forecast of where every tracked point will be at the next frame.
-
-    ``process(points, *, timestamp=None)`` takes the points, a dict ``label -> (x, y, z)`` or an ``(N, 3)`` array in the
-    order of ``labels``. The step is one frame: the feature has no time axis and ``timestamp`` is only copied into
-    ``result.timestamp``. It is stateful (``reset()``).
-
-    Parameters
-    ----------
-    labels : sequence of str, optional
-        Names of the points, in the order of array frames; a dict frame is read by them. Fixed at construction. One of
-        ``labels`` and ``skeleton`` is required, otherwise ``ValueError``.
-    skeleton : str or Skeleton, optional
-        A lab preset that gives the ``labels`` (``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``, ``"openpose"``;
-        see :mod:`pyeyesweb.skeletons`). Fixed at construction.
-
-    Notes
-    -----
-    **Outputs.** ``predicted``: ``(N, 3)`` array of ``(x, y, z)`` in the unit of the data, labelled by ``labels``. A point
-    seen for the first time (or after a gap) is returned unchanged. A point missing in a frame (absent from the dict, or a
-    row with a NaN) is NaN in the output and forgotten. An infinite value, an empty frame and a frame without any point
-    are ``INVALID_INPUT``; otherwise the result is ``OK`` (no warm-up).
-
-    **Corrected in the core.** The original never stored the previous values and so never predicted anything; the output
-    set is rebuilt at every call, so a label that disappears does not stay.
-
-    Examples
-    --------
-    >>> from pyeyesweb.physical_signals import PointsPredictor
-    >>> predictor = PointsPredictor(labels=["a", "b"])
-    >>> predictor.process([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]).predicted
-    array([[0., 0., 0.],
-           [1., 1., 1.]])
-    >>> predictor.process([[1.0, 0.0, 0.0], [1.0, 2.0, 1.0]]).predicted
-    array([[2., 0., 0.],
-           [1., 3., 1.]])
-    """
-    _core_class = _humanoid.PointsPredictor
-
-    def __init__(self, labels: Optional[Sequence[str]] = None, skeleton: Any = None):
-        labels, _ = with_skeleton(skeleton, labels, {})
-        if not labels:
-            raise ValueError("PointsPredictor: no points given; pass labels= or skeleton=")
-        if len(set(labels)) != len(labels):
-            raise ValueError("PointsPredictor: repeated labels")
-        super().__init__()
-        self._labels = tuple(labels)
-        self._layout = core.SkeletonLayout(list(labels))
-
-    @property
-    def labels(self) -> Tuple[str, ...]:
-        """Names of the points."""
-        return self._labels
-
-    def _inputs(self) -> Inputs:
-        return Inputs(points_input("points", self._labels, "labelled points", accepts=(dict,), allow_non_finite=True))
-
-    def _schema(self) -> Schema:
-        return Schema(Output("predicted", (len(self._labels), 3), labels=self._labels, components=XYZ,
-                             unit="<length>", doc="linear extrapolation of each point one frame ahead"))
-
-    def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
-        if isinstance(frame, dict):
-            points = np.full((len(self._labels), 3), math.nan)
-            for row, label in enumerate(self._labels):
-                if label in frame:
-                    points[row] = frame[label]
-        else:
-            points = np.asarray(frame, dtype=float)
-            if points.size == 0:
-                return self._no_output(Status.INVALID_INPUT, "empty frame", timestamp)
-        if np.isinf(points).any():
-            return self._no_output(Status.INVALID_INPUT, "infinite values", timestamp)
-        if np.isnan(points).all():
-            return self._no_output(Status.INVALID_INPUT, "no point present in the frame", timestamp)
-        return self._result(predicted=self._block.process_array(self._layout, points), timestamp=timestamp)
-
-
 __all__ = ["HumanoidSimulator", "HumanoidOrientations", "GenericModelOrientations", "GenericModelSimulator",
-           "GenericModelPredictor", "GenericModelEstimator", "PointsPredictor", "MassSpringModel", "HUMANOID_JOINTS",
+           "MassSpringModel", "HUMANOID_JOINTS",
            "HUMANOID_BONES"]

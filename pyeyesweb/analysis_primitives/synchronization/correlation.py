@@ -1,12 +1,12 @@
 """Correlation-based synchronization matrices.
 
-`CorrelationsMatrix` and `GeneralisedAutoCorrelation` run on a static series and are windowed features (``window``,
-``hop``); `PartialRecurrenceSynchronization` transforms the matrix that `CorrelationsMatrix` returns, one matrix per
-call. Their results are ``OK`` unless the docstring of the feature says otherwise.
+`GeneralisedAutoCorrelation` runs on a static series and is a windowed feature (``window``, ``hop``);
+`PartialRecurrenceSynchronization` transforms a correlation matrix (for instance ``numpy.corrcoef`` of the curves of
+`GeneralisedAutoCorrelation`), one matrix per call. Their results are ``OK`` unless the docstring of the feature says otherwise.
 """
 
 from itertools import count
-from typing import Any, Optional, Sequence
+from typing import Any, Optional
 
 import numpy as np
 
@@ -23,84 +23,11 @@ _sync = core.sync
 _OutputType = _sync.GeneralisedAutoCorrelationOutputType
 
 
-@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="CorrelationsMatrix (CPRMatrix)")
-class CorrelationsMatrix(_SeriesBlock):
-    r"""Matrix of positive Pearson correlations between the signals of a group over a sliding window.
-
-    Describes how much each pair among ``number_of_inputs`` movement signals (for example one signal per
-    participant, or per body segment) varies together over the window. For the signals :math:`s_k` the entry
-    :math:`(k, l)` of the matrix is
-
-    .. math::
-
-        C_{kl} = \max\left(0, \; \rho(s_k, s_l)\right) \;\; (k \ne l), \qquad C_{kk} = 1,
-
-    where :math:`\rho` is the Pearson correlation coefficient over the ``window`` samples: anti-correlation is
-    reported as 0, so :math:`C_{kl} \in [0, 1]`. The matrix is the input of `PartialRecurrenceSynchronization`.
-
-    Parameters
-    ----------
-    window : int
-        Samples per analysis window, at least 2 (no default). Changing it keeps the newest samples; a larger window
-        warms up again. *(live)*
-    hop : int, optional
-        Samples between two results, ``1 <= hop <= window`` (default 1). *(live)*
-    number_of_inputs : int, optional
-        Number of signals (default 4); the size of the frame and of the matrix. *(structural)*
-
-    Notes
-    -----
-    **Inputs.** ``process(signals, *, timestamp=None)`` takes one frame of ``number_of_inputs`` values;
-    ``run(signals, *, timestamps=None)`` takes ``(T, number_of_inputs)``.
-
-    **Outputs.** ``correlations_matrix`` (dimensionless, shape ``(number_of_inputs, number_of_inputs)``): symmetric,
-    ones on the diagonal, entries in [0, 1].
-
-    **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT`` between two
-    windows when ``hop > 1``, ``INVALID_INPUT`` for a NaN or infinite value in the window or in the result. A signal
-    that is constant over the window has no defined correlation: its row and column are 0 outside the diagonal.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> a = np.sin(2 * np.pi * np.arange(50) / 50)
-    >>> matrix = CorrelationsMatrix(window=50, number_of_inputs=3)
-    >>> matrix.run(np.column_stack([a, 2 * a, -a])).correlations_matrix[-1].round(2)
-    array([[1., 1., 0.],
-           [1., 1., 0.],
-           [0., 0., 1.]])
-    """
-    _core_class = _sync.CorrelationsMatrix
-    _core_names = {"number_of_inputs": "n_inputs"}
-    _finite_inputs = True
-
-    def _minimum_window(self, **overrides: Any) -> int:
-        return 2  # a correlation needs two samples
-
-    def _state_lost(self) -> None:
-        super()._state_lost()
-        self._buffer, self._pushed = None, 0  # a new `number_of_inputs` is a new frame size: the buffer starts again
-
-    def _inputs(self) -> Inputs:
-        return Inputs(Input("signals", InputKind.SAMPLE, (int(self._param("number_of_inputs", 4)),),  # C++ default
-                            doc="one value per signal"))
-
-    def _schema(self) -> Schema:
-        number_of_inputs = int(self._param("number_of_inputs", 4))  # C++ default
-        return Schema(Output("correlations_matrix", (number_of_inputs, number_of_inputs), doc="CPR matrix"))
-
-    def _call_block(self, args: Sequence[Any]) -> np.ndarray:
-        return self._block.process(list(args[0]))
-
-    def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self._finite_result(correlations_matrix=raw, timestamp=timestamp)
-
-
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="PARS (PartialRecurrenceSynchronizationMatrix)")
 class PartialRecurrenceSynchronization(FrameFeature):
     r"""Partial correlation of a correlation matrix: the direct synchronization between each pair of signals.
 
-    Takes the matrix :math:`C` of `CorrelationsMatrix` and removes the part of each pairwise correlation that is
+    Takes a correlation matrix :math:`C` (for instance ``numpy.corrcoef``) and removes the part of each pairwise correlation that is
     explained by the other signals of the group, so that two signals that are only linked through a third one are
     not reported as synchronized. With :math:`P = C^{-1}`,
 
@@ -137,7 +64,7 @@ class PartialRecurrenceSynchronization(FrameFeature):
     _core_class = _sync.PARS
 
     def _inputs(self) -> Inputs:
-        return Inputs(Input("correlations_matrix", InputKind.MATRIX, (None, None), doc="square matrix of CorrelationsMatrix"))
+        return Inputs(Input("correlations_matrix", InputKind.MATRIX, (None, None), doc="square correlation matrix"))
 
     def _schema(self) -> Schema:
         return Schema(Output("synchronization_matrix", (None, None), doc="partial recurrence synchronisation matrix"))
@@ -244,4 +171,4 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
         return self._result(recurrence_rate=raw, taus=np.arange(first, first + len(raw)), timestamp=timestamp)
 
 
-__all__ = ["CorrelationsMatrix", "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation"]
+__all__ = ["PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation"]

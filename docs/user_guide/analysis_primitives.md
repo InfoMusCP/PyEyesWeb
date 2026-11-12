@@ -13,8 +13,8 @@ choose among them. The groups are described in {doc}`../concepts/layers`.
 ## Which feature for which question
 
 **How regular or complex is the signal?** {py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` measures the irregularity of a
-window; {py:class}`~pyeyesweb.analysis_primitives.CoarseGraining` produces the same signal at a slower scale;
-{py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` combines both into a curve over scales and a complexity index
+window; {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` computes it at several time scales and gives a curve over
+scales and a complexity index
 {cite}`glowinski2010multi`, the input of the dominance analysis of {doc}`high_level`.
 {py:class}`~pyeyesweb.analysis_primitives.Rarity` tells how rare the newest value is within a memory of past values.
 Theory: {doc}`../theory/entropy_rarity_periodicity`.
@@ -29,18 +29,14 @@ has been found (a maximum, reported up to `window` samples late; `threshold` is 
 signal.
 
 - Continuous signals: {py:class}`~pyeyesweb.analysis_primitives.PhaseLockingValue` for the phase relation of two signals in a
-  band, {py:class}`~pyeyesweb.analysis_primitives.CorrelationsMatrix` and
-  {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` for the correlation of a group and the direct
-  link of each pair, and {py:class}`~pyeyesweb.analysis_primitives.NonlinearInterdependence` when the relation is not linear.
+  band, {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` for the direct link of each pair of a
+  group, from its correlation matrix (`numpy.corrcoef`), and {py:class}`~pyeyesweb.analysis_primitives.NonlinearInterdependence` when the relation is not linear.
 - Recurrence: {py:class}`~pyeyesweb.analysis_primitives.RecurrencePlot` for when a movement returns to a state it visited,
   {py:class}`~pyeyesweb.analysis_primitives.CrossRecurrencePlot` for when one movement visits states of another, and
   {py:class}`~pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation` for the recurrence rate as a function of the lag.
 - Events: {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization`,
   {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` and
-  {py:class}`~pyeyesweb.analysis_primitives.SpikeSynchronization` for trains of events, and
-  {py:class}`~pyeyesweb.analysis_primitives.SequenceDetector` for a given sequence of integer events in a stream.
-- Staged processes: {py:class}`~pyeyesweb.analysis_primitives.TemporalSynchronization` follows the progression of a
-  synchronization process from a chain of synchronization values.
+  {py:class}`~pyeyesweb.analysis_primitives.SpikeSynchronization` for trains of events.
 
 Theory: {doc}`../theory/synchronization`. The synchronization of a group of musicians is the setting of
 {cite}`sabharwal2022husync`.

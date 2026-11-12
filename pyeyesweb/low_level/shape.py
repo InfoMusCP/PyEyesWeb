@@ -31,57 +31,6 @@ class ContourFeature(FrameFeature):
         return self._to_result(self._block.process(contour), timestamp)
 
 
-@describe(Layer.LOW_LEVEL, eyesweb="filter_contour (FilterContour)")
-class FilterContour(ContourFeature):
-    r"""Circular Gaussian smoothing of a closed 2D contour.
-
-    Smooths the coordinates of a closed contour, for instance the outline of a silhouette, by convolving each coordinate
-    with a Gaussian kernel. The kernel has ``window`` samples centred on the sample being filtered, with weights
-    proportional to :math:`\exp\!\big(-(i - \lfloor w / 2 \rfloor)^2 / (2 \sigma^2)\big)` for :math:`i = 0, \dots, w -
-    1` and normalised to sum 1, where :math:`w` is ``window`` and :math:`\sigma` is ``gaussian_sigma``. The contour is
-    treated as closed: the neighbours of the first point include the last ones, and the other way round.
-
-    Input: one contour per call, an ``(N, 2)`` array; ``process(frame, *, timestamp=None)`` (``run`` takes ``(T, N,
-    2)``). The feature keeps no state.
-
-    Parameters
-    ----------
-    window : int, optional
-        Number of samples of the Gaussian kernel, at least 1. It must be shorter than the contour, otherwise the call
-        has no output. Defaults to ``3``. *(live)*
-    gaussian_sigma : float, optional
-        Standard deviation of the Gaussian, in samples (not in length units), not negative; ``0`` gives NaN coordinates.
-        Defaults to ``3.0``. *(live)*
-
-    Notes
-    -----
-    **Outputs.** ``contour``: ``(N, 2)`` smoothed contour (components x and y), in the unit of the input.
-
-    **Statuses.** ``NO_OUTPUT`` when ``window`` is not shorter than the contour; ``INVALID_INPUT`` for an empty contour
-    or NaN or infinite coordinates.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from pyeyesweb.low_level import FilterContour
-    >>> theta = np.linspace(0.0, 2.0 * np.pi, 60, endpoint=False)
-    >>> circle = np.column_stack([np.cos(theta), np.sin(theta)])
-    >>> smooth = FilterContour(window=5, gaussian_sigma=1.0).process(circle)
-    >>> print(smooth.contour.shape, f"{np.hypot(*smooth.contour[0]):.3f}")
-    (60, 2) 0.995
-    """
-    _core_class = _motion.FilterContour
-    _core_names = {"window": "window_length", "gaussian_sigma": "sigma_value"}
-
-    def _schema(self) -> Schema:
-        return Schema(Output("contour", (None, 2), components=XY, unit="<length>", doc="smoothed contour"))
-
-    def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        if len(raw) == 0:
-            return self._no_output(Status.NO_OUTPUT, "contour not longer than the filter window", timestamp)
-        return self._result(timestamp=timestamp, contour=raw)
-
-
 @describe(Layer.LOW_LEVEL, eyesweb="contourstolist (CurvatureFunction)")
 class ContourCurvature(ContourFeature):
     r"""Signed curvature at every point of a closed 2D contour.
@@ -198,58 +147,4 @@ class BodyPartsFromCurvature(CoreFeature):
         return self._result(timestamp=timestamp, minimums=minimums, maximums=maximums)
 
 
-@describe(Layer.LOW_LEVEL, eyesweb="ConvexHull")
-class ConvexHull(ContourFeature):
-    """Convex hull polygon of a 2D contour.
-
-    Gives the smallest convex polygon that contains all the points of a contour, for instance the outline of a
-    silhouette, as the list of its vertices. Only strictly convex vertices are kept (collinear points on an edge are
-    dropped). The vertices run clockwise when y points up (counter-clockwise on a screen in image coordinates), starting
-    from the point with the smallest x, and from the smallest y among those. The hull is that of the exact input
-    coordinates.
-
-    Input: one contour per call, an ``(N, 2)`` array; ``process(frame, *, timestamp=None)`` (``run`` takes ``(T, N,
-    2)``). The feature keeps no state.
-
-    Parameters
-    ----------
-    integer_coordinates : bool, optional
-        Require integer coordinates, as the pixel contours of an image have. When ``True``, a contour with fractional
-        coordinates raises ``ValueError``; when ``False`` any real coordinates are accepted. It only validates the
-        input: the hull is the same in both cases (the core's own default is ``True``, the EyesWeb integer contour
-        datatype). Defaults to ``False``. *(live)*
-
-    Notes
-    -----
-    **Outputs.** ``hull``: ``(H, 2)`` vertices of the hull (components x and y), in the unit of the input.
-
-    **Statuses.** ``INVALID_INPUT`` for an empty contour or NaN or infinite coordinates.
-
-    Corrected in the core: the hull of a contour with real coordinates is computed on the exact input points; the
-    coordinates used to be quantised to multiples of 0.001. The orientation tests are exact for any range of
-    coordinates.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from pyeyesweb.low_level import ConvexHull
-    >>> contour = np.array([[0, 0], [4, 0], [4, 4], [0, 4], [2, 2]])
-    >>> print(ConvexHull().process(contour).hull)
-    [[0. 0.]
-     [0. 4.]
-     [4. 4.]
-     [4. 0.]]
-    """
-    _core_class = _motion.ConvexHull
-
-    def __init__(self, integer_coordinates: bool = False):
-        super().__init__(integer_coordinates=integer_coordinates)
-
-    def _schema(self) -> Schema:
-        return Schema(Output("hull", (None, 2), components=XY, unit="<length>", doc="convex hull vertices"))
-
-    def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self._result(timestamp=timestamp, hull=raw)
-
-
-__all__ = ["FilterContour", "ContourCurvature", "ConvexHull", "BodyPartsFromCurvature"]
+__all__ = ["ContourCurvature", "BodyPartsFromCurvature"]

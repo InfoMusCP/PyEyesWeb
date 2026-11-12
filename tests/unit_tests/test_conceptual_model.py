@@ -32,7 +32,7 @@ def test_layers_raise_import_error_without_the_core():
 def test_catalog_lists_features():
     names = {entry.name for entry in catalog()}
     assert {"SpectralArcLength", "SubmovementCount", "Suddenness", "MotionNoiseDetector"} <= names
-    assert len(catalog()) == 60  # 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
+    assert len(catalog()) == 50  # 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
 
 
 @needs_core
@@ -57,15 +57,13 @@ def test_features_with_an_eyesweb_block_name_it():
 
 @needs_core
 def test_layer_placements():
-    from pyeyesweb import low_level, mid_level, physical_signals, analysis_primitives as ap
+    from pyeyesweb import low_level, mid_level, analysis_primitives as ap
 
     assert low_level.Kinematics.LAYER is Layer.LOW_LEVEL
     assert low_level.MotionNoiseDetector.LAYER is Layer.LOW_LEVEL
     assert low_level.Directness.LAYER is Layer.LOW_LEVEL
     assert mid_level.PositionDependingPotentials.LAYER is Layer.MID_LEVEL
-    assert low_level.FilterContour.LAYER is Layer.LOW_LEVEL
     assert low_level.TrajectoryNonPlanarity.LAYER is Layer.LOW_LEVEL
-    assert not hasattr(physical_signals, "FilterContour")
     assert ap.Periodicity.LAYER is Layer.ANALYSIS_PRIMITIVE
     assert ap.synchronization.PartialRecurrenceSynchronization.LAYER is Layer.ANALYSIS_PRIMITIVE
     assert pyeyesweb.high_level.__all__ == ["EnsembleDominance"]

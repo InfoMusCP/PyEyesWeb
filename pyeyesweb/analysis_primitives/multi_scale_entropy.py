@@ -45,8 +45,7 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     a group is the input of the dominance analysis (see ``EnsembleDominance``) :cite:`glowinski2010multi`.
 
     Each signal is normalised to unit standard deviation and coarse-grained at the scales
-    :math:`\tau = 1 \dots` ``max_scale`` (means of non-overlapping groups of :math:`\tau` samples, as in
-    ``CoarseGraining``). The sample entropy of every scale (as in ``SampleEntropy``, for
+    :math:`\tau = 1 \dots` ``max_scale`` (means of non-overlapping groups of :math:`\tau` samples). The sample entropy of every scale (as in ``SampleEntropy``, for
     the template length ``embedding_dimension`` and a matching tolerance of ``tolerance`` times the standard deviation
     of the normalised series) forms the entropy curve :math:`E(\tau)`. The complexity index is the area under that
     curve, by the trapezoid rule over the scales used,

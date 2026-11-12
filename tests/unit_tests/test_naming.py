@@ -136,15 +136,6 @@ def test_sampling_rate_has_no_default_rate_anywhere():
     assert not offenders, offenders
 
 
-def test_window_is_missing_with_a_message_that_says_what_it_is():
-    import pytest
-
-    pytest.importorskip("pyeyesweb._core")
-    from pyeyesweb.analysis_primitives import CorrelationsMatrix
-    with pytest.raises(TypeError, match=r"CorrelationsMatrix\(\) missing required argument.*window.*samples"):
-        CorrelationsMatrix()
-
-
 def test_a_parameter_left_at_its_default_reads_back_and_the_signature_is_honest():
     import inspect
 

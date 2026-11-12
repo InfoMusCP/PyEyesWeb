@@ -4,12 +4,10 @@ Synchronization of events
 
 Often what is shared between two people is a set of moments, not a continuous curve: the instants of a clap, of a step, of a
 change of direction. This second tutorial on synchronization turns the movement of two hands into **trains of events** and
-measures how far the events of one train meet those of the other, with and without a chosen tolerance. It also counts a
-given order of events and follows a staged process in which several measures are reached one after the other.
+measures how far the events of one train meet those of the other, with and without a chosen tolerance.
 
 :Goals: extract events from a movement with a peak detector; measure event synchronization (two trains, several event
-        classes, spike trains in two forms); detect an ordered sequence of events; follow the progression of staged
-        synchronization.
+        classes, spike trains in two forms).
 :Prerequisites: :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` and
                 :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (the peak detector).
 :Data: trials 7 (clapping hands, synchronised) and 8 (unsynchronised), seconds 5 to 21 of the example session.
@@ -180,75 +178,11 @@ for name in trials:
 # **Takeaway.** SPIKE-synchronization needs no tolerance, either from sampled trains (binary) or from spike times (timings).
 
 # %%
-# Sequences of events
-# -------------------
-# Sometimes the question is the *order* of events: does the left hand move and then the right hand answers?
-# :class:`~pyeyesweb.analysis_primitives.SequenceDetector` gets one integer per sample, the id of the event that happens (0 for
-# none), and counts how many times the ids of ``sequence`` follow each other with at most ``inter_event_time`` samples between
-# two of them. We code a left-hand event as 1 and a right-hand event as 2 (3 if both fall on the same sample, which belongs to
-# no sequence) and count "1 then 2" within 0.3 s; with ``any_order=True`` also "2 then 1".
-
-from pyeyesweb.analysis_primitives import SequenceDetector
-
-fig, ax = plt.subplots(figsize=(8, 3))
-for name in trials:
-    ids = (trains[name]["Left"][:, 0] + 2 * trains[name]["Right"][:, 0]).astype(int)
-    ordered = SequenceDetector(sequence="1 2", inter_event_time=30).run(ids, timestamps=stamps)
-    either = SequenceDetector(sequence="1 2", inter_event_time=30, any_order=True).run(ids)
-    ax.step(stamps, ordered.sequence_count, where="post", label=f"{name}: left then right")
-    ax.step(stamps, either.sequence_count, where="post", ls="--", label=f"{name}: either order")
-    print(f"{name:<26} left then right: {int(ordered.sequence_count[-1])}, either order: {int(either.sequence_count[-1])}")
-ax.set_xlabel("time (s)")
-ax.set_ylabel("sequences completed")
-ax.legend(fontsize=7)
-fig.tight_layout()
-
-# %%
-# **Takeaway.** The detector counts an ordered pattern of event ids within a time limit, in a live stream.
-
-# %%
-# Staged synchronization
-# ----------------------
-# When the members of a group synchronize one after the other, the interest is how far the process has got.
-# :class:`~pyeyesweb.analysis_primitives.TemporalSynchronization` takes, at each step, ``number_of_inputs`` synchronization values
-# (the *stages*), compares each with a threshold and returns the ``state`` (how many leading stages are reached), the
-# ``progression`` from 0 to 1, the ``step`` and, once everything is reached, the ``efficiency_step`` (see
-# :doc:`/theory/synchronization`). Here three stages are computed over successive 2 s windows of the clapping trials, each one
-# harder to reach than the last: the phase locking value of the two hands (reached when it is above 0.8), the event
-# synchronization Q (above 0.5) and the spike degree (above 0.5).
-
-from pyeyesweb.analysis_primitives import PhaseLockingValue, TemporalSynchronization
-
-fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharey=True)
-for ax, name in zip(axes, trials):
-    left, right = positions[name]["Left"][:, 0], positions[name]["Right"][:, 0]
-    plv = PhaseLockingValue(window=200, hop=200).run(left, right)
-    q = EventSynchronization(window=200, tau=30, reset_every_buffer=True).run(trains[name]["Left"][:, 0], trains[name]["Right"][:, 0])
-    degree = SpikeSynchronization(window=200, hop=200).run(np.column_stack([trains[name]["Left"][:, 0], trains[name]["Right"][:, 0]]))
-    stages = np.column_stack([plv.phase_locking_value[plv.ok], q.synchronization[q.ok], degree.degree[degree.ok]])
-    progress = TemporalSynchronization(thresholds=[0.8, 0.5, 0.5]).run(stages)
-    ax.plot(stamps[plv.ok], progress.progression, "o-", label="progression")
-    ax.step(stamps[plv.ok], progress.state / 3, where="mid", color="C3", label="state / 3")
-    ax.set_title(name, fontsize=9, loc="left")
-    ax.set_xlabel("end of the 2 s window (s)")
-    print(f"{name:<26} states over the windows: {progress.state.astype(int)}")
-axes[0].set_ylabel("progression")
-axes[0].legend(fontsize=7)
-fig.tight_layout()
-
-# %%
-# The synchronised pair reaches the later stages in some windows, the other stays at state 0 in most windows. In a group the
-# stages would be, for example, the phase locking value of each member with the previous one.
-#
-# **Takeaway.** The state counts the stages reached in order and the progression says how far the whole process has come.
-
-# %%
 # Try it
 # ------
 # 1. Use ``EventSynchronization(window=1600, tau=30, weighted=True)`` on the two trials. Does the weighting, which lowers the
 #    weight of a pair as its lag grows, lower Q? In which trial more?
-# 2. Count how many times the right hand answers the left within 0.1 s (``inter_event_time=10``) in each trial.
-# 3. Use ``SpikeSynchronization`` in ``"timings"`` mode with the first 8 events of the *left* hand against the first 8 of the
+# 2. Use ``SpikeSynchronization`` in ``"timings"`` mode with the first 8 events of the *left* hand against the first 8 of the
 #    left hand shifted by 0.05 s. What degree do you expect?
 
 # %%
@@ -263,14 +197,7 @@ for name in trials:
     print(f"{name:<26} Q = {plain:.2f}, weighted Q = {weighted:.2f}")
 
 # %%
-# Exercise 2. The same detector with a shorter limit.
-
-for name in trials:
-    ids = (trains[name]["Left"][:, 0] + 2 * trains[name]["Right"][:, 0]).astype(int)
-    print(f"{name:<26} left then right within 0.1 s:", int(SequenceDetector(sequence="1 2", inter_event_time=10).run(ids).sequence_count[-1]))
-
-# %%
-# Exercise 3. A train against a shifted copy of itself: every spike has a partner.
+# Exercise 2. A train against a shifted copy of itself: every spike has a partner.
 
 shifted = np.array([spike_times["trial 7 (synchronised)"][0], spike_times["trial 7 (synchronised)"][0] + 0.05])
 print("degree:", float(SpikeSynchronization(window=8, mode="timings").process(shifted).degree))

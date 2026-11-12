@@ -8,7 +8,7 @@ whole body, or the output of a peak detector:
 | Idea | Quantity | Features |
 |---|---|---|
 | Irregularity of the signal | sample entropy | {py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` |
-| Irregularity across time scales | multi-scale entropy, complexity index | {py:class}`~pyeyesweb.analysis_primitives.CoarseGraining`, {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` |
+| Irregularity across time scales | multi-scale entropy, complexity index | {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` |
 | How unusual the current value is | rarity | {py:class}`~pyeyesweb.analysis_primitives.Rarity` |
 | Repetition at a period | periods and their power | {py:class}`~pyeyesweb.analysis_primitives.Periodicity` |
 | Equal spacing of events | regularity of a pulse train | {py:class}`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` |
@@ -58,10 +58,9 @@ $$
 y^{(\tau)}_j = \frac1\tau\sum_{i=(j-1)\tau+1}^{j\tau} x_i, \qquad j=1,\dots,\lfloor N/\tau\rfloor ,
 $$
 
-which is the series seen at the slower sampling rate $f_s/\tau$. {py:class}`~pyeyesweb.analysis_primitives.CoarseGraining`
-returns this series for a window, one row per channel; a remainder of fewer than $\tau$ samples is dropped. As in the EyesWeb
-block it recomputes the series on the first full window and then every `factor` windows, so with a hop larger than 1 several
-of the windows in between have the status `NO_OUTPUT`.
+which is the series seen at the slower sampling rate $f_s/\tau$. A remainder of fewer than $\tau$ samples is dropped. The coarse
+graining is done inside {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy`; in NumPy, for a factor `f`, it is
+`x[:len(x)//f*f].reshape(-1, f).mean(axis=1)`.
 
 **Entropy curve and complexity index.** {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` normalises each signal to unit
 standard deviation, coarse-grains it at the scales $\tau=1,\dots,\tau_{\max}$ (`max_scale`) and computes the sample entropy

@@ -154,15 +154,15 @@ A bar that moves up and down in front of a still background draws a sine in the 
 
 ## The shape of the outline: contours
 
-The four contour features act on an $(N, 2)$ contour, one per call, and keep no state, except the labels of
+The two contour features act on an $(N, 2)$ contour, one per call, and keep no state, except the labels of
 {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature`. They are low-level features: they measure one frame.
 
-**Smoothing.** The outline of a silhouette is jagged because it follows the pixel grid.
-{py:class}`~pyeyesweb.low_level.FilterContour` convolves each coordinate with a Gaussian kernel of `window` samples centred on the
-sample being filtered, with weights proportional to $\exp\bigl(-(i-\lfloor w/2\rfloor)^2/(2\sigma^2)\bigr)$ for
-$i=0,\dots,w-1$, normalised to sum 1, where $w$ is `window` and $\sigma$ is `gaussian_sigma`. The contour is treated as closed:
-the neighbours of the first point include the last ones. $\sigma$ is in samples, not in length units, and the window must be
-shorter than the contour, otherwise the status is `NO_OUTPUT`.
+**Smoothing.** The outline of a silhouette is jagged because it follows the pixel grid. The curvature is a second difference
+of the points, so it amplifies this noise, and the extrema that {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` looks
+for are lost among spurious ones. Smooth the contour before the two features. The library has no feature for this: use
+`scipy.ndimage.gaussian_filter1d(contour, sigma, axis=0, mode="wrap")`, which convolves each coordinate with a Gaussian kernel
+of standard deviation `sigma`. With `mode="wrap"` the contour is treated as closed: the neighbours of the first point include
+the last ones. `sigma` is in samples, not in length units.
 
 **Curvature.** {py:class}`~pyeyesweb.low_level.ContourCurvature` estimates the curvature at every point from the point and its
 two neighbours. With $(x', y')$ the step from the previous point to this one and $(x'', y'')$ the difference between the next
@@ -177,10 +177,6 @@ turns, counter-clockwise (positive) or clockwise, in the coordinate frame of the
 down, the orientation on the screen is reversed. Value $i$ belongs to point $i$ (the values used to be rotated by one point in
 the original, which is corrected in the core). The unit is the inverse of the unit of the contour.
 
-**Convex hull.** {py:class}`~pyeyesweb.low_level.ConvexHull` gives the smallest convex polygon that contains the contour, as the
-list of its vertices; only strictly convex vertices are kept, so collinear points on an edge are dropped. The vertices run
-clockwise when $y$ points up, starting from the point with the smallest $x$.
-
 **Body parts from curvature.** {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` finds the salient points of the outline
 (the head, the hands and the feet of a silhouette) as the extrema of its curvature. The contour is cut at the zero crossings
 of the curvature, at least `minimum_distance` points apart, and in every piece the extremum of larger magnitude is a minimum
@@ -193,7 +189,8 @@ multiplies the largest curvature by about six and creates spurious extrema; afte
 valleys are found.
 
 ```{doctest}
->>> from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature, ConvexHull, FilterContour
+>>> from scipy.ndimage import gaussian_filter1d
+>>> from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
 >>> t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
 >>> radius = 10.0 + 3.0 * np.cos(5.0 * t)
 >>> clean = np.column_stack([radius * np.cos(t), radius * np.sin(t)])
@@ -201,10 +198,10 @@ valleys are found.
 >>> curvature = ContourCurvature().process(noisy).curvature
 >>> round(float(np.abs(curvature).max()), 1)
 7.7
->>> smooth = FilterContour(window=9, gaussian_sigma=2.0).process(noisy).contour
+>>> smooth = gaussian_filter1d(noisy, 2.0, axis=0, mode="wrap")
 >>> smooth_curvature = ContourCurvature().process(smooth).curvature
 >>> round(float(np.abs(smooth_curvature).max()), 1)
-1.3
+1.2
 >>> len(BodyPartsFromCurvature().process(curvature, noisy).minimums)
 11
 >>> parts = BodyPartsFromCurvature().process(smooth_curvature, smooth)
@@ -212,8 +209,6 @@ valleys are found.
 (5, 5)
 >>> sorted(parts.maximums)
 ['label_max0', 'label_max1', 'label_max2', 'label_max3', 'label_max4']
->>> ConvexHull().process(clean).hull.shape
-(35, 2)
 ```
 
 ```{eval-rst}
@@ -223,13 +218,14 @@ valleys are found.
 
    import matplotlib.pyplot as plt
    import numpy as np
-   from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature, FilterContour
+   from scipy.ndimage import gaussian_filter1d
+   from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
 
    t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
    radius = 10.0 + 3.0 * np.cos(5.0 * t)
    clean = np.column_stack([radius * np.cos(t), radius * np.sin(t)])
    noisy = clean + np.random.default_rng(0).normal(0.0, 0.05, clean.shape)
-   smooth = FilterContour(window=9, gaussian_sigma=2.0).process(noisy).contour
+   smooth = gaussian_filter1d(noisy, 2.0, axis=0, mode="wrap")
    curvature = ContourCurvature().process(smooth).curvature
    parts = BodyPartsFromCurvature().process(curvature, smooth)
 

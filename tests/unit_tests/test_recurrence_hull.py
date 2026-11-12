@@ -1,4 +1,4 @@
-"""Output contract of RecurrencePlot, CrossRecurrencePlot and ConvexHull (ports of EyesWeb blocks).
+"""Output contract of RecurrencePlot and CrossRecurrencePlot (ports of EyesWeb blocks).
 
 The numerical behaviour is tested in C++ alongside the core; these tests check schemas, statuses, shapes, dtypes,
 defaults and that the parameters reach the core. Skipped without the compiled core (see
@@ -18,7 +18,6 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.analysis_primitives.synchronization import CrossRecurrencePlot, RecurrencePlot  # noqa: E402
 from pyeyesweb.data_models.results import Result, Schema, Status  # noqa: E402
-from pyeyesweb.low_level import ConvexHull  # noqa: E402
 
 
 def test_recurrence_plot_contract_and_values():
@@ -61,29 +60,3 @@ def test_cross_recurrence_plot_shapes():
         block._process_window(np.zeros((2, 3)), np.zeros((1, 3)))
 
 
-def test_convex_hull_contract_and_convention():
-    block = ConvexHull()
-    assert block.outputs["hull"].shape == (None, 2)
-    result = block.process([(10, 0), (5, 5), (0, 10), (10, 10), (0, 0)])
-    assert result.status is Status.OK and result.valid == {"hull": True}
-    np.testing.assert_array_equal(result.hull, [[0, 0], [0, 10], [10, 10], [10, 0]])
-    np.testing.assert_array_equal(block.process([(2, 2), (0, 0), (1, 1)]).hull, [[0, 0], [2, 2]])
-
-
-def test_convex_hull_accepts_real_coordinates_by_default_and_exactly():
-    pts = [(0.0015, 0.0), (1.23456, 0.0), (0.5, 0.99999)]
-    np.testing.assert_array_equal(ConvexHull().process(pts).hull, [[0.0015, 0.0], [0.5, 0.99999], [1.23456, 0.0]])
-    assert ConvexHull().integer_coordinates is False
-
-
-def test_convex_hull_integer_coordinates_option_rejects_fractions():
-    strict = ConvexHull(integer_coordinates=True)
-    assert strict.process([(0, 0), (4, 0), (0, 4)]).status is Status.OK
-    with pytest.raises(ValueError):
-        strict.process([(0.5, 0.0)])
-
-
-def test_convex_hull_empty_contour_is_invalid_input():
-    result = ConvexHull().process([])
-    assert result.status is Status.INVALID_INPUT and result.reason
-    assert result.valid == {"hull": False} and result.hull.shape == (0, 2)

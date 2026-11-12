@@ -3,7 +3,7 @@
 Two dancers who move in unison, a quartet that breathes together, two hands that keep the same rhythm: synchronization is the
 degree to which the movements of several participants, or of several parts of the same body, are coordinated in time. There is
 no single measure of it, because coordination can mean different things: the signals rise and fall together, their phases
-stay locked, their discrete events occur at the same moments, their trajectories visit the same states. The twelve features of
+stay locked, their discrete events occur at the same moments, their trajectories visit the same states. The nine features of
 this family are organised here by **what is compared**.
 
 | What is compared | Quantity | Features |
@@ -13,8 +13,7 @@ this family are organised here by **what is compared**.
 | Two or more series of events | event synchronization | {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization`, {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` |
 | Several spike trains | SPIKE-synchronization | {py:class}`~pyeyesweb.analysis_primitives.SpikeSynchronization` |
 | The states visited by one or two movements | recurrence | {py:class}`~pyeyesweb.analysis_primitives.RecurrencePlot`, {py:class}`~pyeyesweb.analysis_primitives.CrossRecurrencePlot`, {py:class}`~pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation` |
-| A series of event identifiers against a pattern | sequence detection | {py:class}`~pyeyesweb.analysis_primitives.SequenceDetector` |
-| The members of a group | correlation, partial correlation, staged progression | {py:class}`~pyeyesweb.analysis_primitives.CorrelationsMatrix`, {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization`, {py:class}`~pyeyesweb.analysis_primitives.TemporalSynchronization` |
+| The members of a group | partial correlation | {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` |
 
 Notation is that of {doc}`notation`: samples are indexed by $n$, a window has $N$ samples and slides by a hop $H$. With one
 exception that is stated below, the measures work on such a window, return `WARMING_UP` until it is full and `NO_OUTPUT` between
@@ -239,36 +238,13 @@ lags from `tau_min` (and the lags in `taus`); with `output_type="scalar"` it ret
 50 1.0
 ```
 
-## Sequences
-
-{py:class}`~pyeyesweb.analysis_primitives.SequenceDetector` recognises when a short ordered pattern is performed, for example the
-successive gestures of an exercise, each coded with an integer identifier. At each sample the input is the identifier of the
-event that happens (0 when none); the sequence is completed when its identifiers occur in order with at most `inter_event_time`
-samples between two consecutive ones, and a longer gap breaks it. It returns `is_completed`, true on the sample that completes
-the sequence, and `sequence_count`, the number completed so far. It is always `OK`. The core corrected the detection of the
-reversed order (a lone first element used to be detected) and the double count of a palindromic sequence.
-
-```{doctest}
->>> from pyeyesweb.analysis_primitives import SequenceDetector
->>> detector = SequenceDetector(sequence="1 2 3")
->>> [int(detector.process(event).sequence_count) for event in [1, 2, 3, 0, 1, 2, 3]]
-[0, 0, 1, 1, 1, 1, 2]
-```
-
 ## Group synchronization
 
-For a group of $M$ participants the question is how the members are coordinated pair by pair, and how the coordination
-builds up. Three features work in chain.
+For a group of $M$ participants the question is how the members are coordinated pair by pair.
 
-**Correlation.** {py:class}`~pyeyesweb.analysis_primitives.CorrelationsMatrix` computes, over a window of `number_of_inputs`
-signals (one per participant or per body segment), the matrix
-
-$$
-C_{kl}=\max\big(0,\rho(s_k,s_l)\big)\ (k\ne l),\qquad C_{kk}=1,
-$$
-
-with $\rho$ the Pearson correlation over the window. Anti-correlation is reported as 0, so every entry lies in $[0,1]$. A
-signal that is constant over the window has no defined correlation: its row and column are 0 off the diagonal.
+**Correlation.** The starting point is the matrix $C$ of the Pearson correlations $C_{kl}=\rho(s_k,s_l)$ of the signals (one per
+participant or per body segment) over a window. It is `numpy.corrcoef`: the entries are signed and lie in $[-1,1]$, with 1 on
+the diagonal. A signal that is constant over the window has no defined correlation, and its row and column are `NaN`.
 
 **Direct synchronization.** Two participants can correlate only because both follow a third one. With $P=C^{-1}$,
 {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` removes the part of each correlation that the other
@@ -279,27 +255,19 @@ S_{kl}=\frac{|P_{kl}|}{\sqrt{P_{kk}P_{ll}}},
 $$
 
 an entry being 0 when a diagonal entry of $P$ is not positive, and the whole matrix 0 when $C$ is singular (constant or
-perfectly collinear signals). It takes the matrix as input, so it is applied to the output of `CorrelationsMatrix`; it has no
-window of its own.
-
-**Progression.** When the members synchronize one after the other, {py:class}`~pyeyesweb.analysis_primitives.TemporalSynchronization`
-follows how far the group has got. It takes `number_of_inputs` synchronization values per call (for example the entries of the
-matrix above, or one phase locking value per participant) and compares each with its threshold: `state` is the number of
-leading inputs, in order, that are at or above their threshold, and `progression` rises from 0 to 1 as the stages are completed
-(with the weights `stage_weights`), reaching 1 when all inputs are above their thresholds. `step` counts the calls, and
-`efficiency_step` (valid only when the progression is 1) says how quickly the group completed the process: 1 when it takes
-`number_of_inputs + 1` steps. It works one sample per call, so there is no window.
+perfectly collinear signals). It takes the matrix as input, so it is applied to the output of `numpy.corrcoef`; it has no
+window of its own. A matrix with a `NaN` entry is `INVALID_INPUT`.
 
 In the example the signal $b$ follows $a$ and $c$ follows $b$ with noise. All three are correlated, but $a$ and $c$ only through
 $b$, which the partial correlation shows.
 
 ```{doctest}
->>> from pyeyesweb.analysis_primitives import CorrelationsMatrix, PartialRecurrenceSynchronization, TemporalSynchronization
+>>> from pyeyesweb.analysis_primitives import PartialRecurrenceSynchronization
 >>> rng = np.random.default_rng(5)
 >>> a = rng.normal(size=300)
 >>> b = a + 0.7 * rng.normal(size=300)
 >>> c = b + 0.7 * rng.normal(size=300)
->>> correlations = CorrelationsMatrix(window=300, number_of_inputs=3).run(np.column_stack([a, b, c])).correlations_matrix[-1]
+>>> correlations = np.corrcoef(np.column_stack([a, b, c])[-300:].T)      # the last 300 samples, one row per signal
 >>> correlations.round(2)
 array([[1.  , 0.81, 0.68],
        [0.81, 1.  , 0.85],
@@ -308,19 +276,15 @@ array([[1.  , 0.81, 0.68],
 array([[1.  , 0.61, 0.04],
        [0.61, 1.  , 0.7 ],
        [0.04, 0.7 , 1.  ]])
->>> progress = TemporalSynchronization(thresholds=[0.5, 0.5, 0.5])
->>> [(round(float(r.progression), 2), int(r.state)) for r in map(progress.process, [(.6, .1, .1), (.6, .6, .1), (.6, .6, .6)])]
-[(0.4, 1), (0.73, 2), (1.0, 3)]
 ```
 
 ## Choosing a measure
 
 - Continuous signals, oscillatory and narrow-band: the phase locking value. Continuous signals with an arbitrary coupling:
-  the nonlinear interdependence, or the correlation matrix for a group.
+  the nonlinear interdependence, or the partial correlation for a group.
 - Discrete events with a known tolerance in samples: event synchronization (two series) or MECS (several classes). Events
   without a natural tolerance: SPIKE-synchronization.
 - Whole-body or multichannel states, to see where and when two movements revisit the same posture: cross-recurrence.
-- A fixed order of gestures: the sequence detector.
 
 ## Practical notes
 

@@ -11,16 +11,14 @@
 import numpy as np
 import pytest
 
-from live_param_suite import NOTE, check_invalid, check_live, check_structural, feed, ids
+from live_param_suite import check_invalid, check_live, check_structural, feed, ids
 
 from pyeyesweb.analysis_primitives.synchronization.correlation import (
-    CorrelationsMatrix, GeneralisedAutoCorrelation
+    GeneralisedAutoCorrelation
 )
 from pyeyesweb.analysis_primitives.synchronization.phase import PhaseLockingValue
 from pyeyesweb.analysis_primitives.synchronization.recurrence import CrossRecurrencePlot, RecurrencePlot
-from pyeyesweb.analysis_primitives.synchronization.temporal import TemporalSynchronization
 from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence
-from pyeyesweb.data_models import Status
 
 _rng = np.random.default_rng(11)
 SAMPLE_COUNT = 120
@@ -39,21 +37,17 @@ LIVE = [
     (lambda: NonlinearInterdependence(window=30, neighbours=2), "neighbours", 3, SCALARS),
     (lambda: PhaseLockingValue(window=60, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0), "low_frequency", 2.0, SCALARS),
     (lambda: GeneralisedAutoCorrelation(window=30), "epsilon", 2.0, SIGNAL),
-    (lambda: TemporalSynchronization(thresholds=[1, 1, 1]), "thresholds", [0.5, 1.5, 1], TRIPLES * 2),
 ]
 STRUCTURAL = [
     (lambda: GeneralisedAutoCorrelation(window=30), "tau_spread", 5, SIGNAL),
     (lambda: GeneralisedAutoCorrelation(window=30), "output_type", "scalar", SIGNAL),
-    (lambda: TemporalSynchronization(number_of_inputs=4), "number_of_inputs", 3, QUADS + TRIPLES),
 ]
 INVALID = [
     (lambda: RecurrencePlot(window=20, epsilon=0.5), "epsilon", -1.0, SIGNAL),
     (lambda: CrossRecurrencePlot(window=20, epsilon=0.5), "epsilon", -1.0, PAIRS),
     (lambda: NonlinearInterdependence(window=30, neighbours=2), "neighbours", -1, SCALARS),
     (lambda: PhaseLockingValue(window=60, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0), "low_frequency", 20.0, SCALARS),
-    (lambda: CorrelationsMatrix(window=10, number_of_inputs=3), "number_of_inputs", 1, THREES),
     (lambda: GeneralisedAutoCorrelation(window=30, epsilon=0.1), "epsilon", -1.0, SIGNAL),
-    (lambda: TemporalSynchronization(number_of_inputs=3), "number_of_inputs", 0, TRIPLES * 2),
 ]
 
 
@@ -74,16 +68,6 @@ def test_structural_change_restarts_and_says_so_once(factory, attr, value, recor
 @_param(INVALID)
 def test_invalid_value_raises_and_changes_nothing(factory, attr, value, recording):
     check_invalid(factory, attr, value, recording)
-
-
-def test_correlations_matrix_number_of_inputs_restarts_its_buffer_and_says_so_once():
-    feature = CorrelationsMatrix(window=10, number_of_inputs=4)
-    feed(feature, FOURS[:30])
-    feature.number_of_inputs = 3
-    after = feed(feature, THREES)
-    assert [result.status for result in after[:9]] == [Status.WARMING_UP] * 9 and after[9].status == Status.OK
-    assert NOTE in after[0].reason and all(NOTE not in result.reason for result in after[1:])
-    assert after[9].correlations_matrix.shape == (3, 3)
 
 
 def test_generalised_auto_correlation_set_tau_min_is_live_and_keeps_the_window():

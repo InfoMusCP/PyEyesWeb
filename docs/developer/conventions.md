@@ -13,7 +13,7 @@ is a defect to fix.
   feature and every parameter of the compiled core.
 - snake_case, descriptive, and **the same concept has the same name in every feature**: `window`, `hop`, `sampling_rate`, `dims`,
   `tolerance`, `embedding_dimension`. The Savitzky-Golay parameters are always `filter_window_length` and `filter_polyorder`.
-- Feature names are plain: no `Get` prefix and no `Index` suffix (`KineticEnergy`, `CurvatureDispersion`). The name of the EyesWeb
+- Feature names are plain: no `Get` prefix and no `Index` suffix (`KineticEnergy`, `SpectralArcLength`). The name of the EyesWeb
   block lives only in the `eyesweb=` argument of `@describe`.
 - No EyesWeb pin abbreviations as parameter, input or output names: `gesture_duration`, `quantity_of_motion`,
   `contraction_index`, `first_signal` and `second_signal` rather than the abbreviations of the blocks.

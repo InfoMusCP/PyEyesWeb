@@ -2,7 +2,7 @@
 
 The expected numbers are those of the independent port `eyw_core` (cross-checked by the maintainers), which agree with
 the core after the corrections on every input tried (unweighted and weighted Event Sync, MECS v2, SPIKE sync in both
-modes, SequenceDetector, TemporalSynchronization).
+modes).
 """
 import os
 import sys
@@ -16,7 +16,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    EventSynchronization, EventSynchronizationMECS, SequenceDetector, SpikeSynchronization, TemporalSynchronization)
+    EventSynchronization, EventSynchronizationMECS, SpikeSynchronization)
 
 
 def pair(lag, length=100, tau=3, weighted=False):
@@ -90,17 +90,3 @@ def test_spike_sync_is_unchanged_when_the_trains_share_no_sample():
     assert result.degree == pytest.approx(4 / 6, abs=1e-12)
 
 
-@pytest.mark.parametrize("sequence,events,expected", [("1 2 1", [1, 2, 1], 1), ("5", [5], 1), ("1 1", [1, 1, 0, 1, 1], 2)])
-def test_sequence_detector_counts_a_call_that_completes_both_directions_once(sequence, events, expected):
-    detector = SequenceDetector(sequence=sequence, any_order=True)
-    for event in events:
-        detector.process(event)
-    assert detector.process(0).sequence_count == expected  # EyesWeb: 2, 2, 4
-
-
-def test_temporal_synchronization_with_a_zero_threshold_is_finite():
-    """rho = 0 for a threshold of 0 (EyesWeb: 1 - Q / 0 = inf, a NaN progression)."""
-    block = TemporalSynchronization(number_of_inputs=2, thresholds=[0.0, 0.0], max_steps=100)
-    result = block.process([-0.3, 0.2])
-    assert result.state == 0 and result.progression == 0.5
-    assert block.process([0.2, 0.1]).progression == 1.0

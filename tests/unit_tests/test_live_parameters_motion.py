@@ -10,16 +10,14 @@ import pytest
 from live_param_suite import check_invalid, check_live, check_structural, ids
 
 from pyeyesweb._core import core
-from pyeyesweb.analysis_primitives.complexity import CoarseGraining
 from pyeyesweb.analysis_primitives.periodicity import Periodicity
 from pyeyesweb.analysis_primitives.rarity import Rarity
 from pyeyesweb.low_level.contraction import PointsDensity
-from pyeyesweb.low_level.shape import BodyPartsFromCurvature, ConvexHull
+from pyeyesweb.low_level.shape import BodyPartsFromCurvature
 from pyeyesweb.low_level.symmetry import Symmetry
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.mid_level.segmentation import GestureSegmenter, MotionDuration
-from pyeyesweb.low_level.shape import FilterContour
 
 _motion = core.motion
 _rng = np.random.default_rng(11)
@@ -78,9 +76,6 @@ def symmetry(**params):
 
 LIVE = [
     (lambda: BodyPartsFromCurvature(), "minimum_distance", 3, CURVATURES),
-    (lambda: ConvexHull(integer_coordinates=True), "integer_coordinates", False, HULLS),
-    (lambda: FilterContour(window=5, gaussian_sigma=2.0), "gaussian_sigma", 1.0, CONTOURS),
-    (lambda: FilterContour(window=5, gaussian_sigma=2.0), "window", 7, CONTOURS),
     (lambda: segmenter(), "firing_threshold", 5.0, INTENSITY),
     (lambda: detector(), "noise_threshold", 1e-9, TIMED_HAND),
     (lambda: ContractionImpulsivity(sampling_rate=25.0), "sampling_rate", 50.0, IMPULSES),
@@ -99,17 +94,14 @@ STRUCTURAL = [
     (lambda: segmenter(), "filter_window_length", 7, INTENSITY),
     (lambda: detector(), "labels", ["hand", "torso"], TIMED_HAND),
     (lambda: Rarity(number_of_inputs=2, window=20), "window", 10, SAMPLES_2),
-    (lambda: CoarseGraining(window=20, hop=5, factor=2), "factor", 4, PERIODIC),
 ]
 INVALID = [
-    (lambda: FilterContour(window=5, gaussian_sigma=2.0), "window", 0, CONTOURS),
     (lambda: segmenter(), "filter_window_length", 3, INTENSITY),
     (lambda: ContractionImpulsivity(peak_threshold=0.02), "peak_threshold", 2.0, IMPULSES),
     (lambda: ContractionImpulsivity(motion_threshold=0.01), "motion_threshold", -0.1, IMPULSES),
     (lambda: Rarity(number_of_inputs=2, window=20), "window", 0, SAMPLES_2),
     (lambda: symmetry(), "pairs", [("left_shoulder", "right_shoulder"), ("left_shoulder", "right_shoulder")],
      SKELETONS),
-    (lambda: CoarseGraining(window=20, hop=5, factor=2), "factor", 0, PERIODIC),
 ]
 
 

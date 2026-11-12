@@ -119,10 +119,10 @@ These are Python-layer rules, implemented once in the central call path (`Featur
   values" (the text of `non_finite`). The sample is not buffered and no state advances, so the next valid call behaves
   as if the rejected one had not happened (a windowed feature does not hold it in its window, the hop counter and
   `latest` do not move). An input says `allow_non_finite=True` when NaN is data: the feature then checks it itself. The
-  opt-outs are the humanoid and mass-spring inputs (`HumanoidSimulator`, `HumanoidOrientations`, `GenericModel*`,
-  `PointsPredictor`: a NaN joint is a dropout the model handles; an infinity or an all-NaN frame is still
+  opt-outs are the humanoid and mass-spring inputs (`HumanoidSimulator`, `HumanoidOrientations`, `GenericModel*`:
+  a NaN joint is a dropout the model handles; an infinity or an all-NaN frame is still
   `INVALID_INPUT`) and the input of `EnsembleDominance` (a NaN complexity index is a participant without one, ignored by
-  design). An input that is cast to an integer (`SequenceDetector`) says `integer=True` and also rejects values beyond the
+  design). An input that is cast to an integer says `integer=True` and also rejects values beyond the
   integer range. A feature that checks first or more specifically (an empty frame, a degenerate shape) keeps its own
   reason. A result that overflows (finite data, 1e300) is `INVALID_INPUT` "the result is not finite" through
   `_finite_result(...)`, used by the features whose arithmetic can overflow; that rejection comes after the block advanced (see work
@@ -151,7 +151,7 @@ These are Python-layer rules, implemented once in the central call path (`Featur
 Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of forbidden synonyms over the catalog.
 
 - **One spelling per concept.** `number_of_inputs` (and `number_of_event_classes`, `number_of_points`, `number_of_regions`,
-  `number_of_subsamples`); `window` for every length in samples (also `FilterContour`, `Videogram`, `ScalarPeakDetector`,
+  `number_of_subsamples`); `window` for every length in samples (also `Videogram`, `ScalarPeakDetector`,
   the `Rarity` memory, the potentials); `cells_along_x` / `cells_along_y`; `gaussian_sigma`, `gaussian_sigma_x`,
   `gaussian_sigma_y`, `gaussian_correlation`; no EyesWeb pin abbreviations (`gesture_duration`, `quantity_of_motion`,
   `contraction_index`, `custom_amplitude`, `center_of_gravity`, `reference_direction`, inputs `first_signal` /
@@ -166,7 +166,7 @@ Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of fo
   argument raises a `TypeError` naming the public class and saying what `window` is. A variant feature shows the default
   method's parameters first and the parameters of only some methods are keyword-only.
 - **Hop.** Default 1 everywhere. `EventSynchronization` and `EventSynchronizationMECS` accumulate across windows: `hop=None`
-  is `window` (non-overlapping) and the only valid value. `CurvatureDispersion` has no hop (a result per call).
+  is `window` (non-overlapping) and the only valid value.
 - **Rate.** `sampling_rate` defaults to `None` everywhere. The window metrics (`SpectralArcLength`, `LogDimensionlessJerk`,
   `Harmonicity`, `SubmovementCount`, `CurvatureVelocityCorrelation`) have no time axis and raise at construction without it
   (`_rate_required`). `ContractionImpulsivity.frames` is `sampling_rate`; without it the index is per frame.
@@ -207,7 +207,7 @@ Results, recorder and discoverability.
   are public in `pyeyesweb.physical_signals` (they need the core, so not in `data_models`), next to `MassSpringModel`.
 - **Layer placement rule** (in the `catalog` docstring). Physical signals produce a signal from raw frames or a model and
   give a signal again; low-level measures a frame or a short window the feature buffers itself; mid-level needs a whole gesture; high-level needs several people; an analysis primitive knows nothing of bodies or geometry. Moved:
-  `FilterContour` to `pyeyesweb.low_level` (with the other contour features, in `shape.py`), `TrajectoryNonPlanarity` and
+  `TrajectoryNonPlanarity` and
   `average_curvature_3d` to `pyeyesweb.mid_level` (superseded in work package D: `Directness` too moved to low-level).
   `ContourFeature` now lives in `low_level/shape.py`.
 - **`GenericModel*`.** Each docstring has an example, and the error for a wrong `model=` names
@@ -254,7 +254,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   Before, the core default `"neck"`, which is no joint of those presets, was kept and the core silently skipped the translation.
 - **`KineticEnergy(weights=...)` (S5).** A sequence of weights is read as one weight per label (`labels=` or `skeleton=`); another length
   raises `ValueError` ("weights has 1 value, the skeleton has 3 joints"), as does a sequence without labels or a value that is neither
-  mapping nor sequence. No other feature takes `weights`; `MotionNoiseDetector`, `PointsDensity` and `PointsPredictor` take `labels` only.
+  mapping nor sequence. No other feature takes `weights`; `MotionNoiseDetector` and `PointsDensity` take `labels` only.
 - **Constructor error of `window`/`hop` (S8).** It names the class, as the setter's does.
 - **Overflow does not roll the state back (S6, documented, not changed).** `"the result is not finite"` is detected after the block
   processed the sample, and the state is not rolled back. A stateful feature (`KineticEnergy` in position mode keeps the overflowing frame as
@@ -304,10 +304,6 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   the same configuration. The Python wrapper now divides the damping of the core's XML by `0.5 * sqrt(mass2 * stiffness)` (the factor the
   loader multiplies by), so `from_xml_*(m.to_xml())` has the configuration of `m` (to rounding, about 1e-16 relative); loading is unchanged and
   existing files read as before. A spring with zero stiffness or tip mass has no relative damping and is written as 0.
-- **`CoarseGraining` cadence is the core's, documented.** The EyesWeb block counts its activations modulo `factor` and computes only on
-  activation 0, so with `hop` the series is produced on the first full window and then every `factor * hop`
-  samples; the other windows are `NO_OUTPUT` "not recomputed on this activation". Not a defect: kept, described in the docstring and pinned by
-  `test_coarse_graining_is_computed_every_factor_th_window`.
 
 ### Contract changes of work package J (2026-10-21)
 
@@ -315,7 +311,6 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
 
 - **`Symmetry` has no `reference_type`.** The core translates the frame only for `"label"`, so the parameter is hidden (`_hidden_params`): not in the signature, the setter or `parameters`; passing it is a `TypeError`. The reference joint is `reference_point=` or the skeleton's reference.
 - **`Symmetry(pairs=...)` is validated** (constructor and setter, both methods): an entry that is not two joint names raises `ValueError` ("a pair is two joint names (left, right), got ..."); an unknown joint raises as before.
-- **`ConvexHull(integer_coordinates=False)`** is the default: float contours are accepted; `True` (the core default) rejects fractions.
 - **`KineticEnergy(labels=[...])`** without `weights=` weighs every joint 1.0; a joint missing from an explicit mapping weighs 0.
 
 #### J-b
@@ -374,8 +369,8 @@ The documentation is built from the code, so these are rules for any later chang
 - snake_case, descriptive, the same concept has the same name in every feature (`window`, `hop`, `sampling_rate`,
   `dims`, `tolerance`, `embedding_dimension`...).
 - Savitzky-Golay parameters are always `filter_window_length` and `filter_polyorder`, in every feature (no unprefixed forms).
-- Feature names are the plain name, with no `Get` prefix and no `Index` suffix (`KineticEnergy`, `CurvatureVelocityCorrelation`,
-  `CurvatureDispersion`). The EyesWeb block name lives only in the `@describe(eyesweb=...)` metadata.
+- Feature names are the plain name, with no `Get` prefix and no `Index` suffix (`KineticEnergy`, `CurvatureVelocityCorrelation`).
+  The EyesWeb block name lives only in the `@describe(eyesweb=...)` metadata.
 
 ### Choices are strings (**Decided**)
 

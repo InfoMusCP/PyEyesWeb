@@ -8,7 +8,7 @@ concepts behind it are in {doc}`../concepts/inputs`; the generated reference is 
 
 ## What a feature reads from a skeleton
 
-Five classes take `skeleton=`. Each reads the fields of the skeleton that it needs and ignores the others.
+Four classes take `skeleton=`. Each reads the fields of the skeleton that it needs and ignores the others.
 
 | Class | Fields it reads |
 |---|---|
@@ -16,7 +16,6 @@ Five classes take `skeleton=`. Each reads the fields of the skeleton that it nee
 | {py:class}`~pyeyesweb.low_level.MotionNoiseDetector` | `joints` |
 | {py:class}`~pyeyesweb.low_level.Symmetry` | `joints`, `pairs` and, for `method="ratio"`, `reference` |
 | {py:class}`~pyeyesweb.low_level.PointsDensity` | `joints` (names only; they do not enter the computation) |
-| {py:class}`~pyeyesweb.physical_signals.PointsPredictor` | `joints` |
 
 A value given explicitly to the feature (`labels=`, `weights=`, `pairs=`) always wins over the skeleton. A feature that needs
 joints and receives none, neither through `skeleton=` nor through `labels=`, raises `ValueError` at construction. Other
@@ -208,8 +207,8 @@ True
 The humanoid and generic-model features of the physical-signals layer do not take a skeleton. They follow a captured body with a
 model that has its own joint names (`pyeyesweb.physical_signals.HUMANOID_JOINTS`, 21 names), and the parameter `joint_map`
 says which label of your data feeds each model joint, as `model joint -> your label`. A joint you leave out keeps the model's
-name. Six classes take `joint_map`: `HumanoidSimulator`, `HumanoidOrientations`, `GenericModelOrientations`,
-`GenericModelSimulator`, `GenericModelPredictor` and `GenericModelEstimator`.
+name. Four classes take `joint_map`: `HumanoidSimulator`, `HumanoidOrientations`, `GenericModelOrientations` and
+`GenericModelSimulator`.
 
 ```{doctest}
 >>> from pyeyesweb.physical_signals import HUMANOID_JOINTS, HumanoidSimulator

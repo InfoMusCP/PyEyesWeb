@@ -3,11 +3,9 @@
 A captured skeleton is a noisy, incomplete record of a body: joints jitter, drop out for a few frames, and move in ways
 a real body could not (a forearm that changes length). A **mass-spring model** is a small physical simulation that is driven
 by the captured movement and gives back the movement of a body that obeys simple mechanics. Its joints are masses, its
-bones are springs, and the output is a smooth, always articulated pose with constant bone lengths. The same model can
-also be run ahead of the data, to forecast a movement a fraction of a second early, or fitted to a recording, to find the
-masses and the stiffnesses that explain it.
+bones are springs, and the output is a smooth, always articulated pose with constant bone lengths.
 
-Seven features implement this family (all in layer 1, see {doc}`../user_guide/physical_signals`). They are virtual sensors
+Four features implement this family (all in layer 1, see {doc}`../user_guide/physical_signals`). They are virtual sensors
 in the sense of the conceptual model ({doc}`framework`): they take a signal (a skeleton) and give a signal again. The
 body-model approach follows the HumanoidModel blocks of the EyesWeb platform {cite}`camurri2003eyesweb,volpe2016designing`;
 for the original formulation of mass-spring humanoid models in the EyesWeb libraries {cite}`piana2016fluidity`.
@@ -54,7 +52,7 @@ $$
 \mathbf{b}_s = \mathbf{p}_{\mathrm{tip}(s)} - \mathbf{p}_{\mathrm{hinge}(s)},
 $$
 
-not normalised and in the unit of the data. It is the front end of the generic simulator and predictor.
+not normalised and in the unit of the data. It is the front end of the generic simulator.
 
 ## Following a movement: the simulators
 
@@ -88,38 +86,6 @@ the captured joints and, optionally, `control` bone directions that replace the 
 
 The first call after construction or `reset()` with `start_from_input=True` puts the model on the input and returns it
 unchanged, as the last line shows. From then on the model moves by its dynamics.
-
-## Looking ahead: the predictors
-
-{py:class}`~pyeyesweb.physical_signals.GenericModelPredictor` follows the bone directions like the generic simulator
-and gives `positions`, where the masses will be `prediction_interval` seconds later (0.2 s by default) when the model is left
-to move on its own. With `mode="masses_inertia"` the masses keep their velocity; with `"directions_linear"` the bone
-directions are extrapolated linearly. The forecast does not disturb the state of the model that follows the data.
-
-{py:class}`~pyeyesweb.physical_signals.PointsPredictor` is the simplest forecast and needs no model: each labelled point is
-extended by its last displacement,
-
-$$
-\hat{\mathbf{p}}(t) = \mathbf{p}(t) + \bigl(\mathbf{p}(t) - \mathbf{p}(t-1)\bigr),
-$$
-
-a constant-velocity prediction one frame ahead. The step is one frame, whatever the sampling rate: the feature has no time axis.
-A point seen for the first time, or after a gap, is returned unchanged.
-
-## Learning the body: the estimator
-
-{py:class}`~pyeyesweb.physical_signals.GenericModelEstimator` follows the observed positions of the masses of a model and,
-while `enable_adaptation` is on, perturbs one parameter per frame (a stochastic coordinate descent). It keeps the change when
-it lowers a cost that weighs position, direction and speed errors, with weights `cost_distance`, `cost_directions` and
-`cost_speed`. Which parameters are adapted is chosen by `estimate_masses`, `estimate_length_springs` and
-`estimate_direction_springs`; with none of them on, nothing is adapted. Over a recording the model learns the masses, and the
-stiffnesses and dampings of the springs, that explain the observed movement, and `feature.model` is a copy of the model with
-the estimated parameters (it can be saved as an XML file). The random draws are seeded (`seed`, 12345 by default), so a run is
-reproducible.
-
-Its second output, `error`, is the cost of the frame. It mixes quantities in the unit of the model, so its trend over a
-recording says more than its value: it should fall as the model adapts. The result is `INVALID_INPUT` with the reason
-`"the result is not finite"` when the simulation diverged.
 
 ## How to read the outputs
 
@@ -189,7 +155,7 @@ Numerically, the angle of the rod after 0.05, 0.1, 0.2, 0.5 and 1 s:
 
 ## Practical notes
 
-**Time.** The simulators, the predictor and the estimator advance the model by the time step of the call, in seconds: the
+**Time.** The simulators advance the model by the time step of the call, in seconds: the
 difference of `timestamp` from the previous call, else `1 / sampling_rate`, else one second per call with the `reason`
 `"no time given: per-sample derivatives"` (see {doc}`../concepts/time_units_parameters`). The first timed call after
 construction or `reset()` uses `1 / sampling_rate` (or 1 s), never the absolute time. A timestamp that does not increase gives

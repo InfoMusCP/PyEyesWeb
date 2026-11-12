@@ -5,9 +5,8 @@ compared with the raw core block that adopts the new parameters at the same fram
 block's, bit for bit, and the result says "parameters changed: state reset" exactly when the block reports that it
 forgot its state. The classification is the core's, from the original (see the headers of the blocks):
 
-* `HumanoidSimulator`, `GenericModelSimulator`, `GenericModelPredictor`: every parameter is LIVE; the topology of a
+* `HumanoidSimulator`, `GenericModelSimulator`: every parameter is LIVE; the topology of a
   model (names of its masses and springs, which end masses) is STRUCTURAL, the rest of a model is LIVE.
-* `GenericModelEstimator`: LIVE except `seed` and the topology of the model.
 * `HumanoidOrientations`: `reference_direction` is STRUCTURAL (the body is built from it).
 """
 
@@ -24,7 +23,7 @@ from humanoid_inputs import CHAIN_XML, REFERENCE, forearm  # noqa: E402
 from live_param_suite import CHANGE_AT, NOTE, check_invalid, check_structural, feed  # noqa: E402
 
 from pyeyesweb._core import core  # noqa: E402
-from pyeyesweb.physical_signals import (HUMANOID_JOINTS, GenericModelEstimator, GenericModelPredictor,  # noqa: E402
+from pyeyesweb.physical_signals import (HUMANOID_JOINTS, # noqa: E402
                                         GenericModelSimulator, HumanoidOrientations, HumanoidSimulator, MassSpringModel)
 
 RAW = core.humanoid
@@ -55,11 +54,6 @@ BLOCKS = {
                           JOINT_LAYOUT, FOREARM),
     "GenericModelSimulator": (lambda **params: GenericModelSimulator(MODEL, **RATE, **params),
                               lambda **params: RAW.GenericModelSimulator(RAW_MODEL, **_raw(params)), SPRING_LAYOUT, CHAIN_DIRECTIONS),
-    "GenericModelPredictor": (lambda **params: GenericModelPredictor(MODEL, **RATE, **params),
-                              lambda **params: RAW.GenericModelPredictor(RAW_MODEL, **_raw(params)), SPRING_LAYOUT, CHAIN_DIRECTIONS),
-    "GenericModelEstimator": (lambda **params: GenericModelEstimator(MODEL, estimate_direction_springs=True, **RATE, **params),
-                              lambda **params: RAW.GenericModelEstimator(RAW_MODEL, **_raw({"estimate_direction_springs": True, **params})),
-                              MASS_LAYOUT, CHAIN_POSITIONS),
 }
 
 COMMON = [("damping", 3.0), ("viscosity", 2.0), ("gravity", (0.0, -500.0, 0.0)), ("length_forces", False),
@@ -69,15 +63,6 @@ GENERIC = [("use_input_lengths", True)]
 CASES = (
     [("HumanoidSimulator", name, value, False) for name, value in COMMON]
     + [("GenericModelSimulator", name, value, False) for name, value in COMMON + GENERIC]
-    + [("GenericModelPredictor", name, value, False) for name, value in COMMON + GENERIC + [
-        ("prediction_interval", 0.5), ("damping_factor", 0.5), ("viscosity_factor", 2.0), ("mode", "directions_linear")]]
-    + [("GenericModelEstimator", name, value, False) for name, value in COMMON + GENERIC + [
-        ("enable_adaptation", False), ("estimate_masses", True), ("estimate_length_springs", True),
-        ("estimate_direction_springs", False), ("step_is_absolute", True), ("initial_step", 0.1),
-        ("step_adaptation_factor", 0.001), ("cost_distance", 2.0), ("cost_directions", 2.0), ("cost_speed", 2.0),
-        ("cost_length_stiffness", 0.5), ("cost_direction_stiffness", 0.5), ("cost_length_damping", 0.5),
-        ("cost_direction_damping", 0.5)]]
-    + [("GenericModelEstimator", "seed", 99, True)]
 )
 
 
@@ -143,9 +128,6 @@ def test_a_live_change_keeps_the_state_a_control_does_not_share():
 INVALID = [
     (lambda: HumanoidSimulator(integration_step=0.002, **RATE), "integration_step", 0.0, list(FOREARM)),
     (lambda: GenericModelSimulator(MODEL, integration_step=0.002, **RATE), "integration_step", -1.0, list(CHAIN_DIRECTIONS)),
-    (lambda: GenericModelPredictor(MODEL, prediction_interval=0.2, **RATE), "prediction_interval", -0.1, list(CHAIN_DIRECTIONS)),
-    (lambda: GenericModelPredictor(MODEL, mode="masses_inertia", **RATE), "mode", "sideways", list(CHAIN_DIRECTIONS)),
-    (lambda: GenericModelEstimator(MODEL, initial_step=0.05, **RATE), "initial_step", -1.0, list(CHAIN_POSITIONS)),
     (lambda: GenericModelSimulator(MODEL, length_forces=True, **RATE), "length_forces", "yes", list(CHAIN_DIRECTIONS)),
 ]
 

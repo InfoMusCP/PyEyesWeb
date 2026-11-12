@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from pyeyesweb.analysis_primitives.synchronization import (
-    PartialRecurrenceSynchronization, CorrelationsMatrix, CrossRecurrencePlot, NonlinearInterdependence,
+    PartialRecurrenceSynchronization, CrossRecurrencePlot, NonlinearInterdependence,
     EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, RecurrencePlot, SpikeSynchronization, PhaseLockingValue
 )
 from pyeyesweb.data_models.inputs import InputKind
@@ -105,18 +105,7 @@ def test_pars_non_finite_matrix_is_invalid_input_and_must_be_square():
     assert PartialRecurrenceSynchronization().process(np.eye(3)).status is Status.OK
 
 
-def test_warming_up_correlations_matrix_into_pars():
-    cpr, pars = CorrelationsMatrix(window=5, number_of_inputs=2), PartialRecurrenceSynchronization()
-    for _ in range(5):
-        row = cpr.process(RNG.standard_normal(2))
-        if row.status is Status.OK:
-            assert pars.process(row.correlations_matrix).status is Status.OK
-        else:
-            assert pars.process(row.correlations_matrix).status is Status.INVALID_INPUT
-
-
 @pytest.mark.parametrize("factory, series", [
-    (lambda: CorrelationsMatrix(window=8, number_of_inputs=2), (2, 8)),
     (lambda: RecurrencePlot(window=8), (2, 8)),
     (lambda: GeneralisedAutoCorrelation(window=20), (1, 20)),
 ])
@@ -178,11 +167,6 @@ def test_set_tau_min_is_kept_by_a_rebuilt_block():
     assert result.taus[0] == 3
     with pytest.raises(ValueError, match="window"):
         feature.set_tau_min(30)
-
-
-def test_correlations_matrix_needs_two_samples():
-    with pytest.raises(ValueError, match="window"):
-        CorrelationsMatrix(window=1)
 
 
 def test_synchronization_filter_needs_a_long_enough_window():

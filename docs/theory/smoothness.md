@@ -7,10 +7,10 @@ the study of expressive movement {cite}`piana2016fluidity,alborno2016interactive
 {cite}`balasubramanian2015analysis`.
 
 No single number is the smoothness of a movement: the metrics below capture different aspects, and they do not rank
-movements in the same way. This page defines the six features of the family and says what each one measures:
+movements in the same way. This page defines the five features of the family and says what each one measures:
 {py:class}`~pyeyesweb.low_level.SpectralArcLength`, {py:class}`~pyeyesweb.low_level.LogDimensionlessJerk`,
-{py:class}`~pyeyesweb.low_level.Harmonicity`, {py:class}`~pyeyesweb.low_level.SubmovementCount`,
-{py:class}`~pyeyesweb.low_level.CurvatureDispersion` and {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`. The
+{py:class}`~pyeyesweb.low_level.Harmonicity`, {py:class}`~pyeyesweb.low_level.SubmovementCount` and
+{py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`. The
 symbols are those of {doc}`notation`.
 
 ## What is a smooth movement
@@ -197,34 +197,6 @@ the correlation is strongly negative:
 -0.94
 ```
 
-### Curvature dispersion
-
-{py:class}`~pyeyesweb.low_level.CurvatureDispersion` is a curvature-based index of a movement that relates how much the path
-bends to the distance that the point travelled over the last `window` calls (50 by default). It is computed from the
-velocity and the acceleration vectors of the point, from which the feature derives the curvature $\kappa$ and the arc
-length $\lVert\mathbf{v}\rVert \, \Delta t$ of each call, keeps both over a ring of `window` calls, and returns one
-dimensionless value per call, from the first call on. The index is 1 while the movement is slower than `movement_threshold`:
-a point at rest has no smoothness to measure. A path with curvature 0 everywhere, a perfectly straight one, has no finite
-index and gives `INVALID_INPUT`. The empty entries of the rings weigh in until they have filled, so the first `window`
-values are not comparable with the later ones. Corrected in the core: every call now adds the speed times the time step to
-the arc length (above and below the threshold). This index was the `smoothness` output of `Kinematics` in earlier versions.
-
-The velocity and the acceleration come from two `Kinematics` features with the same filter parameters and time rule, one for
-each, with `output_dims="components"`:
-
-```{doctest}
->>> from pyeyesweb.low_level import CurvatureDispersion, Kinematics
->>> time = np.arange(200) / 100.0
->>> circle = np.c_[np.cos(2 * np.pi * time), np.sin(2 * np.pi * time)]     # a circle of radius 1 m
->>> velocity = Kinematics(output_type="velocity", output_dims="components", sampling_rate=100.0)
->>> acceleration = Kinematics(output_type="acceleration", output_dims="components", sampling_rate=100.0)
->>> feature = CurvatureDispersion(window=50, sampling_rate=100.0)
->>> for point in circle:
-...     result = feature.process(velocity.process(point).velocity, acceleration.process(point).acceleration)
->>> round(float(result.curvature_dispersion), 2)
-0.06
-```
-
 ## How to read the outputs
 
 | Feature | Output | Unit | Smoother means | Range |
@@ -234,7 +206,6 @@ each, with `output_dims="components"`:
 | `Harmonicity` | `harmonicity` | none | closer to 1 | $[0, 1]$ |
 | `SubmovementCount` | `submovement_count` | none | lower | integer, 0 or more |
 | `CurvatureVelocityCorrelation` | `smoothness` | none | closer to $-1$ | $[-1, 1]$ for `"pearson"` |
-| `CurvatureDispersion` | `curvature_dispersion` | none | see the example | 1 below the movement threshold |
 
 The metrics are dimensionless and independent of the unit of the data, which makes them comparable between movements of
 different size and speed, but a value is only meaningful relative to the same metric on a comparable movement: the absolute

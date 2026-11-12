@@ -8,7 +8,7 @@ kinematics_energy:
 smoothness:
   title: Smoothness
   doc: theory/smoothness
-  features: [SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount, CurvatureDispersion, CurvatureVelocityCorrelation]
+  features: [SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount, CurvatureVelocityCorrelation]
 shape_symmetry_balance:
   title: Shape, symmetry and balance
   doc: theory/shape_symmetry_balance
@@ -25,13 +25,13 @@ gesture_segmentation:
 entropy_rarity_periodicity:
   title: Entropy, rarity and periodicity
   doc: theory/entropy_rarity_periodicity
-  features: [SampleEntropy, CoarseGraining, MultiScaleEntropy, Rarity, Periodicity, BinaryPulsesRegularity]
+  features: [SampleEntropy, MultiScaleEntropy, Rarity, Periodicity, BinaryPulsesRegularity]
 synchronization:
   title: Synchronization
   doc: theory/synchronization
-  features: [PhaseLockingValue, CorrelationsMatrix, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation,
+  features: [PhaseLockingValue, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation,
              EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization,
-             SequenceDetector, RecurrencePlot, CrossRecurrencePlot, TemporalSynchronization]
+             RecurrencePlot, CrossRecurrencePlot]
 dominance:
   title: Dominance
   doc: theory/dominance
@@ -39,9 +39,8 @@ dominance:
 humanoid_models:
   title: Humanoid and mass-spring models
   doc: theory/humanoid_models
-  features: [HumanoidSimulator, HumanoidOrientations, GenericModelOrientations, GenericModelSimulator,
-             GenericModelPredictor, GenericModelEstimator, PointsPredictor]
+  features: [HumanoidSimulator, HumanoidOrientations, GenericModelOrientations, GenericModelSimulator]
 imaging:
   title: Imaging
   doc: theory/imaging
-  features: [SilhouetteCentroids, SilhouetteBodyParts, Videogram, FilterContour, ContourCurvature, ConvexHull, BodyPartsFromCurvature]
+  features: [SilhouetteCentroids, SilhouetteBodyParts, Videogram, ContourCurvature, BodyPartsFromCurvature]

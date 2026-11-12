@@ -1,17 +1,16 @@
 """Synchronization between signals, events and people."""
 
 from .phase import PhaseLockingValue
-from .correlation import CorrelationsMatrix, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation
+from .correlation import PartialRecurrenceSynchronization, GeneralisedAutoCorrelation
 from .events import (
-    EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization, SequenceDetector
+    EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization,
 )
 from .recurrence import RecurrencePlot, CrossRecurrencePlot
-from .temporal import TemporalSynchronization
 
 __all__ = [
-    "PhaseLockingValue", "CorrelationsMatrix", "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation",
+    "PhaseLockingValue", "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation",
     "EventSynchronization", "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization",
-    "SequenceDetector", "RecurrencePlot", "CrossRecurrencePlot", "TemporalSynchronization"
+    "RecurrencePlot", "CrossRecurrencePlot",
 ]
 
 

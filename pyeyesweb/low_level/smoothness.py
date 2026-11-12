@@ -10,7 +10,6 @@ from pyeyesweb.data_models.feature import WindowedFeature
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
 from pyeyesweb.base.inputs import non_finite
-from pyeyesweb.low_level.kinematics import _InferredDimsBlock
 
 
 class _SpeedProfileMetric(MinimumWindow, WindowedFeature, CoreFeature):
@@ -319,92 +318,6 @@ class SubmovementCount(_SpeedProfileMetric):
         super().__init__(window, hop, sampling_rate=sampling_rate, prominence_factor=prominence_factor)
 
 
-@describe(Layer.LOW_LEVEL)
-class CurvatureDispersion(_InferredDimsBlock):
-    r"""Curvature-based smoothness index of a movement, from its velocity and acceleration vectors.
-
-    The index relates the curvature of the path to the distance covered over the last ``window`` calls: it compares how
-    much the path bends with how far the point travelled, and it is 1 while the movement is slower than
-    ``movement_threshold`` (a still point has no smoothness to measure). It is computed from the velocity
-    :math:`\mathbf{v}` and the acceleration :math:`\mathbf{a}` of the point, from which the feature derives the
-    curvature :math:`\kappa` of the path and the arc length :math:`\lVert\mathbf{v}\rVert\,dt` covered at each call; it
-    keeps both over a ring of ``window`` calls and returns one dimensionless value per call, from the first call on.
-    The two rings fill over ``window`` calls and their empty entries (zeros) weigh in until then.
-
-    Parameters
-    ----------
-    dims : int, optional
-        Number of components of the vectors: 1, 2 or 3. ``None`` (default) takes it from the first frame. In 1D the
-        curvature is 0, so the index is NaN (``INVALID_INPUT``) above the threshold. *(structural)*
-    window : int, optional
-        Calls held by the curvature and arc-length rings (at least 2). Defaults to ``50``. *(structural)*
-    movement_threshold : float, optional
-        Speed below which the movement counts as still and the index is 1, in m/s (scaled by ``units``). Defaults to
-        ``0.005``. *(live)*
-    sampling_rate : float, optional
-        Sampling rate in Hz, used when no timestamp is given. Defaults to ``None`` (one second per call, and the
-        ``reason`` says so). *(live)*
-    units : {"m", "mm"}, optional
-        Unit of the data: scales ``movement_threshold`` (the vectors and the output are never scaled). Defaults to
-        ``"m"``. *(live)*
-
-    Notes
-    -----
-    **Inputs.** ``process(velocity, acceleration, *, timestamp=None)``: the velocity vector (length/s) and the
-    acceleration vector (length/s^2) of the movement at this call, ``dims`` components each. Compute them beforehand
-    with two ``Kinematics(output_dims="components")``, one with ``output_type="velocity"`` and one with
-    ``output_type="acceleration"``, with the same filter parameters and time rule, and feed both to every call.
-    ``reset()`` clears the rings. ``timestamp`` is in seconds.
-
-    **Outputs.** ``curvature_dispersion`` (dimensionless; 1 when the movement is below the threshold).
-
-    **Statuses.** ``OK`` from the first call; ``INVALID_INPUT`` when an input is NaN or infinite, the timestamp does
-    not increase, or the index is not finite (for example a perfectly straight path, whose curvature is 0).
-
-    Corrected in the core: the arc length added the speed alone above the movement threshold but the speed times the
-    time step below it; every call now adds the speed times the time step. This index was the ``smoothness`` output
-    of ``Kinematics``.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from pyeyesweb.low_level import CurvatureDispersion, Kinematics
-    >>> t = np.arange(200) / 100.0
-    >>> path = np.c_[np.cos(2 * np.pi * t), np.sin(2 * np.pi * t)]  # a circle of radius 1 m
-    >>> speed = Kinematics(output_type="velocity", output_dims="components", sampling_rate=100.0)
-    >>> acceleration = Kinematics(output_type="acceleration", output_dims="components", sampling_rate=100.0)
-    >>> feature = CurvatureDispersion(window=50, sampling_rate=100.0)
-    >>> for point in path:
-    ...     result = feature.process(speed.process(point).velocity, acceleration.process(point).acceleration)
-    >>> round(float(result.curvature_dispersion), 2)
-    0.06
-    """
-
-    _OUTPUTS = Schema(Output("curvature_dispersion",
-                            doc="Curvature-based smoothness index; 1 when the movement is below the threshold."))
-    _core_class = core.trajectory.CurvatureDispersion
-    _timed = True
-    _unit_params = {"movement_threshold": 1}  # a speed threshold: length per time
-
-    def _inputs(self) -> Inputs:
-        return Inputs(Input("velocity", InputKind.SAMPLE, (self._dims,), unit="units/s", doc="velocity vector"),
-                      Input("acceleration", InputKind.SAMPLE, (self._dims,), unit="units/s^2",
-                            doc="acceleration vector"))
-
-    def _frame_dims(self, frame: Any) -> Optional[int]:
-        shape = np.shape(frame)
-        return shape[0] if len(shape) == 1 and shape[0] >= 1 else None
-
-    def process(self, velocity: Any, acceleration: Any, *, timestamp: Optional[float] = None) -> Result:
-        self._infer_dims(velocity)
-        self.inputs.check((velocity, acceleration), type(self).__name__)  # the declared shapes now know `dims`
-        dt = self._time_step(timestamp)
-        vectors = [np.ascontiguousarray(vector, dtype=float) for vector in (velocity, acceleration)]
-        if reason := non_finite(vectors):
-            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
-        return self._to_result(self._block.process(*vectors, dt), timestamp)
-
-
 @describe(Layer.LOW_LEVEL, eyesweb="smoothnessindex (Smoothness)")
 class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     r"""Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.
@@ -580,5 +493,5 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
                            curvature_std=curvature_std, velocity_std=velocity_std, timestamp=timestamp)
 
 
-__all__ = ["SpectralArcLength", "LogDimensionlessJerk", "Harmonicity", "SubmovementCount", "CurvatureDispersion",
+__all__ = ["SpectralArcLength", "LogDimensionlessJerk", "Harmonicity", "SubmovementCount",
            "CurvatureVelocityCorrelation"]

@@ -11,7 +11,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.analysis_primitives import (  # noqa: E402
-    CoarseGraining, MultiScaleEntropy, Periodicity, Rarity, SampleEntropy
+    MultiScaleEntropy, Periodicity, Rarity, SampleEntropy
 )
 
 RNG = np.random.default_rng(0)
@@ -34,8 +34,6 @@ def test_multi_scale_entropy_rejects_a_window_that_drops_scales():
     (lambda window_size: Rarity(method="mode_distance", window=window_size), 2),
     (lambda window_size: SampleEntropy(window=window_size, embedding_dimension=4), 5),
     (lambda window_size: SampleEntropy(window=window_size), 13),
-    (lambda window_size: CoarseGraining(window=window_size, factor=3), 3),
-    (lambda window_size: CoarseGraining(window=window_size), 2),
     (lambda window_size: Periodicity(window=window_size), 2),
 ])
 def test_minimum_window_at_construction_and_when_set(build, minimum):
@@ -47,7 +45,7 @@ def test_minimum_window_at_construction_and_when_set(build, minimum):
     assert feature.window == minimum
 
 
-def test_sample_entropy_and_coarse_graining_revalidate_on_parameter_change():
+def test_sample_entropy_revalidates_on_parameter_change():
     entropy = SampleEntropy(window=8, embedding_dimension=3)
     with pytest.raises(ValueError, match=">= 9"):
         entropy.embedding_dimension = 8
@@ -55,11 +53,6 @@ def test_sample_entropy_and_coarse_graining_revalidate_on_parameter_change():
     entropy.embedding_dimension = 7
     assert entropy.outputs["sample_entropy"].shape == (7,)
     assert entropy._process_window(RNG.standard_normal((1, 8))).ok
-    graining = CoarseGraining(window=6, factor=2)
-    with pytest.raises(ValueError, match=">= 7"):
-        graining.factor = 7
-    graining.factor = 3
-    assert graining._process_window(RNG.standard_normal((1, 6))).coarse_grained.shape == (1, 2)
 
 
 def test_rarity_method_accepts_its_name():

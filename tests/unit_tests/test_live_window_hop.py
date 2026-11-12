@@ -13,7 +13,7 @@ import pytest
 
 from live_param_suite import NOTE, feed
 
-from pyeyesweb.analysis_primitives import (BinaryPulsesRegularity, CoarseGraining, CorrelationsMatrix, CrossRecurrencePlot,
+from pyeyesweb.analysis_primitives import (BinaryPulsesRegularity, CrossRecurrencePlot,
                                            EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation,
                                            MultiScaleEntropy, NonlinearInterdependence, Periodicity, PhaseLockingValue,
                                            Rarity, RecurrencePlot, SampleEntropy, SpikeSynchronization)
@@ -43,7 +43,6 @@ EVENT_PAIRS = [(first, second) for first, second in zip(*_events())]
 # (factory, recording): `hop` of the factory is 5 unless the block needs another.
 FREE = [
     (lambda: SampleEntropy(window=30, hop=5), _frames(1)),
-    (lambda: CoarseGraining(window=30, hop=5, factor=2), _frames(1)),
     (lambda: BinaryPulsesRegularity(window=30, hop=5), _frames(1)),
     (lambda: Periodicity(window=30, hop=5), _frames(1)),
     (lambda: MultiScaleEntropy(window=3100, hop=5), _frames(1, 3400)),
@@ -55,7 +54,6 @@ FREE = [
     (lambda: Harmonicity(window=30, hop=5, sampling_rate=50.0), _frames(1)),
     (lambda: SubmovementCount(window=30, hop=5, sampling_rate=50.0), _frames(1)),
     (lambda: Rarity(window=30, hop=5, method="mode_distance"), _frames(1)),
-    (lambda: CorrelationsMatrix(window=30, hop=5, number_of_inputs=3), _frames(3)),
     (lambda: GeneralisedAutoCorrelation(window=30, hop=5), _frames(1)),
     (lambda: RecurrencePlot(window=30, hop=5), _frames(1)),
     (lambda: CrossRecurrencePlot(window=30, hop=5), _pairs()),
