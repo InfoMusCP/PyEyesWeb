@@ -24,7 +24,7 @@ EXEMPT = {
         "SpikeSynchronization.degree SpikeSynchronization.distance SpikeSynchronization.profile "
         "RecurrencePlot.recurrence_matrix CrossRecurrencePlot.cross_recurrence_matrix "
         "Periodicity.powers "
-        "HumanoidOrientations.directions"),
+        "MassSpringSimulator.directions"),
     "a logarithm of a ratio (an information measure)": (
         "SampleEntropy.sample_entropy Rarity.rarity MultiScaleEntropy.complexity_index MultiScaleEntropy.scale_entropies"),
     "a count or an index": (
@@ -38,7 +38,7 @@ EXEMPT = {tuple(entry.split(".")): reason for reason, entries in EXEMPT.items() 
 
 # A feature with `units=`: the outputs that are a length (or a speed...) and must name the unit it was given.
 LENGTH_OUTPUTS = {
-    "HumanoidSimulator": ("joints",), "GenericModelSimulator": ("positions",),
+    "MassSpringSimulator": ("joints",),
     "Kinematics": ("velocity",), "TrajectoryNonPlanarity": ("curvature_radius",),
     "HitCellDetector": (), "Equilibrium": (), "MotionNoiseDetector": (),
 }

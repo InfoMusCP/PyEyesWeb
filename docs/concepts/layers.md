@@ -60,7 +60,7 @@ Pass a {py:class}`~pyeyesweb.catalog.Layer` to list one group.
 >>> from pyeyesweb import Layer, catalog
 >>> features = catalog()
 >>> Counter(info.layer.value for info in features)
-Counter({'low_level': 22, 'analysis_primitives': 19, 'physical_signals': 11, 'mid_level': 7, 'high_level': 1})
+Counter({'low_level': 19, 'analysis_primitives': 15, 'mid_level': 7, 'physical_signals': 5, 'high_level': 1})
 >>> [info.name for info in catalog(Layer.MID_LEVEL)]
 ['GestureSegmenter', 'MotionDuration', 'Suddenness', 'SuddennessImpulsivity', 'ContractionImpulsivity', 'PositionDependingPotentials', 'RegionDependingPotentials']
 >>> info = next(info for info in features if info.name == "KineticEnergy")

@@ -6,7 +6,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 import pyeyesweb  # noqa: E402
 from pyeyesweb import analysis_primitives, data_models, datasets, high_level, low_level, mid_level, physical_signals, skeletons  # noqa: E402
-from pyeyesweb.physical_signals import GenericModelSimulator  # noqa: E402
+from pyeyesweb.physical_signals import MassSpringSimulator  # noqa: E402
 
 
 def test_the_package_lists_its_public_modules_and_names_only():
@@ -35,4 +35,4 @@ def test_the_helpers_of_the_output_contract_are_private():
 
 def test_the_model_error_names_the_ways_to_build_one():
     with pytest.raises(TypeError, match="MassSpringModel.from_xml_file"):
-        GenericModelSimulator(None)
+        MassSpringSimulator(model=None)

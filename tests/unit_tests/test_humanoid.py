@@ -18,9 +18,8 @@ from humanoid_inputs import CHAIN_XML, MASSES, REFERENCE, SPRINGS, forearm, tpos
 from pyeyesweb import Layer, catalog  # noqa: E402
 from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.data_models import Status  # noqa: E402
-from pyeyesweb.physical_signals import (HUMANOID_BONES, HUMANOID_JOINTS, GenericModelOrientations,  # noqa: E402
-                                        GenericModelSimulator, HumanoidOrientations,
-                                        HumanoidSimulator, MassSpringModel)
+from pyeyesweb.physical_signals import (HUMANOID_BONES, HUMANOID_JOINTS, MassSpringModel,  # noqa: E402
+                                        MassSpringSimulator)
 
 DT = 0.04
 RATE = 25.0
@@ -65,36 +64,36 @@ def test_humanoid_simulator_is_the_raw_block(scenario):
     frames = SCENARIOS[scenario]
     raw = RAW.HumanoidSimulator()
     expected = np.stack([raw.process_array(JOINT_LAYOUT, frame, DT) for frame in frames])
-    results = _stream(HumanoidSimulator(**MM), frames)
+    results = _stream(MassSpringSimulator(**MM), frames)
     assert all(result.status is Status.OK for result in results)
     assert _same(_stack(results, "joints"), expected)
-    assert _same(HumanoidSimulator(**MM).run(frames)["joints"], expected)
-    assert _same(HumanoidSimulator(**MM, labels=HUMANOID_JOINTS).run(frames)["joints"], expected)
-    assert HumanoidSimulator(**MM).outputs["joints"].axis_names[0] == tuple(raw.output_labels)
+    assert _same(MassSpringSimulator(**MM).run(frames)["joints"], expected)
+    assert _same(MassSpringSimulator(**MM, labels=HUMANOID_JOINTS).run(frames)["joints"], expected)
+    assert MassSpringSimulator(**MM).outputs["joints"].axis_names[0] == tuple(raw.output_labels)
 
 
 @pytest.mark.parametrize("scenario", SCENARIOS)
 def test_humanoid_orientations_is_the_raw_block(scenario):
     frames = SCENARIOS[scenario]
     expected = RAW.HumanoidOrientationsExtractor().run(JOINT_LAYOUT, frames)
-    assert _same(HumanoidOrientations().run(frames)["directions"], expected)
-    assert _same(_stack(_stream(HumanoidOrientations(), frames), "directions"), expected)
+    assert _same(MassSpringSimulator(**MM).run(frames)["directions"], expected)
+    assert _same(_stack(_stream(MassSpringSimulator(**MM), frames), "directions"), expected)
 
 
 def test_humanoid_simulator_with_control_is_the_raw_block_through_the_pipeline():
     frames = forearm(60, noise=5.0, seed=1)
-    controls = HumanoidOrientations().run(frames)["directions"]
+    controls = MassSpringSimulator(**MM).run(frames)["directions"]
     raw, extractor = RAW.HumanoidSimulator(), RAW.HumanoidOrientationsExtractor()
     expected = []
     for frame in frames:
         joints = {name: tuple(row) for name, row in zip(HUMANOID_JOINTS, frame)}
         out = raw.process(joints, DT, extractor.process(joints))
         expected.append([out[name] for name in raw.output_labels])
-    results = _stream(HumanoidSimulator(**MM), frames, controls)
+    results = _stream(MassSpringSimulator(**MM), frames, controls)
     assert _same(_stack(results, "joints"), np.array(expected))
-    assert _same(HumanoidSimulator(**MM).run(frames, controls)["joints"], np.array(expected))
+    assert _same(MassSpringSimulator(**MM).run(frames, controls)["joints"], np.array(expected))
     as_dicts = [{bone: tuple(row) for bone, row in zip(HUMANOID_BONES, control)} for control in controls]
-    feature = HumanoidSimulator(**MM)
+    feature = MassSpringSimulator(**MM)
     assert _same([feature.process(frame, control)["joints"] for frame, control in zip(frames, as_dicts)], np.array(expected))
 
 
@@ -112,7 +111,7 @@ def _qualisys_excerpt():
 
 @pytest.mark.parametrize("case", ["tpose", "forearm", "qualisys"])
 def test_the_extractor_output_as_control_gives_the_pose_of_the_joints(case):
-    """Round trip: joints -> `HumanoidOrientations` -> `control` of a simulator, against the simulator driven by the joints
+    """Round trip: joints -> `directions` output -> `directions` input of a simulator, against the simulator driven by the joints
     themselves. The simulator only reads the target bone directions, so equal simulated joints (max absolute difference over
     the first 30 frames, mm) mean equal target directions. Rounding differences (1e-13) grow exponentially in the flutter of the
     model (a 1e-14 perturbation of the input does the same), so a longer comparison would test the dynamics, not the control."""
@@ -123,31 +122,31 @@ def test_the_extractor_output_as_control_gives_the_pose_of_the_joints(case):
     else:
         frames = SCENARIOS[case]
     frames = frames[:30]
-    controls = HumanoidOrientations(**mapping).run(frames)["directions"]
-    driven_by_joints = HumanoidSimulator(**MM, **mapping, **kwargs).run(frames)["joints"]
-    driven_by_control = HumanoidSimulator(**MM, **mapping, **kwargs).run(frames, controls)["joints"]
+    controls = MassSpringSimulator(**MM, **mapping).run(frames)["directions"]
+    driven_by_joints = MassSpringSimulator(**MM, **mapping, **kwargs).run(frames)["joints"]
+    driven_by_control = MassSpringSimulator(**MM, **mapping, **kwargs).run(frames, controls)["joints"]
     assert np.abs(driven_by_control - driven_by_joints).max() < 1e-9
 
 
 def test_control_directions_are_relative_to_the_parent_bone():
     """Turning the upper arm turns the forearm with it: the same relative control gives another world pose."""
     pose = tpose()
-    straight = HumanoidOrientations().run(pose[None])["directions"]
+    straight = MassSpringSimulator(**MM).run(pose[None])["directions"]
     bent = pose.copy()
     shoulder = bent[HUMANOID_JOINTS.index("left_shoulder")]
     moving = [HUMANOID_JOINTS.index(name) for name in ("left_elbow", "left_wrist", "left_hand")]
     bent[moving] = shoulder + (bent[moving] - shoulder) @ np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1.0]]).T  # upper arm turned 90 degrees
-    turned = HumanoidOrientations().run(bent[None])["directions"]
+    turned = MassSpringSimulator(**MM).run(bent[None])["directions"]
     forearm_index = HUMANOID_BONES.index("left_elbow-left_wrist")
     assert np.allclose(turned[0, forearm_index], straight[0, forearm_index])  # the forearm did not change in the parent's frame
-    controlled = HumanoidSimulator(**MM, start_from_input=True).run(np.repeat(bent[None], 400, axis=0), np.repeat(turned, 400, axis=0))["joints"][-1]
+    controlled = MassSpringSimulator(**MM, start_from_input=True).run(np.repeat(bent[None], 400, axis=0), np.repeat(turned, 400, axis=0))["joints"][-1]
     wrist, elbow = (controlled[HUMANOID_JOINTS.index(name)] for name in ("left_wrist", "left_elbow"))
     assert np.allclose((wrist - elbow) / np.linalg.norm(wrist - elbow), (bent[moving[1]] - bent[moving[0]]) / np.linalg.norm(bent[moving[1]] - bent[moving[0]]), atol=1e-3)
 
 
 def test_humanoid_reset_goes_back_to_the_tpose():
     frames = forearm(40)
-    feature = HumanoidSimulator(**MM)
+    feature = MassSpringSimulator(**MM)
     first = _stack(_stream(feature, frames), "joints")
     feature.reset()
     assert _same(_stack(_stream(feature, frames), "joints"), first)
@@ -155,32 +154,30 @@ def test_humanoid_reset_goes_back_to_the_tpose():
 
 def test_humanoid_blocks_reproduce_the_frozen_reference():
     joints = REFERENCE["joints"]
-    assert _same(HumanoidSimulator(**MM).run(joints)["joints"], REFERENCE["humanoid_simulated"]) or \
-        np.abs(HumanoidSimulator(**MM).run(joints)["joints"] - REFERENCE["humanoid_simulated"]).max() < 1e-9
-    orientations = HumanoidOrientations().run(joints)["directions"]
+    assert _same(MassSpringSimulator(**MM).run(joints)["joints"], REFERENCE["humanoid_simulated"]) or \
+        np.abs(MassSpringSimulator(**MM).run(joints)["joints"] - REFERENCE["humanoid_simulated"]).max() < 1e-9
+    orientations = MassSpringSimulator(**MM).run(joints)["directions"]
     assert np.abs(orientations - REFERENCE["orientations"]).max() < 1e-9
-    controlled = HumanoidSimulator(**MM).run(joints, orientations)["joints"]
+    controlled = MassSpringSimulator(**MM).run(joints, orientations)["joints"]
     assert np.abs(controlled - REFERENCE["humanoid_control_simulated"]).max() < 1e-9
 
 
 def test_generic_blocks_reproduce_the_frozen_reference():
     assert tuple(MODEL.mass_names) == MASSES and tuple(MODEL.spring_names) == SPRINGS
-    assert np.abs(GenericModelOrientations(MODEL).run(CHAIN_POSITIONS)["directions"] - CHAIN_DIRECTIONS).max() < 1e-9
-    assert np.abs(GenericModelSimulator(MODEL, **MM).run(CHAIN_DIRECTIONS)["positions"] - REFERENCE["generic_simulated"]).max() < 1e-9
+    assert np.abs(MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)["directions"] - CHAIN_DIRECTIONS).max() < 1e-9
+    assert np.abs(MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)["joints"] - REFERENCE["generic_simulated"]).max() < 1e-9
 
 
 def test_generic_blocks_are_the_raw_blocks():
     core_model = RAW.MassSpringModel.from_xml_string(CHAIN_XML)
     layout = core.SkeletonLayout(list(MASSES))
-    assert _same(GenericModelOrientations(MODEL).run(CHAIN_POSITIONS)["directions"],
+    assert _same(MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)["directions"],
                  RAW.GenericModelOrientationsExtractor(core_model).run(layout, CHAIN_POSITIONS))
 
 
 FEATURES = {
-    "HumanoidSimulator": (lambda: HumanoidSimulator(**MM), (forearm(30), HumanoidOrientations().run(forearm(30))["directions"])),
-    "HumanoidOrientations": (lambda: HumanoidOrientations(), (forearm(30),)),
-    "GenericModelOrientations": (lambda: GenericModelOrientations(MODEL), (CHAIN_POSITIONS[:30],)),
-    "GenericModelSimulator": (lambda: GenericModelSimulator(MODEL, **MM), (CHAIN_DIRECTIONS[:30],)),
+    "humanoid": (lambda: MassSpringSimulator(**MM), (forearm(30), MassSpringSimulator(**MM).run(forearm(30))["directions"])),
+    "model": (lambda: MassSpringSimulator(model=MODEL, **MM), (CHAIN_POSITIONS[:30], CHAIN_DIRECTIONS[:30])),
 }
 
 
@@ -192,24 +189,25 @@ def test_feature_contract(name):
 
 def test_the_features_are_catalogued_as_physical_signals():
     found = {info.name: (info.layer, info.eyesweb_block) for info in catalog()}
-    for name, block in (("HumanoidSimulator", "HumanoidSimulator (MassSpringHumanoidSimulator)"),
-                        ("HumanoidOrientations", "HumanoidOrientationsExtractor"),
-                        ("GenericModelOrientations", "GenericModelOrientationsExtractor"),
-                        ("GenericModelSimulator", "GenericModelSimulator"),                         ):
-        assert found[name] == (Layer.PHYSICAL_SIGNALS, block)
+    assert found["MassSpringSimulator"] == (Layer.PHYSICAL_SIGNALS,
+                                            "HumanoidSimulator (MassSpringHumanoidSimulator), GenericModelSimulator")
+    assert not {"HumanoidSimulator", "HumanoidOrientations", "GenericModelOrientations", "GenericModelSimulator"} & set(found)
     assert "MassSpringModel" not in found  # a helper, not a feature
 
 
 def test_schemas_are_known_before_data():
-    simulator = HumanoidSimulator(**MM)
+    simulator = MassSpringSimulator(**MM)
     joints = simulator.outputs["joints"]
     assert joints.shape == (21, 3) and joints.axis_names == (HUMANOID_JOINTS, ("x", "y", "z")) and joints.unit == "mm"
-    assert HumanoidOrientations().outputs["directions"].axis_names[0] == HUMANOID_BONES
-    assert simulator.inputs["control"].optional and simulator.inputs["control"].labels == HUMANOID_BONES
-    assert simulator.inputs["skeleton"].labels == HUMANOID_JOINTS
-    assert HumanoidSimulator(**MM, labels=[f"j{index}" for index in range(30)] + list(HUMANOID_JOINTS)).inputs["skeleton"].shape == (51, 3)
-    assert GenericModelSimulator(MODEL, **MM).inputs["directions"].labels == SPRINGS
-    assert GenericModelOrientations(MODEL).outputs["directions"].axis_names[0] == SPRINGS
+    directions = simulator.outputs["directions"]
+    assert directions.axis_names[0] == HUMANOID_BONES and directions.unit is None  # unit vectors
+    assert simulator.inputs["directions"].optional and simulator.inputs["directions"].labels == HUMANOID_BONES
+    assert simulator.inputs["joints"].labels == HUMANOID_JOINTS
+    assert MassSpringSimulator(**MM, labels=[f"j{index}" for index in range(30)] + list(HUMANOID_JOINTS)).inputs["joints"].shape == (51, 3)
+    chain = MassSpringSimulator(model=MODEL, **MM)
+    assert chain.inputs["joints"].labels == MASSES and chain.inputs["directions"].labels == SPRINGS
+    assert chain.outputs["joints"].axis_names[0] == MASSES
+    assert chain.outputs["directions"].axis_names[0] == SPRINGS and chain.outputs["directions"].unit == "mm"
 
 
 # ------------------------------------------------------------------------------------------------------ joint map
@@ -225,11 +223,11 @@ def test_a_joint_map_reads_the_users_labels_in_any_order():
     order = np.random.default_rng(0).permutation(21)
     shuffled, labels = _renamed(frames, order)
     joint_map = {name: f"Marker_{name}" for name in HUMANOID_JOINTS}
-    expected = HumanoidSimulator(**MM).run(frames)["joints"]
-    assert _same(HumanoidSimulator(**MM, labels=labels, joint_map=joint_map).run(shuffled)["joints"], expected)
-    assert _same(HumanoidOrientations(labels=labels, joint_map=joint_map).run(shuffled)["directions"],
-                 HumanoidOrientations().run(frames)["directions"])
-    feature = HumanoidSimulator(**MM, labels=labels + ["extra"], joint_map=joint_map)  # labels the model does not use are ignored
+    expected = MassSpringSimulator(**MM).run(frames)["joints"]
+    assert _same(MassSpringSimulator(**MM, labels=labels, joint_map=joint_map).run(shuffled)["joints"], expected)
+    assert _same(MassSpringSimulator(**MM, labels=labels, joint_map=joint_map).run(shuffled)["directions"],
+                 MassSpringSimulator(**MM).run(frames)["directions"])
+    feature = MassSpringSimulator(**MM, labels=labels + ["extra"], joint_map=joint_map)  # labels the model does not use are ignored
     extra = np.concatenate([shuffled, np.full((50, 1, 3), 7.0)], axis=1)
     assert _same(feature.run(extra)["joints"], expected)
 
@@ -237,40 +235,39 @@ def test_a_joint_map_reads_the_users_labels_in_any_order():
 def test_a_dict_frame_is_read_by_the_mapped_labels():
     frames = forearm(20)
     joint_map = {name: f"Marker_{name}" for name in HUMANOID_JOINTS}
-    from_dicts, from_arrays = HumanoidSimulator(**MM, joint_map=joint_map), HumanoidSimulator(**MM)
+    from_dicts, from_arrays = MassSpringSimulator(**MM, joint_map=joint_map), MassSpringSimulator(**MM)
     for frame in frames:
         dictionary = {f"Marker_{name}": tuple(row) for name, row in zip(HUMANOID_JOINTS, frame)}
         dictionary["unrelated"] = (1.0, 2.0, 3.0)
         assert _same(from_dicts.process(dictionary)["joints"], from_arrays.process(frame)["joints"])
     partial = {f"Marker_{name}": tuple(row) for name, row in zip(HUMANOID_JOINTS, frames[0]) if name != "left_hand"}
-    assert HumanoidSimulator(**MM, joint_map=joint_map).process(partial).status is Status.OK  # a missing joint is a dropout
+    assert MassSpringSimulator(**MM, joint_map=joint_map).process(partial).status is Status.OK  # a missing joint is a dropout
 
 
 def test_a_partial_joint_map_keeps_the_other_names():
     frames = forearm(15)
     labels = [name if name != "head" else "skull" for name in HUMANOID_JOINTS]
-    assert _same(HumanoidSimulator(**MM, labels=labels, joint_map={"head": "skull"}).run(frames)["joints"],
-                 HumanoidSimulator(**MM).run(frames)["joints"])
+    assert _same(MassSpringSimulator(**MM, labels=labels, joint_map={"head": "skull"}).run(frames)["joints"],
+                 MassSpringSimulator(**MM).run(frames)["joints"])
 
 
 def test_labels_that_miss_a_joint_of_the_model_raise_at_construction():
     labels = [name for name in HUMANOID_JOINTS if name != "left_hand"]
-    for feature in (HumanoidSimulator, HumanoidOrientations):
-        with pytest.raises(ValueError, match="left_hand"):
-            feature(labels=labels)
+    with pytest.raises(ValueError, match="left_hand"):
+        MassSpringSimulator(labels=labels)
     with pytest.raises(ValueError, match="Marker_head"):
-        HumanoidSimulator(**MM, labels=HUMANOID_JOINTS, joint_map={"head": "Marker_head"})
+        MassSpringSimulator(**MM, labels=HUMANOID_JOINTS, joint_map={"head": "Marker_head"})
     with pytest.raises(ValueError, match="not model names"):
-        HumanoidSimulator(**MM, joint_map={"skull": "head"})
+        MassSpringSimulator(**MM, joint_map={"skull": "head"})
     with pytest.raises(ValueError, match="a"):
-        GenericModelSimulator(MODEL, **MM, labels=["s1", "s2"])
+        MassSpringSimulator(model=MODEL, **MM, labels=["a", "b"])
 
 
 def test_labels_and_joint_map_can_be_changed_and_a_bad_value_changes_nothing():
-    feature = HumanoidSimulator(**MM)
+    feature = MassSpringSimulator(**MM)
     feature.joint_map = {name: f"Marker_{name}" for name in HUMANOID_JOINTS}
     feature.labels = [f"Marker_{name}" for name in HUMANOID_JOINTS]
-    assert feature.inputs["skeleton"].labels[0].startswith("Marker_") and feature.joint_map["head"] == "Marker_head"
+    assert feature.inputs["joints"].labels[0].startswith("Marker_") and feature.joint_map["head"] == "Marker_head"
     with pytest.raises(ValueError):
         feature.labels = ["head"]
     with pytest.raises(ValueError):
@@ -278,47 +275,59 @@ def test_labels_and_joint_map_can_be_changed_and_a_bad_value_changes_nothing():
     assert feature.labels[0].startswith("Marker_") and feature.joint_map["head"] == "Marker_head"
 
 
-def test_the_generic_features_map_masses_and_springs():
+def test_a_model_of_your_own_maps_its_masses():
     labels = [f"p_{name}" for name in MASSES[::-1]]
     positions = CHAIN_POSITIONS[:, ::-1]
     mapping = {name: f"p_{name}" for name in MASSES}
-    assert _same(GenericModelOrientations(MODEL, labels=labels, joint_map=mapping).run(positions)["directions"],
-                 GenericModelOrientations(MODEL).run(CHAIN_POSITIONS)["directions"])
-    spring_labels = [f"b_{name}" for name in SPRINGS[::-1]]
-    spring_map = {name: f"b_{name}" for name in SPRINGS}
-    assert _same(GenericModelSimulator(MODEL, **MM, labels=spring_labels, joint_map=spring_map).run(CHAIN_DIRECTIONS[:, ::-1])["positions"],
-                 GenericModelSimulator(MODEL, **MM).run(CHAIN_DIRECTIONS)["positions"])
+    assert _same(MassSpringSimulator(model=MODEL, **MM, labels=labels, joint_map=mapping).run(positions)["directions"],
+                 MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)["directions"])
+    assert _same(MassSpringSimulator(model=MODEL, **MM, labels=labels, joint_map=mapping).run(positions)["joints"],
+                 MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)["joints"])
+
+
+def test_directions_replace_those_read_from_the_joints():
+    """The `directions` input wins over the joints, given as an array or a dict, for both bodies."""
+    chain = MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)
+    still = np.repeat(CHAIN_POSITIONS[:1], len(CHAIN_POSITIONS), axis=0)  # joints that do not move: only the directions drive
+    driven = MassSpringSimulator(model=MODEL, **MM).run(still, CHAIN_DIRECTIONS)
+    assert _same(driven["joints"], chain["joints"]) and _same(driven["directions"], CHAIN_DIRECTIONS)
+    as_dicts = MassSpringSimulator(model=MODEL, **MM)
+    for frame, vectors in zip(still, CHAIN_DIRECTIONS):
+        result = as_dicts.process(frame, dict(zip(SPRINGS, vectors)))
+    assert _same(result["joints"], chain["joints"][-1])
+    raw = RAW.GenericModelSimulator(RAW.MassSpringModel.from_xml_string(CHAIN_XML))
+    layout = core.SkeletonLayout(list(SPRINGS))
+    assert _same(chain["joints"], np.stack([raw.process_array(layout, vectors, DT) for vectors in CHAIN_DIRECTIONS]))
 
 
 # ------------------------------------------------------------------------------------------------- bad data
 
 
 def test_wrong_shapes_raise():
-    simulator = HumanoidSimulator(**MM)
+    simulator = MassSpringSimulator(**MM)
     for bad in (np.ones((20, 3)), np.ones((21, 2)), np.ones(63), np.ones((2, 21, 3))):
-        with pytest.raises(ValueError, match="HumanoidSimulator"):
+        with pytest.raises(ValueError, match="MassSpringSimulator"):
             simulator.process(bad)
-    with pytest.raises(ValueError, match="control"):
+    with pytest.raises(ValueError, match="directions"):
         simulator.process(tpose(), np.ones((19, 3)))
-    with pytest.raises(ValueError, match="HumanoidSimulator"):
+    with pytest.raises(ValueError, match="MassSpringSimulator"):
         simulator.run(np.ones((5, 20, 3)))
 
 
 def test_bad_data_is_invalid_input_not_an_exception():
-    for feature in (HumanoidSimulator(**MM), HumanoidOrientations()):
+    for feature in (MassSpringSimulator(**MM), MassSpringSimulator(model=MODEL, **MM)):
         for frame, reason in ((np.full((21, 3), np.nan), "no joint"), (np.full((21, 3), np.inf), "infinite"),
-                              (np.zeros((0, 3)), "empty"), ({}, "no joint"), ({"a": (0, 0, 0)}, "match none")):
+                              (np.zeros((0, 3)), "empty"), ({}, "no joint"), ({"zz": (0, 0, 0)}, "match none")):
+            if not isinstance(frame, dict):
+                frame = np.resize(frame, (len(feature.inputs[0].labels), 3)) if frame.size else frame
             result = feature.process(frame)
             assert result.status is Status.INVALID_INPUT and reason in result.reason, (feature, reason)
-            assert np.isnan(result[feature.outputs.names[0]]).all()
-    for feature in (GenericModelSimulator(MODEL, **MM), GenericModelOrientations(MODEL),
-                    ):
-        assert feature.process(np.full((len(feature.inputs[0].labels), 3), np.nan)).status is Status.INVALID_INPUT
+            assert all(np.isnan(result[name]).all() for name in feature.outputs.names)
 
 
 def test_an_invalid_frame_does_not_disturb_the_state():
     frames = forearm(30)
-    clean, disturbed = HumanoidSimulator(**MM), HumanoidSimulator(**MM)
+    clean, disturbed = MassSpringSimulator(**MM), MassSpringSimulator(**MM)
     expected = _stack(_stream(clean, frames), "joints")
     results = []
     for index, frame in enumerate(frames):
@@ -330,7 +339,7 @@ def test_an_invalid_frame_does_not_disturb_the_state():
 
 def test_a_missing_joint_is_a_dropout_the_block_handles():
     frames = _with_missing(forearm(30))
-    result = HumanoidSimulator(**MM).run(frames)
+    result = MassSpringSimulator(**MM).run(frames)
     assert result.ok.all() and np.isfinite(result["joints"]).all()
 
 
@@ -340,32 +349,32 @@ def test_a_missing_joint_is_a_dropout_the_block_handles():
 def test_time_is_the_timestamp_then_the_sampling_rate_then_per_sample():
     frames = forearm(20)
     mm = dict(units="mm")
-    by_rate = HumanoidSimulator(sampling_rate=50.0, **mm).run(frames)["joints"]
-    by_stamp = HumanoidSimulator(sampling_rate=50.0, **mm).run(frames, timestamps=np.arange(1, 21) * 0.02)["joints"]
-    assert not _same(by_rate, HumanoidSimulator(sampling_rate=RATE, **mm).run(frames)["joints"])
+    by_rate = MassSpringSimulator(sampling_rate=50.0, **mm).run(frames)["joints"]
+    by_stamp = MassSpringSimulator(sampling_rate=50.0, **mm).run(frames, timestamps=np.arange(1, 21) * 0.02)["joints"]
+    assert not _same(by_rate, MassSpringSimulator(sampling_rate=RATE, **mm).run(frames)["joints"])
     # the first step of a timed run is 1 / sampling_rate (an absolute time is not a step), then the timestamp differences
     assert _same(by_stamp, by_rate)
-    assert not _same(HumanoidSimulator(sampling_rate=50.0, **mm).run(frames, timestamps=np.arange(1, 21) * 0.04)["joints"], by_rate)
+    assert not _same(MassSpringSimulator(sampling_rate=50.0, **mm).run(frames, timestamps=np.arange(1, 21) * 0.04)["joints"], by_rate)
     # no time at all: the default is None, one second per call, and every result says so
-    feature = HumanoidSimulator(**mm)
+    feature = MassSpringSimulator(**mm)
     assert feature.sampling_rate is None
     assert "no time given: per-sample derivatives" in feature.process(frames[0]).reason
-    assert "per-sample" not in HumanoidSimulator(**MM).process(frames[0]).reason
-    assert "per-sample" in HumanoidSimulator(**mm).process(frames[0], timestamp=0.04).reason  # the first timed step is per sample
+    assert "per-sample" not in MassSpringSimulator(**MM).process(frames[0]).reason
+    assert "per-sample" in MassSpringSimulator(**mm).process(frames[0], timestamp=0.04).reason  # the first timed step is per sample
     raw = RAW.HumanoidSimulator()
-    assert _same(HumanoidSimulator(**mm).run(frames)["joints"],
+    assert _same(MassSpringSimulator(**mm).run(frames)["joints"],
                  np.stack([raw.process_array(JOINT_LAYOUT, frame, 1.0) for frame in frames]))
 
 
 def test_every_time_stepped_feature_defaults_to_no_rate_and_says_so():
-    for feature, frame in ((GenericModelSimulator(MODEL), CHAIN_DIRECTIONS[0]),                            ):
+    for feature, frame in ((MassSpringSimulator(model=MODEL), CHAIN_POSITIONS[0]), (MassSpringSimulator(units="mm"), tpose())):
         assert feature.sampling_rate is None
         assert "no time given: per-sample derivatives" in feature.process(frame).reason
-    timed = GenericModelSimulator(MODEL, sampling_rate=25.0)
-    assert "per-sample" not in timed.process(CHAIN_DIRECTIONS[0]).reason
-    untimed = GenericModelSimulator(MODEL)
-    assert "per-sample" in untimed.process(CHAIN_DIRECTIONS[0], timestamp=0.1).reason  # no previous timestamp: per sample
-    assert "per-sample" not in untimed.process(CHAIN_DIRECTIONS[1], timestamp=0.2).reason
+    timed = MassSpringSimulator(model=MODEL, sampling_rate=25.0)
+    assert "per-sample" not in timed.process(CHAIN_POSITIONS[0]).reason
+    untimed = MassSpringSimulator(model=MODEL)
+    assert "per-sample" in untimed.process(CHAIN_POSITIONS[0], timestamp=0.1).reason  # no previous timestamp: per sample
+    assert "per-sample" not in untimed.process(CHAIN_POSITIONS[1], timestamp=0.2).reason
 
 
 # --------------------------------------------------------------------------------------------------------- units
@@ -376,9 +385,9 @@ def test_units_mm_is_the_core_bit_for_bit_and_metres_are_the_same_motion():
     kwargs = dict(sampling_rate=RATE, gravity=(0.0, -9810.0, 0.0), ground_interaction=True, floor_position=(0.0, -1500.0, 0.0))
     raw = RAW.HumanoidSimulator(gravity=kwargs["gravity"], ground_interaction=True, floor_position=kwargs["floor_position"])
     expected = np.stack([raw.process_array(JOINT_LAYOUT, frame, DT) for frame in frames])
-    in_mm = HumanoidSimulator(units="mm", **kwargs).run(frames)["joints"]
+    in_mm = MassSpringSimulator(units="mm", **kwargs).run(frames)["joints"]
     assert _same(in_mm, expected)  # nothing converted: the numbers of the core
-    in_metres = HumanoidSimulator(units="m", **{**kwargs, "gravity": (0.0, -9.81, 0.0), "floor_position": (0.0, -1.5, 0.0)}
+    in_metres = MassSpringSimulator(units="m", **{**kwargs, "gravity": (0.0, -9.81, 0.0), "floor_position": (0.0, -1.5, 0.0)}
                                   ).run(frames / 1000.0)["joints"]
     # data * 1000 and joints / 1000 are the only extra operations (rounding of the scaling, amplified by the dynamics):
     # equal to the millimetre run scaled by 1/1000 within 1e-9 of the body size, not bit for bit
@@ -386,21 +395,21 @@ def test_units_mm_is_the_core_bit_for_bit_and_metres_are_the_same_motion():
 
 
 def test_the_outputs_name_the_unit_of_the_data():
-    assert HumanoidSimulator().outputs["joints"].unit == "m"
-    assert HumanoidSimulator(units="mm").outputs["joints"].unit == "mm"
-    assert GenericModelSimulator(MODEL).outputs["positions"].unit == "m"
-    for build in (lambda: HumanoidSimulator(units="cm"), lambda: GenericModelSimulator(MODEL, units="cm")):
+    assert MassSpringSimulator().outputs["joints"].unit == "m"
+    assert MassSpringSimulator(units="mm").outputs["joints"].unit == "mm"
+    assert MassSpringSimulator(model=MODEL).outputs["joints"].unit == "m"
+    for build in (lambda: MassSpringSimulator(units="cm"), lambda: MassSpringSimulator(model=MODEL, units="cm")):
         with pytest.raises(ValueError, match="units"):
             build()
 
 
 def test_the_generic_models_run_in_their_own_unit_and_only_name_it():
-    assert _same(GenericModelSimulator(MODEL, sampling_rate=RATE, units="m").run(CHAIN_DIRECTIONS)["positions"],
-                 GenericModelSimulator(MODEL, sampling_rate=RATE, units="mm").run(CHAIN_DIRECTIONS)["positions"])
+    assert _same(MassSpringSimulator(model=MODEL, sampling_rate=RATE, units="m").run(CHAIN_POSITIONS)["joints"],
+                 MassSpringSimulator(model=MODEL, sampling_rate=RATE, units="mm").run(CHAIN_POSITIONS)["joints"])
 
 
 def test_a_timestamp_that_does_not_advance_is_invalid_input():
-    feature = HumanoidSimulator(**MM)
+    feature = MassSpringSimulator(**MM)
     assert feature.process(tpose(), timestamp=1.0).status is Status.OK
     result = feature.process(tpose(), timestamp=0.5)
     assert result.status is Status.INVALID_INPUT and result.reason == "non-increasing timestamp"
@@ -409,11 +418,11 @@ def test_a_timestamp_that_does_not_advance_is_invalid_input():
 
 @pytest.mark.parametrize("rate", [0, -5.0, float("nan"), "fast", True])
 def test_an_invalid_sampling_rate_raises(rate):
-    for build in (lambda: HumanoidSimulator(sampling_rate=rate), lambda: GenericModelSimulator(MODEL, sampling_rate=rate),
+    for build in (lambda: MassSpringSimulator(sampling_rate=rate), lambda: MassSpringSimulator(model=MODEL, sampling_rate=rate),
                   ):
         with pytest.raises(ValueError, match="sampling_rate"):
             build()
-    feature = HumanoidSimulator(**MM)
+    feature = MassSpringSimulator(**MM)
     with pytest.raises(ValueError, match="sampling_rate"):
         feature.sampling_rate = rate
     assert feature.sampling_rate == 25.0
@@ -424,13 +433,13 @@ def test_an_invalid_sampling_rate_raises(rate):
 
 def test_start_from_input_puts_the_model_on_the_first_frame():
     frames = forearm(20)
-    feature = HumanoidSimulator(**MM, start_from_input=True)
+    feature = MassSpringSimulator(**MM, start_from_input=True)
     first = feature.process(frames[0])
     assert np.allclose(first.joints, frames[0])
     raw = RAW.HumanoidSimulator()
     expected = [raw.process_array(JOINT_LAYOUT, frames[0], DT, True)]
     expected += [raw.process_array(JOINT_LAYOUT, frame, DT) for frame in frames[1:]]
-    assert _same(HumanoidSimulator(**MM, start_from_input=True).run(frames)["joints"], np.stack(expected))
+    assert _same(MassSpringSimulator(**MM, start_from_input=True).run(frames)["joints"], np.stack(expected))
     feature.reset()
     assert np.allclose(feature.process(frames[3])["joints"], frames[3])  # again after a reset
     assert not np.allclose(feature.process(frames[4])["joints"], frames[4])
@@ -438,9 +447,9 @@ def test_start_from_input_puts_the_model_on_the_first_frame():
     with pytest.raises(TypeError):
         feature.start_from_input = "yes"
     with pytest.raises(TypeError):
-        HumanoidSimulator(**MM, start_from_input=1)
-    chain = GenericModelSimulator(MODEL, **MM, start_from_input=True)
-    assert chain.start_from_input and chain.process(CHAIN_DIRECTIONS[0]).status is Status.OK
+        MassSpringSimulator(**MM, start_from_input=1)
+    chain = MassSpringSimulator(model=MODEL, **MM, start_from_input=True)
+    assert chain.start_from_input and chain.process(CHAIN_POSITIONS[0]).status is Status.OK
 
 
 # ------------------------------------------------------------------------------------------ the model
@@ -449,13 +458,13 @@ def test_start_from_input_puts_the_model_on_the_first_frame():
 def test_the_model_can_be_given_as_a_file_or_a_wrapper_or_a_core_model(tmp_path):
     path = tmp_path / "chain.xml"
     path.write_text(CHAIN_XML)
-    expected = GenericModelSimulator(MODEL, **MM).run(CHAIN_DIRECTIONS)["positions"]
+    expected = MassSpringSimulator(model=MODEL, **MM).run(CHAIN_POSITIONS)["joints"]
     for given in (path, str(path), MassSpringModel.from_xml_file(path), RAW.MassSpringModel.from_xml_string(CHAIN_XML)):
-        assert _same(GenericModelSimulator(given, **MM).run(CHAIN_DIRECTIONS)["positions"], expected)
+        assert _same(MassSpringSimulator(model=given, **MM).run(CHAIN_POSITIONS)["joints"], expected)
     with pytest.raises(FileNotFoundError):
-        GenericModelSimulator(tmp_path / "missing.xml")
+        MassSpringSimulator(model=tmp_path / "missing.xml")
     with pytest.raises(TypeError, match="model"):
-        GenericModelSimulator(3)
+        MassSpringSimulator(model=3)
     with pytest.raises(ValueError):
         MassSpringModel.from_xml_string("<Model/>")
 
@@ -472,7 +481,7 @@ def test_mass_spring_model_builds_by_hand_and_round_trips():
     assert "2 masses, 1 springs" in repr(model)
     with pytest.raises(AttributeError):
         model.no_such_method
-    feature = GenericModelSimulator(model, **MM)  # the feature copies the model
+    feature = MassSpringSimulator(model=model, **MM)  # the feature copies the model
     model.set_parameter("mass::bob::mass", 5.0)
     assert feature.model.export_configuration()["mass::bob::mass"] == 2.0
     assert isinstance(feature.model, MassSpringModel)
@@ -520,31 +529,45 @@ def test_a_loaded_file_keeps_its_relative_damping():
 
 
 def test_the_model_is_a_structural_parameter():
-    feature = GenericModelSimulator(MODEL, **MM)
-    for frame in CHAIN_DIRECTIONS[:5]:
+    feature = MassSpringSimulator(model=MODEL, **MM)
+    for frame in CHAIN_POSITIONS[:5]:
         feature.process(frame)
     softer = MassSpringModel.from_xml_string(CHAIN_XML)
     softer.set_parameter("spring::s1::stiffness", 10.0)
     feature.model = softer  # the same topology: the stiffness is live, the state is kept
-    assert "state reset" not in feature.process(CHAIN_DIRECTIONS[5]).reason
+    assert "state reset" not in feature.process(CHAIN_POSITIONS[5]).reason
     renamed = MassSpringModel.from_xml_string(CHAIN_XML.replace('name="c"', 'name="d"').replace('mass2="c"', 'mass2="d"'))
     feature.model = renamed  # another topology: structural, the outputs follow the new names
-    result = feature.process(CHAIN_DIRECTIONS[6])
-    assert "state reset" in result.reason and feature.outputs["positions"].axis_names[0] == ("a", "b", "d", "root")
-    assert _same(result["positions"], GenericModelSimulator(renamed, **MM).process(CHAIN_DIRECTIONS[6])["positions"])
-    feature = GenericModelSimulator(MODEL, **MM, labels=SPRINGS)
+    result = feature.process(CHAIN_POSITIONS[6])
+    assert "state reset" in result.reason and feature.outputs["joints"].axis_names[0] == ("a", "b", "d", "root")
+    assert _same(result["joints"], MassSpringSimulator(model=renamed, **MM).process(CHAIN_POSITIONS[6])["joints"])
+    feature = MassSpringSimulator(model=MODEL, **MM, labels=MASSES)
     other = MassSpringModel()
     other.add_mass("root", 1e10)
     other.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
     other.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
-    with pytest.raises(ValueError, match="rod"):  # the labels no longer fit: nothing changes
+    with pytest.raises(ValueError, match="tip"):  # the labels no longer fit: nothing changes
         feature.model = other
-    assert feature.model.spring_names == ["s1", "s2", "s3"] and feature.inputs[0].labels == SPRINGS
-    assert GenericModelSimulator(other, **MM, labels=["rod"]).outputs["positions"].axis_names[0] == ("root", "tip")
+    assert feature.model.spring_names == ["s1", "s2", "s3"] and feature.inputs[0].labels == MASSES
+    assert MassSpringSimulator(model=other, **MM, labels=["tip", "root"]).outputs["joints"].axis_names[0] == ("root", "tip")
+
+
+def test_the_body_is_fixed_for_the_humanoid_and_a_model_of_your_own_stays_one():
+    humanoid = MassSpringSimulator(**MM)
+    assert humanoid.model == "humanoid"
+    with pytest.raises(AttributeError, match="humanoid body is fixed"):
+        humanoid.model = MODEL
+    chain = MassSpringSimulator(model=MODEL, **MM)
+    with pytest.raises(ValueError, match="another kind of body"):
+        chain.model = "humanoid"
+    assert type(humanoid).__name__ == type(chain).__name__ == "MassSpringSimulator"
+    assert isinstance(humanoid, MassSpringSimulator) and isinstance(chain, MassSpringSimulator)
+    with pytest.raises(TypeError, match="model='humanoid' does not take use_input_lengths"):
+        MassSpringSimulator(**MM, use_input_lengths=True)
 
 
 def test_unknown_parameters_are_type_errors_with_a_suggestion():
     with pytest.raises(TypeError, match="did you mean 'damping'"):
-        HumanoidSimulator(**MM, dampin=3.0)
+        MassSpringSimulator(**MM, dampin=3.0)
     with pytest.raises(TypeError, match="spine_names"):  # the joint names are `joint_map`
-        HumanoidSimulator(**MM, spine_names=["a", "b", "c", "d", "e"])
+        MassSpringSimulator(**MM, spine_names=["a", "b", "c", "d", "e"])

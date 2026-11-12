@@ -129,7 +129,7 @@ read from the catalog:
 >>> from collections import Counter
 >>> from pyeyesweb import catalog
 >>> Counter((info.layer.name, info.timescale.value) for info in catalog())
-Counter({('LOW_LEVEL', 'up to ~0.5 s'): 22, ('ANALYSIS_PRIMITIVE', 'any'): 19, ('PHYSICAL_SIGNALS', 'frame'): 11, ('MID_LEVEL', '0.5-3 s'): 7, ('HIGH_LEVEL', '3 s and above'): 1})
+Counter({('LOW_LEVEL', 'up to ~0.5 s'): 19, ('ANALYSIS_PRIMITIVE', 'any'): 15, ('MID_LEVEL', '0.5-3 s'): 7, ('PHYSICAL_SIGNALS', 'frame'): 5, ('HIGH_LEVEL', '3 s and above'): 1})
 ```
 
 A few remarks on the placement make the mapping precise.
@@ -138,7 +138,7 @@ A few remarks on the placement make the mapping precise.
   takes the joints of a skeleton and gives a number for each frame is low-level, even if it is used for something that is
   perceived as a quality of the whole movement. The measures of synchronization between signals are analysis primitives
   although they are mostly applied to movement, because they know nothing of bodies.
-- **Layer 1 is mostly about models and sensors.** Features such as {py:class}`~pyeyesweb.physical_signals.HumanoidSimulator`
+- **Layer 1 is mostly about models and sensors.** Features such as {py:class}`~pyeyesweb.physical_signals.MassSpringSimulator`
   or {py:class}`~pyeyesweb.physical_signals.SilhouetteCentroids` give a signal again: a simulated pose, the centroids of a
   silhouette. The recording of the data itself is not the library's job; {doc}`../concepts/inputs` describes what a feature
   expects.

@@ -8,7 +8,7 @@ is, a mass-spring humanoid turns a captured skeleton into a smooth, plausible on
 a body that you describe yourself.
 
 :Goals: locate points in a grid of cells; follow a skeleton with a mass-spring humanoid and read the effect of the damping;
-        pass a real recording through ``joint_map``; extract bone directions and feed them back to a simulator; build and drive a
+        pass a real recording through ``joint_map``; read the bone directions and feed them back to the simulator; build and drive a
         model of your own.
 :Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
 :Data: trial 10 of the example session (sumo squat with weight shift) for the hit cells, trial 7 (clapping hands) for the
@@ -97,15 +97,15 @@ print("clip_values=False:", verdict.status.name, "-", verdict.reason)
 # a body that obeys simple mechanics: its joints are masses, its bones are springs, and the bone lengths stay constant.
 # :doc:`/theory/humanoid_models` gives the equations.
 #
-# :class:`~pyeyesweb.physical_signals.HumanoidSimulator` is a ready-made body of 21 joints (``HUMANOID_JOINTS``) and 20 bones
-# (``HUMANOID_BONES``). The head is pinned: the output is the pose of a body that hangs from where its head starts, so the
+# :class:`~pyeyesweb.physical_signals.MassSpringSimulator` runs, by default (``model="humanoid"``), a ready-made body of 21
+# joints (``HUMANOID_JOINTS``) and 20 bones (``HUMANOID_BONES``). The head is pinned: the output is the pose of a body that hangs from where its head starts, so the
 # translation of the person is not followed. To see it work we build a synthetic skeleton: the **rest pose** of the model (the
 # body standing, the upper arms stretched sideways, the pose it starts from) with the left forearm swinging about the elbow.
 
-from pyeyesweb.physical_signals import HUMANOID_BONES, HUMANOID_JOINTS, HumanoidSimulator
+from pyeyesweb.physical_signals import HUMANOID_BONES, HUMANOID_JOINTS, MassSpringSimulator
 
 RATE = 25.0  # frames per second of the synthetic skeleton
-tpose = HumanoidSimulator(sampling_rate=RATE).process({"head": (0.0, 0.0, 0.0)}).joints  # (21, 3) in metres
+tpose = MassSpringSimulator(sampling_rate=RATE).process({"head": (0.0, 0.0, 0.0)}).joints  # (21, 3) in metres
 HAND = HUMANOID_JOINTS.index("left_hand")
 print(len(HUMANOID_JOINTS), "joints:", HUMANOID_JOINTS[:5], "...")
 print(len(HUMANOID_BONES), "bones:", HUMANOID_BONES[:3], "...")
@@ -125,7 +125,7 @@ def swinging_forearm(frames=150, amplitude=0.6, noise=0.0, seed=0):
 
 swing = swinging_forearm()
 swing_time = np.arange(len(swing)) / RATE
-simulator = HumanoidSimulator(sampling_rate=RATE)
+simulator = MassSpringSimulator(sampling_rate=RATE)
 print(simulator.inputs)
 print(simulator.outputs)
 simulated = simulator.run(swing)["joints"]
@@ -173,7 +173,7 @@ settings = (3.0, 10.0, 30.0)
 errors = {}
 for damping in settings:
     for label, data in (("clean", swing), ("noisy", noisy)):
-        run = HumanoidSimulator(sampling_rate=RATE, damping=damping).run(data)["joints"]
+        run = MassSpringSimulator(sampling_rate=RATE, damping=damping).run(data)["joints"]
         errors[damping, label] = np.linalg.norm(run[:, HAND] - swing[:, HAND], axis=1) * 1000  # millimetres
 input_noise = np.linalg.norm(noisy[:, HAND] - swing[:, HAND], axis=1).mean() * 1000
 print(f"input noise on the hand: {input_noise:.1f} mm")
@@ -196,23 +196,19 @@ fig_damping.tight_layout()
 # **Takeaway.** A higher damping is more stable and lags more; the model does not remove noise, so it is not a filter.
 
 # %%
-# Bone directions and the ``control`` input
-# -----------------------------------------
-# :class:`~pyeyesweb.physical_signals.HumanoidOrientations` describes a pose by its 20 **bone directions**: the unit vector
-# of each bone, expressed in the frame of the previous bone of the chain, so that it does not depend on where the body is or
-# on how its parent segments are turned. The output ``directions`` has shape ``(20, 3)`` and is labelled
-# ``"<joint1>-<joint2>"`` as in ``HUMANOID_BONES``. A joint that is missing in a frame keeps the position it had before.
+# Bone directions: an output and an optional input
+# ------------------------------------------------
+# The simulator follows the 20 **bone directions** it reads from the joints, and returns them as its second output,
+# ``directions``: the unit vector of each bone, expressed in the frame of the previous bone of the chain, so that it does not
+# depend on where the body is. The output has shape ``(20, 3)`` and is labelled ``"<joint1>-<joint2>"`` as in
+# ``HUMANOID_BONES``. A joint that is missing in a frame keeps the position it had before.
 #
-# This is the form of the optional ``control`` input of the simulator, which replaces the directions the simulator would
-# read from the joints. Extractor and simulator therefore pipe into each other.
+# The same directions are an optional second input, which replaces the directions the simulator would read from the joints.
+# Passing the output back gives the same pose.
 
-from pyeyesweb.physical_signals import HumanoidOrientations
-
-extractor = HumanoidOrientations()
-print(extractor.outputs)
-directions = extractor.run(swing)["directions"]  # (frames, 20, 3)
-piped = HumanoidSimulator(sampling_rate=RATE).run(swing, directions)["joints"]
-print("simulator driven through control equals the plain path (first 30 frames):", np.allclose(piped[:30], simulated[:30], atol=1e-6))
+directions = MassSpringSimulator(sampling_rate=RATE).run(swing)["directions"]  # (frames, 20, 3)
+piped = MassSpringSimulator(sampling_rate=RATE).run(swing, directions)["joints"]
+print("simulator driven through its directions equals the plain path (first 30 frames):", np.allclose(piped[:30], simulated[:30], atol=1e-6))
 
 forearm = HUMANOID_BONES.index("left_elbow-left_wrist")
 fig_directions, ax = plt.subplots(figsize=(8, 2.6))
@@ -224,8 +220,8 @@ ax.set_title("left_elbow-left_wrist: the forearm direction in the frame of the u
 fig_directions.tight_layout()
 
 # %%
-# **Takeaway.** Bone directions are a pose description without position; ``HumanoidOrientations`` produces them and the
-# simulator can take them as ``control``.
+# **Takeaway.** Bone directions are a pose description without position; the simulator returns them and can take them as
+# its second input.
 
 # %%
 # A real recording through ``joint_map``
@@ -246,13 +242,13 @@ for side in ("left", "right"):
     for part in ("shoulder", "elbow", "wrist", "hand", "hip", "knee", "ankle", "foot"):
         joint_map[f"{side}_{part}"] = f"{side.capitalize()}_{part.capitalize()}"
 
-follower = HumanoidSimulator(labels=labels, joint_map=joint_map, units="mm", sampling_rate=arm_movement.sampling_rate, start_from_input=True)
+follower = MassSpringSimulator(labels=labels, joint_map=joint_map, units="mm", sampling_rate=arm_movement.sampling_rate, start_from_input=True)
 body = follower.run(captured)["joints"]  # (frames, 21, 3) in millimetres
 measured = np.stack([captured[:, labels.index(joint_map[name])] for name in HUMANOID_JOINTS], axis=1)
 print("simulated joints:", body.shape, "| first frame equals the input:", np.allclose(body[0], measured[0]))
 
 try:
-    HumanoidSimulator(labels=labels[:-1], joint_map=joint_map)
+    MassSpringSimulator(labels=labels[:-1], joint_map=joint_map)
 except ValueError as error:
     print("ValueError:", str(error)[:150])
 
@@ -305,13 +301,11 @@ print(model)
 print("masses:", model.mass_names, "| springs:", model.spring_names)
 
 # %%
-# We move the chain with three joint angles that oscillate at different frequencies and record the four masses. Two
-# features work on a model:
-#
-# * :class:`~pyeyesweb.physical_signals.GenericModelOrientations` gives the vector of each bone, from the hinge to the tip;
-# * :class:`~pyeyesweb.physical_signals.GenericModelSimulator` follows the bone directions and gives the masses.
+# We move the chain with three joint angles that oscillate at different frequencies and record the four masses.
+# ``MassSpringSimulator(model=model)`` takes the positions of the masses, reads the vector of each bone (from the hinge to
+# the tip, not normalised), follows those directions and gives the simulated masses, ``joints``, and the bone vectors,
+# ``directions``.
 
-from pyeyesweb.physical_signals import GenericModelOrientations, GenericModelSimulator
 
 CHAIN_RATE = 50.0
 steps = np.arange(750)
@@ -323,13 +317,11 @@ chain = np.concatenate([np.zeros((750, 1, 2)), tips], axis=1)
 chain = np.concatenate([chain, np.zeros((750, 4, 1))], axis=2)  # (frames, 4 masses, 3), rows in the order of chain_labels
 chain_labels = ["root", "a", "b", "c"]
 
-orientations = GenericModelOrientations(model, labels=chain_labels)
-bones = orientations.run(chain)["directions"]
-print("bone vectors:", bones.shape, "for the springs", orientations.outputs["directions"].axis_names[0])
-
-chain_simulator = GenericModelSimulator(model, sampling_rate=CHAIN_RATE, damping=3.0)
-mass_order = list(chain_simulator.outputs["positions"].axis_names[0])
-followed = chain_simulator.run(bones)["positions"]
+chain_simulator = MassSpringSimulator(model=model, labels=chain_labels, sampling_rate=CHAIN_RATE, damping=3.0)
+mass_order = list(chain_simulator.outputs["joints"].axis_names[0])
+chain_run = chain_simulator.run(chain)
+followed, bones = chain_run["joints"], chain_run["directions"]
+print("bone vectors:", bones.shape, "for the springs", chain_simulator.outputs["directions"].axis_names[0])
 truth = chain[:, [chain_labels.index(name) for name in mass_order]]
 tip = mass_order.index("c")
 print("mean error of the simulated tip:", round(float(np.linalg.norm(followed[:, tip] - truth[:, tip], axis=1).mean()), 3))
@@ -369,7 +361,7 @@ print("frames of the left hand in columns 0, 1, 2:", np.bincount(hand_cells[:, 0
 # %%
 # Exercise 2. A larger damping lags more, so the hand is further from the clean movement.
 
-heavy = HumanoidSimulator(sampling_rate=RATE, damping=30.0).run(swing)["joints"]
+heavy = MassSpringSimulator(sampling_rate=RATE, damping=30.0).run(swing)["joints"]
 print(f"damping 30: mean error {np.linalg.norm(heavy[:, HAND] - swing[:, HAND], axis=1).mean() * 1000:.1f} mm,",
       f"damping 10: {errors[10.0, 'clean'].mean():.1f} mm")
 

@@ -91,7 +91,7 @@ status is `WARMING_UP`; with a hop larger than 1, the calls between windows are 
 >>> from pyeyesweb.data_models import WindowedFeature
 >>> windowed = [info for info in pyeyesweb.catalog() if issubclass(info.cls, WindowedFeature)]
 >>> len(windowed)
-22
+20
 >>> import inspect
 >>> {info.name: inspect.signature(info.cls).parameters["window"].default for info in windowed if inspect.signature(info.cls).parameters["window"].default is not inspect.Parameter.empty}
 {'SpectralArcLength': 60, 'LogDimensionlessJerk': 60, 'Harmonicity': 60, 'SubmovementCount': 60, 'MultiScaleEntropy': 3000}
@@ -126,9 +126,9 @@ Lengths, positions, and thresholds that are lengths are in **metres**, the unit 
 ```{doctest}
 >>> with_units = [info.name for info in pyeyesweb.catalog() if "units" in inspect.signature(info.cls).parameters]
 >>> len(with_units)
-7
+6
 >>> with_units
-['HumanoidSimulator', 'GenericModelSimulator', 'HitCellDetector', 'Kinematics', 'Equilibrium', 'MotionNoiseDetector', 'TrajectoryNonPlanarity']
+['MassSpringSimulator', 'HitCellDetector', 'Kinematics', 'Equilibrium', 'MotionNoiseDetector', 'TrajectoryNonPlanarity']
 ```
 
 The rule is that **parameters are scaled and data are not**. A threshold is always written in metres, whatever `units` says,
@@ -160,27 +160,27 @@ Schema(Output('kinetic_energy', unit='<length>^2/s^2'))
 
 ### The humanoid model
 
-`HumanoidSimulator` works internally in millimetres, because the body model of EyesWeb and its spring forces are defined in
+The humanoid of `MassSpringSimulator` works internally in millimetres, because the body model of EyesWeb and its spring forces are defined in
 that unit. It still follows the same rule: `units` declares the unit of your frames, of `gravity` and `floor_position`, and of
 the output, and the wrapper converts at the boundary. A body run in metres and the same body run in millimetres give the same
 motion, to rounding:
 
 ```{doctest}
->>> from pyeyesweb.physical_signals import HumanoidSimulator
->>> pose = HumanoidSimulator(sampling_rate=25.0).process({"head": (0.0, 1.7, 0.0)}).joints      # metres
->>> in_metres = HumanoidSimulator(sampling_rate=25.0)
->>> in_millimetres = HumanoidSimulator(sampling_rate=25.0, units="mm")
+>>> from pyeyesweb.physical_signals import MassSpringSimulator
+>>> pose = MassSpringSimulator(sampling_rate=25.0).process({"head": (0.0, 1.7, 0.0)}).joints      # metres
+>>> in_metres = MassSpringSimulator(sampling_rate=25.0)
+>>> in_millimetres = MassSpringSimulator(sampling_rate=25.0, units="mm")
 >>> for step in range(5):
 ...     a = in_metres.process(pose + 0.001 * step).joints
 ...     b = in_millimetres.process(pose * 1000 + 1.0 * step).joints
 >>> bool(np.allclose(a * 1000, b))
 True
 >>> in_millimetres.outputs
-Schema(Output('joints', shape=(21, 3), unit='mm'))
+Schema(Output('joints', shape=(21, 3), unit='mm'), Output('directions', shape=(20, 3)))
 ```
 
-The `GenericModel*` features are different: they run in the unit of the model you give them, and `units` only names it, so
-`"m"` and `"mm"` give the same numbers.
+A model of your own is different: it runs in its own unit, and `units` only names it, so `"m"` and `"mm"` give the same
+numbers.
 
 ## Choices are strings, switches are booleans
 
@@ -197,7 +197,7 @@ No parameter takes an enumeration: the only enumerations in the public interface
 Traceback (most recent call last):
   ...
 ValueError: output_dims: invalid value 'bogus'; choose one of 'components', 'tangential'
->>> HumanoidSimulator(length_forces="on")
+>>> MassSpringSimulator(length_forces="on")
 Traceback (most recent call last):
   ...
 TypeError: length_forces must be True or False, got 'on'

@@ -67,9 +67,9 @@ library and the core are both in place.
 >>> import pyeyesweb
 >>> features = pyeyesweb.catalog()
 >>> len(features)
-60
+47
 >>> [info.name for info in features[:3]]
-['HumanoidSimulator', 'HumanoidOrientations', 'GenericModelOrientations']
+['MassSpringSimulator', 'SilhouetteCentroids', 'SilhouetteBodyParts']
 ```
 
 The catalog lists every feature with its layer and timescale (see {doc}`../concepts/layers`).

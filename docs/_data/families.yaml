@@ -39,7 +39,7 @@ dominance:
 humanoid_models:
   title: Humanoid and mass-spring models
   doc: theory/humanoid_models
-  features: [HumanoidSimulator, HumanoidOrientations, GenericModelOrientations, GenericModelSimulator]
+  features: [MassSpringSimulator]
 imaging:
   title: Imaging
   doc: theory/imaging

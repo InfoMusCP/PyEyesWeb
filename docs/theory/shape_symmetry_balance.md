@@ -138,8 +138,8 @@ triangle is isosceles. The three vertices are $(x,y)$ points with $y$ growing do
 >>> frame = np.array([[0.0, 0.0, 0.0], [-0.5, -0.3, 0.1], [0.8, -0.1, 0.2]])
 >>> Symmetry(labels, pairs=pairs, reference_point="neck").process(frame).symmetry
 0.6056630888033111
->>> Symmetry(labels, pairs=pairs, method="reflection", reference_point="neck").process(frame).pair_symmetry
-array([0.73692362])
+>>> Symmetry(labels, pairs=pairs, method="reflection", reference_point="neck").process(frame).pair_symmetry.round(4)
+array([0.7369])
 >>> triangle = TriangleSymmetry()
 >>> [round(float(triangle.process((0, 0), (-1, 1), (x, 1)).symmetry), 2) for x in (1, 2, 3)]
 [1.0, 0.5, 0.33]

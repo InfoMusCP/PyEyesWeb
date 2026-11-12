@@ -32,7 +32,7 @@ def test_layers_raise_import_error_without_the_core():
 def test_catalog_lists_features():
     names = {entry.name for entry in catalog()}
     assert {"SpectralArcLength", "SubmovementCount", "Suddenness", "MotionNoiseDetector"} <= names
-    assert len(catalog()) == 50  # 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
+    assert len(catalog()) == 47  # 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
 
 
 @needs_core

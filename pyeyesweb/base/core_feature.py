@@ -452,10 +452,19 @@ class VariantFeature:
     The public class names the keyword and its default string in `_SWITCH = (keyword, default)` and holds
     `_variants = {}`, keyed by the choices (lower-case strings); a parameter that only another variant takes is a `TypeError` naming the choice. Each
     variant's `__init__` accepts the keyword itself (and ignores it). `inspect.signature(Feature)` is the union of the variants'.
+
+    A keyword that takes more than the names of the variants (`MassSpringSimulator(model=...)`: `"humanoid"` or a model of
+    your own) sets `_switch_annotation` and overrides `_variant_key`, which maps a value of the keyword to its variant.
     """
 
     _SWITCH: ClassVar[Tuple[str, str]]
     _variants: ClassVar[dict]
+    _switch_annotation: ClassVar[Any] = None  # default: a `Literal` of the variant names
+
+    @classmethod
+    def _variant_key(cls, value: Any) -> str:
+        """The key of `_variants` that `value` of the keyword selects."""
+        return coerce_choice(f"v{value}" if type(value) is int else value, cls._variants, cls._SWITCH[0])
 
     def __init_subclass__(cls, variant: Any = None, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
@@ -464,8 +473,9 @@ class VariantFeature:
             public = next(base for base in cls.__mro__ if "_variants" in base.__dict__)
             public._variants[variant] = cls
             keyword, default = public._SWITCH
+            annotation = public._switch_annotation or Literal[tuple(public._variants)]
             merged = {keyword: inspect.Parameter(keyword, inspect.Parameter.KEYWORD_ONLY, default=default,
-                                                 annotation=Literal[tuple(public._variants)])}
+                                                 annotation=annotation)}
             for _, source in sorted(public._variants.items(), key=lambda entry: entry[0] != default):  # the default's first
                 for parameter in source.__signature__.parameters.values():
                     merged.setdefault(parameter.name, parameter)
@@ -477,8 +487,7 @@ class VariantFeature:
     def __new__(cls, *args: Any, **params: Any):
         if "_variants" in cls.__dict__:
             keyword, default = cls._SWITCH
-            choice = params.get(keyword, default)
-            cls = cls._variants[coerce_choice(f"v{choice}" if type(choice) is int else choice, cls._variants, keyword)]
+            cls = cls._variants[cls._variant_key(params.get(keyword, default))]
             if foreign := [name for name in params if name not in cls.__signature__.parameters]:
                 raise TypeError(f"{keyword}={cls._variant!r} does not take {', '.join(foreign)}")
         return super().__new__(cls)

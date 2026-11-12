@@ -5,9 +5,11 @@ compared with the raw core block that adopts the new parameters at the same fram
 block's, bit for bit, and the result says "parameters changed: state reset" exactly when the block reports that it
 forgot its state. The classification is the core's, from the original (see the headers of the blocks):
 
-* `HumanoidSimulator`, `GenericModelSimulator`: every parameter is LIVE; the topology of a
-  model (names of its masses and springs, which end masses) is STRUCTURAL, the rest of a model is LIVE.
-* `HumanoidOrientations`: `reference_direction` is STRUCTURAL (the body is built from it).
+* `MassSpringSimulator`, with the humanoid and with a model of your own: every parameter is LIVE; the topology of a model
+  (names of its masses and springs, which end masses) is STRUCTURAL, the rest of a model is LIVE.
+
+A model of your own takes joint positions; its raw block takes the bone vectors that the positions give
+(`REFERENCE["bone_directions"]` are those of `REFERENCE["model_positions"]`).
 """
 
 import os
@@ -23,8 +25,7 @@ from humanoid_inputs import CHAIN_XML, REFERENCE, forearm  # noqa: E402
 from live_param_suite import CHANGE_AT, NOTE, check_invalid, check_structural, feed  # noqa: E402
 
 from pyeyesweb._core import core  # noqa: E402
-from pyeyesweb.physical_signals import (HUMANOID_JOINTS, # noqa: E402
-                                        GenericModelSimulator, HumanoidOrientations, HumanoidSimulator, MassSpringModel)
+from pyeyesweb.physical_signals import HUMANOID_JOINTS, MassSpringModel, MassSpringSimulator  # noqa: E402
 
 RAW = core.humanoid
 DT = 0.04
@@ -36,7 +37,6 @@ CHAIN_DIRECTIONS = REFERENCE["bone_directions"]
 CHAIN_POSITIONS = REFERENCE["model_positions"]
 JOINT_LAYOUT = core.SkeletonLayout(list(HUMANOID_JOINTS))
 SPRING_LAYOUT = core.SkeletonLayout([str(label) for label in REFERENCE["spring_labels"]])
-MASS_LAYOUT = core.SkeletonLayout([str(label) for label in REFERENCE["mass_labels"]])
 
 
 def _raw(params):
@@ -48,12 +48,14 @@ def _positions(output):
     return output[0] if isinstance(output, tuple) else output
 
 
-# name -> (feature factory, raw factory, layout, frames); the raw factory takes the changed parameters as keywords
+# name -> (feature factory, raw factory, layout, frames of the feature, frames of the raw block); the raw factory takes the
+# changed parameters as keywords
 BLOCKS = {
-    "HumanoidSimulator": (lambda **params: HumanoidSimulator(**RATE, **params), lambda **params: RAW.HumanoidSimulator(**_raw(params)),
-                          JOINT_LAYOUT, FOREARM),
-    "GenericModelSimulator": (lambda **params: GenericModelSimulator(MODEL, **RATE, **params),
-                              lambda **params: RAW.GenericModelSimulator(RAW_MODEL, **_raw(params)), SPRING_LAYOUT, CHAIN_DIRECTIONS),
+    "humanoid": (lambda **params: MassSpringSimulator(**RATE, **params), lambda **params: RAW.HumanoidSimulator(**_raw(params)),
+                 JOINT_LAYOUT, FOREARM, FOREARM),
+    "model": (lambda **params: MassSpringSimulator(model=MODEL, **RATE, **params),
+              lambda **params: RAW.GenericModelSimulator(RAW_MODEL, **_raw(params)), SPRING_LAYOUT, CHAIN_POSITIONS,
+              CHAIN_DIRECTIONS),
 }
 
 COMMON = [("damping", 3.0), ("viscosity", 2.0), ("gravity", (0.0, -500.0, 0.0)), ("length_forces", False),
@@ -61,24 +63,20 @@ COMMON = [("damping", 3.0), ("viscosity", 2.0), ("gravity", (0.0, -500.0, 0.0)),
           ("floor_position", (0.0, -1.0, 0.0)), ("ground_interaction", True)]
 GENERIC = [("use_input_lengths", True)]
 CASES = (
-    [("HumanoidSimulator", name, value, False) for name, value in COMMON]
-    + [("GenericModelSimulator", name, value, False) for name, value in COMMON + GENERIC]
+    [("humanoid", name, value, False) for name, value in COMMON]
+    + [("model", name, value, False) for name, value in COMMON + GENERIC]
 )
-
-
-def _raw_value(value):
-    return RAW.PredictionMode.__members__[value.upper()] if value in ("directions_linear", "masses_inertia") else value
 
 
 @pytest.mark.parametrize("block, attr, value, structural", CASES, ids=[f"{case[0]}.{case[1]}" for case in CASES])
 def test_a_changed_parameter_is_what_the_raw_block_adopts(block, attr, value, structural):
-    make_feature, make_raw, layout, frames = BLOCKS[block]
+    make_feature, make_raw, layout, frames, raw_frames = BLOCKS[block]
     feature, raw = make_feature(), make_raw()
-    for index, frame in enumerate(frames):
+    for index, (frame, raw_frame) in enumerate(zip(frames, raw_frames)):
         if index == CHANGE_AT:
             setattr(feature, attr, value)
-            assert raw.adopt_params(make_raw(**{attr: _raw_value(value)})) is structural
-        out = raw.process_array(layout, frame, DT)
+            assert raw.adopt_params(make_raw(**{attr: value})) is structural
+        out = raw.process_array(layout, raw_frame, DT)
         result = feature.process(frame)
         name = result.schema.names[0]
         assert np.array_equal(result[name], _positions(out), equal_nan=True), (attr, index)
@@ -89,26 +87,22 @@ def test_a_changed_parameter_is_what_the_raw_block_adopts(block, attr, value, st
 def test_a_model_of_the_same_topology_is_live_and_another_is_structural():
     softer = MassSpringModel.from_xml_string(CHAIN_XML)
     softer.set_parameter("spring::s1::stiffness", 10.0)
-    feature, raw = GenericModelSimulator(MODEL, **RATE), RAW.GenericModelSimulator(RAW_MODEL)
-    for index, frame in enumerate(CHAIN_DIRECTIONS[:CHANGE_AT + 5]):
+    feature, raw = MassSpringSimulator(model=MODEL, **RATE), RAW.GenericModelSimulator(RAW_MODEL)
+    for index, (frame, vectors) in enumerate(zip(CHAIN_POSITIONS[:CHANGE_AT + 5], CHAIN_DIRECTIONS)):
         if index == CHANGE_AT:
             feature.model = softer
             assert raw.adopt_params(RAW.GenericModelSimulator(softer._model)) is False
         result = feature.process(frame)
-        assert np.array_equal(result["positions"], raw.process_array(SPRING_LAYOUT, frame, DT), equal_nan=True)
+        assert np.array_equal(result["joints"], raw.process_array(SPRING_LAYOUT, vectors, DT), equal_nan=True)
         assert NOTE not in result.reason
-    check_structural(lambda: GenericModelSimulator(MODEL, **RATE), "model",
+    check_structural(lambda: MassSpringSimulator(model=MODEL, **RATE), "model",
                      MassSpringModel.from_xml_string(CHAIN_XML.replace('name="c"', 'name="d"').replace('mass2="c"', 'mass2="d"')),
-                     list(CHAIN_DIRECTIONS))
-
-
-def test_the_reference_direction_of_the_orientations_is_structural():
-    check_structural(lambda: HumanoidOrientations(), "reference_direction", (0.0, 0.0, 1.0), list(FOREARM))
+                     list(CHAIN_POSITIONS))
 
 
 def test_the_sampling_rate_is_live():
     frames = FOREARM
-    feature, raw = HumanoidSimulator(**RATE), RAW.HumanoidSimulator()
+    feature, raw = MassSpringSimulator(**RATE), RAW.HumanoidSimulator()
     for index, frame in enumerate(frames[:90]):
         if index == CHANGE_AT:
             feature.sampling_rate = 50.0
@@ -118,7 +112,7 @@ def test_the_sampling_rate_is_live():
 
 
 def test_a_live_change_keeps_the_state_a_control_does_not_share():
-    control, changed = HumanoidSimulator(**RATE), HumanoidSimulator(**RATE)
+    control, changed = MassSpringSimulator(**RATE), MassSpringSimulator(**RATE)
     before = feed(control, list(FOREARM[:CHANGE_AT])), feed(changed, list(FOREARM[:CHANGE_AT]))
     assert before[0] == before[1]
     changed.damping = 3.0
@@ -126,9 +120,9 @@ def test_a_live_change_keeps_the_state_a_control_does_not_share():
 
 
 INVALID = [
-    (lambda: HumanoidSimulator(integration_step=0.002, **RATE), "integration_step", 0.0, list(FOREARM)),
-    (lambda: GenericModelSimulator(MODEL, integration_step=0.002, **RATE), "integration_step", -1.0, list(CHAIN_DIRECTIONS)),
-    (lambda: GenericModelSimulator(MODEL, length_forces=True, **RATE), "length_forces", "yes", list(CHAIN_DIRECTIONS)),
+    (lambda: MassSpringSimulator(integration_step=0.002, **RATE), "integration_step", 0.0, list(FOREARM)),
+    (lambda: MassSpringSimulator(model=MODEL, integration_step=0.002, **RATE), "integration_step", -1.0, list(CHAIN_POSITIONS)),
+    (lambda: MassSpringSimulator(model=MODEL, length_forces=True, **RATE), "length_forces", "yes", list(CHAIN_POSITIONS)),
 ]
 
 

@@ -34,7 +34,7 @@ def _same(first, second):
 
 
 def test_there_are_timed_features():
-    assert len(TIMED) >= 6
+    assert len(TIMED) >= 5
 
 
 @pytest.mark.parametrize("name", TIMED)

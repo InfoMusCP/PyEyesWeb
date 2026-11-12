@@ -255,6 +255,10 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 | `CrossRecurrencePlot(multiple_epsilons=..., use_multiple_epsilons=...)` | development | removed: one `epsilon` for every row; `RecurrencePlot` keeps the per-row thresholds |
 | `Suddenness` output `is_sudden`; `Suddenness(method=...)` with `"quantile"` | development | removed: the outputs are `alpha`, `beta` and `gamma`, and the fit is the constrained one, so `method` is gone |
 | `CurvatureVelocityCorrelation(velocity_threshold=...)` | development | removed: the block never read it |
+| `HumanoidSimulator(...)` | development | `MassSpringSimulator(...)` (`model="humanoid"`, the default); the input `skeleton` is `joints` and `control` is `directions`; the result also holds the `directions` |
+| `HumanoidOrientations(...).process(skeleton).directions` | development | `MassSpringSimulator(units=...).process(joints).directions` |
+| `GenericModelSimulator(model, ...).process(directions)`, output `positions` | development | `MassSpringSimulator(model=model, ...).process(joints)` takes the positions of the masses and reads the bone vectors itself; the bone vectors can still be given, `process(joints, directions)`; the output is `joints` |
+| `GenericModelOrientations(model).process(skeleton).directions` | development | `MassSpringSimulator(model=model, units=...).process(joints).directions` |
 
 ### Removed features
 
@@ -303,7 +307,7 @@ These are names of the development states or of the EyesWeb blocks that a user o
 | `EventSynchronizationInterdependence` | `NonlinearInterdependence` | outputs `xy`, `yx` are `first_to_second_interdependence`, `second_to_first_interdependence` |
 | `SpikeES` | `SpikeSynchronization` | |
 | `CentroidsCalc`, `BlobSubRegions`, `VideoGram` | `SilhouetteCentroids`, `SilhouetteBodyParts`, `Videogram` | on full-frame masks |
-| `HumanoidOrientationsExtractor`, `GenericModelOrientationsExtractor` | `HumanoidOrientations`, `GenericModelOrientations` | `joint_map` names your labels |
+| `HumanoidSimulator`, `GenericModelSimulator`, `HumanoidOrientationsExtractor`, `GenericModelOrientationsExtractor` | `MassSpringSimulator` | one feature: `model="humanoid"` or a `MassSpringModel`; the bone directions are its `directions` output; `joint_map` names your labels |
 | `MassSpringModel`, `TimeWindowSynchronizer` | `pyeyesweb.physical_signals.MassSpringModel`, `TimeWindowSynchronizer` (and `SynchronizedWindow`) | not catalog features |
 
 ### Parameter, input and output spellings
@@ -337,13 +341,13 @@ new spelling.
 | `std_dev_y` | `gaussian_sigma_y` | `PositionDependingPotentials` |
 | `rho` | `gaussian_correlation` | `PositionDependingPotentials` |
 | `ges_dur` | `gesture_duration` | `ContractionImpulsivity` |
-| `frames` | `sampling_rate` | `ContractionImpulsivity`, `CurvatureVelocityCorrelation`, `GenericModelSimulator` and 10 more |
+| `frames` | `sampling_rate` | `ContractionImpulsivity`, `CurvatureVelocityCorrelation`, `MassSpringSimulator` and 9 more |
 | `use_cust_ampl` | `use_custom_amplitude` | `PositionDependingPotentials` |
 | `cust_ampl` | `custom_amplitude` | `PositionDependingPotentials` |
 | `use_cust_dist` | `use_custom_distance` | `PositionDependingPotentials` |
 | `cust_dist` | `custom_distance` | `PositionDependingPotentials` |
 | `reg_init_values` | `region_initial_values` | `RegionDependingPotentials` |
-| `ref_dir` | `reference_direction` | `GenericModelSimulator`, `HumanoidOrientations`, `HumanoidSimulator` |
+| `ref_dir` | `reference_direction` | `MassSpringSimulator` |
 | `filter_params` | `low_frequency`, `high_frequency` | `PhaseLockingValue` |
 | `algorithm` | `method` | `Periodicity`, `Rarity`, `SuddennessImpulsivity` and 1 more |
 | `algo` | `method` | `Periodicity`, `Rarity`, `SuddennessImpulsivity` and 1 more |
@@ -401,7 +405,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `MotionNoiseDetector` | `reset()` clears the speed windows |
 | `ScalarPeakDetector` | the running maximum was seeded with the smallest positive number, so a signal that stays at or below 0 never produced a peak |
 | `SilhouetteBodyParts`, `Videogram` | the barycentre is the centroid of the mask truncated to whole pixels; the channel sums of the videogram are independent (the original aliased them) |
-| `GenericModelSimulator`, `HumanoidSimulator` | the damping force is proportional to the relative velocity of the two masses (the original used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in |
+| `MassSpringSimulator` | the damping force is proportional to the relative velocity of the two masses (the original used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in |
 
 The notes on each family in the theory pages ({doc}`theory/kinematics_energy`, {doc}`theory/smoothness`,
 {doc}`theory/impulsivity_suddenness`, {doc}`theory/humanoid_models`, {doc}`theory/imaging`) give the details.

@@ -1,10 +1,9 @@
 """Mass-spring models of a body (EyesWeb HumanoidModel catalog): virtual sensors that turn a captured skeleton into a
-physically simulated one or into bone directions.
+physically simulated one, with its bone directions.
 
-* :class:`HumanoidSimulator`, :class:`HumanoidOrientations`: a fixed 21-joint humanoid (the joints of the Kinect SDK v1
-  as EyesWeb names them); ``HUMANOID_JOINTS`` and ``HUMANOID_BONES`` list its joint and bone names.
-* :class:`GenericModelOrientations`, :class:`GenericModelSimulator`: the same features for a model of your own, a :class:`MassSpringModel` (also loaded
-  from an EyesWeb XML file). Positions are in the unit of the model.
+:class:`MassSpringSimulator` runs either a fixed 21-joint humanoid (``model="humanoid"``, the joints of the Kinect SDK v1
+as EyesWeb names them; ``HUMANOID_JOINTS`` and ``HUMANOID_BONES`` list its joint and bone names) or a model of your own,
+a :class:`MassSpringModel` (also loaded from an EyesWeb XML file), whose positions are in the unit of the model.
 
 A frame is a dict ``label -> (x, y, z)`` or an ``(N, 3)`` array in the order of ``labels``. The model has its own joint
 names; ``joint_map`` maps each of them to the label of your data (``{"head": "Head", ...}``; the names you do not list
@@ -13,28 +12,28 @@ missing in a frame (absent from the dict, or a row with a NaN) is a dropout the 
 were); infinite values and a frame without any joint are ``INVALID_INPUT``. Outputs are labelled by the names of the
 model.
 
-Time: the simulators advance the model by the time step of the call in seconds (the
+Time: the simulator advances the model by the time step of the call in seconds (the
 library rule: ``timestamp``, else ``sampling_rate`` in Hz, default ``None``, else 1 s per call and the ``reason`` says
 ``"no time given: per-sample derivatives"``).
 
 Units: ``units="m"|"mm"`` (default ``"m"``) is the unit of your frames, of ``gravity`` / ``floor_position`` and of the
-outputs. :class:`HumanoidSimulator` works internally in millimetres (the EyesWeb body is defined in mm) and converts at
-the boundary, the one place where the library rescales data; the generic models run in the unit of their own model and
+outputs. The humanoid works internally in millimetres (the EyesWeb body is defined in mm) and converts at the
+boundary, the one place where the library rescales data; a model of your own runs in the unit of their own model and
 ``units`` names it (stiffness and damping are in that unit).
 
-Known limitation of the simulators: the rotation springs make chains of four or five bones flutter at a low ``damping``
+Known limitation of the simulator: the rotation springs make chains of four or five bones flutter at a low ``damping``
 and the model is not a noise filter; the default ``damping=10`` (EyesWeb: 0.3, which diverges) is stable, 3 follows
 clean data with less lag.
 """
 
 import math
 import os
-from typing import Any, Dict, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, Mapping, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.base.core_feature import XYZ, CoreFeature, FrameFeature
+from pyeyesweb.base.core_feature import XYZ, CoreFeature, VariantFeature
 from pyeyesweb.base.inputs import points_input
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
@@ -222,82 +221,59 @@ class _Simulator(_Timed):
         super().reset()
 
 
-class _ModelFeature(_ModelInput):
-    """Mixin of the features built on a `MassSpringModel`: `model`, which is a parameter like the others (structural)."""
-
-    @classmethod
-    def _coerce_choices(cls, params: dict) -> dict:
-        out = super()._coerce_choices(params)
-        if "model" in out:
-            out["model"] = core_model(out["model"])
-        return out
-
-    @staticmethod
-    def _names_of(model: Any) -> Tuple[str, ...]:
-        raise NotImplementedError
-
-    def _input_names(self) -> Tuple[str, ...]:
-        return self._names_of(self._params["model"])
-
-    @property
-    def model(self) -> MassSpringModel:
-        """A copy of the model in its current state. Setting it changes
-        the model; the state restarts and the labels are checked against the new names."""
-        block_model = getattr(self._block, "model", None)
-        return MassSpringModel._wrap(self._params["model"] if block_model is None else block_model)
-
-    @model.setter
-    def model(self, value: Any) -> None:
-        model = core_model(value)
-        self._set_input(self._labels, self._given_map, self._names_of(model))  # checks before anything changes
-        try:
-            self._set_param("model", model)
-        except Exception:
-            self._set_input(self._labels, self._given_map)
-            raise
-
-    def _output_labels(self) -> Tuple[str, ...]:
-        return tuple(self._block.output_labels)
-
-    def _positions_output(self) -> Output:
-        return Output("positions", (len(self._output_labels()), 3), labels=self._output_labels(), components=XYZ,
-                      unit=self._params["units"], doc="positions of the masses of the model, in `units`")
-
-
 # ---------------------------------------------------------------------------------------------------------------------
-# the humanoid
+# the mass-spring simulator: the humanoid preset and a model of your own
 
 
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="HumanoidSimulator (MassSpringHumanoidSimulator)")
-class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
-    """A physically based humanoid that follows a captured skeleton.
+_HUMANOID = "humanoid"
+_ModelArgument = Union[str, MassSpringModel, os.PathLike]
 
-    The captured joints are replaced by the pose of a virtual body: a humanoid of 21 masses (the joints of
-    ``HUMANOID_JOINTS``) joined by 20 springs (the bones of ``HUMANOID_BONES``) is integrated in time. Every bone is a
-    spring with a length force, which keeps its rest length, and a rotation force, which turns it towards the direction
-    observed in the input; the head is the (very heavy) root. The simulated pose is smooth and always articulated, with the
-    proportions of the model body, so the feature acts as a virtual sensor that removes the jitter and the dropouts of a
+
+@describe(Layer.PHYSICAL_SIGNALS, eyesweb="HumanoidSimulator (MassSpringHumanoidSimulator), GenericModelSimulator")
+class MassSpringSimulator(VariantFeature, CoreFeature):
+    r"""A physically based body of masses and springs that follows a captured skeleton.
+
+    The captured joints are replaced by the pose of a virtual body: masses (the joints) joined by springs (the bones) are
+    integrated in time. Every bone is a spring with a length force, which keeps its rest length, and a rotation force,
+    which turns it towards the direction observed in the input. The simulated pose is smooth and always articulated, with
+    the proportions of the model, so the feature acts as a virtual sensor that removes the jitter and the dropouts of a
     captured skeleton and yields a physically plausible joint trajectory. It is not a noise filter in the
     signal-processing sense (see Notes).
 
-    ``process(skeleton, control=None, *, timestamp=None)`` takes the captured joints, a dict ``label -> (x, y, z)`` or a
-    ``(21, 3)`` array in the order of ``labels``. The optional ``control`` holds bone directions, a ``(20, 3)`` array in the
-    order of ``HUMANOID_BONES`` or a dict ``"<joint1>-<joint2>" -> (x, y, z)``; the bones then follow them instead of the
-    directions seen in the joints. They are directions *relative to the parent bone*, the convention of the output of
-    :class:`HumanoidOrientations`: passing that output as ``control`` reproduces the pose of the joints it came from.
+    ``model`` chooses the body:
+
+    * ``"humanoid"`` (default): a fixed humanoid of 21 joints (``HUMANOID_JOINTS``, the joints of the first Kinect SDK as
+      EyesWeb names them) and 20 bones (``HUMANOID_BONES``), hanging from its head (the EyesWeb HumanoidSimulator). Its
+      bone directions are unit vectors relative to the parent bone.
+    * a :class:`MassSpringModel`, or the path of an EyesWeb XML model file: a body of your own (a limb, a puppet, a rope;
+      the EyesWeb GenericModelSimulator). The bone direction of a spring is the vector from its first mass (the hinge) to
+      its second mass (the tip), :math:`\mathbf{b}_s = \mathbf{p}_{\mathrm{tip}(s)} - \mathbf{p}_{\mathrm{hinge}(s)}`,
+      not normalised.
+
+    ``process(joints, directions=None, *, timestamp=None)`` takes the captured joints, a dict ``label -> (x, y, z)`` or an
+    ``(n_joints, 3)`` array in the order of ``labels`` (by default the order of ``inputs["joints"].labels``). The bone
+    directions are read from the joints; the optional ``directions`` replaces them: an ``(n_bones, 3)`` array in the order
+    of the ``directions`` output, or a dict ``bone -> (x, y, z)``, in the convention of that output (for the humanoid,
+    unit directions relative to the parent bone; for a model of your own, world vectors). The ``directions`` output of a
+    call, passed back, gives the pose of the joints it came from.
 
     Parameters
     ----------
     labels : sequence of str, optional
-        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``HUMANOID_JOINTS``.
+        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the joint names of the model
+        (``HUMANOID_JOINTS``, or the mass names of your model).
     joint_map : dict, optional
-        ``joint of the model -> label of your data`` *(live)*; the model names are those of ``HUMANOID_JOINTS`` and the
-        names you leave out keep their own. The constructor raises ``ValueError`` when ``labels`` lack a joint the model
-        needs.
+        ``joint of the model -> label of your data`` *(live)*; the names you leave out keep their own. The constructor
+        raises ``ValueError`` when ``labels`` lack a joint the model needs.
+    model : {"humanoid"} or MassSpringModel or str
+        The body. ``"humanoid"`` (default) is the 21-joint humanoid, fixed for the life of the feature; a
+        :class:`MassSpringModel` or the path of an EyesWeb XML file is a model of your own *(structural)*, which can be
+        replaced by another model of your own.
     start_from_input : bool, default False
         Put the model on the first frame after construction or ``reset()`` instead of letting it settle there from its
-        T-pose *(live)*. The present joints take the input positions, the rest lengths of the bones become the bone
-        lengths of the input, and that first frame is returned as it is. A change applies from the next ``reset()``.
+        rest pose *(live)*. The joints that are present take the input positions and that first frame is returned as it
+        is; for the humanoid the rest lengths of the bones become the bone lengths of the input. A change applies from
+        the next ``reset()``.
     reference_direction : tuple of float, default (1.0, 0.0, 0.0)
         Reference direction of the model *(live)*: the direction from which the rest directions of the springs are
         measured (dimensionless; the x axis by default).
@@ -325,393 +301,276 @@ class HumanoidSimulator(_Units, _Simulator, _ModelInput, CoreFeature):
         hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.
     units : {"m", "mm"}, default "m"
         Unit of your frames, of the outputs, of ``gravity`` and of ``floor_position`` *(live)*. See Notes.
+    use_input_lengths : bool, default False
+        Take the rest length of each spring from the length of its input bone vector instead of the length of the model
+        *(live)*. A model of your own only.
 
     Notes
     -----
-    **Outputs.** ``joints``: ``(21, 3)`` array of ``(x, y, z)`` in ``units``, labelled by ``HUMANOID_JOINTS``; a joint
-    the model did not produce is NaN. The result is ``OK`` on every valid call (there is no warm-up). A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame
-    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint
-    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.
+    **Outputs.** ``joints``: ``(n_joints, 3)`` array of ``(x, y, z)`` in ``units``, the simulated positions, labelled by
+    the joint names of the model; a joint the model did not produce is NaN. ``directions``: ``(n_bones, 3)``, the bone
+    directions the model followed in this call (the ones read from the joints, or the ``directions`` given), labelled by
+    the bone names (``HUMANOID_BONES``, or the spring names of your model in alphabetical order). For the humanoid they are
+    unit vectors relative to the parent bone, dimensionless (a bone of zero length gives the zero vector, and a joint
+    missing in a frame keeps the position it had in the previous frame, the T-pose before the first); for a model of your
+    own they are world vectors in ``units`` (NaN for a spring with a missing mass). The result is ``OK`` on every valid
+    call (there is no warm-up). A frame with an infinite value, an empty frame, a frame without any joint (every row NaN)
+    and a dict frame whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in
+    ``result.reason``); a joint that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles:
+    its bones keep their target.
 
-    **Time.** The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A
-    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it
-    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses
-    ``1 / sampling_rate`` (or 1 s), never the absolute time.
+    **Time.** The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else
+    1 s. A timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model
+    where it was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()``
+    uses ``1 / sampling_rate`` (or 1 s), never the absolute time.
 
-    **Units.** This is the one feature that rescales data. The EyesWeb body is defined in millimetres and the spring forces
-    depend on the length unit, so the feature works internally in millimetres and converts at the boundary: with
-    ``units="m"`` frames are multiplied by 1000 on the way in and joints divided by 1000 on the way out, with ``"mm"``
-    nothing is converted. A body driven in metres reproduces the millimetre run up to rounding; metres declared as
-    ``"mm"`` give a different motion, because the model is not scale free.
+    **Units.** The EyesWeb humanoid is defined in millimetres and the spring forces depend on the length unit, so the
+    humanoid works internally in millimetres and converts at the boundary: with ``units="m"`` frames are multiplied by
+    1000 on the way in and joints divided by 1000 on the way out. A body driven in metres reproduces the millimetre run up
+    to rounding. A model of your own runs in its own unit, and ``units`` only names it: nothing is rescaled, and its
+    stiffness and damping are expressed in that unit (an EyesWeb XML model is usually in millimetres: ``units="mm"``).
 
-    **Behaviour.** The head is pinned: the output is the pose of a body hanging from where its head starts, the T-pose at
-    the origin or, with ``start_from_input``, the first frame; the translation of the person is not followed, as in
-    EyesWeb. Bone lengths stay those of the body and only the directions follow the input. A joint missing in a frame
-    leaves its bones unchanged. Every parameter is live; ``reset()`` puts the body back in the T-pose.
+    **Behaviour.** The humanoid hangs from its head: the output is the pose of a body hanging from where its head starts,
+    the T-pose at the origin or, with ``start_from_input``, the first frame; the translation of the person is not
+    followed, as in EyesWeb. Bone lengths stay those of the model and only the directions follow the input. ``reset()``
+    puts the body back in its rest pose.
 
     **Known limitation.** The rotation springs make chains of four or five bones flutter at a low ``damping``, and the
     model is not a noise filter: it follows the input with a lag that grows with ``damping``.
 
-    **Differences from EyesWeb.** The default ``damping`` is 10 (EyesWeb: 0.3, which diverges); time is in seconds per
-    call; ``control`` is read as directions relative to the parent bone (EyesWeb read world directions, so there the output
-    of its orientation extractor gave another pose).
+    **Differences from EyesWeb.** One feature for the two EyesWeb simulators and their orientation extractors (the bone
+    directions are an output); the default ``damping`` is 10 (EyesWeb: 0.3, which diverges); time is in seconds per call;
+    the humanoid reads ``directions`` relative to the parent bone (EyesWeb read world directions, so there the output of
+    its orientation extractor gave another pose).
 
     **Corrected in the core.** The damping force is proportional to the relative velocity of the two masses (the original
     used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in, so the
-    body at rest is in equilibrium; the reset to the input, which the original could never reach, works and moves only the
-    joints that are present.
+    body at rest is in equilibrium; the reset to the input, which the original humanoid could never reach, works and moves
+    only the joints that are present; after the reset of a model of your own the spring directions are refreshed; the zero
+    vector normalises to the zero vector instead of NaN.
 
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.physical_signals import HumanoidSimulator
-    >>> simulator = HumanoidSimulator(sampling_rate=25.0)
+    >>> from pyeyesweb.physical_signals import MassSpringModel, MassSpringSimulator
+    >>> simulator = MassSpringSimulator(sampling_rate=25.0)
     >>> result = simulator.process({"head": (0.0, 1.7, 0.0)})    # a lone joint: the body hangs from it, in its T-pose
-    >>> result.joints.shape
-    (21, 3)
-    >>> follower = HumanoidSimulator(sampling_rate=25.0, start_from_input=True)
+    >>> result.joints.shape, result.directions.shape
+    ((21, 3), (20, 3))
+    >>> follower = MassSpringSimulator(sampling_rate=25.0, start_from_input=True)
     >>> bool(np.allclose(follower.process(result.joints).joints, result.joints))
     True
+
+    A model of your own: a rod of length 1 hanging from a heavy root, asked to point along y.
+
+    >>> model = MassSpringModel()
+    >>> model.add_mass("root", 1e10)
+    >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
+    >>> model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
+    >>> rod = MassSpringSimulator(model=model, sampling_rate=100.0)
+    >>> rod.inputs["joints"].labels
+    ('root', 'tip')
+    >>> for _ in range(3):
+    ...     result = rod.process([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    >>> result.directions
+    array([[0., 1., 0.]])
     """
+    _SWITCH = ("model", _HUMANOID)
+    _switch_annotation = _ModelArgument
+    _variants: ClassVar[dict] = {}
+    _timed = True  # both bodies advance by the time step of each call (the catalog-wide time tests read it here)
+
+    @classmethod
+    def _variant_key(cls, value: Any) -> str:
+        return _HUMANOID if isinstance(value, str) and value.strip().lower() == _HUMANOID else "custom"
+
+    def _inputs(self) -> Inputs:
+        bones = self._bone_names()
+        return Inputs(self._frame_input("joints", "captured joints, in `units`"),
+                      Input("directions", InputKind.POINTS, (len(bones), 3), bones, doc=(
+                          "bone directions replacing those read from the joints, in the convention of the `directions` "
+                          "output"), accepts=(dict,), optional=True, allow_non_finite=True))
+
+    def _schema(self) -> Schema:
+        joints, bones = self._joint_names(), self._bone_names()
+        return Schema(Output("joints", (len(joints), 3), labels=joints, components=XYZ, unit=self._units_output(),
+                             doc="simulated joint positions"),
+                      Output("directions", (len(bones), 3), labels=bones, components=XYZ,
+                             unit=self._directions_unit(), doc="bone directions followed by the model"))
+
+    def _directions_array(self, directions: Any) -> np.ndarray:
+        """`directions` given by the user as the `(n_bones, 3)` array of the `directions` output (NaN: no direction)."""
+        bones = self._bone_names()
+        if isinstance(directions, dict):
+            out = np.full((len(bones), 3), math.nan)
+            for row, name in enumerate(bones):
+                if name in directions:
+                    out[row] = directions[name]
+            return out
+        return np.asarray(directions, dtype=float)
+
+    def process(self, joints: Any, directions: Any = None, *, timestamp: Optional[float] = None) -> Result:
+        points = self._points(joints, timestamp)
+        if isinstance(points, Result):
+            return points
+        step = self._time_step(timestamp)
+        given = None if directions is None else self._directions_array(directions)
+        positions, followed = self._simulate(points, given, step, self._teleport())
+        return self._result(joints=positions, directions=followed, timestamp=timestamp)
+
+
+class _Humanoid(_Units, _Simulator, _ModelInput, MassSpringSimulator, variant=_HUMANOID):
+    """The ``model="humanoid"`` body of ``MassSpringSimulator``; see that class for the parameters and the outputs."""
+
     _core_class = _humanoid.HumanoidSimulator
     _hidden_params = NAME_PARAMS
     _internal_mm = True
 
     def __init__(self, labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 *, start_from_input: bool = False, **params: Any):
+                 *, model: _ModelArgument = _HUMANOID, start_from_input: bool = False, **params: Any):
         _check_rate(params.get("sampling_rate"))
         self._start_from_input = _switch("start_from_input", start_from_input)
         super().__init__(**params)
         self._set_input(labels, joint_map)
         self._layout = core.SkeletonLayout(list(HUMANOID_JOINTS))
 
+    @property
+    def model(self) -> str:
+        """``"humanoid"``: the body of this feature, fixed for its life."""
+        return _HUMANOID
+
+    @model.setter
+    def model(self, value: Any) -> None:
+        raise AttributeError("MassSpringSimulator: the humanoid body is fixed; build a new MassSpringSimulator(model=...) "
+                             "for a model of your own")
+
     def _input_names(self) -> Tuple[str, ...]:
         return HUMANOID_JOINTS
 
-    def _inputs(self) -> Inputs:
-        return Inputs(self._frame_input("skeleton", "captured joints, in `units`"),
-                      Input("control", InputKind.POINTS, (len(HUMANOID_BONES), 3), HUMANOID_BONES, doc=(
-                          "bone directions relative to the parent bone (the output of HumanoidOrientations) replacing those seen in the joints"), accepts=(dict,), optional=True,
-                            allow_non_finite=True))
+    def _joint_names(self) -> Tuple[str, ...]:
+        return HUMANOID_JOINTS
 
-    def _schema(self) -> Schema:
-        return Schema(Output("joints", (len(HUMANOID_JOINTS), 3), labels=HUMANOID_JOINTS, components=XYZ,
-                             unit=self._units_output(), doc="simulated joint positions"))
+    def _bone_names(self) -> Tuple[str, ...]:
+        return HUMANOID_BONES
 
-    def process(self, skeleton: Any, control: Any = None, *, timestamp: Optional[float] = None) -> Result:
-        points = self._points(skeleton, timestamp)
-        if isinstance(points, Result):
-            return points
-        step = self._time_step(timestamp)
-        teleport = self._teleport()
+    def _directions_unit(self) -> Optional[str]:
+        return None  # unit vectors
+
+    @property
+    def _extractor(self) -> Any:
+        """The orientation extractor of the humanoid, for the `directions` output. It holds the last position of every
+        joint, so it lives as long as the simulator and is rebuilt only when the reference direction changes."""
+        extractor = self.__dict__.get("_extractor_block")
+        if extractor is None:
+            reference = self._block_params(self._params).get("ref_dir")
+            extractor = _humanoid.HumanoidOrientationsExtractor() if reference is None else \
+                _humanoid.HumanoidOrientationsExtractor(ref_dir=reference)
+            self.__dict__["_extractor_block"] = extractor
+        return extractor
+
+    def _set_param(self, name: str, value: Any) -> None:
+        super()._set_param(name, value)
+        if name == "reference_direction":
+            self.__dict__.pop("_extractor_block", None)
+
+    def reset(self) -> None:
+        super().reset()
+        self._extractor.reset()
+
+    def _simulate(self, points: np.ndarray, given: Optional[np.ndarray], step: float,
+                  teleport: bool) -> Tuple[np.ndarray, np.ndarray]:
         scale = self._to_core
         if scale != 1.0:  # metres in, the core works in mm
             points = points * scale
-        if control is None:
+        observed = self._extractor.process_array(self._layout, points)
+        if given is None:
             raw = self._block.process_array(self._layout, points, step, teleport)
         else:
-            raw = self._with_control(points, control, step, teleport)
+            joints = {name: tuple(row) for name, row in zip(HUMANOID_JOINTS, points.tolist()) if not np.isnan(row).any()}
+            control = {name: tuple(row) for name, row in zip(HUMANOID_BONES, given.tolist()) if np.isfinite(row).all()}
+            out = self._block.process(joints, step, control, teleport)
+            raw = np.array([out.get(name, _NAN_POINT) for name in self._block.output_labels])
         if scale != 1.0:
             raw = raw / scale
-        return self._result(joints=raw, timestamp=timestamp)
-
-    def _with_control(self, points: np.ndarray, control: Any, step: float, teleport: bool) -> np.ndarray:
-        joints = {name: tuple(row) for name, row in zip(HUMANOID_JOINTS, points.tolist()) if not np.isnan(row).any()}
-        if not isinstance(control, dict):
-            control = dict(zip(HUMANOID_BONES, np.asarray(control, dtype=float).tolist()))
-        directions = {name: tuple(vector) for name, vector in control.items() if np.isfinite(vector).all()}
-        out = self._block.process(joints, step, directions, teleport)
-        return np.array([out.get(name, _NAN_POINT) for name in self._block.output_labels])
+        return raw, observed if given is None else given
 
 
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="HumanoidOrientationsExtractor")
-class HumanoidOrientations(_ModelInput, FrameFeature):
-    """The orientation of every bone of a skeleton relative to its parent bone.
+class _Custom(_Units, _Simulator, _ModelInput, MassSpringSimulator, variant="custom"):
+    """A ``MassSpringModel`` body of ``MassSpringSimulator``; see that class for the parameters and the outputs."""
 
-    A posture is described by the direction of each of the 20 bones of ``HUMANOID_BONES`` (named
-    ``"<joint1>-<joint2>"``) expressed in the frame of the previous bone of the chain, so that the description does not
-    depend on where the body is or how its parent segments are oriented. The output is the convention of the ``control``
-    input of :class:`HumanoidSimulator`, which takes it as it is.
-
-    ``process(skeleton, *, timestamp=None)`` takes the captured joints, a dict ``label -> (x, y, z)`` or a ``(21, 3)`` array
-    in the order of ``labels``. The feature is stateful (``reset()``) but has no time axis: ``timestamp`` is only copied
-    into ``result.timestamp``.
-
-    Parameters
-    ----------
-    labels : sequence of str, optional
-        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``HUMANOID_JOINTS``.
-    joint_map : dict, optional
-        ``joint of the model -> label of your data`` *(live)*, as in :class:`HumanoidSimulator`; names left out keep their
-        own.
-    reference_direction : tuple of float, default (1.0, 0.0, 0.0)
-        Reference direction of the root bones (dimensionless; the x axis by default) *(structural)*: the rotation of a
-        root bone is the shortest arc from this direction.
-
-    Notes
-    -----
-    **Outputs.** ``directions``: ``(20, 3)`` array of unit vectors, dimensionless, labelled by ``HUMANOID_BONES``. A
-    bone of zero length gives the zero vector. A joint missing in a frame keeps the position it had in the previous frame
-    (the T-pose before the first), so a bone whose joint was never seen is still computed. The result is ``OK`` on every
-    valid call. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame
-    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint
-    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from pyeyesweb.physical_signals import HumanoidOrientations, HumanoidSimulator
-    >>> pose = HumanoidSimulator().process({"head": (0.0, 0.0, 0.0)}).joints    # the T-pose, (21, 3)
-    >>> directions = HumanoidOrientations().process(pose).directions
-    >>> directions.shape
-    (20, 3)
-    >>> bool(np.allclose(np.linalg.norm(directions, axis=1), 1.0))
-    True
-    """
-    _core_class = _humanoid.HumanoidOrientationsExtractor
-    _hidden_params = NAME_PARAMS
+    _core_class = _humanoid.GenericModelSimulator
 
     def __init__(self, labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 **params: Any):
-        super().__init__(**params)
-        self._set_input(labels, joint_map)
-        self._layout = core.SkeletonLayout(list(HUMANOID_JOINTS))
-
-    def _input_names(self) -> Tuple[str, ...]:
-        return HUMANOID_JOINTS
-
-    def _inputs(self) -> Inputs:
-        return Inputs(self._frame_input("skeleton", "captured joints"))
-
-    def _schema(self) -> Schema:
-        return Schema(Output("directions", (len(HUMANOID_BONES), 3), labels=HUMANOID_BONES, components=XYZ,
-                             doc="unit direction of each bone in the frame of its previous bone"))
-
-    def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
-        points = self._points(frame, timestamp)
-        if isinstance(points, Result):
-            return points
-        return self._result(directions=self._block.process_array(self._layout, points), timestamp=timestamp)
-
-
-# ---------------------------------------------------------------------------------------------------------------------
-# generic models
-
-
-class _GenericFeature(_ModelFeature):
-    """Mixin of the features of a model of your own: `model` is the first argument and `labels` / `joint_map` follow."""
-
-    def __init__(self, model: Union[MassSpringModel, str, os.PathLike],
-                 labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None, **params: Any):
+                 *, model: _ModelArgument, start_from_input: bool = False, **params: Any):
+        _check_rate(params.get("sampling_rate"))
+        self._start_from_input = _switch("start_from_input", start_from_input)
         super().__init__(model=model, **params)
         self._set_input(labels, joint_map)
 
+    @classmethod
+    def _coerce_choices(cls, params: dict) -> dict:
+        out = super()._coerce_choices(params)
+        if "model" in out:
+            if isinstance(out["model"], str) and out["model"].strip().lower() == _HUMANOID:
+                raise ValueError("MassSpringSimulator: model='humanoid' is another kind of body; build a new "
+                                 "MassSpringSimulator for it")
+            out["model"] = core_model(out["model"])
+        return out
+
+    @property
+    def model(self) -> MassSpringModel:
+        """A copy of the model in its current state. Setting it changes the model; the state restarts and the labels
+        are checked against the new mass names."""
+        return MassSpringModel._wrap(self._block.model)
+
+    @model.setter
+    def model(self, value: Any) -> None:
+        model = self._coerce_choices({"model": value})["model"]
+        self._set_input(self._labels, self._given_map, tuple(model.mass_names))  # checks before anything changes
+        try:
+            self._set_param("model", model)
+        except Exception:
+            self._set_input(self._labels, self._given_map)
+            raise
+
+    def _input_names(self) -> Tuple[str, ...]:
+        return tuple(self._params["model"].mass_names)
+
+    def _joint_names(self) -> Tuple[str, ...]:
+        return tuple(self._block.output_labels)
+
+    def _bone_names(self) -> Tuple[str, ...]:
+        return tuple(self._extractor.output_labels)
+
+    def _directions_unit(self) -> Optional[str]:
+        return self._units_output()
+
     def _outputs_changed(self) -> None:
-        self.__dict__.pop("_layout", None)
+        for cached in ("_extractor_block", "_mass_layout", "_bone_layout"):
+            self.__dict__.pop(cached, None)
         super()._outputs_changed()
 
-    def _model_layout(self) -> Any:
-        layout = self.__dict__.get("_layout")
-        if layout is None:
-            layout = self.__dict__["_layout"] = core.SkeletonLayout(list(self._input_names()))
-        return layout
+    def _cached(self, key: str, build: Any) -> Any:
+        value = self.__dict__.get(key)
+        if value is None:
+            value = self.__dict__[key] = build()
+        return value
+
+    @property
+    def _extractor(self) -> Any:
+        """The bone vectors of the model (stateless): rebuilt when the model changes."""
+        return self._cached("_extractor_block", lambda: _humanoid.GenericModelOrientationsExtractor(self._params["model"]))
+
+    def _simulate(self, points: np.ndarray, given: Optional[np.ndarray], step: float,
+                  teleport: bool) -> Tuple[np.ndarray, np.ndarray]:
+        masses = self._cached("_mass_layout", lambda: core.SkeletonLayout(list(self._input_names())))
+        bones = self._cached("_bone_layout", lambda: core.SkeletonLayout(list(self._bone_names())))
+        followed = self._extractor.process_array(masses, points) if given is None else given
+        return self._block.process_array(bones, np.ascontiguousarray(followed), step, reset_to_input=teleport), followed
 
 
-def _mass_names(model: Any) -> Tuple[str, ...]:
-    return tuple(model.mass_names)
+for _variant in (_Humanoid, _Custom):
+    _variant.__name__ = MassSpringSimulator.__name__
 
 
-def _spring_names(model: Any) -> Tuple[str, ...]:
-    return tuple(model.spring_names)
-
-
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="GenericModelOrientationsExtractor")
-class GenericModelOrientations(_GenericFeature, FrameFeature):
-    r"""The bone vectors of a mass-spring model from the positions of its masses.
-
-    For every spring :math:`s` of ``model``, the feature gives the vector from its first mass (the hinge) to its second
-    mass (the tip),
-
-    .. math::
-
-        \mathbf{b}_s = \mathbf{p}_{\mathrm{tip}(s)} - \mathbf{p}_{\mathrm{hinge}(s)},
-
-    not normalised and in the unit of the data. It is the front end of :class:`GenericModelSimulator`, which takes these vectors as the directions the springs have to follow.
-
-    ``process(skeleton, *, timestamp=None)`` takes the positions of the masses, one point per mass of ``model`` named like
-    the mass (or mapped with ``joint_map``), as a dict ``label -> (x, y, z)`` or an ``(n_masses, 3)`` array in the order of
-    ``labels``. The feature is stateless and has no time axis: ``timestamp`` is only copied into ``result.timestamp``.
-
-    Parameters
-    ----------
-    model : MassSpringModel or str
-        The model, or the path of an EyesWeb XML model file *(structural)*. Only the mass and spring names matter here.
-    labels : sequence of str, optional
-        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.mass_names``.
-    joint_map : dict, optional
-        ``mass name of the model -> label of your data`` *(live)*; names left out keep their own.
-
-    Notes
-    -----
-    **Outputs.** ``directions``: ``(n_springs, 3)`` array of ``(x, y, z)``, in the unit of the data, labelled by the spring
-    names of the model. A spring with a missing mass is NaN. The result is ``OK`` on every valid call. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame
-    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint
-    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.
-
-    Examples
-    --------
-    >>> from pyeyesweb.physical_signals import GenericModelOrientations, MassSpringModel
-    >>> model = MassSpringModel()
-    >>> model.add_mass("root", 1e10)
-    >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
-    >>> model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
-    >>> GenericModelOrientations(model).process([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]).directions
-    array([[0., 1., 0.]])
-    """
-    _core_class = _humanoid.GenericModelOrientationsExtractor
-    _names_of = staticmethod(_mass_names)
-
-    def _inputs(self) -> Inputs:
-        return Inputs(self._frame_input("skeleton", "positions of the masses of the model"))
-
-    def _schema(self) -> Schema:
-        labels = self._output_labels()
-        return Schema(Output("directions", (len(labels), 3), labels=labels, components=XYZ, unit="<length>",
-                             doc="vector from the first to the second mass of each spring"))
-
-    def _process(self, frame: Any, timestamp: Optional[float]) -> Result:
-        points = self._points(frame, timestamp)
-        if isinstance(points, Result):
-            return points
-        return self._result(directions=self._block.process_array(self._model_layout(), points), timestamp=timestamp)
-
-
-class _Directions(_GenericFeature):
-    """The input of the simulator: one direction per spring of the model."""
-
-    _names_of = staticmethod(_spring_names)
-
-    def _inputs(self) -> Inputs:
-        return Inputs(self._frame_input("directions", "bone directions of the springs of the model, e.g. the output of "
-                                                      "GenericModelOrientations"))
-
-    def _schema(self) -> Schema:
-        return Schema(self._positions_output())
-
-
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="GenericModelSimulator")
-class GenericModelSimulator(_Units, _Simulator, _Directions, CoreFeature):
-    """A mass-spring model that follows bone directions.
-
-    A model of your own, a :class:`MassSpringModel` of masses joined by springs, is integrated in time while each spring is
-    pulled towards the direction given in the input. The result is a smooth, always articulated trajectory of the masses of
-    the model that follows a captured or generated movement: a virtual sensor for any articulated structure (a limb, a
-    puppet, a whole body of your own design).
-
-    ``process(directions, *, timestamp=None)`` takes one direction per spring of ``model`` (a dict ``label -> (x, y, z)``,
-    labelled by the spring names or mapped with ``joint_map``, or a ``(n_springs, 3)`` array in the order of ``labels``;
-    typically the output of :class:`GenericModelOrientations`) as the rest targets of the springs. It advances the model by
-    the time step of the call and returns ``positions``.
-
-    Parameters
-    ----------
-    model : MassSpringModel or str
-        The model, or the path of an EyesWeb XML model file *(structural)*.
-    labels : sequence of str, optional
-        Names of the rows of array frames *(live)*. Default ``None``: the rows follow the order of ``model.spring_names``.
-    joint_map : dict, optional
-        ``spring name of the model -> label of your data`` *(live)*; names left out keep their own.
-    start_from_input : bool, default False
-        Move the tips of the springs onto the input at the first frame after construction or ``reset()`` *(live)*; a
-        change applies from the next ``reset()``.
-    reference_direction : tuple of float, default (1.0, 0.0, 0.0)
-        Reference direction of the model *(live)*: the direction from which the rest directions of the springs are
-        measured (dimensionless; the x axis by default).
-    integration_step : float, default 0.001
-        Step of the numerical integration in seconds, > 0 *(live)*. A call that advances the model by ``dt`` seconds runs
-        ``int(dt / integration_step)`` steps.
-    gravity : tuple of float, default (0.0, 0.0, 0.0)
-        Gravity vector in ``units`` per second squared *(live)*; zero means no gravity.
-    damping : float, default 10.0
-        Damping coefficient of the springs *(live)*. The EyesWeb default, 0.3, makes chains of four or five bones diverge;
-        10 is stable with noisy input and 3 follows clean data with less lag.
-    viscosity : float, default 0.0
-        Viscous friction of the masses *(live)*.
-    length_forces : bool, default True
-        Switch on the forces that keep each spring at its rest length *(live)*.
-    rotation_forces : bool, default True
-        Switch on the forces that turn each spring towards its target direction *(live)*.
-    ground_interaction : bool, default False
-        Add a floor, the plane through ``floor_position`` whose normal is opposite to gravity *(live)*; a mass below it is
-        pushed back along the normal.
-    floor_position : tuple of float, default (0.0, 0.0, 0.0)
-        A point of the floor plane, in ``units`` *(live)*.
-    use_input_lengths : bool, default False
-        Take the rest length of each spring from the length of the input vector instead of the length of the model *(live)*.
-    sampling_rate : float, optional
-        Frame rate in Hz, used for the time step of a call that has no ``timestamp`` *(live)*. Default ``None`` (no
-        hidden rate): the step is then 1 s and ``reason`` says ``"no time given: per-sample derivatives"``.
-    units : {"m", "mm"}, default "m"
-        Name of the unit of the model, of the data, of ``gravity``, ``floor_position`` and of the outputs *(live)*.
-        Nothing is rescaled (see Notes).
-
-    Notes
-    -----
-    **Outputs.** ``positions``: ``(n_masses, 3)`` array of ``(x, y, z)`` in ``units``, labelled by the mass names of the
-    model. The result is ``OK`` on every valid call (no warm-up). A direction missing in a frame leaves its spring
-    unchanged. A frame with an infinite value, an empty frame, a frame without any joint (every row NaN) and a dict frame
-    whose keys match none of the names the model reads are ``INVALID_INPUT`` (the cause is in ``result.reason``); a joint
-    that is missing (absent from the dict, or a row with a NaN) is a dropout the model handles.
-
-    **Time.** The time step of a call is ``timestamp - previous timestamp`` in seconds, else ``1 / sampling_rate``, else 1 s. A
-    timestamp that does not increase gives ``INVALID_INPUT`` (``"non-increasing timestamp"``) and leaves the model where it
-    was; a non-finite timestamp raises ``ValueError``. The first timed call after construction or ``reset()`` uses
-    ``1 / sampling_rate`` (or 1 s), never the absolute time.
-
-    **Units.** The model, the data, ``gravity``, ``floor_position`` and the outputs are in one and the same length unit, the
-    unit of your model; ``units`` only names it (an EyesWeb XML model is usually in millimetres: ``units="mm"``). Nothing is
-    rescaled, so the numbers are identical for ``"m"`` and ``"mm"``. The dynamics are those of the model in its own unit,
-    and its stiffness and damping are expressed in that unit too: the same model written in another unit moves
-    differently. :class:`HumanoidSimulator` is the exception that does convert.
-
-    **Known limitation.** The rotation springs make chains of four or five bones flutter at a low ``damping``; see
-    :class:`HumanoidSimulator`.
-
-    **Corrected in the core.** The damping is proportional to the relative velocity of the two masses (the original
-    injected energy); a spring is skipped by the length force only when its direction is the zero vector; after the reset
-    to the input the spring directions are refreshed; the zero vector normalises to the zero vector instead of NaN.
-
-    Examples
-    --------
-    >>> from pyeyesweb.physical_signals import GenericModelSimulator, MassSpringModel
-    >>> model = MassSpringModel()
-    >>> model.add_mass("root", 1e10)
-    >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))
-    >>> model.add_spring("rod", "root", "tip", 1.0, 100.0, (1.0, 0.0, 0.0), 100.0)
-    >>> simulator = GenericModelSimulator(model, sampling_rate=100.0)
-    >>> for _ in range(3):
-    ...     result = simulator.process([[0.0, 1.0, 0.0]])    # the rod is asked to point along y
-    >>> result.positions[1].round(3)
-    array([1.   , 0.042, 0.   ])
-    """
-    _core_class = _humanoid.GenericModelSimulator
-
-    def __init__(self, model: Union[MassSpringModel, str, os.PathLike],
-                 labels: Optional[Sequence[str]] = None, joint_map: Optional[Mapping[str, str]] = None,
-                 *, start_from_input: bool = False, **params: Any):
-        _check_rate(params.get("sampling_rate"))
-        self._start_from_input = _switch("start_from_input", start_from_input)
-        super().__init__(model, labels, joint_map, **params)
-
-    def process(self, directions: Any, *, timestamp: Optional[float] = None) -> Result:
-        points = self._points(directions, timestamp)
-        if isinstance(points, Result):
-            return points
-        step = self._time_step(timestamp)
-        raw = self._block.process_array(self._model_layout(), points, step, reset_to_input=self._teleport())
-        return self._result(positions=raw, timestamp=timestamp)
-
-
-__all__ = ["HumanoidSimulator", "HumanoidOrientations", "GenericModelOrientations", "GenericModelSimulator",
-           "MassSpringModel", "HUMANOID_JOINTS",
-           "HUMANOID_BONES"]
+__all__ = ["MassSpringSimulator", "MassSpringModel", "HUMANOID_JOINTS", "HUMANOID_BONES"]

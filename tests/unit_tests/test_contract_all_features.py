@@ -19,7 +19,7 @@ import numpy as np
 import pytest
 
 from contract_suite import check_feature_contract
-from humanoid_inputs import CHAIN_XML, REFERENCE, forearm
+from humanoid_inputs import forearm
 from imaging_inputs import silhouette
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
@@ -40,14 +40,12 @@ from pyeyesweb.mid_level import (  # noqa: E402
     GestureSegmenter, PositionDependingPotentials, RegionDependingPotentials, Suddenness, SuddennessImpulsivity
 )
 from pyeyesweb.physical_signals import (  # noqa: E402
-    GenericModelOrientations, GenericModelSimulator, HitCellDetector,
-    HumanoidOrientations, HumanoidSimulator, MassSpringModel,
+    HitCellDetector, MassSpringSimulator,
     SilhouetteCentroids, Videogram
 )
 
 FRAME_COUNT = 40
 LABELS = ["torso", "left_hip", "right_hip"]
-MODEL = MassSpringModel.from_xml_string(CHAIN_XML)
 MILLIMETRES = dict(sampling_rate=25.0, units="mm")
 
 
@@ -130,11 +128,9 @@ def _cells():
 
 def _humanoid_control():
     frames = forearm(30)
-    return frames, HumanoidOrientations().run(frames)["directions"]
+    return frames, MassSpringSimulator(**MILLIMETRES).run(frames)["directions"]
 
 
-def _chain(name):
-    return (REFERENCE[name][:30],)
 
 
 # name -> (factory, data); features not listed are built with no argument and driven by `from_inputs`
@@ -143,10 +139,7 @@ OVERRIDES = {
     "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1),
                                lambda: (_random(10).choice([-1.0, 1.0], size=(12, 8)), _contours()[0])),
     "HitCellDetector": (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=1.0, y_max=1.0), _hits),
-    "HumanoidSimulator": (lambda: HumanoidSimulator(**MILLIMETRES), _humanoid_control),
-    "HumanoidOrientations": (None, lambda: (forearm(30),)),
-    "GenericModelOrientations": (lambda: GenericModelOrientations(MODEL), lambda: _chain("model_positions")),
-    "GenericModelSimulator": (lambda: GenericModelSimulator(MODEL, **MILLIMETRES), lambda: _chain("bone_directions")),
+    "MassSpringSimulator": (lambda: MassSpringSimulator(**MILLIMETRES), _humanoid_control),
     "SilhouetteCentroids": (lambda: SilhouetteCentroids(filter_centroids=True, alpha=0.5), _moving_body),
     "SilhouetteBodyParts": (None, _moving_body),
     "Videogram": (lambda: Videogram(window=4), None),

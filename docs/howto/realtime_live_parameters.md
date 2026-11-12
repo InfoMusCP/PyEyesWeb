@@ -223,10 +223,10 @@ against a feature built with the new value.
 | `CrossRecurrencePlot` | `epsilon` | |
 
 A parameter that is not in the table belongs to a feature whose parameters are not changed one by one by those tests, or has no
-live meaning; the class documentation says which. In the humanoid and generic-model features every tested parameter is live
+live meaning; the class documentation says which. In `MassSpringSimulator` every tested parameter is live
 (`damping`, `viscosity`, `gravity`, the forces, `integration_step`, `floor_position`,
-`sampling_rate`), except the replacement of the `model` by one with another topology and
-the `reference_direction` of `HumanoidOrientations`, which are structural. Four features have a structural `window`, because the state of the core is sized by it: `Rarity(method="information")`,
+`sampling_rate`, `reference_direction`), except the replacement of the `model` by one with another topology, which is
+structural. Four features have a structural `window`, because the state of the core is sized by it: `Rarity(method="information")`,
 `Videogram` and `ScalarPeakDetector`, and `CurvatureVelocityCorrelation`, whose `hop` and `sampling_rate` are structural too
 (its filters need the same length and overlap in consecutive windows).
 `EventSynchronization` and `EventSynchronizationMECS` change `window` and `hop` together, with `configure(window=, hop=)`.

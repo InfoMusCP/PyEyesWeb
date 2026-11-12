@@ -16,13 +16,11 @@ The features fall in three groups, one for each kind of input.
 **You have a skeleton and want a cleaner one.** The captured joints jitter and drop out; a mass-spring model
 follows them and gives a smooth, articulated pose with constant bone lengths.
 
-- {py:class}`~pyeyesweb.physical_signals.HumanoidSimulator` for the fixed 21-joint humanoid (the joints of the first Kinect
-  SDK as EyesWeb names them). It is the choice for a body captured by any system whose joints you can map to those names (see
-  {doc}`../howto/map_skeleton`).
-- {py:class}`~pyeyesweb.physical_signals.HumanoidOrientations` when you need the posture itself, the direction of each bone in
-  the frame of its parent, which does not depend on where the body is.
-- {py:class}`~pyeyesweb.physical_signals.GenericModelSimulator` and {py:class}`~pyeyesweb.physical_signals.GenericModelOrientations`
-  when the structure is not a human body (a limb, a puppet, an instrument). They take a `MassSpringModel`.
+- {py:class}`~pyeyesweb.physical_signals.MassSpringSimulator`. With `model="humanoid"` (the default) it runs the fixed
+  21-joint humanoid (the joints of the first Kinect SDK as EyesWeb names them), the choice for a body captured by any system
+  whose joints you can map to those names (see {doc}`../howto/map_skeleton`). With `model=` a `MassSpringModel` it runs a
+  structure that is not a human body (a limb, a puppet, an instrument). Its `directions` output is the posture itself, the
+  direction of each bone, which does not depend on where the body is.
 
 Theory, assumptions and the units exception: {doc}`../theory/humanoid_models`.
 
@@ -49,9 +47,9 @@ the model, feed any feature that takes a labelled skeleton.
 
 ```{doctest}
 >>> import numpy as np
->>> from pyeyesweb.physical_signals import HUMANOID_JOINTS, HumanoidSimulator
+>>> from pyeyesweb.physical_signals import HUMANOID_JOINTS, MassSpringSimulator
 >>> from pyeyesweb.low_level import KineticEnergy
->>> simulator = HumanoidSimulator(sampling_rate=25.0)
+>>> simulator = MassSpringSimulator(sampling_rate=25.0)
 >>> energy = KineticEnergy(labels=list(HUMANOID_JOINTS), weights={name: 1.0 for name in HUMANOID_JOINTS}, sampling_rate=25.0)
 >>> tpose = simulator.process({"head": (0.0, 0.0, 0.0)}).joints
 >>> frame = {name: tuple(point) for name, point in zip(HUMANOID_JOINTS, tpose)}
@@ -73,10 +71,10 @@ The other pipeline of the layer goes from an image to the measures of an outline
 ## What to know before choosing
 
 - The features of this layer do not wait for data: every valid call is `OK`, with no warm-up (see {doc}`../concepts/results`).
-- Time is in seconds. The simulators advance their model by the time of the call
+- Time is in seconds. The simulator advances its model by the time of the call
   ({doc}`../concepts/time_units_parameters`); the image features and `HitCellDetector` have no time axis.
-- Units: `HumanoidSimulator` is the one feature of the library that converts data (its model is in millimetres and it converts at
-  the boundary); the generic models do not. {doc}`../theory/humanoid_models` explains the difference.
+- Units: the humanoid of `MassSpringSimulator` is the one place of the library that converts data (its model is in millimetres
+  and it converts at the boundary); a model of your own does not. {doc}`../theory/humanoid_models` explains the difference.
 - Image features take 8-bit images or masks and return pixel coordinates (see {doc}`../concepts/inputs`).
 
 Hands-on: see {ref}`sphx_glr_tutorials_02_physical_signals_plot_03_points.py` (points) and {ref}`sphx_glr_tutorials_02_physical_signals_plot_04_images.py` (images).

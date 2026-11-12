@@ -4,8 +4,6 @@
 KineticEnergy: {skeleton: kinect_v2}
 Symmetry: {skeleton: kinect_v2}
 MotionNoiseDetector: {skeleton: kinect_v2}
-GenericModelOrientations: {model: "@mass_spring_model"}
-GenericModelSimulator: {model: "@mass_spring_model"}
 SpectralArcLength: {sampling_rate: 100.0}
 LogDimensionlessJerk: {sampling_rate: 100.0}
 Harmonicity: {sampling_rate: 100.0}

@@ -119,7 +119,7 @@ These are Python-layer rules, implemented once in the central call path (`Featur
   values" (the text of `non_finite`). The sample is not buffered and no state advances, so the next valid call behaves
   as if the rejected one had not happened (a windowed feature does not hold it in its window, the hop counter and
   `latest` do not move). An input says `allow_non_finite=True` when NaN is data: the feature then checks it itself. The
-  opt-outs are the humanoid and mass-spring inputs (`HumanoidSimulator`, `HumanoidOrientations`, `GenericModel*`:
+  opt-outs are the humanoid and mass-spring inputs (`MassSpringSimulator`:
   a NaN joint is a dropout the model handles; an infinity or an all-NaN frame is still
   `INVALID_INPUT`) and the input of `EnsembleDominance` (a NaN complexity index is a participant without one, ignored by
   design). An input that is cast to an integer says `integer=True` and also rejects values beyond the
@@ -261,7 +261,7 @@ From the suspected-bugs list of the fact sheet (S1 to S7, S8, S10).
   the previous one; a windowed feature holds the sample in its window until it leaves) can therefore return `INVALID_INPUT` on the
   next valid call too. The other rejections (non-finite values, missing joints, non-increasing or non-finite timestamp) never
   reach the block and change nothing. Pinned by `test_an_overflow_has_advanced_the_state_of_the_block` in `test_input_safety.py`.
-- **Wording.** `Result.timestamp` is in seconds; `HumanoidSimulator.process` outputs are in the unit of `units`; layer 4 is "qualities
+- **Wording.** `Result.timestamp` is in seconds; `MassSpringSimulator.process` outputs are in the unit of `units`; layer 4 is "qualities
   communicated" (as the catalog table says); the stale lines of the package docstring and of sections 3 and 4 were fixed.
 
 ### Contract changes of work package I (2026-10-15)
@@ -432,11 +432,11 @@ Thresholds and lengths are in metres, as in EyesWeb. A feature with unit-sensiti
 `units="m"|"mm"`, declared once through `_unit_params = {name: power}` (power 1 for a length or speed, 2 for an area
 or an energy). The parameters are scaled, the data and the outputs never are. Do not rescale data silently.
 
-- Exception: the humanoid features. `HumanoidSimulator` works internally in mm (the EyesWeb body model is defined in mm
+- Exception: the humanoid of `MassSpringSimulator` (`model="humanoid"`) works internally in mm (the EyesWeb body model is defined in mm
   and its spring forces depend on the length unit): `units` declares the unit of the user's frames, of `gravity` /
   `floor_position` and of the outputs, and the wrapper converts at the boundary (frames x 1000 in, joints / 1000 out for
-  `"m"`; nothing for `"mm"`). The `GenericModel*` features run in the unit of the user's model and `units` only names
-  it (no scaling). Time is the shared rule (`sampling_rate` default None, no 25 Hz default).
+  `"m"`; nothing for `"mm"`). A model of the user's own runs in its own unit and `units` only names it (no
+  scaling). Time is the shared rule (`sampling_rate` default None, no 25 Hz default).
 
 ### Dimensions
 

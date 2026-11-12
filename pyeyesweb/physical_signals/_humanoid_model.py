@@ -15,7 +15,7 @@ HUMANOID_JOINTS: Tuple[str, ...] = tuple(_humanoid.HumanoidSimulator().output_la
 """The 21 joints of the humanoid (EyesWeb Kinect SDK v1 names), in the order of the arrays it takes and returns."""
 
 HUMANOID_BONES: Tuple[str, ...] = tuple(_humanoid.HumanoidOrientationsExtractor().output_labels)
-"""The 20 bones of the humanoid, named `"<joint1>-<joint2>"`, in the order of `HumanoidOrientations`' output."""
+"""The 20 bones of the humanoid, named `"<joint1>-<joint2>"`, in the order of the `directions` output of `MassSpringSimulator`."""
 
 # The joint names the block would otherwise take as parameters; `joint_map` replaces them.
 NAME_PARAMS = frozenset({"spine_names", "left_arm_names", "right_arm_names", "left_leg_names", "right_leg_names"})
@@ -31,7 +31,7 @@ class MassSpringModel:
     Build the model from an EyesWeb XML file (``MassSpringModel.from_xml_file(path)``; ``<Model><Masses>...<Springs>...``) or
     by hand with ``add_mass`` and ``add_spring``, and give it to a feature as ``model=`` (a path to an XML file is accepted
     there too). The features copy the model they get; ``feature.model`` returns a copy of its current state. Lengths and positions are in the unit of your
-    data; the dynamics are those of the model in that unit (see :class:`GenericModelSimulator`).
+    data; the dynamics are those of the model in that unit (see :class:`MassSpringSimulator`).
 
     Parameters
     ----------

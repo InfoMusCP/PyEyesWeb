@@ -16,7 +16,7 @@ PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Ge
   mask and one attribute per output; `is_valid` remains as an alias of `ok`. A missing value is `NaN` (`0` for integer and
   `False` for boolean outputs), never `None`, and array shapes do not change between calls.
 * feat!: layered architecture. Features live in `pyeyesweb.physical_signals`, `low_level`, `mid_level`, `high_level` and
-  `analysis_primitives`; the catalog (`pyeyesweb.catalog()`) holds 60 features (11, 22, 7, 1 and 19). `pyeyesweb.Smoothness`
+  `analysis_primitives`; the catalog (`pyeyesweb.catalog()`) holds 47 features (5, 19, 7, 1 and 15). `pyeyesweb.Smoothness`
   and `pyeyesweb.Synchronization` are no longer exported at the top level.
 * The features run in a compiled core, the module `eyesweb_core`, a package separate from `pyeyesweb` (a development build is
   found through `EYESWEB_CORE_PATH`). `import pyeyesweb`, `pyeyesweb.data_models` and `Layer` work without it. The minimum
@@ -37,6 +37,16 @@ PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Ge
   `ScalarBinarySyncDetector`, the trajectory datatype and its blocks, the `GeometricTrajectory3D` transforms,
   `pyeyesweb.utils.math_utils`, `pyeyesweb.utils.signal_processing` and `TSVReader`. See the migration guide for the
   replacements.
+* Algorithm review (2026-11): removed `PointsPredictor`, `GenericModelPredictor`, `GenericModelEstimator`,
+  `CurvatureDispersion`, `ConvexHull`, `FilterContour`, `CorrelationsMatrix`, `CoarseGraining`, `SequenceDetector` and
+  `TemporalSynchronization` (no published definition, or a NumPy/SciPy one-liner; substitutes in the migration guide).
+* Algorithm review: `HumanoidSimulator`, `HumanoidOrientations`, `GenericModelOrientations` and `GenericModelSimulator` are
+  one feature, `MassSpringSimulator`: `model="humanoid"` (default) or a `MassSpringModel`; it takes joint positions (a model
+  of your own too) and an optional `directions` input (the former `control`), and returns `joints` and `directions`.
+* Algorithm review: `tau` is `max_lag` in `EventSynchronization` and `EventSynchronizationMECS` (`weighted` removed);
+  `GeneralisedAutoCorrelation` takes `lag` and `max_lag` (`tau`, `tau_min`, `tau_spread` and `set_tau_min` removed);
+  `CrossRecurrencePlot` takes one `epsilon` (`multiple_epsilons` removed); `Suddenness` has no `is_sudden` output and no
+  `method`; `CurvatureVelocityCorrelation` has no `velocity_threshold`.
 
 ### Features
 
