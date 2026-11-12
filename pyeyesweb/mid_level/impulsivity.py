@@ -11,11 +11,11 @@ from pyeyesweb.data_models.feature import WindowedFeature
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema
 from pyeyesweb.base.inputs import InferredDims, scalar
-from pyeyesweb.mid_level.suddenness import _Algorithm, _SuddennessFit
+from pyeyesweb.mid_level.suddenness import _Algorithm, _FitMethod, _SuddennessFit
 
 
 @describe(Layer.MID_LEVEL)
-class SuddennessImpulsivity(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
+class SuddennessImpulsivity(_FitMethod, _SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     r"""Impulsivity of a trajectory: its direction change when it is also sudden, else zero.
 
     Captures the burst-like quality of a movement as the product of a spatial and a temporal term over a window of a

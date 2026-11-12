@@ -349,9 +349,6 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
         New samples between two windows. Defaults to ``1``. *(structural)*
     sampling_rate : float
         Sampling rate of the series in Hz. Required: the window carries no time axis of its own. *(structural)*
-    velocity_threshold : float, optional
-        Velocity threshold of the original block. It has no effect: the block validates it and never reads it.
-        Defaults to ``0.001``. *(live)*
     standard_deviation_threshold : float, optional
         Threshold of the original block on the standard deviations of the curvature and the velocity, used by the
         ``"simplified"`` index only. It acts on the quantities the filters give, so on the velocity per sample
@@ -414,6 +411,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     -0.94
     """
     _core_class = core.motion.SmoothnessIndex
+    _hidden_params = frozenset({"velocity_threshold"})  # read nowhere by the block: left at its default
     _DEFAULT_FILTER_WINDOW_LENGTH = 9
     _warmed_shape = None  # shape of the last window processed, None while the filters have no history
 

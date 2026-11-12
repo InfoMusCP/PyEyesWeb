@@ -49,7 +49,7 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     Quantifies the coordination of two sequences of discrete events (for example the onsets of two performers'
     gestures or beats) without assuming a fixed rhythm, following the event synchronization measure of Quian Quiroga
     and colleagues. With :math:`m_x` and :math:`m_y` events in the first and second train and :math:`c(y|x)` the
-    number of events of the second train that follow an event of the first one within ``tau`` samples (and
+    number of events of the second train that follow an event of the first one within ``max_lag`` samples (and
     :math:`c(x|y)` the converse), the feature reports
 
     .. math::
@@ -59,8 +59,7 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
 
     :math:`Q = 1` means that every event of each train has a partner in the other one; :math:`q > 0` means that the
     first train leads, :math:`q < 0` that the second one does. Simultaneous events count as synchronous and
-    contribute to :math:`Q` but not to :math:`q`. With ``weighted=True`` a pair at lag :math:`d` (in samples)
-    counts with the weight :math:`1 - (d - 1)/\tau` instead of 1.
+    contribute to :math:`Q` but not to :math:`q`.
 
     The queues and counts are accumulated across windows, so consecutive windows must not overlap: ``hop`` equals
     ``window`` (its default) and any other value raises ``ValueError``.
@@ -72,15 +71,13 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     hop : int, optional
         Samples between two results; ``None`` (default) means ``window``, and no other value is accepted.
         *(live)*
-    tau : int, optional
-        Largest lag, in samples, at which an event of one train is matched to an event of the other (default 5).
-        *(live)*
+    max_lag : int, optional
+        Largest lag, in samples, at which an event of one train is matched to an event of the other: two events are
+        coupled when ``0 < lag <= max_lag`` (default 5). *(live)*
     reset_every_buffer : bool, optional
         If ``True``, the accumulated events and counts are cleared at every window, so that each window is evaluated
         on its own and events are not matched across the boundary of two windows (default ``False``).
         *(structural)*
-    weighted : bool, optional
-        Weight each matched pair by its lag as above (default ``False``). *(live)*
 
     Notes
     -----
@@ -92,15 +89,15 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.
 
-    **Accumulation and ``tau``.** By default the counts :math:`m_x`, :math:`m_y`, :math:`c(y|x)` and :math:`c(x|y)`
+    **Accumulation and ``max_lag``.** By default the counts :math:`m_x`, :math:`m_y`, :math:`c(y|x)` and :math:`c(x|y)`
     accumulate across windows, so the value of a window describes the whole recording up to its end; for the value of
-    each window on its own, pass ``reset_every_buffer=True``. :math:`Q` depends strongly on ``tau``: the same two
-    trains give a low :math:`Q` with a small ``tau`` and a :math:`Q` close to 1 with a large one, so choose ``tau``
+    each window on its own, pass ``reset_every_buffer=True``. :math:`Q` depends strongly on ``max_lag``: the same two
+    trains give a low :math:`Q` with a small ``max_lag`` and a :math:`Q` close to 1 with a large one, so choose
+    ``max_lag``
     from the lags that count as simultaneous in your data and report it with the result.
 
-    **Corrected in the core.** The coincidence window is now ``0 < lag <= tau`` (an event used to expire one sample
-    too early, so ``tau = 1`` matched nothing); the weight of ``weighted=True`` is the one above (an integer division
-    made it 0 for nearly every pair); ``delay`` is positive when the first series leads (the sign was reversed); and
+    **Corrected in the core.** The coincidence window is now ``0 < lag <= max_lag`` (an event used to expire one
+    sample too early, so ``max_lag = 1`` matched nothing); ``delay`` is positive when the first series leads (the sign was reversed); and
     events are no longer credited twice or never. Overlapping windows are refused (they counted the overlapped events
     twice).
 
@@ -110,11 +107,13 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     >>> first, second = np.zeros(60), np.zeros(60)
     >>> first[[5, 25, 45]] = 1
     >>> second[[7, 27, 56]] = 1
-    >>> record = EventSynchronization(window=60, tau=3).run(first, second)
+    >>> record = EventSynchronization(window=60, max_lag=3).run(first, second)
     >>> round(float(record.synchronization[-1]), 2), round(float(record.delay[-1]), 2)
     (0.67, 0.67)
     """
     _core_class = _sync.EventSynchronization
+    _core_names = {"max_lag": "tau"}
+    _hidden_params = frozenset({"weighted"})  # the core's lag-weighted mode is not offered: matched pairs count 1
     _INPUTS = Inputs(_train("first_signal"), _train("second_signal"))
 
     def _schema(self) -> Schema:
@@ -141,7 +140,7 @@ class EventSynchronizationMECS(_MECSBlock):
     Extends the event synchronization of two trains to ``number_of_inputs`` series that carry events of several
     classes (for example gestures of different types, one channel per class), and reports for every class how
     synchronous the series are. For each class and each pair of series, the coincidences :math:`S_{ij}` are the pairs
-    of events within ``tau`` samples, weighted by the ``kernel``; with :math:`m_i` and :math:`m_j` the event counts of
+    of events within ``max_lag`` samples, weighted by the ``kernel``; with :math:`m_i` and :math:`m_j` the event counts of
     the two series, the pair term is
 
     .. math::
@@ -165,8 +164,9 @@ class EventSynchronizationMECS(_MECSBlock):
     number_of_event_classes : int, optional
         Number of event classes (default 3), the number of channels of each series and the size of the outputs.
         *(structural)*
-    tau : int, optional
-        Largest lag, in samples, at which two events are considered coincident (default 10). *(structural)*
+    max_lag : int, optional
+        Largest lag, in samples, at which two events are considered coincident: two events are coupled when
+        ``0 < lag <= max_lag`` (default 10). *(structural)*
     kernel : {"uniform", "linear", "gaussian"}, optional
         Weight given to a coincidence as a function of the lag: constant (``"uniform"``, the default), decreasing
         linearly (``"linear"``), or Gaussian (``"gaussian"``). *(live)*
@@ -184,9 +184,9 @@ class EventSynchronizationMECS(_MECSBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.
 
-    **Windows and ``tau``.** Unlike ``EventSynchronization``, this block has no ``reset_every_buffer`` parameter; in
+    **Windows and ``max_lag``.** Unlike ``EventSynchronization``, this block has no ``reset_every_buffer`` parameter; in
     a check on random trains the value and the ``events`` count of each window were those of the same window run
-    alone, so they are per-window values. The index depends strongly on ``tau``: a larger ``tau`` matches more events,
+    alone, so they are per-window values. The index depends strongly on ``max_lag``: a larger ``max_lag`` matches more events,
     so choose it from the lags that count as simultaneous in your data.
 
     **Corrected in the core.** The number of pairs was evaluated as :math:`(N!/2)(N-2)!` instead of
@@ -199,12 +199,13 @@ class EventSynchronizationMECS(_MECSBlock):
     >>> first, second = np.zeros((60, 1)), np.zeros((60, 1))
     >>> first[[5, 25, 45], 0] = 1
     >>> second[[7, 27, 46], 0] = 1
-    >>> record = EventSynchronizationMECS(window=60, number_of_event_classes=1, tau=3).run(first, second)
+    >>> record = EventSynchronizationMECS(window=60, number_of_event_classes=1, max_lag=3).run(first, second)
     >>> record.synchronization[-1], record.events[-1]
     (array([1.]), array([6.]))
     """
     _core_class = _sync.EventSynchronizationMECS
-    _core_names = {"number_of_inputs": "time_series_number", "number_of_event_classes": "event_class_number"}
+    _core_names = {"number_of_inputs": "time_series_number", "number_of_event_classes": "event_class_number",
+                   "max_lag": "tau"}
 
     def _inputs(self) -> Inputs:
         return _series_inputs(self, "events of one class per channel")

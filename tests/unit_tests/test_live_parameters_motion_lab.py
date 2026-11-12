@@ -7,7 +7,7 @@ never touched.
 import numpy as np
 import pytest
 
-from live_param_suite import CHANGE_AT, NOTE, check_invalid, check_live, feed, ids
+from live_param_suite import check_invalid, check_live, ids
 
 from pyeyesweb.analysis_primitives.multi_scale_entropy import MultiScaleEntropy
 from pyeyesweb.analysis_primitives.rarity import Rarity
@@ -17,7 +17,6 @@ from pyeyesweb.low_level.equilibrium import Equilibrium
 from pyeyesweb.low_level.smoothness import Harmonicity, LogDimensionlessJerk, SpectralArcLength, SubmovementCount
 from symmetry_inputs import reflection
 from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
-from pyeyesweb.mid_level.suddenness import Suddenness
 
 _rng = np.random.default_rng(11)
 
@@ -78,14 +77,3 @@ def test_live_change_keeps_the_state(factory, attr, value, recording):
 @_param(INVALID)
 def test_invalid_value_raises_and_changes_nothing(factory, attr, value, recording):
     check_invalid(factory, attr, value, recording)
-
-
-def test_suddenness_algorithm_change_keeps_the_window():
-    # the two algorithms differ in which windows they can fit, so the status sequence of check_live does not apply
-    changed, fresh = Suddenness(window=12), Suddenness(window=12)
-    fresh.method = "quantile"
-    feed(changed, POINT[:CHANGE_AT])
-    changed.method = "quantile"
-    actual = feed(changed, POINT[CHANGE_AT:])
-    assert all(NOTE not in result.reason for result in actual)
-    assert actual == feed(fresh, POINT)[CHANGE_AT:]

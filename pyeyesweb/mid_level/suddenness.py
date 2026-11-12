@@ -19,8 +19,8 @@ _Algorithm = Literal["constrained", "quantile"]
 
 
 class _SuddennessFit(MinimumWindow):
-    """What the features that fit the velocity distribution share: the minimum window, the `(dims,)` point of the
-    trajectory (`dims` = 2 or 3) and the `method` parameter."""
+    """What the features that fit the velocity distribution share: the minimum window and the `(dims,)` point of the
+    trajectory (`dims` = 2 or 3)."""
 
     MIN_WINDOW = 6
 
@@ -39,6 +39,10 @@ class _SuddennessFit(MinimumWindow):
         if value not in (None, 2, 3):
             raise ValueError(f"{type(self).__name__}: a position has 2 or 3 coordinates, got {value}")
         super()._set_dims(value, inferred)
+
+
+class _FitMethod:
+    """The `method` parameter of a feature that offers both fits of the core (SuddennessImpulsivity)."""
 
     @property
     def method(self) -> _Algorithm:
@@ -66,13 +70,7 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
 
     where :math:`\alpha \in (0, 2]` (stability, thickness of the tails: 2 for a Gaussian, towards 0 for heavy tails) and
     :math:`\beta \in [-1, 1]` (skewness) are obtained from :math:`\nu_\alpha` and :math:`\nu_\beta` by interpolation in
-    McCulloch's tables. The window is classified as sudden when
-
-    .. math::
-
-        \gamma \left(1 - \frac{\alpha}{2}\right) \beta \ge 0,
-
-    which, with :math:`\gamma > 0` and :math:`\alpha \le 2`, amounts to a non-negative skewness :math:`\beta`. Speeds
+    McCulloch's tables, with :math:`\nu_\alpha` and :math:`\nu_\beta` clamped to the range of the tables. Speeds
     are differences between consecutive samples: timestamps do not enter the computation and :math:`\gamma` is a ratio
     of quantile differences.
 
@@ -89,21 +87,15 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
         New frames between two windows, between 1 and ``window``. Defaults to ``1``. *(live)*
     dims : int, optional
         Coordinates of the position, 2 or 3. Defaults to the size of the first position.
-    method : {"constrained", "quantile"}, optional
-        The fit. ``"constrained"`` (default) clamps :math:`\nu_\alpha` and :math:`\nu_\beta` to the range of the tables
-        and always gives a result; ``"quantile"`` uses the unclamped values and linear percentiles, and fails when the
-        window is outside the range of the tables. *(live)*
 
     Notes
     -----
-    **Outputs.** ``is_sudden``: ``True`` when the window is classified as sudden. ``alpha``: stability parameter, in (0,
-    2]. ``beta``: skewness parameter, in [-1, 1]. ``gamma``: scale parameter, not negative and dimensionless, computed from the quantile
+    **Outputs.** ``alpha``: stability parameter, in (0, 2]. ``beta``: skewness parameter, in [-1, 1]. ``gamma``: scale parameter, not negative and dimensionless, computed from the quantile
     ratio.
 
     **Statuses.** ``WARMING_UP`` until the first window of ``window`` frames is full, ``NO_OUTPUT`` between two windows,
-    ``INVALID_INPUT`` for NaN or infinite coordinates and, with ``method="quantile"``, when the distribution could not
-    be fitted (no outputs). A window whose speeds are all equal, as for a trajectory at rest or at constant speed, gives
-    the Gaussian fallback (:math:`\alpha = 2`, :math:`\beta = 0`, :math:`\gamma = 0`) and is classified as sudden.
+    ``INVALID_INPUT`` for NaN or infinite coordinates. A window whose speeds are all equal, as for a trajectory at rest
+    or at constant speed, gives the Gaussian fallback (:math:`\alpha = 2`, :math:`\beta = 0`, :math:`\gamma = 0`).
 
     References
     ----------
@@ -115,25 +107,23 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     >>> from pyeyesweb.mid_level import Suddenness
     >>> positions = np.cumsum(np.random.default_rng(0).normal(size=(40, 3)), axis=0)
     >>> record = Suddenness(window=20, hop=10).run(positions)
-    >>> print(f"{record.alpha[19]:.2f} {record.beta[19]:.2f}", record.is_sudden[19])
-    1.53 0.53 True
+    >>> print(f"{record.alpha[19]:.2f} {record.beta[19]:.2f}")
+    1.53 0.53
     """
 
     _OUTPUTS = Schema(
-        Output("is_sudden", kind=bool, doc="Whether the movement is classified as sudden."),
         Output("alpha", doc="Stability parameter of the fitted stable distribution."),
         Output("beta", doc="Skewness parameter of the fitted stable distribution."),
         Output("gamma", doc="Scale parameter of the fitted stable distribution."),
     )
 
     _core_class = core.motion.Suddenness
-    _core_names = {"method": "algorithm"}
+    _hidden_params = frozenset({"algorithm"})  # the constrained fit, the block's default
     _lazy_block = True
 
-    def __init__(self, window: int, hop: int = 1, *, dims: Optional[int] = None, method: _Algorithm = "constrained"):
+    def __init__(self, window: int, hop: int = 1, *, dims: Optional[int] = None):
         super().__init__(window=window, hop=hop)
         self.dims = dims
-        self.method = method
         self._check_window()
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
@@ -141,8 +131,8 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
         if (unusable := self._unusable(pos, timestamp)) is not None:
             return unusable
 
-        alpha, beta, gamma, is_sudden = self._block.process(pos)
-        return self._fit_result(alpha, timestamp, is_sudden=is_sudden, alpha=alpha, beta=beta, gamma=gamma)
+        alpha, beta, gamma, _ = self._block.process(pos)  # the core's fourth value, a sudden flag, is not offered
+        return self._fit_result(alpha, timestamp, alpha=alpha, beta=beta, gamma=gamma)
 
 
 __all__ = ["Suddenness"]

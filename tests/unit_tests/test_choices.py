@@ -14,7 +14,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.analysis_primitives import Rarity  # noqa: E402
-from pyeyesweb.analysis_primitives.synchronization import EventSynchronization  # noqa: E402
+from pyeyesweb.analysis_primitives.synchronization import RecurrencePlot  # noqa: E402
 from pyeyesweb.low_level import Kinematics, KineticEnergy, Symmetry  # noqa: E402
 
 # (feature class, parameter, string) for one core enum of each area.
@@ -64,15 +64,15 @@ def test_none_and_other_parameters_are_untouched():
 
 
 def test_bool_parameter_is_live_and_takes_only_bools():
-    feature = EventSynchronization(window=10)
+    feature = RecurrencePlot(window=10)
     feature._block
-    feature.weighted = True
-    assert feature.weighted is True
-    feature.weighted = False
-    assert feature.weighted is False
+    feature.use_multiple_epsilons = True
+    assert feature.use_multiple_epsilons is True
+    feature.use_multiple_epsilons = False
+    assert feature.use_multiple_epsilons is False
     for word in ("off", "on", "yes", 1):
         with pytest.raises(TypeError, match="True or False"):
-            feature.weighted = word
+            feature.use_multiple_epsilons = word
 
 
 @pytest.mark.parametrize("cls, method", [(Rarity, "mode-distance"), (Symmetry, "Reflection")])

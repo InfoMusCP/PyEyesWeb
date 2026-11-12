@@ -215,9 +215,9 @@ against a feature built with the new value.
 | `Periodicity` | `threshold` | |
 | `ScalarPeakDetector` | `threshold` | `window` |
 | `PhaseLockingValue` | `low_frequency` | |
-| `GeneralisedAutoCorrelation` | `epsilon` | `output_type`, `tau_spread` |
-| `EventSynchronization` | `tau` | `reset_every_buffer` |
-| `EventSynchronizationMECS` | `kernel` | `number_of_event_classes`, `tau` |
+| `GeneralisedAutoCorrelation` | `epsilon` | `output_type`, `max_lag` |
+| `EventSynchronization` | `max_lag` | `reset_every_buffer` |
+| `EventSynchronizationMECS` | `kernel` | `number_of_event_classes`, `max_lag` |
 | `NonlinearInterdependence` | `neighbours` | |
 | `RecurrencePlot` | `epsilon` | |
 | `CrossRecurrencePlot` | `epsilon` | |

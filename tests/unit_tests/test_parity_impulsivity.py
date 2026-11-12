@@ -13,7 +13,6 @@ Needs the compiled core: found as pyeyesweb._eyesweb_core, or as eyesweb_core in
 """
 import inspect
 import json
-import math
 import os
 import sys
 from pathlib import Path
@@ -55,16 +54,14 @@ def test_a_position_has_two_or_three_coordinates():
 
 def test_the_quantile_sentinel_is_invalid_input_without_an_index():
     """#47: SuddennessImpulsivity could not see the alpha = -1 sentinel of the QUANTILE fit (OK with an index); it reads the
-    alpha of the suddenness fit now and reports INVALID_INPUT like Suddenness, with the reason and no numbers."""
+    alpha of the suddenness fit now and reports INVALID_INPUT, with the reason and no numbers."""
     failed = 0
     for seed in range(40):
         series = np.cumsum(np.random.default_rng(seed).standard_normal((3, 12)), axis=1)
         index = SuddennessImpulsivity(window=12, dims=3, method="quantile", direction_change_epsilon=2.0)._process_window(series)
-        fit = Suddenness(window=12, dims=3, method="quantile")._process_window(series)
-        assert index.status == fit.status
-        if fit.status == Status.INVALID_INPUT:
+        if index.status == Status.INVALID_INPUT:
             failed += 1
-            assert index.status == Status.INVALID_INPUT and index.reason == fit.reason and np.isnan(index.impulsivity_index)
+            assert index.reason == "the distribution could not be fitted" and np.isnan(index.impulsivity_index)
         else:
             assert index.ok
         assert SuddennessImpulsivity(window=12, dims=3, direction_change_epsilon=2.0)._process_window(series).ok
@@ -72,15 +69,15 @@ def test_the_quantile_sentinel_is_invalid_input_without_an_index():
 
 
 def test_both_components_evaluate_the_same_trajectory():
-    """The index is the cosine direction change times the suddenness verdict of one and the same trajectory."""
+    """The index is the cosine direction change times the suddenness verdict of one and the same trajectory (the
+    constrained fit, the one `Suddenness` offers)."""
     rng = np.random.default_rng(4)
-    for algorithm in ("constrained", "quantile"):
+    for _ in range(2):
         series = np.cumsum(rng.standard_normal((2, 20)), axis=1)
-        index = SuddennessImpulsivity(window=20, dims=2, method=algorithm)._process_window(series).impulsivity_index
+        index = SuddennessImpulsivity(window=20, dims=2)._process_window(series).impulsivity_index
         cosine = DirectionChange(window=20, metrics=["cosine"])._process_window(series).cosine
-        sudden = Suddenness(window=20, dims=2, method=algorithm)._process_window(series).is_sudden
-        if math.isnan(index):  # the quantile fit failed: no number
-            continue
+        fit = Suddenness(window=20, dims=2)._process_window(series)
+        sudden = fit.gamma * (1 - fit.alpha / 2) * fit.beta >= 0  # the verdict of the core
         assert index == pytest.approx(cosine * float(sudden), rel=1e-12, abs=1e-15)
 
 

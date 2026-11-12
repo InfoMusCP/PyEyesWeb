@@ -94,9 +94,8 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
         \#\{\, i < N - \tau \;:\; \lVert x_i - x_{i+\tau} \rVert \le \epsilon \,\},
 
     with the Euclidean norm over the channels. A periodic movement shows peaks of :math:`\mathrm{RR}(\tau)` at
-    the multiples of its period. With ``output_type="function_of_tau"`` the feature returns :math:`\mathrm{RR}` for
-    ``tau_spread`` consecutive lags starting at ``tau_min``; with ``output_type="scalar"`` it returns the single
-    value at lag ``tau``.
+    the multiples of its period. With ``output_type="function_of_tau"`` the feature returns :math:`\mathrm{RR}` at
+    the lags 1 to ``max_lag``; with ``output_type="scalar"`` it returns the single value at lag ``lag``.
 
     Parameters
     ----------
@@ -108,16 +107,13 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     epsilon : float, optional
         Recurrence threshold, in the unit of the signal (default 0.1). *(live)*
     output_type : {"function_of_tau", "scalar"}, optional
-        Whether to return the recurrence rate for a range of lags or for the single lag ``tau`` (default
+        Whether to return the recurrence rate for a range of lags or for the single lag ``lag`` (default
         ``"function_of_tau"``). *(structural)*
-    tau : int, optional
+    lag : int, optional
         Lag in samples of the single value of ``output_type="scalar"`` (default 1). *(live)*
-    tau_min : int, optional
-        First lag in samples of ``output_type="function_of_tau"`` (default 1); ``set_tau_min`` changes it at run
-        time. *(live)*
-    tau_spread : int, optional
-        Number of lags returned by ``output_type="function_of_tau"`` (default 10), limited to two thirds of the
-        window. *(structural)*
+    max_lag : int, optional
+        Largest lag in samples of ``output_type="function_of_tau"``, which returns the lags 1 to ``max_lag``
+        (default 10), limited to two thirds of the window. *(structural)*
 
     Notes
     -----
@@ -129,19 +125,28 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT`` between two
     windows when ``hop > 1``, ``INVALID_INPUT`` for NaN or infinite values. The window must be longer than
-    ``tau_min`` plus the (limited) ``tau_spread``, and at least 2 samples for ``"scalar"``; a shorter window raises
+    1 plus the (limited) ``max_lag``, and at least 2 samples for ``"scalar"``; a shorter window raises
     ``ValueError``.
 
     Examples
     --------
     >>> import numpy as np
     >>> x = np.sin(2 * np.pi * np.arange(50) / 50)[:, None]
-    >>> rec = GeneralisedAutoCorrelation(window=50, tau_spread=3, epsilon=0.1).run(x)
+    >>> rec = GeneralisedAutoCorrelation(window=50, max_lag=3, epsilon=0.1).run(x)
     >>> rec.recurrence_rate[-1].round(2), rec.taus[-1]
     (array([0.61, 0.25, 0.21]), array([1, 2, 3]))
     """
     _core_class = _sync.GeneralisedAutoCorrelation
     _finite_inputs = True
+    _core_names = {"lag": "tau", "max_lag": "tau_spread"}
+    _hidden_params = frozenset({"tau_min"})  # the lags of the curve start at 1, the block's default first lag
+
+    def _build_block(self, params: Optional[dict] = None) -> Any:
+        params = self._params if params is None else params
+        for name in ("lag", "max_lag"):  # checked here: the core message also names its first lag, which is not public
+            if name in params and int(params[name]) < 1:
+                raise ValueError(f"GeneralisedAutoCorrelation: {name} must be >= 1, got {params[name]}")
+        return super()._build_block(params)
 
     def _window_changed(self) -> None:
         self._invalidate_block()  # the block fixes the series length (and the lag spread) at its first call; it holds no history
@@ -150,9 +155,9 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
         params = {**self._params, **overrides}
         if params.get("output_type") == _OutputType.SCALAR:
             return 2
-        tau_min, spread = int(params.get("tau_min", 1)), int(params.get("tau_spread", 10))  # C++ defaults
-        # the core clamps the spread to 2N/3 and wants tau_min + spread < N
-        return next(size for size in count(1) if tau_min + min(spread, 2 * size // 3) < size)
+        spread = int(params.get("max_lag", 10))  # C++ default
+        # the core clamps the spread to 2N/3 and wants 1 + spread < N (the first lag is 1)
+        return next(size for size in count(1) if 1 + min(spread, 2 * size // 3) < size)
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per channel"))
@@ -161,13 +166,9 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
         return Schema(Output("recurrence_rate", (None,), doc="fraction of recurring samples per lag"),
                       Output("taus", (None,), kind=int, unit="samples", doc="lag of each recurrence rate"))
 
-    def set_tau_min(self, tau_min: int) -> None:
-        """Change the first lag, in samples, at run time (equivalent to assigning ``tau_min``)."""
-        self._set_param("tau_min", int(tau_min))
-
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
         scalar = self._param("output_type", None) == _OutputType.SCALAR
-        first = int(self._param("tau" if scalar else "tau_min", 1))  # C++ defaults
+        first = int(self._param("lag", 1)) if scalar else 1  # C++ defaults
         return self._result(recurrence_rate=raw, taus=np.arange(first, first + len(raw)), timestamp=timestamp)
 
 

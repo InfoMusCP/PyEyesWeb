@@ -35,7 +35,7 @@ $$
 $$
 
 and $\alpha$ and $\beta$ are obtained from $\nu_\alpha$ and $\nu_\beta$ by interpolation in McCulloch's tables. The window is
-classified as **sudden** when
+classified as **sudden** (the verdict that `SuddennessImpulsivity` uses) when
 
 $$
 \gamma \left(1 - \frac{\alpha}{2}\right) \beta \ge 0 ,
@@ -54,10 +54,8 @@ ratio of quantile differences, so it is dimensionless.
 
 `Suddenness` takes one position per call, the point of a trajectory in two or three dimensions (a frame with several
 markers is rejected: average the markers beforehand if one trajectory is wanted). It keeps `window` positions (at least 6,
-because five speeds are needed) and computes every `hop`. Its outputs are `is_sudden` (boolean), `alpha`, `beta` and
-`gamma`. The parameter `method` selects the fit: `"constrained"` (the default) restricts $\nu_\alpha$ and $\nu_\beta$ to the
-range of McCulloch's tables and always gives a result; `"quantile"` uses the unrestricted values and linear percentiles, and
-gives `INVALID_INPUT`, with no outputs, when the window is outside the range of the tables. The status is `WARMING_UP`
+because five speeds are needed) and computes every `hop`. Its outputs are `alpha`, `beta` and `gamma`. The fit restricts
+$\nu_\alpha$ and $\nu_\beta$ to the range of McCulloch's tables and always gives a result. The status is `WARMING_UP`
 until the first window is full and `NO_OUTPUT` between windows.
 
 Two trajectories of 20 steps along a line illustrate the classification. The first is slow, with two bursts; the second is
@@ -80,7 +78,8 @@ fast and steady, with three brief stops:
 >>> steady[[3, 9, 15]] = 0.003                                          # three brief stops in a fast one
 >>> for name, speeds in [("bursts", bursts), ("steady with stops", steady)]:
 ...     last = Suddenness(window=21, dims=2).run(corner(speeds))[-1]
-...     print(f"{name:18s} sudden={bool(last.is_sudden)}  alpha={last.alpha:.2f}  beta={last.beta:.2f}")
+...     sudden = last.gamma * (1 - last.alpha / 2) * last.beta >= 0       # the classification above
+...     print(f"{name:18s} sudden={bool(sudden)}  alpha={last.alpha:.2f}  beta={last.beta:.2f}")
 bursts             sudden=True  alpha=0.52  beta=1.24
 steady with stops  sudden=False  alpha=0.52  beta=-1.19
 ```
@@ -168,8 +167,7 @@ at 0.
 
 | Feature | Output | Unit | Range |
 |---|---|---|---|
-| `Suddenness` | `is_sudden` | none | boolean |
-| | `alpha` | none | $(0, 2]$; 2 is Gaussian |
+| `Suddenness` | `alpha` | none | $(0, 2]$; 2 is Gaussian |
 | | `beta` | none | skewness; non-negative when sudden |
 | | `gamma` | none | 0 or more |
 | `SuddennessImpulsivity` | `impulsivity_index` | none | $[0, 1]$; 0 when not sudden |

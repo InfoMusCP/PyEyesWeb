@@ -152,21 +152,8 @@ def test_generalised_auto_correlation_minimum_window_follows_the_core():
     with pytest.raises(ValueError, match="window"):
         GeneralisedAutoCorrelation(window=3)
     assert GeneralisedAutoCorrelation(window=4)._process_window(RNG.random((1, 4))).status is Status.OK
-    with pytest.raises(ValueError, match="window"):
-        GeneralisedAutoCorrelation(window=9, tau_min=3)
-    GeneralisedAutoCorrelation(window=10, tau_min=3)._process_window(RNG.random((1, 10)))
+    GeneralisedAutoCorrelation(window=10, max_lag=12)._process_window(RNG.random((1, 10)))  # max_lag limited to 2N/3
     GeneralisedAutoCorrelation(window=2, output_type="scalar")
-
-
-def test_set_tau_min_is_kept_by_a_rebuilt_block():
-    feature = GeneralisedAutoCorrelation(window=30)
-    feature.set_tau_min(3)
-    assert feature.tau_min == 3
-    feature._invalidate_block()
-    result = feature._process_window(RNG.random((1, 30)))
-    assert result.taus[0] == 3
-    with pytest.raises(ValueError, match="window"):
-        feature.set_tau_min(30)
 
 
 def test_synchronization_filter_needs_a_long_enough_window():

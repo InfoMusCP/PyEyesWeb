@@ -103,21 +103,20 @@ def test_rarity_of_a_single_outlier():
     assert _mode_distance(np.r_[np.zeros(14), 1.0, 0.0], 16) == 0
 
 
-def _suddenness(speeds, method):
+def _suddenness(speeds):
     positions = np.c_[np.r_[0, np.cumsum(speeds)], np.zeros(len(speeds) + 1)]
-    return _last(Suddenness(window=len(positions), method=method), positions)
+    return _last(Suddenness(window=len(positions)), positions)
 
 
 def test_suddenness_of_a_constant_speed_is_the_gaussian_default():
-    result = _suddenness(np.full(40, 1.5), "constrained")
+    result = _suddenness(np.full(40, 1.5))
     assert (result.alpha, result.beta, result.gamma) == (2, 0, 0)
 
 
-@pytest.mark.parametrize("method", ["constrained", "quantile"])
-def test_suddenness_percentile_statistics_of_linear_speeds(method):
+def test_suddenness_percentile_statistics_of_linear_speeds():
     # 101 sorted speeds 3000 + (k - 50)^3 / 100 (all positive) are symmetric about x50 (beta 0); x25, x75 = 3000 -+ 156.25, so
     # gamma = (x75 - x25) / (x75 - x50) = 2, and (x95 - x5) / (x75 - x25) = 5.8 is inside the range the fit accepts
-    result = _suddenness(3000 + (np.arange(101) - 50.0) ** 3 / 100, method)
+    result = _suddenness(3000 + (np.arange(101) - 50.0) ** 3 / 100)
     assert result.beta == pytest.approx(0, abs=1e-12)
     assert result.gamma == pytest.approx(2)
 

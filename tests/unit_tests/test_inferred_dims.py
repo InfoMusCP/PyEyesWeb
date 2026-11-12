@@ -69,7 +69,7 @@ def test_dims_is_assignable_and_a_window_needs_it(cls):
         feature.__class__(window=WINDOW, dims=0)
 
 
-@pytest.mark.parametrize("cls", [Suddenness, SuddennessImpulsivity])
+@pytest.mark.parametrize("cls", [SuddennessImpulsivity])
 def test_algorithm_as_a_string(cls):
     for name, member in (("quantile", "quantile"), ("Constrained", "constrained")):
         assert cls(window=WINDOW, method=name).method == member

@@ -22,7 +22,7 @@ measures how far the events of one train meet those of the other, with and witho
 # value per sample, where a non-zero value is an event. The events are the maxima of each swing, found online with
 # :class:`~pyeyesweb.analysis_primitives.ScalarPeakDetector` on the position of the hand around its mean, in metres, with a
 # buffer of 0.4 s (40 samples) and a swing of at least 5 cm. A peak is reported when the buffer already holds the samples that
-# follow it, so the markers come up to a few tenths of a second after the maximum. Time is in seconds; ``tau`` and the windows below are in samples
+# follow it, so the markers come up to a few tenths of a second after the maximum. Time is in seconds; ``max_lag`` and the windows below are in samples
 # (100 per second).
 
 import matplotlib.pyplot as plt
@@ -71,17 +71,17 @@ fig.tight_layout()
 # Event synchronization: do the events of one hand have a partner?
 # -----------------------------------------------------------------
 # :class:`~pyeyesweb.analysis_primitives.EventSynchronization` looks, for each event of one train, for an event of the other
-# within ``tau`` samples. ``synchronization`` (Q) is 1 when every event has a partner and 0 when none has; ``delay`` (q)
+# within ``max_lag`` samples. ``synchronization`` (Q) is 1 when every event has a partner and 0 when none has; ``delay`` (q)
 # is positive when the first train leads and negative when the second does. Because it accumulates events, consecutive
 # windows may not overlap (``hop`` is the window); ``reset_every_buffer=True`` makes every window independent. We use windows
-# of 4 s (400 samples) and ``tau=30`` (0.3 s).
+# of 4 s (400 samples) and ``max_lag=30`` (0.3 s).
 
 from pyeyesweb.analysis_primitives import EventSynchronization
 
 fig, axes = plt.subplots(1, 2, figsize=(8, 3))
 for name in trials:
     left, right = trains[name]["Left"][:, 0], trains[name]["Right"][:, 0]
-    recorder = EventSynchronization(window=400, tau=30, reset_every_buffer=True).run(left, right, timestamps=stamps)
+    recorder = EventSynchronization(window=400, max_lag=30, reset_every_buffer=True).run(left, right, timestamps=stamps)
     index = np.flatnonzero(recorder.ok)
     axes[0].plot(recorder.timestamps[index], recorder.synchronization[index], "o-", label=name)
     axes[1].plot(recorder.timestamps[index], recorder.delay[index], "o-", label=name)
@@ -95,15 +95,15 @@ axes[0].legend(fontsize=7)
 fig.tight_layout()
 
 # %%
-# The only parameter that defines "at the same time" is ``tau``. The same recordings over the whole 16 s with three
+# The only parameter that defines "at the same time" is ``max_lag``. The same recordings over the whole 16 s with three
 # tolerances:
 
-for tau in (5, 15, 30):
-    values = [float(EventSynchronization(window=1600, tau=tau).run(trains[name]["Left"][:, 0], trains[name]["Right"][:, 0])[-1].synchronization) for name in trials]
-    print(f"tau = {tau:>2} samples ({tau / sampling_rate:.2f} s): Q = {values[0]:.2f} (trial 7), {values[1]:.2f} (trial 8)")
+for max_lag in (5, 15, 30):
+    values = [float(EventSynchronization(window=1600, max_lag=max_lag).run(trains[name]["Left"][:, 0], trains[name]["Right"][:, 0])[-1].synchronization) for name in trials]
+    print(f"max_lag = {max_lag:>2} samples ({max_lag / sampling_rate:.2f} s): Q = {values[0]:.2f} (trial 7), {values[1]:.2f} (trial 8)")
 
 # %%
-# **Takeaway.** Q is the share of events that have a partner within ``tau``; choose ``tau`` in samples to say how close "together"
+# **Takeaway.** Q is the share of events that have a partner within ``max_lag``; choose ``max_lag`` in samples to say how close "together"
 # is.
 
 # %%
@@ -120,7 +120,7 @@ from pyeyesweb.analysis_primitives import EventSynchronizationMECS
 classes = ["x (side)", "y (vertical)", "z (depth)"]
 mecs = {}
 for name in trials:
-    mecs[name] = EventSynchronizationMECS(window=1600, tau=30, number_of_event_classes=3).run(
+    mecs[name] = EventSynchronizationMECS(window=1600, max_lag=30, number_of_event_classes=3).run(
         trains[name]["Left"], trains[name]["Right"], timestamps=stamps)[-1]
     print(f"{name:<26} synchronization per class {np.round(mecs[name].synchronization, 2)}, events {mecs[name].events.astype(int)}")
 
@@ -141,7 +141,7 @@ fig.tight_layout()
 # Spike trains: no tolerance to choose
 # ------------------------------------
 # :class:`~pyeyesweb.analysis_primitives.SpikeSynchronization` (SPIKE-synchronization) decides what is simultaneous from the local
-# spacing of the events, so it has no ``tau``. ``degree`` is the share of events that have a partner in another train and
+# spacing of the events, so it has no ``max_lag``. ``degree`` is the share of events that have a partner in another train and
 # ``distance`` is ``1 - degree``. It takes the trains in two forms. In ``mode="binary"`` (the default) each sample has one
 # channel per train, as above; here windows of 2 s.
 
@@ -180,21 +180,23 @@ for name in trials:
 # %%
 # Try it
 # ------
-# 1. Use ``EventSynchronization(window=1600, tau=30, weighted=True)`` on the two trials. Does the weighting, which lowers the
-#    weight of a pair as its lag grows, lower Q? In which trial more?
+# 1. Swap the two trains in ``EventSynchronization(window=1600, max_lag=30)`` on the two trials. What happens to Q and to
+#    q?
 # 2. Use ``SpikeSynchronization`` in ``"timings"`` mode with the first 8 events of the *left* hand against the first 8 of the
 #    left hand shifted by 0.05 s. What degree do you expect?
 
 # %%
 # Solutions
 # ---------
-# Exercise 1. A weighted pair counts less than 1 unless the lag is one sample.
+# Exercise 1. Q counts the pairs in both directions, so it does not change; q is the difference of the two directions, so it
+# changes sign.
 
 for name in trials:
     left, right = trains[name]["Left"][:, 0], trains[name]["Right"][:, 0]
-    plain = float(EventSynchronization(window=1600, tau=30).run(left, right)[-1].synchronization)
-    weighted = float(EventSynchronization(window=1600, tau=30, weighted=True).run(left, right)[-1].synchronization)
-    print(f"{name:<26} Q = {plain:.2f}, weighted Q = {weighted:.2f}")
+    forward = EventSynchronization(window=1600, max_lag=30).run(left, right)[-1]
+    swapped = EventSynchronization(window=1600, max_lag=30).run(right, left)[-1]
+    print(f"{name:<26} Q = {forward.synchronization:.2f} and {swapped.synchronization:.2f}, "
+          f"q = {forward.delay:+.2f} and {swapped.delay:+.2f}")
 
 # %%
 # Exercise 2. A train against a shifted copy of itself: every spike has a partner.

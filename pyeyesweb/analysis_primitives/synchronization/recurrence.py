@@ -18,8 +18,9 @@ _sync = core.sync
 
 
 class _Epsilons:
-    """Mixin, placed before the series block, of the plots with one threshold per sample: `multiple_epsilons=None` is
-    `epsilon` for each of the `window` samples (the core wants one value per sample when `use_multiple_epsilons`)."""
+    """Mixin, placed before the series block, of the plot with one threshold per sample (RecurrencePlot only):
+    `multiple_epsilons=None` is `epsilon` for each of the `window` samples (the core wants one value per sample when
+    `use_multiple_epsilons`)."""
 
     def __init__(self, window: int, hop: int = 1, *, multiple_epsilons: Optional[Sequence[float]] = None, **params: Any):
         super().__init__(window, hop, multiple_epsilons=multiple_epsilons, **params)
@@ -105,7 +106,7 @@ class RecurrencePlot(_Epsilons, _SeriesBlock):
 
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="CrossRecurrencePlot (CrossRecurrenceMatrix)")
-class CrossRecurrencePlot(_Epsilons, _SeriesBlock):
+class CrossRecurrencePlot(_SeriesBlock):
     r"""Cross-recurrence plot of two windows of states: when one movement visits states of the other.
 
     Compares two multichannel movement signals with the same channels, for example two participants performing the
@@ -114,9 +115,9 @@ class CrossRecurrencePlot(_Epsilons, _SeriesBlock):
 
     .. math::
 
-        R_{ij} = \Theta\left(\epsilon_i - \lVert x_i - y_j \rVert_p\right),
+        R_{ij} = \Theta\left(\epsilon - \lVert x_i - y_j \rVert_p\right),
 
-    with the distance and the thresholds defined as for `RecurrencePlot`. Long diagonal lines mean that the two
+    with the distance defined as for `RecurrencePlot` and one threshold :math:`\epsilon` (``epsilon``) for every row. Long diagonal lines mean that the two
     signals follow the same trajectory, possibly with a time shift.
 
     Parameters
@@ -126,17 +127,11 @@ class CrossRecurrencePlot(_Epsilons, _SeriesBlock):
         again. *(live)*
     hop : int, optional
         Samples between two results, ``1 <= hop <= window`` (default 1). *(live)*
-    multiple_epsilons : sequence of float, optional
-        One threshold per sample of the window, in the unit of the signal, used when ``use_multiple_epsilons`` is
-        ``True``; the threshold of row :math:`i` is ``multiple_epsilons[i]``. ``None`` (default) means ``epsilon``
-        for every sample of the window. *(live)*
     order : float, optional
         Order :math:`p` of the Minkowski distance, positive (default 2: Euclidean); ``numpy.inf`` gives the maximum
         norm. *(live)*
     epsilon : float, optional
         Recurrence threshold, in the unit of the signal (default 0.5). *(live)*
-    use_multiple_epsilons : bool, optional
-        Use ``multiple_epsilons`` instead of ``epsilon`` (default ``False``). *(live)*
 
     Notes
     -----
@@ -162,6 +157,7 @@ class CrossRecurrencePlot(_Epsilons, _SeriesBlock):
     """
     _core_class = _sync.CrossRecurrencePlot
     _finite_inputs = True
+    _hidden_params = frozenset({"use_multiple_epsilons", "multiple_epsilons"})  # one threshold for every row
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("first_series", InputKind.SAMPLE, (None,), doc="state vector, one value per channel"),

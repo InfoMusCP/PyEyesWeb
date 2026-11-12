@@ -32,7 +32,7 @@ def test_inputs_are_one_point(cls):
     assert cls(window=8, dims=2).inputs[0].kind is InputKind.SAMPLE
 
 
-@pytest.mark.parametrize("cls", FITS)
+@pytest.mark.parametrize("cls", [SuddennessImpulsivity])
 def test_algorithm_enum_and_runtime_change(cls):
     feature = cls(window=8)
     assert feature.method == "constrained"
@@ -58,20 +58,6 @@ def test_non_finite_positions_are_invalid_input(cls, bad):
     series = _series(12)
     series[0, 5] = bad
     assert cls(window=12, dims=3)._process_window(series).status == Status.INVALID_INPUT
-
-
-def test_quantile_sentinel_is_invalid_input_without_numbers():
-    feature = Suddenness(window=12, dims=3, method="quantile")
-    statuses = []
-    for seed in range(20):
-        result = feature._process_window(_series(12, seed=seed))
-        statuses.append(result.status)
-        if result.status == Status.INVALID_INPUT:
-            assert result.reason and np.isnan(result.gamma) and not any(result.valid.values())
-        else:
-            assert result.ok
-    assert Status.INVALID_INPUT in statuses
-    assert Suddenness(window=12, dims=3)._process_window(_series(12)).ok
 
 
 def test_motion_noise_detector_non_finite_coordinates_are_invalid_input():

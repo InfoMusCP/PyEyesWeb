@@ -160,10 +160,17 @@ ax.set_title("Each stem appears when a phase ends and says how long it lasted")
 # :class:`~pyeyesweb.mid_level.Suddenness` looks at the speeds of one point over a window and fits an alpha-stable
 # distribution to them (:doc:`/theory/impulsivity_suddenness`). Its outputs are ``alpha`` (2 is a Gaussian, smaller means
 # heavier tails, that is more bursts), ``beta`` (the skewness: not negative when the bursts are towards large speeds),
-# ``gamma`` and the flag ``is_sudden``. It takes **one** position per call, and a window of ``window`` samples moves by ``hop``
-# samples. Here, windows of half a second every 0.1 s on the right hand:
+# and ``gamma``. A window is classified as sudden when :math:`\gamma (1 - \alpha / 2) \beta \ge 0` (in practice, when ``beta``
+# is not negative). It takes **one** position per call, and a window of ``window`` samples moves by ``hop`` samples. Here,
+# windows of half a second every 0.1 s on the right hand:
 
 from pyeyesweb.mid_level import Suddenness
+
+
+def is_sudden(record):
+    """The classification of each window of a ``Suddenness`` record, from its outputs."""
+    return record.gamma * (1 - record.alpha / 2) * record.beta >= 0
+
 
 hand = trial.joint("Right_Hand")
 suddenness = Suddenness(window=50, hop=10).run(hand, timestamps=time)
@@ -192,7 +199,7 @@ axes[0].set_title("Suddenness of the right hand, window 0.5 s, hop 0.1 s")
 print(f"{'window (s)':>11} {'windows':>8} {'% sudden':>9} {'median beta':>12} {'median gamma':>13}")
 for window in (25, 50, 100, 200):
     record = Suddenness(window=window, hop=10).run(hand, timestamps=time)
-    print(f"{window / 100:>11.2f} {int(record.ok.sum()):>8} {100 * record.is_sudden[record.ok].mean():>9.0f} "
+    print(f"{window / 100:>11.2f} {int(record.ok.sum()):>8} {100 * is_sudden(record)[record.ok].mean():>9.0f} "
           f"{np.median(record.beta[record.ok]):>12.2f} {np.median(record.gamma[record.ok]):>13.2f}")
 
 # %%
@@ -288,7 +295,7 @@ for number in (20, 21, 22, 23, 24, 25):
     ev = ContractionImpulsivity(gesture_duration=100, peak_threshold=0.05, sampling_rate=100).run(qom, ci).impulsivity_index
     median = lambda x: np.nanmedian(x) if np.isfinite(x).any() else float("nan")
     print(f"{number:>5} {int(seg.is_gesture_start.sum()):>9} {median(dur.motion_duration):>11.2f} {median(dur.pause_duration):>10.2f} "
-          f"{100 * sud.is_sudden[sud.ok].mean():>9.0f} {imp.impulsivity_index[imp.ok].mean():>12.3f} {int((ev > 0).sum()):>12}")
+          f"{100 * is_sudden(sud)[sud.ok].mean():>9.0f} {imp.impulsivity_index[imp.ok].mean():>12.3f} {int((ev > 0).sum()):>12}")
 
 # %%
 # **Takeaway.** Every feature works on every trial; the slow trial 25 has almost no gestures at this threshold, and the

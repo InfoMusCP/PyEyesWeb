@@ -39,7 +39,6 @@ def test_suddenness_random_walk():
 
     assert result.ok
     assert isinstance(result.alpha, float)
-    assert isinstance(result.is_sudden, bool)
 
 
 # ==========================================
@@ -60,7 +59,8 @@ def test_impulsivity_orchestration():
 
     # Core mathematical contract: the index is direction change times the suddenness verdict, so 0 when not sudden
     cosine = DirectionChange(window=30, metrics=["cosine"])._process_window(data[:, 0, :].T).cosine
-    sudden = Suddenness(window=30, dims=3)._process_window(_series(data)).is_sudden
+    fit = Suddenness(window=30, dims=3)._process_window(_series(data))
+    sudden = fit.gamma * (1 - fit.alpha / 2) * fit.beta >= 0  # the verdict of the core
     assert result.impulsivity_index == cosine * float(sudden)
     assert tuple(result.schema.names) == ("impulsivity_index",)
 

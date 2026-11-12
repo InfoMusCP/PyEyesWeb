@@ -223,8 +223,8 @@ def test_structured_outputs_flatten_with_meaningful_keys():
     per = Periodicity(window=len(PERIODIC), threshold=0.1)._process_window(PERIODIC)
     assert per.periods.shape == per.powers.shape and per.periods[0, 0] == 5
 
-    gac = GeneralisedAutoCorrelation(window=50, tau_min=3)._process_window(signal_a[None])
-    assert list(gac.taus[:2]) == [3, 4] and gac.recurrence_rate.shape == gac.taus.shape
+    gac = GeneralisedAutoCorrelation(window=50, max_lag=4)._process_window(signal_a[None])
+    assert list(gac.taus) == [1, 2, 3, 4] and gac.recurrence_rate.shape == gac.taus.shape
     assert gac.taus.dtype.kind == "i"
 
     bp = BodyPartsFromCurvature(minimum_distance=1).process([1.0, -1, 1, -1, 1, -1, 1, -1], CIRCLE)

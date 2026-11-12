@@ -238,9 +238,23 @@ release.
 | `GeometricSymmetry(joint_pairs, center_of_symmetry)`; result `pairs` | `Symmetry(method="reflection", pairs=..., reference_point=...)`; output `pair_symmetry`, an array with one value per pair | joint names instead of indices; `reference_point=None` is the barycentre of the frame |
 | `Equilibrium(left_foot_idx, right_foot_idx, barycenter_idx, margin_mm, y_weight, axes)`; result `value`, `angle` | `Equilibrium(margin, y_weight, units)` with the three inputs `left_foot`, `right_foot`, `barycenter`; outputs `equilibrium`, `angle` | no indices: pass the three points; `margin` is in metres (the default 0.1 is the former 100 mm) |
 | `DirectionChange(epsilon, num_subsamples, metrics)` | `DirectionChange(window, hop, epsilon, number_of_subsamples, metrics)` | `window` and `hop` are parameters; one trajectory per call |
-| `Suddenness(algo="new")` | `Suddenness(window, hop, dims, method)`, `method` being `"constrained"` or `"quantile"` | `algo="new"` is `method="constrained"`, the default; one `(dims,)` point per call |
+| `Suddenness(algo="new")` | `Suddenness(window, hop, dims)` | `algo="new"` is the constrained fit, the only one; one `(dims,)` point per call |
 | `Impulsivity(direction_change_epsilon, suddenness_algo)`; result `impulsivity_index`, `direction_change_val`, `is_sudden` | `SuddennessImpulsivity(window, hop, dims, direction_change_epsilon, method)`; output `impulsivity_index` | the intermediate values are gone; the EyesWeb `ImpulsivityIndex` is a different feature, `ContractionImpulsivity` |
 | `BoundingBoxFilledArea`, `EllipsoidSphericity`, `PointsDensity` (one shared `ContractionExpansionResult`) | same names | each feature declares its own outputs: `contraction_index`; `sphericity`, `axis_ratio`, `radii`; `density`, `centroid` |
+
+### Parameters and outputs of the feature review
+
+These names existed in the development states and were renamed or removed by the review of the definitions. A lag in
+samples is `lag` (one shift) or `max_lag` (the largest shift considered).
+
+| Old | From | New |
+|---|---|---|
+| `EventSynchronization(tau=...)`, `EventSynchronizationMECS(tau=...)` | development | `max_lag`: two events are coupled when `0 < lag <= max_lag` |
+| `EventSynchronization(weighted=...)` | development | removed: every matched pair counts 1 |
+| `GeneralisedAutoCorrelation(tau=...)`, `tau_min`, `tau_spread`, `set_tau_min()` | development | `lag` for `output_type="scalar"`; `max_lag` for the curve, which holds the lags 1 to `max_lag` (`tau_spread=n` with `tau_min=1` is `max_lag=n`); a first lag above 1 is not offered |
+| `CrossRecurrencePlot(multiple_epsilons=..., use_multiple_epsilons=...)` | development | removed: one `epsilon` for every row; `RecurrencePlot` keeps the per-row thresholds |
+| `Suddenness` output `is_sudden`; `Suddenness(method=...)` with `"quantile"` | development | removed: the outputs are `alpha`, `beta` and `gamma`, and the fit is the constrained one, so `method` is gone |
+| `CurvatureVelocityCorrelation(velocity_threshold=...)` | development | removed: the block never read it |
 
 ### Removed features
 
@@ -331,8 +345,8 @@ new spelling.
 | `reg_init_values` | `region_initial_values` | `RegionDependingPotentials` |
 | `ref_dir` | `reference_direction` | `GenericModelSimulator`, `HumanoidOrientations`, `HumanoidSimulator` |
 | `filter_params` | `low_frequency`, `high_frequency` | `PhaseLockingValue` |
-| `algorithm` | `method` | `Periodicity`, `Rarity`, `Suddenness` and 2 more |
-| `algo` | `method` | `Periodicity`, `Rarity`, `Suddenness` and 2 more |
+| `algorithm` | `method` | `Periodicity`, `Rarity`, `SuddennessImpulsivity` and 1 more |
+| `algo` | `method` | `Periodicity`, `Rarity`, `SuddennessImpulsivity` and 1 more |
 | `type` | `measure` | `Rarity` |
 | `couples` | `pairs` | `Symmetry` |
 | `joint_pairs` | `pairs` | `Symmetry` |

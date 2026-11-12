@@ -17,7 +17,7 @@ this family are organised here by **what is compared**.
 
 Notation is that of {doc}`notation`: samples are indexed by $n$, a window has $N$ samples and slides by a hop $H$. With one
 exception that is stated below, the measures work on such a window, return `WARMING_UP` until it is full and `NO_OUTPUT` between
-two hops (see {doc}`../concepts/results`), and count time in samples (`tau`, lags and event intervals), not in seconds. A pair
+two hops (see {doc}`../concepts/results`), and count time in samples (`lag`, `max_lag` and event intervals), not in seconds. A pair
 of signals is passed to `process` one sample of each per call, and to `run` as two series of the same length. Inputs to
 the measures are one signal per participant: for 2D or 3D data, reduce each participant to a scalar first, for example the
 speed from {py:class}`~pyeyesweb.low_level.Kinematics`.
@@ -98,7 +98,7 @@ Many movement data are discrete events rather than signals: the onsets of gestur
 by {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector`. Event synchronization measures the coordination of two such
 series without assuming a fixed rhythm {cite}`quiroga2002event`. In the input a
 non-zero sample is an event. With $m_x$ and $m_y$ events in the first and in the second series, and $c(y|x)$ the number of events
-of the second series that follow an event of the first within `tau` samples (and $c(x|y)$ the converse), the feature
+of the second series that follow an event of the first within `max_lag` samples (and $c(x|y)$ the converse), the feature
 {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization` reports
 
 $$
@@ -106,27 +106,26 @@ Q=\frac{c(x|y)+c(y|x)}{\sqrt{m_x m_y}}\in[0,1],\qquad q=\frac{c(y|x)-c(x|y)}{\sq
 $$
 
 $Q=1$ means that every event of each series has a partner in the other. $q>0$ means that the first series leads, $q<0$ that the
-second does; simultaneous events count for $Q$ but not for $q$. With `weighted=True` a pair at a lag of $d$ samples counts with
-the weight $1-(d-1)/\tau$ instead of 1. The outputs are `synchronization` ($Q$) and `delay` ($q$).
+second does; simultaneous events count for $Q$ but not for $q$. The outputs are `synchronization` ($Q$) and `delay` ($q$).
 
 The feature works on consecutive windows that do not overlap: `hop` equals `window` (its default) and any other value raises
 `ValueError`. It gives one result per window (`OK` once per window) and no `NO_OUTPUT`, the exception to the sliding windows of
 the family. By default the counts accumulate across windows, so the value of a window describes the whole recording up to its
 end; for the value of each window on its own, pass `reset_every_buffer=True`.
 
-$Q$ depends strongly on `tau`: the same two series give a low $Q$ with a small `tau` and a $Q$ close to 1 with a large one, so
-choose `tau` from the lags that count as simultaneous in your data.
+$Q$ depends strongly on `max_lag`: the same two series give a low $Q$ with a small `max_lag` and a $Q$ close to 1 with a large
+one, so choose `max_lag` from the lags that count as simultaneous in your data.
 
-Corrected in the core: the result follows the definition above, with the coincidence window $0<	ext{lag}\le	au$, the weight and
-the sign of the delay given here, and each event credited exactly once.
+Corrected in the core: the result follows the definition above, with the coincidence window $0<\text{lag}\le$ `max_lag`, the
+sign of the delay given here, and each event credited exactly once.
 
 {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` (multi-event-class synchronization) extends the measure
 to `number_of_inputs` series that carry events of several classes (for example one channel per type of gesture) {cite}`alborno2019multi`. For every class and every pair of series, the coincidences $S_{ij}$ are
-the pairs of events within `tau` samples, weighted by the `kernel`; with $m_i$ and $m_j$ the event counts of the two series the
+the pairs of events within `max_lag` samples, weighted by the `kernel`; with $m_i$ and $m_j$ the event counts of the two series the
 pair term is $\min\!\big(1,S_{ij}/\sqrt{m_im_j}\big)$, and the synchronization of the class is the mean of the pair terms over
 the $M(M-1)/2$ pairs of the $M$ series. It returns the `synchronization` of each class and the number of `events` of each class
 in the window, summed over the series, and also needs non-overlapping windows. It has no `reset_every_buffer`: its values and counts are those of
-each window on its own (checked on random trains), and it depends on `tau` in the same way. Only the former "version 2" of the algorithm is
+each window on its own (checked on random trains), and it depends on `max_lag` in the same way. Only the former "version 2" of the algorithm is
 provided.
 
 ```{doctest}
@@ -134,7 +133,7 @@ provided.
 >>> first, second = np.zeros(60), np.zeros(60)
 >>> first[[5, 25, 45]] = 1                    # three events of the first performer
 >>> second[[7, 27, 56]] = 1                   # the second follows two of them within 3 samples
->>> record = EventSynchronization(window=60, tau=3).run(first, second)
+>>> record = EventSynchronization(window=60, max_lag=3).run(first, second)
 >>> round(float(record.synchronization[-1]), 2), round(float(record.delay[-1]), 2)
 (0.67, 0.67)
 ```
@@ -174,14 +173,14 @@ R_{ij}=\Theta\big(\epsilon_i-\lVert\mathbf{x}_i-\mathbf{x}_j\rVert_p\big),\qquad
 $$
 
 with $\Theta$ the Heaviside step (a distance equal to $\epsilon$ is not a recurrence), $p$ the `order` and $\epsilon_i$ the
-threshold of row $i$ (`epsilon`, or one per row with `use_multiple_epsilons`). The diagonal is 1. A periodic movement draws
+threshold of row $i$ (`epsilon`, or one per row with `use_multiple_epsilons`, in the recurrence plot only). The diagonal is 1. A periodic movement draws
 diagonal lines, whose spacing is the period; a movement that stays in one posture draws blocks.
 {py:class}`~pyeyesweb.analysis_primitives.RecurrencePlot` returns the matrix of the last complete window as
 `recurrence_matrix`, of shape $(N,N)$.
 
 The cross-recurrence plot compares two multichannel signals with the same channels, for example two participants performing
-the same gesture: $R_{ij}=\Theta(\epsilon_i-\lVert\mathbf{x}_i-\mathbf{y}_j\rVert_p)$, with $\mathbf{x}$ from the first signal
-and $\mathbf{y}$ from the second. Long diagonal lines mean that the two follow the same trajectory, possibly with a time shift, and
+the same gesture: $R_{ij}=\Theta(\epsilon-\lVert\mathbf{x}_i-\mathbf{y}_j\rVert_p)$, with $\mathbf{x}$ from the first signal
+and $\mathbf{y}$ from the second, and one threshold $\epsilon$ (`epsilon`) for every row. Long diagonal lines mean that the two follow the same trajectory, possibly with a time shift, and
 the offset of the line from the main diagonal is that shift. {py:class}`~pyeyesweb.analysis_primitives.CrossRecurrencePlot`
 returns `cross_recurrence_matrix`. In both, the core corrected the `order`, which used to be ignored (the distance was always
 Euclidean).
@@ -225,14 +224,14 @@ $$
 $$
 
 the fraction of states that return within $\epsilon$ after $\tau$ samples. A periodic movement has peaks of $\mathrm{RR}$ at
-the multiples of its period. With `output_type="function_of_tau"` the feature returns the rates for `tau_spread` consecutive
-lags from `tau_min` (and the lags in `taus`); with `output_type="scalar"` it returns the rate at the single lag `tau`.
+the multiples of its period. With `output_type="function_of_tau"` the feature returns the rates at the lags 1 to `max_lag` (and
+the lags in `taus`); with `output_type="scalar"` it returns the rate at the single lag `lag`.
 
 ```{doctest}
 >>> from pyeyesweb.analysis_primitives import GeneralisedAutoCorrelation
 >>> states = np.sin(2 * np.pi * np.arange(200) / 50)[:, None]      # a movement with a period of 50 samples
 >>> for lag in (25, 50):
-...     rate = GeneralisedAutoCorrelation(window=200, output_type="scalar", tau=lag, epsilon=0.1).run(states).recurrence_rate[-1]
+...     rate = GeneralisedAutoCorrelation(window=200, output_type="scalar", lag=lag, epsilon=0.1).run(states).recurrence_rate[-1]
 ...     print(lag, round(float(rate[0]), 2))
 25 0.04
 50 1.0
@@ -290,7 +289,7 @@ array([[1.  , 0.61, 0.04],
 
 - Reduce every participant to a scalar signal (or one vector per sample for the recurrence measures) and give all participants
   the same sampling rate, preferably from one clock. Resample before the measure if the streams differ.
-- The window should hold several cycles of the movement. `window` and `tau` are in samples: $N=\lceil T f_s\rceil$ for a
+- The window should hold several cycles of the movement. `window`, `lag` and `max_lag` are in samples: $N=\lceil T f_s\rceil$ for a
   window of $T$ seconds.
 - A `NaN` or infinite value gives `INVALID_INPUT` and no output; the Notes of each feature in the API reference give the
   exact rule.

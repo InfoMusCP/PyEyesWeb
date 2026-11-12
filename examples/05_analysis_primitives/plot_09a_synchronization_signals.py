@@ -176,7 +176,7 @@ clapping = {name: load_qualisys_trial(number, start=5, stop=21).to_units("m").jo
             for name, number in {"trial 7 (synchronised)": 7, "trial 8 (unsynchronised)": 8}.items()}
 fig, ax = plt.subplots(figsize=(8, 3))
 for name, position in clapping.items():
-    rates = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, tau_min=1, tau_spread=300).run(position)[-1]
+    rates = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, max_lag=300).run(position)[-1]
     ax.plot(rates.taus / sampling_rate, rates.recurrence_rate, label=name)
 ax.set_xlabel("lag (s)")
 ax.set_ylabel("recurrence rate")
@@ -185,7 +185,7 @@ fig.tight_layout()
 
 # %%
 # The regular clapping returns to the same positions at regular lags; the unsynchronised trial has no clear peaks. With
-# ``output_type="scalar"`` and a ``tau`` the feature returns the rate at one lag, which is convenient for a live loop. The lags
+# ``output_type="scalar"`` and a ``lag`` the feature returns the rate at one lag, which is convenient for a live loop. The lags
 # (``taus``) are in samples; divide by the sampling rate for seconds.
 #
 # The recurrence of a window can also be drawn. :class:`~pyeyesweb.analysis_primitives.RecurrencePlot` is the binary matrix
@@ -267,10 +267,10 @@ for epsilon in (0.01, 0.05, 0.15):
     print(f"epsilon {epsilon} m: {cross.mean():.2f} of the plot recurs, {np.diag(cross).mean():.2f} of the main diagonal")
 
 # %%
-# Exercise 3. A scalar output holds the rate at one lag, ``tau``, in samples.
+# Exercise 3. A scalar output holds the rate at one lag, ``lag``, in samples.
 
 for name, position in clapping.items():
-    scalar = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, output_type="scalar", tau=77).run(position)[-1]
+    scalar = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, output_type="scalar", lag=77).run(position)[-1]
     print(f"{name}: recurrence rate at {int(scalar.taus[0]) / sampling_rate:.1f} s = {float(scalar.recurrence_rate[0]):.2f}")
 
 # %%

@@ -1,7 +1,7 @@
 """Event synchronisation blocks after the corrections of 2026-10-14 (see docs/developer/porting_status.md).
 
 The expected numbers are those of the independent port `eyw_core` (cross-checked by the maintainers), which agree with
-the core after the corrections on every input tried (unweighted and weighted Event Sync, MECS v2, SPIKE sync in both
+the core after the corrections on every input tried (Event Sync, MECS v2, SPIKE sync in both
 modes).
 """
 import os
@@ -19,32 +19,25 @@ from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
     EventSynchronization, EventSynchronizationMECS, SpikeSynchronization)
 
 
-def pair(lag, length=100, tau=3, weighted=False):
+def pair(lag, length=100, max_lag=3):
     """Event Sync of a train with an event every 10 samples and the same train delayed by `lag` samples."""
     first = np.zeros(length)
     first[10:90:10] = 1
     second = np.roll(first, lag) if lag else first.copy()
-    block = EventSynchronization(window=length, hop=length, tau=tau, weighted=weighted)
+    block = EventSynchronization(window=length, hop=length, max_lag=max_lag)
     result = block._process_window(first[None], second[None])
     return float(result.synchronization), float(result.delay)
 
 
 @pytest.mark.parametrize("lag,expected", [(-4, 0.0), (-3, 1.0), (-2, 1.0), (-1, 1.0), (0, 1.0), (1, 1.0), (2, 1.0), (3, 1.0), (4, 0.0)])
-def test_event_sync_accepts_the_lags_up_to_tau(lag, expected):
-    """0 < lag <= tau (EyesWeb: 1 <= lag <= tau - 1: with tau = 3 a lag of 3 gave 0)."""
+def test_event_sync_accepts_the_lags_up_to_max_lag(lag, expected):
+    """0 < lag <= max_lag (EyesWeb: 1 <= lag <= tau - 1: with tau = 3 a lag of 3 gave 0)."""
     assert pair(lag)[0] == expected
     assert np.sign(pair(lag)[1]) == (np.sign(lag) if expected else 0)  # q > 0 when the first series leads
 
 
-def test_event_sync_tau_one_accepts_a_lag_of_one():
-    assert pair(1, tau=1) == (1.0, 1.0) and pair(2, tau=1)[0] == 0.0
-
-
-@pytest.mark.parametrize("lag,expected", [(1, 1.0), (2, 2 / 3), (3, 1 / 3), (4, 0.0)])
-def test_weighted_event_sync_is_one_at_lag_one_and_one_over_tau_at_lag_tau(lag, expected):
-    """Weight 1 - (lag - 1) / tau (EyesWeb: integer division, 0 for every lag inside the window)."""
-    assert pair(lag, weighted=True)[0] == pytest.approx(expected, abs=1e-12)
-    assert pair(-lag, weighted=True)[1] == pytest.approx(-expected, abs=1e-12)
+def test_event_sync_max_lag_one_accepts_a_lag_of_one():
+    assert pair(1, max_lag=1) == (1.0, 1.0) and pair(2, max_lag=1)[0] == 0.0
 
 
 def test_mecs_of_identical_series_is_one_whatever_the_number_of_events():
@@ -52,18 +45,18 @@ def test_mecs_of_identical_series_is_one_whatever_the_number_of_events():
     for events in (1, 2, 4):
         series = np.zeros((1, 60))
         series[0, [5, 20, 40, 50][:events]] = 1
-        block = EventSynchronizationMECS(window=60, hop=60, number_of_inputs=2, number_of_event_classes=1, tau=5)
+        block = EventSynchronizationMECS(window=60, hop=60, number_of_inputs=2, number_of_event_classes=1, max_lag=5)
         assert block._process_window(series, series.copy()).synchronization[0] == pytest.approx(1.0, abs=1e-12)
 
 
 def test_mecs_pair_value_is_the_geometric_mean_normalisation_clamped_to_one():
     first = np.zeros((2, 40))
     second = np.zeros((2, 40))
-    first[0, [10, 20]] = 1          # class 0: two events, S = 2 against one event within tau -> 2 / sqrt(2), clamped to 1
+    first[0, [10, 20]] = 1          # class 0: two events, S = 2 against one event within max_lag -> 2 / sqrt(2), clamped to 1
     second[0, 10] = 1
     first[1, [5, 25]] = 1           # class 1: 2 events each, one coincident pair: S = 1 -> 1 / sqrt(4) = 0.5
     second[1, [5, 33]] = 1
-    block = EventSynchronizationMECS(window=40, hop=40, number_of_inputs=2, number_of_event_classes=2, tau=3)
+    block = EventSynchronizationMECS(window=40, hop=40, number_of_inputs=2, number_of_event_classes=2, max_lag=3)
     assert block._process_window(first, second).synchronization == pytest.approx([1.0 / np.sqrt(2), 0.5], abs=1e-12)
 
 

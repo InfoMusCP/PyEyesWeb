@@ -4,14 +4,14 @@
 * Recurrence plots, cross recurrence plots, interdependence, tau estimator, phase locking value: stateless in the
   core, every parameter is LIVE (the windows buffered by the feature are kept).
 * Correlations matrix: `number_of_inputs` is STRUCTURAL (read by Init(): number of inputs and size of the output).
-* Generalised auto correlation: epsilon, tau, tau_min are LIVE; output_type and tau_spread are STRUCTURAL.
+* Generalised auto correlation: epsilon and lag are LIVE; output_type and max_lag are STRUCTURAL.
 * Temporal synchronization: p, m, thresholds are LIVE; number_of_inputs is STRUCTURAL.
 """
 
 import numpy as np
 import pytest
 
-from live_param_suite import check_invalid, check_live, check_structural, feed, ids
+from live_param_suite import check_invalid, check_live, check_structural, ids
 
 from pyeyesweb.analysis_primitives.synchronization.correlation import (
     GeneralisedAutoCorrelation
@@ -39,7 +39,7 @@ LIVE = [
     (lambda: GeneralisedAutoCorrelation(window=30), "epsilon", 2.0, SIGNAL),
 ]
 STRUCTURAL = [
-    (lambda: GeneralisedAutoCorrelation(window=30), "tau_spread", 5, SIGNAL),
+    (lambda: GeneralisedAutoCorrelation(window=30), "max_lag", 5, SIGNAL),
     (lambda: GeneralisedAutoCorrelation(window=30), "output_type", "scalar", SIGNAL),
 ]
 INVALID = [
@@ -68,11 +68,3 @@ def test_structural_change_restarts_and_says_so_once(factory, attr, value, recor
 @_param(INVALID)
 def test_invalid_value_raises_and_changes_nothing(factory, attr, value, recording):
     check_invalid(factory, attr, value, recording)
-
-
-def test_generalised_auto_correlation_set_tau_min_is_live_and_keeps_the_window():
-    feature, control = GeneralisedAutoCorrelation(window=30), GeneralisedAutoCorrelation(window=30, tau_min=3)
-    feed(feature, SIGNAL[:50])
-    feature.set_tau_min(3)
-    assert feature.tau_min == 3
-    assert feed(feature, SIGNAL[50:]) == feed(control, SIGNAL)[50:]

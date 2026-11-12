@@ -85,8 +85,8 @@ def test_window_and_hop_are_live(factory, recording):
 
 
 @pytest.mark.parametrize("feature, recording, window", [
-    (EventSynchronization(window=10, tau=5), EVENT_PAIRS, 20),
-    (EventSynchronizationMECS(window=6, tau=4, number_of_event_classes=1), [([a[0]], [b[0]]) for a, b in EVENT_PAIRS], 12),
+    (EventSynchronization(window=10, max_lag=5), EVENT_PAIRS, 20),
+    (EventSynchronizationMECS(window=6, max_lag=4, number_of_event_classes=1), [([a[0]], [b[0]]) for a, b in EVENT_PAIRS], 12),
 ], ids=["EventSynchronization", "EventSynchronizationMECS"])
 def test_window_of_accumulating_blocks_is_live_through_configure(feature, recording, window):
     feed(feature, recording[:HELD])
