@@ -519,8 +519,8 @@ class _Custom(_Units, _Simulator, _ModelInput, MassSpringSimulator, variant="cus
 
     @property
     def model(self) -> MassSpringModel:
-        """A copy of the model in its current state. Setting it changes the model; the state restarts and the labels
-        are checked against the new mass names."""
+        """A copy of the model in its current state. Setting it changes the model: with the same mass and spring names
+        the state is kept; with other names the state restarts and the labels are checked against the new mass names."""
         return MassSpringModel._wrap(self._block.model)
 
     @model.setter
