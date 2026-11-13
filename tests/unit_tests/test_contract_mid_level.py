@@ -16,7 +16,7 @@ from contract_suite import check_feature_contract  # noqa: E402
 
 from pyeyesweb.data_models import InputKind, Status  # noqa: E402
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import GestureSegmenter, MotionDuration  # noqa: E402
+from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity, SuddennessImpulsivity
 from pyeyesweb.mid_level.suddenness import Suddenness
 
@@ -32,20 +32,28 @@ VELOCITIES = RNG.standard_normal((40, 3, 3))
 
 def test_gesture_segmenter():
     intensity = np.abs(np.sin(np.arange(60) / 4)) + (np.arange(60) > 30)
-    noise = (np.arange(60) % 9 < 3).astype(float)
-    check_feature_contract(lambda: GestureSegmenter(filter_window_length=5, firing_threshold=0.5), intensity, noise)
+    check_feature_contract(lambda: GestureSegmenter(filter_window_length=5, firing_threshold=0.5), intensity)
     segmenter = GestureSegmenter()
-    assert segmenter.inputs.names == ("intensity", "noise")
+    assert segmenter.inputs.names == ("intensity",)
     assert all(declared.kind is InputKind.SAMPLE for declared in segmenter.inputs)
-    assert segmenter.outputs.names == ("smoothed_intensity", "is_gesturing", "is_gesture_start", "is_gesture_end")
+    assert segmenter.outputs.names == ("smoothed_intensity", "is_gesturing", "is_gesture_start", "is_gesture_end",
+                                       "motion_duration", "pause_duration")
 
 
-def test_gesture_segmenter_noise_input_is_optional():
+def test_gesture_segmenter_durations_follow_the_time():
     intensity = np.abs(np.sin(np.arange(60) / 4)) + (np.arange(60) > 30)
-    plain, silent = GestureSegmenter(filter_window_length=5).run(intensity), GestureSegmenter(filter_window_length=5).run(intensity, np.zeros(60))
-    assert np.array_equal(plain.status, silent.status) and np.array_equal(plain["is_gesturing"], silent["is_gesturing"])
-    streamed = GestureSegmenter(filter_window_length=5)
-    assert [streamed.process(value).status for value in intensity] == list(plain.status)
+    make = lambda **time: GestureSegmenter(filter_window_length=5, firing_threshold=0.9, **time)
+    samples, rate = make().run(intensity), make(sampling_rate=20.0).run(intensity)
+    stamped = make().run(intensity, timestamps=np.arange(60) / 20.0)
+    assert np.isfinite(samples["motion_duration"]).any()
+    np.testing.assert_allclose(rate["motion_duration"], samples["motion_duration"] / 20.0)
+    np.testing.assert_allclose(stamped["pause_duration"], samples["pause_duration"] / 20.0)
+    streamed = make()
+    assert [streamed.process(value).status for value in intensity] == list(samples.status)
+    continuous = make(continuous_output=True).run(intensity)
+    last = np.fmax.accumulate(np.where(np.isfinite(samples["motion_duration"]), np.arange(60), -1))
+    expected = np.where(last >= 0, samples["motion_duration"][np.maximum(last, 0)], np.nan)
+    np.testing.assert_array_equal(continuous["motion_duration"], expected)
 
 
 def test_motion_noise_detector():
@@ -70,18 +78,6 @@ def test_motion_noise_detector_array_needs_labels():
         MotionNoiseDetector()
     with pytest.raises(ValueError):
         MotionNoiseDetector(labels=LABELS).process(SKELETON[0][:2], timestamp=0.0)
-
-
-def test_motion_duration():
-    check_feature_contract(lambda: MotionDuration(), SIGNAL)
-    recording = MotionDuration().run(SIGNAL)
-    assert (recording.status == Status.OK).any() and (recording.status == Status.NO_OUTPUT).any()
-
-
-def test_motion_duration_accepts_one_channel_columns():
-    plain = MotionDuration().run(SIGNAL)
-    column = MotionDuration().run(SIGNAL[:, None])
-    assert np.array_equal(plain.status, column.status)
 
 
 def test_contraction_impulsivity_takes_two_inputs():

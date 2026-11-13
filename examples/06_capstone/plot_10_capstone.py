@@ -25,11 +25,10 @@ the example session with a plain nearest-centroid rule and a plot.
 # it needs between calls (see :doc:`/concepts/results`). Here the chain is the one of the gesture tutorial,
 #
 # ``skeleton`` -> :class:`~pyeyesweb.low_level.KineticEnergy` -> :class:`~pyeyesweb.mid_level.GestureSegmenter`
-# -> :class:`~pyeyesweb.mid_level.MotionDuration`
 #
 # The kinetic energy of the body is the *intensity* that the segmenter thresholds to find gestures (energy per unit of mass, see
-# :doc:`/theory/kinematics_energy`). ``MotionDuration`` turns the
-# on/off signal ``is_gesturing`` into the length of each phase of motion and of pause (:doc:`/theory/gesture_segmentation`).
+# :doc:`/theory/kinematics_energy`); it also gives the length of
+# each phase of motion and of pause (:doc:`/theory/gesture_segmentation`).
 #
 # The recording is trial 7 (clapping hands) in **metres**; time is in seconds. A ``Recorder`` collects the results of a loop
 # with ``append``, which is all that ``run`` does for you.
@@ -41,7 +40,7 @@ from helpers import shade_status
 from pyeyesweb.data_models import Recorder
 from pyeyesweb.datasets import load_qualisys_trial
 from pyeyesweb.low_level import KineticEnergy
-from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
+from pyeyesweb.mid_level import GestureSegmenter
 
 RATE = 100  # Hz, the sampling rate of the recordings
 
@@ -50,17 +49,16 @@ time = trial.timestamps
 
 
 def make_pipeline():
-    """The three features, built from the skeleton of the trial."""
+    """The two features, built from the skeleton of the trial."""
     return (KineticEnergy(skeleton=trial.skeleton, sampling_rate=RATE),
-            GestureSegmenter(firing_threshold=1.0),
-            MotionDuration(sampling_rate=RATE))
+            GestureSegmenter(firing_threshold=1.0))
 
 
-energy, segmenter, durations = make_pipeline()
+energy, segmenter = make_pipeline()
 print(segmenter.inputs)
 
 # %%
-# The loop is three calls per frame. At 3 s we make the segmenter less sensitive by raising its ``firing_threshold`` from 1 to 4
+# The loop is two calls per frame. At 3 s we make the segmenter less sensitive by raising its ``firing_threshold`` from 1 to 4
 # (a **live** parameter: the new value is used from the next call and nothing is lost). At 6 s we change
 # ``filter_window_length``, the smoothing of the segmenter, from 9 to 7 samples (a **structural** parameter: it shapes the
 # state of the filter, so the segmenter restarts, and the ``reason`` of the next result says so). The rule is in
@@ -75,10 +73,9 @@ for frame, stamp in zip(trial.positions, time):
         segmenter.filter_window_length = 7        # structural: the segmenter restarts and warms up again
     ke = energy.process(frame, timestamp=stamp)
     gesture = segmenter.process(ke.kinetic_energy, timestamp=stamp)
-    phase = durations.process(float(gesture.is_gesturing), timestamp=stamp)
     log.append(gesture)
     thresholds.append(segmenter.firing_threshold)
-    motion.append(phase.motion_duration)
+    motion.append(gesture.motion_duration)
 
 changed = [(round(float(time[i]), 2), reason) for i, reason in enumerate(log.reasons) if "state reset" in reason]
 print("results with a state reset:", changed)
@@ -118,7 +115,7 @@ ax.set_title("Live loop on trial 7: a live change and a structural change (dashe
 # ``run`` is defined as ``reset()`` followed by a loop of ``process``, so a live loop must give the numbers of the batch call
 # as long as no parameter changes. We check it on the first three seconds, before the first change, with a fresh pipeline.
 
-energy, segmenter, durations = make_pipeline()
+energy, segmenter = make_pipeline()
 first = slice(0, 300)
 batch_energy = energy.run(trial.positions[first], timestamps=time[first]).kinetic_energy
 batch = segmenter.run(batch_energy, timestamps=time[first])
@@ -137,8 +134,8 @@ print("same gesture flags:", bool(np.array_equal(batch.is_gesturing, log.is_gest
 #
 # * ``kinetic energy`` (mean, J/kg): :class:`~pyeyesweb.low_level.KineticEnergy`, how much the whole body moves;
 # * ``gestures per minute`` and ``% gesturing``: the number of gesture starts and the share of time inside a gesture, from the
-#   segmenter of the chain above; ``motion phase`` (median, s): :class:`~pyeyesweb.mid_level.MotionDuration`, the typical
-#   length of a gesture (0 if none ended);
+#   segmenter of the chain above; ``motion phase`` (median, s): its ``motion_duration``, the typical length of a gesture (0 if
+#   none ended);
 # * ``smoothness`` (median): :class:`~pyeyesweb.low_level.SpectralArcLength` of the speed of the right hand, computed by
 #   :class:`~pyeyesweb.low_level.Kinematics`, in windows of 2 s; it is negative and closer to 0 means smoother
 #   (:doc:`/theory/smoothness`);
@@ -162,7 +159,7 @@ def trial_row(number, start, stop):
     stamps, positions, skeleton = data.timestamps, data.positions, data.skeleton
     intensity = KineticEnergy(skeleton=skeleton, sampling_rate=RATE).run(positions, timestamps=stamps).kinetic_energy
     gestures = GestureSegmenter(firing_threshold=1.0).run(intensity, timestamps=stamps)
-    phases = MotionDuration(sampling_rate=RATE).run(gestures.is_gesturing.astype(float), timestamps=stamps).motion_duration
+    phases = gestures.motion_duration
     speed = Kinematics(sampling_rate=RATE).run(data.joint("Right_Hand"), timestamps=stamps).velocity
     arc = SpectralArcLength(window=200, hop=100, sampling_rate=RATE).run(np.asarray(speed), timestamps=stamps)
     symmetry = Symmetry(skeleton=skeleton, reference_point="Neck").run(positions).symmetry
@@ -298,7 +295,7 @@ for title, table in groups.items():
 # ------
 # 1. In the live loop, lower the threshold again at 8 s (``firing_threshold = 0.5``) and print the number of gesture starts in
 #    each of the three stretches of the trial (before 3 s, 3 s to 8 s, after 8 s).
-# 2. Add two columns to the first table: the median pause (``pause_duration`` of ``MotionDuration``) and the ``Symmetry`` with
+# 2. Add two columns to the first table: the median pause (``pause_duration`` of the segmenter) and the ``Symmetry`` with
 #    ``method="reflection"``. Do the assignments of the leave-one-out rule change?
 # 3. Trials 10 and 19 are other tasks (a squat with weight shift, balance on tiptoes). Compute their rows with ``trial_row`` and
 #    print which centroid of the first comparison each is nearer to, with the z-scores made from the means and standard
@@ -309,7 +306,7 @@ for title, table in groups.items():
 # ---------
 # Exercise 1. The same loop with a third threshold; the gesture starts are counted per stretch.
 
-energy, segmenter, durations = make_pipeline()
+energy, segmenter = make_pipeline()
 starts = []
 for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 3.0):
@@ -331,8 +328,7 @@ def extra_columns(number):
     data = load_qualisys_trial(number, start=5, stop=21).to_units("m")
     stamps = data.timestamps
     intensity = KineticEnergy(skeleton=data.skeleton, sampling_rate=RATE).run(data.positions, timestamps=stamps).kinetic_energy
-    gestures = GestureSegmenter(firing_threshold=1.0).run(intensity, timestamps=stamps)
-    pauses = MotionDuration(sampling_rate=RATE).run(gestures.is_gesturing.astype(float), timestamps=stamps).pause_duration
+    pauses = GestureSegmenter(firing_threshold=1.0).run(intensity, timestamps=stamps).pause_duration
     reflection = Symmetry(skeleton=data.skeleton, method="reflection").run(data.positions).pair_symmetry
     return {"pause (s)": float(np.nanmedian(pauses)) if np.isfinite(pauses).any() else 0.0,
             "reflection symmetry": float(np.mean(reflection))}

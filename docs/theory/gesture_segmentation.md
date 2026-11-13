@@ -6,9 +6,8 @@ how smooth, the stream must first be cut into gestures. Segmentation is therefor
 low-level layer, where there is one value for each sample, to the mid-level layer, where there is one value for each movement
 unit ({doc}`framework`).
 
-The family has three features. {py:class}`~pyeyesweb.mid_level.GestureSegmenter` finds the start and the end of the gestures
-in an intensity signal. {py:class}`~pyeyesweb.mid_level.MotionDuration` measures how long the phases of motion and of pause
-last, from the output of the segmenter. {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector` finds the peaks of a
+The family has two features. {py:class}`~pyeyesweb.mid_level.GestureSegmenter` finds the start and the end of the gestures
+in an intensity signal and measures how long the gestures and the pauses between them last. {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector` finds the peaks of a
 signal, which locate events inside a gesture or between gestures. The symbols are those of {doc}`notation`.
 
 ## A threshold on the intensity of motion
@@ -20,39 +19,43 @@ of a video. The intensity is noisy, so it is first smoothed to $\bar{I}(n)$, and
 intensity is at least a threshold $\theta$:
 
 $$
-\text{start: } \bar{I}(n) \ge \theta \;\text{ and not noise}, \qquad \text{end: } \bar{I}(n) < \theta .
+\text{start: } \bar{I}(n) \ge \theta, \qquad \text{end: } \bar{I}(n) < \theta .
 $$
 
-A gesture starts on the first sample at which the smoothed intensity reaches $\theta$, provided that the optional noise flag
-is not set, and ends on the first sample at which it falls below $\theta$. Once a gesture has started, the noise flag has no
-effect on its end. Between two gestures the body is in a **pause**.
+A gesture starts on the first sample at which the smoothed intensity reaches $\theta$ and ends on the first sample at which
+it falls below $\theta$. Between two gestures the body is in a **pause**. There is a single threshold, with no hysteresis
+and no minimum duration: an intensity that hovers around $\theta$ opens and closes many short gestures, so the threshold
+is set clearly above the level of the intensity at rest.
 
-The smoothing of {py:class}`~pyeyesweb.mid_level.GestureSegmenter` is a Savitzky-Golay filter of polynomial order 3, applied to the last 10 samples with a window of `filter_window_length`
-samples. This must be odd and shorter than the series of 10: 5, 7 or 9, the default being 9 (the window of 15 samples of
-the original EyesWeb block cannot be used with a series of 10, so the default is 9 here). The smoothing delays the
-detection by a few samples, and the filter needs 10 samples before it can produce a value: the status is `WARMING_UP` for the
-first 10 samples and `OK` afterwards. A change of `filter_window_length` restarts the filter, and `firing_threshold` can be
+The smoothing of {py:class}`~pyeyesweb.mid_level.GestureSegmenter` is a Savitzky-Golay filter: a polynomial of order 3
+is fit to the newest `filter_window_length` samples and read at their centre, as in
+{py:class}`~pyeyesweb.low_level.Kinematics`. The window is odd and at least 5 samples, 9 by default. The smoothing delays
+the detection by $(F - 1)/2$ samples for a window of $F$ samples, and the filter needs a full window before it can produce
+a value: the status is `WARMING_UP` for the first $F - 1$ samples and `OK` afterwards. A change of `filter_window_length` restarts the filter, and `firing_threshold` can be
 changed at any time. The threshold is in the unit of the intensity: for a kinetic energy, the squared unit of length per
 squared second (and the weights).
 
 The outputs are `smoothed_intensity` (the filtered intensity, in the unit of the input), `is_gesturing` (true while a gesture
 is running), and `is_gesture_start` and `is_gesture_end`, true on the sample that opens or closes a gesture. A value that is
-not finite, in the intensity or in the flag, gives `INVALID_INPUT`.
+not finite gives `INVALID_INPUT`.
 
 ## Duration of motion and pause
 
 The duration of the gestures and of the pauses between them is itself a quantity of expressive movement: a calm and a tense
 movement differ in the length of their pauses, and a rhythm is made of durations.
-{py:class}`~pyeyesweb.mid_level.MotionDuration` takes the segmentation signal, one scalar for each sample, typically the
-`is_gesturing` output of the segmenter. A sample is **motion** when the signal is not zero and a **pause** when it is zero,
-and the length of a phase is reported when the phase ends, on the first sample of the next one: a motion duration when a
-pause begins and a pause duration when a motion begins. The phase that is running when the first sample arrives is counted
-from that sample, whether or not it began earlier.
+The segmenter measures them on its own segmentation. A phase, gesture or pause, lasts from the sample where it begins to
+the sample where the next one begins,
 
-The durations are in seconds when a `sampling_rate` is given and in frames without one. By default a call produces an output
-only on the sample that ends a phase, and the others have status `NO_OUTPUT`; with `continuous_output=True` every call gives
-both durations, those of the last completed motion and pause phases (0 until a phase of that kind has ended). The outputs
-are `motion_duration` and `pause_duration`.
+$$
+D = t(\text{end}) - t(\text{begin}),
+$$
+
+and its duration is reported on the sample that ends it: `motion_duration` when a pause begins and `pause_duration` when a
+gesture begins. The phase that is running on the first smoothed sample is counted from that sample, whether or not it began
+earlier. The time $t$ follows the timestamps when they are given, else `sampling_rate`; without either, durations count
+samples and the `reason` says so. By default a duration is given only on the sample that ends its phase, NaN on the
+others; with `continuous_output=True` every sample gives the durations of the last completed gesture and pause (NaN until
+one has ended). In EyesWeb the durations came from a separate block, `MotionDuration`, which counted samples.
 
 ## Peaks of a signal
 
@@ -82,7 +85,7 @@ and a longer, slower one, with speeds of bell shape.
 
 ```{doctest}
 >>> from pyeyesweb.low_level import KineticEnergy
->>> from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
+>>> from pyeyesweb.mid_level import GestureSegmenter
 >>> rate = 50.0
 >>> time = np.arange(int(8 * rate)) / rate
 >>> bump = lambda centre, width, height: height * np.exp(-0.5 * ((time - centre) / width) ** 2)
@@ -90,21 +93,21 @@ and a longer, slower one, with speeds of bell shape.
 >>> frames = np.zeros((len(time), 1, 3))
 >>> frames[:, 0, 0] = np.cumsum(speed) / rate                        # the position of one joint, in m
 >>> energy = KineticEnergy(labels=["hand"], weights={"hand": 1.0}, sampling_rate=rate).run(frames).kinetic_energy
->>> segmenter = GestureSegmenter(firing_threshold=0.05)
+>>> segmenter = GestureSegmenter(firing_threshold=0.05, sampling_rate=rate)
 >>> record = segmenter.run(energy)
 >>> starts, ends = np.flatnonzero(record.is_gesture_start), np.flatnonzero(record.is_gesture_end)
 >>> time[starts], time[ends]
-(array([1.46, 4.54]), array([2.26, 5.68]))
->>> durations = MotionDuration(sampling_rate=rate).run(record.is_gesturing.astype(float))
->>> durations.motion_duration[~np.isnan(durations.motion_duration)]
+(array([1.44, 4.52]), array([2.24, 5.66]))
+>>> record.motion_duration[~np.isnan(record.motion_duration)].round(3)
 array([0.8 , 1.14])
->>> durations.pause_duration[~np.isnan(durations.pause_duration)]
-array([1.46, 2.28])
+>>> record.pause_duration[~np.isnan(record.pause_duration)].round(3)
+array([1.28, 2.28])
 ```
 
-The two gestures start at 1.46 s and 4.54 s and end at 2.26 s and 5.68 s, and last 0.80 s and 1.14 s. The pauses before them
-are 1.46 s (counted from the first sample) and 2.28 s. The segmenter reports the start of the first gesture 0.1 s after the
-intensity first reached the threshold, at 1.36 s, the delay of the smoothing. The figure shows the intensity, its
+The two gestures start at 1.44 s and 4.52 s and end at 2.24 s and 5.66 s, and last 0.80 s and 1.14 s. The pauses before them
+are 1.28 s (counted from the first smoothed sample, at 0.16 s) and 2.28 s. The segmenter reports the start of the first
+gesture 0.08 s after the intensity first reached the threshold, at 1.36 s: the delay of the smoothing, 4 samples with the
+window of 9. The figure shows the intensity, its
 smoothed version and the gestures.
 
 ```{eval-rst}
@@ -145,7 +148,7 @@ smoothed version and the gestures.
 | `GestureSegmenter` | `smoothed_intensity` | unit of the input | the filtered intensity |
 | | `is_gesturing` | none | true while a gesture is running |
 | | `is_gesture_start`, `is_gesture_end` | none | true on the sample that opens or closes a gesture |
-| `MotionDuration` | `motion_duration`, `pause_duration` | s, or frames without a rate | length of the last completed phase; 0 or more |
+| | `motion_duration`, `pause_duration` | s (samples without time) | length of the last completed gesture or pause; more than 0 |
 | `ScalarPeakDetector` | `is_peak` | none | a peak was found on this sample |
 
 The start of a gesture is reported a few samples after the intensity reaches the threshold, and a duration is reported at the
@@ -157,8 +160,8 @@ from the recorder; in a stream, the output of each call is acted upon as it arri
 
 - **The threshold.** The firing threshold is the one parameter that matters, and it is set in the unit of the intensity. A
   low threshold includes the slow beginning and end of the movement, a high one keeps only the energetic part and may
-  split a gesture that has a dip in the middle. In the example, the first gesture lasts from 1.30 s to 2.42 s
-  with a threshold of 0.01 and from 1.66 s to 2.06 s with 0.2. Choose it on a recording of the same body, set-up and
+  split a gesture that has a dip in the middle. In the example, the first gesture lasts from 1.28 s to 2.40 s
+  with a threshold of 0.01 and from 1.64 s to 2.04 s with 0.2. Choose it on a recording of the same body, set-up and
   units, and compare gestures only with the same threshold.
 - **Units.** With a kinetic energy, the threshold depends on the weights and on the unit of length of the data: the same
   movement in millimetres has an energy $10^6$ times larger in the squared unit.

@@ -259,12 +259,14 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 | `HumanoidOrientations(...).process(skeleton).directions` | development | `MassSpringSimulator(units=...).process(joints).directions` |
 | `GenericModelSimulator(model, ...).process(directions)`, output `positions` | development | `MassSpringSimulator(model=model, ...).process(joints)` takes the positions of the masses and reads the bone vectors itself; the bone vectors can still be given, `process(joints, directions)`; the output is `joints` |
 | `GenericModelOrientations(model).process(skeleton).directions` | development | `MassSpringSimulator(model=model, units=...).process(joints).directions` |
+| `MotionDuration(sampling_rate=..., continuous_output=...).run(is_gesturing)` | development | `GestureSegmenter(sampling_rate=..., continuous_output=...)`: the outputs `motion_duration` and `pause_duration` of the segmenter, measured on its own segmentation |
+| `GestureSegmenter.process(intensity, noise)`, input `noise` | development | removed: `process(intensity)`; the noise test is held back and will return inside the segmenter |
 
 ### Held back from this release
 
 Kept in the code and investigated for the next release, these features are not exported by their layer package and are not in
 `catalog()`: `MassSpringSimulator` (with `MassSpringModel`, `HUMANOID_JOINTS` and `HUMANOID_BONES`), `Harmonicity`,
-`MotionNoiseDetector` (and so the `noise` flag of `GestureSegmenter` has no producer in this release), `Suddenness`,
+`MotionNoiseDetector` (its noise test returns inside `GestureSegmenter` later), `Suddenness`,
 `SuddennessImpulsivity`, `ContractionImpulsivity`, `PositionDependingPotentials`, `RegionDependingPotentials`,
 `NonlinearInterdependence` and `SpikeSynchronization`. The rows that name them below describe the state they will return in.
 
@@ -310,7 +312,8 @@ These are names of the development states or of the EyesWeb blocks that a user o
 | `Curvature` | `ContourCurvature` | |
 | `SymmetryIndex3D`, `GeometricSymmetry` | `Symmetry` | `method="ratio"` or `"reflection"` |
 | `TriangleSymmetryIndex` | `TriangleSymmetry` | the output `symmetry` is 1 minus the EyesWeb asymmetry |
-| the development `GestureSegmenter` that read skeletons | `MotionNoiseDetector` (skeleton in, noise flag out); `GestureSegmenter` takes the intensity | |
+| the development `GestureSegmenter` that read skeletons | `KineticEnergy` then `GestureSegmenter`, which takes the intensity | |
+| `MotionDuration` (display name `SteadyStateLength`) | the outputs `motion_duration` and `pause_duration` of `GestureSegmenter` | durations in seconds instead of milliseconds |
 | `PARS` | `PartialRecurrenceSynchronization` | |
 | `EventSynchronizationInterdependence` | `NonlinearInterdependence` | outputs `xy`, `yx` are `first_to_second_interdependence`, `second_to_first_interdependence` |
 | `SpikeES` | `SpikeSynchronization` | |
@@ -384,8 +387,10 @@ development states; the second lists corrections of defects of the original Eyes
 in 2.0 (each is also stated on the page of the feature, as "Corrected in the core").
 
 | Feature | Change |
-| `LogDimensionlessJerk` | a flat or null signal (no jerk, or no peak to normalise by) is `INVALID_INPUT` with no value; 1.x and the development state returned 0, the best value of the scale |
 |---|---|
+| `LogDimensionlessJerk` | a flat or null signal (no jerk, or no peak to normalise by) is `INVALID_INPUT` with no value; 1.x and the development state returned 0, the best value of the scale |
+| `GestureSegmenter` | the Savitzky-Golay polynomial is fit to the newest `filter_window_length` samples, newest included, and read at their centre (EyesWeb never read the newest sample of a fixed 10-sample window): the detection is one sample earlier, the warm-up is `filter_window_length - 1` samples instead of 10, and any odd window of 5 or more is accepted |
+| `GestureSegmenter` (EyesWeb `MotionDuration`) | durations follow the timestamps, `t(end) - t(begin)`, else `sampling_rate`; EyesWeb counted calls. NaN until a phase has ended (EyesWeb gave 0) |
 | `SpectralArcLength`, `LogDimensionlessJerk`, `Harmonicity`, `SubmovementCount` (1.x `Smoothness`) | the Butterworth low-pass filter (`use_filter`) is gone, so the values at the former defaults differ; the rate has no default |
 | `MultiScaleEntropy` (1.x `MultiScaleEntropyDominance`) | sample entropy comes from the EyesWeb block; values differ from 1.x by a term of order 1/N |
 | `SampleEntropy` | the default tolerance is relative to the signal (`relative_tolerance=0.2`); an absolute tolerance of 0.3 matched nothing on a signal of another scale and gave infinite entropies |

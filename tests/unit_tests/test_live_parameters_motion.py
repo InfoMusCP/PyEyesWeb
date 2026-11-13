@@ -17,7 +17,7 @@ from pyeyesweb.low_level.shape import BodyPartsFromCurvature
 from pyeyesweb.low_level.symmetry import Symmetry
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
-from pyeyesweb.mid_level.segmentation import GestureSegmenter, MotionDuration
+from pyeyesweb.mid_level.segmentation import GestureSegmenter
 
 _motion = core.motion
 _rng = np.random.default_rng(11)
@@ -65,8 +65,8 @@ def segmenter(**params):
     return GestureSegmenter(**{"filter_window_length": 5, "firing_threshold": 0.1, **params})
 
 
-# the energy of the hand above (weight 2) and a noise flag that comes and goes: what the segmenter receives
-INTENSITY = [(float(2.0 * 0.5 * np.diff(_HAND, prepend=0.0)[frame] ** 2), float(frame % 17 < 5)) for frame in range(_FRAMES + 20)]
+# the energy of the hand above (weight 2): what the segmenter receives
+INTENSITY = [float(2.0 * 0.5 * np.diff(_HAND, prepend=0.0)[frame] ** 2) for frame in range(_FRAMES + 20)]
 
 
 def symmetry(**params):
@@ -81,8 +81,7 @@ LIVE = [
     (lambda: ContractionImpulsivity(sampling_rate=25.0), "sampling_rate", 50.0, IMPULSES),
     (lambda: ContractionImpulsivity(), "peak_threshold", 0.5, IMPULSES),
     (lambda: ContractionImpulsivity(), "motion_threshold", 0.1, IMPULSES),
-    (lambda: MotionDuration(sampling_rate=25.0), "sampling_rate",
-     50.0, SQUARE_WAVE),
+    (lambda: segmenter(), "continuous_output", True, INTENSITY),
     (lambda: Periodicity(window=40, hop=10, threshold=0.2), "threshold", 0.6, PERIODIC),
     (lambda: Rarity(number_of_inputs=2, window=20), "measure", "contrast", SAMPLES_2),
     (lambda: symmetry(aggregation="mean"), "aggregation", "min",

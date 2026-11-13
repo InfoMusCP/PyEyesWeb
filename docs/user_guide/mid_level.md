@@ -12,21 +12,19 @@ them. The background is in {doc}`../concepts/layers` and {doc}`../theory/framewo
 ## Which feature for which question
 
 **Where are the gestures?** {py:class}`~pyeyesweb.mid_level.GestureSegmenter` turns an intensity signal, typically the
-kinetic energy of a skeleton, into the start and the end of gestures.
-{py:class}`~pyeyesweb.mid_level.MotionDuration` measures the length of the motion phases and of the pauses of its
-output. Most of the other features of this layer are computed over a gesture, so segmentation is usually the first step.
+kinetic energy of a skeleton, into the start and the end of gestures, and measures how long the gestures and the pauses
+last. Most of the other features of this layer are computed over a gesture, so segmentation is usually the first step.
 Theory: {doc}`../theory/gesture_segmentation`.
 
 ## A typical pipeline
 
 The mid-level features are fed by the outputs of layers 1 and 2. A point makes two reaches of 0.4 m, with pauses before and
-between them. Its kinetic energy is the intensity that the segmenter takes, and the segmentation signal goes to
-`MotionDuration`.
+between them. Its kinetic energy is the intensity that the segmenter takes.
 
 ```{doctest}
 >>> import numpy as np
 >>> from pyeyesweb.low_level import KineticEnergy
->>> from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
+>>> from pyeyesweb.mid_level import GestureSegmenter
 >>> rate = 50.0
 >>> time = np.arange(0.0, 8.0, 1.0 / rate)
 >>> def reach(start, stop, amplitude):
@@ -37,17 +35,16 @@ between them. Its kinetic energy is the intensity that the segmenter takes, and 
 >>> energy = KineticEnergy(labels=["hand"], weights={"hand": 1.0}, sampling_rate=rate).run(position[:, None, :])
 >>> round(float(energy.kinetic_energy.max()), 3)
 0.07
->>> segmentation = GestureSegmenter(firing_threshold=0.005).run(energy.kinetic_energy)
+>>> segmentation = GestureSegmenter(firing_threshold=0.005, sampling_rate=rate).run(energy.kinetic_energy)
 >>> (np.flatnonzero(segmentation.is_gesture_start) / rate).tolist()     # seconds
-[1.42, 5.42]
+[1.4, 5.4]
 >>> (np.flatnonzero(segmentation.is_gesture_end) / rate).tolist()
-[2.82, 6.82]
->>> durations = MotionDuration(sampling_rate=rate).run(segmentation.is_gesturing.astype(float))
->>> float(np.nanmax(durations.motion_duration)), float(np.nanmax(durations.pause_duration))
+[2.8, 6.8]
+>>> round(float(np.nanmax(segmentation.motion_duration)), 3), round(float(np.nanmax(segmentation.pause_duration)), 3)
 (1.4, 2.6)
 ```
 
-The first gesture is found from 1.42 s to 2.82 s, although the reach lasts from 1.0 s to 3.0 s: the segmenter smooths the
+The first gesture is found from 1.4 s to 2.8 s, although the reach lasts from 1.0 s to 3.0 s: the segmenter smooths the
 intensity and declares a gesture while it is at least `firing_threshold` (in the unit of the intensity), so the start is late
 by a few samples and the slow beginning and end of a reach, where the energy is low, are left out. The threshold fixes how much
 of the movement counts as a gesture. The gestures can then be cut from the signals of layer 2 and summarised, for

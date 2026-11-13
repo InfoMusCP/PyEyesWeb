@@ -129,7 +129,7 @@ read from the catalog:
 >>> from collections import Counter
 >>> from pyeyesweb import catalog
 >>> Counter((info.layer.name, info.timescale.value) for info in catalog())
-Counter({('LOW_LEVEL', 'up to ~0.5 s'): 17, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('MID_LEVEL', '0.5-3 s'): 2, ('HIGH_LEVEL', '3 s and above'): 1})
+Counter({('LOW_LEVEL', 'up to ~0.5 s'): 17, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('MID_LEVEL', '0.5-3 s'): 1, ('HIGH_LEVEL', '3 s and above'): 1})
 ```
 
 A few remarks on the placement make the mapping precise.
@@ -159,14 +159,14 @@ A feature of one layer is built on the output of the layer below. The sketch fol
 skeleton (layer 1, a physical signal) gives a frame of joint positions at every sample.
 {py:class}`~pyeyesweb.low_level.KineticEnergy` (layer 2) turns each frame into one number, the energy of the body at this
 moment. {py:class}`~pyeyesweb.mid_level.GestureSegmenter` (layer 3) takes that number and finds where the gestures start
-and end, and {py:class}`~pyeyesweb.mid_level.MotionDuration` measures how long they last. Between the second and the third
+and end, and how long they last. Between the second and the third
 step the unit of analysis changes from the frame to the gesture, and so does the timescale:
 
 ```{doctest}
 >>> from pyeyesweb.low_level import KineticEnergy
->>> from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
->>> [(feature.__name__, feature.LAYER.name, feature.TIMESCALE.value) for feature in (KineticEnergy, GestureSegmenter, MotionDuration)]
-[('KineticEnergy', 'LOW_LEVEL', 'up to ~0.5 s'), ('GestureSegmenter', 'MID_LEVEL', '0.5-3 s'), ('MotionDuration', 'MID_LEVEL', '0.5-3 s')]
+>>> from pyeyesweb.mid_level import GestureSegmenter
+>>> [(feature.__name__, feature.LAYER.name, feature.TIMESCALE.value) for feature in (KineticEnergy, GestureSegmenter)]
+[('KineticEnergy', 'LOW_LEVEL', 'up to ~0.5 s'), ('GestureSegmenter', 'MID_LEVEL', '0.5-3 s')]
 ```
 
 The same example is run with data in {doc}`gesture_segmentation`. Such pipelines are written by the user, from the

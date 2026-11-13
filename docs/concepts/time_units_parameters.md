@@ -148,8 +148,8 @@ Schema(Output('velocity', unit='mm/s'))
 
 The unit of an output (`Output.unit`) is documentation in the terms of the data. `<length>` is the length unit of the data,
 `<input>` is the unit of the input, `samples`, `frames`, `px`, `deg`, `s` and `cells` are what they say, and compounds such
-as `<length>/s` combine them. The text follows the parameters: the duration of `MotionDuration` is in `frames` without a rate
-and in `s` with one.
+as `<length>/s` combine them. A duration is in `s`; without timestamps and without `sampling_rate` it counts samples, and the `reason` of
+every result says so.
 
 ```{doctest}
 >>> KineticEnergy(skeleton="kinect_v2").outputs

@@ -1,5 +1,5 @@
 """Regenerate the outputs in `tests/data/gesture_segmenter_reference.npz` (status, reason, values, valid of every scenario) with
-the current KineticEnergy + MotionNoiseDetector + GestureSegmenter, `is_noisy` fed directly to the `noise` input. The inputs
+the current KineticEnergy -> GestureSegmenter. The inputs
 (`syn_*`, `ts_*`) and the scenarios (`meta`) are kept. Do it ONLY when a numeric change is intended. Needs the compiled core.
     python tools/regenerate_gesture_segmenter_reference.py
 """

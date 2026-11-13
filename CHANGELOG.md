@@ -16,7 +16,7 @@ PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Ge
   mask and one attribute per output; `is_valid` remains as an alias of `ok`. A missing value is `NaN` (`0` for integer and
   `False` for boolean outputs), never `None`, and array shapes do not change between calls.
 * feat!: layered architecture. Features live in `pyeyesweb.physical_signals`, `low_level`, `mid_level`, `high_level` and
-  `analysis_primitives`; the catalog (`pyeyesweb.catalog()`) holds 47 features (5, 19, 7, 1 and 15). `pyeyesweb.Smoothness`
+  `analysis_primitives`; the catalog (`pyeyesweb.catalog()`) holds 36 features (4, 17, 1, 1 and 13). `pyeyesweb.Smoothness`
   and `pyeyesweb.Synchronization` are no longer exported at the top level.
 * The features run in a compiled core, the module `eyesweb_core`, a package separate from `pyeyesweb` (a development build is
   found through `EYESWEB_CORE_PATH`). `import pyeyesweb`, `pyeyesweb.data_models` and `Layer` work without it. The minimum
@@ -64,6 +64,8 @@ PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Ge
   `TrajectoryNonPlanarity`, `CurvatureDispersion`, `CurvatureVelocityCorrelation`, `TriangleSymmetry`,
   `MotionNoiseDetector`, `GestureSegmenter`, `MotionDuration`, `ContractionImpulsivity`, `Periodicity`, `SampleEntropy`,
   `CoarseGraining`, `BinaryPulsesRegularity`, `ScalarPeakDetector` and `TimeWindowSynchronizer`.
+* feat!: `MotionDuration` is merged into `GestureSegmenter`, whose outputs `motion_duration` and `pause_duration` follow the
+  timestamps; the `noise` input of the segmenter is removed and the Savitzky-Golay fit uses the newest samples.
 * feat: `KineticEnergy(input_mode="velocity")` and a PCA fit of a point cloud in `EllipsoidSphericity.process` (with
   `axis_ratio` and `radii`), extensions of the EyesWeb blocks; the default behaviour is the faithful one.
 * feat: discovery metadata (`LAYER`, `TIMESCALE`, `EYESWEB_BLOCK`) on every feature class, `pyeyesweb.catalog()` and

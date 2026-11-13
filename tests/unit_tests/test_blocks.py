@@ -34,7 +34,7 @@ from pyeyesweb.low_level import (  # noqa: E402
     Symmetry, TriangleSymmetry
 )
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import GestureSegmenter, MotionDuration  # noqa: E402
+from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 
 DTYPES = {float: np.floating, int: np.integer, bool: np.bool_}
@@ -55,7 +55,6 @@ CASES = {
     "KineticEnergy": (lambda: KineticEnergy(weights={"head": 1.0}), lambda block: block.process({"head": (0, 0, 0)})),
     "Periodicity": (lambda: Periodicity(window=len(PERIODIC)), lambda block: block._process_window(PERIODIC)),
     "ContractionImpulsivity": (lambda: ContractionImpulsivity(), lambda block: block.process(0.5, 0.5)),
-    "MotionDuration": (lambda: MotionDuration(continuous_output=True), lambda block: block.process(1.0)),
     "Rarity": (lambda: Rarity(method="information"), lambda block: block.process([0.1, 0.9])),
     "SampleEntropy": (lambda: SampleEntropy(window=len(SINE), embedding_dimension=2, tolerance=0.5), lambda block: block._process_window(SINE)),
     "CurvatureVelocityCorrelation": (lambda: CurvatureVelocityCorrelation(window=40, sampling_rate=25.0), lambda block: block._process_window(
@@ -155,16 +154,13 @@ def test_scalar_results_are_named_after_the_feature():
 # ------------------------------------------------------------------------------------------ (c) no-output paths
 
 
-def test_motion_duration_updates_one_output_or_none():
-    md = MotionDuration()  # updates a field only on phase changes
-    quiet = md.process(1.0)
-    assert quiet.status is Status.NO_OUTPUT
-    assert quiet.valid == {"motion_duration": False, "pause_duration": False}
-    assert np.isnan(quiet.to_array()).all()
-    changed = md.process(0.0)
-    assert changed.status is Status.OK
-    assert changed.valid == {"motion_duration": True, "pause_duration": False}
-    assert not math.isnan(changed.motion_duration) and math.isnan(changed.pause_duration)
+def test_gesture_segmenter_gives_a_duration_only_when_its_phase_ends():
+    gs = GestureSegmenter(filter_window_length=5, firing_threshold=0.5)
+    results = [gs.process(value) for value in [1.0] * 10 + [0.0] * 10]
+    ends = [result for result in results if result.is_gesture_end]
+    assert len(ends) == 1 and ends[0].valid["motion_duration"] and not ends[0].valid["pause_duration"]
+    quiet = [result for result in results[4:] if not result.is_gesture_end]
+    assert all(not result.valid["motion_duration"] and math.isnan(result.motion_duration) for result in quiet)
 
 
 def test_points_density_without_points_is_invalid_input():
@@ -184,11 +180,11 @@ def test_gesture_segmenter_default_filter_window_length_is_usable():
 def test_gesture_segmenter_warms_up_then_emits():
     gs = GestureSegmenter(filter_window_length=5)
     results = [gs.process(0.01 * index, timestamp=index * 0.04) for index in range(11)]
-    assert all(result.status is Status.WARMING_UP for result in results[:10]) and results[10].status is Status.OK
+    assert all(result.status is Status.WARMING_UP for result in results[:4]) and results[4].status is Status.OK
     early, late = results[0], results[10]
-    assert early.valid == {"smoothed_intensity": False, "is_gesturing": False, "is_gesture_start": False, "is_gesture_end": False}
+    assert not any(early.valid.values())
     assert math.isnan(early.smoothed_intensity) and early.is_gesturing is False
-    assert all(late.valid.values()) and not math.isnan(late.smoothed_intensity)
+    assert late.valid["smoothed_intensity"] and not math.isnan(late.smoothed_intensity)
     assert late.timestamp == pytest.approx(10 * 0.04)
 
 

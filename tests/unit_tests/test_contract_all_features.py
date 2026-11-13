@@ -112,7 +112,7 @@ def _correlation_matrices():
 
 
 def _gesture_segmenter():
-    return (np.abs(np.sin(np.arange(60) / 4)) + (np.arange(60) > 30), (np.arange(60) % 9 < 3).astype(float))
+    return (np.abs(np.sin(np.arange(60) / 4)) + (np.arange(60) > 30),)
 
 
 def _hits():

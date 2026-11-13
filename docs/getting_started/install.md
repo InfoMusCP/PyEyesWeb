@@ -67,7 +67,7 @@ library and the core are both in place.
 >>> import pyeyesweb
 >>> features = pyeyesweb.catalog()
 >>> len(features)
-37
+36
 >>> [info.name for info in features[:3]]
 ['SilhouetteCentroids', 'SilhouetteBodyParts', 'Videogram']
 ```

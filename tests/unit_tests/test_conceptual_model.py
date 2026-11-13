@@ -34,7 +34,7 @@ def test_catalog_lists_features():
     assert {"SpectralArcLength", "SubmovementCount", "GestureSegmenter", "EnsembleDominance"} <= names
     assert not {"Suddenness", "MotionNoiseDetector", "MassSpringSimulator"} & names  # held back from the release
     assert all(entry.cls.RELEASED for entry in catalog())
-    assert len(catalog()) == 37  # 47 before ten features were held back from the early release (2026-11-13), 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
+    assert len(catalog()) == 36  # 37 before MotionDuration was merged into GestureSegmenter (2026-11-13), 47 before ten features were held back from the early release (2026-11-13), 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
 
 
 @needs_core

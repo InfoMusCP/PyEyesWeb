@@ -89,17 +89,15 @@ def _gesture(scale, units):
     steps = np.concatenate([rng.normal(0, 1e-4, (20, 3)), reach, rng.normal(0, 1e-4, (20, 3))])
     frames = np.cumsum(steps, axis=0).reshape(60, 1, 3) * scale  # metres, or the same motion in millimetres
     energy = KineticEnergy(labels=LABELS, weights={"a": 1.0}, sampling_rate=50.0).run(frames)["kinetic_energy"]
-    noise = MotionNoiseDetector(labels=LABELS, noise_threshold=0.5, sampling_rate=50.0, units=units).run(frames)["is_noisy"]
-    noise = np.asarray(noise, dtype=bool)  # is_noisy goes straight to the noise input: the segmenter blocks a start while it is set
     squared = 1e6 if units == "mm" else 1.0  # the energy of data in millimetres is in mm^2
-    segmented = GestureSegmenter(filter_window_length=5, firing_threshold=0.1 * squared).run(energy, noise)
-    return {"kinetic_energy": energy, "noise": noise, **{name: segmented[name] for name in ("is_gesturing", "is_gesture_start", "is_gesture_end")}}
+    segmented = GestureSegmenter(filter_window_length=5, firing_threshold=0.1 * squared).run(energy)
+    return {"kinetic_energy": energy, **{name: segmented[name] for name in ("is_gesturing", "is_gesture_start", "is_gesture_end")}}
 
 
 def test_gesture_segmenter_in_millimetres_gives_the_same_segmentation():
     metres, millimetres = _gesture(1.0, "m"), _gesture(1000.0, "mm")
     assert metres["is_gesturing"].any() and not metres["is_gesturing"].all()  # the thresholds matter in this recording
-    for name in ("is_gesturing", "is_gesture_start", "is_gesture_end", "noise"):
+    for name in ("is_gesturing", "is_gesture_start", "is_gesture_end"):
         assert np.array_equal(metres[name], millimetres[name]), name
     assert np.allclose(millimetres["kinetic_energy"], 1e6 * np.asarray(metres["kinetic_energy"]))  # outputs keep the data unit
 

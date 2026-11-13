@@ -10,7 +10,7 @@ correction of the original is recorded, and which blocks of earlier versions are
 >>> import pyeyesweb
 >>> entries = pyeyesweb.catalog()
 >>> len(entries), sum(info.eyesweb_block is not None for info in entries), sum(info.eyesweb_block is None for info in entries)
-(37, 28, 9)
+(36, 27, 9)
 ```
 
 The first number is the number of features, the second the number that come from an EyesWeb block (the block is the

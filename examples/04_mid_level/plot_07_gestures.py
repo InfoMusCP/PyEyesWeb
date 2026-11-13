@@ -52,9 +52,10 @@ starts = time[gestures.is_gesture_start]
 print("gestures:", len(starts), "| start times (s):", starts.round(2))
 
 # %%
-# The segmenter needs 10 samples before it can smooth, so its first 10 results are ``WARMING_UP`` (yellow). The outputs are
-# ``smoothed_intensity``, ``is_gesturing`` (true during a gesture) and ``is_gesture_start`` and ``is_gesture_end``, true on the
-# sample that opens or closes a gesture.
+# The segmenter needs a full window of ``filter_window_length`` samples (9) before it can smooth, so its first 8 results are
+# ``WARMING_UP`` (yellow). The outputs are ``smoothed_intensity``, ``is_gesturing`` (true during a gesture),
+# ``is_gesture_start`` and ``is_gesture_end``, true on the sample that opens or closes a gesture, and the durations of the
+# next section.
 
 # sphinx_gallery_thumbnail_number = 1
 fig, (top, bottom) = plt.subplots(2, 1, figsize=(8, 5), sharex=True)
@@ -84,7 +85,7 @@ top.set_title("Trial 21: gestures (green) found from the kinetic energy of the w
 # What the parameters do
 # ----------------------
 # ``firing_threshold`` is the sensitivity: the lower it is, the more of the recording counts as gesture. ``filter_window_length``
-# (5, 7 or 9) sets the smoothing and must be odd and shorter than the 10 samples of the filter. The threshold is in the unit
+# (odd, 5 or more, 9 by default) sets the smoothing: the smoothed intensity lags by half the window. The threshold is in the unit
 # of the intensity, so it has to be chosen for the signal. Trial 25, a deliberately slow movement, has far less energy than
 # trial 21:
 
@@ -103,21 +104,16 @@ for threshold in (0.1, 0.5, 1.0, 2.0, 4.0):
 # %%
 # How long do gestures and pauses last?
 # -------------------------------------
-# :class:`~pyeyesweb.mid_level.MotionDuration` takes the ``is_gesturing`` signal (non-zero is motion, zero is pause) and reports
-# the length of a phase when it ends: a motion duration when a pause begins, a pause duration when a motion begins. With
-# ``sampling_rate`` the durations are in seconds. Most samples have status ``NO_OUTPUT``, because only the sample that ends a
-# phase has something to report.
+# The segmenter also reports the length of a phase when it ends: ``motion_duration`` when a pause begins, ``pause_duration``
+# when a gesture begins, NaN on the other samples. The durations are in seconds, measured on the timestamps.
 
-from pyeyesweb.mid_level import MotionDuration
-
-durations = MotionDuration(sampling_rate=100).run(gestures.is_gesturing.astype(float), timestamps=time)
+durations = gestures
 motion = durations.motion_duration[~np.isnan(durations.motion_duration)]
 pause = durations.pause_duration[~np.isnan(durations.pause_duration)]
-print(durations)
 print(f"{len(motion)} motion phases, median {np.median(motion):.2f} s | {len(pause)} pauses, median {np.median(pause):.2f} s")
 
 fig, ax = plt.subplots(figsize=(8, 3))
-ax.plot(time, gestures.is_gesturing * 0.5, color="0.6", lw=0.8, label="is_gesturing (input)")
+ax.plot(time, gestures.is_gesturing * 0.5, color="0.6", lw=0.8, label="is_gesturing")
 ax.stem(time[~np.isnan(durations.motion_duration)], motion, linefmt="C2-", markerfmt="C2o", basefmt=" ", label="motion duration")
 ax.stem(time[~np.isnan(durations.pause_duration)], pause, linefmt="C0-", markerfmt="C0o", basefmt=" ", label="pause duration")
 ax.set_xlabel("time (s)")
@@ -126,7 +122,7 @@ ax.legend(loc="upper right")
 ax.set_title("Each stem appears when a phase ends and says how long it lasted")
 
 # %%
-# **Takeaway.** ``MotionDuration`` turns the on/off signal of the segmenter into the durations of motion and of pause.
+# **Takeaway.** The segmenter gives the durations of motion and of pause along with the gestures.
 
 # %%
 # Try it

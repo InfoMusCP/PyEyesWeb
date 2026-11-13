@@ -72,8 +72,8 @@ def test_motion_noise_detector_non_finite_coordinates_are_invalid_input():
 
 def test_gesture_segmenter_non_finite_samples_are_invalid_input_and_leave_the_state():
     segmenter = GestureSegmenter(filter_window_length=5)
-    for value, noise in ((np.nan, 0.0), (np.inf, 0.0), (1.0, np.nan), ([], 0.0)):
-        assert segmenter.process(value, noise).status == Status.INVALID_INPUT
+    for value in (np.nan, np.inf, []):
+        assert segmenter.process(value).status == Status.INVALID_INPUT
     reference = GestureSegmenter(filter_window_length=5)
     for _ in range(11):
         assert segmenter.process(1.0).status == reference.process(1.0).status
