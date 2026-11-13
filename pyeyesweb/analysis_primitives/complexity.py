@@ -26,7 +26,7 @@ class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     Sample entropy measures the irregularity of a signal: how unlikely it is that two stretches of the signal that
     are close to each other for ``m`` samples remain close at the next sample. A regular, predictable signal gives
     a low value, an irregular one a high value. Two templates of length ``k`` match when every pair of corresponding
-    samples differs by less than the tolerance ``r``. With :math:`B_k` the number of matching template pairs of
+    samples differs by at most the tolerance ``r``. With :math:`B_k` the number of matching template pairs of
     length ``k`` and :math:`A_k` the number of those that still match when extended by one sample, the entry for
     template length ``k`` is
 

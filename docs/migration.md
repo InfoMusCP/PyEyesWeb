@@ -410,6 +410,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `CurvatureVelocityCorrelation` (development) | `velocity` and `velocity_std` are per second in both modes of `differentiate`; the development values with `differentiate=False` were per sample |
 | `MotionNoiseDetector` (development) | `is_noisy` is `True` for noisy (random, jumpy) motion; it was the reverse |
 | `MassSpringModel.to_xml()` (development) | the damping is written as relative damping, so a saved model reloads to the same configuration |
+| `SampleEntropy`, `MultiScaleEntropy` (development) | two templates match when their distance is at most the tolerance (`<=`, Richman and Moorman); it was strictly less, as in the EyesWeb block and pyEntropy. Values change only when a distance equals the tolerance, as on quantised data |
 
 | Feature | Correction of the original block |
 |---|---|
@@ -417,6 +418,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `CurvatureVelocityCorrelation` | the curvature used half of the second derivative of the fit |
 | `SuddennessImpulsivity` | both terms are evaluated on the same single trajectory (the original took the direction change of the mean of all the signals and the suddenness of the first signal) |
 | `MotionNoiseDetector` | `reset()` clears the speed windows |
+| `RecurrencePlot`, `CrossRecurrencePlot` | a distance equal to `epsilon` is a recurrence (Marwan et al. 2007, eq. 10); the original was strict, so `epsilon=0` gave an empty matrix, even on the diagonal. Values change only when a distance equals the threshold, as on quantised data |
 | `ScalarPeakDetector` | the running maximum was seeded with the smallest positive number, so a signal that stays at or below 0 never produced a peak |
 | `SilhouetteBodyParts`, `Videogram` | the barycentre is the centroid of the mask truncated to whole pixels; the channel sums of the videogram are independent (the original aliased them) |
 | `MassSpringSimulator` | the damping force is proportional to the relative velocity of the two masses (the original used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in |

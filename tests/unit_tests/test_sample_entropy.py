@@ -1,7 +1,9 @@
 """SampleEntropy: the tolerance is `relative_tolerance * std(window)` unless `tolerance` is given.
 
-An explicit `tolerance` gives exactly the numbers of the block before the relative default existed (frozen outputs,
-tests/data/sample_entropy_reference.npz, made with the old core: bit for bit).
+An explicit `tolerance` gives the numbers of the block with that tolerance (frozen outputs,
+tests/data/sample_entropy_reference.npz, bit for bit). Regenerated 2026-11-13 for the match test d <= r (Richman &
+Moorman 2000; the block used <): only the integer lattice with r = 1 changed, where distances equal r
+(tools/regenerate_sample_entropy_reference.py).
 """
 import inspect
 import json
@@ -39,7 +41,7 @@ def _speed_mm_per_s():
 
 
 @pytest.mark.parametrize("entry,signal,expected", _frozen_cases())
-def test_explicit_tolerance_gives_the_numbers_of_the_old_default_bit_for_bit(entry, signal, expected):
+def test_explicit_tolerance_gives_the_frozen_numbers_bit_for_bit(entry, signal, expected):
     feature = SampleEntropy(window=len(signal), embedding_dimension=entry["embedding_dimension"], tolerance=entry["tolerance"])
     assert_same_floats(feature._process_window(signal)["sample_entropy"], expected)
 

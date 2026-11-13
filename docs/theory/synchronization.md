@@ -111,7 +111,8 @@ provided.
 
 ## Recurrence
 
-Recurrence analysis compares a movement with itself or with another movement in the space of states {cite}`varni2017computational`. For a window of states $\mathbf{x}_n$ (one value per
+Recurrence analysis compares a movement with itself or with another movement in the space of states {cite}`marwan2007recurrence`, and the lab uses it to measure the synchronization of a group
+{cite}`varni2010system`. For a window of states $\mathbf{x}_n$ (one value per
 channel, for example the posture of a participant), the recurrence plot is the binary matrix
 
 $$
@@ -119,7 +120,8 @@ R_{ij}=\Theta\big(\epsilon_i-\lVert\mathbf{x}_i-\mathbf{x}_j\rVert_p\big),\qquad
 \lVert\mathbf{v}\rVert_p=\Big(\sum_c|v_c|^p\Big)^{1/p},
 $$
 
-with $\Theta$ the Heaviside step (a distance equal to $\epsilon$ is not a recurrence), $p$ the `order` and $\epsilon_i$ the
+with $\Theta$ the Heaviside step, $\Theta(0)=1$ (a distance equal to $\epsilon$ is a recurrence, as in
+{cite}`marwan2007recurrence`, eq. 10), $p$ the `order` and $\epsilon_i$ the
 threshold of row $i$ (`epsilon`, or one per row with `use_multiple_epsilons`, in the recurrence plot only). The diagonal is 1. A periodic movement draws
 diagonal lines, whose spacing is the period; a movement that stays in one posture draws blocks.
 {py:class}`~pyeyesweb.analysis_primitives.RecurrencePlot` returns the matrix of the last complete window as

@@ -26,7 +26,8 @@ def test_recurrence_plot_contract_and_values():
     result = block._process_window(np.array([[0.0, 0.5, 1.0, 3.0]]))
     assert isinstance(result, Result) and result.status is Status.OK and result.valid == {"recurrence_matrix": True}
     assert result.recurrence_matrix.shape == (4, 4) and np.issubdtype(result.recurrence_matrix.dtype, np.floating)
-    np.testing.assert_array_equal(result.recurrence_matrix, np.eye(4))  # |0 - 0.5| == epsilon is not a recurrence
+    np.testing.assert_array_equal(result.recurrence_matrix, [[1, 1, 0, 0], [1, 1, 1, 0], [0, 1, 1, 0], [0, 0, 0, 1]])
+    # |0 - 0.5| == epsilon is a recurrence (Marwan 2007, eq. 10)
 
 
 def test_recurrence_plot_multichannel_order():
@@ -41,7 +42,7 @@ def test_recurrence_plot_multichannel_order():
 def test_recurrence_plot_multiple_epsilons():
     block = RecurrencePlot(window=3, use_multiple_epsilons=True, multiple_epsilons=[1.5, 0.0, 1.0])
     np.testing.assert_array_equal(block._process_window(np.array([[0.0, 1.0, 2.0]])).recurrence_matrix,
-                                  [[1, 1, 0], [0, 0, 0], [0, 0, 1]])
+                                  [[1, 1, 0], [0, 1, 0], [0, 1, 1]])  # d <= epsilon of the row; d = 0 <= 0
     with pytest.raises(ValueError):
         block._process_window(np.arange(4.0)[None])  # 3 epsilons for 4 samples
     with pytest.raises(ValueError):

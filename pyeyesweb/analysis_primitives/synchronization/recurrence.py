@@ -48,7 +48,7 @@ class RecurrencePlot(_Epsilons, _SeriesBlock):
         R_{ij} = \Theta\left(\epsilon_i - \lVert x_i - x_j \rVert_p\right), \qquad
         \lVert v \rVert_p = \Big(\sum_c |v_c|^p\Big)^{1/p},
 
-    with :math:`\Theta` the Heaviside step (a distance equal to :math:`\epsilon` is not a recurrence), :math:`p` the
+    with :math:`\Theta` the Heaviside step, :math:`\Theta(0) = 1` (a distance equal to :math:`\epsilon` is a recurrence), :math:`p` the
     ``order`` and :math:`\epsilon_i` the threshold of row :math:`i` (``epsilon`` unless ``use_multiple_epsilons``).
     The diagonal is 1. Periodic movements give diagonal lines, whose spacing is the period.
 

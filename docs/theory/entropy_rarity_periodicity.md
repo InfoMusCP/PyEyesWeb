@@ -22,7 +22,7 @@ it represents. Except for the instantaneous rarity they work on a window of $N$ 
 
 Sample entropy measures how unlikely it is that two stretches of the signal that are close to each other for $k$ samples are
 still close at the next sample {cite}`glowinski2013creative,glowinski2013movements,glowinski2013action`. Take the templates $u_k(i)=(x_i,\dots,x_{i+k-1})$ of
-length $k$ in a window. Two templates match when every pair of corresponding samples differs by less than a tolerance $r$
+length $k$ in a window. Two templates match when every pair of corresponding samples differs by at most a tolerance $r$
 (Chebyshev distance). With $B_k$ the number of matching pairs of templates of length $k$, and $A_k$ the number of those pairs
 that still match when both are extended by one sample (that is, the number of matching pairs of length $k+1$), the entry for
 the template length $k$ is
