@@ -5,9 +5,9 @@ Read this first. When a rule here conflicts with what you see in older code, the
 to fix, unless the maintainer says otherwise. Rules marked **Decided** were chosen by the maintainer; do not change
 them without asking.
 
-**Status (2026-10-16).** The contract below is implemented and tested for all 60 catalog features. **Remaining work:
-`ROADMAP.md`** (release, open decisions, documentation still to do). Section 10 of this file says what must be removed before it
-is published for contributors.
+**Status (2026-11-13).** The contract below is implemented and tested for the 36 features of the early release (2.0.0a1).
+The open work is kept in the maintainer's local notes, which are not in the repository. Section 10 of this file says what
+must be removed before it is published for contributors.
 
 ## 1. What this is
 
@@ -482,7 +482,7 @@ are data in `skeletons.py`; fields not filled yet are listed in `SKELETON_TODO`.
 
 ### Choosing a definition when the sources disagree (**Decided** 2026-10-30, algorithm review)
 
-The algorithm review (`EyesWebCore/dev-notes/algorithm_review/DECISIONS.md`) may change a feature away from the EyesWeb
+The algorithm review (the maintainer's local notes) may change a feature away from the EyesWeb
 source, by maintainer decision as above. When the EyesWeb block, its paper and other implementations disagree or leave a
 detail open, the decision follows this order:
 
@@ -588,9 +588,9 @@ Before you say a change is done:
 Done on 2026-10-16: the sentences that named the private core repository, its files, C++ symbols or the core build were removed
 or reworded. Check again before publishing with
 `grep -n -E "EyesWebCore|PORTING_STATUS|CONVENTIONS|C\+\+|nanobind|\.cpp|bindings|CMake|cmake|ew_|::|Impl|adoptParams" DEVELOPMENT_SPEC.md`.
-When the file is published (a "Contributing" page that includes it, or `CONTRIBUTING.md`; open: see `ROADMAP.md`), remove this
-section, the status paragraph at the top and the pointer to `ROADMAP.md`.
+When the file is published (a "Contributing" page that includes it, or `CONTRIBUTING.md`), remove this section and the
+status paragraph at the top.
 
 ## 11. Backlog and open decisions
 
-See `ROADMAP.md` (open decisions on the original blocks, the core backlog, the release steps).
+The open decisions on the original blocks, the core backlog and the release steps are in the maintainer's local notes.

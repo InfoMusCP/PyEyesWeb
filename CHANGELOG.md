@@ -1,6 +1,35 @@
 # CHANGELOG
 
-## 2.0.0
+## 2.0.0a1 (early release; the date is set at the tag)
+
+The early release holds the 36 features whose algorithms were reviewed against their sources and judged solid on movement
+data: `pyeyesweb.catalog()` lists them (4 physical signals, 17 low-level, 1 mid-level, 1 high-level, 13 analysis
+primitives). The other features of the library are kept in the code, tested and documented in the sources, and are left
+out of this release for further investigation: `MassSpringSimulator`, `Harmonicity`, `MotionNoiseDetector`, `Suddenness`,
+`SuddennessImpulsivity`, `ContractionImpulsivity`, `PositionDependingPotentials`, `RegionDependingPotentials`,
+`NonlinearInterdependence` and `SpikeSynchronization`. Every change of a number against the EyesWeb block or the 1.x
+library that the review decided is listed in the migration guide ("Behaviour changes that alter numbers").
+
+### Algorithm review
+
+* Library-wide rules: a result that is not defined is `INVALID_INPUT` with NaN outputs; durations are in seconds and lags
+  and windows in samples; the Savitzky-Golay filter fits the newest samples; the compiled core and the TouchDesigner
+  operators use the public parameter names.
+* Merged: `MotionDuration` into `GestureSegmenter` (outputs `motion_duration`, `pause_duration`, no noise input); the four
+  humanoid and model blocks into `MassSpringSimulator`. Removed: `CorrelationsMatrix`, `SequenceDetector`,
+  `TemporalSynchronization`, `CurvatureDispersion`, `ConvexHull`, `FilterContour`, `PointsPredictor`,
+  `GenericModelPredictor`, `GenericModelEstimator`.
+* Numbers that changed: `<=` at a tolerance (`SampleEntropy`, `MultiScaleEntropy`, `RecurrencePlot`,
+  `CrossRecurrencePlot`); `MultiScaleEntropy` one tolerance for all scales; `PhaseLockingValue` taper and edges;
+  `BinaryPulsesRegularity` spread rule; `Periodicity` threshold 0.1; `EventSynchronizationMECS` linear kernel;
+  `EventSynchronization` per window; `Videogram` mean; `HitCellDetector` cell edges; `SilhouetteCentroids` centre of
+  gravity of half silhouettes; `SilhouetteBodyParts` left = smaller x; `TrajectoryNonPlanarity` radius 0.1 m;
+  `CurvatureVelocityCorrelation` on logarithms; `TriangleSymmetry` rounding tolerance and the new `method` option.
+* New statuses for undefined cases: `PartialRecurrenceSynchronization`, `Periodicity`, `PhaseLockingValue`,
+  `MultiScaleEntropy`, `ScalarPeakDetector` (warm-up), `EnsembleDominance` (negative index), `KineticEnergy` (missing
+  reference joint).
+
+## 2.0 series, against 1.x (cumulative)
 
 PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Gesture Analysis library. The migration table for every removed or renamed name is in the migration guide
 (`docs/migration.md`, "Migrating from 1.x").
