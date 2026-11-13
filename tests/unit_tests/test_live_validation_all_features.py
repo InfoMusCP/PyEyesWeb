@@ -17,7 +17,6 @@ from test_contract_all_features import NAMES, factory_and_recordings  # noqa: E4
 ACCEPTS_NEGATIVE = {
     "x_min": "origin of the grid: a coordinate, of any sign",
     "y_min": "origin of the grid: a coordinate, of any sign",
-    "nan_value": "marker value that stands for NaN in the original output: any number",
     "noise_threshold": "variance threshold: a negative one never judges the motion as noise (the EyesWeb scenarios use -1)",
     "margin": "margin of the support polygon: a negative margin shrinks it (parity with the original)",
     "number_of_subsamples": "a negative count is reported per call as INVALID_INPUT, as the original does (parity test)",

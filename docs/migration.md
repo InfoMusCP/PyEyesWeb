@@ -255,6 +255,7 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 | `CrossRecurrencePlot(multiple_epsilons=..., use_multiple_epsilons=...)` | development | removed: one `epsilon` for every row; `RecurrencePlot` keeps the per-row thresholds |
 | `Suddenness` output `is_sudden`; `Suddenness(method=...)` with `"quantile"` | development | removed: the outputs are `alpha`, `beta` and `gamma`, and the fit is the constrained one, so `method` is gone |
 | `CurvatureVelocityCorrelation(velocity_threshold=...)` | development | removed: the block never read it |
+| `TrajectoryNonPlanarity(output_type="curvature_value")`, output `curvature`; `TrajectoryNonPlanarity(nan_value=...)` | development | removed: the output is always `curvature_radius` (the inverse of this distance has no geometric meaning); an undefined result is `INVALID_INPUT` instead of a marker value |
 | `HumanoidSimulator(...)` | development | `MassSpringSimulator(...)` (`model="humanoid"`, the default); the input `skeleton` is `joints` and `control` is `directions`; the result also holds the `directions` |
 | `HumanoidOrientations(...).process(skeleton).directions` | development | `MassSpringSimulator(units=...).process(joints).directions` |
 | `GenericModelSimulator(model, ...).process(directions)`, output `positions` | development | `MassSpringSimulator(model=model, ...).process(joints)` takes the positions of the masses and reads the bone vectors itself; the bone vectors can still be given, `process(joints, directions)`; the output is `joints` |
@@ -388,6 +389,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 
 | Feature | Change |
 |---|---|
+| `TrajectoryNonPlanarity` | default `radius` 0.1 m (was 100, a value written for millimetres); a path where no point has another point within `radius` is `INVALID_INPUT` (was 0, which read as "planar"); too many undefined local planes is `INVALID_INPUT` (was the marker 999) |
 | `LogDimensionlessJerk` | a flat or null signal (no jerk, or no peak to normalise by) is `INVALID_INPUT` with no value; 1.x and the development state returned 0, the best value of the scale |
 | `GestureSegmenter` | the Savitzky-Golay polynomial is fit to the newest `filter_window_length` samples, newest included, and read at their centre (EyesWeb never read the newest sample of a fixed 10-sample window): the detection is one sample earlier, the warm-up is `filter_window_length - 1` samples instead of 10, and any odd window of 5 or more is accepted |
 | `GestureSegmenter` (EyesWeb `MotionDuration`) | durations follow the timestamps, `t(end) - t(begin)`, else `sampling_rate`; EyesWeb counted calls. NaN until a phase has ended (EyesWeb gave 0) |

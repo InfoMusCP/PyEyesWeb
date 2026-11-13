@@ -65,8 +65,8 @@ def _static_cases():
     points = _point_sets()
     for name, data in points.items():
         cases[f"directness/{name}"] = ("Directness", {}, [data])
-        for parameters in ({}, {"radius": 0.1}, {"radius": 2.0, "nan_fraction": 0.0}, {"nan_fraction": 1.0, "nan_value": -1.0},
-                           {"output_type": "curvature_value", "radius": 5.0}, {"radius": 0.3, "units": "mm"}):
+        for parameters in ({}, {"radius": 100.0}, {"radius": 2.0, "nan_fraction": 0.0}, {"nan_fraction": 1.0, "radius": 100.0},
+                           {"radius": 5.0}, {"radius": 0.3, "units": "mm"}):
             cases[f"curvature/{name}/{json.dumps(parameters, sort_keys=True)}"] = ("TrajectoryNonPlanarity", parameters, [data])
     return cases
 

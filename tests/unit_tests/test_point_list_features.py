@@ -33,12 +33,18 @@ def test_directness_contract():
 
 
 def test_average_curvature_contract():
-    curvature = TrajectoryNonPlanarity()
+    curvature = TrajectoryNonPlanarity(radius=2.0)
     assert curvature.outputs.names == ("curvature_radius",)
     assert curvature.process(line()).curvature_radius == pytest.approx(0, abs=1e-6)
     assert curvature.process(np.zeros((0, 3))).status is Status.INVALID_INPUT
     assert curvature.process(line(dims=2)).status is Status.INVALID_INPUT
-    assert TrajectoryNonPlanarity(output_type="curvature_value").outputs.names == ("curvature",)
+    with pytest.raises(TypeError):
+        TrajectoryNonPlanarity(output_type="curvature_value")
+    apart = np.array([[0.0, 0, 0], [1.0, 0, 0], [2.0, 0, 0]])  # 1 m apart, radius 0.1 m: no neighbour
+    lonely = TrajectoryNonPlanarity().process(apart)
+    assert lonely.status is Status.INVALID_INPUT and "nothing to fit" in lonely.reason
+    assert TrajectoryNonPlanarity(radius=1.0).process(apart).status is Status.OK
+    assert TrajectoryNonPlanarity(radius=0.0005, units="mm").process(apart * 1000).status is Status.INVALID_INPUT
 
 
 def test_directness_takes_no_parameters_and_is_in_the_catalog():

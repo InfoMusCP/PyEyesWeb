@@ -44,7 +44,7 @@ def kinematics(**params):
 LIVE = [
     (lambda: kinematics(), "movement_threshold", 0.5, POINTS3),
     (lambda: kinematics(output_type=["velocity", CURVATURE]), "movement_threshold", 0.5, POINTS3),
-    (lambda: TrajectoryNonPlanarity(), "radius", 50.0, TRAJECTORIES),
+    (lambda: TrajectoryNonPlanarity(radius=100.0), "radius", 50.0, TRAJECTORIES),
     (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4), "x_max", 2.0, HITS),
     (lambda: PositionDependingPotentials(potential_type="gaussian", **_GRID),
      "gaussian_sigma_x", 2.0, CELLS),

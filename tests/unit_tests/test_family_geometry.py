@@ -120,7 +120,7 @@ def test_triangle_symmetry_collinear_vertices_are_invalid_input():
 
 
 def test_average_curvature_with_too_few_points_is_invalid_input():
-    feature = TrajectoryNonPlanarity()
+    feature = TrajectoryNonPlanarity(radius=2.0)
     assert feature.process(np.zeros((1, 3))).status is Status.INVALID_INPUT
     assert feature.process(LINE).ok
 

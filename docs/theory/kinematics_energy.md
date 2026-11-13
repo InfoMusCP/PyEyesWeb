@@ -216,12 +216,12 @@ A movement that stays in a plane (a circle, a swing) differs from one that leave
 {py:class}`~pyeyesweb.low_level.TrajectoryNonPlanarity` fits local best-fit planes over neighbourhoods of size `radius` to
 the points of a three-dimensional trajectory and gives the mean distance of the points from them, in the unit of the data: 0
 for a planar path, larger for a path that leaves the plane. It is not the geometric curvature of the path, which is
-`Kinematics(output_type="curvature")`. With `output_type="curvature_value"` the output is the inverse of that distance.
+`Kinematics(output_type="curvature")`.
 
 The value depends on `radius`: the neighbourhood has to be of the size of the movement, and values compared between
-recordings must use the same radius. The radius is in metres, scaled by `units`, and its default is a value written for
-millimetres in the original block (100 m), so with data in metres a radius of the order of the movement, for example 0.1 to
-1, should be passed. A spiral of radius 1 m rising 1.26 m in two turns is not planar, a circle is:
+recordings must use the same radius. The radius is in metres, scaled by `units`; the default, 0.1 m, suits a hand or an arm
+(the original block's 100 was written for millimetres). When no point has another point within the radius there is nothing
+to fit, and the result is `INVALID_INPUT`. A spiral of radius 1 m rising 1.26 m in two turns is not planar, a circle is:
 
 ```{doctest}
 >>> from pyeyesweb.low_level import TrajectoryNonPlanarity
