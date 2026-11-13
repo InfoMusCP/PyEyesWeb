@@ -171,13 +171,34 @@ def test_body_parts_selection_and_missing_parts():
     assert SilhouetteBodyParts().process(block).status is Status.OK
 
 
+def _oracle_videogram(frames, window, mode="horizontal", direction="left_to_right", end="loop"):
+    """An independent numpy videogram (Jensenius 2006): each frame gives the mean of its rows (horizontal) or columns
+    (vertical), per channel, truncated; lines are written left to right or right to left, wrapping; in scroll mode the
+    image, once filled, is rotated so that the line at the write position comes first."""
+    lines = [frame.reshape(frame.shape[:2] + (-1,)).astype(np.int64).sum(axis=1 if mode == "horizontal" else 0)
+             // frame.shape[1 if mode == "horizontal" else 0] for frame in frames]
+    buffer = np.zeros((window,) + lines[0].shape, np.uint8)
+    position, filled, out = 0, False, []
+    for line in lines:
+        if direction == "right_to_left":
+            position = (position - 1) % window
+            buffer[position] = line
+        else:
+            buffer[position] = line
+            position = (position + 1) % window
+        filled = filled or position == 0
+        image = np.roll(buffer, -position, axis=0) if end == "scroll" and filled and position != 0 else buffer.copy()
+        out.append(image.transpose(1, 0, 2) if mode == "horizontal" else image)
+    return out
+
+
 def test_the_videogram_sums_every_channel_on_its_own():
-    """The independent oracle: a numpy videogram, line = frame summed along an axis, per channel, scaled by its maximum."""
+    """The independent oracle: a numpy videogram, line = mean of the frame along an axis, per channel."""
     for frames, mode in ((COLOUR_FRAMES, "horizontal"), (COLOUR_FRAMES, "vertical"), (GRAY_FRAMES, "horizontal")):
         feature = Videogram(window=len(frames) + 2, mode=mode)
         recorded = feature.run(frames)
-        sums = [frame.reshape(frame.shape[:2] + (-1,)).astype(np.int64).sum(axis=1 if mode == "horizontal" else 0) for frame in frames]
-        lines = np.stack([(line * 255) // np.maximum(line.max(axis=0), 1) for line in sums]).astype(np.uint8)
+        lines = np.stack([frame.reshape(frame.shape[:2] + (-1,)).astype(np.int64).sum(axis=1 if mode == "horizontal" else 0)
+                          // frame.shape[1 if mode == "horizontal" else 0] for frame in frames]).astype(np.uint8)
         last = recorded.column("videogram")[-1]
         expected = lines.transpose(1, 0, 2) if mode == "horizontal" else lines
         assert np.array_equal(last[:, :len(frames)] if mode == "horizontal" else last[:len(frames)], expected)
@@ -188,9 +209,10 @@ def test_the_videogram_loops_scrolls_and_changes_direction():
     marked = [np.array([[level, level], [100, 100]], np.uint8) for level in (10, 20, 30, 40, 50)]
     looped = Videogram(window=3).run(marked).column("videogram")[-1]
     scrolled = Videogram(window=3, end_of_image_mode="scroll").run(marked).column("videogram")[-1]
-    assert looped[0, :, 0].tolist() == [102, 127, 76] and scrolled[0, :, 0].tolist() == [76, 102, 127]  # oldest line first
+    assert looped[0, :, 0].tolist() == [40, 50, 30] and scrolled[0, :, 0].tolist() == [30, 40, 50]  # oldest line first
+    assert looped[1, :, 0].tolist() == [100, 100, 100]  # the mean keeps the level of each row
     backwards = Videogram(window=3, direction="right_to_left").run(frames).column("videogram")[-1]
-    assert backwards[:, :, 0].tolist() == [[255, 255, 255]] * 2  # right to left: columns 2, 1, 0
+    assert backwards[:, :, 0].tolist() == [[3, 2, 1]] * 2  # right to left: columns 2, 1, 0
     assert Videogram(window=3).process(frames[0]).videogram.shape == (2, 3, 1)
 
 
@@ -252,11 +274,12 @@ def test_body_parts_equal_the_reference_port():
         assert int(result.masks[name].sum()) == REFERENCE["parts_mask_sums"][index]
 
 
-def test_the_videogram_equals_the_reference_port():
+def test_the_videogram_equals_the_oracle_on_the_reference_videos():
+    # The frozen port scaled every line to 255; the line is the mean now (algorithm review, D1), so the oracle is numpy.
     colour = Videogram(window=5, direction="right_to_left", end_of_image_mode="scroll").run(VIDEO_COLOUR).column("videogram")
-    assert np.array_equal(np.stack(colour), REFERENCE["videogram_colour_horizontal_scroll_rtl"])
+    assert np.array_equal(np.stack(colour), np.stack(_oracle_videogram(VIDEO_COLOUR, 5, direction="right_to_left", end="scroll")))
     gray = Videogram(window=5, mode="vertical").run(VIDEO_GRAY).column("videogram")
-    assert np.array_equal(np.stack(gray)[..., 0], REFERENCE["videogram_gray_vertical_loop"])
+    assert np.array_equal(np.stack(gray), np.stack(_oracle_videogram(VIDEO_GRAY, 5, mode="vertical")))
 
 
 def _paper_regularity(windows, threshold):

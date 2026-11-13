@@ -121,16 +121,19 @@ found). The figure shows the centroids and the boxes on this synthetic silhouett
 A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line and the lines of
 successive frames are placed side by side, so that a movement becomes a visible trace. With a motion image (a frame
 difference) the result is called a motiongram {cite}`jensenius2006using`. For a grayscale frame
-$I(h, w)$ and `mode="horizontal"`, the line of a frame is the sum of each row, scaled by its maximum to 0 to 255,
+$I(h, w)$ of width $W$ and `mode="horizontal"`, the line of a frame is the mean of each row, truncated,
 
 $$
-v(h) = 255\,\frac{\sum_w I(h, w)}{\max_h \sum_w I(h, w)},
+v(h) = \Big\lfloor\frac{1}{W}\sum_w I(h, w)\Big\rfloor,
 $$
 
-each channel of a colour frame being summed and scaled on its own; `mode="vertical"` sums the columns instead.
+each channel of a colour frame on its own; `mode="vertical"` takes the mean of the columns instead {cite}`jensenius2006using`.
+The mean keeps where and how much motion there is: a still frame stays dark and a small movement weak (the original block
+scaled every line to its own maximum, so camera noise on a still frame became full brightness).
 {py:class}`~pyeyesweb.physical_signals.Videogram` keeps the last `window` lines (500 by default). The newest line is written
 at a position that wraps around, so the oldest is overwritten (`direction` sets where it goes), and `end_of_image_mode="scroll"`
-rotates the image once it is full so that the oldest line comes first. The output is an integer image in 0 to 255 with channels
+rotates the image once it is full so that the lines run in the direction of writing: the oldest first left to right,
+the newest first right to left. The output is an integer image in 0 to 255 with channels
 last; the lines not written yet are 0, and so is the line of a black frame. A frame of another size restarts the videogram (the
 `reason` says so).
 

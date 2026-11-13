@@ -204,13 +204,15 @@ class Videogram(_ImageFeature):
     A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line (a column
     or a row) and the lines of successive frames are placed side by side, so that a movement becomes a visible trace. With a
     motion image (a frame difference) it is a motiongram (Jensenius, 2006). For a grayscale frame :math:`I(h, w)` and the
-    mode ``"horizontal"`` the line of a frame is the sum of each row, scaled by its maximum to 0-255,
+    mode ``"horizontal"`` the line of a frame is the mean of each row, truncated to a whole number,
 
     .. math::
 
-        v(h) = 255\, \frac{\sum_w I(h, w)}{\max_h \sum_w I(h, w)},
+        v(h) = \Big\lfloor \frac{1}{W} \sum_w I(h, w) \Big\rfloor,
 
-    each channel of a colour frame being summed and scaled on its own; the mode ``"vertical"`` sums the columns instead.
+    each channel of a colour frame on its own; the mode ``"vertical"`` takes the mean of each column instead. The mean
+    keeps both where and how much motion there is: a still frame stays dark and a small movement weak, and the colour
+    ratios are kept (Jensenius, sec. 2-3).
 
     ``process(frame, *, timestamp=None)`` takes one ``(H, W)`` or ``(H, W, C)`` image with 1, 3 or 4 channels (see the module
     description for the image types). The first frame fixes the size; a frame of another size restarts the videogram (the
@@ -221,14 +223,15 @@ class Videogram(_ImageFeature):
     window : int, default 500
         Number of lines of the videogram, >= 1 *(structural)*; changing it restarts the image.
     mode : {"horizontal", "vertical"}, default "horizontal"
-        ``"horizontal"``: each frame becomes a column (the sum of each row) of an image ``window`` wide and ``H`` high;
-        ``"vertical"``: a row (the sum of each column) of an image ``W`` wide and ``window`` high *(structural)*. Changing
+        ``"horizontal"``: each frame becomes a column (the mean of each row) of an image ``window`` wide and ``H`` high;
+        ``"vertical"``: a row (the mean of each column) of an image ``W`` wide and ``window`` high *(structural)*. Changing
         it restarts the image.
     direction : {"left_to_right", "right_to_left"}, default "left_to_right"
         Where the newest line is written *(live)*; the position wraps around so that the oldest line is overwritten.
     end_of_image_mode : {"loop", "scroll"}, default "loop"
-        ``"loop"``: the image as it is; ``"scroll"``: once it has been filled, the image is rotated so that the oldest line
-        comes first *(live)*.
+        ``"loop"``: the image as it is; ``"scroll"``: once it has been filled, the image is rotated so that the lines run
+        from the oldest to the newest in the direction of writing: oldest first for ``"left_to_right"``, newest first for
+        ``"right_to_left"`` *(live)*.
 
     Notes
     -----
@@ -238,8 +241,9 @@ class Videogram(_ImageFeature):
     is an image: ``result.to_frame()`` and the recorder have no value columns for it.
 
     **Corrected in the core.** The channel sums are independent: in the original the accumulators of the channels aliased each
-    other, so with one channel the next pixel was added to channel 0 (and a byte past the end of the row was read), and with
-    three channels the first byte of the next pixel was.
+    other, so with one channel the next pixel was added to channel 0, with three channels the first byte of the next pixel
+    was, and in both cases a byte past the end of the row was read. **Changed:** the original scaled every line to its own
+    maximum, 255, so camera noise on a still frame became full brightness; the line is the mean, as in the paper.
 
     Examples
     --------
@@ -248,8 +252,8 @@ class Videogram(_ImageFeature):
     >>> videogram = Videogram(window=4)
     >>> frame = np.zeros((3, 2), dtype=np.uint8)
     >>> frame[1] = (10, 30)                                       # only the middle row holds signal
-    >>> videogram.process(frame).videogram[:, 0, 0].tolist()      # the first line: its row sums, scaled to 255
-    [0, 255, 0]
+    >>> videogram.process(frame).videogram[:, 0, 0].tolist()      # the first line: the mean of each row
+    [0, 20, 0]
     >>> videogram.process(frame * 2).videogram.shape              # a second line is written next to it
     (3, 4, 1)
     """
