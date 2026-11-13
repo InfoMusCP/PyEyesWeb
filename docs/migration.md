@@ -421,6 +421,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `SuddennessImpulsivity` | both terms are evaluated on the same single trajectory (the original took the direction change of the mean of all the signals and the suddenness of the first signal) |
 | `MotionNoiseDetector` | `reset()` clears the speed windows |
 | `RecurrencePlot`, `CrossRecurrencePlot` | a distance equal to `epsilon` is a recurrence (Marwan et al. 2007, eq. 10); the original was strict, so `epsilon=0` gave an empty matrix, even on the diagonal. Values change only when a distance equals the threshold, as on quantised data |
+| `ScalarPeakDetector` | no peak and status `WARMING_UP` for the first `window - 1` samples: the original analysed a zero-filled buffer, so a signal that starts high and falls gave a false peak |
 | `ScalarPeakDetector` | the running maximum was seeded with the smallest positive number, so a signal that stays at or below 0 never produced a peak |
 | `SilhouetteBodyParts`, `Videogram` | the barycentre is the centroid of the mask truncated to whole pixels; the channel sums of the videogram are independent (the original aliased them) |
 | `MassSpringSimulator` | the damping force is proportional to the relative velocity of the two masses (the original used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in |

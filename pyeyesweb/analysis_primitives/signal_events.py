@@ -1,8 +1,7 @@
 """Peak events of a scalar signal (EyesWeb DANCE).
 
 The feature is a stateful stream over a scalar signal: `process(value, timestamp=None)` takes one sample per call and
-returns an always-`OK` `Result` whose `timestamp` is the timestamp in seconds (`NaN` when not given); `reset()`
-restarts the stream.
+returns a `Result` whose `timestamp` is the timestamp in seconds (`NaN` when not given); `reset()` restarts the stream.
 """
 
 from typing import Any, Optional
@@ -13,7 +12,7 @@ from pyeyesweb._core import core
 from pyeyesweb.base.core_feature import FrameFeature
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
-from pyeyesweb.data_models.results import Output, Result, Schema
+from pyeyesweb.data_models.results import Output, Result, Schema, Status
 
 _dance = core.dance
 
@@ -48,7 +47,7 @@ class ScalarPeakDetector(_ScalarStream):
     Parameters
     ----------
     window : int, optional
-        Length of the buffer, in samples. Defaults to ``5``. *(structural)*
+        Length of the buffer, in samples, at least 1. Defaults to ``5``. *(structural)*
     threshold : float, optional
         Detection threshold, in the units of the signal. Defaults to ``0.01``. *(live)*
 
@@ -61,7 +60,13 @@ class ScalarPeakDetector(_ScalarStream):
     just appeared in the buffer after a rise; the sample is up to ``window`` samples after the maximum itself. ``timestamp`` is the timestamp in seconds
     (``NaN`` when not given).
 
-    **Statuses.** Always ``OK``.
+    **Statuses.** ``WARMING_UP`` for the first ``window - 1`` samples, while the buffer fills (no peak can be
+    reported: the original analysed a zero-filled buffer, so a signal that starts high and falls gave a false peak);
+    ``OK`` afterwards; ``INVALID_INPUT`` for a NaN or infinite sample, which is kept out of the buffer.
+
+    **Compared with** ``scipy.signal.find_peaks(x, prominence=threshold)``: the same idea, a maximum that stands out by
+    more than ``threshold``, but causal and sample by sample, on a buffer of ``window`` samples only, reported with a delay,
+    and as a yes/no flag instead of positions. A peak whose fall takes longer than ``window`` samples is missed.
 
     Corrected in the core: the running maximum was seeded with the smallest positive number, so a signal that stays
     at or below 0 never produced a peak.
@@ -70,8 +75,11 @@ class ScalarPeakDetector(_ScalarStream):
     --------
     >>> from pyeyesweb.analysis_primitives import ScalarPeakDetector
     >>> detector = ScalarPeakDetector(window=3, threshold=0.5)
-    >>> [detector.process(value).is_peak for value in [0, 1, 3, 1, 0, 0, 2, 0, 0, 0]]
+    >>> results = [detector.process(value) for value in [0, 1, 3, 1, 0, 0, 2, 0, 0, 0]]
+    >>> [result.is_peak for result in results]
     [False, False, False, False, True, False, False, False, True, False]
+    >>> [result.status.name for result in results[:3]]
+    ['WARMING_UP', 'WARMING_UP', 'OK']
 
     The maxima are at samples 2 and 6 and the peaks are reported two samples later, at samples 4 and 8.
     """
@@ -80,7 +88,9 @@ class ScalarPeakDetector(_ScalarStream):
     def _schema(self) -> Schema:
         return Schema(Output("is_peak", kind=bool))
 
-    def _to_result(self, raw: bool, timestamp: Optional[float]) -> Result:
+    def _to_result(self, raw: Optional[bool], timestamp: Optional[float]) -> Result:
+        if raw is None:
+            return self._no_output(Status.WARMING_UP, "buffer filling", timestamp)
         return self._result(is_peak=raw, timestamp=timestamp)
 
 
