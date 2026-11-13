@@ -6,9 +6,11 @@ offset, the Phase Locking Value (PLV).
 
 from typing import Optional
 
+import numpy as np
+
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Inputs
-from pyeyesweb.data_models.results import Output, Result, Schema
+from pyeyesweb.data_models.results import Output, Result, Schema, Status
 from pyeyesweb._core import core
 from pyeyesweb.utils.validators import validate_and_normalize_filter_params
 
@@ -17,13 +19,17 @@ from ._blocks import _TrainPairBlock, _train
 
 @describe(Layer.ANALYSIS_PRIMITIVE)
 class PhaseLockingValue(_TrainPairBlock):
-    r"""Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.
+    r"""Phase Locking Value over time within a window (mean phase coherence) of two signals, from their Hilbert phases.
 
     The Phase Locking Value quantifies phase synchronization between two movement signals, for example the
-    oscillation of two dancers' hands or of two body segments, independently of their amplitudes. Each window of
-    each signal is optionally band-pass filtered, the instantaneous phase :math:`\phi(t)` is taken from the
-    analytic signal obtained with the Hilbert transform, and the PLV is the length of the mean phasor of the phase
-    difference over the :math:`N` samples of the window:
+    oscillation of two dancers' hands or of two body segments, independently of their amplitudes. This is the
+    single-trial form suited to movement data, the *mean phase coherence* of :cite:`mormann2000mean` (eq. 8): the
+    average is taken over the samples of one window, while the PLV of :cite:`lachaux1999measuring`, where the measure
+    comes from, averages over repeated trials at each instant. Each window of each signal is optionally band-pass
+    filtered, its mean is removed, it is tapered with a Hann window, the instantaneous phase :math:`\phi(t)` is taken
+    from the analytic signal obtained with the Hilbert transform, and the PLV is the length of the mean phasor of the
+    phase difference over the middle 80 % of the :math:`N` samples (the 10 % at each end, distorted by the edges of the
+    transform, are left out, as in Mormann et al.):
 
     .. math::
 
@@ -32,14 +38,17 @@ class PhaseLockingValue(_TrainPairBlock):
 
     .. math::
 
-        \mathrm{PLV} = \left| \frac{1}{N} \sum_{t=1}^{N} e^{\,i\,\Delta\phi(t)} \right| \in [0, 1].
+        \mathrm{PLV} = \left| \frac{1}{N - 2k} \sum_{t=k+1}^{N-k} e^{\,i\,\Delta\phi(t)} \right| \in [0, 1],
+        \qquad k = \lfloor 0.1 N \rfloor.
 
     A value of 1 means that the phase difference is constant over the window (perfect phase locking, whatever the
     offset); a value near 0 means that it is uniformly spread (no phase relation).
 
-    The Hilbert phase is only meaningful for narrow-band signals: on broadband movement data the PLV stays near 1
-    whatever the coupling. Nothing is filtered unless ``low_frequency`` and ``high_frequency`` are given, so band-limit
-    the signals first or pass the band. For 2D or 3D data reduce each participant to one signal first, for example
+    The Hilbert phase is only meaningful for narrow-band, oscillatory signals (Lachaux et al. band-pass at
+    :math:`f \pm 2` Hz first). On broadband data the value is not a phase relation: independent white noise gives about
+    0.08 on 200 samples, but independent random walks about 0.57, because each window is dominated by one slow trend.
+    Nothing is filtered unless ``low_frequency`` and ``high_frequency`` are given, so band-limit the signals first or pass
+    the band, and use windows of several whole periods; for irregular movement see ``NonlinearInterdependence``. For 2D or 3D data reduce each participant to one signal first, for example
     the tangential ``velocity`` output of ``Kinematics``, or the projection on the dominant axis of the movement.
 
     Parameters
@@ -68,13 +77,14 @@ class PhaseLockingValue(_TrainPairBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) until the first window of ``window`` samples is full,
     ``NO_OUTPUT`` between two windows when ``hop > 1``, ``INVALID_INPUT`` when a sample of the window is NaN or
-    infinite. A constant signal has no defined phase evolution: the block reports 1 for two constant windows.
+    infinite, and when a signal is constant over the window (``"constant signal: no phase"``).
 
     The measure assumes that the phase relation is stationary over the window.
 
     References
     ----------
-    :cite:`varni2010system`, :cite:`sabharwal2022husync`
+    :cite:`mormann2000mean` (definition), :cite:`lachaux1999measuring` (origin of the PLV),
+    :cite:`sabharwal2022husync` (application to movement)
 
     Examples
     --------
@@ -84,10 +94,10 @@ class PhaseLockingValue(_TrainPairBlock):
     >>> locked, drifting = np.sin(2 * np.pi * 3 * t + 0.5), np.sin(2 * np.pi * 4.3 * t)
     >>> plv = PhaseLockingValue(window=200, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)
     >>> round(float(plv.run(x, locked).phase_locking_value[-1]), 2)
-    0.98
+    0.99
     >>> plv.reset()
     >>> round(float(plv.run(x, drifting).phase_locking_value[-1]), 2)
-    0.15
+    0.04
     """
 
     _OUTPUTS = Schema(
@@ -123,6 +133,8 @@ class PhaseLockingValue(_TrainPairBlock):
         return Inputs(_train("first_signal", "one value per call"), _train("second_signal", "one value per call"))
 
     def _to_result(self, raw: float, timestamp: Optional[float]) -> Result:
+        if np.isnan(raw):
+            return self._no_output(Status.INVALID_INPUT, "constant signal: no phase", timestamp)
         return self._result(phase_locking_value=raw, timestamp=timestamp)
 
 

@@ -27,27 +27,33 @@ several cycles of the movement and so that the coordination does not change with
 
 For oscillatory movement, such as the swing of two arms or the steps of two walkers, synchronization is often a matter of
 phase: the signals may have different amplitudes and a constant lag and still be perfectly coordinated. The phase locking
-value (PLV) measures this {cite}`varni2010system,sabharwal2022husync`. Each window of each signal is optionally band-pass
-filtered, the instantaneous phase $\phi(n)$ is taken from the analytic signal obtained with the Hilbert transform,
+value (PLV) measures this {cite}`lachaux1999measuring`; it has been applied to the movement of groups in
+{cite}`sabharwal2022husync`. The PLV of Lachaux et al. averages over repeated trials at each instant; movement data has no
+repeated trials, so the feature computes the single-trial form, the PLV over time within a window, also called the *mean
+phase coherence* {cite}`mormann2000mean`. Each window of each signal is optionally band-pass filtered, its mean is removed,
+it is tapered with a Hann window, and the instantaneous phase $\phi(n)$ is taken from the analytic signal obtained with the
+Hilbert transform,
 
 $$
 z_x(n)=x(n)+i\,\mathcal{H}[x(n)],\qquad \phi_x(n)=\arg z_x(n),\qquad \Delta\phi(n)=\phi_x(n)-\phi_y(n),
 $$
 
-and the PLV is the length of the mean phasor of the phase difference over the $N$ samples of the window,
+and the PLV is the length of the mean phasor of the phase difference over the middle 80 % of the $N$ samples of the
+window (the 10 % at each end, distorted by the edges of the Hilbert transform, are left out, as in Mormann et al.),
 
 $$
-\mathrm{PLV}=\left|\frac1N\sum_{n=1}^{N}e^{\,i\,\Delta\phi(n)}\right|\in[0,1].
+\mathrm{PLV}=\left|\frac{1}{N-2k}\sum_{n=k+1}^{N-k}e^{\,i\,\Delta\phi(n)}\right|\in[0,1],\qquad k=\lfloor 0.1N\rfloor .
 $$
 
 It is 1 when the phase difference is constant over the window (perfect locking, whatever the offset), and close to 0 when it is
 spread uniformly (no phase relation). {py:class}`~pyeyesweb.analysis_primitives.PhaseLockingValue` implements it and
 returns `phase_locking_value` for the last complete window.
 
-The Hilbert phase is only meaningful for **narrow-band** signals: on broadband movement data the PLV stays near 1 whatever the
-coupling. Nothing is filtered unless `low_frequency` and `high_frequency` (with the `sampling_rate`) are given, so either
-band-limit the signals first or pass the band. A constant signal has no phase evolution, and the block reports 1 for two
-constant windows.
+The Hilbert phase is only meaningful for **narrow-band, oscillatory** signals; Lachaux et al. band-pass at $f\pm2$ Hz before
+taking it. On broadband data the value is not a phase relation: independent white noise gives about 0.08 on 200 samples, but
+independent random walks about 0.57, because each window is dominated by one slow trend. Nothing is filtered unless
+`low_frequency` and `high_frequency` (with the `sampling_rate`) are given, so either band-limit the signals first or pass the
+band, and use windows of several whole periods. A constant signal has no phase: the result is `INVALID_INPUT`.
 
 ```{doctest}
 >>> from pyeyesweb.analysis_primitives import PhaseLockingValue
@@ -57,10 +63,10 @@ constant windows.
 >>> drifting = np.sin(2 * np.pi * 4.3 * time)                     # a different rhythm
 >>> plv = PhaseLockingValue(window=200, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)
 >>> round(float(plv.run(reference, locked).phase_locking_value[-1]), 2)
-0.98
+0.99
 >>> plv.reset()
 >>> round(float(plv.run(reference, drifting).phase_locking_value[-1]), 2)
-0.15
+0.04
 ```
 
 ## Event series
@@ -202,9 +208,12 @@ $$
 S_{kl}=\frac{|P_{kl}|}{\sqrt{P_{kk}P_{ll}}},
 $$
 
-an entry being 0 when a diagonal entry of $P$ is not positive, and the whole matrix 0 when $C$ is singular (constant or
-perfectly collinear signals). It takes the matrix as input, so it is applied to the output of `numpy.corrcoef`; it has no
-window of its own. A matrix with a `NaN` entry is `INVALID_INPUT`.
+{cite}`varni2010system` (eq. 4). It takes the matrix as input, so it is applied to the output of `numpy.corrcoef`; it has
+no window of its own. In the paper the matrix holds the CPR index of each pair, `numpy.corrcoef` of the recurrence-rate
+curves of {py:class}`~pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation` (Varni eq. 3). A matrix with a `NaN` entry,
+a matrix too ill-conditioned to invert (condition number above $10^{12}$, as for constant or perfectly collinear signals)
+and a matrix that is not positive definite (a diagonal entry of $P$ not positive, so not a correlation matrix) are
+`INVALID_INPUT`.
 
 In the example the signal $b$ follows $a$ and $c$ follows $b$ with noise. All three are correlated, but $a$ and $c$ only through
 $b$, which the partial correlation shows.
@@ -247,5 +256,6 @@ array([[1.  , 0.61, 0.04],
 
 ## Further reading
 
-The phase locking value and its use for the analysis of group behaviour are described in {cite}`varni2010system` and
-{cite}`sabharwal2022husync`; the generated pages of the API reference list every parameter of the features.
+The phase locking value comes from {cite}`lachaux1999measuring`, its single-trial form is defined in
+{cite}`mormann2000mean`, and its use for movement in groups is shown in {cite}`sabharwal2022husync`; recurrence-based
+synchronization of a group is described in {cite}`varni2010system`; the generated pages of the API reference list every parameter of the features.
