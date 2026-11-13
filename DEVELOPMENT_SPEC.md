@@ -102,6 +102,10 @@ is an image has `None` sizes in its `Output` shape (known from the first frame) 
   `Result` with `INVALID_INPUT` and a `reason`. Never raise and never return a plausible-looking number: an
   `INVALID_INPUT` result holds the empty value (NaN, 0, False) in every output and `valid` is `False` for all of them;
   the diagnostic is the `reason`. The central rules are in "Contract changes of work package A" below.
+- Valid input with **no defined result** (a constant window, a singular matrix, a flat profile with nothing to
+  measure): NaN or empty outputs, `INVALID_INPUT` and a `reason` that says why. Never a guard value with `OK` (rule G9 of
+  the algorithm review, 2026-11-12). `NO_OUTPUT` is only for "nothing to compute at this call" (an empty list, a hop not
+  reached).
 - Not enough samples yet: `WARMING_UP`, never an exception.
 - Invalid **parameters** raise at construction, never at the first `process`. A minimum window size is validated at
   construction (`MinimumWindow`).
@@ -425,6 +429,14 @@ else `sampling_rate` (Hz, int or float), else per-sample derivatives (and the `r
 computes the time step `dt` and hands it to the core; the core never sees timestamps, ticks or time modes. Do not
 add time-mode parameters. Details (the first call, a call without timestamp, a timestamp that does not increase) are
 in "Contract changes of work package A".
+
+Units of time parameters (algorithm review, 2026-11-12): durations, rates and time constants are in **seconds** and
+follow the rule above (a state that counts calls converts them with the time step of each call); lags and window lengths
+are counts of **samples** (`lag`, `max_lag`, `delay`, `theiler_window`, `window`, `hop`). A model that integrates in time
+carries the remainder of a time step that is not a whole number of integration steps to the next call.
+
+Savitzky-Golay smoothing, wherever it is used, fits the newest `F` samples, `n - F + 1 .. n` (lag `(F - 1) / 2`), not the
+`F` samples before the newest one as the EyesWeb SDK did (algorithm review, 2026-11-12).
 
 ### Units (**Decided**)
 
