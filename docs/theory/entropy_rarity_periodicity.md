@@ -66,20 +66,25 @@ which is the series seen at the slower sampling rate $f_s/\tau$. A remainder of 
 graining is done inside {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy`; in NumPy, for a factor `f`, it is
 `x[:len(x)//f*f].reshape(-1, f).mean(axis=1)`.
 
-**Entropy curve and complexity index.** {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` normalises each signal to unit
-standard deviation, coarse-grains it at the scales $\tau=1,\dots,\tau_{\max}$ (`max_scale`) and computes the sample entropy
-$E(\tau)$ of each scale (the template length is `embedding_dimension`, the tolerance `tolerance` times the standard deviation of
-the normalised series). A scale is used while its coarse-grained series has at least `minimum_points` samples. The
+**Entropy curve and complexity index.** {py:class}`~pyeyesweb.analysis_primitives.MultiScaleEntropy` standardises each signal
+once (zero mean, unit standard deviation over the window), coarse-grains it at the scales $\tau=1,\dots,\tau_{\max}$
+(`max_scale`) and computes the sample entropy $E(\tau)$ of each scale, with the template length `embedding_dimension` and the
+same tolerance $r$ = `tolerance` times the standard deviation of the original signal at every scale. The tolerance is not
+re-set for each coarse-grained series {cite}`costa2005multiscale`: averaging lowers the variance of an uncorrelated signal,
+so with a fixed $r$ white noise loses entropy with the scale while a signal with structure at several scales keeps it. A scale is used while its coarse-grained series has at least `minimum_points` samples. The
 complexity index is the area under the curve by the trapezoid rule,
 
 $$
 \mathrm{CI}=\sum_{\tau=1}^{\tau_{\max}-1}\frac{E(\tau)+E(\tau+1)}{2} ,
 $$
 
-so it is larger when the entropy stays high across scales. It is non-negative, and `NaN` for a constant signal, which has no
-entropy. The feature takes one value per signal per call (a frame of several signals gives one index each), and the indices
+so it is larger when the entropy stays high across scales. It is non-negative. It is `NaN` when the entropy of a scale is
+not defined: for a constant signal, and for a scale at which no pair of templates matches (too few samples for the
+tolerance); the `reason` of the result names those signals, and when no signal has an index the status is `INVALID_INPUT`.
+A `NaN` index means "not enough data", not "no complexity". The feature takes one value per signal per call (a frame of several signals gives one index each), and the indices
 of the members of a group are the input of the dominance analysis in {doc}`dominance` {cite}`glowinski2010multi`.
-The entropies come from the sample entropy of the core, so they differ from those of the pure-Python 1.x release by $O(1/N)$.
+The entropies come from the sample entropy of the core; against the pure-Python 1.x release, the tolerance is no longer
+re-set at every scale, an undefined entropy is `NaN` instead of 0, and the counts differ by $O(1/N)$.
 
 The default window (3000 samples) and `minimum_points` (500) reflect how much data entropy estimates need; with smaller
 windows lower both and expect a coarser estimate at the largest scales.
@@ -94,12 +99,14 @@ windows lower both and expect a coarser estimate at the largest scales.
 ...     sampen = SampleEntropy(window=200, embedding_dimension=2).run(signal)[-1].sample_entropy
 ...     mse = MultiScaleEntropy(window=1200, max_scale=6, minimum_points=100).run(signal)[-1]
 ...     print(name, sampen.round(2), mse.complexity_index.round(2), mse.scale_entropies.round(2))
-noise [2.18 2.19] [12.55] [[2.47 2.46 2.44 2.5  2.77 2.27]]
-oscillation [2.04 0.74] [2.54] [[0.96 0.71 0.59 0.48 0.13 0.3 ]]
+noise [2.18 2.19] [9.68] [[2.47 2.06 1.95 1.82 1.76 1.73]]
+oscillation [2.04 0.74] [2.51] [[0.96 0.7  0.59 0.47 0.12 0.29]]
 ```
 
-The noise keeps an entropy between 2.3 and 2.8 at all six scales, so its index is large; the oscillation, which is easy to
-predict once a few samples are known, has a lower entropy at the finest scale and a small index.
+The noise has the highest entropy at every scale, so its index is large, but its entropy falls from 2.47 to 1.73 as the scale
+grows: averaging uncorrelated samples lowers their variance, and the tolerance is the same at every scale
+{cite}`costa2005multiscale`. The oscillation, which is easy to predict once a few samples are known, has a lower entropy
+at the finest scale and a small index.
 
 ## Rarity
 

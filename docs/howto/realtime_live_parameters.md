@@ -205,7 +205,7 @@ against a feature built with the new value.
 | `SampleEntropy` | `relative_tolerance`, `tolerance` | |
 | `Rarity` | `alpha`, `measure` | `window` |
 | `BinaryPulsesRegularity` | `threshold` | |
-| `MultiScaleEntropy` | `tolerance` | |
+| `MultiScaleEntropy` | `tolerance`, `embedding_dimension`, `max_scale`, `minimum_points` | |
 | `Periodicity` | `threshold` | |
 | `ScalarPeakDetector` | `threshold` | `window` |
 | `PhaseLockingValue` | `low_frequency` | |

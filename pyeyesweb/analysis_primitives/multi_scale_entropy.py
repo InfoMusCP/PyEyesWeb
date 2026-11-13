@@ -44,10 +44,11 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     slower scales. In the study of social creative activities the complexity index of the movement of each member of
     a group is the input of the dominance analysis (see ``EnsembleDominance``) :cite:`glowinski2010multi`.
 
-    Each signal is normalised to unit standard deviation and coarse-grained at the scales
-    :math:`\tau = 1 \dots` ``max_scale`` (means of non-overlapping groups of :math:`\tau` samples). The sample entropy of every scale (as in ``SampleEntropy``, for
-    the template length ``embedding_dimension`` and a matching tolerance of ``tolerance`` times the standard deviation
-    of the normalised series) forms the entropy curve :math:`E(\tau)`. The complexity index is the area under that
+    Each signal is standardised once (zero mean, unit standard deviation over the window) and coarse-grained at the
+    scales :math:`\tau = 1 \dots` ``max_scale`` (means of non-overlapping groups of :math:`\tau` samples). The sample
+    entropy of every scale (as in ``SampleEntropy``, for the template length ``embedding_dimension``) with the same
+    tolerance :math:`r` = ``tolerance`` times the standard deviation of the original signal at every scale, as in
+    :cite:`costa2005multiscale`, forms the entropy curve :math:`E(\tau)`. The complexity index is the area under that
     curve, by the trapezoid rule over the scales used,
 
     .. math::
@@ -65,15 +66,15 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     hop : int, optional
         New samples between two windows. Defaults to ``1``. *(live)*
     embedding_dimension : int, optional
-        Template length of the sample entropy, at least 1. Defaults to ``2``. *(structural)*
+        Template length of the sample entropy, at least 1. Defaults to ``2``. *(live)*
     tolerance : float, optional
-        Matching tolerance of the sample entropy, in standard deviations of the (normalised) series, dimensionless,
-        in ``[0.0001, 0.9999]``. Defaults to ``0.15``. *(live)*
+        Matching tolerance of the sample entropy, in standard deviations of the original signal, dimensionless, in
+        ``[0.0001, 0.9999]``; the same at every scale. Defaults to ``0.15``. *(live)*
     max_scale : int, optional
-        Largest scale :math:`\tau` of the coarse graining, at least 1. Defaults to ``6``. *(structural)*
+        Largest scale :math:`\tau` of the coarse graining, at least 1. Defaults to ``6``. *(live)*
     minimum_points : int, optional
         Minimum number of samples a coarse-grained series must have for its scale to be used, at least 1. Defaults
-        to ``500``. *(structural)*
+        to ``500``. *(live)*
 
     Notes
     -----
@@ -81,20 +82,24 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     is one signal. ``run`` takes a recording of shape ``(samples, signals)``.
 
     **Outputs.** ``complexity_index``, shape ``(signals,)``: the area under the entropy curve, non-negative;
-    ``NaN`` for a constant signal, which has no entropy. ``scale_entropies``, shape ``(signals, max_scale)``: the
+    ``NaN`` for a signal without a defined entropy at one of the scales: a constant signal, or a scale where no pair of
+    templates matches (too few samples for the tolerance). The ``reason`` names those signals. ``scale_entropies``, shape ``(signals, max_scale)``: the
     sample entropy :math:`E(\tau)` of each signal at the scales 1 to ``max_scale`` (nats; ``NaN`` for a scale not
     used). ``timestamp`` is the timestamp (seconds) of the newest sample. The dominance of several signals is
     ``EnsembleDominance`` applied to the complexity indices.
 
     **Statuses.** ``WARMING_UP`` while the first window fills (``"k of window samples"``), ``NO_OUTPUT`` between two
-    hops, ``INVALID_INPUT`` for a window that holds a ``NaN`` or an infinite value.
+    hops, ``INVALID_INPUT`` for a window that holds a ``NaN`` or an infinite value, and when no signal has a defined
+    complexity index.
 
-    The entropies are computed with the sample entropy of the core (see ``SampleEntropy``); they differ from the
-    pure-Python implementation of the 1.x releases by O(1/N), not by rounding.
+    The entropies are computed with the sample entropy of the core (see ``SampleEntropy``, matches within
+    :math:`d \le r`). Against the 1.x releases: the tolerance is no longer re-set at every scale (1.x standardised each
+    coarse-grained series, so :math:`r` shrank with the scale), an undefined entropy is ``NaN`` (1.x gave 0, the most
+    regular value), and the counts differ by O(1/N).
 
     References
     ----------
-    :cite:`glowinski2010multi`
+    :cite:`glowinski2010multi`, :cite:`costa2005multiscale`
 
     Examples
     --------
@@ -104,7 +109,7 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     >>> feature = MultiScaleEntropy(window=1200, max_scale=2, minimum_points=600)
     >>> result = feature.run(x)[-1]
     >>> result.complexity_index.round(1), result.scale_entropies.round(1)
-    (array([2.5]), array([[2.5, 2.4]]))
+    (array([2.3]), array([[2.5, 2.1]]))
     """
     _core_class = core.motion.MultiScaleEntropy
     _lazy_block = True
@@ -195,7 +200,21 @@ class MultiScaleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
         raw = self._block.process(np.ascontiguousarray(signals))
         if raw is None:
             return self._no_output(Status.WARMING_UP, f"fewer than {self.minimum_points} samples", timestamp)
-        return self._result(complexity_index=raw[0], scale_entropies=raw[1], timestamp=timestamp)
+        index, entropies = raw
+        undefined = [self._undefined(row, entropies[number]) for number, row in enumerate(signals) if not np.isfinite(index[number])]
+        undefined = [f"signal {number}: {why}" for number, why in zip(np.flatnonzero(~np.isfinite(index)), undefined)]
+        if undefined and len(undefined) == len(index):
+            return self._no_output(Status.INVALID_INPUT, "no defined entropy (" + "; ".join(undefined) + ")", timestamp)
+        reason = "no defined entropy for " + "; ".join(undefined) if undefined else ""
+        return self._result(complexity_index=index, scale_entropies=entropies, timestamp=timestamp, reason=reason)
+
+    @staticmethod
+    def _undefined(signal: np.ndarray, entropies: np.ndarray) -> str:
+        """Why one signal has no complexity index: constant, or the first scale without matching templates."""
+        if np.std(signal) < 1e-10:
+            return "constant"
+        scales = np.flatnonzero(np.isnan(entropies))
+        return f"no matching templates at scale {scales[0] + 1}" if len(scales) else "undefined"
 
 
 __all__ = ['MultiScaleEntropy']
