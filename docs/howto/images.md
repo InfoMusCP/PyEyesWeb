@@ -84,8 +84,8 @@ change.
 [[161.0, 114.0], [159.0, 48.0], [nan, nan]]
 ```
 
-{py:class}`~pyeyesweb.physical_signals.SilhouetteBodyParts` finds the rectangles of six parts (`right_leg`, `left_leg`, `trunk`,
-`right_arm`, `left_arm`, `head`) and returns `regions` (one row `x, y, width, height` for each), `is_found`, and `masks`, a
+{py:class}`~pyeyesweb.physical_signals.SilhouetteBodyParts` finds the rectangles of six parts (`left_leg`, `right_leg`, `trunk`,
+`left_arm`, `right_arm`, `head`) and returns `regions` (one row `x, y, width, height` for each), `is_found`, and `masks`, a
 dict with one integer mask per part:
 
 ```{doctest}
@@ -93,7 +93,7 @@ dict with one integer mask per part:
 >>> parts.regions[:2].tolist(), parts.is_found.tolist()
 ([[138, 136, 23, 90], [161, 136, 46, 90]], [True, True, True, True, True, True])
 >>> {name: mask.shape for name, mask in list(parts.masks.items())[:2]}
-{'right_leg': (90, 23), 'left_leg': (90, 46)}
+{'left_leg': (90, 23), 'right_leg': (90, 46)}
 ```
 
 ## Videograms

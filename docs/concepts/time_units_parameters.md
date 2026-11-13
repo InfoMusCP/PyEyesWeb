@@ -201,7 +201,7 @@ the block, which is not necessarily the order you gave.
 >>> SilhouetteBodyParts(parts=["tail"])
 Traceback (most recent call last):
   ...
-ValueError: parts: invalid value 'tail'; choose one of 'right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head'
+ValueError: parts: invalid value 'tail'; choose one of 'left_leg', 'right_leg', 'trunk', 'left_arm', 'right_arm', 'head'
 ```
 
 Not every `output_dims` has the same vocabulary: `Kinematics` accepts `components` or `tangential`, `PointsDensity`

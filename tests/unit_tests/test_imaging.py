@@ -25,7 +25,10 @@ REFERENCE = np.load(os.path.join(os.path.dirname(__file__), "..", "data", "imagi
 BODY = silhouette()
 LABELS = ["center_of_gravity", "head", "left_shoulder", "left_elbow", "left_forearm", "left_hand", "right_shoulder", "right_elbow",
           "right_forearm", "right_hand", "left_knee", "left_foot", "right_knee", "right_foot"]
-PARTS = ["right_leg", "left_leg", "trunk", "right_arm", "left_arm", "head"]
+PARTS = ["left_leg", "right_leg", "trunk", "left_arm", "right_arm", "head"]  # the image's sides (left = smaller x)
+# the reference port names the parts by the subject's sides: its "right" parts are on the smaller x
+PORT_NAMES = {"right_leg": "left_leg", "left_leg": "right_leg", "trunk": "trunk", "right_arm": "left_arm",
+              "left_arm": "right_arm", "head": "head"}
 MOVING_BODY = np.stack([silhouette(shift=2 * step) for step in range(8)])
 RNG = np.random.default_rng(1)
 GRAY_FRAMES = (RNG.random((10, 12, 16)) * 255).astype(np.uint8)
@@ -157,13 +160,13 @@ def test_body_parts_of_a_silhouette():
         assert result.masks[name].shape == (height, width) and set(np.unique(result.masks[name])) <= {0, 255}
         assert result.masks[name].any()
     assert result.regions[PARTS.index("head"), 1] < result.regions[PARTS.index("trunk"), 1]
-    assert result.regions[PARTS.index("right_arm"), 0] < result.regions[PARTS.index("left_arm"), 0]
+    assert result.regions[PARTS.index("left_arm"), 0] < result.regions[PARTS.index("right_arm"), 0]  # left = smaller x
 
 
 def test_body_parts_selection_and_missing_parts():
     result = SilhouetteBodyParts(parts=["Left leg"]).process(BODY)
-    assert result.is_found.tolist() == [False, True, False, False, False, False] and list(result.masks) == ["left_leg"]
-    assert not result.regions[0].any()
+    assert result.is_found.tolist() == [True, False, False, False, False, False] and list(result.masks) == ["left_leg"]
+    assert not result.regions[1].any()
     empty = SilhouetteBodyParts().process(np.zeros((20, 20), np.uint8))
     assert empty.status is Status.INVALID_INPUT and "foreground" in empty.reason
     block = np.zeros((20, 20), np.uint8)
@@ -266,7 +269,7 @@ def test_centroids_equal_the_reference_port_with_the_filter():
 
 def test_body_parts_equal_the_reference_port():
     result = SilhouetteBodyParts().process(BODY)
-    assert list(result.masks) == REFERENCE["parts_labels"].tolist()
+    assert list(result.masks) == [PORT_NAMES[label] for label in REFERENCE["parts_labels"].tolist()]
     for index, name in enumerate(result.masks):
         slot = PARTS.index(name)
         assert result.regions[slot].tolist() == REFERENCE["parts_rects"][index].tolist()
@@ -310,3 +313,15 @@ def test_parts_default_to_everything_and_are_listed_in_the_signature():
     feature = SilhouetteBodyParts()
     feature.parts = ["head"]
     assert feature.parts == ("head",) and list(feature.process(BODY).masks) == ["head"]
+
+
+def test_a_body_part_touching_the_first_column_is_found():
+    # The original dropped a region whose origin was 0 (final round D2): crop a body so that its left arm starts at x = 0.
+    rows, columns = np.mgrid[:240, :320]
+    body = (abs(columns - 160) <= 28) & (rows >= 60) & (rows <= 140)
+    body |= (columns - 160) ** 2 / 18 ** 2 + (rows - 40) ** 2 / 22 ** 2 <= 1
+    body |= (abs(rows - 75) <= 7) & (columns >= 80) & (columns <= 240)
+    body |= (abs(columns - 147) <= 9) & (rows > 140) & (rows <= 225)
+    body |= (abs(columns - 173) <= 9) & (rows > 140) & (rows <= 225)
+    result = SilhouetteBodyParts().process(body[:, 80:].astype(np.uint8) * 255)
+    assert result.is_found.all() and result.regions[PARTS.index("left_arm"), 0] == 0

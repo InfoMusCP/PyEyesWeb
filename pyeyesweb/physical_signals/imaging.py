@@ -22,7 +22,11 @@ from pyeyesweb.data_models.results import Output, Result, Schema, Status
 _imaging = core.imaging
 
 _CENTROIDS = tuple("center_of_gravity" if label == "cog" else label for label in _imaging.CentroidsCalc.labels)
-_BODY_PARTS = ("right_leg", "left_leg", "trunk", "right_arm", "left_arm", "head")
+# The parts by the image's sides (left = smaller x), as SilhouetteCentroids; the core names its slots by the subject's
+# sides facing the camera, so its "right" parts are on the smaller x.
+_BODY_PARTS = ("left_leg", "right_leg", "trunk", "left_arm", "right_arm", "head")
+_CORE_PART = {"left_leg": "right_leg", "right_leg": "left_leg", "trunk": "trunk", "left_arm": "right_arm",
+              "right_arm": "left_arm", "head": "head"}
 
 
 class _ImageFeature(FrameFeature):
@@ -125,8 +129,9 @@ class SilhouetteBodyParts(_ImageFeature):
     The silhouette of a person, a binary mask, is divided into six body parts, each with its bounding box and mask, for the
     analysis of the movement of single parts (the arms, the head) from a plain image. The columns holding the arms are
     found by accumulating the area from each side (``arm_percentage``), the legs by the horizontal extent of the lower rows, the neck by the first row, going up from the
-    barycentre, where the body narrows, and each arm by the rows where it holds many pixels. "Right" and "left" are the
-    image's: the right arm and the right leg are on the smaller x.
+    barycentre, where the body narrows, and each arm by the rows where it holds many pixels. "Left" and "right" are those
+    of the image, as in ``SilhouetteCentroids``: the left arm and the left leg are on the smaller x (the subject's right
+    when facing the camera; the original block named them by the subject's sides).
 
     ``process(silhouette, *, timestamp=None)`` takes one ``(H, W)`` mask (non-zero is body; see the module description for the
     image types); the boxes are in the frame of the mask.
@@ -146,13 +151,14 @@ class SilhouetteBodyParts(_ImageFeature):
     arms_max_threshold : float, default 0.5
         An arm starts at the first row with more foreground pixels than this fraction of its width *(live)*.
     parts : sequence of str, default all six
-        Which parts to output *(live)*, among ``"right_leg"``, ``"left_leg"``, ``"trunk"``, ``"right_arm"``, ``"left_arm"``
+        Which parts to output *(live)*, among ``"left_leg"``, ``"right_leg"``, ``"trunk"``, ``"left_arm"``, ``"right_arm"``
         and ``"head"``.
 
     Notes
     -----
     **Outputs.** ``regions``: ``(6, 4)`` integer array of ``(x, y, width, height)`` in pixels of the frame, rows in the order
-    right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found. ``is_found``: ``(6,)``
+    left_leg, right_leg, trunk, left_arm, right_arm, head, zeros for a part that was not found. A part touching the first
+    row or column of the frame is found (the original dropped it). ``is_found``: ``(6,)``
     booleans, which parts were found. ``masks``: dict ``part -> (height, width)`` array of 0 and 255 holding the mask of
     each part found. A part is dropped when it is empty or touches the first column or the first row of the frame, as in
     EyesWeb. A mask without foreground is ``INVALID_INPUT`` (``"no foreground pixels in the silhouette"``); an empty image
@@ -181,7 +187,7 @@ class SilhouetteBodyParts(_ImageFeature):
     [True, True, True, True, True, True]
     """
     _core_class = _imaging.BlobSubRegions
-    _parts = {part: f"extract_{part}" for part in _BODY_PARTS}
+    _parts = {part: f"extract_{_CORE_PART[part]}" for part in _BODY_PARTS}
     _INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
     _OUTPUTS = Schema(
         Output("regions", (len(_BODY_PARTS), 4), kind=int, labels=_BODY_PARTS, components=("x", "y", "width", "height"),
@@ -195,7 +201,8 @@ class SilhouetteBodyParts(_ImageFeature):
         regions = np.zeros((len(_BODY_PARTS), 4), dtype=int)
         found = np.zeros(len(_BODY_PARTS), dtype=bool)
         masks = {}
-        for label, left, top, part_mask in self._block.process(mask):
+        for core_label, left, top, part_mask in self._block.process(mask):
+            label = _CORE_PART[core_label]  # the mapping is its own inverse
             slot = _BODY_PARTS.index(label)
             regions[slot] = (left, top, part_mask.shape[1], part_mask.shape[0])
             found[slot] = True

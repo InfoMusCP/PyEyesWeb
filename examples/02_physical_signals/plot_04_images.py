@@ -148,7 +148,7 @@ fig_parts.tight_layout()
 # As for the centroids, ``parts`` selects what is returned: the rows of the other parts are zero and ``masks`` keeps only the
 # selected ones.
 
-legs = SilhouetteBodyParts(parts=["right_leg", "left_leg"]).process(body)
+legs = SilhouetteBodyParts(parts=["left_leg", "right_leg"]).process(body)
 print("masks returned:", list(legs.masks))
 print("regions of the head, not selected:", legs.regions[part_names.index("head")])
 
