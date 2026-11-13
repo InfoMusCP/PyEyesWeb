@@ -119,6 +119,54 @@ def test_triangle_symmetry_collinear_vertices_are_invalid_input():
     assert feature.process([0, 0], [np.nan, 1], [1, 1]).status is Status.INVALID_INPUT
 
 
+# Head at x = 0, hands at x = -1 and 3: barycentre 2/3, SI_h = |5/3 - 7/3| / 4 = 1/6; hands 2 apart in height.
+GLOWINSKI_TRIANGLE = ((0.0, 0.0), (-1.0, 1.0), (3.0, 3.0))
+
+
+@pytest.mark.parametrize("method, name, expected", [
+    ("horizontal", "horizontal_asymmetry", 1 / 6), ("vertical", "vertical_asymmetry", 2.0),
+    ("spatial", "spatial_asymmetry", 1 / 12)])
+def test_triangle_symmetry_glowinski_indices(method, name, expected):
+    feature = TriangleSymmetry(method=method)
+    assert feature.outputs.names == (name,)
+    result = feature.process(*GLOWINSKI_TRIANGLE)
+    assert result.ok and getattr(result, name) == pytest.approx(expected)
+
+
+def test_triangle_symmetry_glowinski_symmetric_triangle_is_zero():
+    triangle = ((0.0, 0.0), (-1.0, 1.0), (1.0, 1.0))
+    assert TriangleSymmetry(method="horizontal").process(*triangle).horizontal_asymmetry == 0
+    assert TriangleSymmetry(method="vertical").process(*triangle).vertical_asymmetry == 0
+    assert TriangleSymmetry(method="area").process(*triangle).symmetry == pytest.approx(1.0)
+
+
+def test_triangle_symmetry_glowinski_undefined_cases_are_invalid_input():
+    vertical_line = ((2.0, 0.0), (2.0, 1.0), (2.0, 3.0))
+    for method in ("horizontal", "spatial"):
+        result = TriangleSymmetry(method=method).process(*vertical_line)
+        assert result.status is Status.INVALID_INPUT and result.reason == "all vertices on one vertical line"
+        assert not any(result.valid.values())
+    result = TriangleSymmetry(method="spatial").process((0, 0), (-1, 1), (3, 1))
+    assert result.status is Status.INVALID_INPUT and result.reason == "the two lower vertices at the same height"
+    assert TriangleSymmetry(method="vertical").process(*vertical_line).vertical_asymmetry == 2.0
+    # collinear vertices with different x: defined for the Glowinski indices, invalid only for the area index
+    assert TriangleSymmetry(method="horizontal").process((0, 0), (1, 1), (2, 2)).ok
+
+
+def test_triangle_symmetry_method_is_live():
+    feature = TriangleSymmetry()
+    assert feature.method == "area" and feature.outputs.names == ("symmetry",)
+    area = feature.process(*GLOWINSKI_TRIANGLE).symmetry
+    feature.method = "spatial"
+    assert feature.outputs.names == ("spatial_asymmetry",)
+    result = feature.process(*GLOWINSKI_TRIANGLE)
+    assert result.ok and result.reason == "" and result.spatial_asymmetry == pytest.approx(1 / 12)
+    feature.method = "area"
+    assert feature.process(*GLOWINSKI_TRIANGLE).symmetry == area
+    with pytest.raises(ValueError):
+        TriangleSymmetry(method="diagonal")
+
+
 def test_average_curvature_with_too_few_points_is_invalid_input():
     feature = TrajectoryNonPlanarity(radius=2.0)
     assert feature.process(np.zeros((1, 3))).status is Status.INVALID_INPUT

@@ -7,6 +7,7 @@ from typing import Any, Literal, Optional, Sequence, Tuple
 import numpy as np
 
 from pyeyesweb._core import core
+from pyeyesweb.base.choices import choice_name
 from pyeyesweb.base.core_feature import XYZ, CoreFeature, FrameFeature, VariantFeature
 from pyeyesweb.catalog import Layer, describe
 from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
@@ -233,26 +234,59 @@ _COLLINEAR = 1e-9  # relative size of the triangle area below which the vertices
 
 @describe(Layer.LOW_LEVEL, eyesweb="trianglesymmetryindex (SymmetryTriangle3D)")
 class TriangleSymmetry(CoreFeature):
-    """Symmetry of a head-and-shoulders triangle about its apex, from 0 to 1.
+    r"""Symmetry of a head-and-shoulders triangle about its apex, or one of the asymmetry indices of Glowinski et al. 2011.
 
-    Measures the lateral lean of an upper body as the symmetry of the triangle formed by the head (apex, ``upper``) and
-    the two shoulders (``left`` and ``right``) about the vertical line through the apex. The coordinates are taken
-    relative to the apex, the base is split at that line, and the two halves of the triangle, mirrored on top of each
-    other, are compared: the index is 1 when they coincide and decreases as their areas differ, down to 0. It is a
-    posture measure, the tilt of the apex over the base, not a test of whether the triangle is isosceles. When both base
-    vertices lie on the same side of the apex the index is 0.
+    Measures the lateral lean of an upper body from a triangle with the head as apex (``upper``) and two lower vertices
+    (``left`` and ``right``: the shoulders or the hands). ``method`` picks the index.
+
+    **method="area"** (default; the EyesWeb block). The symmetry of the triangle about the vertical line through the
+    apex. The coordinates are taken relative to the apex, the base is split at that line, and the two halves of the
+    triangle, mirrored on top of each other, are compared: the index is 1 when they coincide and decreases as their areas
+    differ, down to 0. It is a posture measure, the tilt of the apex over the base, not a test of whether the triangle is
+    isosceles. When both base vertices lie on the same side of the apex the index is 0.
+
+    **method="horizontal", "vertical", "spatial"** (Glowinski et al. 2011, eqs. 4-5). With :math:`x_B` the x of the
+    barycentre of the three vertices and :math:`x_{\min}`, :math:`x_{\max}` the smallest and largest x of the vertices,
+
+    .. math::
+
+        SI_h = \frac{\bigl\lvert \lvert x_B - x_{\min} \rvert - \lvert x_B - x_{\max} \rvert \bigr\rvert}
+                    {x_{\max} - x_{\min}}, \qquad
+        SI_v = \lvert y_{left} - y_{right} \rvert, \qquad
+        SI_s = \frac{SI_h}{SI_v}.
+
+    :math:`SI_h` is the horizontal asymmetry, :math:`SI_v` the difference in height of the two lower vertices (the hands
+    in the paper) and :math:`SI_s` the spatial asymmetry. All three are 0 for a symmetric triangle.
 
     Three inputs, the vertices of the triangle as ``(x, y)`` samples with y growing downwards (image coordinates):
     ``process(upper, left, right, *, timestamp=None)``; ``run`` takes the three recordings in the same order. The apex
-    is the first argument and is anatomical (head over the shoulders), not detected. The feature has no parameters and
-    keeps no state.
+    is the first argument and is anatomical (head over the shoulders), not detected. The feature keeps no state.
+
+    Parameters
+    ----------
+    method : {"area", "horizontal", "vertical", "spatial"}, optional
+        The index: ``"area"``, the EyesWeb symmetry; ``"horizontal"``, ``"vertical"`` or ``"spatial"``, the asymmetry
+        indices of Glowinski et al. 2011. Defaults to ``"area"``. *(live)*
 
     Notes
     -----
-    **Outputs.** ``symmetry``: dimensionless, in [0, 1], 1 for a symmetric triangle and 0 for total asymmetry. It is one
-    minus the asymmetry that the original block outputs.
+    **Outputs.** One output, named after the method. ``"area"``: ``symmetry``, dimensionless, in [0, 1], 1 for a
+    symmetric triangle and 0 for total asymmetry; it is one minus the asymmetry that the original block outputs.
+    ``"horizontal"``: ``horizontal_asymmetry``, dimensionless, in [0, 1], 0 for a symmetric triangle. ``"vertical"``:
+    ``vertical_asymmetry``, a length in the unit of the input, 0 for lower vertices at the same height. ``"spatial"``:
+    ``spatial_asymmetry``, in 1/length.
 
-    **Statuses.** ``INVALID_INPUT`` for an empty vertex, for NaN or infinite coordinates and for collinear vertices.
+    **Statuses.** ``INVALID_INPUT`` for an empty vertex and for NaN or infinite coordinates. ``"area"``: also for
+    collinear vertices. ``"horizontal"`` and ``"spatial"``: also when all vertices are on one vertical line.
+    ``"spatial"``: also when the two lower vertices are at the same height.
+
+    **Sources.** The area index is EyesWeb's own construction; no paper describes it. The three other indices are
+    eqs. 4-5 of :cite:`glowinski2011minimal`.
+
+    **On real data.** On the example session (head and both hands in the frontal plane, y negated), the area index
+    separates arms moving together from arms moving apart clearly: median 0.88 and 0.92 for trials 3 and 5 against 0.39
+    and 0.19 for trials 4 and 6. The horizontal index alone barely does (0.99 against 0.85 and 0.95, as
+    :math:`1 - SI_h`), because arms moving apart differ mostly in height; that is what the vertical index captures.
 
     Examples
     --------
@@ -262,15 +296,39 @@ class TriangleSymmetry(CoreFeature):
     1.00
     >>> print(f"{feature.process((0, 0), (-1, 1), (3, 1)).symmetry:.2f}")
     0.33
+
+    Vertices at x = 0, -1 and 3 put the barycentre at 2/3, so :math:`SI_h = \lvert 5/3 - 7/3 \rvert / 4 = 1/6`; the
+    lower vertices are 2 apart in height, so :math:`SI_s = 1/12`.
+
+    >>> head, left, right = (0, 0), (-1, 1), (3, 3)
+    >>> print(f"{TriangleSymmetry(method='horizontal').process(head, left, right).horizontal_asymmetry:.4f}")
+    0.1667
+    >>> print(f"{TriangleSymmetry(method='vertical').process(head, left, right).vertical_asymmetry:.1f}")
+    2.0
+    >>> print(f"{TriangleSymmetry(method='spatial').process(head, left, right).spatial_asymmetry:.4f}")
+    0.0833
     """
     _core_class = core.motion.TriangleSymmetryIndex
+
+    # Output name, unit and description of each method.
+    _OUTPUTS = {
+        "area": ("symmetry", "", "1 = symmetric, 0 = totally asymmetric"),
+        "horizontal": ("horizontal_asymmetry", "", "Glowinski 2011 eq. 4, 0 = symmetric"),
+        "vertical": ("vertical_asymmetry", "<length>", "height difference of the lower vertices"),
+        "spatial": ("spatial_asymmetry", "1/<length>", "Glowinski 2011 eq. 5, horizontal / vertical asymmetry"),
+    }
+
+    @property
+    def _method(self) -> str:
+        return choice_name(self._param("method", core.motion.TriangleSymmetryMethod.AREA))
 
     def _inputs(self) -> Inputs:
         return Inputs(*(Input(name, InputKind.SAMPLE, (2,), doc=f"{name} vertex (x, y)")
                         for name in ("upper", "left", "right")))
 
     def _schema(self) -> Schema:
-        return Schema(Output("symmetry", doc="1 = symmetric, 0 = totally asymmetric"))
+        name, unit, doc = self._OUTPUTS[self._method]
+        return Schema(Output(name, unit=unit, doc=doc))
 
     def process(self, upper: Any, left: Any, right: Any, *, timestamp: Optional[float] = None) -> Result:
         vertices = [np.asarray(vertex, dtype=float) for vertex in (upper, left, right)]
@@ -279,13 +337,20 @@ class TriangleSymmetry(CoreFeature):
         return self._to_result((vertices, self._block.process(*(tuple(vertex.tolist()) for vertex in vertices))), timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
-        vertices, symmetry = raw
+        vertices, value = raw
+        method = self._method
+        if method != "area":
+            if np.isnan(value):  # the core's mark of an undefined index
+                same_x = max(vertex[0] for vertex in vertices) == min(vertex[0] for vertex in vertices)
+                reason = "all vertices on one vertical line" if same_x else "the two lower vertices at the same height"
+                return self._no_output(Status.INVALID_INPUT, reason, timestamp)
+            return self._result(timestamp=timestamp, **{self._OUTPUTS[method][0]: value})
         to_left, to_right = vertices[1] - vertices[0], vertices[2] - vertices[0]
         collinear = abs(to_left[0] * to_right[1] - to_left[1] * to_right[0]) <= (
             _COLLINEAR * np.linalg.norm(to_left) * np.linalg.norm(to_right))
         return self._result(status=Status.INVALID_INPUT if collinear else Status.OK,
                            reason="the vertices are collinear" if collinear else "",
-                           symmetry=symmetry, timestamp=timestamp)
+                           symmetry=value, timestamp=timestamp)
 
 
 __all__ = ["Symmetry", "TriangleSymmetry"]

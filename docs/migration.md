@@ -263,6 +263,7 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 | `GenericModelOrientations(model).process(skeleton).directions` | development | `MassSpringSimulator(model=model, units=...).process(joints).directions` |
 | `MotionDuration(sampling_rate=..., continuous_output=...).run(is_gesturing)` | development | `GestureSegmenter(sampling_rate=..., continuous_output=...)`: the outputs `motion_duration` and `pause_duration` of the segmenter, measured on its own segmentation |
 | `GestureSegmenter.process(intensity, noise)`, input `noise` | development | removed: `process(intensity)`; the noise test is held back and will return inside the segmenter |
+| `TriangleSymmetry()`: the area index only | development | new option `method`: `"area"` (default, unchanged), or the indices of Glowinski et al. 2011 `"horizontal"`, `"vertical"` and `"spatial"`, with outputs `horizontal_asymmetry`, `vertical_asymmetry` and `spatial_asymmetry` |
 
 ### Held back from this release
 

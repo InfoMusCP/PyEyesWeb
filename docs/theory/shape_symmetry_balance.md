@@ -145,6 +145,27 @@ array([0.7369])
 [1.0, 0.5, 0.33]
 ```
 
+The area index above is EyesWeb's own construction; no paper describes it. With `method`, the feature also gives the three
+indices of {cite}`glowinski2011minimal` (eqs. 4-5), computed from the head $H$ and the two hands $L$ and $R$. With
+$x_B=(x_H+x_L+x_R)/3$ the x of the barycentre and $x_{\min}$, $x_{\max}$ the smallest and largest x of the vertices,
+
+$$
+SI_h = \frac{\bigl\lvert\,\lvert x_B-x_{\min}\rvert-\lvert x_B-x_{\max}\rvert\,\bigr\rvert}{x_{\max}-x_{\min}}, \qquad
+SI_v = \lvert y_L-y_R\rvert, \qquad SI_s = \frac{SI_h}{SI_v}.
+$$
+
+$SI_h$ (`"horizontal"`) is dimensionless, in $[0,1]$; $SI_v$ (`"vertical"`) is a length in the unit of the input; $SI_s$
+(`"spatial"`) is in 1/length. All three are 0 for a symmetric triangle. $SI_h$ is undefined when all vertices are on one
+vertical line and $SI_s$ also when the hands are at the same height: the result is then `INVALID_INPUT` with no value. On
+real data the hands of arms moving apart differ mostly in height, which $SI_v$ captures and $SI_h$ alone barely does.
+
+```{doctest}
+>>> head, left, right = (0, 0), (-1, 1), (3, 3)
+>>> [round(float(getattr(TriangleSymmetry(method=m).process(head, left, right), f"{m}_asymmetry")), 4)
+...  for m in ("horizontal", "vertical", "spatial")]
+[0.1667, 2.0, 0.0833]
+```
+
 ## Balance
 
 {py:class}`~pyeyesweb.low_level.Equilibrium` estimates the postural balance from one snapshot of the floor plane
