@@ -92,7 +92,7 @@ class Rarity(VariantFeature, CoreFeature):
     **Statuses.** ``"information"`` with ``measure="rarity"``: the memory starts filled with zeros, so the result is
     ``WARMING_UP`` (``"the memory holds k of window values"``; the numbers are given but are artefacts) until
     ``window`` samples have been seen; a value above the sum of ``bins`` (or ``NaN``) keeps the previous bin and gives
-    ``INVALID_INPUT`` (``"value outside the bins"``) with the numbers kept; a non-finite value is ``INVALID_INPUT``.
+    ``INVALID_INPUT`` (``"value outside the bins"``), whose outputs are empty; a non-finite value is ``INVALID_INPUT``.
     ``"mode_distance"``: ``WARMING_UP`` while the window holds fewer than 2 samples (and while the first window
     fills), ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` while the window holds a ``NaN`` or an infinite value
     (until that sample leaves the window). ``reset()`` clears the memory and the bin indices, so ``run`` is a pure
@@ -202,9 +202,9 @@ class _InformationRarity(Rarity, FrameFeature, variant="information"):
         rarity = np.asarray(self._block.process(values), dtype=float)
         memory = int(self._param("window", 50))  # C++ defaults
         uses_memory = self._param("measure", core.motion.RarityType.RARITY) == core.motion.RarityType.RARITY
-        self._filled += uses_memory
-        if not np.all(values <= np.cumsum(self._param("bins", [0.3, 0.3, 0.4]))[-1]):  # also NaN
+        if not np.all(values <= np.cumsum(self._param("bins", [0.3, 0.3, 0.4]))[-1]):  # also NaN; not a value of the memory
             return self._result(status=Status.INVALID_INPUT, reason="value outside the bins", rarity=rarity, timestamp=timestamp)
+        self._filled += uses_memory
         if uses_memory and self._filled < memory:
             return self._result(status=Status.WARMING_UP, reason=f"the memory holds {self._filled} of {memory} values",
                                rarity=rarity, timestamp=timestamp)

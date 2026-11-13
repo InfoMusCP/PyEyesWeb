@@ -119,6 +119,13 @@ def test_information_rarity_value_outside_the_bins_is_invalid_input_without_numb
     assert feature.process([np.nan, 0.2]).status is Status.INVALID_INPUT
 
 
+def test_a_value_outside_the_bins_does_not_fill_the_memory():
+    from pyeyesweb.data_models import Status
+    feature = Rarity(number_of_inputs=1, window=3, bins=[0.5, 0.5])
+    statuses = [feature.process([value]).status for value in (0.2, 1.5, 0.3, 0.4)]
+    assert statuses == [Status.WARMING_UP, Status.INVALID_INPUT, Status.WARMING_UP, Status.OK]
+
+
 def test_information_rarity_rejects_the_degenerate_combinations_at_construction():
     with pytest.raises(ValueError):
         Rarity(number_of_inputs=1, measure="contrast")

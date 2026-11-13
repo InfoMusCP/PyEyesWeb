@@ -222,8 +222,8 @@ class RegionDependingPotentials(FrameFeature):
     ``(number_of_regions,)``, the value of each region. Values are dimensionless.
 
     **Statuses.** ``NO_OUTPUT`` for an empty list of hits; ``INVALID_INPUT`` for a cell outside the grid or a region
-    index out of range (``result.reason`` says so; with region input, ``hit_regions`` and ``hit_region_indexes`` are
-    still produced).
+    index out of range (``result.reason`` says so); an ``INVALID_INPUT`` result has empty outputs, ``hit_regions`` and
+    ``hit_region_indexes`` included.
 
     Corrected in the core: the Reset trigger restores the initial values of the regions and clears the occupation
     counters (it used to pass other values and keep the counters); increment/decrement with several cells is computed as
