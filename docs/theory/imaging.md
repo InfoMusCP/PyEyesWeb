@@ -14,7 +14,8 @@ An image is an array with $H$ rows and $W$ columns. A pixel is at column $x$ (co
 the top, from 0), so the $y$ axis points down. Coordinates are in pixels of the frame of the image you give, never in the frame
 of a cropped region. A **silhouette** is a binary mask $S(x, y)$ in which every non-zero pixel is foreground, the body. A `bool`
 array is a 0 / 1 mask; any other numeric array must hold whole numbers in 0 to 255. "Left" and "right" are those of the image:
-left means the smaller $x$ (so the right arm and the right leg of the body parts are on the smaller $x$).
+left means the smaller $x$, for the centroids and the body parts alike (the left arm of the body parts is the
+subject's right arm when the subject faces the camera).
 
 A **contour** is a closed sequence of $N$ points $\mathbf{p}_i = (x_i, y_i)$, an $(N, 2)$ array in which the last point is
 a neighbour of the first. The contour of a silhouette comes from any contour-finding step of your image pipeline; the features
@@ -82,8 +83,8 @@ parameters are fractions of the area and of the width.
 [True, True, True, True, True, True]
 ```
 
-The rows of `regions` are in the order right leg, left leg, trunk, right arm, left arm, head (zeros for a part that was not
-found). The figure shows the centroids and the boxes on this synthetic silhouette.
+The rows of `regions` are in the order left leg, right leg, trunk, left arm, right arm, head (zeros for a part that was not
+found); a part that touches the first row or column of the frame is found. The figure shows the centroids and the boxes on this synthetic silhouette.
 
 ```{eval-rst}
 .. plot::
@@ -149,8 +150,8 @@ A bar that moves up and down in front of a still background draws a sine in the 
 ...     result = videogram.process(frame)
 >>> result.videogram.shape                            # (rows of the frame, window, channels)
 (60, 100, 1)
->>> int(result.videogram.max())
-255
+>>> int(result.videogram.max())                       # the bar fills half of each row: the mean is 127
+127
 >>> [int(np.argmax(result.videogram[:, n, 0])) for n in (0, 12, 25, 37)]   # row of the bar at four instants
 [27, 46, 27, 7]
 ```
