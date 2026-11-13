@@ -43,7 +43,8 @@ class EnsembleDominance(FrameFeature):
     index over the largest one. ``leader_index``: position of the leader among the participants, ``-1`` when no
     participant has an index. ``leader_complexity``: the complexity index of the leader, in the unit of the input.
 
-    **Statuses.** ``INVALID_INPUT`` for an infinite index; NaN is data, not an error.
+    **Statuses.** ``INVALID_INPUT`` for an infinite index and for a negative one (a complexity index built from sample
+    entropy is not negative, and with one the score :math:`D_i` would leave [0, 1]); NaN is data, not an error.
 
     Corrected in the core: a NaN complexity index no longer zeroes every score and becomes the leader; such a
     participant is ignored (score NaN, never the leader).
@@ -75,6 +76,8 @@ class EnsembleDominance(FrameFeature):
         indices = np.asarray(frame, dtype=float).reshape(-1)
         if np.isinf(indices).any():
             return self._no_output(Status.INVALID_INPUT, "infinite values", timestamp)
+        if (indices < 0).any():  # sample entropy is not negative, and a score above 1 would leave [0, 1]
+            return self._no_output(Status.INVALID_INPUT, "negative complexity index", timestamp)
         dominance_score, leader_index, leader_complexity = self._block.process(indices)
         return self._result(dominance_score=dominance_score, leader_index=leader_index,
                            leader_complexity=leader_complexity, timestamp=timestamp)

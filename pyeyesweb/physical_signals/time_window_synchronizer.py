@@ -6,6 +6,7 @@ rates (audio, motion capture, video frames).
 """
 
 import dataclasses
+import warnings
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
@@ -46,7 +47,7 @@ class TimeWindowSynchronizer:
     samples, motion capture in a few, video in single frames. The synchronizer buffers every stream and releases, one window
     at a time, the data of the same stretch of time, ready to be given together to features that need aligned inputs;
     :math:`t` advances by one window at each ``pop()``. A sampled stream (audio, motion capture, any time series) gives
-    ``int(sampling_rate * window)`` samples per window, cut from and concatenated over the chunks received: samples that do
+    ``round(sampling_rate * window)`` samples per window (a warning when that product is not a whole number), cut from and concatenated over the chunks received: samples that do
     not fit stay for the next window. A frame stream (video) gives the latest frame that starts before the end of the
     window. The synchronizer is pull-based: ``push`` and ``push_frame`` add data, ``ready()`` says whether every stream
     holds enough for the next window and ``pop()`` returns it.
@@ -70,7 +71,9 @@ class TimeWindowSynchronizer:
     ``samples_per_window(stream)`` gives the samples of a window of a sampled stream (0 for a frame stream); ``reset()``
     drops everything buffered and restarts at ``start_time``.
 
-    **Corrected in the core.** The part of a chunk that did not fit in a window is kept and opens the next window (the
+    **Gaps are not detected:** samples are counted, not timed, so a stream that loses samples shifts against the others
+    unless ``push`` is given ``timestamp``. **Corrected in the core.** The count of samples per window is rounded to the
+    nearest integer (the original truncated it, which lost a sample to floating point, as 0.29 s at 100 Hz gave 28). The part of a chunk that did not fit in a window is kept and opens the next window (the
     original dropped it as soon as a window was full). Unlike the EyesWeb block, which outputs once per activation and
     possibly an incomplete window, this one outputs only complete windows.
 
@@ -92,6 +95,11 @@ class TimeWindowSynchronizer:
     def __init__(self, window: float, inputs: Sequence[Optional[Tuple[int, float]]], start_time: float = 0.0):
         self._window = float(window)
         self._start_time = float(start_time)
+        for stream in inputs:  # the samples of a window are rate * window, rounded; say so when it was not a whole number
+            if stream is not None and abs(stream[1] * self._window - round(stream[1] * self._window)) > 1e-6:
+                warnings.warn(f"TimeWindowSynchronizer: {stream[1]} Hz * {self._window} s = {stream[1] * self._window:g} samples is "
+                              f"not a whole number; the window holds {round(stream[1] * self._window)} samples", UserWarning,
+                              stacklevel=2)
         self._core = _Synchronizer(self._window, [_Synchronizer.Input.frames() if stream is None else _Synchronizer.Input(*stream)
                                                   for stream in inputs], self._start_time)
         self._sampled = tuple(stream is not None for stream in inputs)

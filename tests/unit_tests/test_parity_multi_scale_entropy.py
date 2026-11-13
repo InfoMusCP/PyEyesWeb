@@ -186,3 +186,9 @@ def test_split_reproduces_the_combined_block_bit_for_bit(entry, data):
             assert same_floats(composed.leader_complexity, outputs["leader_complexity"])
         else:
             assert outputs["dominance_score"] == []
+
+
+def test_a_negative_complexity_index_is_invalid_input():
+    result = EnsembleDominance().process([1.0, -0.5, 2.0])
+    assert result.status is Status.INVALID_INPUT and "negative" in result.reason and not any(result.valid.values())
+    assert EnsembleDominance().process([1.0, 0.0, 2.0]).status is Status.OK

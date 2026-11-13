@@ -57,7 +57,11 @@ class SpectralArcLength(_SpeedProfileMetric):
     where :math:`V(f)` is the magnitude of the Fourier transform of the (zero-padded) speed of the window. The cut-off
     is adaptive: the highest frequency at which :math:`\hat{V}` is still above ``amplitude_threshold``, limited to
     ``[minimum_cutoff_frequency, maximum_cutoff_frequency]``. The measure is dimensionless and independent of the
-    amplitude and duration of the movement; it is negative, and closer to 0 means smoother.
+    amplitude and duration of the movement; it is negative, and closer to 0 means smoother. The cut-off frequency of
+    the arc is bounded below by ``minimum_cutoff_frequency`` (2 Hz by default), a bound that is not in the original
+    definition: it keeps the value from depending on the spectrum below it, but for a movement longer than about 1.5 s,
+    or a window with a low-frequency spectrum, the value grows more negative with the duration, so it is no longer
+    independent of the duration.
 
     Parameters
     ----------
@@ -136,7 +140,9 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
     with the derivatives taken by finite differences. In ``"acceleration"`` mode the input is the acceleration
     magnitude and the jerk is its first difference, normalised by the duration and the peak of the acceleration. The
     measure is dimensionless and negative; closer to 0 means smoother. A flat signal has no jerk to measure and gives
-    ``INVALID_INPUT``.
+    ``INVALID_INPUT``. In ``"acceleration"`` mode the input is a magnitude, so the gravity that the LDLJ-A variant of the
+    literature removes from the acceleration vector is not removed here: give an acceleration with gravity already taken
+    off, or use the speed.
 
     Parameters
     ----------

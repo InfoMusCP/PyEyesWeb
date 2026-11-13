@@ -405,6 +405,10 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `Symmetry(method="reflection")` (1.x `GeometricSymmetry`) | 1.x gave the distance between a joint and the reflection of its partner (0 for a mirror image); 2.0 gives a score of the pair in [0, 1] that is 1 for a mirror image |
 | `Equilibrium` | the margin is in metres (0.1 m, the former 100 mm); the three points are the inputs |
 | `KineticEnergy` | only the total is returned; an empty frame is `INVALID_INPUT` instead of 0.0; `weights` is a mapping or one weight per label |
+| `EllipsoidSphericity` | for a point cloud, `sphericity` is computed from the ellipsoid fitted to the points, a lab extension of the EyesWeb block that kept the name, so it is not the 1.x value; the `radii` are the standard deviations of the cloud along its principal axes, not its extent |
+| `Symmetry` | a joint that belongs to two pairs is normalised once; the original scaled it twice, so the index changes for skeletons where a joint is in two pairs |
+| `EnsembleDominance` | a negative complexity index is `INVALID_INPUT`; the original gave a score above 1 |
+| `TimeWindowSynchronizer` | the samples of a window are `round(sampling_rate * window)` (a warning when the product is not a whole number); the original truncated it, which lost a sample to floating point (0.29 s at 100 Hz gave 28) |
 | `BoundingBoxFilledArea`, `EllipsoidSphericity`, `PointsDensity` | an empty frame is `INVALID_INPUT` instead of 0.0; `PointsDensity` is the EyesWeb block, with the options `centroid_type` and `distance_type` |
 | `DirectionChange`, `Suddenness` | one trajectory per call: a frame with several markers is rejected (1.x averaged them), average the markers beforehand; the numbers for a single point are unchanged |
 | `Equilibrium`, `Symmetry` | a negative joint index is rejected (1.x wrapped around); there are no joint indices any more |
