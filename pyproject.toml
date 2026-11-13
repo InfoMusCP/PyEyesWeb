@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyeyesweb"
-version = "2.0.0a1"
+version = "2.0.0a2"
 requires-python = ">=3.10"
 authors = [
     {name = "InfoMus Lab - Casa Paganini", email = "cp.infomus@gmail.com"}
@@ -48,10 +48,10 @@ classifiers = [
 ]
 
 # Runtime: NumPy and the compiled core (the separate binary wheel `eyesweb-core`, import name `eyesweb_core`). The lower bound
-# names the alpha because 2.0.0a1 sorts before 2.0; `<2.1` mirrors REQUIRED_CORE = (2, 0) in pyeyesweb/_core.py.
+# names the alpha because 2.0.0a2 sorts before 2.0; `<2.1` mirrors REQUIRED_CORE = (2, 0) in pyeyesweb/_core.py.
 dependencies = [
     "numpy>=1.24.0",
-    "eyesweb-core>=2.0.0a1,<2.1",
+    "eyesweb-core>=2.0.0a2,<2.1",
 ]
 
 [project.optional-dependencies]

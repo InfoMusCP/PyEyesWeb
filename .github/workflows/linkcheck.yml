@@ -25,7 +25,7 @@ jobs:
         if: vars.CORE_FROM_TESTPYPI == 'true'
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --pre --no-deps --index-url https://test.pypi.org/simple/ "eyesweb-core>=2.0.0a1,<2.1"
+          python -m pip install --pre --no-deps --index-url https://test.pypi.org/simple/ "eyesweb-core>=2.0.0a2,<2.1"
       - name: Install the pinned documentation toolchain, then the package
         run: |
           python -m pip install -r docs/requirements.txt

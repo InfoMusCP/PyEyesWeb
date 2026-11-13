@@ -5,7 +5,7 @@ Read this first. When a rule here conflicts with what you see in older code, the
 to fix, unless the maintainer says otherwise. Rules marked **Decided** were chosen by the maintainer; do not change
 them without asking.
 
-**Status (2026-11-13).** The contract below is implemented and tested for the 36 features of the early release (2.0.0a1).
+**Status (2026-11-13).** The contract below is implemented and tested for the 36 features of the early release (2.0.0a2).
 The open work is kept in the maintainer's local notes, which are not in the repository. Section 10 of this file says what
 must be removed before it is published for contributors.
 

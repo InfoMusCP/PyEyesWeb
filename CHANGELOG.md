@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## 2.0.0a1 (early release; the date is set at the tag)
+## 2.0.0a2 (early release; the date is set at the tag)
+
+The version is 2.0.0a2, not 2.0.0a1: a first 2.0.0a1 core was uploaded to TestPyPI before the review of the algorithms and cannot be
+replaced, so the reviewed core and package are 2.0.0a2.
 
 The early release holds the 36 features whose algorithms were reviewed against their sources and judged solid on movement
 data: `pyeyesweb.catalog()` lists them (4 physical signals, 17 low-level, 1 mid-level, 1 high-level, 13 analysis

@@ -47,7 +47,7 @@ jobs:
         run: python -m pip install --upgrade pip
       - name: Install the core from TestPyPI (only while it is not on PyPI)
         if: env.CORE_FROM_TESTPYPI == 'true'
-        run: python -m pip install --pre --no-deps --index-url https://test.pypi.org/simple/ "eyesweb-core>=2.0.0a1,<2.1"
+        run: python -m pip install --pre --no-deps --index-url https://test.pypi.org/simple/ "eyesweb-core>=2.0.0a2,<2.1"
       - name: Install the package and the test tools
         run: python -m pip install ".[test]"
       - name: The core is present (a silent pure-Python-only run is a failure)

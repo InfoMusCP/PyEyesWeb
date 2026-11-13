@@ -44,7 +44,7 @@ def test_version_is_pep440_and_matches_the_core_pin():
     pin = next(d for d in PROJECT["dependencies"] if _name(d) == "eyesweb-core")
     major, minor = _required_core()
     assert f"<{major}.{minor + 1}" in pin.replace(" ", "")
-    # the lower bound must admit the core of this very release (2.0.0a1 sorts before 2.0)
+    # the lower bound must admit the core of this very release (2.0.0a2 sorts before 2.0)
     assert f">={version}" in pin.replace(" ", "") or f">={major}.{minor}" in pin.replace(" ", "")
     if re.search(r"(a|b|rc)\d+$", version):
         assert f">={version}" in pin.replace(" ", "")
