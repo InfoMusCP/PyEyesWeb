@@ -186,7 +186,8 @@ the original, which is corrected in the core). The unit is the inverse of the un
 of the curvature, at least `minimum_distance` points apart, and in every piece the extremum of larger magnitude is a minimum
 point when it is negative and a maximum point when it is positive. With `track_points=True` the labels of the previous call are
 carried over to the nearest new points, up to `number_of_points` of them, so a label stays with the same body part from frame to
-frame. The extremities of a body are read from the curvature of its silhouette, as in the EyesWeb silhouette analysis.
+frame; a maximum that moved farther than `tracking_distance` (0.05 by default, in the unit of the contour: pass a few pixels for a
+contour in pixels) loses its label. The extremities of a body are read from the curvature of its silhouette, as in the EyesWeb silhouette analysis.
 
 A contour with five lobes shows the chain. Without smoothing, noise of standard deviation 0.05 in the coordinates (the radius is about 10)
 multiplies the largest curvature by about six and creates spurious extrema; after the Gaussian filter the five lobes and five

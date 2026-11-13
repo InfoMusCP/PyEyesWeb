@@ -89,7 +89,8 @@ class BodyPartsFromCurvature(CoreFeature):
     the zero crossings of the curvature (at least ``minimum_distance`` points apart); in every piece, the extremum of
     larger magnitude is a minimum point when it is negative and a maximum point when it is positive. With
     ``track_points`` the labels of the previous call are carried over to the nearest new points (the feature keeps the
-    previous points as its state), up to ``number_of_points`` of them.
+    previous points as its state), up to ``number_of_points`` of them; a maximum that moved farther than
+    ``tracking_distance`` since the previous call loses its label.
 
     Input: ``process(curvature, contour, *, timestamp=None)``, the ``(N,)`` curvature of each point of the ``(N, 2)``
     contour (for example from ``ContourCurvature``); ``run`` takes ``(T, N)`` and ``(T, N, 2)`` recordings.
@@ -105,6 +106,10 @@ class BodyPartsFromCurvature(CoreFeature):
     track_points : bool, optional
         Keep the labels of the extrema between calls. With ``False`` each call labels its points afresh. Defaults to
         ``True``. *(live)*
+    tracking_distance : float, optional
+        Largest move between two calls, in the unit of the contour, of a maximum that keeps its label; > 0. Defaults to
+        ``0.05``, the constant of the original block, which suits a normalised contour: for a contour in pixels pass a
+        few pixels. *(live)*
 
     Notes
     -----

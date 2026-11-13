@@ -85,3 +85,21 @@ def test_kinematics_series_mode():
     block = Kinematics(dims=2, input_mode="time_series")
     result = block.process(POINT_2D[:30].T, timestamp=0.5)
     assert result.ok and result.timestamp == 0.5
+
+
+def test_body_parts_tracking_distance_and_zero_points():
+    t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
+    contour = np.c_[(10.0 + 3.0 * np.cos(5.0 * t)) * np.cos(t), (10.0 + 3.0 * np.cos(5.0 * t)) * np.sin(t)]
+    curvature = ContourCurvature().process(contour).curvature
+    moved = contour + 0.3  # every point moves 0.42: farther than the default 0.05
+    near, far = BodyPartsFromCurvature(tracking_distance=1.0), BodyPartsFromCurvature()
+    for feature in (near, far):
+        feature.process(curvature, contour)
+    assert len(near.process(curvature, moved).maximums) == 5
+    assert len(far.process(curvature, moved).maximums) == 0
+    with pytest.raises(ValueError):
+        BodyPartsFromCurvature(tracking_distance=0.0)
+    none = BodyPartsFromCurvature(number_of_points=0)  # no maxima, all the minima
+    none.process(curvature, contour)
+    result = none.process(curvature, contour)
+    assert not result.maximums and len(result.minimums) == 5

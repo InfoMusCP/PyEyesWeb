@@ -255,6 +255,7 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 | `CrossRecurrencePlot(multiple_epsilons=..., use_multiple_epsilons=...)` | development | removed: one `epsilon` for every row; `RecurrencePlot` keeps the per-row thresholds |
 | `Suddenness` output `is_sudden`; `Suddenness(method=...)` with `"quantile"` | development | removed: the outputs are `alpha`, `beta` and `gamma`, and the fit is the constrained one, so `method` is gone |
 | `CurvatureVelocityCorrelation(velocity_threshold=...)` | development | removed: the block never read it |
+| `BodyPartsFromCurvature`: the fixed tracking threshold 0.05; `number_of_points=0` refused | development | `tracking_distance` (default 0.05, in the unit of the contour); `number_of_points=0` is accepted (no maxima, all the minima), as documented |
 | `TrajectoryNonPlanarity(output_type="curvature_value")`, output `curvature`; `TrajectoryNonPlanarity(nan_value=...)` | development | removed: the output is always `curvature_radius` (the inverse of this distance has no geometric meaning); an undefined result is `INVALID_INPUT` instead of a marker value |
 | `HumanoidSimulator(...)` | development | `MassSpringSimulator(...)` (`model="humanoid"`, the default); the input `skeleton` is `joints` and `control` is `directions`; the result also holds the `directions` |
 | `HumanoidOrientations(...).process(skeleton).directions` | development | `MassSpringSimulator(units=...).process(joints).directions` |
