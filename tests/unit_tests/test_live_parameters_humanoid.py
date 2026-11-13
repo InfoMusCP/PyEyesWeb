@@ -40,8 +40,8 @@ SPRING_LAYOUT = core.SkeletonLayout([str(label) for label in REFERENCE["spring_l
 
 
 def _raw(params):
-    """The keywords of the raw block: it spells the reference direction as the core does."""
-    return {"ref_dir" if name == "reference_direction" else name: value for name, value in params.items()}
+    """The keywords of the raw block: the public names (the core uses them too)."""
+    return dict(params)
 
 
 def _positions(output):

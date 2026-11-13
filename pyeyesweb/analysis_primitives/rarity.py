@@ -174,7 +174,6 @@ class _InformationRarity(Rarity, FrameFeature, variant="information"):
     Input: one sample of ``number_of_inputs`` values per call. See ``Rarity``.
     """
     _core_class = core.motion.RarityIndex
-    _core_names = {"window": "data_memory", "measure": "type"}
     _filled = 0  # samples written to the memory since it was last empty (measure "rarity" only)
 
     def reset(self) -> None:

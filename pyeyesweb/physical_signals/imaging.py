@@ -97,7 +97,6 @@ class SilhouetteCentroids(_ImageFeature):
     [9.0, 9.0]
     """
     _core_class = _imaging.CentroidsCalc
-    _core_names = {"center_of_gravity": "cog"}
     _parts = {label: label for label in _CENTROIDS}
     _INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
     _OUTPUTS = Schema(
@@ -255,7 +254,6 @@ class Videogram(_ImageFeature):
     (3, 4, 1)
     """
     _core_class = _imaging.VideoGram
-    _core_names = {"window": "length"}
     _INPUTS = Inputs(image_input("frame", "grayscale or colour frame", channels=None))
     _OUTPUTS = Schema(Output("videogram", (None, None, None), kind=int, doc="the videogram image, channels last"))
 

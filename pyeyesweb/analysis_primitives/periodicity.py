@@ -61,7 +61,6 @@ class Periodicity(MinimumWindow, WindowedFeature, CoreFeature):
     5.0 1.0
     """
     _core_class = core.motion.PeriodicityIndex
-    _core_names = {"method": "algorithm"}
 
     def __init__(self, window: int, hop: int = 1, **params: Any):
         super().__init__(window=window, hop=hop, **params)

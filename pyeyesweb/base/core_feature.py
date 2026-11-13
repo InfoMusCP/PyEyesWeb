@@ -140,8 +140,8 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
     the listed parameters are written in metres (as EyesWeb does) and multiplied by `1000 ** power` for data in
     millimetres (power 1 for a length or a speed, 2 for an area or an energy). Data and outputs are never rescaled.
 
-    `_core_names` maps the public name of a parameter to its name in the block, where the library spells out an abbreviation
-    of the core (`{"gesture_duration": "ges_dur"}`); everything public (signature, setters, `_params`) uses the public name.
+    `_core_names` maps the public name of a parameter to its name in the block where the two differ; the core uses the
+    public names (2026-11-13), so no feature sets it today. Everything public (signature, setters, `_params`) uses the public name.
     `_hidden_params` names block parameters the wrapper does not show: it keeps them at the block's default and takes a
     parameter of its own instead (`joint_map` for the joint names of the humanoid). A feature whose parameters can be changed by a property setter calls `_set_param(name, value)`. A feature that sets its parameters after `CoreFeature.__init__` runs declares
     `_lazy_block = True`, so nothing is built until first use. A block that is not just `_core_class(**params)`
@@ -244,7 +244,7 @@ class CoreFeature(Feature, metaclass=_SealedMeta):
 
     @contextmanager
     def _public_errors(self):
-        """Inside, an error of the core that names a parameter by its core name (`amplitudeThreshold`, `ges_dur`) is
+        """Inside, an error of the core that names a parameter by its core name (`amplitudeThreshold`) is
         re-raised, same type, with its public name (`amplitude_threshold`, `gesture_duration`). Only the identifiers of the
         message that are public parameters of this feature are touched: the reverse of `_core_names`, else camelCase to snake_case."""
         try:

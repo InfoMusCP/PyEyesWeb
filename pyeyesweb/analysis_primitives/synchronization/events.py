@@ -112,7 +112,6 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     (0.67, 0.67)
     """
     _core_class = _sync.EventSynchronization
-    _core_names = {"max_lag": "tau"}
     _hidden_params = frozenset({"weighted"})  # the core's lag-weighted mode is not offered: matched pairs count 1
     _INPUTS = Inputs(_train("first_signal"), _train("second_signal"))
 
@@ -204,8 +203,6 @@ class EventSynchronizationMECS(_MECSBlock):
     (array([1.]), array([6.]))
     """
     _core_class = _sync.EventSynchronizationMECS
-    _core_names = {"number_of_inputs": "time_series_number", "number_of_event_classes": "event_class_number",
-                   "max_lag": "tau"}
 
     def _inputs(self) -> Inputs:
         return _series_inputs(self, "events of one class per channel")
@@ -349,7 +346,6 @@ class SpikeSynchronization(_SeriesBlock):
     (1.0, 0.0)
     """
     _core_class = _sync.SpikeES
-    _core_names = {"number_of_inputs": "number_of_input_trains"}
 
     def _inputs(self) -> Inputs:
         number_of_trains = int(self._param("number_of_inputs", 2))  # C++ default

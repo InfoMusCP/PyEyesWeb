@@ -138,8 +138,7 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     """
     _core_class = _sync.GeneralisedAutoCorrelation
     _finite_inputs = True
-    _core_names = {"lag": "tau", "max_lag": "tau_spread"}
-    _hidden_params = frozenset({"tau_min"})  # the lags of the curve start at 1, the block's default first lag
+    _hidden_params = frozenset({"min_lag"})  # the lags of the curve start at 1, the block's default first lag
 
     def _build_block(self, params: Optional[dict] = None) -> Any:
         params = self._params if params is None else params

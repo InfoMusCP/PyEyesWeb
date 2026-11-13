@@ -149,7 +149,6 @@ class _ReflectionSymmetry(Symmetry, variant="reflection"):
     """
 
     _core_class = core.motion.GeometricSymmetry
-    _core_names = {"pairs": "joint_pairs", "reference_point": "center_of_symmetry"}  # `_block_params` turns names into rows
 
     def __init__(self, labels: Optional[Sequence[str]] = None, skeleton: Any = None, *,
                  pairs: Optional[Sequence[Tuple[str, str]]] = None, reference_point: Optional[str] = None,
@@ -169,8 +168,8 @@ class _ReflectionSymmetry(Symmetry, variant="reflection"):
         names = {name for pair in pairs for name in pair} | ({reference} if reference is not None else set())
         if unknown := sorted(names - set(row)):
             raise ValueError(f"Symmetry: names that are not among the labels: {unknown}")
-        return {"joint_pairs": [(row[left], row[right]) for left, right in pairs],
-                "center_of_symmetry": -1 if reference is None else row[reference]}
+        return {"pairs": [(row[left], row[right]) for left, right in pairs],
+                "reference_point": -1 if reference is None else row[reference]}
 
     def _inputs(self) -> Inputs:
         return Inputs(points_input("skeleton", self._labels, "joint positions", dims=None))
@@ -195,7 +194,6 @@ class _RatioSymmetry(LabelGuard, Symmetry, variant="ratio"):
     """The ``method="ratio"`` formula of ``Symmetry``; see that class for the parameters and the outputs.
     """
     _core_class = core.motion.SymmetryIndex3D
-    _core_names = {"pairs": "couples", "aggregation": "algorithm", "output_dims": "output_type"}
     _hidden_params = frozenset({"reference_type"})  # the core translates the frame only for "label", its default
 
     def __init__(self, labels: Optional[Sequence[str]] = None, skeleton: Any = None, *,

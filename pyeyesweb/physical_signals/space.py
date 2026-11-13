@@ -68,7 +68,6 @@ class HitCellDetector(FrameFeature):
     [[0, 0], [1, 3], [0, 3]]
     """
     _core_class = core.space.HitCellDetector
-    _core_names = {"cells_along_x": "cells_x", "cells_along_y": "cells_y"}
     _unit_params = {"x_min": 1, "x_max": 1, "y_min": 1, "y_max": 1}  # lengths of the monitored area
     _INPUTS = Inputs(points_input("points", None, "2D points to locate in the grid", dims=2))
 

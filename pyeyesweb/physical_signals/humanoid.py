@@ -67,7 +67,6 @@ class _ModelInput(LabelGuard):
     _labels: Optional[Tuple[str, ...]] = None
     _dropouts = True  # missing joints and NaN rows are dropouts of the model, not bad data
     _given_map: Mapping[str, str] = {}
-    _core_names = {"reference_direction": "ref_dir"}
 
     def _input_names(self) -> Tuple[str, ...]:
         raise NotImplementedError
@@ -462,9 +461,9 @@ class _Humanoid(_Units, _Simulator, _ModelInput, MassSpringSimulator, variant=_H
         joint, so it lives as long as the simulator and is rebuilt only when the reference direction changes."""
         extractor = self.__dict__.get("_extractor_block")
         if extractor is None:
-            reference = self._block_params(self._params).get("ref_dir")
+            reference = self._block_params(self._params).get("reference_direction")
             extractor = _humanoid.HumanoidOrientationsExtractor() if reference is None else \
-                _humanoid.HumanoidOrientationsExtractor(ref_dir=reference)
+                _humanoid.HumanoidOrientationsExtractor(reference_direction=reference)
             self.__dict__["_extractor_block"] = extractor
         return extractor
 

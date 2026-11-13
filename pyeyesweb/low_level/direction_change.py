@@ -89,7 +89,6 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
 
     _ALLOWED_METRICS = ["cosine", "polygon"]
     _core_class = core.motion.DirectionChange
-    _core_names = {"number_of_subsamples": "num_subsamples"}
     _lazy_block = True
 
     def _schema(self) -> Schema:

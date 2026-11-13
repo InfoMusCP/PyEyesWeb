@@ -85,7 +85,7 @@ def test_information_rarity_is_warming_up_until_the_memory_is_full_and_the_numbe
     results = [feature.process(sample) for sample in np.abs(PAIR[:8]) % 1.0]
     assert [result.status for result in results] == [Status.WARMING_UP] * 4 + [Status.OK] * 4
     assert "of 5" in results[0].reason and "1 of" in results[0].reason
-    core_block = pyeyesweb._core.core.motion.RarityIndex(number_of_inputs=2, data_memory=5)
+    core_block = pyeyesweb._core.core.motion.RarityIndex(number_of_inputs=2, window=5)
     for sample, result in zip(np.abs(PAIR[:8]) % 1.0, results):
         assert np.array_equal(result.rarity, core_block.process(list(sample)))
     feature.reset()

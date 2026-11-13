@@ -76,7 +76,6 @@ class ScalarPeakDetector(_ScalarStream):
     The maxima are at samples 2 and 6 and the peaks are reported two samples later, at samples 4 and 8.
     """
     _core_class = _dance.ScalarPeakDetector
-    _core_names = {"window": "buffer_length"}
 
     def _schema(self) -> Schema:
         return Schema(Output("is_peak", kind=bool))

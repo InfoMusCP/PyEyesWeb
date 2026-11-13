@@ -185,7 +185,7 @@ supplies the construction, the parameters and the result of the block. Frame-wis
 | Attribute | Meaning |
 |---|---|
 | `_core_class` | the block of the core that the feature wraps |
-| `_core_names` | public parameter name to the name in the block, where the block abbreviates; everything public uses the public name |
+| `_core_names` | public parameter name to the name in the block, for a block that does not use the public name (none today); everything public uses the public name |
 | `_unit_params` | `{name: power}`: the parameters that are lengths (power 1) or areas and energies (power 2); the feature then takes `units="m"` or `"mm"` and scales the parameters, never the data or the outputs |
 | `_timed` | the feature has a time step: the wrapper turns `timestamp`, `sampling_rate` or the per-sample rule into the step in seconds and hands it to the core, which never sees timestamps |
 | `_rate_required` | a window feature that has no time axis and needs `sampling_rate` or raises at construction |

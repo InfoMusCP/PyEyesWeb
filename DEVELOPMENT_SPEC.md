@@ -160,8 +160,10 @@ Naming and signatures; `tests/unit_tests/test_naming.py` enforces the list of fo
   `gaussian_sigma_y`, `gaussian_correlation`; no EyesWeb pin abbreviations (`gesture_duration`, `quantity_of_motion`,
   `contraction_index`, `custom_amplitude`, `center_of_gravity`, `reference_direction`, inputs `first_signal` /
   `second_signal`, ...). Outputs have specific names and every boolean output is `is_<something>`.
-- **Core names.** A core-backed feature maps its public names to those of the block with `_core_names` (`CoreFeature`); the
-  core is not changed. Public signature, setters and `_params` use the public name. A parameter left at its default reads
+- **Core names.** The core uses the public names: the keywords of its bindings are the public parameter names, and the
+  TouchDesigner operators spell them without underscores (`max_lag` -> `Maxlag`). A new block is bound with the public
+  names; `_core_names` (`CoreFeature`) remains for a block that cannot follow and is empty today. Public signature,
+  setters and `_params` use the public name. A parameter left at its default reads
   back as the signature default.
 - **Choices.** `method=` picks an algorithm (`Suddenness`, `SuddennessImpulsivity`, `Periodicity`; `Symmetry` aggregates
   with `aggregation=`); `output_dims` is components versus scalar (`Symmetry`, `PointsDensity`, `Kinematics`); the core

@@ -131,9 +131,6 @@ class PositionDependingPotentials(FrameFeature):
      [-2. -2. -2.]]
     """
     _core_class = _space.PositionDependingPotentials
-    _core_names = {"window": "window_size", "gaussian_sigma_x": "std_dev_x", "gaussian_sigma_y": "std_dev_y",
-                   "gaussian_correlation": "rho", "use_custom_amplitude": "use_cust_ampl",
-                   "custom_amplitude": "cust_ampl", "use_custom_distance": "use_cust_dist", "custom_distance": "cust_dist"}
     _INPUTS = Inputs(_CELLS)
 
     def _schema(self) -> Schema:
@@ -240,7 +237,6 @@ class RegionDependingPotentials(FrameFeature):
     [ 1. -1.]
     """
     _core_class = _space.RegionDependingPotentials
-    _core_names = {"number_of_regions": "num_of_regions", "region_initial_values": "reg_init_values"}
 
     _parts = {"potential": "output_potential_matrix", "hit_regions": "output_hit_regions",
               "hit_region_indexes": "output_hit_region_indexes", "region_values": "output_region_values"}

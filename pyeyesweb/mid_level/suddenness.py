@@ -118,7 +118,7 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     )
 
     _core_class = core.motion.Suddenness
-    _hidden_params = frozenset({"algorithm"})  # the constrained fit, the block's default
+    _hidden_params = frozenset({"method"})  # the constrained fit, the block's default
     _lazy_block = True
 
     def __init__(self, window: int, hop: int = 1, *, dims: Optional[int] = None):

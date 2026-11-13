@@ -38,7 +38,7 @@ Put the class in a module of the package of the layer (`pyeyesweb/low_level/dire
 5. Implement `process` (or the private window hook of `WindowedFeature` for a window; it is never public). Return `self._result(...)` or
    `self._no_output(...)`. Do not check for NaN, missing joints or timestamps: the wrappers do.
 6. Parameters: keyword-only after `window, hop` and after the joint arguments, each annotated, with the single public spelling of the
-   concept, and `sampling_rate=None` as the default rate. Use `_unit_params`, `_timed`, `_rate_required`, `_core_names` and `_parts`
+   concept, and `sampling_rate=None` as the default rate. Use `_unit_params`, `_timed`, `_rate_required` and `_parts`
    where they apply instead of writing the logic again. Mark in the docstring which parameters are live and which structural; a
    structural parameter is one that sizes the state, and when in doubt it is structural.
 7. Export the class in the `__init__` of the layer package and in its `__all__`.

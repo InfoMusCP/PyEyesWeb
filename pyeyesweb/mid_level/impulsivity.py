@@ -88,7 +88,6 @@ class SuddennessImpulsivity(_FitMethod, _SuddennessFit, InferredDims, WindowedFe
     )
 
     _core_class = core.motion.SuddennessImpulsivity
-    _core_names = {"method": "algorithm"}
     _lazy_block = True
 
     def __init__(self, window: int, hop: int = 1, *, dims: Optional[int] = None, direction_change_epsilon: float = 0.5,
@@ -174,7 +173,6 @@ class ContractionImpulsivity(CoreFeature):
     1.5 5.0
     """
     _core_class = core.motion.ImpulsivityIndex
-    _core_names = {"gesture_duration": "ges_dur", "sampling_rate": "frames"}
     _timed = True
 
     def _block_params(self, params: dict) -> dict:

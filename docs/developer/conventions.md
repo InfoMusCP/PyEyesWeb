@@ -18,7 +18,8 @@ is a defect to fix.
 - No EyesWeb pin abbreviations as parameter, input or output names: `gesture_duration`, `quantity_of_motion`,
   `contraction_index`, `first_signal` and `second_signal` rather than the abbreviations of the blocks.
 - A boolean output is named `is_<something>`. Outputs have specific names (not `value`, `matrix` or `x`).
-- A feature that reads a name from the compiled core maps it with `_core_names`; the core is not changed to suit the Python name.
+- The compiled core and the TouchDesigner operators use the public names (an operator drops the underscores: `max_lag` is
+  `Maxlag`). A block that cannot follow maps its names with `_core_names`; no feature needs it today.
 
 ### The list of forbidden synonyms
 
