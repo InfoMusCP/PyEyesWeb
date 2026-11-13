@@ -63,7 +63,8 @@ class SilhouetteCentroids(_ImageFeature):
     ----------
     silhouette : {"full", "upper", "lower", "left", "right"}, default "full"
         The part of the body the mask shows *(structural)*: the centroids of the missing half (and the head of a left or
-        right half) are not computed. Changing it restarts the filters.
+        right half) are not computed; ``center_of_gravity`` is always the centroid of the mask (the original block
+        reported the edge of the image for a half silhouette). Changing it restarts the filters.
     filter_centroids : bool, default False
         Smooth every centroid over time, ``filtered += alpha * (new - filtered)`` *(live)*. As in EyesWeb the filter
         works on the position inside the bounding box of the silhouette, not on the movement of the box.
@@ -85,6 +86,11 @@ class SilhouetteCentroids(_ImageFeature):
     by the width and the height of the frame, dimensionless, in [0, 1]. A mask without foreground is ``INVALID_INPUT``
     (``"no foreground pixels in the silhouette"``); an empty image too (``"empty image"``). The result is otherwise ``OK``
     (no warm-up).
+
+    As in EyesWeb, the centroids are truncated to whole pixels, inside the filter too: on average they lie half a pixel
+    up and left of the true centroid, and the filtered value lags more on a growing coordinate than on a shrinking one.
+    Every non-zero pixel of the frame is foreground: threshold the mask and keep only the body (its largest connected
+    region) first, since a stray pixel moves every centroid.
 
     Examples
     --------
