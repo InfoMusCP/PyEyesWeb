@@ -47,7 +47,7 @@ the model, feed any feature that takes a labelled skeleton.
 
 ```{doctest}
 >>> import numpy as np
->>> from pyeyesweb.physical_signals import HUMANOID_JOINTS, MassSpringSimulator
+>>> from pyeyesweb.physical_signals.humanoid import HUMANOID_JOINTS, MassSpringSimulator
 >>> from pyeyesweb.low_level import KineticEnergy
 >>> simulator = MassSpringSimulator(sampling_rate=25.0)
 >>> energy = KineticEnergy(labels=list(HUMANOID_JOINTS), weights={name: 1.0 for name in HUMANOID_JOINTS}, sampling_rate=25.0)

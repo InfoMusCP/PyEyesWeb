@@ -14,7 +14,7 @@ from pyeyesweb.base.inputs import InferredDims, scalar
 from pyeyesweb.mid_level.suddenness import _Algorithm, _FitMethod, _SuddennessFit
 
 
-@describe(Layer.MID_LEVEL)
+@describe(Layer.MID_LEVEL, released=False)
 class SuddennessImpulsivity(_FitMethod, _SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     r"""Impulsivity of a trajectory: its direction change when it is also sudden, else zero.
 
@@ -76,7 +76,7 @@ class SuddennessImpulsivity(_FitMethod, _SuddennessFit, InferredDims, WindowedFe
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.mid_level import SuddennessImpulsivity
+    >>> from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
     >>> positions = np.cumsum(np.random.default_rng(0).normal(size=(40, 3)), axis=0)
     >>> record = SuddennessImpulsivity(window=20, hop=10).run(positions)
     >>> print(f"{record.impulsivity_index[19]:.2f}")
@@ -115,7 +115,7 @@ class SuddennessImpulsivity(_FitMethod, _SuddennessFit, InferredDims, WindowedFe
         return self._fit_result(alpha, timestamp, impulsivity_index=impulsivity)
 
 
-@describe(Layer.MID_LEVEL, eyesweb="Impulsivity")
+@describe(Layer.MID_LEVEL, eyesweb="Impulsivity", released=False)
 class ContractionImpulsivity(CoreFeature):
     r"""Change of the contraction index over a short, energetic gesture, per second.
 
@@ -166,7 +166,7 @@ class ContractionImpulsivity(CoreFeature):
 
     Examples
     --------
-    >>> from pyeyesweb.mid_level import ContractionImpulsivity
+    >>> from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
     >>> quantity_of_motion = [0, 0.05, 0.2, 0.3, 0.1, 0, 0]
     >>> contraction_index = [0.5, 0.5, 0.6, 0.8, 0.7, 0.5, 0.5]
     >>> record = ContractionImpulsivity(sampling_rate=25.0).run(quantity_of_motion, contraction_index)

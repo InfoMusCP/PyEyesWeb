@@ -211,7 +211,7 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
                             doc="speed or acceleration magnitude of the movement, as `input_mode` says"))
 
 
-@describe(Layer.LOW_LEVEL)
+@describe(Layer.LOW_LEVEL, released=False)
 class Harmonicity(_SpeedProfileMetric):
     r"""Harmonicity of a speed profile: 1 for a single bell-shaped speed peak, lower for an irregular speed.
 
@@ -249,7 +249,7 @@ class Harmonicity(_SpeedProfileMetric):
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.low_level import Harmonicity
+    >>> from pyeyesweb.low_level.smoothness import Harmonicity
     >>> t = np.arange(100) / 100.0
     >>> bell = np.sin(np.pi * t) ** 2  # one smooth bell-shaped speed peak
     >>> feature = Harmonicity(window=100, sampling_rate=100.0)

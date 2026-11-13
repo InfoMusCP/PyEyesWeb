@@ -18,7 +18,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.data_models.recorder import Recorder  # noqa: E402
 from pyeyesweb.data_models.results import Result, Schema, Status  # noqa: E402
-from pyeyesweb.mid_level import PositionDependingPotentials, RegionDependingPotentials  # noqa: E402
+from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials  # noqa: E402
 from pyeyesweb.physical_signals import HitCellDetector  # noqa: E402
 
 MASK = np.array([[0, 0, 1, 2]])

@@ -229,7 +229,7 @@ _HUMANOID = "humanoid"
 _ModelArgument = Union[str, MassSpringModel, os.PathLike]
 
 
-@describe(Layer.PHYSICAL_SIGNALS, eyesweb="HumanoidSimulator (MassSpringHumanoidSimulator), GenericModelSimulator")
+@describe(Layer.PHYSICAL_SIGNALS, eyesweb="HumanoidSimulator (MassSpringHumanoidSimulator), GenericModelSimulator", released=False)
 class MassSpringSimulator(VariantFeature, CoreFeature):
     r"""A physically based body of masses and springs that follows a captured skeleton.
 
@@ -352,7 +352,7 @@ class MassSpringSimulator(VariantFeature, CoreFeature):
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.physical_signals import MassSpringModel, MassSpringSimulator
+    >>> from pyeyesweb.physical_signals.humanoid import MassSpringModel, MassSpringSimulator
     >>> simulator = MassSpringSimulator(sampling_rate=25.0)
     >>> result = simulator.process({"head": (0.0, 1.7, 0.0)})    # a lone joint: the body hangs from it, in its T-pose
     >>> result.joints.shape, result.directions.shape

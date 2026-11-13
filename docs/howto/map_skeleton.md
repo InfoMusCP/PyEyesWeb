@@ -115,7 +115,8 @@ Describe the fields in turn.
 frame, one row per joint, and `parameters` shows what they took from the skeleton.
 
 ```{doctest}
->>> from pyeyesweb.low_level import KineticEnergy, MotionNoiseDetector, PointsDensity
+>>> from pyeyesweb.low_level import KineticEnergy, PointsDensity
+>>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 >>> energy = KineticEnergy(skeleton=upper_body, sampling_rate=100.0)
 >>> energy.inputs
 Inputs(skeleton: points (9, 3) - joint positions or velocities)
@@ -210,7 +211,7 @@ has its own joint names (`pyeyesweb.physical_signals.HUMANOID_JOINTS`, 21 names,
 the model's name. It is the only class that takes `joint_map`.
 
 ```{doctest}
->>> from pyeyesweb.physical_signals import HUMANOID_JOINTS, MassSpringSimulator
+>>> from pyeyesweb.physical_signals.humanoid import HUMANOID_JOINTS, MassSpringSimulator
 >>> HUMANOID_JOINTS[:4]
 ('head', 'left_ankle', 'left_elbow', 'left_foot')
 >>> simulator = MassSpringSimulator(joint_map={"head": "Head", "neck": "Neck"}, sampling_rate=25.0)

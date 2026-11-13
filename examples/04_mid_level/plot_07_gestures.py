@@ -46,7 +46,8 @@ print(trial.positions.shape, "frames x joints x coordinates | duration", trial.d
 # joint that decides (the alphabetically last name) jump about at random, as with a tracker that loses a marker. The flag is passed directly to the segmenter
 # (``True`` means noise: no gesture can start). The pipeline is skeleton, energy, noise flag, segmenter:
 
-from pyeyesweb.low_level import KineticEnergy, MotionNoiseDetector
+from pyeyesweb.low_level import KineticEnergy
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.mid_level import GestureSegmenter
 
 energy = KineticEnergy(skeleton=trial.skeleton, sampling_rate=100).run(trial.positions, timestamps=time)
@@ -164,7 +165,7 @@ ax.set_title("Each stem appears when a phase ends and says how long it lasted")
 # is not negative). It takes **one** position per call, and a window of ``window`` samples moves by ``hop`` samples. Here,
 # windows of half a second every 0.1 s on the right hand:
 
-from pyeyesweb.mid_level import Suddenness
+from pyeyesweb.mid_level.suddenness import Suddenness
 
 
 def is_sudden(record):
@@ -214,7 +215,7 @@ for window in (25, 50, 100, 200):
 # same trajectory: the index is between 0 and 1 and is 0 when the window is not sudden or the path does not turn. The
 # parameter ``direction_change_epsilon`` sets how close to a right angle a turn must be to count.
 
-from pyeyesweb.mid_level import SuddennessImpulsivity
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 
 impulsivity = SuddennessImpulsivity(window=50, hop=10).run(hand, timestamps=time)
 print(impulsivity)
@@ -246,7 +247,7 @@ axes[0].set_title("SuddennessImpulsivity of the right hand")
 # comparable) and clipped to [0, 1], and 0 outside the gestures.
 
 from pyeyesweb.low_level import BoundingBoxFilledArea
-from pyeyesweb.mid_level import ContractionImpulsivity
+from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 
 quantity = np.clip(np.nan_to_num(gestures.smoothed_intensity) / 20, 0, 1) * gestures.is_gesturing
 contraction = BoundingBoxFilledArea().run(trial.positions).contraction_index
@@ -326,7 +327,7 @@ print("hit cells:", cells.shape, "| first:", cells[0, 0], "| rows", cells[..., 0
 # ``increment_factor`` and every other cell loses ``decrement_factor``, a leaky count in which old visits fade; the Gaussian
 # type has no memory and draws a spot on the present cell.
 
-from pyeyesweb.mid_level import PositionDependingPotentials
+from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials
 
 kinds = {
     "occupation rates (% of time)": dict(potential_type="occupation_rates"),
@@ -360,7 +361,7 @@ fig.suptitle("Potential of each floor cell (x to the right, z upward; red + is t
 # with the region of each cell. It keeps one value per region. ``parts`` chooses which outputs are produced; here the cell
 # matrix and the value of each region. We split the room in four vertical bands, from left to right.
 
-from pyeyesweb.mid_level import RegionDependingPotentials
+from pyeyesweb.mid_level.space_occupation import RegionDependingPotentials
 
 mask = np.tile(np.minimum(np.arange(14) // 4, 3), (6, 1))
 zones = RegionDependingPotentials(cells_along_x=14, cells_along_y=6, potential_type="occupation_rates_linear", mask=mask,

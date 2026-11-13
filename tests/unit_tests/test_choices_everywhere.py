@@ -8,7 +8,7 @@ import pytest
 
 pytest.importorskip("pyeyesweb._core")
 
-from pyeyesweb import catalog  # noqa: E402
+from every_feature import every_feature as catalog  # noqa: E402
 from pyeyesweb.base.choices import choice_name  # noqa: E402
 
 
@@ -48,7 +48,7 @@ def _rows(rows, cls, skip=(), only=None):
 
 
 def _model():
-    from pyeyesweb.physical_signals import MassSpringModel
+    from pyeyesweb.physical_signals.humanoid import MassSpringModel
 
     model = MassSpringModel()
     model.add_mass("root", 1e10)

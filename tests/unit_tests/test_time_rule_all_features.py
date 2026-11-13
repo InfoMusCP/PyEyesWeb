@@ -17,7 +17,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from test_contract_all_features import NAMES, factory_and_recordings  # noqa: E402
 
-from pyeyesweb import catalog  # noqa: E402
+from every_feature import every_feature as catalog  # noqa: E402
 from pyeyesweb.data_models import Status  # noqa: E402
 
 TIMED = [info.name for info in catalog() if getattr(info.cls, "_timed", False)]

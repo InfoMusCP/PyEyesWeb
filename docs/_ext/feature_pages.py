@@ -53,7 +53,7 @@ def load_families(path, entries):
 
 
 def _model():
-    from pyeyesweb.physical_signals import MassSpringModel
+    from pyeyesweb.physical_signals.humanoid import MassSpringModel
     model = MassSpringModel()
     model.add_mass("a", 1.0, (0, 0, 0))
     model.add_mass("b", 1.0, (0.3, 0, 0))

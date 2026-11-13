@@ -2,10 +2,8 @@ import numpy as np
 
 from pyeyesweb.data_models.results import Status
 from pyeyesweb.low_level import DirectionChange
-from pyeyesweb.mid_level import (
-    Suddenness,
-    SuddennessImpulsivity,
-)
+from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 
 
 def _series(window_data):

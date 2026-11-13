@@ -102,7 +102,7 @@ print("clip_values=False:", verdict.status.name, "-", verdict.reason)
 # translation of the person is not followed. To see it work we build a synthetic skeleton: the **rest pose** of the model (the
 # body standing, the upper arms stretched sideways, the pose it starts from) with the left forearm swinging about the elbow.
 
-from pyeyesweb.physical_signals import HUMANOID_BONES, HUMANOID_JOINTS, MassSpringSimulator
+from pyeyesweb.physical_signals.humanoid import HUMANOID_BONES, HUMANOID_JOINTS, MassSpringSimulator
 
 RATE = 25.0  # frames per second of the synthetic skeleton
 tpose = MassSpringSimulator(sampling_rate=RATE).process({"head": (0.0, 0.0, 0.0)}).joints  # (21, 3) in metres
@@ -287,7 +287,7 @@ fig_real.tight_layout()
 # bone. Here is a chain of three bones of length 1 hanging from a heavy root (the unit is the one of your data: a model has
 # no unit of its own, so ``units`` only names it).
 
-from pyeyesweb.physical_signals import MassSpringModel
+from pyeyesweb.physical_signals.humanoid import MassSpringModel
 
 model = MassSpringModel()
 model.add_mass("root", 1e10, (0.0, 0.0, 0.0))

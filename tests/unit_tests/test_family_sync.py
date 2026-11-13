@@ -4,10 +4,8 @@
 import numpy as np
 import pytest
 
-from pyeyesweb.analysis_primitives.synchronization import (
-    PartialRecurrenceSynchronization, CrossRecurrencePlot, NonlinearInterdependence,
-    EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, RecurrencePlot, SpikeSynchronization, PhaseLockingValue
-)
+from pyeyesweb.analysis_primitives.synchronization import PartialRecurrenceSynchronization, CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, RecurrencePlot, PhaseLockingValue
+from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence, SpikeSynchronization
 from pyeyesweb.data_models.inputs import InputKind
 from pyeyesweb.data_models.results import Status
 

@@ -145,7 +145,7 @@ fig.tight_layout()
 # ``distance`` is ``1 - degree``. It takes the trains in two forms. In ``mode="binary"`` (the default) each sample has one
 # channel per train, as above; here windows of 2 s.
 
-from pyeyesweb.analysis_primitives import SpikeSynchronization
+from pyeyesweb.analysis_primitives.synchronization.events import SpikeSynchronization
 
 fig, ax = plt.subplots(figsize=(8, 3))
 for name in trials:

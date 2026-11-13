@@ -213,7 +213,7 @@ joint names (`pyeyesweb.physical_signals.HUMANOID_JOINTS` for the humanoid, the 
 their own. It is the only class that takes `joint_map`.
 
 ```{doctest}
->>> from pyeyesweb.physical_signals import MassSpringSimulator
+>>> from pyeyesweb.physical_signals.humanoid import MassSpringSimulator
 >>> simulator = MassSpringSimulator(joint_map={"head": "Head", "neck": "Neck"}, sampling_rate=25.0)
 >>> simulator.process({"Head": (0.0, 1.7, 0.0), "Neck": (0.0, 1.5, 0.0)}).joints.shape
 (21, 3)

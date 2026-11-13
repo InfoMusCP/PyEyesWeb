@@ -5,8 +5,10 @@ import pytest
 
 from pyeyesweb.data_models.inputs import InputKind
 from pyeyesweb.data_models.results import Status
-from pyeyesweb.low_level import MotionNoiseDetector
-from pyeyesweb.mid_level import GestureSegmenter, Suddenness, SuddennessImpulsivity
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
+from pyeyesweb.mid_level import GestureSegmenter
+from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 
 FITS = [Suddenness, SuddennessImpulsivity]
 

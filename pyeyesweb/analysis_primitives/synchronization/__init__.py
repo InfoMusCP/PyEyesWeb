@@ -2,15 +2,12 @@
 
 from .phase import PhaseLockingValue
 from .correlation import PartialRecurrenceSynchronization, GeneralisedAutoCorrelation
-from .events import (
-    EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization,
-)
+from .events import EventSynchronization, EventSynchronizationMECS
 from .recurrence import RecurrencePlot, CrossRecurrencePlot
 
 __all__ = [
-    "PhaseLockingValue", "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation",
-    "EventSynchronization", "EventSynchronizationMECS", "NonlinearInterdependence", "SpikeSynchronization",
-    "RecurrencePlot", "CrossRecurrencePlot",
+    "PhaseLockingValue", "PartialRecurrenceSynchronization", "GeneralisedAutoCorrelation", "EventSynchronization",
+    "EventSynchronizationMECS", "RecurrencePlot", "CrossRecurrencePlot",
 ]
 
 

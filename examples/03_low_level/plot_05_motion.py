@@ -112,7 +112,8 @@ fig.tight_layout()
 # The smooth one follows the minimum-jerk profile, a single bell-shaped speed peak; the jerky one covers each leg in three
 # short steps with pauses, and has a small tremor at 6 Hz and more measurement noise.
 
-from pyeyesweb.low_level import Harmonicity, LogDimensionlessJerk, SpectralArcLength, SubmovementCount
+from pyeyesweb.low_level import LogDimensionlessJerk, SpectralArcLength, SubmovementCount
+from pyeyesweb.low_level.smoothness import Harmonicity
 
 
 def minimum_jerk(s):
@@ -322,7 +323,7 @@ fig.tight_layout()
 # EyesWeb block, see the docstring). Here the names are Head, Left_Hand and Right_Hand, so Right_Hand decides. We add a
 # random jump of a few centimetres to trial 21, once on Right_Hand and once on Head.
 
-from pyeyesweb.low_level import MotionNoiseDetector
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 
 reactive = load_qualisys_trial(21, start=0, stop=12).to_units("m")
 watched = ["Head", "Left_Hand", "Right_Hand"]

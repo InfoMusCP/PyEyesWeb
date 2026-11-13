@@ -60,7 +60,7 @@ class MassSpringModel:
 
     Examples
     --------
-    >>> from pyeyesweb.physical_signals import MassSpringModel
+    >>> from pyeyesweb.physical_signals.humanoid import MassSpringModel
     >>> model = MassSpringModel(name="rod")
     >>> model.add_mass("root", 1e10)
     >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))

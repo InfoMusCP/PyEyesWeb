@@ -166,7 +166,7 @@ the output, and the wrapper converts at the boundary. A body run in metres and t
 motion, to rounding:
 
 ```{doctest}
->>> from pyeyesweb.physical_signals import MassSpringSimulator
+>>> from pyeyesweb.physical_signals.humanoid import MassSpringSimulator
 >>> pose = MassSpringSimulator(sampling_rate=25.0).process({"head": (0.0, 1.7, 0.0)}).joints      # metres
 >>> in_metres = MassSpringSimulator(sampling_rate=25.0)
 >>> in_millimetres = MassSpringSimulator(sampling_rate=25.0, units="mm")

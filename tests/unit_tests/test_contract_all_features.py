@@ -24,25 +24,22 @@ from imaging_inputs import silhouette
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from pyeyesweb import catalog  # noqa: E402
+from every_feature import every_feature as catalog  # noqa: E402
 from pyeyesweb.analysis_primitives import (  # noqa: E402
     BinaryPulsesRegularity, MultiScaleEntropy, Periodicity, Rarity, SampleEntropy
 )
-from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation,
-    NonlinearInterdependence, PhaseLockingValue, RecurrencePlot, SpikeSynchronization)
+from pyeyesweb.analysis_primitives.synchronization import CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, PhaseLockingValue, RecurrencePlot  # noqa: E402
+from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence, SpikeSynchronization
 from pyeyesweb.data_models import InputKind  # noqa: E402
-from pyeyesweb.low_level import (  # noqa: E402
-    BodyPartsFromCurvature, CurvatureVelocityCorrelation, DirectionChange, Harmonicity, Kinematics, KineticEnergy,
-    LogDimensionlessJerk, MotionNoiseDetector, SpectralArcLength, SubmovementCount, Symmetry
-)
-from pyeyesweb.mid_level import (  # noqa: E402
-    GestureSegmenter, PositionDependingPotentials, RegionDependingPotentials, Suddenness, SuddennessImpulsivity
-)
-from pyeyesweb.physical_signals import (  # noqa: E402
-    HitCellDetector, MassSpringSimulator,
-    SilhouetteCentroids, Videogram
-)
+from pyeyesweb.low_level import BodyPartsFromCurvature, CurvatureVelocityCorrelation, DirectionChange, Kinematics, KineticEnergy, LogDimensionlessJerk, SpectralArcLength, SubmovementCount, Symmetry  # noqa: E402
+from pyeyesweb.low_level.smoothness import Harmonicity
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
+from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
+from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials
+from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
+from pyeyesweb.physical_signals import HitCellDetector, SilhouetteCentroids, Videogram  # noqa: E402
+from pyeyesweb.physical_signals.humanoid import MassSpringSimulator
 
 FRAME_COUNT = 40
 LABELS = ["torso", "left_hip", "right_hip"]

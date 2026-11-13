@@ -123,8 +123,9 @@ _DEFAULT_TIMESCALE = {
 }
 
 
-def describe(layer: Layer, *, timescale: Optional[Timescale] = None, eyesweb: Optional[str] = None):
-    """Class decorator: attach ``LAYER``, ``TIMESCALE`` and ``EYESWEB_BLOCK`` to a feature class.
+def describe(layer: Layer, *, timescale: Optional[Timescale] = None, eyesweb: Optional[str] = None,
+             released: bool = True):
+    """Class decorator: attach ``LAYER``, ``TIMESCALE``, ``EYESWEB_BLOCK`` and ``RELEASED`` to a feature class.
 
     Parameters
     ----------
@@ -134,12 +135,16 @@ def describe(layer: Layer, *, timescale: Optional[Timescale] = None, eyesweb: Op
         Defaults to the timescale of the layer.
     eyesweb : str, optional
         The EyesWeb block the feature comes from, if any.
+    released : bool, optional
+        ``False`` for a feature kept in the code but held back from the release while it is investigated: its layer
+        package does not export it, so it is not in ``catalog()`` (default ``True``).
     """
 
     def apply(cls: Type) -> Type:
         cls.LAYER = layer
         cls.TIMESCALE = timescale or _DEFAULT_TIMESCALE[layer]
         cls.EYESWEB_BLOCK = eyesweb
+        cls.RELEASED = released
         return cls
 
     return apply
@@ -207,7 +212,7 @@ def catalog(layer: Optional[Layer] = None) -> List[FeatureInfo]:
     --------
     >>> from pyeyesweb import Layer, catalog
     >>> features = catalog()
-    >>> len(features) > 40, len(catalog(Layer.LOW_LEVEL)) < len(features)
+    >>> len(features) > 30, len(catalog(Layer.LOW_LEVEL)) < len(features)
     (True, True)
     >>> info = next(info for info in features if info.name == "KineticEnergy")
     >>> info.layer.name, info.timescale.value

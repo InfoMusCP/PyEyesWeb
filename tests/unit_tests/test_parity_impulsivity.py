@@ -28,7 +28,8 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import DirectionChange  # noqa: E402
-from pyeyesweb.mid_level import ContractionImpulsivity, Suddenness, SuddennessImpulsivity  # noqa: E402
+from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity, SuddennessImpulsivity  # noqa: E402
+from pyeyesweb.mid_level.suddenness import Suddenness  # noqa: E402
 
 
 @pytest.mark.parametrize("frames", range(0, 9))

@@ -12,9 +12,8 @@ from test_contract_all_features import NAMES, factory_and_recordings  # noqa: E4
 from test_live_validation_all_features import ACCEPTS_NEGATIVE, CASES  # noqa: E402
 
 from pyeyesweb.data_models import Output, Recorder, Schema  # noqa: E402
-from pyeyesweb.low_level import (  # noqa: E402
-    Kinematics, KineticEnergy, MotionNoiseDetector, PointsDensity, SpectralArcLength, Symmetry
-)
+from pyeyesweb.low_level import Kinematics, KineticEnergy, PointsDensity, SpectralArcLength, Symmetry  # noqa: E402
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 
 # core messages that name no parameter at all (the check says what is wrong in words)
 UNNAMED = {"EventSynchronizationMECS.number_of_inputs", "SpikeSynchronization.number_of_inputs"}

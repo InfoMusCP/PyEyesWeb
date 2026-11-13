@@ -25,7 +25,7 @@ from humanoid_inputs import CHAIN_XML, REFERENCE, forearm  # noqa: E402
 from live_param_suite import CHANGE_AT, NOTE, check_invalid, check_structural, feed  # noqa: E402
 
 from pyeyesweb._core import core  # noqa: E402
-from pyeyesweb.physical_signals import HUMANOID_JOINTS, MassSpringModel, MassSpringSimulator  # noqa: E402
+from pyeyesweb.physical_signals.humanoid import HUMANOID_JOINTS, MassSpringModel, MassSpringSimulator  # noqa: E402
 
 RAW = core.humanoid
 DT = 0.04

@@ -62,7 +62,8 @@ Two trajectories of 20 steps along a line illustrate the classification. The fir
 fast and steady, with three brief stops:
 
 ```{doctest}
->>> from pyeyesweb.mid_level import Suddenness, SuddennessImpulsivity
+>>> from pyeyesweb.mid_level.suddenness import Suddenness
+>>> from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 >>> rng = np.random.default_rng(0)
 >>> n = 20
 >>> def corner(speeds, turn=True):
@@ -152,7 +153,7 @@ In the example a short energetic gesture of five frames contracts the body from 
 sixth frame, and the index is the range 0.3 over $5 / 25 = 0.2$ s, that is 1.5 per second:
 
 ```{doctest}
->>> from pyeyesweb.mid_level import ContractionImpulsivity
+>>> from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 >>> quantity_of_motion = [0, 0.05, 0.2, 0.3, 0.1, 0, 0]
 >>> contraction_index = [0.5, 0.5, 0.6, 0.8, 0.7, 0.5, 0.5]
 >>> record = ContractionImpulsivity(sampling_rate=25.0).run(quantity_of_motion, contraction_index)

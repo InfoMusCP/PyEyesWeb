@@ -19,11 +19,8 @@ from pyeyesweb import physical_signals as ps  # noqa: E402
 from pyeyesweb.data_models.inputs import InputKind  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import TrajectoryNonPlanarity  # noqa: E402
-from pyeyesweb.low_level import (  # noqa: E402
-    DirectionChange, Equilibrium, EllipsoidSphericity, Kinematics, CurvatureVelocityCorrelation, SpectralArcLength,
-    LogDimensionlessJerk, Harmonicity, SubmovementCount,
-    Symmetry, TriangleSymmetry
-)
+from pyeyesweb.low_level import DirectionChange, Equilibrium, EllipsoidSphericity, Kinematics, CurvatureVelocityCorrelation, SpectralArcLength, LogDimensionlessJerk, SubmovementCount, Symmetry, TriangleSymmetry  # noqa: E402
+from pyeyesweb.low_level.smoothness import Harmonicity
 
 SPEED_PROFILE_METRICS = tuple(functools.partial(metric, sampling_rate=50.0)  # the rate has no default
                               for metric in (SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount))

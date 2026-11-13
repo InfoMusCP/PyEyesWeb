@@ -53,7 +53,7 @@ class _FitMethod:
         self._set_param("method", coerce_enum(value, _ALGORITHMS, "method"))
 
 
-@describe(Layer.MID_LEVEL)
+@describe(Layer.MID_LEVEL, released=False)
 class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     r"""Suddenness of a trajectory from a stable-distribution fit of its speed distribution.
 
@@ -104,7 +104,7 @@ class Suddenness(_SuddennessFit, InferredDims, WindowedFeature, CoreFeature):
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.mid_level import Suddenness
+    >>> from pyeyesweb.mid_level.suddenness import Suddenness
     >>> positions = np.cumsum(np.random.default_rng(0).normal(size=(40, 3)), axis=0)
     >>> record = Suddenness(window=20, hop=10).run(positions)
     >>> print(f"{record.alpha[19]:.2f} {record.beta[19]:.2f}")

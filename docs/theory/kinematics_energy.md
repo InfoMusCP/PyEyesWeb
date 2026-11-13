@@ -245,7 +245,7 @@ valid on every call. Two quirks of the original block are kept: with several joi
 counts (whatever the order of `labels`; this is the behaviour of the underlying EyesWeb block, only one joint decides), and the flag stays false until 14 speeds have been seen. Corrected in the core: `reset()` clears the speed windows.
 
 ```{doctest}
->>> from pyeyesweb.low_level import MotionNoiseDetector
+>>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 >>> rng = np.random.default_rng(0)
 >>> jumping = rng.normal(scale=0.3, size=(40, 1, 3))                  # a joint that jumps about
 >>> feature = MotionNoiseDetector(labels=["hand"], sampling_rate=50.0)

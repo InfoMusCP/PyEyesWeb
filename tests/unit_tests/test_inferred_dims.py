@@ -3,7 +3,8 @@ import numpy as np
 import pytest
 
 from pyeyesweb.low_level import Kinematics
-from pyeyesweb.mid_level import Suddenness, SuddennessImpulsivity
+from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 
 FEATURES = [Suddenness, SuddennessImpulsivity]
 WINDOW = 10

@@ -15,8 +15,8 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    EventSynchronization, EventSynchronizationMECS, SpikeSynchronization)
+from pyeyesweb.analysis_primitives.synchronization import EventSynchronization, EventSynchronizationMECS  # noqa: E402
+from pyeyesweb.analysis_primitives.synchronization.events import SpikeSynchronization
 
 
 def pair(lag, length=100, max_lag=3):

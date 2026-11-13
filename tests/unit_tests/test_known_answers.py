@@ -9,10 +9,10 @@ pytest.importorskip("pyeyesweb._core")
 
 from pyeyesweb.analysis_primitives import Rarity  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
-from pyeyesweb.low_level import (  # noqa: E402
-    BoundingBoxFilledArea, EllipsoidSphericity, Harmonicity, LogDimensionlessJerk, SpectralArcLength,
-    SubmovementCount, Symmetry)
-from pyeyesweb.mid_level import ContractionImpulsivity, Suddenness  # noqa: E402
+from pyeyesweb.low_level import BoundingBoxFilledArea, EllipsoidSphericity, LogDimensionlessJerk, SpectralArcLength, SubmovementCount, Symmetry  # noqa: E402
+from pyeyesweb.low_level.smoothness import Harmonicity
+from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity  # noqa: E402
+from pyeyesweb.mid_level.suddenness import Suddenness  # noqa: E402
 
 FS = 50.0
 

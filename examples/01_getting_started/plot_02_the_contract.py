@@ -119,7 +119,7 @@ except ValueError as error:
 # * ``NO_OUTPUT``: between two windows (``hop``);
 # * ``INVALID_INPUT``: the sample was not data (next section).
 
-from pyeyesweb.mid_level import Suddenness
+from pyeyesweb.mid_level.suddenness import Suddenness
 
 suddenness = Suddenness(window=8, hop=3)
 rows = []

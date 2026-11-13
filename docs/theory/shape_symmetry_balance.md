@@ -195,7 +195,7 @@ cells defined by a mask (for example the zones of a stage), with linear or expon
 
 ```{doctest}
 >>> from pyeyesweb.physical_signals import HitCellDetector
->>> from pyeyesweb.mid_level import PositionDependingPotentials
+>>> from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials
 >>> detector = HitCellDetector(cells_along_x=4, cells_along_y=2)
 >>> potentials = PositionDependingPotentials(cells_along_x=4, cells_along_y=2, potential_type="occupation_rates")
 >>> path = [[0.1, 0.1], [0.1, 0.1], [0.4, 0.2], [0.9, 0.7]]       # a dancer who mostly stays on the left

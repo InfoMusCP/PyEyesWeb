@@ -11,8 +11,8 @@ from pyeyesweb.data_models import InputKind, Recorder, Status, WindowedFeature
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.analysis_primitives import Periodicity  # noqa: E402
-from pyeyesweb.low_level import (  # noqa: E402
-    Harmonicity, KineticEnergy, LogDimensionlessJerk, SpectralArcLength, SubmovementCount)
+from pyeyesweb.low_level import KineticEnergy, LogDimensionlessJerk, SpectralArcLength, SubmovementCount  # noqa: E402
+from pyeyesweb.low_level.smoothness import Harmonicity
 
 LABELS = ["a", "b", "c"]
 RNG = np.random.default_rng(0)

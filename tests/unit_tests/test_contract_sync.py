@@ -13,10 +13,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
-from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    PartialRecurrenceSynchronization, CrossRecurrencePlot, EventSynchronization, NonlinearInterdependence,
-    EventSynchronizationMECS, GeneralisedAutoCorrelation,
-    RecurrencePlot, SpikeSynchronization, PhaseLockingValue)
+from pyeyesweb.analysis_primitives.synchronization import PartialRecurrenceSynchronization, CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, RecurrencePlot, PhaseLockingValue  # noqa: E402
+from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence, SpikeSynchronization
 from pyeyesweb.data_models import InputKind, Status  # noqa: E402
 
 RNG = np.random.default_rng(0)

@@ -8,7 +8,7 @@ import pytest
 
 from pyeyesweb.data_models.results import Status
 from pyeyesweb.low_level import KineticEnergy, PointsDensity, Symmetry
-from pyeyesweb.low_level import MotionNoiseDetector
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.skeletons import KINECT_V2, MEDIAPIPE, OPENPOSE, QUALISYS_SPORT, SKELETON_TODO, SKELETONS, Skeleton, \
     get_skeleton
 

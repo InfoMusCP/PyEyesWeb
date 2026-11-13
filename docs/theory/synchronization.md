@@ -43,7 +43,7 @@ correction of the core is that this threshold used an exclusive-or instead of th
 value is not finite.
 
 ```{doctest}
->>> from pyeyesweb.analysis_primitives import NonlinearInterdependence
+>>> from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence
 >>> rng = np.random.default_rng(5)
 >>> x = rng.normal(size=100)
 >>> dependent = NonlinearInterdependence(window=100, neighbours=3).run(x, x ** 3)             # a nonlinear function of x
@@ -153,7 +153,7 @@ and nothing is carried from one call to the next; it is `OK` for every call. The
 degree and the distance in binary mode and the use of distinct spike positions instead of all spikes in the mean.
 
 ```{doctest}
->>> from pyeyesweb.analysis_primitives import SpikeSynchronization
+>>> from pyeyesweb.analysis_primitives.synchronization.events import SpikeSynchronization
 >>> trains = np.zeros((50, 2))
 >>> trains[[5, 20, 35], 0] = 1
 >>> trains[[5, 21, 40], 1] = 1

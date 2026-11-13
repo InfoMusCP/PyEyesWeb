@@ -15,9 +15,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from contract_suite import check_feature_contract  # noqa: E402
 
 from pyeyesweb.data_models import InputKind, Status  # noqa: E402
-from pyeyesweb.low_level import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import (ContractionImpulsivity, GestureSegmenter, MotionDuration,  # noqa: E402
-                                 Suddenness, SuddennessImpulsivity)
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
+from pyeyesweb.mid_level import GestureSegmenter, MotionDuration  # noqa: E402
+from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity, SuddennessImpulsivity
+from pyeyesweb.mid_level.suddenness import Suddenness
 
 RNG = np.random.default_rng(0)
 LABELS = ["head", "left_hand", "right_hand"]

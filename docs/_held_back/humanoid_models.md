@@ -66,8 +66,8 @@ followed. With `model=` a `MassSpringModel`, also loaded from an EyesWeb XML fil
 
 ```{doctest}
 >>> import numpy as np
->>> from pyeyesweb.physical_signals import HUMANOID_BONES, HUMANOID_JOINTS
->>> from pyeyesweb.physical_signals import MassSpringSimulator
+>>> from pyeyesweb.physical_signals.humanoid import HUMANOID_BONES, HUMANOID_JOINTS
+>>> from pyeyesweb.physical_signals.humanoid import MassSpringSimulator
 >>> len(HUMANOID_JOINTS), len(HUMANOID_BONES)
 (21, 20)
 >>> tpose = MassSpringSimulator(sampling_rate=25.0).process({"head": (0.0, 0.0, 0.0)}).joints
@@ -106,7 +106,7 @@ which is the lag of the simulated body behind the captured one.
 
    import matplotlib.pyplot as plt
    import numpy as np
-   from pyeyesweb.physical_signals import MassSpringModel, MassSpringSimulator
+   from pyeyesweb.physical_signals.humanoid import MassSpringModel, MassSpringSimulator
 
    model = MassSpringModel()
    model.add_mass("root", 1e10)
@@ -133,7 +133,7 @@ which is the lag of the simulated body behind the captured one.
 Numerically, the angle of the rod after 0.05, 0.1, 0.2, 0.5 and 1 s:
 
 ```{doctest}
->>> from pyeyesweb.physical_signals import MassSpringModel
+>>> from pyeyesweb.physical_signals.humanoid import MassSpringModel
 >>> model = MassSpringModel()
 >>> model.add_mass("root", 1e10)
 >>> model.add_mass("tip", 1.0, (1.0, 0.0, 0.0))

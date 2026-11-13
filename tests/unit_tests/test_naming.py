@@ -44,7 +44,7 @@ def test_no_one_character_public_parameter_of_a_feature_or_of_the_core():
     import pytest
 
     pytest.importorskip("pyeyesweb._core")
-    from pyeyesweb import catalog
+    from every_feature import every_feature as catalog
     from pyeyesweb._core import core
     from pyeyesweb.base.core_feature import _SIGNATURE_PARAM
 
@@ -98,7 +98,7 @@ def _declared():
     pytest.importorskip("pyeyesweb._core")
     from test_contract_all_features import NAMES, factory_and_recordings
 
-    from pyeyesweb import catalog
+    from every_feature import every_feature as catalog
     names = []
     for info in catalog():
         names += [(info.name, "parameter", name) for name in inspect.signature(info.cls).parameters]
@@ -130,7 +130,7 @@ def test_sampling_rate_has_no_default_rate_anywhere():
     import pytest
 
     pytest.importorskip("pyeyesweb._core")
-    from pyeyesweb import catalog
+    from every_feature import every_feature as catalog
     offenders = [info.name for info in catalog() if "sampling_rate" in inspect.signature(info.cls).parameters
                  and inspect.signature(info.cls).parameters["sampling_rate"].default is not None]
     assert not offenders, offenders
@@ -163,7 +163,7 @@ def test_the_speed_profile_metrics_need_a_rate_and_accept_a_one_element_array():
     import pytest
 
     pytest.importorskip("pyeyesweb._core")
-    from pyeyesweb.low_level import Harmonicity
+    from pyeyesweb.low_level.smoothness import Harmonicity
     with pytest.raises(ValueError, match="sampling_rate"):
         Harmonicity()
     feature = Harmonicity(window=10, sampling_rate=50.0)

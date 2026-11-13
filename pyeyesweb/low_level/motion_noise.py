@@ -12,7 +12,7 @@ from pyeyesweb.base.labels import LabelGuard
 from pyeyesweb.skeletons import with_skeleton
 
 
-@describe(Layer.LOW_LEVEL, eyesweb="GestureSegmenter (IsUserMotionRandomic2)")
+@describe(Layer.LOW_LEVEL, eyesweb="GestureSegmenter (IsUserMotionRandomic2)", released=False)
 class MotionNoiseDetector(LabelGuard, FrameFeature):
     r"""Noise test of the skeleton motion: whether the motion is random, with jumpy speeds.
 
@@ -63,7 +63,7 @@ class MotionNoiseDetector(LabelGuard, FrameFeature):
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.low_level import MotionNoiseDetector
+    >>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
     >>> rng = np.random.default_rng(0)
     >>> frames = rng.normal(scale=0.3, size=(40, 1, 3))  # a joint that jumps about
     >>> feature = MotionNoiseDetector(labels=["hand"], sampling_rate=50.0)

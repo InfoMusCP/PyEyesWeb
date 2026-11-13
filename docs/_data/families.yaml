@@ -1,23 +1,22 @@
 # Feature families: every catalog feature belongs to exactly one family (the extension fails the build otherwise).
+# Held back from the early release (2026-11-13), with their pages in docs/_held_back: MassSpringSimulator (humanoid_models),
+# Suddenness, SuddennessImpulsivity, ContractionImpulsivity (impulsivity_suddenness), MotionNoiseDetector, Harmonicity,
+# PositionDependingPotentials, RegionDependingPotentials, NonlinearInterdependence, SpikeSynchronization.
 # A family names a theory page (doc: path relative to docs/, without suffix). Decided 2026-10-15: HitCellDetector,
 # PositionDependingPotentials and RegionDependingPotentials stay in shape_symmetry_balance.
 kinematics_energy:
   title: Kinematics and energy
   doc: theory/kinematics_energy
-  features: [Kinematics, KineticEnergy, DirectionChange, Directness, TrajectoryNonPlanarity, MotionNoiseDetector]
+  features: [Kinematics, KineticEnergy, DirectionChange, Directness, TrajectoryNonPlanarity]
 smoothness:
   title: Smoothness
   doc: theory/smoothness
-  features: [SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount, CurvatureVelocityCorrelation]
+  features: [SpectralArcLength, LogDimensionlessJerk, SubmovementCount, CurvatureVelocityCorrelation]
 shape_symmetry_balance:
   title: Shape, symmetry and balance
   doc: theory/shape_symmetry_balance
   features: [BoundingBoxFilledArea, EllipsoidSphericity, PointsDensity, Symmetry, TriangleSymmetry, Equilibrium,
-             HitCellDetector, PositionDependingPotentials, RegionDependingPotentials]
-impulsivity_suddenness:
-  title: Impulsivity and suddenness
-  doc: theory/impulsivity_suddenness
-  features: [Suddenness, SuddennessImpulsivity, ContractionImpulsivity]
+             HitCellDetector]
 gesture_segmentation:
   title: Gesture segmentation
   doc: theory/gesture_segmentation
@@ -30,16 +29,12 @@ synchronization:
   title: Synchronization
   doc: theory/synchronization
   features: [PhaseLockingValue, PartialRecurrenceSynchronization, GeneralisedAutoCorrelation,
-             EventSynchronization, EventSynchronizationMECS, NonlinearInterdependence, SpikeSynchronization,
+             EventSynchronization, EventSynchronizationMECS,
              RecurrencePlot, CrossRecurrencePlot]
 dominance:
   title: Dominance
   doc: theory/dominance
   features: [EnsembleDominance]
-humanoid_models:
-  title: Humanoid and mass-spring models
-  doc: theory/humanoid_models
-  features: [MassSpringSimulator]
 imaging:
   title: Imaging
   doc: theory/imaging

@@ -43,7 +43,8 @@ import numpy as np
 from helpers import shade_status
 from pyeyesweb.data_models import Recorder
 from pyeyesweb.datasets import load_qualisys_trial
-from pyeyesweb.low_level import KineticEnergy, MotionNoiseDetector
+from pyeyesweb.low_level import KineticEnergy
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
 
 RATE = 100  # Hz, the sampling rate of the recordings

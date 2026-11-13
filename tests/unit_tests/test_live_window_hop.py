@@ -13,14 +13,13 @@ import pytest
 
 from live_param_suite import NOTE, feed
 
-from pyeyesweb.analysis_primitives import (BinaryPulsesRegularity, CrossRecurrencePlot,
-                                           EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation,
-                                           MultiScaleEntropy, NonlinearInterdependence, Periodicity, PhaseLockingValue,
-                                           Rarity, RecurrencePlot, SampleEntropy, SpikeSynchronization)
+from pyeyesweb.analysis_primitives import BinaryPulsesRegularity, CrossRecurrencePlot, EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, MultiScaleEntropy, Periodicity, PhaseLockingValue, Rarity, RecurrencePlot, SampleEntropy
+from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence, SpikeSynchronization
 from pyeyesweb.data_models import Status
-from pyeyesweb.low_level import (CurvatureVelocityCorrelation, DirectionChange, Harmonicity, LogDimensionlessJerk,
-                                 SpectralArcLength, SubmovementCount)
-from pyeyesweb.mid_level import Suddenness, SuddennessImpulsivity
+from pyeyesweb.low_level import CurvatureVelocityCorrelation, DirectionChange, LogDimensionlessJerk, SpectralArcLength, SubmovementCount
+from pyeyesweb.low_level.smoothness import Harmonicity
+from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 
 _rng = np.random.default_rng(11)
 HELD = 60  # samples fed before the change

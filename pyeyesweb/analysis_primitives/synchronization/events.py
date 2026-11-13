@@ -219,7 +219,7 @@ class EventSynchronizationMECS(_MECSBlock):
         return self._block.process(list(args), 0)
 
 
-@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="EventSynchronization_Interdependence")
+@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="EventSynchronization_Interdependence", released=False)
 class NonlinearInterdependence(_TrainPairBlock):
     r"""Nonlinear interdependence between two signals: how much the neighbours of one reflect those of the other.
 
@@ -281,7 +281,7 @@ class NonlinearInterdependence(_TrainPairBlock):
                                   threshold=raw[2], timestamp=timestamp)
 
 
-@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="SPIKE sync")
+@describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="SPIKE sync", released=False)
 class SpikeSynchronization(_SeriesBlock):
     r"""SPIKE-synchronization of several spike trains: the share of spikes that have a coincident partner.
 

@@ -6,23 +6,18 @@ from .kinematics import Kinematics
 from .energy import KineticEnergy
 from .contraction import BoundingBoxFilledArea, EllipsoidSphericity, PointsDensity
 from .symmetry import Symmetry, TriangleSymmetry
-from .smoothness import (
-    SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount,
-    CurvatureVelocityCorrelation
-)
+from .smoothness import SpectralArcLength, LogDimensionlessJerk, SubmovementCount, CurvatureVelocityCorrelation
 from .equilibrium import Equilibrium
 from .direction_change import DirectionChange
 from .shape import ContourCurvature, BodyPartsFromCurvature
-from .motion_noise import MotionNoiseDetector
 from .directness import Directness
 from .non_planarity import TrajectoryNonPlanarity, average_curvature_3d
 
 __all__ = [
     "Kinematics", "KineticEnergy", "BoundingBoxFilledArea", "EllipsoidSphericity", "PointsDensity", "Symmetry",
-    "TriangleSymmetry", "SpectralArcLength", "LogDimensionlessJerk", "Harmonicity", "SubmovementCount",
-    "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange",
-    "ContourCurvature", "BodyPartsFromCurvature", "MotionNoiseDetector",
-    "Directness", "TrajectoryNonPlanarity", "average_curvature_3d"
+    "TriangleSymmetry", "SpectralArcLength", "LogDimensionlessJerk", "SubmovementCount",
+    "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange", "ContourCurvature", "BodyPartsFromCurvature",
+    "Directness", "TrajectoryNonPlanarity", "average_curvature_3d",
 ]
 
 

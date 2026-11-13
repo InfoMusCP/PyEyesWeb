@@ -14,12 +14,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from contract_suite import check_feature_contract  # noqa: E402
+from every_feature import held_back  # noqa: E402
 from humanoid_inputs import CHAIN_XML, MASSES, REFERENCE, SPRINGS, forearm, tpose  # noqa: E402
 from pyeyesweb import Layer, catalog  # noqa: E402
 from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.data_models import Status  # noqa: E402
-from pyeyesweb.physical_signals import (HUMANOID_BONES, HUMANOID_JOINTS, MassSpringModel,  # noqa: E402
-                                        MassSpringSimulator)
+from pyeyesweb.physical_signals.humanoid import HUMANOID_BONES, HUMANOID_JOINTS, MassSpringModel, MassSpringSimulator  # noqa: E402
 
 DT = 0.04
 RATE = 25.0
@@ -187,8 +187,9 @@ def test_feature_contract(name):
     check_feature_contract(factory, *recordings)
 
 
-def test_the_features_are_catalogued_as_physical_signals():
-    found = {info.name: (info.layer, info.eyesweb_block) for info in catalog()}
+def test_the_feature_is_a_physical_signal_held_back_from_the_release():
+    assert not MassSpringSimulator.RELEASED and "MassSpringSimulator" not in {info.name for info in catalog()}
+    found = {info.name: (info.layer, info.eyesweb_block) for info in held_back()}
     assert found["MassSpringSimulator"] == (Layer.PHYSICAL_SIGNALS,
                                             "HumanoidSimulator (MassSpringHumanoidSimulator), GenericModelSimulator")
     assert not {"HumanoidSimulator", "HumanoidOrientations", "GenericModelOrientations", "GenericModelSimulator"} & set(found)

@@ -104,7 +104,8 @@ Three speed profiles of one second, sampled at 100 Hz, show the metrics at work:
 and the bell with measurement noise added. One window holds the whole movement.
 
 ```{doctest}
->>> from pyeyesweb.low_level import SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount
+>>> from pyeyesweb.low_level import SpectralArcLength, LogDimensionlessJerk, SubmovementCount
+>>> from pyeyesweb.low_level.smoothness import Harmonicity
 >>> rate = 100.0
 >>> time = np.arange(100) / rate
 >>> bump = lambda centre, width, height: height * np.exp(-0.5 * ((time - centre) / width) ** 2)

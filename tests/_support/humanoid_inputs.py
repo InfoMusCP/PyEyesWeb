@@ -5,7 +5,7 @@ import os
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.physical_signals import HUMANOID_JOINTS
+from pyeyesweb.physical_signals.humanoid import HUMANOID_JOINTS
 
 REFERENCE = np.load(os.path.join(os.path.dirname(__file__), "..", "data", "humanoid_reference.npz"))
 

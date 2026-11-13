@@ -31,8 +31,10 @@ def test_layers_raise_import_error_without_the_core():
 @needs_core
 def test_catalog_lists_features():
     names = {entry.name for entry in catalog()}
-    assert {"SpectralArcLength", "SubmovementCount", "Suddenness", "MotionNoiseDetector"} <= names
-    assert len(catalog()) == 47  # 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
+    assert {"SpectralArcLength", "SubmovementCount", "GestureSegmenter", "EnsembleDominance"} <= names
+    assert not {"Suddenness", "MotionNoiseDetector", "MassSpringSimulator"} & names  # held back from the release
+    assert all(entry.cls.RELEASED for entry in catalog())
+    assert len(catalog()) == 37  # 47 before ten features were held back from the early release (2026-11-13), 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
 
 
 @needs_core
@@ -51,7 +53,7 @@ def test_features_with_an_eyesweb_block_name_it():
     from pyeyesweb import low_level, mid_level, analysis_primitives as ap
 
     assert low_level.KineticEnergy.EYESWEB_BLOCK and low_level.CurvatureVelocityCorrelation.EYESWEB_BLOCK
-    assert ap.Rarity.EYESWEB_BLOCK and mid_level.ContractionImpulsivity.EYESWEB_BLOCK
+    assert ap.Rarity.EYESWEB_BLOCK and mid_level.GestureSegmenter.EYESWEB_BLOCK
     assert low_level.SpectralArcLength.EYESWEB_BLOCK is None
 
 
@@ -60,9 +62,8 @@ def test_layer_placements():
     from pyeyesweb import low_level, mid_level, analysis_primitives as ap
 
     assert low_level.Kinematics.LAYER is Layer.LOW_LEVEL
-    assert low_level.MotionNoiseDetector.LAYER is Layer.LOW_LEVEL
     assert low_level.Directness.LAYER is Layer.LOW_LEVEL
-    assert mid_level.PositionDependingPotentials.LAYER is Layer.MID_LEVEL
+    assert mid_level.GestureSegmenter.LAYER is Layer.MID_LEVEL
     assert low_level.TrajectoryNonPlanarity.LAYER is Layer.LOW_LEVEL
     assert ap.Periodicity.LAYER is Layer.ANALYSIS_PRIMITIVE
     assert ap.synchronization.PartialRecurrenceSynchronization.LAYER is Layer.ANALYSIS_PRIMITIVE
@@ -90,5 +91,8 @@ def test_every_public_feature_class_is_exported_by_its_package():
                    for info in pkgutil.iter_modules(package.__path__) if not info.name.startswith("_")]
         for module in modules:
             for name, obj in vars(module).items():
-                if inspect.isclass(obj) and obj.__module__ == module.__name__ and not name.startswith("_")                         and hasattr(obj, "LAYER"):
-                    assert name in package.__all__, f"{module.__name__}.{name} is missing from {layer.package}.__all__"
+                if inspect.isclass(obj) and obj.__module__ == module.__name__ and not name.startswith("_") \
+                        and hasattr(obj, "LAYER"):
+                    exported = name in package.__all__
+                    assert exported is obj.RELEASED, (f"{module.__name__}.{name}: exported by {layer.package} is "
+                                                      f"{exported}, released is {obj.RELEASED}")

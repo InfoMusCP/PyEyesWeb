@@ -102,7 +102,7 @@ fig.tight_layout()
 # (``first_to_second_interdependence`` and the reverse; they may differ, and the difference is read as the direction of
 # the coupling) and a ``threshold`` computed from the parameters. Identical signals give 1 and independent signals near 0.
 
-from pyeyesweb.analysis_primitives import NonlinearInterdependence
+from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence
 
 fig, ax = plt.subplots(figsize=(8, 3))
 for name, signal in heights.items():

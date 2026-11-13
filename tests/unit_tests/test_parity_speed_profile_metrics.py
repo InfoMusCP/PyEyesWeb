@@ -13,7 +13,8 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
-from pyeyesweb.low_level import Harmonicity, LogDimensionlessJerk, SpectralArcLength, SubmovementCount  # noqa: E402
+from pyeyesweb.low_level import LogDimensionlessJerk, SpectralArcLength, SubmovementCount  # noqa: E402
+from pyeyesweb.low_level.smoothness import Harmonicity
 from pyeyesweb.data_models import Status  # noqa: E402
 
 def _features(window, sampling_rate):

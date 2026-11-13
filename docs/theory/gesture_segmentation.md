@@ -91,7 +91,8 @@ phases. The signal of the example is a hand that makes two movements in eight se
 and a longer, slower one, with speeds of bell shape.
 
 ```{doctest}
->>> from pyeyesweb.low_level import KineticEnergy, MotionNoiseDetector
+>>> from pyeyesweb.low_level import KineticEnergy
+>>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 >>> from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
 >>> rate = 50.0
 >>> time = np.arange(int(8 * rate)) / rate

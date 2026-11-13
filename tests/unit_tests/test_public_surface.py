@@ -6,7 +6,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 import pyeyesweb  # noqa: E402
 from pyeyesweb import analysis_primitives, data_models, datasets, high_level, low_level, mid_level, physical_signals, skeletons  # noqa: E402
-from pyeyesweb.physical_signals import MassSpringSimulator  # noqa: E402
+from pyeyesweb.physical_signals.humanoid import MassSpringSimulator  # noqa: E402
 
 
 def test_the_package_lists_its_public_modules_and_names_only():
@@ -24,8 +24,9 @@ def test_analysis_primitives_list_their_exports_and_the_synchronization_package(
     assert dir(analysis_primitives) == sorted([*analysis_primitives.__all__, "synchronization"])
 
 
-def test_the_stream_synchronizer_and_the_model_are_public_in_physical_signals():
-    assert {"TimeWindowSynchronizer", "SynchronizedWindow", "MassSpringModel"} <= set(physical_signals.__all__)
+def test_the_stream_synchronizer_is_public_in_physical_signals():
+    assert {"TimeWindowSynchronizer", "SynchronizedWindow"} <= set(physical_signals.__all__)
+    assert "MassSpringModel" not in physical_signals.__all__  # held back with MassSpringSimulator
 
 
 def test_the_helpers_of_the_output_contract_are_private():

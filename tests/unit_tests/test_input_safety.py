@@ -6,7 +6,7 @@ import pytest
 from pyeyesweb.data_models import Status
 from pyeyesweb.low_level import Kinematics, KineticEnergy
 from pyeyesweb.low_level import average_curvature_3d
-from pyeyesweb.low_level import MotionNoiseDetector
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 
 LABELS = ["a", "b", "c"]
 FRAMES = np.random.default_rng(0).normal(size=(30, 3, 3))

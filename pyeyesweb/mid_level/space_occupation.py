@@ -29,7 +29,7 @@ def _no_input(block: CoreFeature, timestamp: float) -> Result:
 _CELLS = points_input("cells", None, "hit cells (i, j) = (row, column)", dims=2)
 
 
-@describe(Layer.MID_LEVEL, eyesweb="PositionDependingPotentials")
+@describe(Layer.MID_LEVEL, eyesweb="PositionDependingPotentials", released=False)
 class PositionDependingPotentials(FrameFeature):
     r"""Potential over a grid of cells driven by the cells that are hit, with memory of past hits.
 
@@ -123,7 +123,7 @@ class PositionDependingPotentials(FrameFeature):
 
     Examples
     --------
-    >>> from pyeyesweb.mid_level import PositionDependingPotentials
+    >>> from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials
     >>> potentials = PositionDependingPotentials(cells_along_x=3, cells_along_y=2)
     >>> _ = potentials.process([[0, 1]])
     >>> print(potentials.process([[0, 1]]).potential)
@@ -154,7 +154,7 @@ class PositionDependingPotentials(FrameFeature):
         return self._result(timestamp=timestamp, potential=potential)
 
 
-@describe(Layer.MID_LEVEL, eyesweb="RegionDependingPotentials")
+@describe(Layer.MID_LEVEL, eyesweb="RegionDependingPotentials", released=False)
 class RegionDependingPotentials(FrameFeature):
     r"""One potential per region of a cell mask, driven by hit cells or hit regions.
 
@@ -232,7 +232,7 @@ class RegionDependingPotentials(FrameFeature):
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.mid_level import RegionDependingPotentials
+    >>> from pyeyesweb.mid_level.space_occupation import RegionDependingPotentials
     >>> mask = np.array([[0, 0, 1], [0, 0, 1]])
     >>> potentials = RegionDependingPotentials(cells_along_x=3, cells_along_y=2, mask=mask, number_of_regions=2,
     ...                                        parts=("region_values",))

@@ -63,7 +63,7 @@ extensions = [
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 root_doc = "index"
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "_held_back", "Thumbs.db", ".DS_Store"]  # _held_back: pages of features out of the release
 
 autosummary_generate = True
 autodoc_typehints = "none"

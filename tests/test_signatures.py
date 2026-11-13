@@ -9,7 +9,7 @@ import pytest
 
 pytest.importorskip("pyeyesweb._core")
 
-from pyeyesweb import catalog  # noqa: E402
+from every_feature import every_feature as catalog  # noqa: E402
 from pyeyesweb.base.core_feature import _SIGNATURE_PARAM, CoreFeature  # noqa: E402
 from pyeyesweb.base.signatures import _InputModeFactory  # noqa: E402
 

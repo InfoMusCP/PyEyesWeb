@@ -25,17 +25,17 @@ from pyeyesweb._core import core  # noqa: E402
 from pyeyesweb.analysis_primitives import (  # noqa: E402
     Periodicity, Rarity, SampleEntropy, ScalarPeakDetector
 )
-from pyeyesweb.analysis_primitives.synchronization import (  # noqa: E402
-    EventSynchronization, NonlinearInterdependence, EventSynchronizationMECS,
-    GeneralisedAutoCorrelation, PartialRecurrenceSynchronization, SpikeSynchronization)
+from pyeyesweb.analysis_primitives.synchronization import EventSynchronization, EventSynchronizationMECS, GeneralisedAutoCorrelation, PartialRecurrenceSynchronization  # noqa: E402
+from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence, SpikeSynchronization
 from pyeyesweb.data_models.recorder import Recorder  # noqa: E402
 from pyeyesweb.data_models.results import Result, Schema, Status  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
     BodyPartsFromCurvature, ContourCurvature, EllipsoidSphericity, Kinematics, KineticEnergy, PointsDensity, CurvatureVelocityCorrelation,
     Symmetry, TriangleSymmetry
 )
-from pyeyesweb.low_level import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import ContractionImpulsivity, GestureSegmenter, MotionDuration  # noqa: E402
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
+from pyeyesweb.mid_level import GestureSegmenter, MotionDuration  # noqa: E402
+from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 
 DTYPES = {float: np.floating, int: np.integer, bool: np.bool_}
 

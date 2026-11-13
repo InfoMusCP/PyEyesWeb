@@ -14,7 +14,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.data_models.results import Status  # noqa: E402
-from pyeyesweb.mid_level import Suddenness  # noqa: E402
+from pyeyesweb.mid_level.suddenness import Suddenness  # noqa: E402
 
 @pytest.mark.parametrize("count", range(0, 8))
 def test_short_windows(count):

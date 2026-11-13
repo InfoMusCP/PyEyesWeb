@@ -18,7 +18,7 @@ from pyeyesweb.data_models import InputKind  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
     BodyPartsFromCurvature, ContourCurvature, Directness, Kinematics, TrajectoryNonPlanarity
 )
-from pyeyesweb.mid_level import PositionDependingPotentials, RegionDependingPotentials
+from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials
 from pyeyesweb.physical_signals import HitCellDetector  # noqa: E402
 
 RNG = np.random.default_rng(0)

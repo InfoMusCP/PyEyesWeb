@@ -7,9 +7,11 @@ from pyeyesweb.analysis_primitives import EventSynchronization
 from pyeyesweb.data_models import Input, InputKind, Status
 from pyeyesweb.low_level import (BodyPartsFromCurvature, ContourCurvature, KineticEnergy,
                                  PointsDensity)
-from pyeyesweb.low_level import MotionNoiseDetector
-from pyeyesweb.mid_level import (GestureSegmenter, PositionDependingPotentials,
-                                 Suddenness, SuddennessImpulsivity)
+from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
+from pyeyesweb.mid_level import GestureSegmenter
+from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials
+from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity
 from pyeyesweb.physical_signals import HitCellDetector
 
 LABELS = ["a", "b", "c"]
