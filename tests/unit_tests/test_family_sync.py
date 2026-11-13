@@ -187,3 +187,12 @@ def test_importing_the_package_does_not_load_scipy():
     code = "import sys, pyeyesweb.analysis_primitives; sys.exit('scipy' in sys.modules)"
     assert subprocess.run([sys.executable, "-c", code]).returncode == 0
 
+
+def test_partial_recurrence_synchronization_undefined_matrices_are_invalid_input():
+    pars = PartialRecurrenceSynchronization()
+    collinear = pars.process(np.array([[1.0, 1 - 1e-13], [1 - 1e-13, 1.0]]))  # condition number about 2e13
+    assert collinear.status is Status.INVALID_INPUT and "condition number" in collinear.reason
+    assert pars.process(np.ones((3, 3))).status is Status.INVALID_INPUT  # singular
+    indefinite = pars.process(np.array([[0.0, 1.0], [1.0, 4.0]]))
+    assert indefinite.status is Status.INVALID_INPUT and "positive definite" in indefinite.reason
+    assert pars.process(np.array([[1.0, 0.999], [0.999, 1.0]])).status is Status.OK

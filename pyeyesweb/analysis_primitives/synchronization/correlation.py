@@ -34,9 +34,10 @@ class PartialRecurrenceSynchronization(FrameFeature):
 
         S_{kl} = \frac{|P_{kl}|}{\sqrt{P_{kk}\,P_{ll}}},
 
-    the absolute value of the partial correlation between :math:`k` and :math:`l`. An entry is 0 when a diagonal
-    entry of :math:`P` is not positive, and the whole matrix is 0 when :math:`C` is singular (for example constant
-    or perfectly collinear signals).
+    the absolute value of the partial correlation between :math:`k` and :math:`l` (:cite:`varni2010system`, eq. 4).
+    The input is the matrix of the synchronization indices of the pairs; in the paper, the CPR index: ``np.corrcoef``
+    of the recurrence-rate curves of ``GeneralisedAutoCorrelation`` (Varni eq. 3, signed). The feature does not compute
+    it.
 
     The feature has no parameters.
 
@@ -49,7 +50,11 @@ class PartialRecurrenceSynchronization(FrameFeature):
     **Outputs.** ``synchronization_matrix`` (dimensionless, shape ``(n, n)`` with ``n`` taken from the input):
     symmetric, entries in [0, 1].
 
-    **Statuses.** ``INVALID_INPUT`` for a NaN or infinite entry; otherwise ``OK``.
+    **Statuses.** ``INVALID_INPUT`` for a NaN or infinite entry; for a matrix too ill-conditioned to invert (2-norm
+    condition number, as ``numpy.linalg.cond``, above :math:`10^{12}`; for example constant or perfectly collinear
+    signals); and for a matrix that is not positive definite (a diagonal entry of :math:`P` not positive, so it is not
+    a correlation matrix). Otherwise ``OK``. The original block did not invert :math:`C` (corrected in the core), and
+    the first port gave zeros in the undefined cases.
 
     Examples
     --------
@@ -74,9 +79,14 @@ class PartialRecurrenceSynchronization(FrameFeature):
             raise ValueError(f"PartialRecurrenceSynchronization: the matrix must be square, got shape {matrix.shape}")
         if reason := non_finite(matrix):
             return self._no_output(Status.INVALID_INPUT, reason, timestamp)
+        self._condition = np.linalg.cond(matrix) if matrix.size else 1.0  # names the reason of a NaN result
         return super()._process(matrix, timestamp)
 
     def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
+        if np.isnan(raw).any() and not self._condition <= 1e12:
+            return self._no_output(Status.INVALID_INPUT, "ill-conditioned matrix (condition number above 1e12)", timestamp)
+        if np.isnan(raw).any():
+            return self._no_output(Status.INVALID_INPUT, "not positive definite: not a correlation matrix", timestamp)
         return self._result(synchronization_matrix=raw, timestamp=timestamp)
 
 
