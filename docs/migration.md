@@ -138,7 +138,7 @@ Inputs(first_signal: sample (1) - one value per call, second_signal: sample (1) 
 >>> recording
 Recorder(PhaseLockingValue, rows=500, columns=['phase_locking_value'], status={'OK': 7, 'WARMING_UP': 199, 'NO_OUTPUT': 294})
 >>> round(float(recording[-1].phase_locking_value), 3)
-0.987
+0.996
 ```
 
 ### Choices: strings instead of enums
