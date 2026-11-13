@@ -156,16 +156,27 @@ def test_curvature_velocity_velocity_is_per_second_in_both_modes(differentiate):
     result = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, differentiate=differentiate).run(ellipse)
     speed = np.pi * np.hypot(2 * np.sin(np.pi * t[200:]), np.cos(np.pi * t[200:]))  # the exact speed, length per second
     assert np.allclose(result.velocity[-1][15:-10], speed[10:-15], rtol=1e-2)  # the filter delays the series by 5 samples
-    assert result.velocity_std[-1] == pytest.approx(np.std(result.velocity[-1], ddof=1))
-    assert result.smoothness[-1] == pytest.approx(-0.9433871886796, abs=1e-9)
-    assert result.curvature_std[-1] == pytest.approx(0.57434934336, abs=1e-9)
+    assert result.log_speed_std[-1] == pytest.approx(np.std(np.log(np.abs(result.velocity[-1])), ddof=1))
+    assert result.smoothness[-1] == pytest.approx(5.771238243071946, abs=1e-9)  # 1 / (std log k * std log v)
+    assert result.log_curvature_std[-1] == pytest.approx(0.7209848282936275, abs=1e-9)
+    # an ellipse traced harmonically follows the speed-curvature power law exactly: the logs correlate perfectly
+    pearson = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, differentiate=differentiate,
+                                           correlation_type="pearson").run(ellipse)
+    assert pearson.smoothness[-1] == pytest.approx(-1.0, abs=1e-9)
+
+
+def test_curvature_velocity_no_variation_is_invalid_input():
+    t = np.arange(200) / 100.0
+    line = np.c_[t, 2 * t]  # a straight path at constant speed: nothing to correlate
+    result = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0).run(line)
+    assert result.status[-1] == int(Status.INVALID_INPUT) and np.isnan(result.smoothness[-1])
 
 
 def test_curvature_velocity_smoothness_process_window_matches_the_streamed_first_window():
     streamed = CurvatureVelocityCorrelation(window=40, sampling_rate=25.0).run(SERIES[:40])
     direct = CurvatureVelocityCorrelation(window=40, sampling_rate=25.0)._process_window(SERIES[:40].T, timestamp=0.5)
     assert direct.timestamp == 0.5
-    for name in ("smoothness", "curvature", "velocity", "curvature_std", "velocity_std"):
+    for name in ("smoothness", "curvature", "velocity", "log_curvature_std", "log_speed_std"):
         np.testing.assert_array_equal(direct[name], streamed[name][-1])
 
 

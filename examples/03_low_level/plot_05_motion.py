@@ -234,9 +234,10 @@ fig.tight_layout()
 # Smoothness of the path
 # ----------------------
 # Two features look at the path instead of the speed profile. When a hand follows a curve it slows down where the curve
-# bends (the "two-thirds power law"), so in a smooth movement curvature and speed are negatively correlated.
-# :class:`~pyeyesweb.low_level.CurvatureVelocityCorrelation` computes that correlation over a window of the path (needs a
-# ``window`` and the sampling rate; the first complete window is ``WARMING_UP``, because its filters need a previous window).
+# bends (the "two-thirds power law"): in a smooth movement log speed falls linearly with log curvature.
+# :class:`~pyeyesweb.low_level.CurvatureVelocityCorrelation` measures how closely, over a window of the path, as
+# 1 / (std of log curvature x std of log speed): high when the two vary together in a narrow band (needs a ``window`` and
+# the sampling rate; the first complete window is ``WARMING_UP``, because its filters need a previous window).
 # We trace an ellipse in two ways, with a speed that follows the law and with a constant speed along the path.
 
 from pyeyesweb.low_level import CurvatureVelocityCorrelation
@@ -251,10 +252,24 @@ uniform = np.c_[np.interp(along, arc, np.r_[fine[:, 0], fine[0, 0]]), np.interp(
 for name, path in (("speed follows the curvature", law), ("constant speed", uniform)):
     result = CurvatureVelocityCorrelation(window=100, sampling_rate=RATE).run(path, timestamps=t_ellipse)
     ok = np.asarray(result.status) == 0
-    print(f"{name:<30} mean correlation over {ok.sum()} windows: {np.nanmean(np.asarray(result.smoothness)[ok]):.2f}")
+    index = f"{np.mean(np.asarray(result.smoothness)[ok]):.2f}" if ok.any() else "none"
+    print(f"{name:<30} windows with a result: {ok.sum():>3}, mean index {index}  ({result.reasons[-1] or 'OK'})")
 
 # %%
-# **Takeaway.** ``CurvatureVelocityCorrelation`` is strongly negative when the speed follows the curvature of the path.
+# At constant speed the speed does not vary, so there is nothing to relate it to: almost every window is
+# ``INVALID_INPUT`` (the few with a result straddle the point where the synthetic path is joined, and the speed jumps). On
+# the recordings, the smooth executions of the figure eight and of the caress score ten to twenty times higher than the
+# jerky ones.
+
+for number in (11, 12, 13, 14):
+    hand = trials[number].joint("Right_Hand")
+    result = CurvatureVelocityCorrelation(window=100, hop=25, sampling_rate=RATE).run(hand, timestamps=trials[number].timestamps)
+    ok = np.asarray(result.status) == 0
+    print(f"trial {number}: median index {np.median(np.asarray(result.smoothness)[ok]):.1f} over {ok.sum()} windows")
+
+# %%
+# **Takeaway.** ``CurvatureVelocityCorrelation`` is high when the speed follows the curvature of the path, and it
+# separates a smooth execution from a jerky one.
 
 # %%
 # How direct and how flat is a path

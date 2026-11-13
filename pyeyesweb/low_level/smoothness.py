@@ -323,20 +323,23 @@ class SubmovementCount(_SpeedProfileMetric):
 class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     r"""Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.
 
-    A smooth movement slows down where its path bends: curvature and speed are negatively related. The feature
-    measures that coupling inside a window of the trajectory. The samples of the window are
-    smoothed and differentiated by a Savitzky-Golay filter, which gives the velocity :math:`v_k` and the curvature
-    :math:`\kappa_k` at every sample :math:`k`; the ``smoothness`` output is then, by default, their Pearson
-    correlation coefficient over the window,
+    A smooth movement slows down where its path bends: curvature and speed are negatively related, close to a power
+    law (log speed falls linearly with log curvature). The feature measures that coupling inside a window of the
+    trajectory, as Mazzarino et al. (2009) and Piana et al. (2016) define it. The samples of the window are smoothed and
+    differentiated by a Savitzky-Golay filter, which gives the velocity :math:`v_k` and the curvature :math:`\kappa_k`
+    at every sample :math:`k`. The index is computed on their logarithms; by default (``correlation_type="simplified"``,
+    the papers' form for a short window) it is
 
     .. math::
 
-        S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}
-        {\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],
+        S = \frac{1}{\sigma_{\log\kappa}\,\sigma_{\log |v|}},
 
-    which is strongly negative for a smooth movement (high curvature, low speed). With ``correlation_type="simplified"``
-    the index is a simplified form of the original block, bounded above by ``upper_limit``. The outputs also hold the
-    per-sample ``curvature`` and ``velocity`` series of the window and their standard deviations.
+    capped at ``upper_limit``: large for a smooth movement, whose curvature and speed vary together within a narrow
+    band, and close to 1 for a jerky one (about 10 against 1 on the smooth and jerky figure-eights of the example
+    session). ``correlation_type="pearson"`` gives the correlation coefficient of the two logarithms instead, in
+    [-1, 1]; on movement data it does not rank smooth above jerky (stops pair a near-zero speed with a large curvature,
+    which also correlates strongly). Samples with zero curvature or speed have no logarithm and are left out of the
+    window.
 
     The filters keep their history between windows (the previous window feeds the start of the next one), so
     consecutive windows overlap by ``window - hop`` samples; ``hop=window`` means no overlap.
@@ -351,10 +354,11 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     sampling_rate : float
         Sampling rate of the series in Hz. Required: the window carries no time axis of its own. *(structural)*
     standard_deviation_threshold : float, optional
-        Threshold of the original block on the standard deviations of the curvature and the velocity, used by the
-        ``"simplified"`` index only. It acts on the quantities the filters give, so on the velocity per sample
-        (not per second) unless ``differentiate`` is set; the ``velocity`` outputs are always per second. Defaults to
-        ``0.0001``. *(live)*
+        Smallest variation that counts: when the standard deviation of the (linear) curvature or velocity of the window
+        is below it, there is nothing to correlate (a straight path, a constant speed) and the result is
+        ``INVALID_INPUT``. It acts on the quantities the filters give, so on the velocity per sample (not per second)
+        unless ``differentiate`` is set; the ``velocity`` outputs are always per second. Defaults to ``0.0001``.
+        *(live)*
     upper_limit : float, optional
         Upper bound of the index (dimensionless); the ``"simplified"`` index is capped at it. Defaults to ``100.0``.
         *(live)*
@@ -363,15 +367,15 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     filter_window_length : int, optional
         Samples of the Savitzky-Golay window (odd, greater than ``filter_polyorder``). Defaults to ``9``.
         *(structural)*
-    correlation_type : {"pearson", "simplified"}, optional
-        ``"pearson"`` (default): the Pearson correlation coefficient. ``"simplified"``: the simplified index of the
-        original block, at most ``upper_limit``. *(live)*
+    correlation_type : {"simplified", "pearson"}, optional
+        ``"simplified"`` (default): :math:`1 / (\sigma_{\log\kappa}\,\sigma_{\log |v|})`, at most ``upper_limit``.
+        ``"pearson"``: the correlation coefficient of the logarithms. *(live)*
     differentiate : bool, optional
         Whether the derivatives of the filter are taken with respect to time in seconds. With the default
         ``False`` they are taken per sample and the velocity outputs are multiplied by ``sampling_rate``, so they
-        are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and the Pearson correlation do
-        not depend on it; the ``"simplified"`` index and ``standard_deviation_threshold`` do, because they act on the
-        velocity before that conversion. *(structural)*
+        are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and both indices do not depend on
+        it (a scale factor does not change the spread of a logarithm); ``standard_deviation_threshold`` does, because
+        it acts on the velocity before that conversion. *(structural)*
     input_kind : {"static", "dynamic"}, optional
         ``"static"`` (default): every window has the shape of the first one. ``"dynamic"``: the series may change
         length from window to window; a window of another length or channel count rebuilds the filters with an empty
@@ -386,12 +390,17 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
 
     **Outputs.** ``smoothness`` (dimensionless; in [-1, 1] for ``"pearson"``); ``curvature``: the per-sample curvature
     of the window (``window`` values, 1/length); ``velocity``: the per-sample velocity of the window (``window``
-    values, length/s); ``curvature_std`` and ``velocity_std``: their sample standard deviations of the window.
+    values, length/s); ``log_curvature_std`` and ``log_speed_std``: the sample standard deviations of the logarithms
+    of curvature and speed that enter the index (dimensionless).
 
     **Statuses.** ``WARMING_UP`` while the first window fills (``"k of N samples"``) and for the first window after
-    it, because the filters need a previous window (``smoothness`` is then NaN); ``NO_OUTPUT`` between two windows
-    when ``hop > 1``; ``INVALID_INPUT`` when the data does not support the index (a null movement, for example) or a
-    sample is NaN or infinite.
+    it, because the filters need a previous window (no output); ``NO_OUTPUT`` between two windows when ``hop > 1``;
+    ``INVALID_INPUT`` (no output) when there is nothing to correlate (curvature or velocity does not vary, or fewer
+    than 3 samples have a non-zero curvature and speed) or a sample is NaN or infinite.
+
+    **Changed from EyesWeb.** The block correlated the linear values of curvature and velocity; the index here is on
+    their logarithms, as the papers define it, and ``"simplified"`` is the default. A window without variation gave
+    ``upper_limit`` or a correlation of rounding noise; it is ``INVALID_INPUT``.
 
     Corrected in the core: the curvature used half of the second derivative of the Savitzky-Golay fit. With
     ``input_kind="dynamic"``, the window after a change of length or channel count is ``WARMING_UP`` (it was reported
@@ -399,7 +408,7 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
 
     References
     ----------
-    :cite:`mazzarino2009need`
+    :cite:`mazzarino2009need`, :cite:`piana2016adaptive`
 
     Examples
     --------
@@ -409,7 +418,10 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     >>> ellipse = np.c_[2 * np.cos(np.pi * t), np.sin(np.pi * t)]
     >>> feature = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0)
     >>> round(float(feature.run(ellipse).smoothness[-1]), 2)
-    -0.94
+    5.77
+    >>> pearson = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, correlation_type="pearson")
+    >>> round(float(pearson.run(ellipse).smoothness[-1]), 2)  # an ellipse follows the power law exactly
+    -1.0
     """
     _core_class = core.motion.SmoothnessIndex
     _hidden_params = frozenset({"velocity_threshold"})  # read nowhere by the block: left at its default
@@ -469,7 +481,8 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
     def _schema(self) -> Schema:
         return Schema(Output("smoothness"), Output("curvature", (None,), unit="1/<length>", doc="curvature per sample"),
                       Output("velocity", (None,), unit="<length>/s", doc="velocity per sample"),
-                      Output("curvature_std", unit="1/<length>"), Output("velocity_std", unit="<length>/s"))
+                      Output("log_curvature_std", doc="standard deviation of log curvature"),
+                      Output("log_speed_std", doc="standard deviation of log speed"))
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         series = np.asarray(series, dtype=float)
@@ -481,15 +494,19 @@ class CurvatureVelocityCorrelation(MinimumWindow, WindowedFeature, CoreFeature):
         except ValueError as exc:
             return self._no_output(Status.INVALID_INPUT, str(exc), timestamp)
         if not self._param("differentiate", False):  # the filters give a velocity per sample: the output is per second
-            velocity, velocity_std = np.asarray(velocity) * self.sampling_rate, velocity_std * self.sampling_rate
+            velocity = np.asarray(velocity) * self.sampling_rate  # (the spread of its logarithm does not change)
         warming_up, self._warmed_shape = series.shape != self._warmed_shape, series.shape  # a new shape: empty history
-        status, reason = Status.OK, ""
-        if np.isnan(smoothness) or np.isnan(curvature_std):
-            status, reason = (Status.WARMING_UP, "the filters need a previous window") if warming_up else (
-                Status.INVALID_INPUT, "the data does not support smoothness (NaN)")
-        return self._result(status=status, reason=reason, smoothness=smoothness,
+        if warming_up:
+            return self._no_output(Status.WARMING_UP, "the filters need a previous window", timestamp)
+        if np.isnan(smoothness):
+            return self._no_output(Status.INVALID_INPUT, "nothing to correlate: curvature or velocity does not vary, or "
+                                   "fewer than 3 samples have a non-zero curvature and speed", timestamp)
+        if not (np.isfinite(curvature).all() and np.isfinite(velocity).all()):
+            return self._no_output(Status.INVALID_INPUT, "curvature or velocity is not finite (values too large)",
+                                   timestamp)
+        return self._result(status=Status.OK, reason="", smoothness=smoothness,
                            curvature=np.asarray(curvature, dtype=float), velocity=np.asarray(velocity, dtype=float),
-                           curvature_std=curvature_std, velocity_std=velocity_std, timestamp=timestamp)
+                           log_curvature_std=curvature_std, log_speed_std=velocity_std, timestamp=timestamp)
 
 
 __all__ = ["SpectralArcLength", "LogDimensionlessJerk", "Harmonicity", "SubmovementCount",

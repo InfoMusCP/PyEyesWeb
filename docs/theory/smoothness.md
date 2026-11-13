@@ -155,28 +155,33 @@ Two features take the path of the point instead of its speed profile.
 ### Curvature and speed
 
 A hand that follows a curve slows down where the curve bends, and speeds up where it straightens. For a smooth movement the
-curvature $\kappa$ and the speed $v$ are therefore negatively correlated, and the correlation is a smoothness index
-{cite}`mazzarino2009need`. In a window of the trajectory,
+curvature $\kappa$ and the speed $v$ follow a power law, $\log v$ falling linearly with $\log \kappa$, and how closely they
+do is a smoothness index {cite}`mazzarino2009need,piana2016adaptive`. In a window of the trajectory,
 {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation` smooths and differentiates the samples by a Savitzky-Golay
-filter, which gives the velocity $v_k$ and the curvature $\kappa_k$ at every sample
-$k$ of the window, and its `smoothness` output is by default their Pearson correlation,
+filter, which gives the velocity $v_k$ and the curvature $\kappa_k$ at every sample $k$ of the window. Its `smoothness`
+output is computed on their logarithms; by default (`correlation_type="simplified"`) it is the papers' form for a short
+window,
 
 $$
-S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}
-{\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],
+S = \frac{1}{\sigma_{\log\kappa}\,\sigma_{\log |v|}},
 $$
 
-strongly negative for a smooth movement. It takes a trajectory of one, two or three channels, one sample per call, and
-needs the sampling rate. The outputs also hold the per-sample `curvature` and `velocity` of the window and their standard
-deviations. The filters keep their history between windows, so consecutive windows share $N - H$ samples, and the status is
-`WARMING_UP` while the first window fills and for the first window after it, because the filters need a previous window
-(`smoothness` is then NaN). A null movement
-gives `INVALID_INPUT`. The default `correlation_type="pearson"` is the coefficient above; `"simplified"` is a simplified
-index of the original block, capped at `upper_limit`. Corrected in the core: the curvature used half of the second
-derivative of the fit.
+capped at `upper_limit`: large when curvature and speed vary together within a narrow band, close to 1 for a jerky
+movement. `correlation_type="pearson"` gives instead the correlation coefficient of $\log\kappa$ and $\log |v|$, in
+$[-1, 1]$; on recorded movement it is not a smoothness ranking, because the stops of a jerky movement pair a near-zero
+speed with a large curvature, which also correlates strongly. Samples with zero curvature or speed have no logarithm and
+are left out of the window.
 
-An ellipse traced at constant angular speed slows down at the ends of its long axis, where the curvature is largest, and
-the correlation is strongly negative:
+It takes a trajectory of one, two or three channels, one sample per call, and needs the sampling rate. The outputs also
+hold the per-sample `curvature` and `velocity` of the window and the standard deviations of their logarithms. The filters
+keep their history between windows, so consecutive windows share $N - H$ samples, and the status is `WARMING_UP` while the
+first window fills and for the first window after it, because the filters need a previous window. A window where the
+curvature or the speed does not vary (a straight path, a constant speed) has nothing to correlate and gives
+`INVALID_INPUT`. The original block correlated the linear values; corrected in the core, the curvature used half of the
+second derivative of the fit.
+
+An ellipse traced at constant angular speed slows down at the ends of its long axis, where the curvature is largest; it
+follows the power law exactly, so the logarithms correlate perfectly:
 
 ```{doctest}
 >>> from pyeyesweb.low_level import CurvatureVelocityCorrelation
@@ -184,7 +189,10 @@ the correlation is strongly negative:
 >>> ellipse = np.c_[2 * np.cos(np.pi * time), np.sin(np.pi * time)]
 >>> feature = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0)
 >>> round(float(feature.run(ellipse).smoothness[-1]), 2)
--0.94
+5.77
+>>> pearson = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, correlation_type="pearson")
+>>> round(float(pearson.run(ellipse).smoothness[-1]), 2)
+-1.0
 ```
 
 ## How to read the outputs
@@ -194,7 +202,7 @@ the correlation is strongly negative:
 | `SpectralArcLength` | `spectral_arc_length` | none | closer to 0 | negative |
 | `LogDimensionlessJerk` | `log_dimensionless_jerk` | none | closer to 0 | negative; `INVALID_INPUT` for a flat signal |
 | `SubmovementCount` | `submovement_count` | none | lower | integer, 0 or more |
-| `CurvatureVelocityCorrelation` | `smoothness` | none | closer to $-1$ | $[-1, 1]$ for `"pearson"` |
+| `CurvatureVelocityCorrelation` | `smoothness` | none | higher (`"simplified"`) | positive, at most `upper_limit`; $[-1, 1]$ for `"pearson"` |
 
 The metrics are dimensionless and independent of the unit of the data, which makes them comparable between movements of
 different size and speed, but a value is only meaningful relative to the same metric on a comparable movement: the absolute
