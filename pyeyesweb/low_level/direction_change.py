@@ -32,7 +32,10 @@ class DirectionChange(MinimumWindow, WindowedFeature, CoreFeature):
         0 & \text{otherwise,} \end{cases}
 
     so that :math:`D_{\cos}` is 1 for a right-angle turn (:math:`\theta = 90^\circ`) and falls to 0 at a distance
-    ``epsilon`` from it; a straight path or a U-turn gives 0.
+    ``epsilon`` from it; a straight path or a U-turn gives 0. This is Algorithm 2 of :cite:`niewiadomski2015impulsive`,
+    where the paper says that a sudden movement along a line (a change of direction by 180 or 0 degrees) is not
+    detected as impulsive; the three points are the window's first, middle and last samples here, the paper's are
+    two time steps apart.
 
     **Polygon metric.** The positions are subsampled to ``number_of_subsamples`` points and the feature returns the
     area of the polygon they form, the shoelace sum of cross products :math:`\tfrac12\lVert\sum_i \mathbf{X}_i\times
