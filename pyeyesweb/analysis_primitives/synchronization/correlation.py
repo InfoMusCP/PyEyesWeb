@@ -5,7 +5,6 @@
 `GeneralisedAutoCorrelation`), one matrix per call. Their results are ``OK`` unless the docstring of the feature says otherwise.
 """
 
-from itertools import count
 from typing import Any, Optional
 
 import numpy as np
@@ -86,15 +85,18 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     r"""Recurrence rate of a multichannel series as a function of the lag: how self-similar a movement is in time.
 
     For a window of :math:`N` states :math:`x_i` (one value per channel) the recurrence rate at lag :math:`\tau`
-    is the fraction of samples whose state returns within :math:`\epsilon` after :math:`\tau` samples,
+    is the fraction of samples whose state returns within :math:`\epsilon` after :math:`\tau` samples, the
+    probability of recurrence of :cite:`varni2010system` (eq. 2) and :cite:`marwan2007recurrence` (eq. 111),
 
     .. math::
 
         \mathrm{RR}(\tau) = \frac{1}{N - \tau}\,
         \#\{\, i < N - \tau \;:\; \lVert x_i - x_{i+\tau} \rVert \le \epsilon \,\},
 
-    with the Euclidean norm over the channels. A periodic movement shows peaks of :math:`\mathrm{RR}(\tau)` at
-    the multiples of its period. With ``output_type="function_of_tau"`` the feature returns :math:`\mathrm{RR}` at
+    with the Euclidean norm over the channels; a distance equal to :math:`\epsilon` counts, as in
+    ``RecurrencePlot``, of which :math:`\mathrm{RR}(\tau)` is the density of one diagonal. A periodic movement shows
+    peaks of :math:`\mathrm{RR}(\tau)` at the multiples of its period. The curve of two signals is what their
+    synchronization index compares (the CPR of :cite:`varni2010system`, eq. 3): ``np.corrcoef`` of the two curves. With ``output_type="function_of_tau"`` the feature returns :math:`\mathrm{RR}` at
     the lags 1 to ``max_lag``; with ``output_type="scalar"`` it returns the single value at lag ``lag``.
 
     Parameters
@@ -110,10 +112,10 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
         Whether to return the recurrence rate for a range of lags or for the single lag ``lag`` (default
         ``"function_of_tau"``). *(structural)*
     lag : int, optional
-        Lag in samples of the single value of ``output_type="scalar"`` (default 1). *(live)*
+        Lag in samples of the single value of ``output_type="scalar"`` (default 1), smaller than ``window``. *(live)*
     max_lag : int, optional
         Largest lag in samples of ``output_type="function_of_tau"``, which returns the lags 1 to ``max_lag``
-        (default 10), limited to two thirds of the window. *(structural)*
+        (default 10), smaller than ``window``. *(structural)*
 
     Notes
     -----
@@ -124,9 +126,10 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     entry; both have the size of the lag range (a single entry for ``"scalar"``).
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills, ``NO_OUTPUT`` between two
-    windows when ``hop > 1``, ``INVALID_INPUT`` for NaN or infinite values. The window must be longer than
-    1 plus the (limited) ``max_lag``, and at least 2 samples for ``"scalar"``; a shorter window raises
-    ``ValueError``.
+    windows when ``hop > 1``, ``INVALID_INPUT`` for NaN or infinite values. ``lag`` and ``max_lag`` must be
+    smaller than ``window``; otherwise the constructor or the setter raises ``ValueError`` (the original block cut the
+    lag range silently to two thirds of the window). A large lag rests on few pairs (:math:`N - \tau`); a common
+    guideline keeps the lags below about :math:`N/4`.
 
     Examples
     --------
@@ -138,7 +141,6 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     """
     _core_class = _sync.GeneralisedAutoCorrelation
     _finite_inputs = True
-    _hidden_params = frozenset({"min_lag"})  # the lags of the curve start at 1, the block's default first lag
 
     def _build_block(self, params: Optional[dict] = None) -> Any:
         params = self._params if params is None else params
@@ -153,10 +155,8 @@ class GeneralisedAutoCorrelation(_SeriesBlock):
     def _minimum_window(self, **overrides: Any) -> int:
         params = {**self._params, **overrides}
         if params.get("output_type") == _OutputType.SCALAR:
-            return 2
-        spread = int(params.get("max_lag", 10))  # C++ default
-        # the core clamps the spread to 2N/3 and wants 1 + spread < N (the first lag is 1)
-        return next(size for size in count(1) if 1 + min(spread, 2 * size // 3) < size)
+            return int(params.get("lag", 1)) + 1  # C++ default
+        return int(params.get("max_lag", 10)) + 1  # the lags 1..max_lag need max_lag < window
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("signal", InputKind.SAMPLE, (None,), doc="one value per channel"))

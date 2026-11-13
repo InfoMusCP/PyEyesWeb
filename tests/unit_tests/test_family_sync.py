@@ -146,12 +146,21 @@ def test_interdependence_window_must_exceed_k():
     assert feature._process_window(RNG.random((1, 5)), RNG.random((1, 5))).status is Status.OK
 
 
-def test_generalised_auto_correlation_minimum_window_follows_the_core():
+def test_generalised_auto_correlation_lags_must_be_smaller_than_the_window():
+    # No silent clamping (algorithm review): the original cut the lags to two thirds of the window.
     with pytest.raises(ValueError, match="window"):
-        GeneralisedAutoCorrelation(window=3)
-    assert GeneralisedAutoCorrelation(window=4)._process_window(RNG.random((1, 4))).status is Status.OK
-    GeneralisedAutoCorrelation(window=10, max_lag=12)._process_window(RNG.random((1, 10)))  # max_lag limited to 2N/3
+        GeneralisedAutoCorrelation(window=10)  # max_lag 10
+    result = GeneralisedAutoCorrelation(window=11)._process_window(RNG.random((1, 11)))
+    assert result.status is Status.OK and list(result.taus) == list(range(1, 11))
+    with pytest.raises(ValueError, match="window"):
+        GeneralisedAutoCorrelation(window=10, max_lag=12)
+    feature = GeneralisedAutoCorrelation(window=12, max_lag=5)
+    with pytest.raises(ValueError, match="window"):
+        feature.max_lag = 12  # a live change is checked too
+    assert feature.max_lag == 5
     GeneralisedAutoCorrelation(window=2, output_type="scalar")
+    with pytest.raises(ValueError, match="window"):
+        GeneralisedAutoCorrelation(window=3, output_type="scalar", lag=3)
 
 
 def test_synchronization_filter_needs_a_long_enough_window():
