@@ -420,6 +420,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `CurvatureVelocityCorrelation` | the curvature used half of the second derivative of the fit |
 | `SuddennessImpulsivity` | both terms are evaluated on the same single trajectory (the original took the direction change of the mean of all the signals and the suddenness of the first signal) |
 | `MotionNoiseDetector` | `reset()` clears the speed windows |
+| `HitCellDetector` | a point on an interior cell edge goes to the upper cell, as the formula says; the original divided by the rounded cell size, which put some edges (0.3, 0.6, 0.7 on `[0, 1]` with 10 cells) in the lower one |
 | `RecurrencePlot`, `CrossRecurrencePlot` | a distance equal to `epsilon` is a recurrence (Marwan et al. 2007, eq. 10); the original was strict, so `epsilon=0` gave an empty matrix, even on the diagonal. Values change only when a distance equals the threshold, as on quantised data |
 | `Periodicity` | the default `threshold` is 0.1 (the original block's 0.2 is outside the range 0.01 to 0.1 advised by Sethares and Staley), so `"small2large"` reports weaker periods by default; a window where every channel is constant, or `"mbest"` on fewer than 3 samples, is `INVALID_INPUT` (the original gave `NaN` powers or zeros) |
 | `EventSynchronizationMECS` | the default `kernel` is `"linear"`, the kernel of the paper; the original block's default was `"uniform"`, so the default values change whenever events are not simultaneous |
