@@ -4,10 +4,10 @@ Synchronization of events
 
 Often what is shared between two people is a set of moments, not a continuous curve: the instants of a clap, of a step, of a
 change of direction. This second tutorial on synchronization turns the movement of two hands into **trains of events** and
-measures how far the events of one train meet those of the other, with and without a chosen tolerance.
+measures how far the events of one train meet those of the other, within a chosen tolerance.
 
 :Goals: extract events from a movement with a peak detector; measure event synchronization (two trains, several event
-        classes, spike trains in two forms).
+        classes).
 :Prerequisites: :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` and
                 :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (the peak detector).
 :Data: trials 7 (clapping hands, synchronised) and 8 (unsynchronised), seconds 5 to 21 of the example session.
@@ -28,7 +28,6 @@ measures how far the events of one train meet those of the other, with and witho
 import matplotlib.pyplot as plt
 import numpy as np
 
-from helpers import shade_status
 from pyeyesweb.analysis_primitives import ScalarPeakDetector
 from pyeyesweb.datasets import load_qualisys_trial
 
@@ -138,52 +137,10 @@ fig.tight_layout()
 # **Takeaway.** MECS gives one synchronization per class of events, for any number of participants.
 
 # %%
-# Spike trains: no tolerance to choose
-# ------------------------------------
-# :class:`~pyeyesweb.analysis_primitives.SpikeSynchronization` (SPIKE-synchronization) decides what is simultaneous from the local
-# spacing of the events, so it has no ``max_lag``. ``degree`` is the share of events that have a partner in another train and
-# ``distance`` is ``1 - degree``. It takes the trains in two forms. In ``mode="binary"`` (the default) each sample has one
-# channel per train, as above; here windows of 2 s.
-
-from pyeyesweb.analysis_primitives.synchronization.events import SpikeSynchronization
-
-fig, ax = plt.subplots(figsize=(8, 3))
-for name in trials:
-    pair = np.column_stack([trains[name]["Left"][:, 0], trains[name]["Right"][:, 0]])
-    recorder = SpikeSynchronization(window=200, hop=200).run(pair, timestamps=stamps)
-    index = np.flatnonzero(recorder.ok)
-    ax.plot(recorder.timestamps[index], recorder.degree[index], "o-", label=name)
-    shade_status(ax, stamps, recorder.status, codes=(1,))
-ax.set_xlabel("end of the 2 s window (s)")
-ax.set_ylabel("degree of synchronization")
-ax.set_ylim(0, 1.05)
-ax.legend(fontsize=7)
-fig.tight_layout()
-
-# %%
-# In ``mode="timings"`` you give the spike *times* themselves, as a matrix with one row per train
-# ``(number_of_inputs, window)``; the times are positive and increasing, in any unit, and every train has the same number of
-# spikes (``window``). Each call is independent and always ``OK``. Here the times, in seconds, of the first eight events of
-# each hand.
-
-spike_times = {}
-for name in trials:
-    times = [(np.flatnonzero(trains[name][side][:, 0]) + 1) / sampling_rate for side in ("Left", "Right")]
-    spike_times[name] = np.array([train[:8] for train in times])
-    result = SpikeSynchronization(window=8, mode="timings").process(spike_times[name])
-    print(f"{name:<26} spike times (s), left hand: {spike_times[name][0].round(2)}")
-    print(f"{'':<26} degree {float(result.degree):.2f}, distance {float(result.distance):.2f}")
-
-# %%
-# **Takeaway.** SPIKE-synchronization needs no tolerance, either from sampled trains (binary) or from spike times (timings).
-
-# %%
 # Try it
 # ------
 # 1. Swap the two trains in ``EventSynchronization(window=1600, max_lag=30)`` on the two trials. What happens to Q and to
 #    q?
-# 2. Use ``SpikeSynchronization`` in ``"timings"`` mode with the first 8 events of the *left* hand against the first 8 of the
-#    left hand shifted by 0.05 s. What degree do you expect?
 
 # %%
 # Solutions
@@ -197,12 +154,6 @@ for name in trials:
     swapped = EventSynchronization(window=1600, max_lag=30).run(right, left)[-1]
     print(f"{name:<26} Q = {forward.synchronization:.2f} and {swapped.synchronization:.2f}, "
           f"q = {forward.delay:+.2f} and {swapped.delay:+.2f}")
-
-# %%
-# Exercise 2. A train against a shifted copy of itself: every spike has a partner.
-
-shifted = np.array([spike_times["trial 7 (synchronised)"][0], spike_times["trial 7 (synchronised)"][0] + 0.05])
-print("degree:", float(SpikeSynchronization(window=8, mode="timings").process(shifted).degree))
 
 # %%
 # Next steps

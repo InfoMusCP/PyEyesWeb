@@ -4,10 +4,10 @@ Synchronization of continuous signals
 
 Two hands that rise and fall together, a group that breathes as one: synchronization is how far several movements are
 coordinated in time. This first of two tutorials compares **continuous signals**: it measures phase locking, correlation,
-partial correlation, nonlinear interdependence and recurrence, on a performer who moves both arms together (synchronised) or
+partial correlation and recurrence, on a performer who moves both arms together (synchronised) or
 not (unsynchronised).
 
-:Goals: measure the synchronization of two signals and of a group with six features; read a recurrence plot; know what each
+:Goals: measure the synchronization of two signals and of a group with five features; read a recurrence plot; know what each
         measure compares and what its output looks like in time.
 :Prerequisites: :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (windows, statuses and the
                 analysis primitives).
@@ -92,31 +92,6 @@ fig.tight_layout()
 # values, because the phase then follows only the movement in the band; compare values computed with the same settings.
 #
 # **Takeaway.** PLV is 1 when two rhythms stay in step; give the frequency band of the movement for a meaningful phase.
-
-# %%
-# Nonlinear interdependence: does one signal determine the other?
-# ----------------------------------------------------------------
-# Correlation sees only straight-line relations. :class:`~pyeyesweb.analysis_primitives.NonlinearInterdependence` asks
-# whether the *state* of one signal, a short stretch of ``embedding_dimension`` samples, determines the state of the other: the
-# ``neighbours`` nearest states of one signal are looked up in the other. It returns the two directions
-# (``first_to_second_interdependence`` and the reverse; they may differ, and the difference is read as the direction of
-# the coupling) and a ``threshold`` computed from the parameters. Identical signals give 1 and independent signals near 0.
-
-from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence
-
-fig, ax = plt.subplots(figsize=(8, 3))
-for name, signal in heights.items():
-    recorder = NonlinearInterdependence(window=300, hop=100, embedding_dimension=3, neighbours=5).run(signal[:, 0], signal[:, 1], timestamps=stamps)
-    ax.plot(recorder.timestamps[recorder.ok], recorder.first_to_second_interdependence[recorder.ok], "o-", ms=3, label=f"{name}, left to right")
-    ax.plot(recorder.timestamps[recorder.ok], recorder.second_to_first_interdependence[recorder.ok], "s--", ms=3, label=f"{name}, right to left")
-    print(f"{name:<26} mean interdependence {np.mean(recorder.first_to_second_interdependence[recorder.ok]):.2f}, threshold {recorder.threshold[recorder.ok][0]:.2f}")
-ax.set_xlabel("time (s)")
-ax.set_ylabel("interdependence")
-ax.legend(fontsize=7, ncol=2)
-fig.tight_layout()
-
-# %%
-# **Takeaway.** Interdependence is higher when the movement of one hand determines that of the other, linearly or not.
 
 # %%
 # A group: correlation and direct synchronization
@@ -223,8 +198,7 @@ print("share of the main diagonal of the cross plot that recurs:", {name: round(
 # %%
 # Side by side
 # ------------
-# Each measure for the left and right hands: PLV and correlation over the 16 s, interdependence of the last 3 s window,
-# cross-recurrence of the first 5 s. Values are comparable only within a row.
+# Each measure for the left and right hands: PLV and correlation over the 16 s, cross-recurrence of the first 5 s. Values are comparable only within a row.
 
 rows = {}
 for name, signal in heights.items():
@@ -232,7 +206,6 @@ for name, signal in heights.items():
     rows[name] = {
         "PLV": PhaseLockingValue(window=1600).run(left, right)[-1].phase_locking_value,
         "correlation": np.corrcoef(left, right)[0, 1],
-        "interdependence": NonlinearInterdependence(window=300, hop=100, embedding_dimension=3, neighbours=5).run(left, right).first_to_second_interdependence[-1],
         "cross-recurrence, diagonal": np.diag(CrossRecurrencePlot(window=500, epsilon=0.05).run(signal[:500, 0:1], signal[:500, 1:2])[-1].cross_recurrence_matrix).mean(),
     }
 print(f"{'measure':<28}" + "".join(f"{name:>28}" for name in rows))

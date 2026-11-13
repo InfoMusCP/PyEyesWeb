@@ -67,8 +67,8 @@ call has the right step:
 
 ### Window metrics need a rate
 
-Five low-level metrics work on a window of a speed or acceleration profile, which has no time axis of its own:
-`SpectralArcLength`, `LogDimensionlessJerk`, `Harmonicity`, `SubmovementCount` and `CurvatureVelocityCorrelation`. They
+Four low-level metrics work on a window of a speed or acceleration profile, which has no time axis of its own:
+`SpectralArcLength`, `LogDimensionlessJerk`, `SubmovementCount` and `CurvatureVelocityCorrelation`. They
 require `sampling_rate` and raise `ValueError` at construction without it. They use `timestamp` only to label the result:
 it does not enter the computation and its order is not checked.
 
@@ -91,10 +91,10 @@ status is `WARMING_UP`; with a hop larger than 1, the calls between windows are 
 >>> from pyeyesweb.data_models import WindowedFeature
 >>> windowed = [info for info in pyeyesweb.catalog() if issubclass(info.cls, WindowedFeature)]
 >>> len(windowed)
-20
+15
 >>> import inspect
 >>> {info.name: inspect.signature(info.cls).parameters["window"].default for info in windowed if inspect.signature(info.cls).parameters["window"].default is not inspect.Parameter.empty}
-{'SpectralArcLength': 60, 'LogDimensionlessJerk': 60, 'Harmonicity': 60, 'SubmovementCount': 60, 'MultiScaleEntropy': 3000}
+{'SpectralArcLength': 60, 'LogDimensionlessJerk': 60, 'SubmovementCount': 60, 'MultiScaleEntropy': 3000}
 ```
 
 A window can be changed on a running feature. `window` and `hop` are neither live nor structural in the sense below: the newest
@@ -114,8 +114,8 @@ ValueError: SpectralArcLength: window must be >= 1 and 1 <= hop <= window (got w
 ```
 
 Some exceptions are worth knowing. `EventSynchronization` and `EventSynchronizationMECS` accumulate across windows, so
-`hop=None` means `hop = window` and no other value is accepted. Four classes have a `window` parameter without being windowed
-features: `Videogram`, `PositionDependingPotentials`, `Rarity` and `ScalarPeakDetector`. There `window` is a length of the
+`hop=None` means `hop = window` and no other value is accepted. Three classes have a `window` parameter without being windowed
+features: `Videogram`, `Rarity` and `ScalarPeakDetector`. There `window` is a length of the
 feature's own, in samples, described on its page.
 
 ## Units
@@ -126,9 +126,9 @@ Lengths, positions, and thresholds that are lengths are in **metres**, the unit 
 ```{doctest}
 >>> with_units = [info.name for info in pyeyesweb.catalog() if "units" in inspect.signature(info.cls).parameters]
 >>> len(with_units)
-6
+4
 >>> with_units
-['MassSpringSimulator', 'HitCellDetector', 'Kinematics', 'Equilibrium', 'MotionNoiseDetector', 'TrajectoryNonPlanarity']
+['HitCellDetector', 'Kinematics', 'Equilibrium', 'TrajectoryNonPlanarity']
 ```
 
 The rule is that **parameters are scaled and data are not**. A threshold is always written in metres, whatever `units` says,
@@ -158,30 +158,6 @@ Schema(Output('kinetic_energy', unit='<length>^2/s^2'))
 '<length>^2/s^2'
 ```
 
-### The humanoid model
-
-The humanoid of `MassSpringSimulator` works internally in millimetres, because the body model of EyesWeb and its spring forces are defined in
-that unit. It still follows the same rule: `units` declares the unit of your frames, of `gravity` and `floor_position`, and of
-the output, and the wrapper converts at the boundary. A body run in metres and the same body run in millimetres give the same
-motion, to rounding:
-
-```{doctest}
->>> from pyeyesweb.physical_signals.humanoid import MassSpringSimulator
->>> pose = MassSpringSimulator(sampling_rate=25.0).process({"head": (0.0, 1.7, 0.0)}).joints      # metres
->>> in_metres = MassSpringSimulator(sampling_rate=25.0)
->>> in_millimetres = MassSpringSimulator(sampling_rate=25.0, units="mm")
->>> for step in range(5):
-...     a = in_metres.process(pose + 0.001 * step).joints
-...     b = in_millimetres.process(pose * 1000 + 1.0 * step).joints
->>> bool(np.allclose(a * 1000, b))
-True
->>> in_millimetres.outputs
-Schema(Output('joints', shape=(21, 3), unit='mm'), Output('directions', shape=(20, 3)))
-```
-
-A model of your own is different: it runs in its own unit, and `units` only names it, so `"m"` and `"mm"` give the same
-numbers.
-
 ## Choices are strings, switches are booleans
 
 A parameter that picks one of several algorithms or modes is a lower-case string, as in scikit-learn
@@ -197,10 +173,11 @@ No parameter takes an enumeration: the only enumerations in the public interface
 Traceback (most recent call last):
   ...
 ValueError: output_dims: invalid value 'bogus'; choose one of 'components', 'tangential'
->>> MassSpringSimulator(length_forces="on")
+>>> from pyeyesweb.physical_signals import SilhouetteCentroids
+>>> SilhouetteCentroids(filter_centroids="on")
 Traceback (most recent call last):
   ...
-TypeError: length_forces must be True or False, got 'on'
+TypeError: filter_centroids must be True or False, got 'on'
 ```
 
 A feature with variants (`Symmetry` has `method="ratio"` and `"reflection"`) refuses the parameters of the other variant:
@@ -214,7 +191,7 @@ TypeError: method='reflection' does not take aggregation
 ```
 
 A few features choose which outputs they compute with `parts=`, a sequence of names validated like any other choice:
-`SilhouetteCentroids`, `SilhouetteBodyParts` and `RegionDependingPotentials`. The value is read back as a tuple in the order of
+`SilhouetteCentroids` and `SilhouetteBodyParts`. The value is read back as a tuple in the order of
 the block, which is not necessarily the order you gave.
 
 ```{doctest}

@@ -10,7 +10,7 @@ correction of the original is recorded, and which blocks of earlier versions are
 >>> import pyeyesweb
 >>> entries = pyeyesweb.catalog()
 >>> len(entries), sum(info.eyesweb_block is not None for info in entries), sum(info.eyesweb_block is None for info in entries)
-(47, 35, 12)
+(37, 28, 9)
 ```
 
 The first number is the number of features, the second the number that come from an EyesWeb block (the block is the
@@ -55,9 +55,9 @@ True
 
 Each correction is described where the feature is: in the **Notes** of its docstring, which the generated API page shows, and in
 the theory page of its family ({doc}`../theory/kinematics_energy`, {doc}`../theory/smoothness`,
-{doc}`../theory/shape_symmetry_balance`, {doc}`../theory/impulsivity_suddenness`, {doc}`../theory/gesture_segmentation`,
+{doc}`../theory/shape_symmetry_balance`, {doc}`../theory/gesture_segmentation`,
 {doc}`../theory/entropy_rarity_periodicity`, {doc}`../theory/synchronization`, {doc}`../theory/dominance`,
-{doc}`../theory/humanoid_models`, {doc}`../theory/imaging`). The corrections of the 2.0 release are also in the changelog
+{doc}`../theory/imaging`). The corrections of the 2.0 release are also in the changelog
 ({doc}`../changelog`).
 
 A change of the Python layer that alters numbers follows the same rule: it is a decision, it is documented in the docstring and in

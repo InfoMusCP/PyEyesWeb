@@ -7,8 +7,7 @@ Generated from `pyeyesweb.catalog()`: {{ n_physical_signals }} features. Each en
 
 ## Supporting classes
 
-Not features (they are not in the catalog): the model the generic-model features run on, and the stream plumbing that
-aligns several sources in time.
+Not features (they are not in the catalog): the stream plumbing that aligns several sources in time.
 
 ```{eval-rst}
 .. currentmodule:: pyeyesweb.physical_signals
@@ -17,7 +16,6 @@ aligns several sources in time.
    :toctree: generated/
    :nosignatures:
 
-   MassSpringModel
    TimeWindowSynchronizer
    SynchronizedWindow
 ```

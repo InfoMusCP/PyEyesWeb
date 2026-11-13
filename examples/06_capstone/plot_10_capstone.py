@@ -2,7 +2,7 @@
 Capstone: a pipeline
 ====================
 
-This tutorial puts the previous ones together in two ways. First a **live loop**: a chain of four features is fed one frame at a
+This tutorial puts the previous ones together in two ways. First a **live loop**: a chain of three features is fed one frame at a
 time, as it would be from a motion-capture stream, and a parameter is changed while it runs. Then a **batch analysis**: features
 from three layers are computed for a set of recordings, collected in a table with pandas, and used to compare the conditions of
 the example session with a plain nearest-centroid rule and a plot.
@@ -24,14 +24,11 @@ the example session with a plain nearest-centroid rule and a plot.
 # Each call of ``process`` takes one frame and returns a :class:`~pyeyesweb.data_models.Result`; every feature remembers what
 # it needs between calls (see :doc:`/concepts/results`). Here the chain is the one of the gesture tutorial,
 #
-# ``skeleton`` -> :class:`~pyeyesweb.low_level.KineticEnergy` -> :class:`~pyeyesweb.low_level.MotionNoiseDetector`
-# -> :class:`~pyeyesweb.mid_level.GestureSegmenter` -> :class:`~pyeyesweb.mid_level.MotionDuration`
+# ``skeleton`` -> :class:`~pyeyesweb.low_level.KineticEnergy` -> :class:`~pyeyesweb.mid_level.GestureSegmenter`
+# -> :class:`~pyeyesweb.mid_level.MotionDuration`
 #
 # The kinetic energy of the body is the *intensity* that the segmenter thresholds to find gestures (energy per unit of mass, see
-# :doc:`/theory/kinematics_energy`). ``MotionNoiseDetector`` sets ``is_noisy`` when the speeds of a joint jump at random, as
-# with a tracker that loses a marker, and its flag is fed **directly** to the ``noise`` input of the segmenter: ``True`` means
-# noise, and no gesture can start while it is set. With several joints, only the joint whose name comes last in alphabetical
-# order decides the flag (``Spine`` for the 20 joints used here), see the class description. ``MotionDuration`` turns the
+# :doc:`/theory/kinematics_energy`). ``MotionDuration`` turns the
 # on/off signal ``is_gesturing`` into the length of each phase of motion and of pause (:doc:`/theory/gesture_segmentation`).
 #
 # The recording is trial 7 (clapping hands) in **metres**; time is in seconds. A ``Recorder`` collects the results of a loop
@@ -44,7 +41,6 @@ from helpers import shade_status
 from pyeyesweb.data_models import Recorder
 from pyeyesweb.datasets import load_qualisys_trial
 from pyeyesweb.low_level import KineticEnergy
-from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
 
 RATE = 100  # Hz, the sampling rate of the recordings
@@ -54,18 +50,17 @@ time = trial.timestamps
 
 
 def make_pipeline():
-    """The four features, built from the skeleton of the trial."""
+    """The three features, built from the skeleton of the trial."""
     return (KineticEnergy(skeleton=trial.skeleton, sampling_rate=RATE),
-            MotionNoiseDetector(skeleton=trial.skeleton, sampling_rate=RATE),
             GestureSegmenter(firing_threshold=1.0),
             MotionDuration(sampling_rate=RATE))
 
 
-energy, noise, segmenter, durations = make_pipeline()
+energy, segmenter, durations = make_pipeline()
 print(segmenter.inputs)
 
 # %%
-# The loop is four calls per frame. At 3 s we make the segmenter less sensitive by raising its ``firing_threshold`` from 1 to 4
+# The loop is three calls per frame. At 3 s we make the segmenter less sensitive by raising its ``firing_threshold`` from 1 to 4
 # (a **live** parameter: the new value is used from the next call and nothing is lost). At 6 s we change
 # ``filter_window_length``, the smoothing of the segmenter, from 9 to 7 samples (a **structural** parameter: it shapes the
 # state of the filter, so the segmenter restarts, and the ``reason`` of the next result says so). The rule is in
@@ -79,8 +74,7 @@ for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 6.0):
         segmenter.filter_window_length = 7        # structural: the segmenter restarts and warms up again
     ke = energy.process(frame, timestamp=stamp)
-    flag = noise.process(frame, timestamp=stamp)
-    gesture = segmenter.process(ke.kinetic_energy, flag.is_noisy, timestamp=stamp)
+    gesture = segmenter.process(ke.kinetic_energy, timestamp=stamp)
     phase = durations.process(float(gesture.is_gesturing), timestamp=stamp)
     log.append(gesture)
     thresholds.append(segmenter.firing_threshold)
@@ -124,11 +118,10 @@ ax.set_title("Live loop on trial 7: a live change and a structural change (dashe
 # ``run`` is defined as ``reset()`` followed by a loop of ``process``, so a live loop must give the numbers of the batch call
 # as long as no parameter changes. We check it on the first three seconds, before the first change, with a fresh pipeline.
 
-energy, noise, segmenter, durations = make_pipeline()
+energy, segmenter, durations = make_pipeline()
 first = slice(0, 300)
 batch_energy = energy.run(trial.positions[first], timestamps=time[first]).kinetic_energy
-batch_noise = noise.run(trial.positions[first], timestamps=time[first]).is_noisy
-batch = segmenter.run(batch_energy, batch_noise, timestamps=time[first])
+batch = segmenter.run(batch_energy, timestamps=time[first])
 print("same smoothed intensity as the live loop:", np.allclose(batch.smoothed_intensity, log.smoothed_intensity[first], equal_nan=True))
 print("same gesture flags:", bool(np.array_equal(batch.is_gesturing, log.is_gesturing[first])))
 
@@ -168,8 +161,7 @@ def trial_row(number, start, stop):
     data = load_qualisys_trial(number, start=start, stop=stop).to_units("m")
     stamps, positions, skeleton = data.timestamps, data.positions, data.skeleton
     intensity = KineticEnergy(skeleton=skeleton, sampling_rate=RATE).run(positions, timestamps=stamps).kinetic_energy
-    flag = MotionNoiseDetector(skeleton=skeleton, sampling_rate=RATE).run(positions, timestamps=stamps).is_noisy
-    gestures = GestureSegmenter(firing_threshold=1.0).run(intensity, flag, timestamps=stamps)
+    gestures = GestureSegmenter(firing_threshold=1.0).run(intensity, timestamps=stamps)
     phases = MotionDuration(sampling_rate=RATE).run(gestures.is_gesturing.astype(float), timestamps=stamps).motion_duration
     speed = Kinematics(sampling_rate=RATE).run(data.joint("Right_Hand"), timestamps=stamps).velocity
     arc = SpectralArcLength(window=200, hop=100, sampling_rate=RATE).run(np.asarray(speed), timestamps=stamps)
@@ -317,7 +309,7 @@ for title, table in groups.items():
 # ---------
 # Exercise 1. The same loop with a third threshold; the gesture starts are counted per stretch.
 
-energy, noise, segmenter, durations = make_pipeline()
+energy, segmenter, durations = make_pipeline()
 starts = []
 for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 3.0):
@@ -325,7 +317,7 @@ for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 8.0):
         segmenter.firing_threshold = 0.5
     ke = energy.process(frame, timestamp=stamp)
-    gesture = segmenter.process(ke.kinetic_energy, noise.process(frame, timestamp=stamp).is_noisy, timestamp=stamp)
+    gesture = segmenter.process(ke.kinetic_energy, timestamp=stamp)
     starts.append(bool(gesture.is_gesture_start))
 starts = np.array(starts)
 for label, (a, b) in {"before 3 s": (0, 3), "3 s to 8 s": (3, 8), "after 8 s": (8, 10)}.items():

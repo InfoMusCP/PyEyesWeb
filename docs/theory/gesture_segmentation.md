@@ -39,16 +39,6 @@ The outputs are `smoothed_intensity` (the filtered intensity, in the unit of the
 is running), and `is_gesture_start` and `is_gesture_end`, true on the sample that opens or closes a gesture. A value that is
 not finite, in the intensity or in the flag, gives `INVALID_INPUT`.
 
-### The noise flag
-
-A skeleton tracker may lose a joint, and the speed of a joint that jumps about at random gives an intensity that looks like a
-gesture and is not. The `noise` input is a second stream, one flag for each sample, that is true while the motion is judged to
-be noise, and while it is set no gesture can start. The flag is computed by
-{py:class}`~pyeyesweb.low_level.MotionNoiseDetector` (output `is_noisy`) on the same frames ({doc}`kinematics_energy`). With several joints the detector is decided by the
-alphabetically last joint name: this is the behaviour of the underlying EyesWeb block, and only one joint decides.
-Without a flag the feature segments any one-dimensional signal. The call is `process(intensity, noise=False, *, timestamp=None)`
-and `run(intensity, noise=None, *, timestamps=None)`.
-
 ## Duration of motion and pause
 
 The duration of the gestures and of the pauses between them is itself a quantity of expressive movement: a calm and a tense
@@ -92,7 +82,6 @@ and a longer, slower one, with speeds of bell shape.
 
 ```{doctest}
 >>> from pyeyesweb.low_level import KineticEnergy
->>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 >>> from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
 >>> rate = 50.0
 >>> time = np.arange(int(8 * rate)) / rate
@@ -101,9 +90,8 @@ and a longer, slower one, with speeds of bell shape.
 >>> frames = np.zeros((len(time), 1, 3))
 >>> frames[:, 0, 0] = np.cumsum(speed) / rate                        # the position of one joint, in m
 >>> energy = KineticEnergy(labels=["hand"], weights={"hand": 1.0}, sampling_rate=rate).run(frames).kinetic_energy
->>> noisy = MotionNoiseDetector(labels=["hand"], sampling_rate=rate).run(frames).is_noisy
 >>> segmenter = GestureSegmenter(firing_threshold=0.05)
->>> record = segmenter.run(energy, noisy)
+>>> record = segmenter.run(energy)
 >>> starts, ends = np.flatnonzero(record.is_gesture_start), np.flatnonzero(record.is_gesture_end)
 >>> time[starts], time[ends]
 (array([1.46, 4.54]), array([2.26, 5.68]))
@@ -174,13 +162,10 @@ from the recorder; in a stream, the output of each call is acted upon as it arri
   units, and compare gestures only with the same threshold.
 - **Units.** With a kinetic energy, the threshold depends on the weights and on the unit of length of the data: the same
   movement in millimetres has an energy $10^6$ times larger in the squared unit.
-- **The noise flag.** Pass the `is_noisy` output of `MotionNoiseDetector` as the flag. The flag only stops a gesture from
-  starting: a running gesture ends when the smoothed intensity falls below the threshold, whatever the flag.
 - **Short pauses.** The smoothing makes the segmenter insensitive to dips of the intensity that last a few
   samples. A shorter filter window (5) follows the intensity more closely than the default of 9.
 - **After segmentation.** The segments are the units to which the mid-level features apply: cut the recording at the
-  starts and the ends and compute the smoothness ({doc}`smoothness`), the impulsivity ({doc}`impulsivity_suddenness`) or the
-  mean energy of each.
+  starts and the ends and compute the smoothness ({doc}`smoothness`) or the mean energy of each.
 
 ## Further reading
 

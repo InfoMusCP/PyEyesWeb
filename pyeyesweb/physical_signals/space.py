@@ -31,9 +31,7 @@ class HitCellDetector(FrameFeature):
         i = \left\lfloor \frac{y - y_{min}}{y_{max} - y_{min}}\, n_y \right\rfloor, \qquad
         j = \left\lfloor \frac{x - x_{min}}{x_{max} - x_{min}}\, n_x \right\rfloor,
 
-    with the upper edge of the area belonging to the last cell. It is the first step of the space-occupation features, which
-    turn the hit cells into potentials (:class:`~pyeyesweb.mid_level.PositionDependingPotentials`,
-    :class:`~pyeyesweb.mid_level.RegionDependingPotentials`).
+    with the upper edge of the area belonging to the last cell.
 
     ``process(points, *, timestamp=None)`` takes an ``(N, 2)`` array of ``(x, y)`` (``run`` takes ``(T, N, 2)``); the
     feature is stateless and has no time axis: ``timestamp`` is only copied into ``result.timestamp``.

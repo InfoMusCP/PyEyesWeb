@@ -3,15 +3,13 @@
 Two dancers who move in unison, a quartet that breathes together, two hands that keep the same rhythm: synchronization is the
 degree to which the movements of several participants, or of several parts of the same body, are coordinated in time. There is
 no single measure of it, because coordination can mean different things: the signals rise and fall together, their phases
-stay locked, their discrete events occur at the same moments, their trajectories visit the same states. The nine features of
+stay locked, their discrete events occur at the same moments, their trajectories visit the same states. The seven features of
 this family are organised here by **what is compared**.
 
 | What is compared | Quantity | Features |
 |---|---|---|
-| Two signals | nonlinear interdependence | {py:class}`~pyeyesweb.analysis_primitives.NonlinearInterdependence` |
 | The phases of two signals | phase locking value | {py:class}`~pyeyesweb.analysis_primitives.PhaseLockingValue` |
 | Two or more series of events | event synchronization | {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization`, {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` |
-| Several spike trains | SPIKE-synchronization | {py:class}`~pyeyesweb.analysis_primitives.SpikeSynchronization` |
 | The states visited by one or two movements | recurrence | {py:class}`~pyeyesweb.analysis_primitives.RecurrencePlot`, {py:class}`~pyeyesweb.analysis_primitives.CrossRecurrencePlot`, {py:class}`~pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation` |
 | The members of a group | partial correlation | {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` |
 
@@ -24,33 +22,6 @@ speed from {py:class}`~pyeyesweb.low_level.Kinematics`.
 
 Synchronization measures assume that the coordination is stationary over the window. Choose the window so that it contains
 several cycles of the movement and so that the coordination does not change within it.
-
-## Two signals
-
-Linear correlation (see the group matrix below) sees only relations of the form $y\approx ax+b$. The nonlinear
-interdependence measure detects any
-dependence in which the state of one signal determines the state of the other. Each signal is embedded in a state space of
-dimension $m$ (`embedding_dimension`): the state at sample $n$ is a vector of $m$ delayed samples. For each state of the
-first signal $X$, the $k$ nearest states in time (`neighbours`) are found, and the interdependence $S(X|Y)$ compares the
-distances of these states in the space of $X$ with the distances of the states that have the same time indices in the space of
-$Y$. It is close to 1 for two signals that determine each other (identical signals give 1) and close to 0 for independent
-signals. The two directions $S(X|Y)$ and $S(Y|X)$ are generally different, and their asymmetry is read as the direction of the
-coupling.
-
-{py:class}`~pyeyesweb.analysis_primitives.NonlinearInterdependence` returns both values, `first_to_second_interdependence` and
-`second_to_first_interdependence`, and `threshold`, the value $(k/m)^{2/m}$ that the block computes from its parameters. A
-correction of the core is that this threshold used an exclusive-or instead of the power. The result is `INVALID_INPUT` when a
-value is not finite.
-
-```{doctest}
->>> from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterdependence
->>> rng = np.random.default_rng(5)
->>> x = rng.normal(size=100)
->>> dependent = NonlinearInterdependence(window=100, neighbours=3).run(x, x ** 3)             # a nonlinear function of x
->>> independent = NonlinearInterdependence(window=100, neighbours=3).run(x, rng.normal(size=100))
->>> round(float(dependent.first_to_second_interdependence[-1]), 2), round(float(independent.first_to_second_interdependence[-1]), 2)
-(0.93, 0.01)
-```
 
 ## Phase
 
@@ -136,30 +107,6 @@ provided.
 >>> record = EventSynchronization(window=60, max_lag=3).run(first, second)
 >>> round(float(record.synchronization[-1]), 2), round(float(record.delay[-1]), 2)
 (0.67, 0.67)
-```
-
-## Spike trains
-
-A spike train is an event series for which a good coincidence window is not known in advance, as in the firing of neurons or
-in irregular gestures. SPIKE-synchronization has no time-scale
-parameter: coincidence is decided adaptively from the local spike intervals. Each spike receives a coincidence
-indicator, 1 if it coincides with a spike of another train and 0 if it does not; the degree of synchronization is the mean of
-the indicator over all the spikes of all the trains (a spike shared by two trains counts twice), and the distance is
-$1-\text{degree}$. {py:class}`~pyeyesweb.analysis_primitives.SpikeSynchronization` takes `number_of_inputs` trains in one of two
-modes. In `"binary"` mode each call gives one sample with a channel per train (non-zero is a spike), and the feature also
-returns the `profile`, the coincidence indicator of the merged spikes at each sample (-1 where no train has a spike). In
-`"timings"` mode each call takes a matrix whose rows are the spike times of the trains (positive and increasing, in any unit)
-and nothing is carried from one call to the next; it is `OK` for every call. The core fixed in this feature the swap of the
-degree and the distance in binary mode and the use of distinct spike positions instead of all spikes in the mean.
-
-```{doctest}
->>> from pyeyesweb.analysis_primitives.synchronization.events import SpikeSynchronization
->>> trains = np.zeros((50, 2))
->>> trains[[5, 20, 35], 0] = 1
->>> trains[[5, 21, 40], 1] = 1
->>> record = SpikeSynchronization(window=50).run(trains)
->>> float(record.degree[-1]), float(record.distance[-1])
-(1.0, 0.0)
 ```
 
 ## Recurrence

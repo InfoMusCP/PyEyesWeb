@@ -133,8 +133,8 @@ True
 
 Instead of listing joints by hand, a feature that works on a body takes `skeleton=`, either the name of a preset or a
 {py:class}`~pyeyesweb.data_models.Skeleton` that you build. A skeleton carries the joint names, optionally the symmetric
-pairs, a reference joint and the weights of the joints. `skeleton=` is accepted by four classes:
-{py:class}`~pyeyesweb.low_level.KineticEnergy` (joints and weights), {py:class}`~pyeyesweb.low_level.MotionNoiseDetector`,
+pairs, a reference joint and the weights of the joints. `skeleton=` is accepted by three classes:
+{py:class}`~pyeyesweb.low_level.KineticEnergy` (joints and weights),
 {py:class}`~pyeyesweb.low_level.Symmetry` (joints, pairs and reference) and {py:class}`~pyeyesweb.low_level.PointsDensity`. An explicit `labels=`, `weights=` or `pairs=` always wins over the
 skeleton, and a feature given no joint information at all raises `ValueError`. (`KineticEnergy(labels=[...])` alone is joint
 information: it weighs every joint 1.0.)
@@ -205,20 +205,6 @@ You can build a skeleton for your own marker set:
 {'shoulder': 4.0, 'elbow': 2.0, 'hand': 1.0}
 ```
 
-## Mapping your joint names to a model: `joint_map`
-
-`MassSpringSimulator`, in the physical-signals layer, follows a captured skeleton with a body model. The model has its own
-joint names (`pyeyesweb.physical_signals.HUMANOID_JOINTS` for the humanoid, the mass names for a model of your own), and
-`joint_map` says which label of your data feeds each model joint, as `model joint -> your label`. The names you leave out keep
-their own. It is the only class that takes `joint_map`.
-
-```{doctest}
->>> from pyeyesweb.physical_signals.humanoid import MassSpringSimulator
->>> simulator = MassSpringSimulator(joint_map={"head": "Head", "neck": "Neck"}, sampling_rate=25.0)
->>> simulator.process({"Head": (0.0, 1.7, 0.0), "Neck": (0.0, 1.5, 0.0)}).joints.shape
-(21, 3)
-```
-
 ## Images
 
 Image features take an 8-bit image per call, `(H, W)` for grayscale or `(H, W, C)` for colour. A mask is a `bool` array, read
@@ -271,8 +257,7 @@ sets. What differs is what the feature declares as its input, and how it reads i
 
 ## The dimension of a signal: `dims`
 
-Three classes (`Kinematics`, `Suddenness` and `SuddennessImpulsivity`) work on a point or signal of
-any dimension. Their `dims` parameter defaults to `None`, which means "taken from the first frame". The inferred value is
+`Kinematics` works on a point or signal of any dimension. Its `dims` parameter defaults to `None`, which means "taken from the first frame". The inferred value is
 fixed for the rest of the run, a later frame of another size raises `ValueError`, and `reset()` forgets it.
 
 ```{doctest}

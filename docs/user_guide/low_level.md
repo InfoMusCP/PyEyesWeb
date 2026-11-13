@@ -16,14 +16,13 @@ direction of a point from a Savitzky-Golay fit, and is the usual first step: its
 energy of a whole body use {py:class}`~pyeyesweb.low_level.KineticEnergy`, the weighted kinetic energy of the joints of a
 skeleton. {py:class}`~pyeyesweb.low_level.DirectionChange` measures the sharp turns of a path in a window,
 {py:class}`~pyeyesweb.low_level.Directness` how straight a path is, and
-{py:class}`~pyeyesweb.low_level.TrajectoryNonPlanarity` how far a 3D path leaves its best-fit planes.
-{py:class}`~pyeyesweb.low_level.MotionNoiseDetector` tells whether the motion of a skeleton is random. Theory:
+{py:class}`~pyeyesweb.low_level.TrajectoryNonPlanarity` how far a 3D path leaves its best-fit planes. Theory:
 {doc}`../theory/kinematics_energy`.
 
 **How smooth is it?** Start from a speed profile and pick the metric that suits the question.
 {py:class}`~pyeyesweb.low_level.SpectralArcLength` and {py:class}`~pyeyesweb.low_level.LogDimensionlessJerk` are the two
 established metrics {cite}`balasubramanian2015analysis`; {py:class}`~pyeyesweb.low_level.SubmovementCount` counts the
-speed peaks, {py:class}`~pyeyesweb.low_level.Harmonicity` compares a profile with a single bell-shaped peak, and
+speed peaks, and
 {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation` works on the vectors of the movement. Theory: {doc}`../theory/smoothness`.
 
 **How is the posture shaped?** {py:class}`~pyeyesweb.low_level.BoundingBoxFilledArea`,

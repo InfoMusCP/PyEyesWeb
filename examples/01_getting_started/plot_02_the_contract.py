@@ -3,7 +3,7 @@ The contract every feature follows
 ==================================
 
 Every PyEyesWeb feature takes its input and returns its output in the same way. This tutorial goes through those rules one
-at a time, with ``Kinematics`` for a point, ``Suddenness`` for a window of samples and ``KineticEnergy`` for a skeleton.
+at a time, with ``Kinematics`` for a point, ``DirectionChange`` for a window of samples and ``KineticEnergy`` for a skeleton.
 
 :Goals: use ``process`` (live) and ``run`` (offline) and know what ``reset`` does; read a ``Result`` and its ``Schema``;
         interpret ``Status`` and the warm-up; give time and units correctly; change a parameter while a feature runs; build a
@@ -111,7 +111,7 @@ except ValueError as error:
 # Status and warm-up
 # ------------------
 # A feature that works on a window of samples cannot answer before the window is full. The ``status`` of a result tells why
-# a value is absent. :class:`~pyeyesweb.mid_level.Suddenness` looks at ``window`` samples of a trajectory and reports a new
+# a value is absent. :class:`~pyeyesweb.low_level.DirectionChange` looks at ``window`` samples of a trajectory and reports a new
 # result every ``hop`` samples. With ``window=8`` and ``hop=3``:
 #
 # * ``WARMING_UP``: fewer than 8 samples so far; the ``reason`` counts them;
@@ -119,12 +119,12 @@ except ValueError as error:
 # * ``NO_OUTPUT``: between two windows (``hop``);
 # * ``INVALID_INPUT``: the sample was not data (next section).
 
-from pyeyesweb.mid_level.suddenness import Suddenness
+from pyeyesweb.low_level import DirectionChange
 
-suddenness = Suddenness(window=8, hop=3)
+turns = DirectionChange(window=8, hop=3)
 rows = []
 for index in range(14):
-    result = suddenness.process(hand[index], timestamp=time[index])
+    result = turns.process(hand[index], timestamp=time[index])
     rows.append(result)
     print(f"sample {index:2d}: {result.status.name:<10} {result.reason}")
 
@@ -137,23 +137,23 @@ for index, result in enumerate(rows):
 ax.set_yticks([])
 ax.set_xticks(range(14))
 ax.set_xlabel("sample number")
-ax.set_title("Suddenness(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT")
+ax.set_title("DirectionChange(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT")
 ax.grid(False)
 
 # %%
 # ``feature.latest`` keeps the last result that was ``OK``. It is ``None`` before the first one and after ``reset()``.
 
-print("latest:", suddenness.latest)
-suddenness.reset()
-print("latest after reset:", suddenness.latest)
+print("latest:", turns.latest)
+turns.reset()
+print("latest after reset:", turns.latest)
 
 # %%
 # On a whole recording the same statuses are columns of the recorder. ``plot_recorder`` draws the rows that are ``OK`` and shades the warm-up
 # (yellow: warming up; red: invalid input), here for a window of one second that moves every 0.1 s.
 
-slow_window = Suddenness(window=100, hop=10).run(hand, timestamps=time)
+slow_window = DirectionChange(window=100, hop=10).run(hand, timestamps=time)
 print(slow_window)
-fig = plot_recorder(slow_window, names=["alpha"], t=time, title="Suddenness, window 100 samples (1 s), hop 10")
+fig = plot_recorder(slow_window, names=["cosine"], t=time, title="DirectionChange, window 100 samples (1 s), hop 10")
 
 # %%
 # **Takeaway.** The status says why a value is missing; the first ``OK`` comes when the window is full, then every ``hop``
@@ -250,7 +250,7 @@ print("after a structural change:", repr(energy.process(np.zeros((20, 3))).reaso
 print("the note appears once:", repr(energy.process(np.zeros((20, 3))).reason))
 
 # %%
-# For ``window`` and ``hop`` the newest samples are kept: ``suddenness.window = 12`` keeps the latest 12 samples and the
+# For ``window`` and ``hop`` the newest samples are kept: ``turns.window = 12`` keeps the latest 12 samples and the
 # feature goes on. Which parameter of which feature is live is listed in :doc:`/concepts/time_units_parameters`.
 
 # %%
@@ -313,7 +313,7 @@ for layer in pyeyesweb.Layer:
 # ------
 # 1. ``Kinematics`` can return the velocity, the acceleration and the jerk of the same hand in one call: give ``output_type``
 #    a list. How many outputs does the schema have? Run it and print the status counts of the recorder.
-# 2. Feed ``Suddenness(window=8, hop=3)`` the first 20 samples of the hand with ``process`` and list the sample numbers
+# 2. Feed ``DirectionChange(window=8, hop=3)`` the first 20 samples of the hand with ``process`` and list the sample numbers
 #    where the status is ``OK``. Then change ``hop`` to 1 and do it again. What changed?
 # 3. Break the contract on purpose: give ``process`` a timestamp that does not increase. What are the status and the reason, and
 #    does the next valid sample work?
@@ -332,7 +332,7 @@ print({name: int((recorder.status == code).sum()) for name, code in (("OK", 0), 
 # Exercise 2. The first window ends at sample 7; ``hop`` sets how often a result follows.
 
 for hop in (3, 1):
-    feature = Suddenness(window=8, hop=hop)
+    feature = DirectionChange(window=8, hop=hop)
     ok = [i for i in range(20) if feature.process(hand[i], timestamp=time[i]).status.name == "OK"]
     print(f"hop={hop}: OK at samples {ok}")
 

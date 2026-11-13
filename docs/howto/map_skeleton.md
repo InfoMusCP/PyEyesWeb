@@ -8,12 +8,11 @@ concepts behind it are in {doc}`../concepts/inputs`; the generated reference is 
 
 ## What a feature reads from a skeleton
 
-Four classes take `skeleton=`. Each reads the fields of the skeleton that it needs and ignores the others.
+Three classes take `skeleton=`. Each reads the fields of the skeleton that it needs and ignores the others.
 
 | Class | Fields it reads |
 |---|---|
 | {py:class}`~pyeyesweb.low_level.KineticEnergy` | `joints` (the labels of the rows) and `weights` (the weight of each joint) |
-| {py:class}`~pyeyesweb.low_level.MotionNoiseDetector` | `joints` |
 | {py:class}`~pyeyesweb.low_level.Symmetry` | `joints`, `pairs` and, for `method="ratio"`, `reference` |
 | {py:class}`~pyeyesweb.low_level.PointsDensity` | `joints` (names only; they do not enter the computation) |
 
@@ -116,7 +115,6 @@ frame, one row per joint, and `parameters` shows what they took from the skeleto
 
 ```{doctest}
 >>> from pyeyesweb.low_level import KineticEnergy, PointsDensity
->>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 >>> energy = KineticEnergy(skeleton=upper_body, sampling_rate=100.0)
 >>> energy.inputs
 Inputs(skeleton: points (9, 3) - joint positions or velocities)
@@ -127,8 +125,6 @@ Inputs(skeleton: points (9, 3) - joint positions or velocities)
 ([('l_shoulder', 'r_shoulder'), ('l_elbow', 'r_elbow'), ('l_wrist', 'r_wrist')], 'pelvis')
 >>> PointsDensity(skeleton=upper_body).inputs
 Inputs(points: points (9, 3) - points whose dispersion is measured)
->>> MotionNoiseDetector(skeleton=upper_body).inputs
-Inputs(skeleton: points (9, 3) - joint positions)
 ```
 
 A recording of this system is an array of shape `(frames, 9, 3)`; here a random walk stands in for the data. `run` takes the
@@ -202,25 +198,6 @@ parameters, with explicit values winning. They are useful for a function of your
 >>> skeletons.get_skeleton(upper_body) is upper_body
 True
 ```
-
-## Mapping to a body model: `joint_map`
-
-`MassSpringSimulator`, in the physical-signals layer, does not take a skeleton. It follows a captured body with a model that
-has its own joint names (`pyeyesweb.physical_signals.HUMANOID_JOINTS`, 21 names, for the humanoid), and the parameter
-`joint_map` says which label of your data feeds each model joint, as `model joint -> your label`. A joint you leave out keeps
-the model's name. It is the only class that takes `joint_map`.
-
-```{doctest}
->>> from pyeyesweb.physical_signals.humanoid import HUMANOID_JOINTS, MassSpringSimulator
->>> HUMANOID_JOINTS[:4]
-('head', 'left_ankle', 'left_elbow', 'left_foot')
->>> simulator = MassSpringSimulator(joint_map={"head": "Head", "neck": "Neck"}, sampling_rate=25.0)
->>> simulator.process({"Head": (0.0, 1.7, 0.0), "Neck": (0.0, 1.5, 0.0)}).joints.shape
-(21, 3)
-```
-
-The simulator follows a body model and expects frames in the unit given by `units`; see
-{doc}`../theory/humanoid_models` for what the model does and {doc}`../concepts/time_units_parameters` for the unit rule.
 
 ## What goes wrong, and how it is reported
 

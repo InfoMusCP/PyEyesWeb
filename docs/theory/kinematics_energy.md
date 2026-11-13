@@ -5,13 +5,12 @@ descriptions of movement, and they are the starting point for most of the others
 conceptual model ({doc}`framework`): each is defined for one moment or for a short stretch of movement, and each is computed
 from a position signal alone. In studies of expressive movement the speed, the acceleration and the energy of the body are
 among the cues that best separate emotions and movement styles {cite}`camurri2003recognizing,glowinski2011minimal`, and the
-smoothness of a movement ({doc}`smoothness`), its segmentation into gestures ({doc}`gesture_segmentation`) and its
-impulsivity ({doc}`impulsivity_suddenness`) are all computed from the quantities of this page.
+smoothness of a movement ({doc}`smoothness`) and its segmentation into gestures ({doc}`gesture_segmentation`) are
+computed from the quantities of this page.
 
-The page covers the six features of the family: {py:class}`~pyeyesweb.low_level.Kinematics`,
+The page covers the five features of the family: {py:class}`~pyeyesweb.low_level.Kinematics`,
 {py:class}`~pyeyesweb.low_level.KineticEnergy`, {py:class}`~pyeyesweb.low_level.DirectionChange`,
-{py:class}`~pyeyesweb.low_level.Directness`, {py:class}`~pyeyesweb.low_level.TrajectoryNonPlanarity` and
-{py:class}`~pyeyesweb.low_level.MotionNoiseDetector`. The symbols are those of {doc}`notation`.
+{py:class}`~pyeyesweb.low_level.Directness` and {py:class}`~pyeyesweb.low_level.TrajectoryNonPlanarity`. The symbols are those of {doc}`notation`.
 
 ## Definitions
 
@@ -234,28 +233,6 @@ millimetres in the original block (100 m), so with data in metres a radius of th
 (0.0, 0.113)
 ```
 
-### Motion noise
-
-A skeleton tracker that loses a joint or mixes its labels produces speeds that jump about at random, and the energy of such
-a signal is not movement. {py:class}`~pyeyesweb.low_level.MotionNoiseDetector` tests for this. For each watched joint it
-keeps the last 10 speeds and computes their variance; the variance is averaged over 5 frames, and the motion is flagged
-as noisy when the mean exceeds `noise_threshold` (a threshold on that variance, written as the block does in square metres and scaled by
-`units`). A still body, a uniform drift and the first 14 frames are never flagged. The output `is_noisy` is a boolean,
-valid on every call. Two quirks of the original block are kept: with several joints only the alphabetically last joint name that has a full window
-counts (whatever the order of `labels`; this is the behaviour of the underlying EyesWeb block, only one joint decides), and the flag stays false until 14 speeds have been seen. Corrected in the core: `reset()` clears the speed windows.
-
-```{doctest}
->>> from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
->>> rng = np.random.default_rng(0)
->>> jumping = rng.normal(scale=0.3, size=(40, 1, 3))                  # a joint that jumps about
->>> feature = MotionNoiseDetector(labels=["hand"], sampling_rate=50.0)
->>> bool(feature.run(np.zeros((40, 1, 3))).is_noisy[-1]), bool(feature.run(jumping).is_noisy[-1])
-(False, True)
-```
-
-The flag is the `noise` input of {py:class}`~pyeyesweb.mid_level.GestureSegmenter`, which refuses to open a gesture
-while it is set ({doc}`gesture_segmentation`).
-
 ## How to read the outputs
 
 | Feature | Output | Unit | Range |
@@ -268,7 +245,6 @@ while it is set ({doc}`gesture_segmentation`).
 | | `polygon` | length$^2$ | 0 or more |
 | `Directness` | `directness_index` | none | $[0, 1]$, 1 for a straight path |
 | `TrajectoryNonPlanarity` | `curvature_radius` | length | 0 or more, 0 for a planar path |
-| `MotionNoiseDetector` | `is_noisy` | none | boolean |
 
 Magnitudes depend on the size of the movement and on the unit of the data, so they are compared between recordings made in
 the same unit and with the same set-up. The indices of direction change and of directness are dimensionless and do not

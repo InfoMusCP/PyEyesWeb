@@ -30,13 +30,12 @@ signal.
 
 - Continuous signals: {py:class}`~pyeyesweb.analysis_primitives.PhaseLockingValue` for the phase relation of two signals in a
   band, {py:class}`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` for the direct link of each pair of a
-  group, from its correlation matrix (`numpy.corrcoef`), and {py:class}`~pyeyesweb.analysis_primitives.NonlinearInterdependence` when the relation is not linear.
+  group, from its correlation matrix (`numpy.corrcoef`).
 - Recurrence: {py:class}`~pyeyesweb.analysis_primitives.RecurrencePlot` for when a movement returns to a state it visited,
   {py:class}`~pyeyesweb.analysis_primitives.CrossRecurrencePlot` for when one movement visits states of another, and
   {py:class}`~pyeyesweb.analysis_primitives.GeneralisedAutoCorrelation` for the recurrence rate as a function of the lag.
-- Events: {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization`,
-  {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` and
-  {py:class}`~pyeyesweb.analysis_primitives.SpikeSynchronization` for trains of events.
+- Events: {py:class}`~pyeyesweb.analysis_primitives.EventSynchronization` and
+  {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` for trains of events.
 
 Theory: {doc}`../theory/synchronization`. The synchronization of a group of musicians is the setting of
 {cite}`sabharwal2022husync`.

@@ -7,9 +7,9 @@ the study of expressive movement {cite}`piana2016fluidity,alborno2016interactive
 {cite}`balasubramanian2015analysis`.
 
 No single number is the smoothness of a movement: the metrics below capture different aspects, and they do not rank
-movements in the same way. This page defines the five features of the family and says what each one measures:
+movements in the same way. This page defines the four features of the family and says what each one measures:
 {py:class}`~pyeyesweb.low_level.SpectralArcLength`, {py:class}`~pyeyesweb.low_level.LogDimensionlessJerk`,
-{py:class}`~pyeyesweb.low_level.Harmonicity`, {py:class}`~pyeyesweb.low_level.SubmovementCount` and
+{py:class}`~pyeyesweb.low_level.SubmovementCount` and
 {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`. The
 symbols are those of {doc}`notation`.
 
@@ -80,16 +80,6 @@ acceleration, the jerk is its first difference, and the normalisation uses the d
 (`LogDimensionlessJerk.from_acceleration`). The measure is dimensionless and negative, closer to 0 for a smoother movement; a
 flat signal has no jerk to measure and gives `INVALID_INPUT`. It is the more sensitive of the two to noise, because it differentiates twice: filter the speed first.
 
-### Harmonicity
-
-A smooth ballistic movement has one peak of speed, and a repeated movement alternates peaks and valleys.
-{py:class}`~pyeyesweb.low_level.Harmonicity` compares the number of peaks of the speed in the window with the number of sign
-changes of its gradient, the turning points of the speed. It is 1 when peaks and valleys alternate regularly, as in a single
-bell-shaped profile or in a regular oscillation, and lower when the speed has turning points that do not belong to that
-pattern; a maximum at the border of the window is not counted as a peak. The measure is dimensionless and lies in $[0, 1]$.
-Unlike SPARC and LDLJ it does not compare the movement with a reference shape: it says whether the peaks and the valleys
-are regular.
-
 ### Sub-movements
 
 A simple reaching movement has one speed peak, and corrections and hesitations add further peaks, the sub-movements.
@@ -105,7 +95,6 @@ and the bell with measurement noise added. One window holds the whole movement.
 
 ```{doctest}
 >>> from pyeyesweb.low_level import SpectralArcLength, LogDimensionlessJerk, SubmovementCount
->>> from pyeyesweb.low_level.smoothness import Harmonicity
 >>> rate = 100.0
 >>> time = np.arange(100) / rate
 >>> bump = lambda centre, width, height: height * np.exp(-0.5 * ((time - centre) / width) ** 2)
@@ -115,14 +104,14 @@ and the bell with measurement noise added. One window holds the whole movement.
 ...     "bell with noise": np.sin(np.pi * time) ** 2 + np.random.default_rng(1).normal(scale=0.08, size=100),
 ... }
 >>> metrics = {"SPARC": (SpectralArcLength, "spectral_arc_length"), "LDLJ": (LogDimensionlessJerk, "log_dimensionless_jerk"),
-...            "harmonicity": (Harmonicity, "harmonicity"), "sub-movements": (SubmovementCount, "submovement_count")}
+...            "sub-movements": (SubmovementCount, "submovement_count")}
 >>> for name, speed in profiles.items():
 ...     values = {label: round(float(getattr(cls(window=100, sampling_rate=rate).run(speed), output)[-1]), 2)
 ...               for label, (cls, output) in metrics.items()}
 ...     print(f"{name:18s}", values)
-one bell           {'SPARC': -1.43, 'LDLJ': -5.25, 'harmonicity': 1.0, 'sub-movements': 1.0}
-three corrections  {'SPARC': -2.89, 'LDLJ': -10.45, 'harmonicity': 1.0, 'sub-movements': 3.0}
-bell with noise    {'SPARC': -1.42, 'LDLJ': -14.67, 'harmonicity': 1.0, 'sub-movements': 4.0}
+one bell           {'SPARC': -1.43, 'LDLJ': -5.25, 'sub-movements': 1.0}
+three corrections  {'SPARC': -2.89, 'LDLJ': -10.45, 'sub-movements': 3.0}
+bell with noise    {'SPARC': -1.42, 'LDLJ': -14.67, 'sub-movements': 4.0}
 ```
 
 ```{eval-rst}
@@ -204,7 +193,6 @@ the correlation is strongly negative:
 |---|---|---|---|---|
 | `SpectralArcLength` | `spectral_arc_length` | none | closer to 0 | negative |
 | `LogDimensionlessJerk` | `log_dimensionless_jerk` | none | closer to 0 | negative; `INVALID_INPUT` for a flat signal |
-| `Harmonicity` | `harmonicity` | none | closer to 1 | $[0, 1]$ |
 | `SubmovementCount` | `submovement_count` | none | lower | integer, 0 or more |
 | `CurvatureVelocityCorrelation` | `smoothness` | none | closer to $-1$ | $[-1, 1]$ for `"pearson"` |
 

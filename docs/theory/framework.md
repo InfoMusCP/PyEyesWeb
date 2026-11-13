@@ -116,9 +116,9 @@ with the model, and the number of features in each group.
 
 | Layer of the model | Package | Timescale | Features | Content |
 |---|---|---|---|---|
-| 1, physical signals | `pyeyesweb.physical_signals` | frame | {{ n_physical_signals }} | Virtual sensors and models: simulated bodies and their orientations, silhouettes and their parts, locating points in a grid. See {doc}`humanoid_models` and {doc}`imaging`. |
+| 1, physical signals | `pyeyesweb.physical_signals` | frame | {{ n_physical_signals }} | Virtual sensors: silhouettes and their parts, locating points in a grid. See {doc}`imaging`. |
 | 2, low-level features | `pyeyesweb.low_level` | up to about 0.5 s | {{ n_low_level }} | Kinematics and energy, smoothness, shape, symmetry and balance, contour measures. See {doc}`kinematics_energy`, {doc}`smoothness` and {doc}`shape_symmetry_balance`. |
-| 3, mid-level features | `pyeyesweb.mid_level` | 0.5 to 3 s | {{ n_mid_level }} | Gesture segmentation, impulsivity, suddenness, space occupied over time. See {doc}`gesture_segmentation` and {doc}`impulsivity_suddenness`. |
+| 3, mid-level features | `pyeyesweb.mid_level` | 0.5 to 3 s | {{ n_mid_level }} | Gesture segmentation and the durations of gestures and pauses. See {doc}`gesture_segmentation`. |
 | 4, high-level features | `pyeyesweb.high_level` | 3 s and above | {{ n_high_level }} | Qualities of a group, which need several people. See {doc}`dominance`. |
 | analysis primitives | `pyeyesweb.analysis_primitives` | any | {{ n_analysis_primitives }} | Entropy, rarity, periodicity, synchronization. See {doc}`entropy_rarity_periodicity` and {doc}`synchronization`. |
 
@@ -129,7 +129,7 @@ read from the catalog:
 >>> from collections import Counter
 >>> from pyeyesweb import catalog
 >>> Counter((info.layer.name, info.timescale.value) for info in catalog())
-Counter({('LOW_LEVEL', 'up to ~0.5 s'): 19, ('ANALYSIS_PRIMITIVE', 'any'): 15, ('MID_LEVEL', '0.5-3 s'): 7, ('PHYSICAL_SIGNALS', 'frame'): 5, ('HIGH_LEVEL', '3 s and above'): 1})
+Counter({('LOW_LEVEL', 'up to ~0.5 s'): 17, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('MID_LEVEL', '0.5-3 s'): 2, ('HIGH_LEVEL', '3 s and above'): 1})
 ```
 
 A few remarks on the placement make the mapping precise.
@@ -138,17 +138,16 @@ A few remarks on the placement make the mapping precise.
   takes the joints of a skeleton and gives a number for each frame is low-level, even if it is used for something that is
   perceived as a quality of the whole movement. The measures of synchronization between signals are analysis primitives
   although they are mostly applied to movement, because they know nothing of bodies.
-- **Layer 1 is mostly about models and sensors.** Features such as {py:class}`~pyeyesweb.physical_signals.MassSpringSimulator`
-  or {py:class}`~pyeyesweb.physical_signals.SilhouetteCentroids` give a signal again: a simulated pose, the centroids of a
-  silhouette. The recording of the data itself is not the library's job; {doc}`../concepts/inputs` describes what a feature
+- **Layer 1 is mostly about sensors.** Features such as {py:class}`~pyeyesweb.physical_signals.SilhouetteCentroids` give a
+  signal again: the centroids of a silhouette. The recording of the data itself is not the library's job; {doc}`../concepts/inputs` describes what a feature
   expects.
 - **Layer 4 is deliberately small.** A quality that is perceived needs several people, context and memory. The library
   provides the features that can be computed from the signals of a group ({py:class}`~pyeyesweb.high_level.EnsembleDominance`)
   and leaves the mapping from features to labels, such as an emotion, to the user. The qualities communicated by one person
   are obtained by combining lower-layer features, typically with a learned model (see for example
   {cite}`niewiadomski2017lowintrusive`).
-- **A mid-level feature needs a unit.** Features such as {py:class}`~pyeyesweb.mid_level.SuddennessImpulsivity` work on a
-  window that holds one movement, and {py:class}`~pyeyesweb.mid_level.GestureSegmenter` finds the units in a stream.
+- **A mid-level feature needs a unit.** A mid-level quality is measured on a window that holds one movement, and
+  {py:class}`~pyeyesweb.mid_level.GestureSegmenter` finds the units in a stream.
   Together they make the step from the sample to the gesture that the model describes.
 - **A whole layer can be skipped.** The entropy of a speed profile needs no segmentation, and the energy of a skeleton can be
   fed to a synchronization measure directly. The model gives the timescale of the result, not an obligation to visit

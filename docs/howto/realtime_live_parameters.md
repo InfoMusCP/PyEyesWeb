@@ -195,7 +195,6 @@ against a feature built with the new value.
 | `Symmetry` | `aggregation`, `reference_point` | |
 | `SpectralArcLength` | `amplitude_threshold`, `maximum_cutoff_frequency`, `minimum_cutoff_frequency`, `sampling_rate` | |
 | `LogDimensionlessJerk` | `input_mode`, `sampling_rate` | |
-| `Harmonicity` | `sampling_rate` | |
 | `SubmovementCount` | `prominence_factor`, `sampling_rate` | |
 | `CurvatureVelocityCorrelation` | `upper_limit` | `filter_window_length` |
 | `Equilibrium` | `margin` | |
@@ -204,10 +203,6 @@ against a feature built with the new value.
 | `TrajectoryNonPlanarity` | `radius` | |
 | `GestureSegmenter` | `firing_threshold` | `filter_window_length` |
 | `MotionDuration` | `sampling_rate` | |
-| `SuddennessImpulsivity` | `direction_change_epsilon` | |
-| `ContractionImpulsivity` | `motion_threshold`, `peak_threshold`, `sampling_rate` | |
-| `PositionDependingPotentials` | `gaussian_sigma_x` | `potential_type` |
-| `RegionDependingPotentials` | `parts` | `potential_type` |
 | `SampleEntropy` | `relative_tolerance`, `tolerance` | |
 | `Rarity` | `alpha`, `measure` | `window` |
 | `BinaryPulsesRegularity` | `threshold` | |
@@ -218,15 +213,11 @@ against a feature built with the new value.
 | `GeneralisedAutoCorrelation` | `epsilon` | `output_type`, `max_lag` |
 | `EventSynchronization` | `max_lag` | `reset_every_buffer` |
 | `EventSynchronizationMECS` | `kernel` | `number_of_event_classes`, `max_lag` |
-| `NonlinearInterdependence` | `neighbours` | |
 | `RecurrencePlot` | `epsilon` | |
 | `CrossRecurrencePlot` | `epsilon` | |
 
 A parameter that is not in the table belongs to a feature whose parameters are not changed one by one by those tests, or has no
-live meaning; the class documentation says which. In `MassSpringSimulator` every tested parameter is live
-(`damping`, `viscosity`, `gravity`, the forces, `integration_step`, `floor_position`,
-`sampling_rate`, `reference_direction`), except the replacement of the `model` by one with another topology, which is
-structural. Four features have a structural `window`, because the state of the core is sized by it: `Rarity(method="information")`,
+live meaning; the class documentation says which. Four features have a structural `window`, because the state of the core is sized by it: `Rarity(method="information")`,
 `Videogram` and `ScalarPeakDetector`, and `CurvatureVelocityCorrelation`, whose `hop` and `sampling_rate` are structural too
 (its filters need the same length and overlap in consecutive windows).
 `EventSynchronization` and `EventSynchronizationMECS` change `window` and `hop` together, with `configure(window=, hop=)`.

@@ -60,9 +60,9 @@ Pass a {py:class}`~pyeyesweb.catalog.Layer` to list one group.
 >>> from pyeyesweb import Layer, catalog
 >>> features = catalog()
 >>> Counter(info.layer.value for info in features)
-Counter({'low_level': 19, 'analysis_primitives': 15, 'mid_level': 7, 'physical_signals': 5, 'high_level': 1})
+Counter({'low_level': 17, 'analysis_primitives': 13, 'physical_signals': 4, 'mid_level': 2, 'high_level': 1})
 >>> [info.name for info in catalog(Layer.MID_LEVEL)]
-['GestureSegmenter', 'MotionDuration', 'Suddenness', 'SuddennessImpulsivity', 'ContractionImpulsivity', 'PositionDependingPotentials', 'RegionDependingPotentials']
+['GestureSegmenter', 'MotionDuration']
 >>> info = next(info for info in features if info.name == "KineticEnergy")
 >>> info.layer.title, info.timescale.value
 ('Layer 2: low-level features', 'up to ~0.5 s')
@@ -85,7 +85,7 @@ The same metadata is on the class itself, so a feature can be asked where it bel
 
 ```{doctest}
 >>> [info.name for info in features if info.eyesweb_block is None]
-['BoundingBoxFilledArea', 'SpectralArcLength', 'LogDimensionlessJerk', 'Harmonicity', 'SubmovementCount', 'Equilibrium', 'DirectionChange', 'Suddenness', 'SuddennessImpulsivity', 'EnsembleDominance', 'MultiScaleEntropy', 'PhaseLockingValue']
+['BoundingBoxFilledArea', 'SpectralArcLength', 'LogDimensionlessJerk', 'SubmovementCount', 'Equilibrium', 'DirectionChange', 'EnsembleDominance', 'MultiScaleEntropy', 'PhaseLockingValue']
 ```
 
 {py:func}`pyeyesweb.catalog.catalog_table` renders the features of one layer as a Markdown table. On this site, the
@@ -100,5 +100,5 @@ can drive generic code, for example to list the features that work on a window:
 ```{doctest}
 >>> from pyeyesweb.data_models import WindowedFeature
 >>> sorted(info.name for info in catalog(Layer.LOW_LEVEL) if issubclass(info.cls, WindowedFeature))
-['CurvatureVelocityCorrelation', 'DirectionChange', 'Harmonicity', 'LogDimensionlessJerk', 'SpectralArcLength', 'SubmovementCount']
+['CurvatureVelocityCorrelation', 'DirectionChange', 'LogDimensionlessJerk', 'SpectralArcLength', 'SubmovementCount']
 ```

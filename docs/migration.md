@@ -260,6 +260,14 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 | `GenericModelSimulator(model, ...).process(directions)`, output `positions` | development | `MassSpringSimulator(model=model, ...).process(joints)` takes the positions of the masses and reads the bone vectors itself; the bone vectors can still be given, `process(joints, directions)`; the output is `joints` |
 | `GenericModelOrientations(model).process(skeleton).directions` | development | `MassSpringSimulator(model=model, units=...).process(joints).directions` |
 
+### Held back from this release
+
+Kept in the code and investigated for the next release, these features are not exported by their layer package and are not in
+`catalog()`: `MassSpringSimulator` (with `MassSpringModel`, `HUMANOID_JOINTS` and `HUMANOID_BONES`), `Harmonicity`,
+`MotionNoiseDetector` (and so the `noise` flag of `GestureSegmenter` has no producer in this release), `Suddenness`,
+`SuddennessImpulsivity`, `ContractionImpulsivity`, `PositionDependingPotentials`, `RegionDependingPotentials`,
+`NonlinearInterdependence` and `SpikeSynchronization`. The rows that name them below describe the state they will return in.
+
 ### Removed features
 
 | Removed | From | Use instead |
@@ -409,4 +417,4 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `MassSpringSimulator` | the damping force is proportional to the relative velocity of the two masses (the original used speed magnitudes and injected energy); the feet of the T-pose are built along the direction they rest in |
 
 The notes on each family in the theory pages ({doc}`theory/kinematics_energy`, {doc}`theory/smoothness`,
-{doc}`theory/impulsivity_suddenness`, {doc}`theory/humanoid_models`, {doc}`theory/imaging`) give the details.
+{doc}`theory/imaging`) give the details.

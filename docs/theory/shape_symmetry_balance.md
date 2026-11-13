@@ -17,7 +17,7 @@ joints and $d=2$ for floor positions. Lengths are in the unit of the data; every
 | Are left and right joints mirror images? | symmetry index or score | {py:class}`~pyeyesweb.low_level.Symmetry` |
 | Is the head centred over the shoulders? | triangle symmetry | {py:class}`~pyeyesweb.low_level.TriangleSymmetry` |
 | Is the barycenter over the support between the feet? | equilibrium | {py:class}`~pyeyesweb.low_level.Equilibrium` |
-| Which floor cells are occupied, and how often? | hit cells, potentials | {py:class}`~pyeyesweb.physical_signals.HitCellDetector`, {py:class}`~pyeyesweb.mid_level.PositionDependingPotentials`, {py:class}`~pyeyesweb.mid_level.RegionDependingPotentials` |
+| Which floor cells are occupied? | hit cells | {py:class}`~pyeyesweb.physical_signals.HitCellDetector` |
 
 ## Contraction and expansion
 
@@ -179,33 +179,19 @@ and the status is `INVALID_INPUT`.
 
 ## Use of space
 
-The three remaining features describe where on the floor a performer is, and how often.
+The last feature describes where on the floor a performer is.
 {py:class}`~pyeyesweb.physical_signals.HitCellDetector` divides a rectangular area
 $[x_{\min},x_{\max}]\times[y_{\min},y_{\max}]$ into `cells_along_y` rows and `cells_along_x` columns and returns, for each
 $(x,y)$ point, the cell $(i,j)$ (row from $y$, column from $x$) that contains it, counted from 0. Points outside the area are
 clipped to the border cells unless `clip_values=False`, in which case the call is `INVALID_INPUT`.
 
-The hit cells feed {py:class}`~pyeyesweb.mid_level.PositionDependingPotentials`, which keeps one potential value per cell
-and updates it at every call. With `potential_type="increment_decrement"` a hit cell gains `increment` and every other cell
-loses `decrement`; with `"occupation_rates"` the value of a cell is the fraction of calls in which it was hit (optionally
-over the last `window` calls); the `"polynomial"`, `"gaussian"` and `"logarithmic"` types have no memory and draw a field
-centred on each hit cell. {py:class}`~pyeyesweb.mid_level.RegionDependingPotentials` does the same for regions, groups of
-cells defined by a mask (for example the zones of a stage), with linear or exponential occupation rates. Both keep state:
-`reset()` restores the initial potential. An empty list of hits has status `NO_OUTPUT` and does not update the potential.
-
 ```{doctest}
 >>> from pyeyesweb.physical_signals import HitCellDetector
->>> from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials
 >>> detector = HitCellDetector(cells_along_x=4, cells_along_y=2)
->>> potentials = PositionDependingPotentials(cells_along_x=4, cells_along_y=2, potential_type="occupation_rates")
->>> path = [[0.1, 0.1], [0.1, 0.1], [0.4, 0.2], [0.9, 0.7]]       # a dancer who mostly stays on the left
->>> for point in path:
-...     cells = detector.process([point]).cells
-...     result = potentials.process(cells)
->>> result.potential
-array([[50., 25.,  0.,  0.],
-       [ 0.,  0.,  0., 25.]])
+>>> detector.process([[0.1, 0.1], [0.4, 0.2], [0.9, 0.7]]).cells.tolist()
+[[0, 0], [0, 1], [1, 3]]
 ```
+
 
 ## Practical notes
 
