@@ -14,6 +14,7 @@ if os.environ.get("EYESWEB_CORE_PATH"):
 pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 
 from pyeyesweb.low_level import Harmonicity, LogDimensionlessJerk, SpectralArcLength, SubmovementCount  # noqa: E402
+from pyeyesweb.data_models import Status  # noqa: E402
 
 def _features(window, sampling_rate):
     """The four classes on one window."""
@@ -75,3 +76,10 @@ def test_parameter_change_reaches_the_core():
     before = feature._process_window(signal).spectral_arc_length
     feature.maximum_cutoff_frequency = 2.5
     assert before != feature._process_window(signal).spectral_arc_length
+
+
+@pytest.mark.parametrize("build", [SpectralArcLength, LogDimensionlessJerk.from_velocity, LogDimensionlessJerk.from_acceleration])
+def test_a_flat_profile_has_no_defined_value(build):
+    result = build(sampling_rate=50.0)._process_window(np.full(40, 4.0))
+    assert result.status is Status.INVALID_INPUT and np.isnan(result[result.schema.names[0]])
+

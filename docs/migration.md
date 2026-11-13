@@ -376,6 +376,7 @@ development states; the second lists corrections of defects of the original Eyes
 in 2.0 (each is also stated on the page of the feature, as "Corrected in the core").
 
 | Feature | Change |
+| `LogDimensionlessJerk` | a flat or null signal (no jerk, or no peak to normalise by) is `INVALID_INPUT` with no value; 1.x and the development state returned 0, the best value of the scale |
 |---|---|
 | `SpectralArcLength`, `LogDimensionlessJerk`, `Harmonicity`, `SubmovementCount` (1.x `Smoothness`) | the Butterworth low-pass filter (`use_filter`) is gone, so the values at the former defaults differ; the rate has no default |
 | `MultiScaleEntropy` (1.x `MultiScaleEntropyDominance`) | sample entropy comes from the EyesWeb block; values differ from 1.x by a term of order 1/N |

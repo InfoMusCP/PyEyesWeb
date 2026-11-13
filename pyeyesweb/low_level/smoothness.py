@@ -135,7 +135,8 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
 
     with the derivatives taken by finite differences. In ``"acceleration"`` mode the input is the acceleration
     magnitude and the jerk is its first difference, normalised by the duration and the peak of the acceleration. The
-    measure is dimensionless and negative; closer to 0 means smoother, and a flat signal gives 0.
+    measure is dimensionless and negative; closer to 0 means smoother. A flat signal has no jerk to measure and gives
+    ``INVALID_INPUT``.
 
     Parameters
     ----------
@@ -162,8 +163,8 @@ class LogDimensionlessJerk(_SpeedProfileMetric):
     window.
 
     **Statuses.** ``WARMING_UP`` while fewer than 10 samples are available (``"k of N samples"``), ``NO_OUTPUT``
-    between two windows when ``hop > 1``, ``INVALID_INPUT`` when the profile cannot support the measure or a sample is
-    NaN or infinite.
+    between two windows when ``hop > 1``, ``INVALID_INPUT`` when the profile cannot support the measure (a flat or null
+    signal: no jerk, or no peak to normalise by) or a sample is NaN or infinite.
 
     Differentiating a noisy signal amplifies the noise: filter or smooth the speed first.
 

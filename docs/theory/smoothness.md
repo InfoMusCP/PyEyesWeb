@@ -77,8 +77,8 @@ $$
 
 where the derivatives are taken by finite differences. With `input_mode="acceleration"` the input is the magnitude of the
 acceleration, the jerk is its first difference, and the normalisation uses the duration and the peak of the acceleration
-(`LogDimensionlessJerk.from_acceleration`). The measure is dimensionless and negative, closer to 0 for a smoother movement, and
-a flat signal gives 0. It is the more sensitive of the two to noise, because it differentiates twice: filter the speed first.
+(`LogDimensionlessJerk.from_acceleration`). The measure is dimensionless and negative, closer to 0 for a smoother movement; a
+flat signal has no jerk to measure and gives `INVALID_INPUT`. It is the more sensitive of the two to noise, because it differentiates twice: filter the speed first.
 
 ### Harmonicity
 
@@ -202,7 +202,7 @@ the correlation is strongly negative:
 | Feature | Output | Unit | Smoother means | Range |
 |---|---|---|---|---|
 | `SpectralArcLength` | `spectral_arc_length` | none | closer to 0 | negative |
-| `LogDimensionlessJerk` | `log_dimensionless_jerk` | none | closer to 0 | negative; 0 for a flat signal |
+| `LogDimensionlessJerk` | `log_dimensionless_jerk` | none | closer to 0 | negative; `INVALID_INPUT` for a flat signal |
 | `Harmonicity` | `harmonicity` | none | closer to 1 | $[0, 1]$ |
 | `SubmovementCount` | `submovement_count` | none | lower | integer, 0 or more |
 | `CurvatureVelocityCorrelation` | `smoothness` | none | closer to $-1$ | $[-1, 1]$ for `"pearson"` |
