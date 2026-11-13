@@ -16,13 +16,19 @@ from pyeyesweb.data_models.results import Output, Result, Schema, Status
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="binary_pulses_regularity (BinaryPulsesRegularity)")
 class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
-    """Whether the pulses of a window are equally spaced.
+    r"""Whether the pulses of a window are equally spaced.
 
     A pulse is a non-zero sample of a single-channel signal (a step, a beat, the ``is_peak`` flag of
-    ``ScalarPeakDetector``). The distance between the first two pulses of a window is the reference interval; the
-    window is regular when at least three pulses are found and every other interval differs from the reference by at
-    most ``threshold`` samples. It measures the regularity of a rhythm, such as a steady walk or a metronomic
-    gesture.
+    ``ScalarPeakDetector``). With :math:`I` the intervals between consecutive pulses of a window, in samples, the window
+    is regular when it holds at least three pulses and the spread of the intervals is below ``threshold``,
+
+    .. math::
+
+        \max(I) - \min(I) < \mathtt{threshold},
+
+    as in :cite:`niewiadomski2019embodied` (sec. 3.2). It measures the regularity of a rhythm, such as a steady walk or
+    a metronomic gesture. The rule does not depend on the order of the intervals; a steady drift (intervals 5, 6, 7, 8)
+    is not regular.
 
     Parameters
     ----------
@@ -32,8 +38,8 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     hop : int, optional
         New samples between two windows. Defaults to ``1``. *(live)*
     threshold : int, optional
-        Tolerance in samples when two intervals are compared, at least 0. Defaults to ``0``: the intervals must be
-        equal. *(live)*
+        Largest spread of the intervals that is still regular, in samples, exclusive, at least 1. Defaults to ``1``:
+        the intervals must be equal; ``2`` accepts intervals that differ by one sample. *(live)*
 
     Notes
     -----
@@ -43,6 +49,9 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     ``pulse_count`` (int, at least 0): number of pulses (non-zero samples) in the window;
     ``is_regularity_detected`` (bool): ``is_regular`` on the first window after a window that was not regular (a
     trigger).
+
+    The original block compared every interval with the first one (within ``threshold``, inclusive), which accepted a
+    spread up to twice the threshold and depended on the first interval; its threshold ``t`` is ``t + 1`` here.
 
     **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` for a
     window that holds a ``NaN`` or an infinite value.

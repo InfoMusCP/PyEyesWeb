@@ -36,7 +36,7 @@ LIVE = [
     (lambda: SilhouetteCentroids(), "parts", ["center_of_gravity", "left_hand"], BODIES),
     (lambda: SilhouetteCentroids(filter_centroids=True, alpha=0.5), "parts", ["head", "left_hand"], BODIES),
     (lambda: SilhouetteCentroids(), "add_intermediate_centroids", True, BODIES),
-    (lambda: BinaryPulsesRegularity(window=10, hop=2), "threshold", 1, PULSES),
+    (lambda: BinaryPulsesRegularity(window=10, hop=2), "threshold", 2, PULSES),
 ]
 STRUCTURAL = [
     (lambda: SilhouetteCentroids(filter_centroids=True), "silhouette", "upper", BODIES),
@@ -51,7 +51,7 @@ INVALID = [
     (lambda: SilhouetteBodyParts(), "parts", ["Head", "tail"], BODIES),
     (lambda: Videogram(window=20), "window", 0, NOISE),
     (lambda: Videogram(direction="left_to_right"), "direction", "up", NOISE),
-    (lambda: BinaryPulsesRegularity(window=10, threshold=0), "threshold", -1, PULSES),
+    (lambda: BinaryPulsesRegularity(window=10, threshold=1), "threshold", 0, PULSES),
 ]
 
 

@@ -217,15 +217,15 @@ def test_binary_pulses_regularity():
     irregular = BinaryPulsesRegularity(window=11)
     for value in [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]:
         result = irregular.process(value)
-    assert not result.is_regular and BinaryPulsesRegularity(window=11, threshold=1).run(
-        np.array([1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1], float))["is_regular"][-1]
+    assert not result.is_regular and BinaryPulsesRegularity(window=11, threshold=2).run(
+        np.array([1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1], float))["is_regular"][-1]  # intervals 3, 4, 3: spread 1 < 2
 
 
 def test_binary_pulses_regularity_validation():
     with pytest.raises(ValueError, match="window"):
         BinaryPulsesRegularity(window=2)
     with pytest.raises(ValueError):
-        BinaryPulsesRegularity(window=5, threshold=-1)
+        BinaryPulsesRegularity(window=5, threshold=0)  # max - min < 0 is never true
     feature = BinaryPulsesRegularity(window=3)
     assert feature.process(1).status is Status.WARMING_UP and feature.process(np.nan).status is Status.INVALID_INPUT
     assert feature.process(1).status is Status.WARMING_UP  # the NaN was not buffered
@@ -259,12 +259,25 @@ def test_the_videogram_equals_the_reference_port():
     assert np.array_equal(np.stack(gray)[..., 0], REFERENCE["videogram_gray_vertical_loop"])
 
 
-@pytest.mark.parametrize("threshold, index", [(0, 0), (1, 1)])
-def test_pulse_regularity_equals_the_reference_port(threshold, index):
+def _paper_regularity(windows, threshold):
+    """Niewiadomski et al. 2019, sec. 3.2: regular when max(I) - min(I) < threshold, with at least 3 pulses; the trigger
+    is the first regular window after one that was not."""
+    out, before = [], False
+    for window in windows:
+        pulses = np.flatnonzero(np.asarray(window) != 0)
+        intervals = np.diff(pulses)
+        regular = len(pulses) >= 3 and int(intervals.max() - intervals.min()) < threshold
+        out.append((regular, len(pulses), regular and not before))
+        before = regular
+    return out
+
+
+@pytest.mark.parametrize("threshold", [1, 2, 3])
+def test_pulse_regularity_follows_the_paper(threshold):
+    # The windows of the frozen port; the rule changed on purpose (algorithm review, D1), so the oracle is the paper's.
     block = BinaryPulsesRegularity(window=3, threshold=threshold)._block  # the core block, one window per call
-    rows = REFERENCE["pulses"][index * len(PULSE_WINDOWS):(index + 1) * len(PULSE_WINDOWS)]
-    for window, row in zip(PULSE_WINDOWS, rows):
-        assert (int(row[0]), (bool(row[1]), int(row[2]), bool(row[3]))) == (threshold, block.process(window))
+    assert [block.process(window) for window in PULSE_WINDOWS] == _paper_regularity(PULSE_WINDOWS, threshold)
+    assert any(regular for regular, _, _ in _paper_regularity(PULSE_WINDOWS, threshold))
 
 
 def test_parts_default_to_everything_and_are_listed_in_the_signature():
