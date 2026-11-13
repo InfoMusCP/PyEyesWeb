@@ -21,22 +21,26 @@ it represents. Except for the instantaneous rarity they work on a window of $N$ 
 ## Sample entropy
 
 Sample entropy measures how unlikely it is that two stretches of the signal that are close to each other for $k$ samples are
-still close at the next sample {cite}`glowinski2013creative,glowinski2013movements,glowinski2013action`. Take the templates $u_k(i)=(x_i,\dots,x_{i+k-1})$ of
-length $k$ in a window. Two templates match when every pair of corresponding samples differs by at most a tolerance $r$
-(Chebyshev distance). With $B_k$ the number of matching pairs of templates of length $k$, and $A_k$ the number of those pairs
-that still match when both are extended by one sample (that is, the number of matching pairs of length $k+1$), the entry for
-the template length $k$ is
+still close at the next sample {cite}`richman2000physiological`, a measure used for ensemble performance in
+{cite}`glowinski2013creative,glowinski2013movements,glowinski2013action`. Take the templates $u_m(i)=(x_i,\dots,x_{i+m-1})$ of
+length $m$ in a window. Two templates match when every pair of corresponding samples differs by at most a tolerance $r$
+(Chebyshev distance). With $B_m$ the number of matching pairs of templates of length $m$, and $A_m$ the number of those pairs
+that still match when both are extended by one sample (that is, the number of matching pairs of length $m+1$), the entry for
+the template length $m$ is
 
 $$
-\mathrm{SampEn}_k = -\ln\frac{A_k}{B_k}, \qquad k=1,\dots,m ,
+\mathrm{SampEn}(m) = -\ln\frac{A_m}{B_m}, \qquad m=0,\dots,M-1 ,
 $$
 
-in nats, where $m$ is `embedding_dimension`. A regular signal, in which a match is usually followed by another match, gives
+in nats, where $M$ is `embedding_dimension`. Entry 0 compares single samples with all the pairs ($B_0=N(N-1)/2$). A regular signal, in which a match is usually followed by another match, gives
 a ratio $A_k/B_k$ close to 1 and a value close to 0; an irregular signal gives a large value. The value is `inf` or `NaN` when
 too few pairs match (a short window, or a tolerance that is too small).
 
-{py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` returns the whole vector $\mathrm{SampEn}_1,\dots,\mathrm{SampEn}_m$,
-entry $k-1$ for the template length $k$. The tolerance is `tolerance` in the unit of the signal, or, when it is not given,
+{py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` returns the whole vector $\mathrm{SampEn}(0),\dots,\mathrm{SampEn}(M-1)$:
+entry $m$ is the template length $m$, the convention of {cite}`richman2000physiological` and of pyEntropy, so the common
+choice $m=2$ is entry 2 and the $m=3$ of {cite}`glowinski2013movements` is entry 3. The counts are the raw numbers of
+pairs of Richman and Moorman; the normalised form of {cite}`glowinski2013movements` (eqs. 2-4) gives values lower by a term
+of order $1/N$. The tolerance is `tolerance` in the unit of the signal, or, when it is not given,
 `relative_tolerance` (default 0.2) times the standard deviation of the window, so that the result does not depend on the scale
 of the signal. One correction of the core: the counts for $k\ge2$ are now properly shifted from one length to the next, and the
 default tolerance became relative.

@@ -21,18 +21,20 @@ _motion = core.motion
 
 @describe(Layer.ANALYSIS_PRIMITIVE, eyesweb="sampleentropy")
 class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
-    r"""Sample entropy of a single-channel window, for template lengths 1 to ``embedding_dimension``.
+    r"""Sample entropy of a single-channel window, for template lengths 0 to ``embedding_dimension - 1``.
 
     Sample entropy measures the irregularity of a signal: how unlikely it is that two stretches of the signal that
     are close to each other for ``m`` samples remain close at the next sample. A regular, predictable signal gives
-    a low value, an irregular one a high value. Two templates of length ``k`` match when every pair of corresponding
-    samples differs by at most the tolerance ``r``. With :math:`B_k` the number of matching template pairs of
-    length ``k`` and :math:`A_k` the number of those that still match when extended by one sample, the entry for
-    template length ``k`` is
+    a low value, an irregular one a high value. Two templates of length ``m`` match when every pair of corresponding
+    samples differs by at most the tolerance ``r``. With :math:`B_m` the number of matching template pairs of
+    length ``m`` and :math:`A_m` the number of those that still match when extended by one sample, entry ``m`` is
 
     .. math::
 
-        \mathrm{SampEn}_k = -\ln \frac{A_k}{B_k}, \qquad k = 1 \dots \mathtt{embedding\_dimension}.
+        \mathrm{SampEn}(m) = -\ln \frac{A_m}{B_m}, \qquad m = 0 \dots \mathtt{embedding\_dimension} - 1,
+
+    the convention of Richman and Moorman (2000) and pyEntropy: entry 0 compares single samples with all pairs
+    (:math:`B_0 = N(N-1)/2`), and the common choice :math:`m = 2` is entry 2.
 
     Parameters
     ----------
@@ -55,8 +57,8 @@ class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
     -----
     **Inputs.** One value per call (a single channel).
 
-    **Outputs.** ``sample_entropy``, shape ``(embedding_dimension,)``: entry ``k - 1`` is
-    :math:`\mathrm{SampEn}_k` (nats). It is non-negative; it is ``inf`` or ``NaN`` when too few template pairs match.
+    **Outputs.** ``sample_entropy``, shape ``(embedding_dimension,)``: entry ``m`` is
+    :math:`\mathrm{SampEn}(m)` (nats). It is non-negative; it is ``inf`` or ``NaN`` when too few template pairs match.
     ``timestamp`` is the timestamp (seconds) of the newest sample.
 
     **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, ``OK`` whenever a window
@@ -114,7 +116,7 @@ class SampleEntropy(MinimumWindow, WindowedFeature, CoreFeature):
         return Inputs(Input("signal", InputKind.SAMPLE, (1,), doc="one value per call"))
 
     def _schema(self) -> Schema:
-        return Schema(Output("sample_entropy", self.embedding_dimension, doc="-log(A[k] / B[k]) for template length k + 1"))
+        return Schema(Output("sample_entropy", self.embedding_dimension, doc="entry m: -log(A[m] / B[m]), SampEn(m) for template length m"))
 
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         raw = self._block.process(np.asarray(series, dtype=float))

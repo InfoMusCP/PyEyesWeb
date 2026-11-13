@@ -84,6 +84,9 @@ class RecurrencePlot(_Epsilons, _SeriesBlock):
     **Corrected in the core.** ``order`` was ignored (every order above 0 gave the Euclidean distance); it is the
     Minkowski order.
 
+    **Real time.** The cost grows with the square of the window: about 2.6 ms per call for a window of 256 samples and
+    40 ms for 1024 with ``hop=1``. For large windows use a ``hop`` above 1.
+
     Examples
     --------
     >>> import numpy as np
@@ -147,6 +150,9 @@ class CrossRecurrencePlot(_SeriesBlock):
     **Corrected in the core.** ``order`` was ignored (every order above 0 gave the Euclidean distance), and the rows of
     a plot of two series of different length were scrambled.
 
+    **Real time.** The cost grows with the square of the window: about 2.6 ms per call for a window of 256 samples and
+    40 ms for 1024 with ``hop=1``. For large windows use a ``hop`` above 1.
+
     Examples
     --------
     >>> import numpy as np
@@ -157,7 +163,6 @@ class CrossRecurrencePlot(_SeriesBlock):
     """
     _core_class = _sync.CrossRecurrencePlot
     _finite_inputs = True
-    _hidden_params = frozenset({"use_multiple_epsilons", "multiple_epsilons"})  # one threshold for every row
 
     def _inputs(self) -> Inputs:
         return Inputs(Input("first_series", InputKind.SAMPLE, (None,), doc="state vector, one value per channel"),
