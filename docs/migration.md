@@ -390,6 +390,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 
 | Feature | Change |
 |---|---|
+| `TriangleSymmetry` | the test that decides whether a shoulder lies inside the mirrored triangle tolerates rounding (EyesWeb compared areas with an exact `==`, which rounding broke for some interior points and sent them to the formula for crossing triangles); about 4 % of random triangles change, by up to 0.17 |
 | `TrajectoryNonPlanarity` | default `radius` 0.1 m (was 100, a value written for millimetres); a path where no point has another point within `radius` is `INVALID_INPUT` (was 0, which read as "planar"); too many undefined local planes is `INVALID_INPUT` (was the marker 999) |
 | `LogDimensionlessJerk` | a flat or null signal (no jerk, or no peak to normalise by) is `INVALID_INPUT` with no value; 1.x and the development state returned 0, the best value of the scale |
 | `GestureSegmenter` | the Savitzky-Golay polynomial is fit to the newest `filter_window_length` samples, newest included, and read at their centre (EyesWeb never read the newest sample of a fixed 10-sample window): the detection is one sample earlier, the warm-up is `filter_window_length - 1` samples instead of 10, and any odd window of 5 or more is accepted |
