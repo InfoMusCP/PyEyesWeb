@@ -78,3 +78,16 @@ def test_periodicity_has_no_sampling_rate():
     with pytest.raises(Exception):
         Periodicity(window=16, sampling_rate=100.0)
     assert not hasattr(Periodicity(window=16), "sampling_rate")
+
+
+def test_periodicity_undefined_windows_are_invalid_input():
+    from pyeyesweb.analysis_primitives import Periodicity
+    from pyeyesweb.data_models.results import Status
+    constant = Periodicity(window=20)._process_window(np.ones((1, 20)))
+    assert constant.status is Status.INVALID_INPUT and "constant" in constant.reason
+    short = Periodicity(window=2, method="mbest")._process_window(np.array([[0.0, 1.0]]))
+    assert short.status is Status.INVALID_INPUT and "3 samples" in short.reason
+    pulses = np.tile([1.0, 0.0, 0.0, 0.0, 0.0], 8)
+    mixed = Periodicity(window=40, method="mbest")._process_window(np.vstack([pulses, np.ones(40)]))
+    assert mixed.status is Status.OK and "channel(s) 1" in mixed.reason and not np.isnan(mixed.powers).any()
+    assert Periodicity(window=40).threshold == 0.1

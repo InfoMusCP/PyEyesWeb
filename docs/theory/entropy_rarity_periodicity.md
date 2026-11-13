@@ -157,9 +157,14 @@ array([0. , 0. , 2.7])
 
 Periodic movements, such as steady steps or a repeated gesture, repeat after a fixed number of samples.
 {py:class}`~pyeyesweb.analysis_primitives.Periodicity` finds the periods of each channel of a window with the Periodicity
-Transform, which decomposes a signal into periodic components. It returns two arrays of
-shape `(channels, columns)`: the detected `periods` in samples and their normalised `powers`, where a perfectly periodic signal
-has a power of 1 and unused entries are $-1$. The number of columns depends on the method (`"small2large"`, from the smallest
+Transform {cite}`sethares1999periodicity`, which decomposes a signal into periodic components; the lab used it, for
+example, for the periodicity of the shoulders in the Body Laughter Index {cite}`mancini2012computing`. It returns two arrays
+of shape `(channels, columns)`: the detected `periods` in samples and their normalised `powers`, where a perfectly periodic
+signal has a power of 1. Unused entries are $-1$ with `"small2large"`; `"mbest"` pads its `best_periods` columns with period
+0 and power 0. A period is reported by `"small2large"` when its power is above `threshold`, by default 0.1, the upper end of
+the range $0.01<T<0.1$ advised by {cite}`sethares1999periodicity` (the original block used 0.2). Two choices of the original
+block are kept: the projection averages the partial last repetition of a period too, and `"mbest"` looks for periods up to
+a third of the window (at least three repetitions). The number of columns depends on the method (`"small2large"`, from the smallest
 period upward, or `"mbest"`, the `best_periods` best periods) and on the window, so these two outputs are not part of the
 numeric table of the recording. Convert a period to seconds by dividing it by the sampling rate $f_s$. A window should contain
 several repetitions of the period of interest.
@@ -180,16 +185,16 @@ period with a high power.
 
 A pulse is a non-zero sample of a single-channel signal: a step, a beat, or the `is_peak` flag of
 {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector`. {py:class}`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity`
-asks whether the pulses of a window are equally spaced. The distance between the first two pulses of the window is the
-reference interval; the window is regular when at least three pulses are found and every later interval differs from the
-reference by at most `threshold` samples. It returns `is_regular`, the `pulse_count` and `is_regularity_detected`, a trigger
+asks whether the pulses of a window are equally spaced. With $I$ the intervals between consecutive pulses, in samples, the
+window is regular when it holds at least three pulses and $\max(I)-\min(I)<$ `threshold` {cite}`niewiadomski2019embodied`;
+the default threshold, 1, accepts only equal intervals. It returns `is_regular`, the `pulse_count` and `is_regularity_detected`, a trigger
 that is true on the first window that is regular after one that was not. It measures the regularity of a rhythm, such as a
 steady walk or a metronomic gesture, and complements the periodicity, which finds the period but does not require the events
 to be equally spaced.
 
 ```{doctest}
 >>> from pyeyesweb.analysis_primitives import BinaryPulsesRegularity
->>> feature = BinaryPulsesRegularity(window=12, threshold=1)
+>>> feature = BinaryPulsesRegularity(window=12, threshold=2)       # intervals may differ by one sample
 >>> steady = np.array([1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0], dtype=float)
 >>> uneven = np.array([1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0], dtype=float)
 >>> for pulses in (steady, uneven):
