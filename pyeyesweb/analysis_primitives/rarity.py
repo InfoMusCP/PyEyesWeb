@@ -37,9 +37,12 @@ class Rarity(VariantFeature, CoreFeature):
 
     where :math:`A` and :math:`B` are two probability terms estimated from the occupancy of the bins: with
     ``measure="rarity"`` from a memory of the last ``window`` values of the same input (a *rarity* across time), with
-    ``measure="contrast"`` across the inputs (a *contrast* between the signals). A rare value gives a large index.
-    The feature keeps its own memory, one sample per call. A value above the sum of the bin widths is outside the
-    bins.
+    ``measure="contrast"`` across the inputs (a *contrast* between the signals). A rare value gives a large index
+    :cite:`mancas2008real`. The term :math:`B` divides by the number of bins :math:`K` (the "Max(M)" of the paper's
+    eq. 4, which the paper does not define; reading it as :math:`K` keeps the index comparable across windows and
+    inputs). The feature keeps its own memory, one sample per call. The default bins assume a signal in
+    :math:`[0, 1]`: rescale other signals to :math:`[0, 1]` or give their own ``bins``. A value above the sum of the
+    bin widths is outside the bins.
 
     ``"mode_distance"``: rarity of the newest sample of a window of one scalar stream. The histogram of the window of
     :math:`N` samples has :math:`\max(\lfloor\sqrt{N}\rfloor, 1)` equal-width bins. With :math:`i_{\mathrm{mode}}` the
@@ -51,7 +54,11 @@ class Rarity(VariantFeature, CoreFeature):
         R = \alpha \, |i_{\mathrm{mode}} - i_{\mathrm{last}}| \, (p_{\mathrm{mode}} - p_{\mathrm{last}}).
 
     It is zero when the newest sample is in the most common bin and grows with its distance from it and with how much
-    less frequent its bin is. It needs no bin widths.
+    less frequent its bin is :cite:`niewiadomski2019embodied` (sec. 3.1). It needs no bin widths: the bins span the
+    smallest and largest values of the window, so one outlier stretches them, and the values differ from the paper's
+    Fig. 1, whose bins span the fixed range :math:`[0, 1]`, on a window that does not span it. The frequencies are
+    fractions of the window (the paper uses counts): multiply :math:`\alpha` by :math:`N` for the paper's scale. The
+    paper used windows of 100 frames; the default here is 50.
 
     Use ``"information"`` to reproduce EyesWeb or to compare several signals with chosen bin widths; use
     ``"mode_distance"`` for a self-contained score of one stream.
@@ -77,8 +84,8 @@ class Rarity(VariantFeature, CoreFeature):
     hop : int, optional
         ``"mode_distance"`` only: new samples between two windows. Defaults to ``1``. *(live)*
     alpha : float, optional
-        ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``.
-        *(live)*
+        ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``
+        (the paper does not give its value). *(live)*
 
     Notes
     -----
