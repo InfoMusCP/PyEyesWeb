@@ -84,8 +84,9 @@ class KineticEnergy(LabelGuard, FrameFeature):
     position mode without a time).
 
     **Statuses.** ``OK`` from the first frame (the first frame of position mode gives 0, there is no previous frame);
-    ``INVALID_INPUT`` when the frame holds NaN or infinity, is empty, is a dict that lacks a weighted joint
-    (``"missing joints: ..."``), or the timestamp does not increase. A rejected frame is not taken as the
+    ``INVALID_INPUT`` when the frame holds NaN or infinity, is empty, is a dict that lacks a weighted joint or the
+    ``reference_point`` (``"missing joints: ..."``; the original took a missing reference as the origin), or the
+    timestamp does not increase. A ``reference_point`` that is not among ``labels`` raises ``ValueError``. A rejected frame is not taken as the
     previous one: the next step is measured from the last valid frame.
 
     Limitations: the weights are a weighting of the joints, not a body model; the presets without anthropometric
@@ -115,6 +116,9 @@ class KineticEnergy(LabelGuard, FrameFeature):
             params["weights"] = dict.fromkeys(labels, 1.0)  # labels alone: every joint counts the same
         if params.get("weights") is not None and not isinstance(params["weights"], Mapping):
             params["weights"] = _weights_by_label(params["weights"], labels)
+        reference = params.get("reference_point") or ""
+        if reference and labels is not None and reference not in labels:
+            raise ValueError(f"KineticEnergy: reference_point {reference!r} is not among the labels {list(labels)}")
         super().__init__(**params)
         self._set_labels(labels)
         self._layout = None if labels is None else core.SkeletonLayout(list(labels))
@@ -138,7 +142,8 @@ class KineticEnergy(LabelGuard, FrameFeature):
         """
 
     def _label_names(self):
-        return set(self._param("weights", None) or ())
+        reference = self._param("reference_point", "")
+        return set(self._param("weights", None) or ()) | ({reference} if reference else set())
 
     def _inputs(self) -> Inputs:
         return Inputs(points_input("skeleton", self._labels, "joint positions or velocities", accepts=(dict,)))

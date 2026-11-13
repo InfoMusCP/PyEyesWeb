@@ -77,3 +77,13 @@ def test_gesture_segmenter_non_finite_samples_are_invalid_input_and_leave_the_st
     reference = GestureSegmenter(filter_window_length=5)
     for _ in range(11):
         assert segmenter.process(1.0).status == reference.process(1.0).status
+
+
+def test_kinetic_energy_missing_reference_joint_is_invalid_input():
+    from pyeyesweb.low_level import KineticEnergy
+    feature = KineticEnergy(weights={"hand": 1.0}, reference_point="pelvis", sampling_rate=10.0)
+    assert feature.process({"hand": (0, 0, 0), "pelvis": (0, 0, 0)}).status == Status.OK
+    missing = feature.process({"hand": (1, 0, 0)})
+    assert missing.status == Status.INVALID_INPUT and "pelvis" in missing.reason
+    with pytest.raises(ValueError, match="reference_point"):
+        KineticEnergy(labels=["hand"], reference_point="pelvis")

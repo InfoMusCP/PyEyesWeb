@@ -408,6 +408,7 @@ in 2.0 (each is also stated on the page of the feature, as "Corrected in the cor
 | `Symmetry(method="ratio")` on a preset without a reference joint | 2.0 asks for `reference_point=`; the development default `"neck"` was no joint of `mediapipe` or `qualisys_sport` and the translation to the reference was silently skipped |
 | `Symmetry(method="ratio")` | there is no `reference_type` parameter (the core only translates the frame by `reference_point`; `"barycenter"` and `"point"` did nothing in the original block): passing it raises `TypeError` |
 | `Symmetry` | `pairs` is validated: an entry that is not two joint names, or a name that is not among the labels, raises `ValueError` |
+| `KineticEnergy(reference_point=...)` | a frame without the reference joint is `INVALID_INPUT` ("missing joints"); the EyesWeb block took the origin as the reference, so the energy of the whole movement was reported. A `reference_point` that is not among `labels` raises `ValueError` |
 | `KineticEnergy(labels=[...])` | without `weights=` every joint weighs 1.0 (it used to raise); a joint missing from an explicit mapping weighs 0 |
 | `CurvatureVelocityCorrelation` (development) | `velocity` and `velocity_std` are per second in both modes of `differentiate`; the development values with `differentiate=False` were per sample |
 | `MotionNoiseDetector` (development) | `is_noisy` is `True` for noisy (random, jumpy) motion; it was the reverse |
