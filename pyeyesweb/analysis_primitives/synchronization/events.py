@@ -48,7 +48,7 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
 
     Quantifies the coordination of two sequences of discrete events (for example the onsets of two performers'
     gestures or beats) without assuming a fixed rhythm, following the event synchronization measure of Quian Quiroga
-    and colleagues. With :math:`m_x` and :math:`m_y` events in the first and second train and :math:`c(y|x)` the
+    and colleagues :cite:`quiroga2002event` (eqs. 1-3). With :math:`m_x` and :math:`m_y` events in the first and second train and :math:`c(y|x)` the
     number of events of the second train that follow an event of the first one within ``max_lag`` samples (and
     :math:`c(x|y)` the converse), the feature reports
 
@@ -61,8 +61,15 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     first train leads, :math:`q < 0` that the second one does. Simultaneous events count as synchronous and
     contribute to :math:`Q` but not to :math:`q`.
 
-    The queues and counts are accumulated across windows, so consecutive windows must not overlap: ``hop`` equals
-    ``window`` (its default) and any other value raises ``ValueError``.
+    By default each window is evaluated on its own. With ``reset_every_buffer=False`` the queues and counts
+    accumulate across windows (the cumulative :math:`Q(n)` of the paper, eq. 5), so consecutive windows must not
+    overlap: ``hop`` equals ``window`` (its default) and any other value raises ``ValueError``.
+
+    An event is coupled to the first partner within ``max_lag``, which keeps :math:`Q \le 1`; the paper counts all
+    pairs. The two agree when ``max_lag`` is below half the smallest interval between the events of a train, the
+    paper's condition; on denser trains choose a smaller ``max_lag`` (with an event of the first train at 10 and of the
+    second at 11 and 12, ``max_lag=3`` gives 0.707 here and 1.414 with all pairs). EventSynchronizationMECS is the
+    tool for groups and event classes.
 
     Parameters
     ----------
@@ -75,9 +82,9 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
         Largest lag, in samples, at which an event of one train is matched to an event of the other: two events are
         coupled when ``0 < lag <= max_lag`` (default 5). *(live)*
     reset_every_buffer : bool, optional
-        If ``True``, the accumulated events and counts are cleared at every window, so that each window is evaluated
-        on its own and events are not matched across the boundary of two windows (default ``False``).
-        *(structural)*
+        If ``True`` (default), the events and counts are cleared at every window, so that each window is evaluated on
+        its own and events are not matched across the boundary of two windows. ``False`` accumulates them over the
+        recording (the original block's default). *(structural)*
 
     Notes
     -----
@@ -89,16 +96,16 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.
 
-    **Accumulation and ``max_lag``.** By default the counts :math:`m_x`, :math:`m_y`, :math:`c(y|x)` and :math:`c(x|y)`
-    accumulate across windows, so the value of a window describes the whole recording up to its end; for the value of
-    each window on its own, pass ``reset_every_buffer=True``. :math:`Q` depends strongly on ``max_lag``: the same two
+    **Accumulation and ``max_lag``.** With ``reset_every_buffer=False`` the counts :math:`m_x`, :math:`m_y`,
+    :math:`c(y|x)` and :math:`c(x|y)` accumulate across windows, so the value of a window describes the whole
+    recording up to its end. :math:`Q` depends strongly on ``max_lag``: the same two
     trains give a low :math:`Q` with a small ``max_lag`` and a :math:`Q` close to 1 with a large one, so choose
     ``max_lag``
     from the lags that count as simultaneous in your data and report it with the result.
 
     **Corrected in the core.** The coincidence window is now ``0 < lag <= max_lag`` (an event used to expire one
     sample too early, so ``max_lag = 1`` matched nothing); ``delay`` is positive when the first series leads (the sign was reversed); and
-    events are no longer credited twice or never. Overlapping windows are refused (they counted the overlapped events
+    events are no longer credited twice or never. The block's unfinished "weighted formula" is removed. Overlapping windows are refused (they counted the overlapped events
     twice).
 
     Examples
@@ -112,7 +119,6 @@ class EventSynchronization(_NonOverlapping, _TrainPairBlock):
     (0.67, 0.67)
     """
     _core_class = _sync.EventSynchronization
-    _hidden_params = frozenset({"weighted"})  # the core's lag-weighted mode is not offered: matched pairs count 1
     _INPUTS = Inputs(_train("first_signal"), _train("second_signal"))
 
     def _schema(self) -> Schema:

@@ -42,7 +42,7 @@ LIVE = [
      "linear", SERIES),
 ]
 STRUCTURAL = [
-    (lambda: EventSynchronization(window=10, hop=10, max_lag=5), "reset_every_buffer", True, PAIRS),
+    (lambda: EventSynchronization(window=10, hop=10, max_lag=5), "reset_every_buffer", False, PAIRS),
     (lambda: EventSynchronizationMECS(window=7, hop=7, max_lag=10), "number_of_event_classes", 2, SERIES),
     (lambda: EventSynchronizationMECS(window=6, hop=6, max_lag=4, number_of_event_classes=1), "max_lag", 6, SERIES),
 ]

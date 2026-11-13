@@ -87,8 +87,8 @@ second does; simultaneous events count for $Q$ but not for $q$. The outputs are 
 
 The feature works on consecutive windows that do not overlap: `hop` equals `window` (its default) and any other value raises
 `ValueError`. It gives one result per window (`OK` once per window) and no `NO_OUTPUT`, the exception to the sliding windows of
-the family. By default the counts accumulate across windows, so the value of a window describes the whole recording up to its
-end; for the value of each window on its own, pass `reset_every_buffer=True`.
+the family. By default each window is evaluated on its own; with `reset_every_buffer=False` the counts accumulate across
+windows, so the value of a window describes the whole recording up to its end (the cumulative index of the paper).
 
 $Q$ depends strongly on `max_lag`: the same two series give a low $Q$ with a small `max_lag` and a $Q$ close to 1 with a large
 one, so choose `max_lag` from the lags that count as simultaneous in your data.
