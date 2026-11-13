@@ -97,13 +97,16 @@ Corrected in the core: the result follows the definition above, with the coincid
 sign of the delay given here, and each event credited exactly once.
 
 {py:class}`~pyeyesweb.analysis_primitives.EventSynchronizationMECS` (multi-event-class synchronization) extends the measure
-to `number_of_inputs` series that carry events of several classes (for example one channel per type of gesture) {cite}`alborno2019multi`. For every class and every pair of series, the coincidences $S_{ij}$ are
-the pairs of events within `max_lag` samples, weighted by the `kernel`; with $m_i$ and $m_j$ the event counts of the two series the
+to `number_of_inputs` series that carry events of several classes (for example one channel per type of gesture) {cite}`alborno2019multi`. For every class and every pair of series, the coincidences
+$S_{ij}$ are the pairs of events less than `max_lag` samples apart, weighted by the `kernel` (by default linear, $1-d/$`max_lag`,
+the kernel of the paper); with $m_i$ and $m_j$ the event counts of the two series the
 pair term is $\min\!\big(1,S_{ij}/\sqrt{m_im_j}\big)$, and the synchronization of the class is the mean of the pair terms over
-the $M(M-1)/2$ pairs of the $M$ series. It returns the `synchronization` of each class and the number of `events` of each class
-in the window, summed over the series, and also needs non-overlapping windows. It has no `reset_every_buffer`: its values and counts are those of
-each window on its own (checked on random trains), and it depends on `max_lag` in the same way. Only the former "version 2" of the algorithm is
-provided.
+the $M(M-1)/2$ pairs of the $M$ series. The normalisation by $\sqrt{m_im_j}$ departs from the paper's $m_im_j$, with which two
+identical trains never reach 1. It returns the `synchronization` of each class and the number of `events` of each class
+in the window, summed over the series, and also needs non-overlapping windows. As in the paper, the last `max_lag` samples of
+a window are carried into the next one, so pairs across the boundary are found; it has no `reset_every_buffer`, and it depends
+on `max_lag` in the same way. Only the synchronization within each class is computed (the former "version 2" of the
+algorithm); the inter-class part of the paper is not implemented.
 
 ```{doctest}
 >>> from pyeyesweb.analysis_primitives import EventSynchronization

@@ -144,17 +144,24 @@ class EventSynchronizationMECS(_MECSBlock):
 
     Extends the event synchronization of two trains to ``number_of_inputs`` series that carry events of several
     classes (for example gestures of different types, one channel per class), and reports for every class how
-    synchronous the series are. For each class and each pair of series, the coincidences :math:`S_{ij}` are the pairs
-    of events within ``max_lag`` samples, weighted by the ``kernel``; with :math:`m_i` and :math:`m_j` the event counts of
-    the two series, the pair term is
+    synchronous the series are :cite:`alborno2019multi` (the intra-class part, eqs. 4-11). For each class and each pair
+    of series, the coincidences :math:`S_{ij}` are the pairs of events less than ``max_lag`` samples apart
+    (:math:`0 \le d <` ``max_lag``), weighted by the ``kernel``; with :math:`m_i` and :math:`m_j` the event counts of the two
+    series, the pair term is
 
     .. math::
 
         \min\left(1, \; \frac{S_{ij}}{\sqrt{m_i m_j}}\right),
 
     and the synchronization of the class is the mean of the pair terms over the :math:`N(N-1)/2` pairs of the
-    :math:`N` series. The block keeps state across windows, so consecutive windows must not overlap: ``hop``
-    equals ``window`` (its default) and any other value raises ``ValueError``.
+    :math:`N` series. The normalisation by :math:`\sqrt{m_i m_j}` (as in Quian Quiroga's event synchronization) departs
+    from the paper's eq. 9, :math:`m_i m_j`, with which two identical trains of :math:`m` events give :math:`1/m`, so perfect
+    synchronization could not reach 1; the clamp to 1 is needed because an event can be near several events of the
+    other series. As in the paper (sec. 5.1), the last ``max_lag`` samples of a window are carried into the next one, so
+    a pair of events across the boundary is found, and those events are counted again in the next window. Consecutive
+    windows must therefore not overlap: ``hop`` equals ``window`` (its default) and any other value raises
+    ``ValueError``. Synchronization between different classes, macro events and the global index of the paper are not
+    implemented (neither were they in EyesWeb), nor is the adaptive lag.
 
     Parameters
     ----------
@@ -172,9 +179,10 @@ class EventSynchronizationMECS(_MECSBlock):
     max_lag : int, optional
         Largest lag, in samples, at which two events are considered coincident: two events are coupled when
         ``0 < lag <= max_lag`` (default 10). *(structural)*
-    kernel : {"uniform", "linear", "gaussian"}, optional
-        Weight given to a coincidence as a function of the lag: constant (``"uniform"``, the default), decreasing
-        linearly (``"linear"``), or Gaussian (``"gaussian"``). *(live)*
+    kernel : {"linear", "uniform", "gaussian"}, optional
+        Weight given to a coincidence as a function of the lag :math:`d`: decreasing linearly, :math:`1 - d /`
+        ``max_lag`` (``"linear"``, the default, the kernel of the paper, eq. 6), constant (``"uniform"``, the original
+        block's default), or Gaussian (``"gaussian"``). *(live)*
     gaussian_sigma, gaussian_mean : float, optional
         Standard deviation and mean, in samples, of the Gaussian kernel; used only with ``kernel="gaussian"``
         (default ``None``: the defaults of the core). *(live)*
@@ -189,10 +197,9 @@ class EventSynchronizationMECS(_MECSBlock):
 
     **Statuses.** ``WARMING_UP`` (``"k of N samples"``) while the first window fills; ``OK`` once per window.
 
-    **Windows and ``max_lag``.** Unlike ``EventSynchronization``, this block has no ``reset_every_buffer`` parameter; in
-    a check on random trains the value and the ``events`` count of each window were those of the same window run
-    alone, so they are per-window values. The index depends strongly on ``max_lag``: a larger ``max_lag`` matches more events,
-    so choose it from the lags that count as simultaneous in your data.
+    **Windows and ``max_lag``.** Unlike ``EventSynchronization``, this block has no ``reset_every_buffer`` parameter: its
+    only memory is the carried tail of ``max_lag`` samples. The index depends strongly on ``max_lag``: a larger ``max_lag``
+    matches more events, so choose it from the lags that count as simultaneous in your data.
 
     **Corrected in the core.** The number of pairs was evaluated as :math:`(N!/2)(N-2)!` instead of
     :math:`N(N-1)/2`, and the pair term shrank with the number of events (two identical series of four events gave
@@ -205,8 +212,11 @@ class EventSynchronizationMECS(_MECSBlock):
     >>> first[[5, 25, 45], 0] = 1
     >>> second[[7, 27, 46], 0] = 1
     >>> record = EventSynchronizationMECS(window=60, number_of_event_classes=1, max_lag=3).run(first, second)
-    >>> record.synchronization[-1], record.events[-1]
-    (array([1.]), array([6.]))
+    >>> record.synchronization[-1].round(3), record.events[-1]    # lags 2, 2, 1: linear weights 1/3, 1/3, 2/3
+    (array([0.444]), array([6.]))
+    >>> EventSynchronizationMECS(window=60, number_of_event_classes=1, max_lag=3, kernel="uniform").run(
+    ...     first, second).synchronization[-1]
+    array([1.])
     """
     _core_class = _sync.EventSynchronizationMECS
 
