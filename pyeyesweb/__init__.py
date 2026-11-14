@@ -9,13 +9,20 @@
 ``pyeyesweb.catalog()`` lists every feature with its layer and timescale. The layers need the compiled EyesWeb core
 (shipped with the ``pyeyesweb`` wheel); ``import pyeyesweb`` itself, the data models (``pyeyesweb.data_models``) and the
 catalog types do not. ``SeriesBuffer`` of the core is available here once it is installed (it is not in ``__all__``).
-``pyeyesweb.physical_signals`` also holds ``MassSpringModel`` and ``TimeWindowSynchronizer``; ``pyeyesweb.skeletons`` the
+``pyeyesweb.physical_signals`` also holds ``TimeWindowSynchronizer``; ``pyeyesweb.skeletons`` the
 lab skeleton presets; ``pyeyesweb.datasets`` loads the example recordings of the tutorials (no compiled core needed).
 """
 
+from importlib.metadata import PackageNotFoundError, version as _version
+
 from .catalog import Layer, Timescale, catalog, catalog_table
 
-__all__ = ["Layer", "Timescale", "catalog", "catalog_table"]
+try:
+    __version__ = _version("pyeyesweb")
+except PackageNotFoundError:  # a source tree that is not installed
+    __version__ = "unknown"
+
+__all__ = ["Layer", "Timescale", "catalog", "catalog_table", "__version__"]
 
 
 _PUBLIC_MODULES = ("physical_signals", "low_level", "mid_level", "high_level", "analysis_primitives", "data_models", "skeletons", "datasets")
