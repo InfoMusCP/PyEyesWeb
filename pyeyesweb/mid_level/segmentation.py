@@ -17,7 +17,7 @@ from pyeyesweb.base.inputs import non_finite, scalar
 _motion = core.motion
 
 
-@describe(Layer.MID_LEVEL, eyesweb="GestureSegmenter, MotionDuration (SteadyStateLength)")
+@describe(Layer.MID_LEVEL, eyesweb="GestureSegmenter, MotionDuration (SteadyStateLength)", released=False)
 class GestureSegmenter(FrameFeature):
     r"""Start and end of gestures from an intensity signal, and the duration of gestures and pauses.
 
@@ -76,7 +76,7 @@ class GestureSegmenter(FrameFeature):
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.mid_level import GestureSegmenter
+    >>> from pyeyesweb.mid_level.segmentation import GestureSegmenter
     >>> intensity = np.concatenate([np.zeros(12), np.ones(15), np.zeros(15)])
     >>> record = GestureSegmenter(firing_threshold=0.5, sampling_rate=10.0).run(intensity)
     >>> print(np.flatnonzero(record.is_gesture_start), np.flatnonzero(record.is_gesture_end))

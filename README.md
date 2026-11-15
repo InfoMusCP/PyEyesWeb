@@ -62,13 +62,13 @@ layer, inputs, outputs and parameters.
 
 ## Layers
 
-`pyeyesweb.catalog()` returns the 36 features of this release:
+`pyeyesweb.catalog()` returns the 35 features of this release:
 
 | Layer | Package | Features |
 |---|---|---|
 | Physical signals | `pyeyesweb.physical_signals` | 4 |
 | Low-level features | `pyeyesweb.low_level` | 17 |
-| Mid-level features | `pyeyesweb.mid_level` | 1 |
+| Mid-level features | `pyeyesweb.mid_level` | 0 |
 | High-level features | `pyeyesweb.high_level` | 1 |
 | Analysis primitives | `pyeyesweb.analysis_primitives` | 13 |
 

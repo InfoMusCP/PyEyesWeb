@@ -34,7 +34,7 @@ from pyeyesweb.data_models import InputKind  # noqa: E402
 from pyeyesweb.low_level import BodyPartsFromCurvature, CurvatureVelocityCorrelation, DirectionChange, Kinematics, KineticEnergy, LogDimensionlessJerk, SpectralArcLength, SubmovementCount, Symmetry  # noqa: E402
 from pyeyesweb.low_level.smoothness import Harmonicity
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
-from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
+from pyeyesweb.mid_level.segmentation import GestureSegmenter  # noqa: E402
 from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials
 from pyeyesweb.mid_level.suddenness import Suddenness
 from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity

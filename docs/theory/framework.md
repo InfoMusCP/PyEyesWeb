@@ -129,7 +129,7 @@ read from the catalog:
 >>> from collections import Counter
 >>> from pyeyesweb import catalog
 >>> Counter((info.layer.name, info.timescale.value) for info in catalog())
-Counter({('LOW_LEVEL', 'up to ~0.5 s'): 17, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('MID_LEVEL', '0.5-3 s'): 1, ('HIGH_LEVEL', '3 s and above'): 1})
+Counter({('LOW_LEVEL', 'up to ~0.5 s'): 17, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('HIGH_LEVEL', '3 s and above'): 1})
 ```
 
 A few remarks on the placement make the mapping precise.
@@ -146,30 +146,29 @@ A few remarks on the placement make the mapping precise.
   and leaves the mapping from features to labels, such as an emotion, to the user. The qualities communicated by one person
   are obtained by combining lower-layer features, typically with a learned model (see for example
   {cite}`niewiadomski2017lowintrusive`).
-- **A mid-level feature needs a unit.** A mid-level quality is measured on a window that holds one movement, and
-  {py:class}`~pyeyesweb.mid_level.GestureSegmenter` finds the units in a stream.
-  Together they make the step from the sample to the gesture that the model describes.
+- **A mid-level feature needs a unit.** A mid-level quality is measured on a window that holds one movement, and a
+  segmentation finds the units in a stream. The segmentation of the library, `GestureSegmenter`, is held back from the early
+  release, so no mid-level feature is released yet.
 - **A whole layer can be skipped.** The entropy of a speed profile needs no segmentation, and the energy of a skeleton can be
   fed to a synchronization measure directly. The model gives the timescale of the result, not an obligation to visit
   every layer.
 
 ## Moving between layers: an example
 
-A feature of one layer is built on the output of the layer below. The sketch follows one stream from layer 1 to layer 3. A
-skeleton (layer 1, a physical signal) gives a frame of joint positions at every sample.
+A feature of one layer is built on the output of the layer below. The sketch follows one stream from layer 1 to layer 2 and on
+to an analysis primitive. A skeleton (layer 1, a physical signal) gives a frame of joint positions at every sample.
 {py:class}`~pyeyesweb.low_level.KineticEnergy` (layer 2) turns each frame into one number, the energy of the body at this
-moment. {py:class}`~pyeyesweb.mid_level.GestureSegmenter` (layer 3) takes that number and finds where the gestures start
-and end, and how long they last. Between the second and the third
-step the unit of analysis changes from the frame to the gesture, and so does the timescale:
+moment. {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector` takes that number and finds its peaks, which are events.
+Between the two steps the unit of analysis changes from the frame to the event:
 
 ```{doctest}
 >>> from pyeyesweb.low_level import KineticEnergy
->>> from pyeyesweb.mid_level import GestureSegmenter
->>> [(feature.__name__, feature.LAYER.name, feature.TIMESCALE.value) for feature in (KineticEnergy, GestureSegmenter)]
-[('KineticEnergy', 'LOW_LEVEL', 'up to ~0.5 s'), ('GestureSegmenter', 'MID_LEVEL', '0.5-3 s')]
+>>> from pyeyesweb.analysis_primitives import ScalarPeakDetector
+>>> [(feature.__name__, feature.LAYER.name) for feature in (KineticEnergy, ScalarPeakDetector)]
+[('KineticEnergy', 'LOW_LEVEL'), ('ScalarPeakDetector', 'ANALYSIS_PRIMITIVE')]
 ```
 
-The same example is run with data in {doc}`gesture_segmentation`. Such pipelines are written by the user, from the
+Such pipelines are written by the user, from the
 declared inputs and outputs of the features ({doc}`../concepts/inputs`, {doc}`../concepts/results`); the library does not
 impose one.
 

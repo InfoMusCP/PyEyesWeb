@@ -8,7 +8,7 @@ from pyeyesweb.data_models import Input, InputKind, Status
 from pyeyesweb.low_level import (BodyPartsFromCurvature, ContourCurvature, KineticEnergy,
                                  PointsDensity)
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
-from pyeyesweb.mid_level import GestureSegmenter
+from pyeyesweb.mid_level.segmentation import GestureSegmenter
 from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials
 from pyeyesweb.mid_level.suddenness import Suddenness
 from pyeyesweb.mid_level.impulsivity import SuddennessImpulsivity

@@ -5,10 +5,11 @@
 The version is 2.0.0a2, not 2.0.0a1: a first 2.0.0a1 core was uploaded to TestPyPI before the review of the algorithms and cannot be
 replaced, so the reviewed core and package are 2.0.0a2.
 
-The early release holds the 36 features whose algorithms were reviewed against their sources and judged solid on movement
-data: `pyeyesweb.catalog()` lists them (4 physical signals, 17 low-level, 1 mid-level, 1 high-level, 13 analysis
+The early release holds the 35 features whose algorithms were reviewed against their sources and judged solid on movement
+data: `pyeyesweb.catalog()` lists them (4 physical signals, 17 low-level, no mid-level, 1 high-level, 13 analysis
 primitives). The other features of the library are kept in the code, tested and documented in the sources, and are left
-out of this release for further investigation: `MassSpringSimulator`, `Harmonicity`, `MotionNoiseDetector`, `Suddenness`,
+out of this release for further investigation: `MassSpringSimulator`, `Harmonicity`, `GestureSegmenter` (until the noise test
+that belongs to it, `MotionNoiseDetector`, is finished, so the release has no mid-level feature), `MotionNoiseDetector`, `Suddenness`,
 `SuddennessImpulsivity`, `ContractionImpulsivity`, `PositionDependingPotentials`, `RegionDependingPotentials`,
 `NonlinearInterdependence` and `SpikeSynchronization`. Every change of a number against the EyesWeb block or the 1.x
 library that the review decided is listed in the migration guide ("Behaviour changes that alter numbers").
@@ -48,7 +49,7 @@ PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Ge
   mask and one attribute per output; `is_valid` remains as an alias of `ok`. A missing value is `NaN` (`0` for integer and
   `False` for boolean outputs), never `None`, and array shapes do not change between calls.
 * feat!: layered architecture. Features live in `pyeyesweb.physical_signals`, `low_level`, `mid_level`, `high_level` and
-  `analysis_primitives`; the catalog (`pyeyesweb.catalog()`) holds 36 features (4, 17, 1, 1 and 13). `pyeyesweb.Smoothness`
+  `analysis_primitives`; the catalog (`pyeyesweb.catalog()`) holds 35 features (4, 17, 0, 1 and 13). `pyeyesweb.Smoothness`
   and `pyeyesweb.Synchronization` are no longer exported at the top level.
 * The features run in a compiled core, the module `eyesweb_core`, a package separate from `pyeyesweb` (a development build is
   found through `EYESWEB_CORE_PATH`). `import pyeyesweb`, `pyeyesweb.data_models` and `Layer` work without it. The minimum

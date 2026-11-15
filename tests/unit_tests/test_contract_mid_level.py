@@ -16,7 +16,7 @@ from contract_suite import check_feature_contract  # noqa: E402
 
 from pyeyesweb.data_models import InputKind, Status  # noqa: E402
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
+from pyeyesweb.mid_level.segmentation import GestureSegmenter  # noqa: E402
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity, SuddennessImpulsivity
 from pyeyesweb.mid_level.suddenness import Suddenness
 

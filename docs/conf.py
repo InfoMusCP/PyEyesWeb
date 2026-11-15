@@ -130,7 +130,7 @@ for _info in pyeyesweb.catalog():
     _counts[_info.layer.value] = _counts.get(_info.layer.value, 0) + 1
     _timescales.setdefault(_info.layer.value, set()).add(_info.timescale)
 # Feature counts and timescales for the landing page, computed from catalog(): {{ n_low_level }}, {{ ts_low_level }} etc.
-myst_substitutions = {f"n_{layer}": str(n) for layer, n in _counts.items()}
+myst_substitutions = {f"n_{layer.value}": str(_counts.get(layer.value, 0)) for layer in pyeyesweb.Layer}  # 0 for a layer without feature
 myst_substitutions.update({f"ts_{layer}": ", ".join(ts.value for ts in pyeyesweb.Timescale if ts in found)
                            for layer, found in _timescales.items()})
 myst_substitutions["n_features"] = str(sum(_counts.values()))

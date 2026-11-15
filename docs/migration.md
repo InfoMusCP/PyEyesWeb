@@ -269,7 +269,7 @@ samples is `lag` (one shift) or `max_lag` (the largest shift considered).
 
 Kept in the code and investigated for the next release, these features are not exported by their layer package and are not in
 `catalog()`: `MassSpringSimulator` (with `MassSpringModel`, `HUMANOID_JOINTS` and `HUMANOID_BONES`), `Harmonicity`,
-`MotionNoiseDetector` (its noise test returns inside `GestureSegmenter` later), `Suddenness`,
+`GestureSegmenter` (held back with its noise test, 2026-11-15), `MotionNoiseDetector` (its noise test returns inside `GestureSegmenter` later), `Suddenness`,
 `SuddennessImpulsivity`, `ContractionImpulsivity`, `PositionDependingPotentials`, `RegionDependingPotentials`,
 `NonlinearInterdependence` and `SpikeSynchronization`. The rows that name them below describe the state they will return in.
 

@@ -31,10 +31,10 @@ def test_layers_raise_import_error_without_the_core():
 @needs_core
 def test_catalog_lists_features():
     names = {entry.name for entry in catalog()}
-    assert {"SpectralArcLength", "SubmovementCount", "GestureSegmenter", "EnsembleDominance"} <= names
-    assert not {"Suddenness", "MotionNoiseDetector", "MassSpringSimulator"} & names  # held back from the release
+    assert {"SpectralArcLength", "SubmovementCount", "EnsembleDominance"} <= names
+    assert not {"Suddenness", "MotionNoiseDetector", "MassSpringSimulator", "GestureSegmenter"} & names  # held back from the release
     assert all(entry.cls.RELEASED for entry in catalog())
-    assert len(catalog()) == 36  # 37 before MotionDuration was merged into GestureSegmenter (2026-11-13), 47 before ten features were held back from the early release (2026-11-13), 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
+    assert len(catalog()) == 35  # 36 before GestureSegmenter was held back until the noise test is finished (2026-11-15), 37 before MotionDuration was merged into GestureSegmenter (2026-11-13), 47 before ten features were held back from the early release (2026-11-13), 50 before the mass-spring merge (2026-11-12), 60 before the ten removals of the algorithm review (2026-11-12), 62 before CannyEdgeDetector, 61 before ZeroCross were dropped (2026-10-14)
 
 
 @needs_core
@@ -50,20 +50,23 @@ def test_every_public_name_resolves_and_layer_matches_its_package():
 
 @needs_core
 def test_features_with_an_eyesweb_block_name_it():
-    from pyeyesweb import low_level, mid_level, analysis_primitives as ap
+    from pyeyesweb import low_level, analysis_primitives as ap
+    from pyeyesweb.mid_level.segmentation import GestureSegmenter
 
     assert low_level.KineticEnergy.EYESWEB_BLOCK and low_level.CurvatureVelocityCorrelation.EYESWEB_BLOCK
-    assert ap.Rarity.EYESWEB_BLOCK and mid_level.GestureSegmenter.EYESWEB_BLOCK
+    assert ap.Rarity.EYESWEB_BLOCK and GestureSegmenter.EYESWEB_BLOCK
     assert low_level.SpectralArcLength.EYESWEB_BLOCK is None
 
 
 @needs_core
 def test_layer_placements():
-    from pyeyesweb import low_level, mid_level, analysis_primitives as ap
+    from pyeyesweb import low_level, analysis_primitives as ap
+    from pyeyesweb.mid_level.segmentation import GestureSegmenter
 
     assert low_level.Kinematics.LAYER is Layer.LOW_LEVEL
     assert low_level.Directness.LAYER is Layer.LOW_LEVEL
-    assert mid_level.GestureSegmenter.LAYER is Layer.MID_LEVEL
+    assert GestureSegmenter.LAYER is Layer.MID_LEVEL
+    assert pyeyesweb.mid_level.__all__ == []  # held back: no mid-level feature in the early release
     assert low_level.TrajectoryNonPlanarity.LAYER is Layer.LOW_LEVEL
     assert ap.Periodicity.LAYER is Layer.ANALYSIS_PRIMITIVE
     assert ap.synchronization.PartialRecurrenceSynchronization.LAYER is Layer.ANALYSIS_PRIMITIVE

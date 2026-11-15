@@ -39,7 +39,7 @@ from floats import assert_same_floats  # noqa: E402
 from pyeyesweb.data_models.results import Status  # noqa: E402
 from pyeyesweb.low_level import KineticEnergy  # noqa: E402
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
+from pyeyesweb.mid_level.segmentation import GestureSegmenter  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 REFERENCE = np.load(DATA / "gesture_segmenter_reference.npz")

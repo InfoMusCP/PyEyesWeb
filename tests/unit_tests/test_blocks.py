@@ -34,7 +34,7 @@ from pyeyesweb.low_level import (  # noqa: E402
     Symmetry, TriangleSymmetry
 )
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
-from pyeyesweb.mid_level import GestureSegmenter  # noqa: E402
+from pyeyesweb.mid_level.segmentation import GestureSegmenter  # noqa: E402
 from pyeyesweb.mid_level.impulsivity import ContractionImpulsivity
 
 DTYPES = {float: np.floating, int: np.integer, bool: np.bool_}

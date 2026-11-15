@@ -11,3 +11,68 @@ gesture. Theory: {doc}`../theory/impulsivity_suddenness`. The quality of impulsi
 ({py:class}`~pyeyesweb.physical_signals.HitCellDetector`, layer 1) into potentials with a memory of past hits: a cell that is
 visited often keeps a high potential and the potential decays where nobody goes. Theory: {doc}`../theory/shape_symmetry_balance`.
 
+<!-- The page docs/user_guide/mid_level.md as it was before GestureSegmenter was held back (2026-11-15). -->
+
+# Mid-level features
+
+Layer 3 describes a gesture: a movement unit that lasts from half a second to about three seconds, with a beginning and an
+end. Where a low-level feature gives a value for each frame, a mid-level feature needs the unit as a whole, or the time over
+which a quantity builds up, and gives one value for the gesture: where it starts and ends, how long it lasts, how sudden or
+impulsive it is, how much of the space it occupied. The layer has {{ n_mid_level }} features; this page helps to choose among
+them. The background is in {doc}`../concepts/layers` and {doc}`../theory/framework`.
+
+```{feature-table} mid_level
+```
+
+## Which feature for which question
+
+**Where are the gestures?** {py:class}`~pyeyesweb.mid_level.GestureSegmenter` turns an intensity signal, typically the
+kinetic energy of a skeleton, into the start and the end of gestures, and measures how long the gestures and the pauses
+last. Most of the other features of this layer are computed over a gesture, so segmentation is usually the first step.
+Theory: {doc}`../theory/gesture_segmentation`.
+
+## A typical pipeline
+
+The mid-level features are fed by the outputs of layers 1 and 2. A point makes two reaches of 0.4 m, with pauses before and
+between them. Its kinetic energy is the intensity that the segmenter takes.
+
+```{doctest}
+>>> import numpy as np
+>>> from pyeyesweb.low_level import KineticEnergy
+>>> from pyeyesweb.mid_level import GestureSegmenter
+>>> rate = 50.0
+>>> time = np.arange(0.0, 8.0, 1.0 / rate)
+>>> def reach(start, stop, amplitude):
+...     s = np.clip((time - start) / (stop - start), 0.0, 1.0)
+...     return amplitude * (10 * s**3 - 15 * s**4 + 6 * s**5)      # minimum-jerk profile
+>>> x = reach(1.0, 3.0, 0.4) - reach(5.0, 7.0, 0.4)
+>>> position = np.column_stack([x, np.zeros_like(x), np.zeros_like(x)])
+>>> energy = KineticEnergy(labels=["hand"], weights={"hand": 1.0}, sampling_rate=rate).run(position[:, None, :])
+>>> round(float(energy.kinetic_energy.max()), 3)
+0.07
+>>> segmentation = GestureSegmenter(firing_threshold=0.005, sampling_rate=rate).run(energy.kinetic_energy)
+>>> (np.flatnonzero(segmentation.is_gesture_start) / rate).tolist()     # seconds
+[1.4, 5.4]
+>>> (np.flatnonzero(segmentation.is_gesture_end) / rate).tolist()
+[2.8, 6.8]
+>>> round(float(np.nanmax(segmentation.motion_duration)), 3), round(float(np.nanmax(segmentation.pause_duration)), 3)
+(1.4, 2.6)
+```
+
+The first gesture is found from 1.4 s to 2.8 s, although the reach lasts from 1.0 s to 3.0 s: the segmenter smooths the
+intensity and declares a gesture while it is at least `firing_threshold` (in the unit of the intensity), so the start is late
+by a few samples and the slow beginning and end of a reach, where the energy is low, are left out. The threshold fixes how much
+of the movement counts as a gesture. The gestures can then be cut from the signals of layer 2 and summarised, for
+example with {py:class}`~pyeyesweb.low_level.SpectralArcLength` on the speed of each gesture, or measured by the
+suddenness features.
+
+## What to know before choosing
+
+- A mid-level feature takes the signals of one unit of movement, but it does not cut them for you: most of them work on a
+  window you size to the gesture, in samples, or on a signal that you segmented.
+- The time-dependent features take `sampling_rate` or timestamps; without a rate the durations are in samples
+  ({doc}`../concepts/time_units_parameters`).
+- The potentials need the cells of `HitCellDetector`, a layer-1 feature, and keep a memory across calls: `reset()` them
+  between recordings.
+
+Hands-on: see {ref}`sphx_glr_tutorials_04_mid_level_plot_07_gestures.py`.

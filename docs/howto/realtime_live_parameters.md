@@ -201,7 +201,6 @@ against a feature built with the new value.
 | `DirectionChange` | `epsilon` | |
 | `BodyPartsFromCurvature` | `minimum_distance` | |
 | `TrajectoryNonPlanarity` | `radius` | |
-| `GestureSegmenter` | `firing_threshold`, `continuous_output` | `filter_window_length` |
 | `SampleEntropy` | `relative_tolerance`, `tolerance` | |
 | `Rarity` | `alpha`, `measure` | `window` |
 | `BinaryPulsesRegularity` | `threshold` | |
