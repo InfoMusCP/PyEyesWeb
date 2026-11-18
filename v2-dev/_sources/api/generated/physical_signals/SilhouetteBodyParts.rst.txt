@@ -5,7 +5,7 @@ SilhouetteBodyParts
 
 Head, trunk, arms and legs of a human silhouette, from its projection histograms.
 
-:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: BlobSubRegions`
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: BlobSubRegions` :bdg-light:`Pose`
 
 Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Imaging </theory/imaging>`.
 
@@ -35,8 +35,8 @@ Parameters
      - ``0.5``
      - ``float``
    * - ``parts``
-     - ``('right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head')``
-     - ``Sequence[Literal['right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head']]``
+     - ``('left_leg', 'right_leg', 'trunk', 'left_arm', 'right_arm', 'head')``
+     - ``Sequence[Literal['left_leg', 'right_leg', 'trunk', 'left_arm', 'right_arm', 'head']]``
 
 Inputs
 ------

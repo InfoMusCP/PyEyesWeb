@@ -5,7 +5,7 @@ HitCellDetector
 
 The grid cells hit by a list of 2D points.
 
-:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: HitCellDetector`
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: HitCellDetector` :bdg-light:`Space`
 
 Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Shape, symmetry and balance </theory/shape_symmetry_balance>`.
 

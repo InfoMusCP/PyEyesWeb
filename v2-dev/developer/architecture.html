@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Architecture and contract &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Architecture and contract &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -713,7 +713,7 @@ supplies the construction, the parameters and the result of the block. Frame-wis
 <td><p>the block of the core that the feature wraps</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_core_names</span></code></p></td>
-<td><p>public parameter name to the name in the block, where the block abbreviates; everything public uses the public name</p></td>
+<td><p>public parameter name to the name in the block, for a block that does not use the public name (none today); everything public uses the public name</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_unit_params</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">power}</span></code>: the parameters that are lengths (power 1) or areas and energies (power 2); the feature then takes <code class="docutils literal notranslate"><span class="pre">units=&quot;m&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code> and scales the parameters, never the data or the outputs</p></td>
@@ -902,7 +902,7 @@ list (<a class="reference internal" href="building_the_docs.html"><span class="d
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

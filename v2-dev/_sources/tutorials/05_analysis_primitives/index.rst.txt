@@ -19,7 +19,7 @@ Metrics that apply to any signal at any layer: entropy, rarity, periodicity, pea
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate. It answers one question about any series of numbers. This tutorial uses six of them: how irregular a signal is at one and at several time scales (``SampleEntropy``, CoarseGraining, MultiScaleEntropy), who is the most regular of a group (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and which period repeats (``Periodicity``).">
+    <div class="sphx-glr-thumbcontainer" tooltip="An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate. It answers one question about any series of numbers. This tutorial uses five of them: how irregular a signal is at one and at several time scales (``SampleEntropy``, MultiScaleEntropy), who is the most regular of a group (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and which period repeats (``Periodicity``).">
 
 .. only:: html
 
@@ -36,7 +36,7 @@ Metrics that apply to any signal at any layer: entropy, rarity, periodicity, pea
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Two hands that rise and fall together, a group that breathes as one: synchronization is how far several movements are coordinated in time. This first of two tutorials compares continuous signals: it measures phase locking, correlation, partial correlation, nonlinear interdependence and recurrence, on a performer who moves both arms together (synchronised) or not (unsynchronised).">
+    <div class="sphx-glr-thumbcontainer" tooltip="Two hands that rise and fall together, a group that breathes as one: synchronization is how far several movements are coordinated in time. This first of two tutorials compares continuous signals: it measures phase locking, correlation, partial correlation and recurrence, on a performer who moves both arms together (synchronised) or not (unsynchronised).">
 
 .. only:: html
 
@@ -53,7 +53,7 @@ Metrics that apply to any signal at any layer: entropy, rarity, periodicity, pea
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Often what is shared between two people is a set of moments, not a continuous curve: the instants of a clap, of a step, of a change of direction. This second tutorial on synchronization turns the movement of two hands into trains of events and measures how far the events of one train meet those of the other, with and without a chosen tolerance. It also counts a given order of events and follows a staged process in which several measures are reached one after the other.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Often what is shared between two people is a set of moments, not a continuous curve: the instants of a clap, of a step, of a change of direction. This second tutorial on synchronization turns the movement of two hands into trains of events and measures how far the events of one train meet those of the other, within a chosen tolerance.">
 
 .. only:: html
 

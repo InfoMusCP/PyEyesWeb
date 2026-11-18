@@ -5,7 +5,7 @@ DirectionChange
 
 Direction change of a trajectory in a window: sharp turns of the path and the area it encloses.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-light:`Trajectory`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Kinematics and energy </theory/kinematics_energy>`.
 

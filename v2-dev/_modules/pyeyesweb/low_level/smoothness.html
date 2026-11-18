@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.low_level.smoothness &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.low_level.smoothness &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -462,7 +462,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_finite</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level.kinematics</span><span class="w"> </span><span class="kn">import</span> <span class="n">_InferredDimsBlock</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_SpeedProfileMetric</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
@@ -512,7 +511,11 @@
 <span class="sd">    where :math:`V(f)` is the magnitude of the Fourier transform of the (zero-padded) speed of the window. The cut-off</span>
 <span class="sd">    is adaptive: the highest frequency at which :math:`\hat{V}` is still above ``amplitude_threshold``, limited to</span>
 <span class="sd">    ``[minimum_cutoff_frequency, maximum_cutoff_frequency]``. The measure is dimensionless and independent of the</span>
-<span class="sd">    amplitude and duration of the movement; it is negative, and closer to 0 means smoother.</span>
+<span class="sd">    amplitude and duration of the movement; it is negative, and closer to 0 means smoother. The cut-off frequency of</span>
+<span class="sd">    the arc is bounded below by ``minimum_cutoff_frequency`` (2 Hz by default), a bound that is not in the original</span>
+<span class="sd">    definition: it keeps the value from depending on the spectrum below it, but for a movement longer than about 1.5 s,</span>
+<span class="sd">    or a window with a low-frequency spectrum, the value grows more negative with the duration, so it is no longer</span>
+<span class="sd">    independent of the duration.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -593,7 +596,10 @@
 
 <span class="sd">    with the derivatives taken by finite differences. In ``"acceleration"`` mode the input is the acceleration</span>
 <span class="sd">    magnitude and the jerk is its first difference, normalised by the duration and the peak of the acceleration. The</span>
-<span class="sd">    measure is dimensionless and negative; closer to 0 means smoother, and a flat signal gives 0.</span>
+<span class="sd">    measure is dimensionless and negative; closer to 0 means smoother. A flat signal has no jerk to measure and gives</span>
+<span class="sd">    ``INVALID_INPUT``. In ``"acceleration"`` mode the input is a magnitude, so the gravity that the LDLJ-A variant of the</span>
+<span class="sd">    literature removes from the acceleration vector is not removed here: give an acceleration with gravity already taken</span>
+<span class="sd">    off, or use the speed.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -620,8 +626,8 @@
 <span class="sd">    window.</span>
 
 <span class="sd">    **Statuses.** ``WARMING_UP`` while fewer than 10 samples are available (``"k of N samples"``), ``NO_OUTPUT``</span>
-<span class="sd">    between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when the profile cannot support the measure or a sample is</span>
-<span class="sd">    NaN or infinite.</span>
+<span class="sd">    between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when the profile cannot support the measure (a flat or null</span>
+<span class="sd">    signal: no jerk, or no peak to normalise by) or a sample is NaN or infinite.</span>
 
 <span class="sd">    Differentiating a noisy signal amplifies the noise: filter or smooth the speed first.</span>
 
@@ -675,9 +681,7 @@
 
 
 
-<div class="viewcode-block" id="Harmonicity">
-<a class="viewcode-back" href="../../../api/generated/low_level/Harmonicity.html#pyeyesweb.low_level.Harmonicity">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">released</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Harmonicity</span><span class="p">(</span><span class="n">_SpeedProfileMetric</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Harmonicity of a speed profile: 1 for a single bell-shaped speed peak, lower for an irregular speed.</span>
 
@@ -715,7 +719,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import Harmonicity</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level.smoothness import Harmonicity</span>
 <span class="sd">    &gt;&gt;&gt; t = np.arange(100) / 100.0</span>
 <span class="sd">    &gt;&gt;&gt; bell = np.sin(np.pi * t) ** 2  # one smooth bell-shaped speed peak</span>
 <span class="sd">    &gt;&gt;&gt; feature = Harmonicity(window=100, sampling_rate=100.0)</span>
@@ -727,8 +731,7 @@
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">Harmonicity</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span></div>
-
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="SubmovementCount">
@@ -789,115 +792,29 @@
 
 
 
-<div class="viewcode-block" id="CurvatureDispersion">
-<a class="viewcode-back" href="../../../api/generated/low_level/CurvatureDispersion.html#pyeyesweb.low_level.CurvatureDispersion">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CurvatureDispersion</span><span class="p">(</span><span class="n">_InferredDimsBlock</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Curvature-based smoothness index of a movement, from its velocity and acceleration vectors.</span>
-
-<span class="sd">    The index relates the curvature of the path to the distance covered over the last ``window`` calls: it compares how</span>
-<span class="sd">    much the path bends with how far the point travelled, and it is 1 while the movement is slower than</span>
-<span class="sd">    ``movement_threshold`` (a still point has no smoothness to measure). It is computed from the velocity</span>
-<span class="sd">    :math:`\mathbf{v}` and the acceleration :math:`\mathbf{a}` of the point, from which the feature derives the</span>
-<span class="sd">    curvature :math:`\kappa` of the path and the arc length :math:`\lVert\mathbf{v}\rVert\,dt` covered at each call; it</span>
-<span class="sd">    keeps both over a ring of ``window`` calls and returns one dimensionless value per call, from the first call on.</span>
-<span class="sd">    The two rings fill over ``window`` calls and their empty entries (zeros) weigh in until then.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    dims : int, optional</span>
-<span class="sd">        Number of components of the vectors: 1, 2 or 3. ``None`` (default) takes it from the first frame. In 1D the</span>
-<span class="sd">        curvature is 0, so the index is NaN (``INVALID_INPUT``) above the threshold. *(structural)*</span>
-<span class="sd">    window : int, optional</span>
-<span class="sd">        Calls held by the curvature and arc-length rings (at least 2). Defaults to ``50``. *(structural)*</span>
-<span class="sd">    movement_threshold : float, optional</span>
-<span class="sd">        Speed below which the movement counts as still and the index is 1, in m/s (scaled by ``units``). Defaults to</span>
-<span class="sd">        ``0.005``. *(live)*</span>
-<span class="sd">    sampling_rate : float, optional</span>
-<span class="sd">        Sampling rate in Hz, used when no timestamp is given. Defaults to ``None`` (one second per call, and the</span>
-<span class="sd">        ``reason`` says so). *(live)*</span>
-<span class="sd">    units : {"m", "mm"}, optional</span>
-<span class="sd">        Unit of the data: scales ``movement_threshold`` (the vectors and the output are never scaled). Defaults to</span>
-<span class="sd">        ``"m"``. *(live)*</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    **Inputs.** ``process(velocity, acceleration, *, timestamp=None)``: the velocity vector (length/s) and the</span>
-<span class="sd">    acceleration vector (length/s^2) of the movement at this call, ``dims`` components each. Compute them beforehand</span>
-<span class="sd">    with two ``Kinematics(output_dims="components")``, one with ``output_type="velocity"`` and one with</span>
-<span class="sd">    ``output_type="acceleration"``, with the same filter parameters and time rule, and feed both to every call.</span>
-<span class="sd">    ``reset()`` clears the rings. ``timestamp`` is in seconds.</span>
-
-<span class="sd">    **Outputs.** ``curvature_dispersion`` (dimensionless; 1 when the movement is below the threshold).</span>
-
-<span class="sd">    **Statuses.** ``OK`` from the first call; ``INVALID_INPUT`` when an input is NaN or infinite, the timestamp does</span>
-<span class="sd">    not increase, or the index is not finite (for example a perfectly straight path, whose curvature is 0).</span>
-
-<span class="sd">    Corrected in the core: the arc length added the speed alone above the movement threshold but the speed times the</span>
-<span class="sd">    time step below it; every call now adds the speed times the time step. This index was the ``smoothness`` output</span>
-<span class="sd">    of ``Kinematics``.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import CurvatureDispersion, Kinematics</span>
-<span class="sd">    &gt;&gt;&gt; t = np.arange(200) / 100.0</span>
-<span class="sd">    &gt;&gt;&gt; path = np.c_[np.cos(2 * np.pi * t), np.sin(2 * np.pi * t)]  # a circle of radius 1 m</span>
-<span class="sd">    &gt;&gt;&gt; speed = Kinematics(output_type="velocity", output_dims="components", sampling_rate=100.0)</span>
-<span class="sd">    &gt;&gt;&gt; acceleration = Kinematics(output_type="acceleration", output_dims="components", sampling_rate=100.0)</span>
-<span class="sd">    &gt;&gt;&gt; feature = CurvatureDispersion(window=50, sampling_rate=100.0)</span>
-<span class="sd">    &gt;&gt;&gt; for point in path:</span>
-<span class="sd">    ...     result = feature.process(speed.process(point).velocity, acceleration.process(point).acceleration)</span>
-<span class="sd">    &gt;&gt;&gt; round(float(result.curvature_dispersion), 2)</span>
-<span class="sd">    0.06</span>
-<span class="sd">    """</span>
-
-    <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"curvature_dispersion"</span><span class="p">,</span>
-                            <span class="n">doc</span><span class="o">=</span><span class="s2">"Curvature-based smoothness index; 1 when the movement is below the threshold."</span><span class="p">))</span>
-    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">CurvatureDispersion</span>
-    <span class="n">_timed</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">_unit_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"movement_threshold"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># a speed threshold: length per time</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dims</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"units/s"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"velocity vector"</span><span class="p">),</span>
-                      <span class="n">Input</span><span class="p">(</span><span class="s2">"acceleration"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dims</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"units/s^2"</span><span class="p">,</span>
-                            <span class="n">doc</span><span class="o">=</span><span class="s2">"acceleration vector"</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_frame_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">velocity</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_dims</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">check</span><span class="p">((</span><span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>  <span class="c1"># the declared shapes now know `dims`</span>
-        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
-        <span class="n">vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">vectors</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="o">*</span><span class="n">vectors</span><span class="p">,</span> <span class="n">dt</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="CurvatureVelocityCorrelation">
 <a class="viewcode-back" href="../../../api/generated/low_level/CurvatureVelocityCorrelation.html#pyeyesweb.low_level.CurvatureVelocityCorrelation">[docs]</a>
 <span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"smoothnessindex (Smoothness)"</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CurvatureVelocityCorrelation</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.</span>
 
-<span class="sd">    A smooth movement slows down where its path bends: curvature and speed are negatively related. The feature</span>
-<span class="sd">    measures that coupling inside a window of the trajectory. The samples of the window are</span>
-<span class="sd">    smoothed and differentiated by a Savitzky-Golay filter, which gives the velocity :math:`v_k` and the curvature</span>
-<span class="sd">    :math:`\kappa_k` at every sample :math:`k`; the ``smoothness`` output is then, by default, their Pearson</span>
-<span class="sd">    correlation coefficient over the window,</span>
+<span class="sd">    A smooth movement slows down where its path bends: curvature and speed are negatively related, close to a power</span>
+<span class="sd">    law (log speed falls linearly with log curvature). The feature measures that coupling inside a window of the</span>
+<span class="sd">    trajectory, as Mazzarino et al. (2009) and Piana et al. (2016) define it. The samples of the window are smoothed and</span>
+<span class="sd">    differentiated by a Savitzky-Golay filter, which gives the velocity :math:`v_k` and the curvature :math:`\kappa_k`</span>
+<span class="sd">    at every sample :math:`k`. The index is computed on their logarithms; by default (``correlation_type="simplified"``,</span>
+<span class="sd">    the papers' form for a short window) it is</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}</span>
-<span class="sd">        {\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],</span>
+<span class="sd">        S = \frac{1}{\sigma_{\log\kappa}\,\sigma_{\log |v|}},</span>
 
-<span class="sd">    which is strongly negative for a smooth movement (high curvature, low speed). With ``correlation_type="simplified"``</span>
-<span class="sd">    the index is a simplified form of the original block, bounded above by ``upper_limit``. The outputs also hold the</span>
-<span class="sd">    per-sample ``curvature`` and ``velocity`` series of the window and their standard deviations.</span>
+<span class="sd">    capped at ``upper_limit``: large for a smooth movement, whose curvature and speed vary together within a narrow</span>
+<span class="sd">    band, and close to 1 for a jerky one (about 10 against 1 on the smooth and jerky figure-eights of the example</span>
+<span class="sd">    session). ``correlation_type="pearson"`` gives the correlation coefficient of the two logarithms instead, in</span>
+<span class="sd">    [-1, 1]; on movement data it does not rank smooth above jerky (stops pair a near-zero speed with a large curvature,</span>
+<span class="sd">    which also correlates strongly). Samples with zero curvature or speed have no logarithm and are left out of the</span>
+<span class="sd">    window.</span>
 
 <span class="sd">    The filters keep their history between windows (the previous window feeds the start of the next one), so</span>
 <span class="sd">    consecutive windows overlap by ``window - hop`` samples; ``hop=window`` means no overlap.</span>
@@ -911,14 +828,12 @@
 <span class="sd">        New samples between two windows. Defaults to ``1``. *(structural)*</span>
 <span class="sd">    sampling_rate : float</span>
 <span class="sd">        Sampling rate of the series in Hz. Required: the window carries no time axis of its own. *(structural)*</span>
-<span class="sd">    velocity_threshold : float, optional</span>
-<span class="sd">        Velocity threshold of the original block. It has no effect: the block validates it and never reads it.</span>
-<span class="sd">        Defaults to ``0.001``. *(live)*</span>
 <span class="sd">    standard_deviation_threshold : float, optional</span>
-<span class="sd">        Threshold of the original block on the standard deviations of the curvature and the velocity, used by the</span>
-<span class="sd">        ``"simplified"`` index only. It acts on the quantities the filters give, so on the velocity per sample</span>
-<span class="sd">        (not per second) unless ``differentiate`` is set; the ``velocity`` outputs are always per second. Defaults to</span>
-<span class="sd">        ``0.0001``. *(live)*</span>
+<span class="sd">        Smallest variation that counts: when the standard deviation of the (linear) curvature or velocity of the window</span>
+<span class="sd">        is below it, there is nothing to correlate (a straight path, a constant speed) and the result is</span>
+<span class="sd">        ``INVALID_INPUT``. It acts on the quantities the filters give, so on the velocity per sample (not per second)</span>
+<span class="sd">        unless ``differentiate`` is set; the ``velocity`` outputs are always per second. Defaults to ``0.0001``.</span>
+<span class="sd">        *(live)*</span>
 <span class="sd">    upper_limit : float, optional</span>
 <span class="sd">        Upper bound of the index (dimensionless); the ``"simplified"`` index is capped at it. Defaults to ``100.0``.</span>
 <span class="sd">        *(live)*</span>
@@ -927,15 +842,15 @@
 <span class="sd">    filter_window_length : int, optional</span>
 <span class="sd">        Samples of the Savitzky-Golay window (odd, greater than ``filter_polyorder``). Defaults to ``9``.</span>
 <span class="sd">        *(structural)*</span>
-<span class="sd">    correlation_type : {"pearson", "simplified"}, optional</span>
-<span class="sd">        ``"pearson"`` (default): the Pearson correlation coefficient. ``"simplified"``: the simplified index of the</span>
-<span class="sd">        original block, at most ``upper_limit``. *(live)*</span>
+<span class="sd">    correlation_type : {"simplified", "pearson"}, optional</span>
+<span class="sd">        ``"simplified"`` (default): :math:`1 / (\sigma_{\log\kappa}\,\sigma_{\log |v|})`, at most ``upper_limit``.</span>
+<span class="sd">        ``"pearson"``: the correlation coefficient of the logarithms. *(live)*</span>
 <span class="sd">    differentiate : bool, optional</span>
 <span class="sd">        Whether the derivatives of the filter are taken with respect to time in seconds. With the default</span>
 <span class="sd">        ``False`` they are taken per sample and the velocity outputs are multiplied by ``sampling_rate``, so they</span>
-<span class="sd">        are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and the Pearson correlation do</span>
-<span class="sd">        not depend on it; the ``"simplified"`` index and ``standard_deviation_threshold`` do, because they act on the</span>
-<span class="sd">        velocity before that conversion. *(structural)*</span>
+<span class="sd">        are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and both indices do not depend on</span>
+<span class="sd">        it (a scale factor does not change the spread of a logarithm); ``standard_deviation_threshold`` does, because</span>
+<span class="sd">        it acts on the velocity before that conversion. *(structural)*</span>
 <span class="sd">    input_kind : {"static", "dynamic"}, optional</span>
 <span class="sd">        ``"static"`` (default): every window has the shape of the first one. ``"dynamic"``: the series may change</span>
 <span class="sd">        length from window to window; a window of another length or channel count rebuilds the filters with an empty</span>
@@ -950,12 +865,17 @@
 
 <span class="sd">    **Outputs.** ``smoothness`` (dimensionless; in [-1, 1] for ``"pearson"``); ``curvature``: the per-sample curvature</span>
 <span class="sd">    of the window (``window`` values, 1/length); ``velocity``: the per-sample velocity of the window (``window``</span>
-<span class="sd">    values, length/s); ``curvature_std`` and ``velocity_std``: their sample standard deviations of the window.</span>
+<span class="sd">    values, length/s); ``log_curvature_std`` and ``log_speed_std``: the sample standard deviations of the logarithms</span>
+<span class="sd">    of curvature and speed that enter the index (dimensionless).</span>
 
 <span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills (``"k of N samples"``) and for the first window after</span>
-<span class="sd">    it, because the filters need a previous window (``smoothness`` is then NaN); ``NO_OUTPUT`` between two windows</span>
-<span class="sd">    when ``hop &gt; 1``; ``INVALID_INPUT`` when the data does not support the index (a null movement, for example) or a</span>
-<span class="sd">    sample is NaN or infinite.</span>
+<span class="sd">    it, because the filters need a previous window (no output); ``NO_OUTPUT`` between two windows when ``hop &gt; 1``;</span>
+<span class="sd">    ``INVALID_INPUT`` (no output) when there is nothing to correlate (curvature or velocity does not vary, or fewer</span>
+<span class="sd">    than 3 samples have a non-zero curvature and speed) or a sample is NaN or infinite.</span>
+
+<span class="sd">    **Changed from EyesWeb.** The block correlated the linear values of curvature and velocity; the index here is on</span>
+<span class="sd">    their logarithms, as the papers define it, and ``"simplified"`` is the default. A window without variation gave</span>
+<span class="sd">    ``upper_limit`` or a correlation of rounding noise; it is ``INVALID_INPUT``.</span>
 
 <span class="sd">    Corrected in the core: the curvature used half of the second derivative of the Savitzky-Golay fit. With</span>
 <span class="sd">    ``input_kind="dynamic"``, the window after a change of length or channel count is ``WARMING_UP`` (it was reported</span>
@@ -963,7 +883,7 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    :cite:`mazzarino2009need`</span>
+<span class="sd">    :cite:`mazzarino2009need`, :cite:`piana2016adaptive`</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -973,9 +893,13 @@
 <span class="sd">    &gt;&gt;&gt; ellipse = np.c_[2 * np.cos(np.pi * t), np.sin(np.pi * t)]</span>
 <span class="sd">    &gt;&gt;&gt; feature = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0)</span>
 <span class="sd">    &gt;&gt;&gt; round(float(feature.run(ellipse).smoothness[-1]), 2)</span>
-<span class="sd">    -0.94</span>
+<span class="sd">    5.77</span>
+<span class="sd">    &gt;&gt;&gt; pearson = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, correlation_type="pearson")</span>
+<span class="sd">    &gt;&gt;&gt; round(float(pearson.run(ellipse).smoothness[-1]), 2)  # an ellipse follows the power law exactly</span>
+<span class="sd">    -1.0</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">SmoothnessIndex</span>
+    <span class="n">_hidden_params</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"velocity_threshold"</span><span class="p">})</span>  <span class="c1"># read nowhere by the block: left at its default</span>
     <span class="n">_DEFAULT_FILTER_WINDOW_LENGTH</span> <span class="o">=</span> <span class="mi">9</span>
     <span class="n">_warmed_shape</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># shape of the last window processed, None while the filters have no history</span>
 
@@ -1032,7 +956,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"smoothness"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"curvature"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"1/&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"curvature per sample"</span><span class="p">),</span>
                       <span class="n">Output</span><span class="p">(</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;/s"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"velocity per sample"</span><span class="p">),</span>
-                      <span class="n">Output</span><span class="p">(</span><span class="s2">"curvature_std"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"1/&lt;length&gt;"</span><span class="p">),</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"velocity_std"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;/s"</span><span class="p">))</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"log_curvature_std"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"standard deviation of log curvature"</span><span class="p">),</span>
+                      <span class="n">Output</span><span class="p">(</span><span class="s2">"log_speed_std"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"standard deviation of log speed"</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -1044,19 +969,23 @@
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"differentiate"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>  <span class="c1"># the filters give a velocity per sample: the output is per second</span>
-            <span class="n">velocity</span><span class="p">,</span> <span class="n">velocity_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">velocity_std</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_rate</span>  <span class="c1"># (the spread of its logarithm does not change)</span>
         <span class="n">warming_up</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_warmed_shape</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_warmed_shape</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># a new shape: empty history</span>
-        <span class="n">status</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="s2">""</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">smoothness</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">curvature_std</span><span class="p">):</span>
-            <span class="n">status</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="s2">"the filters need a previous window"</span><span class="p">)</span> <span class="k">if</span> <span class="n">warming_up</span> <span class="k">else</span> <span class="p">(</span>
-                <span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"the data does not support smoothness (NaN)"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="n">smoothness</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">warming_up</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="s2">"the filters need a previous window"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">smoothness</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"nothing to correlate: curvature or velocity does not vary, or "</span>
+                                   <span class="s2">"fewer than 3 samples have a non-zero curvature and speed"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">curvature</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"curvature or velocity is not finite (values too large)"</span><span class="p">,</span>
+                                   <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="n">smoothness</span><span class="p">,</span>
                            <span class="n">curvature</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">curvature</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">velocity</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
-                           <span class="n">curvature_std</span><span class="o">=</span><span class="n">curvature_std</span><span class="p">,</span> <span class="n">velocity_std</span><span class="o">=</span><span class="n">velocity_std</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+                           <span class="n">log_curvature_std</span><span class="o">=</span><span class="n">curvature_std</span><span class="p">,</span> <span class="n">log_speed_std</span><span class="o">=</span><span class="n">velocity_std</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SpectralArcLength"</span><span class="p">,</span> <span class="s2">"LogDimensionlessJerk"</span><span class="p">,</span> <span class="s2">"Harmonicity"</span><span class="p">,</span> <span class="s2">"SubmovementCount"</span><span class="p">,</span> <span class="s2">"CurvatureDispersion"</span><span class="p">,</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SpectralArcLength"</span><span class="p">,</span> <span class="s2">"LogDimensionlessJerk"</span><span class="p">,</span> <span class="s2">"Harmonicity"</span><span class="p">,</span> <span class="s2">"SubmovementCount"</span><span class="p">,</span>
            <span class="s2">"CurvatureVelocityCorrelation"</span><span class="p">]</span>
 </pre></div>
 
@@ -1105,7 +1034,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Work with images &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Work with images &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -586,7 +586,8 @@ image. Give the result as a <code class="docutils literal notranslate"><span cla
 <span class="go">True</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">centroids</span></code> has one row <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> per centroid, 14 in all, in pixels; <code class="docutils literal notranslate"><span class="pre">normalized</span></code> has the same rows scaled to the frame. A centroid that
+<p><code class="docutils literal notranslate"><span class="pre">centroids</span></code> has one row <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> per centroid, 14 in all, in pixels, with y pointing down from the top-left pixel (for a plot or a
+TouchDesigner TOP use <code class="docutils literal notranslate"><span class="pre">height</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">y</span></code>; for 0 to 1, divide by <code class="docutils literal notranslate"><span class="pre">[width,</span> <span class="pre">height]</span></code>). A centroid that
 cannot be found is NaN. <code class="docutils literal notranslate"><span class="pre">parts=</span></code> chooses the centroids that are output (it is live); the others are NaN, and the shape does not
 change.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">head_only</span> <span class="o">=</span> <span class="n">SilhouetteCentroids</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="s2">"center_of_gravity"</span><span class="p">,</span> <span class="s2">"head"</span><span class="p">])</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
@@ -594,14 +595,14 @@ change.</p>
 <span class="go">[[161.0, 114.0], [159.0, 48.0], [nan, nan]]</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="../api/generated/physical_signals/SilhouetteBodyParts.html#pyeyesweb.physical_signals.SilhouetteBodyParts" title="pyeyesweb.physical_signals.SilhouetteBodyParts"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code></a> finds the rectangles of six parts (<code class="docutils literal notranslate"><span class="pre">right_leg</span></code>, <code class="docutils literal notranslate"><span class="pre">left_leg</span></code>, <code class="docutils literal notranslate"><span class="pre">trunk</span></code>,
-<code class="docutils literal notranslate"><span class="pre">right_arm</span></code>, <code class="docutils literal notranslate"><span class="pre">left_arm</span></code>, <code class="docutils literal notranslate"><span class="pre">head</span></code>) and returns <code class="docutils literal notranslate"><span class="pre">regions</span></code> (one row <code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">width,</span> <span class="pre">height</span></code> for each), <code class="docutils literal notranslate"><span class="pre">is_found</span></code>, and <code class="docutils literal notranslate"><span class="pre">masks</span></code>, a
+<p><a class="reference internal" href="../api/generated/physical_signals/SilhouetteBodyParts.html#pyeyesweb.physical_signals.SilhouetteBodyParts" title="pyeyesweb.physical_signals.SilhouetteBodyParts"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code></a> finds the rectangles of six parts (<code class="docutils literal notranslate"><span class="pre">left_leg</span></code>, <code class="docutils literal notranslate"><span class="pre">right_leg</span></code>, <code class="docutils literal notranslate"><span class="pre">trunk</span></code>,
+<code class="docutils literal notranslate"><span class="pre">left_arm</span></code>, <code class="docutils literal notranslate"><span class="pre">right_arm</span></code>, <code class="docutils literal notranslate"><span class="pre">head</span></code>) and returns <code class="docutils literal notranslate"><span class="pre">regions</span></code> (one row <code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">width,</span> <span class="pre">height</span></code> for each), <code class="docutils literal notranslate"><span class="pre">is_found</span></code>, and <code class="docutils literal notranslate"><span class="pre">masks</span></code>, a
 dict with one integer mask per part:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span> <span class="o">=</span> <span class="n">SilhouetteBodyParts</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span><span class="o">.</span><span class="n">regions</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">parts</span><span class="o">.</span><span class="n">is_found</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 <span class="go">([[138, 136, 23, 90], [161, 136, 46, 90]], [True, True, True, True, True, True])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">masks</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="mi">2</span><span class="p">]}</span>
-<span class="go">{'right_leg': (90, 23), 'left_leg': (90, 46)}</span>
+<span class="go">{'left_leg': (90, 23), 'right_leg': (90, 46)}</span>
 </pre></div>
 </div>
 </section>
@@ -761,7 +762,7 @@ and the videogram read the pixels once: they do not resize, crop or convert colo
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

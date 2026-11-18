@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SilhouetteBodyParts &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>SilhouetteBodyParts &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,7 +60,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="SilhouetteCentroids" href="SilhouetteCentroids.html" />
-    <link rel="prev" title="PointsPredictor" href="PointsPredictor.html" />
+    <link rel="prev" title="HitCellDetector" href="HitCellDetector.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -414,17 +414,9 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../physical_signals.html">Layer 1: physical signals</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.MassSpringModel.html">pyeyesweb.physical_signals.MassSpringModel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.TimeWindowSynchronizer.html">pyeyesweb.physical_signals.TimeWindowSynchronizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.SynchronizedWindow.html">pyeyesweb.physical_signals.SynchronizedWindow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GenericModelEstimator.html">GenericModelEstimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GenericModelOrientations.html">GenericModelOrientations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GenericModelPredictor.html">GenericModelPredictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GenericModelSimulator.html">GenericModelSimulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="HitCellDetector.html">HitCellDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="HumanoidOrientations.html">HumanoidOrientations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="HumanoidSimulator.html">HumanoidSimulator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PointsPredictor.html">PointsPredictor</a></li>
 <li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">SilhouetteBodyParts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SilhouetteCentroids.html">SilhouetteCentroids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Videogram.html">Videogram</a></li>
@@ -433,20 +425,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../low_level.html">Layer 2: low-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/BodyPartsFromCurvature.html">BodyPartsFromCurvature</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/BoundingBoxFilledArea.html">BoundingBoxFilledArea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../low_level/ContourCurvature.html">ContourCurvature</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../low_level/ConvexHull.html">ConvexHull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../low_level/CurvatureDispersion.html">CurvatureDispersion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/CurvatureVelocityCorrelation.html">CurvatureVelocityCorrelation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/DirectionChange.html">DirectionChange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/Directness.html">Directness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/EllipsoidSphericity.html">EllipsoidSphericity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/Equilibrium.html">Equilibrium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../low_level/FilterContour.html">FilterContour</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../low_level/Harmonicity.html">Harmonicity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/Kinematics.html">Kinematics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/KineticEnergy.html">KineticEnergy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/LogDimensionlessJerk.html">LogDimensionlessJerk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../low_level/MotionNoiseDetector.html">MotionNoiseDetector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/PointsDensity.html">PointsDensity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/SpectralArcLength.html">SpectralArcLength</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../low_level/SubmovementCount.html">SubmovementCount</a></li>
@@ -455,30 +441,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../low_level/TriangleSymmetry.html">TriangleSymmetry</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../mid_level.html">Layer 3: mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/ContractionImpulsivity.html">ContractionImpulsivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/GestureSegmenter.html">GestureSegmenter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/MotionDuration.html">MotionDuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/PositionDependingPotentials.html">PositionDependingPotentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/RegionDependingPotentials.html">RegionDependingPotentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/Suddenness.html">Suddenness</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/SuddennessImpulsivity.html">SuddennessImpulsivity</a></li>
-</ul>
-</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mid_level.html">Layer 3: mid-level features</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../high_level.html">Layer 4: qualities communicated</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../high_level/EnsembleDominance.html">EnsembleDominance</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../analysis_primitives.html">Analysis primitives</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/BinaryPulsesRegularity.html">BinaryPulsesRegularity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CoarseGraining.html">CoarseGraining</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CorrelationsMatrix.html">CorrelationsMatrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CrossRecurrencePlot.html">CrossRecurrencePlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/EventSynchronization.html">EventSynchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/EventSynchronizationMECS.html">EventSynchronizationMECS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/GeneralisedAutoCorrelation.html">GeneralisedAutoCorrelation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/MultiScaleEntropy.html">MultiScaleEntropy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/NonlinearInterdependence.html">NonlinearInterdependence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/PartialRecurrenceSynchronization.html">PartialRecurrenceSynchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/Periodicity.html">Periodicity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/PhaseLockingValue.html">PhaseLockingValue</a></li>
@@ -486,9 +460,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/RecurrencePlot.html">RecurrencePlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SampleEntropy.html">SampleEntropy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/ScalarPeakDetector.html">ScalarPeakDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SequenceDetector.html">SequenceDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SpikeSynchronization.html">SpikeSynchronization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/TemporalSynchronization.html">TemporalSynchronization</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../data_models.html">Data models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -594,7 +565,7 @@
   <section id="silhouettebodyparts">
 <span id="feature-silhouettebodyparts"></span><h1>SilhouetteBodyParts<a class="headerlink" href="#silhouettebodyparts" title="Link to this heading">#</a></h1>
 <p>Head, trunk, arms and legs of a human silhouette, from its projection histograms.</p>
-<p><span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">Layer 1: physical signals</span> <span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">timescale: frame</span> <span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">EyesWeb: BlobSubRegions</span></p>
+<p><span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">Layer 1: physical signals</span> <span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">timescale: frame</span> <span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">EyesWeb: BlobSubRegions</span> <span class="sd-sphinx-override sd-badge sd-bg-light sd-bg-text-light">Pose</span></p>
 <p>Layer: <a class="reference internal" href="../../physical_signals.html"><span class="doc">Layer 1: physical signals</span></a>. Family: <a class="reference internal" href="../../../theory/imaging.html"><span class="doc">Imaging</span></a>.</p>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
@@ -632,8 +603,8 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parts</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">('right_leg',</span> <span class="pre">'left_leg',</span> <span class="pre">'trunk',</span> <span class="pre">'right_arm',</span> <span class="pre">'left_arm',</span> <span class="pre">'head')</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Sequence[Literal['right_leg',</span> <span class="pre">'left_leg',</span> <span class="pre">'trunk',</span> <span class="pre">'right_arm',</span> <span class="pre">'left_arm',</span> <span class="pre">'head']]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">('left_leg',</span> <span class="pre">'right_leg',</span> <span class="pre">'trunk',</span> <span class="pre">'left_arm',</span> <span class="pre">'right_arm',</span> <span class="pre">'head')</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Sequence[Literal['left_leg',</span> <span class="pre">'right_leg',</span> <span class="pre">'trunk',</span> <span class="pre">'left_arm',</span> <span class="pre">'right_arm',</span> <span class="pre">'head']]</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -713,13 +684,14 @@
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyeyesweb.physical_signals.SilhouetteBodyParts">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.physical_signals.</span></span><span class="sig-name descname"><span class="pre">SilhouetteBodyParts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">arm_percentage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legs_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legs_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arms_min_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arms_max_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('right_leg',</span> <span class="pre">'left_leg',</span> <span class="pre">'trunk',</span> <span class="pre">'right_arm',</span> <span class="pre">'left_arm',</span> <span class="pre">'head')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/physical_signals/imaging.html#SilhouetteBodyParts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.physical_signals.SilhouetteBodyParts" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.physical_signals.</span></span><span class="sig-name descname"><span class="pre">SilhouetteBodyParts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">arm_percentage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legs_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legs_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arms_min_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arms_max_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('left_leg',</span> <span class="pre">'right_leg',</span> <span class="pre">'trunk',</span> <span class="pre">'left_arm',</span> <span class="pre">'right_arm',</span> <span class="pre">'head')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/physical_signals/imaging.html#SilhouetteBodyParts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.physical_signals.SilhouetteBodyParts" title="Link to this definition">#</a></dt>
 <dd><p>Head, trunk, arms and legs of a human silhouette, from its projection histograms.</p>
 <p>The silhouette of a person, a binary mask, is divided into six body parts, each with its bounding box and mask, for the
 analysis of the movement of single parts (the arms, the head) from a plain image. The columns holding the arms are
 found by accumulating the area from each side (<code class="docutils literal notranslate"><span class="pre">arm_percentage</span></code>), the legs by the horizontal extent of the lower rows, the neck by the first row, going up from the
-barycentre, where the body narrows, and each arm by the rows where it holds many pixels. “Right” and “left” are the
-image’s: the right arm and the right leg are on the smaller x.</p>
+barycentre, where the body narrows, and each arm by the rows where it holds many pixels. “Left” and “right” are those
+of the image, as in <code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code>: the left arm and the left leg are on the smaller x (the subject’s right
+when facing the camera; the original block named them by the subject’s sides).</p>
 <p><code class="docutils literal notranslate"><span class="pre">process(silhouette,</span> <span class="pre">*,</span> <span class="pre">timestamp=None)</span></code> takes one <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W)</span></code> mask (non-zero is body; see the module description for the
 image types); the boxes are in the frame of the mask.</p>
 <dl class="field-list simple">
@@ -737,7 +709,7 @@ image types); the boxes are in the frame of the mask.</p>
 </dd>
 <dt><strong>arms_max_threshold</strong><span class="classifier">float, default 0.5</span></dt><dd><p>An arm starts at the first row with more foreground pixels than this fraction of its width <em>(live)</em>.</p>
 </dd>
-<dt><strong>parts</strong><span class="classifier">sequence of str, default all six</span></dt><dd><p>Which parts to output <em>(live)</em>, among <code class="docutils literal notranslate"><span class="pre">&quot;right_leg&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;left_leg&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;trunk&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;right_arm&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;left_arm&quot;</span></code>
+<dt><strong>parts</strong><span class="classifier">sequence of str, default all six</span></dt><dd><p>Which parts to output <em>(live)</em>, among <code class="docutils literal notranslate"><span class="pre">&quot;left_leg&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;right_leg&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;trunk&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;left_arm&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;right_arm&quot;</span></code>
 and <code class="docutils literal notranslate"><span class="pre">&quot;head&quot;</span></code>.</p>
 </dd>
 </dl>
@@ -745,7 +717,8 @@ and <code class="docutils literal notranslate"><span class="pre">&quot;head&quot
 </dl>
 <p class="rubric">Notes</p>
 <p><strong>Outputs.</strong> <code class="docutils literal notranslate"><span class="pre">regions</span></code>: <code class="docutils literal notranslate"><span class="pre">(6,</span> <span class="pre">4)</span></code> integer array of <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">width,</span> <span class="pre">height)</span></code> in pixels of the frame, rows in the order
-right_leg, left_leg, trunk, right_arm, left_arm, head, zeros for a part that was not found. <code class="docutils literal notranslate"><span class="pre">is_found</span></code>: <code class="docutils literal notranslate"><span class="pre">(6,)</span></code>
+left_leg, right_leg, trunk, left_arm, right_arm, head, zeros for a part that was not found. A part touching the first
+row or column of the frame is found (the original dropped it). <code class="docutils literal notranslate"><span class="pre">is_found</span></code>: <code class="docutils literal notranslate"><span class="pre">(6,)</span></code>
 booleans, which parts were found. <code class="docutils literal notranslate"><span class="pre">masks</span></code>: dict <code class="docutils literal notranslate"><span class="pre">part</span> <span class="pre">-&gt;</span> <span class="pre">(height,</span> <span class="pre">width)</span></code> array of 0 and 255 holding the mask of
 each part found. A part is dropped when it is empty or touches the first column or the first row of the frame, as in
 EyesWeb. A mask without foreground is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;no</span> <span class="pre">foreground</span> <span class="pre">pixels</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">silhouette&quot;</span></code>); an empty image
@@ -791,12 +764,12 @@ normalised centroid of the blob times its width, which is only right for a blob 
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="PointsPredictor.html"
+       href="HitCellDetector.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">PointsPredictor</p>
+        <p class="prev-next-title">HitCellDetector</p>
       </div>
     </a>
     <a class="right-next"
@@ -878,7 +851,7 @@ normalised centroid of the blob times its width, which is only right for a blob 
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

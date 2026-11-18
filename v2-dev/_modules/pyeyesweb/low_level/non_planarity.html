@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.low_level.non_planarity &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.low_level.non_planarity &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -478,18 +478,13 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    output_type : {"curvature_radius", "curvature_value"}, optional</span>
-<span class="sd">        ``"curvature_radius"`` (default): the output ``curvature_radius`` is the non-planarity, in the unit of the</span>
-<span class="sd">        data. ``"curvature_value"``: the output ``curvature`` is its inverse, 1 / non-planarity. *(live)*</span>
 <span class="sd">    radius : float, optional</span>
-<span class="sd">        Size of the neighbourhood over which the local planes are fitted, in m (scaled by ``units``).</span>
-<span class="sd">        Defaults to ``100.0``: that is 100 m, a value written for millimetres in the original, so with data in metres</span>
-<span class="sd">        pass a radius of the size of your movement, for example ``0.1``. *(live)*</span>
+<span class="sd">        Size of the neighbourhood over which the local planes are fitted, in m (scaled by ``units``). Defaults to</span>
+<span class="sd">        ``0.1`` (10 cm; the original's 100 was written for millimetres). Choose it of the size of the movement: a</span>
+<span class="sd">        neighbourhood that holds only its own point fits nothing. *(live)*</span>
 <span class="sd">    nan_fraction : float, optional</span>
-<span class="sd">        Parameter of the original block, passed to the core unchanged; dimensionless. Defaults to ``0.5``. *(live)*</span>
-<span class="sd">    nan_value : float, optional</span>
-<span class="sd">        Value that stands for NaN in the original block, in the unit of the output. Defaults to ``999.0``: that is</span>
-<span class="sd">        999 m with ``units="m"``, a value written for millimetres in the original. *(live)*</span>
+<span class="sd">        Largest share of the points whose local plane may be undefined; above it the result is undefined.</span>
+<span class="sd">        Dimensionless, in [0, 1]. Defaults to ``0.5``. *(live)*</span>
 <span class="sd">    units : {"m", "mm"}, optional</span>
 <span class="sd">        Unit of the position data: scales ``radius`` (given in metres) and names the unit of the output; the data</span>
 <span class="sd">        and the output are never scaled. Defaults to ``"m"``. *(live)*</span>
@@ -499,14 +494,15 @@
 <span class="sd">    **Inputs.** ``process(points, *, timestamp=None)``: an ``(n, 3)`` array of points with row 0 the newest;</span>
 <span class="sd">    ``run(paths, *, timestamps=None)`` takes a ``(T, n, 3)`` recording. The feature keeps no state.</span>
 
-<span class="sd">    **Outputs.** ``curvature_radius`` (length, 0 for a planar path) or ``curvature`` (1/length), as ``output_type``</span>
-<span class="sd">    says.</span>
+<span class="sd">    **Outputs.** ``curvature_radius``: the non-planarity, a length in the unit of the data, 0 for a planar path.</span>
 
-<span class="sd">    **Statuses.** ``INVALID_INPUT`` for 2D points (the method is not implemented for them), for fewer than 2 points</span>
-<span class="sd">    and for a non-finite point.</span>
+<span class="sd">    **Statuses.** ``INVALID_INPUT`` (no output) for 2D points (the method is not implemented for them), for fewer than</span>
+<span class="sd">    2 points, for a non-finite point, when no point has another point within ``radius`` (nothing to fit), and when more</span>
+<span class="sd">    than ``nan_fraction`` of the local planes are undefined.</span>
 
-<span class="sd">    The defaults ``radius=100.0`` and ``nan_value=999.0`` look like millimetres, while ``units`` defaults to ``"m"``:</span>
-<span class="sd">    with data in metres the neighbourhood is 100 m wide unless a radius is given.</span>
+<span class="sd">    **Changed from EyesWeb.** The output type "Curvature Value" (1 / non-planarity) is not provided: the inverse of</span>
+<span class="sd">    this distance has no geometric meaning. The original returned 0 when no point had a neighbour, and a marker value</span>
+<span class="sd">    (``NaNValue``, 999) when too many planes were undefined; both are ``INVALID_INPUT`` here.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -523,12 +519,17 @@
     <span class="n">_unit_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"radius"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># a length</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
-        <span class="n">radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"output_type"</span><span class="p">,</span> <span class="n">_trajectory</span><span class="o">.</span><span class="n">CurvatureOutputType</span><span class="o">.</span><span class="n">CURVATURE_RADIUS</span><span class="p">)</span> <span class="o">==</span>             <span class="n">_trajectory</span><span class="o">.</span><span class="n">CurvatureOutputType</span><span class="o">.</span><span class="n">CURVATURE_RADIUS</span>
-        <span class="n">units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"units"</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"curvature_radius"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">units</span><span class="p">)</span> <span class="k">if</span> <span class="n">radius</span> <span class="k">else</span> <span class="n">Output</span><span class="p">(</span><span class="s2">"curvature"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="sa">f</span><span class="s2">"1/</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"curvature_radius"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"units"</span><span class="p">]))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rejection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">"fewer than 2 points"</span> <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">""</span></div>
+        <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"fewer than 2 points"</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"radius"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1000.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">"units"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"mm"</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">""</span> <span class="k">if</span> <span class="p">(</span><span class="n">distances</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"no point has another point within radius: nothing to fit"</span></div>
 
 
 
@@ -580,7 +581,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

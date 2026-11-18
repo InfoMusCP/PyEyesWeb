@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A real-time loop with live parameters &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>A real-time loop with live parameters &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -715,73 +715,33 @@ against a feature built with the new value.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">input_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Harmonicity</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">prominence_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">upper_limit</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Equilibrium</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">margin</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DirectionChange</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DirectionChange</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FilterContour</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">gaussian_sigma</span></code>, <code class="docutils literal notranslate"><span class="pre">window</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ConvexHull</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">integer_coordinates</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">minimum_distance</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">radius</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">firing_threshold</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">direction_change_epsilon</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">motion_threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">peak_threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">gaussian_sigma_x</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">potential_type</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">parts</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">potential_type</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">relative_tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">tolerance</span></code></p></td>
 <td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code></p></td>
-<td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">factor</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Rarity</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">measure</span></code></p></td>
@@ -792,7 +752,7 @@ against a feature built with the new value.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">embedding_dimension</span></code>, <code class="docutils literal notranslate"><span class="pre">max_scale</span></code>, <code class="docutils literal notranslate"><span class="pre">minimum_points</span></code></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Periodicity</span></code></p></td>
@@ -809,23 +769,15 @@ against a feature built with the new value.</p>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code>, <code class="docutils literal notranslate"><span class="pre">tau_spread</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">output_type</span></code>, <code class="docutils literal notranslate"><span class="pre">max_lag</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">tau</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">max_lag</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">reset_every_buffer</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">kernel</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">number_of_event_classes</span></code>, <code class="docutils literal notranslate"><span class="pre">tau</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">neighbours</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">inter_event_time</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">sequence</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">number_of_event_classes</span></code>, <code class="docutils literal notranslate"><span class="pre">max_lag</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
@@ -835,18 +787,11 @@ against a feature built with the new value.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">thresholds</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">number_of_inputs</span></code></p></td>
-</tr>
 </tbody>
 </table>
 </div>
 <p>A parameter that is not in the table belongs to a feature whose parameters are not changed one by one by those tests, or has no
-live meaning; the class documentation says which. In the humanoid and generic-model features every tested parameter is live
-(<code class="docutils literal notranslate"><span class="pre">damping</span></code>, <code class="docutils literal notranslate"><span class="pre">viscosity</span></code>, <code class="docutils literal notranslate"><span class="pre">gravity</span></code>, the forces, <code class="docutils literal notranslate"><span class="pre">integration_step</span></code>, <code class="docutils literal notranslate"><span class="pre">floor_position</span></code>, the predictor and estimator parameters,
-<code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>), except the <code class="docutils literal notranslate"><span class="pre">seed</span></code> of <code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code>, the replacement of the <code class="docutils literal notranslate"><span class="pre">model</span></code> by one with another topology, and
-the <code class="docutils literal notranslate"><span class="pre">reference_direction</span></code> of <code class="docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code>, which are structural. Four features have a structural <code class="docutils literal notranslate"><span class="pre">window</span></code>, because the state of the core is sized by it: <code class="docutils literal notranslate"><span class="pre">Rarity(method=&quot;information&quot;)</span></code>,
+live meaning; the class documentation says which. Four features have a structural <code class="docutils literal notranslate"><span class="pre">window</span></code>, because the state of the core is sized by it: <code class="docutils literal notranslate"><span class="pre">Rarity(method=&quot;information&quot;)</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Videogram</span></code> and <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code>, and <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code>, whose <code class="docutils literal notranslate"><span class="pre">hop</span></code> and <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> are structural too
 (its filters need the same length and overlap in consecutive windows).
 <code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code> and <code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code> change <code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> together, with <code class="docutils literal notranslate"><span class="pre">configure(window=,</span> <span class="pre">hop=)</span></code>.</p>
@@ -979,7 +924,7 @@ recovers by itself with the next good sample; check <code class="docutils litera
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

@@ -3,9 +3,9 @@
 PhaseLockingValue
 =================
 
-Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.
+Phase Locking Value over time within a window (mean phase coherence) of two signals, from their Hilbert phases.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-light:`Coordination`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 

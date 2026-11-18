@@ -5,7 +5,7 @@ EventSynchronizationMECS
 
 Multi-event-class synchronization of several event series (MECS), one index per event class.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: MECS Algorithm v2`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: MECS Algorithm v2` :bdg-light:`Rhythm` :bdg-light:`Coordination`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 
@@ -31,11 +31,11 @@ Parameters
    * - ``number_of_event_classes``
      - ``3``
      - ``int``
-   * - ``tau``
+   * - ``max_lag``
      - ``10``
      - ``int``
    * - ``kernel``
-     - ``'uniform'``
+     - ``'linear'``
      - ``Literal['uniform', 'linear', 'gaussian']``
    * - ``gaussian_sigma``
      - ``None``

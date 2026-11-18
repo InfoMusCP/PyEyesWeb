@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.rarity &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.rarity &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -450,7 +450,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pyeyesweb.analysis_primitives.rarity</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Rarity of the newest value of a signal, with two methods.</span>
+<span></span><span class="sd">"""Rarity of the newest value of a signal, with three methods.</span>
 
 <span class="sd">This module implements the [Rarity][pyeyesweb.analysis_primitives.rarity.Rarity] feature: how typical or atypical the</span>
 <span class="sd">current state is relative to a memory of past states. The formula is chosen by `method`.</span>
@@ -491,9 +491,12 @@
 
 <span class="sd">    where :math:`A` and :math:`B` are two probability terms estimated from the occupancy of the bins: with</span>
 <span class="sd">    ``measure="rarity"`` from a memory of the last ``window`` values of the same input (a *rarity* across time), with</span>
-<span class="sd">    ``measure="contrast"`` across the inputs (a *contrast* between the signals). A rare value gives a large index.</span>
-<span class="sd">    The feature keeps its own memory, one sample per call. A value above the sum of the bin widths is outside the</span>
-<span class="sd">    bins.</span>
+<span class="sd">    ``measure="contrast"`` across the inputs (a *contrast* between the signals). A rare value gives a large index</span>
+<span class="sd">    :cite:`mancas2008real`. The term :math:`B` divides by the number of bins :math:`K` (the "Max(M)" of the paper's</span>
+<span class="sd">    eq. 4, which the paper does not define; reading it as :math:`K` keeps the index comparable across windows and</span>
+<span class="sd">    inputs). The feature keeps its own memory, one sample per call. The default bins assume a signal in</span>
+<span class="sd">    :math:`[0, 1]`: rescale other signals to :math:`[0, 1]` or give their own ``bins``. A value above the sum of the</span>
+<span class="sd">    bin widths is outside the bins.</span>
 
 <span class="sd">    ``"mode_distance"``: rarity of the newest sample of a window of one scalar stream. The histogram of the window of</span>
 <span class="sd">    :math:`N` samples has :math:`\max(\lfloor\sqrt{N}\rfloor, 1)` equal-width bins. With :math:`i_{\mathrm{mode}}` the</span>
@@ -505,19 +508,43 @@
 <span class="sd">        R = \alpha \, |i_{\mathrm{mode}} - i_{\mathrm{last}}| \, (p_{\mathrm{mode}} - p_{\mathrm{last}}).</span>
 
 <span class="sd">    It is zero when the newest sample is in the most common bin and grows with its distance from it and with how much</span>
-<span class="sd">    less frequent its bin is. It needs no bin widths.</span>
+<span class="sd">    less frequent its bin is :cite:`niewiadomski2019embodied` (sec. 3.1). It needs no bin widths: the bins span the</span>
+<span class="sd">    smallest and largest values of the window, so one outlier stretches them, and the values differ from the paper's</span>
+<span class="sd">    Fig. 1, whose bins span the fixed range :math:`[0, 1]`, on a window that does not span it. The frequencies are</span>
+<span class="sd">    fractions of the window (the paper uses counts): multiply :math:`\alpha` by :math:`N` for the paper's scale. The</span>
+<span class="sd">    paper used windows of 100 frames; the default here is 50.</span>
+
+<span class="sd">    ``"novelty"``: how unusual the movement of the last ``pattern`` samples is compared with the movement of the recent</span>
+<span class="sd">    past, for any signal (a speed, an energy, a position, several features together). The two methods above measure how</span>
+<span class="sd">    rare the current *level* is: a change of shape inside a bin, or a movement that stays among values already seen, is</span>
+<span class="sd">    invisible to them. This method compares *patterns*. At every sample it takes the last ``pattern`` samples (one</span>
+<span class="sd">    point every ``step`` samples, all channels) as a pattern, and compares it with the patterns of the last ``memory``</span>
+<span class="sd">    samples, leaving out the newest ``pattern / 2`` of them, which overlap it. Each channel is divided by its standard</span>
+<span class="sd">    deviation over the memory, so no channel dominates because of its unit; the distance between two patterns is</span>
+<span class="sd">    Euclidean. With :math:`d` the mean distance from the current pattern to its ``neighbours`` nearest patterns,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R = \frac{d}{\operatorname{median}(d \text{ over the last } \mathtt{memory} \text{ samples})},</span>
+
+<span class="sd">    so the value is dimensionless and about 1 for a movement as familiar as usual; it is larger for a movement that has not</span>
+<span class="sd">    happened in the memory, and ``0`` when the pattern is exactly in the memory. A repeated movement becomes familiar</span>
+<span class="sd">    (its patterns enter the memory) and its rarity falls back to about 1; a movement not done for ``memory`` samples is</span>
+<span class="sd">    new again. With ``shape=True`` the newest sample is subtracted from the pattern, so only the *shape* of the movement</span>
+<span class="sd">    counts, not where it happens (use it for positions); without it the level is part of the pattern (use it for scalars</span>
+<span class="sd">    such as a speed or an energy). It is not an EyesWeb block: it is new in this library (design review 2026-11-17).</span>
 
 <span class="sd">    Use ``"information"`` to reproduce EyesWeb or to compare several signals with chosen bin widths; use</span>
-<span class="sd">    ``"mode_distance"`` for a self-contained score of one stream.</span>
+<span class="sd">    ``"mode_distance"`` for a self-contained score of one stream; use ``"novelty"`` to find unusual gestures.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    method : {"information", "mode_distance"}, optional</span>
+<span class="sd">    method : {"information", "mode_distance", "novelty"}, optional</span>
 <span class="sd">        Formula. Defaults to ``"information"``. Which of the other parameters apply depends on the method; all are</span>
 <span class="sd">        keyword-only.</span>
 <span class="sd">    number_of_inputs : int, optional</span>
-<span class="sd">        ``"information"`` only: number of scalar signals per sample. ``measure="contrast"`` needs at least 2.</span>
-<span class="sd">        Defaults to ``2``. *(structural)*</span>
+<span class="sd">        ``"information"`` and ``"novelty"``: number of scalar signals per sample. ``measure="contrast"`` needs at least 2.</span>
+<span class="sd">        Defaults to ``2`` (``"information"``) and ``1`` (``"novelty"``). *(structural)*</span>
 <span class="sd">    measure : {"rarity", "contrast"}, optional</span>
 <span class="sd">        ``"information"`` only: rarity across the last ``window`` values of each input, or contrast across the</span>
 <span class="sd">        inputs. Defaults to ``"rarity"``. *(live)*</span>
@@ -531,26 +558,42 @@
 <span class="sd">    hop : int, optional</span>
 <span class="sd">        ``"mode_distance"`` only: new samples between two windows. Defaults to ``1``. *(live)*</span>
 <span class="sd">    alpha : float, optional</span>
-<span class="sd">        ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``.</span>
-<span class="sd">        *(live)*</span>
+<span class="sd">        ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``</span>
+<span class="sd">        (the paper does not give its value). *(live)*</span>
+<span class="sd">    memory : int, optional</span>
+<span class="sd">        ``"novelty"`` only: samples of patterns kept for the comparison, at least ``3 * pattern``. Defaults to ``300``.</span>
+<span class="sd">        It is the time after which a movement that has not been repeated is new again. *(structural)*</span>
+<span class="sd">    pattern : int, optional</span>
+<span class="sd">        ``"novelty"`` only: samples of one pattern, at least 2: how long a gesture is. Defaults to ``30``. *(structural)*</span>
+<span class="sd">    neighbours : int, optional</span>
+<span class="sd">        ``"novelty"`` only: number of nearest patterns averaged, at least 1. Defaults to ``5``. *(live)*</span>
+<span class="sd">    step : int, optional</span>
+<span class="sd">        ``"novelty"`` only: samples between two points of a pattern, at least 1 (a larger step is cheaper). Defaults to</span>
+<span class="sd">        ``1``. *(structural)*</span>
+<span class="sd">    shape : bool, optional</span>
+<span class="sd">        ``"novelty"`` only: compare the shape of the pattern, not its position (subtract the newest sample). Defaults to</span>
+<span class="sd">        ``False``. *(structural)*</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    **Inputs.** ``"information"``: one sample of ``number_of_inputs`` values per call. ``"mode_distance"``: one value</span>
-<span class="sd">    per call, buffered over ``window`` samples and computed every ``hop`` samples.</span>
+<span class="sd">    **Inputs.** ``"information"`` and ``"novelty"``: one sample of ``number_of_inputs`` values per call. ``"mode_distance"``:</span>
+<span class="sd">    one value per call, buffered over ``window`` samples and computed every ``hop`` samples.</span>
 
 <span class="sd">    **Outputs.** ``rarity``: for ``"information"`` shape ``(number_of_inputs,)``, :math:`R` per input (a larger</span>
 <span class="sd">    value is rarer), together with a ``timestamp`` in seconds (``NaN`` when not given); for ``"mode_distance"`` a</span>
-<span class="sd">    scalar :math:`R \ge 0`, higher meaning more atypical.</span>
+<span class="sd">    scalar :math:`R \ge 0`, higher meaning more atypical; for ``"novelty"`` a scalar :math:`R \ge 0`, about 1 for a</span>
+<span class="sd">    familiar movement.</span>
 
 <span class="sd">    **Statuses.** ``"information"`` with ``measure="rarity"``: the memory starts filled with zeros, so the result is</span>
 <span class="sd">    ``WARMING_UP`` (``"the memory holds k of window values"``; the numbers are given but are artefacts) until</span>
 <span class="sd">    ``window`` samples have been seen; a value above the sum of ``bins`` (or ``NaN``) keeps the previous bin and gives</span>
-<span class="sd">    ``INVALID_INPUT`` (``"value outside the bins"``) with the numbers kept; a non-finite value is ``INVALID_INPUT``.</span>
+<span class="sd">    ``INVALID_INPUT`` (``"value outside the bins"``), whose outputs are empty; a non-finite value is ``INVALID_INPUT``.</span>
 <span class="sd">    ``"mode_distance"``: ``WARMING_UP`` while the window holds fewer than 2 samples (and while the first window</span>
 <span class="sd">    fills), ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` while the window holds a ``NaN`` or an infinite value</span>
-<span class="sd">    (until that sample leaves the window). ``reset()`` clears the memory and the bin indices, so ``run`` is a pure</span>
-<span class="sd">    function of the recording.</span>
+<span class="sd">    (until that sample leaves the window). ``"novelty"``: ``WARMING_UP`` (``"the memory is filling"``) until the memory holds</span>
+<span class="sd">    twice the pattern length of patterns to compare with (``pattern - 1 + 2 * pattern + pattern // 2 - 1`` samples),</span>
+<span class="sd">    ``INVALID_INPUT`` for a ``NaN`` or infinite sample, which is not used. ``reset()`` clears the memory and the bin</span>
+<span class="sd">    indices, so ``run`` is a pure function of the recording.</span>
 
 <span class="sd">    Corrected in the core: ``reset()`` kept the previous bin indices; a contrast with one input, or a rarity with a</span>
 <span class="sd">    memory of one value, divided 0 by 0 and gave ``NaN``: both combinations are invalid and raise ``ValueError`` at</span>
@@ -565,13 +608,25 @@
 <span class="sd">    &gt;&gt;&gt; rarity = Rarity(method="mode_distance", window=10, alpha=1.0)</span>
 <span class="sd">    &gt;&gt;&gt; rarity.run([0.0, 0.1, 0.0, 0.1, 0.0, 0.1, 0.0, 0.1, 0.0, 1.0])[-1].rarity</span>
 <span class="sd">    1.6</span>
+
+<span class="sd">    The ``"novelty"`` method sees a pause in an oscillation that the other two cannot (a pause at the middle of the cycle</span>
+<span class="sd">    stays inside the values already seen):</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; oscillation = np.sin(2 * np.pi * np.arange(220) / 20)</span>
+<span class="sd">    &gt;&gt;&gt; oscillation[150:160] = 0.0                                          # ten samples of pause</span>
+<span class="sd">    &gt;&gt;&gt; novelty = Rarity(method="novelty", memory=90, pattern=10).run(oscillation)</span>
+<span class="sd">    &gt;&gt;&gt; bool(novelty.status[0] == 1 and novelty.status[-1] == 0)            # WARMING_UP at first, then OK</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; round(float(max(novelty.rarity[100:150])), 1), round(float(max(novelty.rarity[150:175])), 1)</span>
+<span class="sd">    (1.0, 15.5)</span>
 <span class="sd">    """</span>
 
     <span class="n">_SWITCH</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="s2">"information"</span><span class="p">)</span>
     <span class="n">_variants</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"information"</span><span class="p">,</span> <span class="s2">"mode_distance"</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"information"</span><span class="p">,</span> <span class="s2">"mode_distance"</span><span class="p">,</span> <span class="s2">"novelty"</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variant</span></div>
 
 
@@ -629,7 +684,6 @@
 <span class="sd">    Input: one sample of ``number_of_inputs`` values per call. See ``Rarity``.</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">RarityIndex</span>
-    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"window"</span><span class="p">:</span> <span class="s2">"data_memory"</span><span class="p">,</span> <span class="s2">"measure"</span><span class="p">:</span> <span class="s2">"type"</span><span class="p">}</span>
     <span class="n">_filled</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># samples written to the memory since it was last empty (measure "rarity" only)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -657,15 +711,44 @@
         <span class="n">rarity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">memory</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"window"</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>  <span class="c1"># C++ defaults</span>
         <span class="n">uses_memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"measure"</span><span class="p">,</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">RarityType</span><span class="o">.</span><span class="n">RARITY</span><span class="p">)</span> <span class="o">==</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">RarityType</span><span class="o">.</span><span class="n">RARITY</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_filled</span> <span class="o">+=</span> <span class="n">uses_memory</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"bins"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># also NaN</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"bins"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># also NaN; not a value of the memory</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"value outside the bins"</span><span class="p">,</span> <span class="n">rarity</span><span class="o">=</span><span class="n">rarity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filled</span> <span class="o">+=</span> <span class="n">uses_memory</span>
         <span class="k">if</span> <span class="n">uses_memory</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filled</span> <span class="o">&lt;</span> <span class="n">memory</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">"the memory holds </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filled</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">memory</span><span class="si">}</span><span class="s2"> values"</span><span class="p">,</span>
                                <span class="n">rarity</span><span class="o">=</span><span class="n">rarity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">rarity</span><span class="o">=</span><span class="n">rarity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">_variant</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_ModeDistanceRarity</span><span class="p">,</span> <span class="n">_InformationRarity</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_NoveltyRarity</span><span class="p">(</span><span class="n">Rarity</span><span class="p">,</span> <span class="n">FrameFeature</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">"novelty"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Rarity of the newest pattern of ``number_of_inputs`` signals within a memory of patterns (method ``"novelty"``).</span>
+
+<span class="sd">    Input: one sample of ``number_of_inputs`` values per call. See ``Rarity``.</span>
+<span class="sd">    """</span>
+    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">NoveltyRarity</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"novelty"</span><span class="p">,</span> <span class="n">number_of_inputs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">number_of_inputs</span><span class="o">=</span><span class="n">number_of_inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_number_of_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"number_of_inputs"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"signals"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_inputs</span><span class="p">(),),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"one value per signal"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"rarity"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"distance to the nearest patterns of the memory, relative to its median; about 1 = familiar"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">rarity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rarity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="s2">"the memory is filling"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">rarity</span><span class="o">=</span><span class="n">rarity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">_variant</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_ModeDistanceRarity</span><span class="p">,</span> <span class="n">_InformationRarity</span><span class="p">,</span> <span class="n">_NoveltyRarity</span><span class="p">):</span>
     <span class="n">_variant</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">Rarity</span><span class="o">.</span><span class="vm">__name__</span>
 
 
@@ -717,7 +800,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

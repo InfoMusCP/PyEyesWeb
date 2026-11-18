@@ -4,10 +4,10 @@ Synchronization of continuous signals
 
 Two hands that rise and fall together, a group that breathes as one: synchronization is how far several movements are
 coordinated in time. This first of two tutorials compares **continuous signals**: it measures phase locking, correlation,
-partial correlation, nonlinear interdependence and recurrence, on a performer who moves both arms together (synchronised) or
+partial correlation and recurrence, on a performer who moves both arms together (synchronised) or
 not (unsynchronised).
 
-:Goals: measure the synchronization of two signals and of a group with seven features; read a recurrence plot; know what each
+:Goals: measure the synchronization of two signals and of a group with five features; read a recurrence plot; know what each
         measure compares and what its output looks like in time.
 :Prerequisites: :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py` (windows, statuses and the
                 analysis primitives).
@@ -94,62 +94,38 @@ fig.tight_layout()
 # **Takeaway.** PLV is 1 when two rhythms stay in step; give the frequency band of the movement for a meaningful phase.
 
 # %%
-# Nonlinear interdependence: does one signal determine the other?
-# ----------------------------------------------------------------
-# Correlation sees only straight-line relations. :class:`~pyeyesweb.analysis_primitives.NonlinearInterdependence` asks
-# whether the *state* of one signal, a short stretch of ``embedding_dimension`` samples, determines the state of the other: the
-# ``neighbours`` nearest states of one signal are looked up in the other. It returns the two directions
-# (``first_to_second_interdependence`` and the reverse; they may differ, and the difference is read as the direction of
-# the coupling) and a ``threshold`` computed from the parameters. Identical signals give 1 and independent signals near 0.
-
-from pyeyesweb.analysis_primitives import NonlinearInterdependence
-
-fig, ax = plt.subplots(figsize=(8, 3))
-for name, signal in heights.items():
-    recorder = NonlinearInterdependence(window=300, hop=100, embedding_dimension=3, neighbours=5).run(signal[:, 0], signal[:, 1], timestamps=stamps)
-    ax.plot(recorder.timestamps[recorder.ok], recorder.first_to_second_interdependence[recorder.ok], "o-", ms=3, label=f"{name}, left to right")
-    ax.plot(recorder.timestamps[recorder.ok], recorder.second_to_first_interdependence[recorder.ok], "s--", ms=3, label=f"{name}, right to left")
-    print(f"{name:<26} mean interdependence {np.mean(recorder.first_to_second_interdependence[recorder.ok]):.2f}, threshold {recorder.threshold[recorder.ok][0]:.2f}")
-ax.set_xlabel("time (s)")
-ax.set_ylabel("interdependence")
-ax.legend(fontsize=7, ncol=2)
-fig.tight_layout()
-
-# %%
-# **Takeaway.** Interdependence is higher when the movement of one hand determines that of the other, linearly or not.
-
-# %%
 # A group: correlation and direct synchronization
 # -----------------------------------------------
-# For more than two signals the question is who moves with whom.
-# :class:`~pyeyesweb.analysis_primitives.CorrelationsMatrix` computes, over a window, the Pearson correlation of every pair
-# of ``number_of_inputs`` signals, with negative values set to 0 (anti-correlation is not synchronization). Two signals can
+# For more than two signals the question is who moves with whom. The Pearson correlation of every pair of signals is
+# ``numpy.corrcoef``: +1 when two signals rise and fall together, -1 when one rises as the other falls. Two signals can
 # correlate only because both follow a third;
 # :class:`~pyeyesweb.analysis_primitives.PartialRecurrenceSynchronization` takes that matrix and removes what the other
-# signals explain, leaving the *direct* relation of each pair (it has no window of its own: one matrix in, one matrix out).
+# signals explain, leaving the strength of the *direct* relation of each pair, between 0 and 1 (it has no window of its own:
+# one matrix in, one matrix out).
 #
 # The four signals are the heights of both hands, the left knee and the head.
 
-from pyeyesweb.analysis_primitives import CorrelationsMatrix, PartialRecurrenceSynchronization
+from pyeyesweb.analysis_primitives import PartialRecurrenceSynchronization
 
 parts = ["Left_Hand", "Right_Hand", "Left_Knee", "Head"]
 matrices = {}
 for name, number in trials.items():
     trial = load_qualisys_trial(number, start=5, stop=21).to_units("m")
     group = np.column_stack([trial.joint(part)[:, 1] for part in parts])
-    correlations = CorrelationsMatrix(window=1600, number_of_inputs=4).run(group)[-1].correlations_matrix
+    correlations = np.corrcoef(group.T)  # (4, 4), over the 16 s
     direct = PartialRecurrenceSynchronization().process(correlations).synchronization_matrix
     matrices[name] = (correlations, direct)
 
 fig, axes = plt.subplots(2, 2, figsize=(7, 6.4))
 for row, (name, (correlations, direct)) in enumerate(matrices.items()):
-    for ax, matrix, title in zip(axes[row], (correlations, direct), ("correlation", "direct (partial)")):
-        image = ax.imshow(matrix, vmin=0, vmax=1, cmap="viridis")
+    for ax, matrix, title, limits in zip(axes[row], (correlations, direct), ("correlation", "direct (partial)"), ((-1, "coolwarm"), (0, "viridis"))):
+        image = ax.imshow(matrix, vmin=limits[0], vmax=1, cmap=limits[1])
+        if row == 1:
+            fig.colorbar(image, ax=axes[:, list(axes[row]).index(ax)], shrink=0.8, location="bottom", label="value (dimensionless)")
         ax.set_xticks(range(4), [part.replace("_", "\n") for part in parts], fontsize=7)
         ax.set_yticks(range(4), [part.replace("_", " ") for part in parts] if ax in axes[:, 0] else [], fontsize=7)
         ax.set_title(f"{name}: {title}", fontsize=8)
         ax.grid(False)
-fig.colorbar(image, ax=axes, shrink=0.8, label="value (dimensionless)")
 
 # sphinx_gallery_thumbnail_number = 6
 
@@ -175,7 +151,7 @@ clapping = {name: load_qualisys_trial(number, start=5, stop=21).to_units("m").jo
             for name, number in {"trial 7 (synchronised)": 7, "trial 8 (unsynchronised)": 8}.items()}
 fig, ax = plt.subplots(figsize=(8, 3))
 for name, position in clapping.items():
-    rates = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, tau_min=1, tau_spread=300).run(position)[-1]
+    rates = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, max_lag=300).run(position)[-1]
     ax.plot(rates.taus / sampling_rate, rates.recurrence_rate, label=name)
 ax.set_xlabel("lag (s)")
 ax.set_ylabel("recurrence rate")
@@ -184,7 +160,7 @@ fig.tight_layout()
 
 # %%
 # The regular clapping returns to the same positions at regular lags; the unsynchronised trial has no clear peaks. With
-# ``output_type="scalar"`` and a ``tau`` the feature returns the rate at one lag, which is convenient for a live loop. The lags
+# ``output_type="scalar"`` and a ``lag`` the feature returns the rate at one lag, which is convenient for a live loop. The lags
 # (``taus``) are in samples; divide by the sampling rate for seconds.
 #
 # The recurrence of a window can also be drawn. :class:`~pyeyesweb.analysis_primitives.RecurrencePlot` is the binary matrix
@@ -222,16 +198,14 @@ print("share of the main diagonal of the cross plot that recurs:", {name: round(
 # %%
 # Side by side
 # ------------
-# Each measure for the left and right hands: PLV and correlation over the 16 s, interdependence of the last 3 s window,
-# cross-recurrence of the first 5 s. Values are comparable only within a row.
+# Each measure for the left and right hands: PLV and correlation over the 16 s, cross-recurrence of the first 5 s. Values are comparable only within a row.
 
 rows = {}
 for name, signal in heights.items():
     left, right = signal[:, 0], signal[:, 1]
     rows[name] = {
         "PLV": PhaseLockingValue(window=1600).run(left, right)[-1].phase_locking_value,
-        "correlation": CorrelationsMatrix(window=1600, number_of_inputs=2).run(signal)[-1].correlations_matrix[0, 1],
-        "interdependence": NonlinearInterdependence(window=300, hop=100, embedding_dimension=3, neighbours=5).run(left, right).first_to_second_interdependence[-1],
+        "correlation": np.corrcoef(left, right)[0, 1],
         "cross-recurrence, diagonal": np.diag(CrossRecurrencePlot(window=500, epsilon=0.05).run(signal[:500, 0:1], signal[:500, 1:2])[-1].cross_recurrence_matrix).mean(),
     }
 print(f"{'measure':<28}" + "".join(f"{name:>28}" for name in rows))
@@ -266,10 +240,10 @@ for epsilon in (0.01, 0.05, 0.15):
     print(f"epsilon {epsilon} m: {cross.mean():.2f} of the plot recurs, {np.diag(cross).mean():.2f} of the main diagonal")
 
 # %%
-# Exercise 3. A scalar output holds the rate at one lag, ``tau``, in samples.
+# Exercise 3. A scalar output holds the rate at one lag, ``lag``, in samples.
 
 for name, position in clapping.items():
-    scalar = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, output_type="scalar", tau=77).run(position)[-1]
+    scalar = GeneralisedAutoCorrelation(window=1000, epsilon=0.05, output_type="scalar", lag=77).run(position)[-1]
     print(f"{name}: recurrence rate at {int(scalar.taus[0]) / sampling_rate:.1f} s = {float(scalar.recurrence_rate[0]):.2f}")
 
 # %%
@@ -277,5 +251,4 @@ for name, position in clapping.items():
 # ----------
 # * :doc:`/theory/synchronization`: definitions, choosing a measure and practical notes.
 # * :doc:`/api/analysis_primitives`: every parameter of these features.
-# * :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`: synchronization of event trains, a
-#   sequence of events and several measures in a staged process.
+# * :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`: synchronization of event trains.

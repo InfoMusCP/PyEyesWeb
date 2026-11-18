@@ -5,7 +5,7 @@ BinaryPulsesRegularity
 
 Whether the pulses of a window are equally spaced.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: binary\_pulses\_regularity (BinaryPulsesRegularity)`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: binary\_pulses\_regularity (BinaryPulsesRegularity)` :bdg-light:`Rhythm`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Entropy, rarity and periodicity </theory/entropy_rarity_periodicity>`.
 
@@ -26,7 +26,7 @@ Parameters
      - ``1``
      - ``int``
    * - ``threshold``
-     - ``0``
+     - ``1``
      - ``int``
 
 Inputs
@@ -69,11 +69,6 @@ Outputs
      - scalar
      - 
      - number of pulses in the window
-   * - ``is_regularity_detected``
-     - ``bool``
-     - scalar
-     - 
-     - first regular window after a window that was not
 
 .. py:currentmodule:: pyeyesweb.analysis_primitives
 

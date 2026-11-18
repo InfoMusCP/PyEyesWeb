@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.low_level.energy &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.low_level.energy &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -538,8 +538,9 @@
 <span class="sd">    position mode without a time).</span>
 
 <span class="sd">    **Statuses.** ``OK`` from the first frame (the first frame of position mode gives 0, there is no previous frame);</span>
-<span class="sd">    ``INVALID_INPUT`` when the frame holds NaN or infinity, is empty, is a dict that lacks a weighted joint</span>
-<span class="sd">    (``"missing joints: ..."``), or the timestamp does not increase. A rejected frame is not taken as the</span>
+<span class="sd">    ``INVALID_INPUT`` when the frame holds NaN or infinity, is empty, is a dict that lacks a weighted joint or the</span>
+<span class="sd">    ``reference_point`` (``"missing joints: ..."``; the original took a missing reference as the origin), or the</span>
+<span class="sd">    timestamp does not increase. A ``reference_point`` that is not among ``labels`` raises ``ValueError``. A rejected frame is not taken as the</span>
 <span class="sd">    previous one: the next step is measured from the last valid frame.</span>
 
 <span class="sd">    Limitations: the weights are a weighting of the joints, not a body model; the presets without anthropometric</span>
@@ -569,6 +570,9 @@
             <span class="n">params</span><span class="p">[</span><span class="s2">"weights"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># labels alone: every joint counts the same</span>
         <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"weights"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">"weights"</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">):</span>
             <span class="n">params</span><span class="p">[</span><span class="s2">"weights"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_weights_by_label</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">"weights"</span><span class="p">],</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reference_point"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">reference</span> <span class="ow">and</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">reference</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"KineticEnergy: reference_point </span><span class="si">{</span><span class="n">reference</span><span class="si">!r}</span><span class="s2"> is not among the labels </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">core</span><span class="o">.</span><span class="n">SkeletonLayout</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
@@ -598,7 +602,8 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_label_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"weights"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">())</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"reference_point"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"weights"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">())</span> <span class="o">|</span> <span class="p">({</span><span class="n">reference</span><span class="p">}</span> <span class="k">if</span> <span class="n">reference</span> <span class="k">else</span> <span class="nb">set</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">points_input</span><span class="p">(</span><span class="s2">"skeleton"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="s2">"joint positions or velocities"</span><span class="p">,</span> <span class="n">accepts</span><span class="o">=</span><span class="p">(</span><span class="nb">dict</span><span class="p">,)))</span>
@@ -691,7 +696,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

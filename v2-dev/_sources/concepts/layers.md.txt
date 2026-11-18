@@ -12,7 +12,7 @@ feature belongs to exactly one package.
 |---|---|---|---|---|
 | Layer 1: physical signals | `pyeyesweb.physical_signals` | frame | {{ n_physical_signals }} | Signals and virtual sensors: simulating a body, centroids and body parts from an image, locating points in a grid. |
 | Layer 2: low-level features | `pyeyesweb.low_level` | up to about 0.5 s | {{ n_low_level }} | Measures of one frame, or of a short window: kinematics, energy, contraction, symmetry, balance, smoothness, contour shape, the directness of a path. |
-| Layer 3: mid-level features | `pyeyesweb.mid_level` | 0.5 to 3 s | {{ n_mid_level }} | Features of a gesture: segmentation, impulsivity, suddenness, space occupied over time. |
+| Layer 3: mid-level features | `pyeyesweb.mid_level` | 0.5 to 3 s | {{ n_mid_level }} | Features of a gesture: segmentation, impulsivity, suddenness, space occupied over time. None is in the early release. |
 | Layer 4: qualities communicated | `pyeyesweb.high_level` | 3 s and above | {{ n_high_level }} | Social and interaction-level qualities, which need several people. |
 | Analysis primitives | `pyeyesweb.analysis_primitives` | any | {{ n_analysis_primitives }} | Metrics for any scalar, vector or event signal, such as entropy, periodicity and synchronization. |
 
@@ -26,7 +26,6 @@ The groups are used as follows.
 
 ```{doctest}
 >>> from pyeyesweb.low_level import KineticEnergy
->>> from pyeyesweb.mid_level import GestureSegmenter
 >>> from pyeyesweb.analysis_primitives import SampleEntropy
 ```
 
@@ -42,11 +41,11 @@ it was ported from.
 - **Low-level** features measure one frame, or a short window that the feature buffers itself, of a signal. This includes the
   shape and filtering of a contour, and a path given as a list of points (its directness and its non-planarity).
 - **Mid-level** features need a whole gesture: the segmentation of gestures, impulsivity, suddenness, the space occupied over
-  time.
+  time (none of them is in the early release).
 - **High-level** features need several people.
 - An **analysis primitive** takes any scalar, vector or event signal and knows nothing of bodies, skeletons or geometry.
 
-So `FilterContour`, `Directness` and `TrajectoryNonPlanarity` are low-level features, and the synchronization measures
+So `BodyPartsFromCurvature`, `Directness` and `TrajectoryNonPlanarity` are low-level features, and the synchronization measures
 between signals are analysis primitives although they are mostly applied to movement.
 
 ## Browsing the catalog
@@ -60,9 +59,9 @@ Pass a {py:class}`~pyeyesweb.catalog.Layer` to list one group.
 >>> from pyeyesweb import Layer, catalog
 >>> features = catalog()
 >>> Counter(info.layer.value for info in features)
-Counter({'low_level': 22, 'analysis_primitives': 19, 'physical_signals': 11, 'mid_level': 7, 'high_level': 1})
+Counter({'low_level': 16, 'analysis_primitives': 13, 'physical_signals': 4, 'high_level': 1})
 >>> [info.name for info in catalog(Layer.MID_LEVEL)]
-['GestureSegmenter', 'MotionDuration', 'Suddenness', 'SuddennessImpulsivity', 'ContractionImpulsivity', 'PositionDependingPotentials', 'RegionDependingPotentials']
+[]
 >>> info = next(info for info in features if info.name == "KineticEnergy")
 >>> info.layer.title, info.timescale.value
 ('Layer 2: low-level features', 'up to ~0.5 s')
@@ -85,7 +84,7 @@ The same metadata is on the class itself, so a feature can be asked where it bel
 
 ```{doctest}
 >>> [info.name for info in features if info.eyesweb_block is None]
-['BoundingBoxFilledArea', 'SpectralArcLength', 'LogDimensionlessJerk', 'Harmonicity', 'SubmovementCount', 'CurvatureDispersion', 'Equilibrium', 'DirectionChange', 'Suddenness', 'SuddennessImpulsivity', 'EnsembleDominance', 'MultiScaleEntropy', 'PhaseLockingValue']
+['BoundingBoxFilledArea', 'SpectralArcLength', 'LogDimensionlessJerk', 'SubmovementCount', 'Equilibrium', 'DirectionChange', 'EnsembleDominance', 'MultiScaleEntropy', 'PhaseLockingValue']
 ```
 
 {py:func}`pyeyesweb.catalog.catalog_table` renders the features of one layer as a Markdown table. On this site, the
@@ -100,5 +99,5 @@ can drive generic code, for example to list the features that work on a window:
 ```{doctest}
 >>> from pyeyesweb.data_models import WindowedFeature
 >>> sorted(info.name for info in catalog(Layer.LOW_LEVEL) if issubclass(info.cls, WindowedFeature))
-['CurvatureVelocityCorrelation', 'DirectionChange', 'Harmonicity', 'LogDimensionlessJerk', 'SpectralArcLength', 'SubmovementCount']
+['CurvatureVelocityCorrelation', 'DirectionChange', 'LogDimensionlessJerk', 'SpectralArcLength', 'SubmovementCount']
 ```

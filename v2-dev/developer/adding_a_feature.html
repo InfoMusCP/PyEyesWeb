@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Adding a feature &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Adding a feature &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,7 +517,7 @@ a dimensionless output is listed with its reason in <code class="docutils litera
 <li><p>Implement <code class="docutils literal notranslate"><span class="pre">process</span></code> (or the private window hook of <code class="docutils literal notranslate"><span class="pre">WindowedFeature</span></code> for a window; it is never public). Return <code class="docutils literal notranslate"><span class="pre">self._result(...)</span></code> or
 <code class="docutils literal notranslate"><span class="pre">self._no_output(...)</span></code>. Do not check for NaN, missing joints or timestamps: the wrappers do.</p></li>
 <li><p>Parameters: keyword-only after <code class="docutils literal notranslate"><span class="pre">window,</span> <span class="pre">hop</span></code> and after the joint arguments, each annotated, with the single public spelling of the
-concept, and <code class="docutils literal notranslate"><span class="pre">sampling_rate=None</span></code> as the default rate. Use <code class="docutils literal notranslate"><span class="pre">_unit_params</span></code>, <code class="docutils literal notranslate"><span class="pre">_timed</span></code>, <code class="docutils literal notranslate"><span class="pre">_rate_required</span></code>, <code class="docutils literal notranslate"><span class="pre">_core_names</span></code> and <code class="docutils literal notranslate"><span class="pre">_parts</span></code>
+concept, and <code class="docutils literal notranslate"><span class="pre">sampling_rate=None</span></code> as the default rate. Use <code class="docutils literal notranslate"><span class="pre">_unit_params</span></code>, <code class="docutils literal notranslate"><span class="pre">_timed</span></code>, <code class="docutils literal notranslate"><span class="pre">_rate_required</span></code> and <code class="docutils literal notranslate"><span class="pre">_parts</span></code>
 where they apply instead of writing the logic again. Mark in the docstring which parameters are live and which structural; a
 structural parameter is one that sizes the state, and when in doubt it is structural.</p></li>
 <li><p>Export the class in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> of the layer package and in its <code class="docutils literal notranslate"><span class="pre">__all__</span></code>.</p></li>
@@ -682,7 +682,7 @@ deviation needs a decision of the maintainers; once decided it is the behaviour 
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

@@ -5,7 +5,7 @@ SpectralArcLength
 
 Spectral arc length (SPARC) of a speed profile: smoothness from the shape of its amplitude spectrum.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-light:`Smoothness`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Smoothness </theory/smoothness>`.
 

@@ -5,7 +5,7 @@ CrossRecurrencePlot
 
 Cross-recurrence plot of two windows of states: when one movement visits states of the other.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: CrossRecurrencePlot (CrossRecurrenceMatrix)`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: CrossRecurrencePlot (CrossRecurrenceMatrix)` :bdg-light:`Complexity`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 
@@ -25,18 +25,12 @@ Parameters
    * - ``hop``
      - ``1``
      - ``int``
-   * - ``multiple_epsilons``
-     - ``None``
-     - ``Optional[Sequence[float]]``
    * - ``order``
      - ``2.0``
      - ``float``
    * - ``epsilon``
      - ``0.5``
      - ``float``
-   * - ``use_multiple_epsilons``
-     - ``False``
-     - ``bool``
 
 Inputs
 ------

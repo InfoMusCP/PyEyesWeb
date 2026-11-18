@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Kinematics and energy &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Kinematics and energy &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -424,12 +424,10 @@
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Kinematics and energy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="smoothness.html">Smoothness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="shape_symmetry_balance.html">Shape, symmetry and balance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="impulsivity_suddenness.html">Impulsivity and suddenness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gesture_segmentation.html">Gesture segmentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="entropy_rarity_periodicity.html">Entropy, rarity and periodicity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="synchronization.html">Synchronization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dominance.html">Dominance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="humanoid_models.html">Humanoid and mass-spring models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="imaging.html">Imaging</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Literature</span></p>
@@ -501,13 +499,12 @@
 descriptions of movement, and they are the starting point for most of the others. They are low-level quantities in the
 conceptual model (<a class="reference internal" href="framework.html"><span class="doc">Conceptual framework</span></a>): each is defined for one moment or for a short stretch of movement, and each is computed
 from a position signal alone. In studies of expressive movement the speed, the acceleration and the energy of the body are
-among the cues that best separate emotions and movement styles <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id14" title="A. Camurri, I. Lagerlöf, and G. Volpe. Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1–2):213–225, 2003.">14</a>, <a class="reference internal" href="../references.html#id13" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">15</a>]</span>, and the
-smoothness of a movement (<a class="reference internal" href="smoothness.html"><span class="doc">Smoothness</span></a>), its segmentation into gestures (<a class="reference internal" href="gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>) and its
-impulsivity (<a class="reference internal" href="impulsivity_suddenness.html"><span class="doc">Impulsivity and suddenness</span></a>) are all computed from the quantities of this page.</p>
-<p>The page covers the six features of the family: <a class="reference internal" href="../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><code class="xref py py-class docutils literal notranslate"><span class="pre">Kinematics</span></code></a>,
+among the cues that best separate emotions and movement styles <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id21" title="A. Camurri, I. Lagerlöf, and G. Volpe. Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1–2):213–225, 2003.">14</a>, <a class="reference internal" href="../references.html#id20" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">15</a>]</span>, and the
+smoothness of a movement (<a class="reference internal" href="smoothness.html"><span class="doc">Smoothness</span></a>) and its segmentation into gestures (<a class="reference internal" href="gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>) are
+computed from the quantities of this page.</p>
+<p>The page covers the five features of the family: <a class="reference internal" href="../api/generated/low_level/Kinematics.html#pyeyesweb.low_level.Kinematics" title="pyeyesweb.low_level.Kinematics"><code class="xref py py-class docutils literal notranslate"><span class="pre">Kinematics</span></code></a>,
 <a class="reference internal" href="../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><code class="xref py py-class docutils literal notranslate"><span class="pre">KineticEnergy</span></code></a>, <a class="reference internal" href="../api/generated/low_level/DirectionChange.html#pyeyesweb.low_level.DirectionChange" title="pyeyesweb.low_level.DirectionChange"><code class="xref py py-class docutils literal notranslate"><span class="pre">DirectionChange</span></code></a>,
-<a class="reference internal" href="../api/generated/low_level/Directness.html#pyeyesweb.low_level.Directness" title="pyeyesweb.low_level.Directness"><code class="xref py py-class docutils literal notranslate"><span class="pre">Directness</span></code></a>, <a class="reference internal" href="../api/generated/low_level/TrajectoryNonPlanarity.html#pyeyesweb.low_level.TrajectoryNonPlanarity" title="pyeyesweb.low_level.TrajectoryNonPlanarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code></a> and
-<a class="reference internal" href="../api/generated/low_level/MotionNoiseDetector.html#pyeyesweb.low_level.MotionNoiseDetector" title="pyeyesweb.low_level.MotionNoiseDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code></a>. The symbols are those of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>.</p>
+<a class="reference internal" href="../api/generated/low_level/Directness.html#pyeyesweb.low_level.Directness" title="pyeyesweb.low_level.Directness"><code class="xref py py-class docutils literal notranslate"><span class="pre">Directness</span></code></a> and <a class="reference internal" href="../api/generated/low_level/TrajectoryNonPlanarity.html#pyeyesweb.low_level.TrajectoryNonPlanarity" title="pyeyesweb.low_level.TrajectoryNonPlanarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code></a>. The symbols are those of <a class="reference internal" href="notation.html"><span class="doc">Notation, units and conventions</span></a>.</p>
 <section id="definitions">
 <h2>Definitions<a class="headerlink" href="#definitions" title="Link to this heading">#</a></h2>
 <p>A point of the body (a joint, a marker, the centre of mass) has a position <span class="math notranslate nohighlight">\(\mathbf{p}(t) \in \mathbb{R}^d\)</span>, with <span class="math notranslate nohighlight">\(d\)</span> equal
@@ -607,7 +604,7 @@ polynomial fit:</p>
 </pre></div>
 </div>
 <p>The output of <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> is the input of several other features. The speed feeds the four window metrics of
-<a class="reference internal" href="smoothness.html"><span class="doc">Smoothness</span></a>, and the velocity and acceleration vectors feed <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>.</p>
+<a class="reference internal" href="smoothness.html"><span class="doc">Smoothness</span></a>.</p>
 </section>
 <section id="kinetic-energy">
 <h3>Kinetic energy<a class="headerlink" href="#kinetic-energy" title="Link to this heading">#</a></h3>
@@ -695,11 +692,11 @@ directness and gives <code class="docutils literal notranslate"><span class="pre
 <a class="reference internal" href="../api/generated/low_level/TrajectoryNonPlanarity.html#pyeyesweb.low_level.TrajectoryNonPlanarity" title="pyeyesweb.low_level.TrajectoryNonPlanarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code></a> fits local best-fit planes over neighbourhoods of size <code class="docutils literal notranslate"><span class="pre">radius</span></code> to
 the points of a three-dimensional trajectory and gives the mean distance of the points from them, in the unit of the data: 0
 for a planar path, larger for a path that leaves the plane. It is not the geometric curvature of the path, which is
-<code class="docutils literal notranslate"><span class="pre">Kinematics(output_type=&quot;curvature&quot;)</span></code>. With <code class="docutils literal notranslate"><span class="pre">output_type=&quot;curvature_value&quot;</span></code> the output is the inverse of that distance.</p>
+<code class="docutils literal notranslate"><span class="pre">Kinematics(output_type=&quot;curvature&quot;)</span></code>.</p>
 <p>The value depends on <code class="docutils literal notranslate"><span class="pre">radius</span></code>: the neighbourhood has to be of the size of the movement, and values compared between
-recordings must use the same radius. The radius is in metres, scaled by <code class="docutils literal notranslate"><span class="pre">units</span></code>, and its default is a value written for
-millimetres in the original block (100 m), so with data in metres a radius of the order of the movement, for example 0.1 to
-1, should be passed. A spiral of radius 1 m rising 1.26 m in two turns is not planar, a circle is:</p>
+recordings must use the same radius. The radius is in metres, scaled by <code class="docutils literal notranslate"><span class="pre">units</span></code>; the default, 0.1 m, suits a hand or an arm
+(the original block’s 100 was written for millimetres). When no point has another point within the radius there is nothing
+to fit, and the result is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>. A spiral of radius 1 m rising 1.26 m in two turns is not planar, a circle is:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrajectoryNonPlanarity</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">angle</span><span class="p">)]</span>
@@ -709,26 +706,6 @@ millimetres in the original block (100 m), so with data in metres a radius of th
 <span class="go">(0.0, 0.113)</span>
 </pre></div>
 </div>
-</section>
-<section id="motion-noise">
-<h3>Motion noise<a class="headerlink" href="#motion-noise" title="Link to this heading">#</a></h3>
-<p>A skeleton tracker that loses a joint or mixes its labels produces speeds that jump about at random, and the energy of such
-a signal is not movement. <a class="reference internal" href="../api/generated/low_level/MotionNoiseDetector.html#pyeyesweb.low_level.MotionNoiseDetector" title="pyeyesweb.low_level.MotionNoiseDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code></a> tests for this. For each watched joint it
-keeps the last 10 speeds and computes their variance; the variance is averaged over 5 frames, and the motion is flagged
-as noisy when the mean exceeds <code class="docutils literal notranslate"><span class="pre">noise_threshold</span></code> (a threshold on that variance, written as the block does in square metres and scaled by
-<code class="docutils literal notranslate"><span class="pre">units</span></code>). A still body, a uniform drift and the first 14 frames are never flagged. The output <code class="docutils literal notranslate"><span class="pre">is_noisy</span></code> is a boolean,
-valid on every call. Two quirks of the original block are kept: with several joints only the alphabetically last joint name that has a full window
-counts (whatever the order of <code class="docutils literal notranslate"><span class="pre">labels</span></code>; this is the behaviour of the underlying EyesWeb block, only one joint decides), and the flag stays false until 14 speeds have been seen. Corrected in the core: <code class="docutils literal notranslate"><span class="pre">reset()</span></code> clears the speed windows.</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotionNoiseDetector</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jumping</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>                  <span class="c1"># a joint that jumps about</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">MotionNoiseDetector</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"hand"</span><span class="p">],</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span><span class="o">.</span><span class="n">is_noisy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">jumping</span><span class="p">)</span><span class="o">.</span><span class="n">is_noisy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="go">(False, True)</span>
-</pre></div>
-</div>
-<p>The flag is the <code class="docutils literal notranslate"><span class="pre">noise</span></code> input of <a class="reference internal" href="../api/generated/mid_level/GestureSegmenter.html#pyeyesweb.mid_level.GestureSegmenter" title="pyeyesweb.mid_level.GestureSegmenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">GestureSegmenter</span></code></a>, which refuses to open a gesture
-while it is set (<a class="reference internal" href="gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>).</p>
 </section>
 </section>
 <section id="how-to-read-the-outputs">
@@ -782,11 +759,6 @@ while it is set (<a class="reference internal" href="gesture_segmentation.html">
 <td><p>length</p></td>
 <td><p>0 or more, 0 for a planar path</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">is_noisy</span></code></p></td>
-<td><p>none</p></td>
-<td><p>boolean</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -812,8 +784,8 @@ movement is applied to its output. Over a gesture, the mean energy and its peak 
 </section>
 <section id="further-reading">
 <h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
-<p>The cues of energy and speed in the recognition of emotion from movement: <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id14" title="A. Camurri, I. Lagerlöf, and G. Volpe. Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1–2):213–225, 2003.">14</a>]</span>,
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id13" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">15</a>]</span>. The EyesWeb implementation of these features: <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">6</a>]</span>.</p>
+<p>The cues of energy and speed in the recognition of emotion from movement: <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id21" title="A. Camurri, I. Lagerlöf, and G. Volpe. Recognizing emotion from dance movement: comparison of spectator recognition and automated techniques. International journal of human-computer studies, 59(1–2):213–225, 2003.">14</a>]</span>,
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id20" title="D. Glowinski, N. Dael, A. Camurri, G. Volpe, M. Mortillaro, and K. Scherer. Toward a minimal representation of affective gestures. IEEE Transactions on Affective Computing, 2(2):106–118, 2011.">15</a>]</span>. The EyesWeb implementation of these features: <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">5</a>]</span>.</p>
 </section>
 </section>
 
@@ -872,7 +844,6 @@ movement is applied to its output. Over a gesture, the mean energy and its peak 
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#direction-change">Direction change</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#directness">Directness</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectory-non-planarity">Trajectory non-planarity</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motion-noise">Motion noise</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-the-outputs">How to read the outputs</a></li>
@@ -921,7 +892,7 @@ movement is applied to its output. Over a gesture, the mean energy and its peak 
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

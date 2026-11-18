@@ -5,7 +5,7 @@ EnsembleDominance
 
 Dominance scores and leader of an ensemble from the complexity indices of its participants.
 
-:bdg-primary:`Layer 4: qualities communicated` :bdg-secondary:`timescale: 3 s and above`
+:bdg-primary:`Layer 4: qualities communicated` :bdg-secondary:`timescale: 3 s and above` :bdg-light:`Complexity` :bdg-light:`Coordination`
 
 Layer: :doc:`Layer 4: qualities communicated </api/high_level>`. Family: :doc:`Dominance </theory/dominance>`.
 

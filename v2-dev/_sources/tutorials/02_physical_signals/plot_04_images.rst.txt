@@ -92,8 +92,8 @@ Centroids: where is the body?
 :class:`~pyeyesweb.physical_signals.SilhouetteCentroids` splits the silhouette recursively around its centre of gravity and
 takes the centre of gravity of each rectangle: the shoulders from the upper quadrants, the head between them, the elbow,
 the forearm and the hand outwards, the knee and the foot downwards. Without a skeleton it gives 14 points, in pixels
-(``centroids``) and as a fraction of the frame (``normalized``), one row per name of the schema; a row is NaN when its
-centroid does not exist.
+(``centroids``, y pointing down from the top-left pixel), one row per name of the schema; a row is NaN when its
+centroid does not exist. Divide by ``[width, height]`` for a fraction of the frame.
 
 .. GENERATED FROM PYTHON SOURCE LINES 54-76
 
@@ -108,7 +108,7 @@ centroid does not exist.
     result = centroids.process(body)
     names = centroids.outputs["centroids"].axis_names[0]
     print(names)
-    print("centre of gravity (x, y) in pixels:", result.centroids[0], "| as a fraction of the frame:", result.normalized[0])
+    print("centre of gravity (x, y) in pixels:", result.centroids[0], "| as a fraction of the frame:", result.centroids[0] / [body.shape[1], body.shape[0]])
 
     fig_centroids, ax = plt.subplots(figsize=(5, 4))
     ax.imshow(body, cmap="gray", alpha=0.5)
@@ -135,7 +135,7 @@ centroid does not exist.
  .. code-block:: none
 
     Inputs(silhouette: image (?, ?) - mask of the body: every non-zero pixel is foreground)
-    Schema(Output('centroids', shape=(14, 2), unit='px'), Output('normalized', shape=(14, 2)))
+    Schema(Output('centroids', shape=(14, 2), unit='px'))
     ('center_of_gravity', 'head', 'left_shoulder', 'left_elbow', 'left_forearm', 'left_hand', 'right_shoulder', 'right_elbow', 'right_forearm', 'right_hand', 'left_knee', 'left_foot', 'right_knee', 'right_foot')
     centre of gravity (x, y) in pixels: [161. 114.] | as a fraction of the frame: [0.5031 0.475 ]
 
@@ -277,14 +277,14 @@ each part found. A part is dropped when it is empty or touches the first row or 
 
  .. code-block:: none
 
-    ('right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head')
+    ('left_leg', 'right_leg', 'trunk', 'left_arm', 'right_arm', 'head')
     [[138 136  23  90]
      [161 136  46  90]
      [142  59  42  77]
      [ 80  68  62  15]
      [184  68  57  15]
      [142  19  42  40]]
-    found: {'right_leg': True, 'left_leg': True, 'trunk': True, 'right_arm': True, 'left_arm': True, 'head': True}
+    found: {'left_leg': True, 'right_leg': True, 'trunk': True, 'left_arm': True, 'right_arm': True, 'head': True}
 
 
 
@@ -299,7 +299,7 @@ selected ones.
 .. code-block:: Python
 
 
-    legs = SilhouetteBodyParts(parts=["right_leg", "left_leg"]).process(body)
+    legs = SilhouetteBodyParts(parts=["left_leg", "right_leg"]).process(body)
     print("masks returned:", list(legs.masks))
     print("regions of the head, not selected:", legs.regions[part_names.index("head")])
 
@@ -311,7 +311,7 @@ selected ones.
 
  .. code-block:: none
 
-    masks returned: ['right_leg', 'left_leg']
+    masks returned: ['left_leg', 'right_leg']
     regions of the head, not selected: [0 0 0 0]
 
 
@@ -427,19 +427,18 @@ line is overwritten; ``end_of_image_mode="scroll"`` rotates the image so that th
 
 **Takeaway.** A videogram turns time into an axis of an image; the motiongram of a frame difference shows the movement alone.
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-226
+.. GENERATED FROM PYTHON SOURCE LINES 217-225
 
 A regular rhythm: BinaryPulsesRegularity
 ----------------------------------------
 A rhythm can be read from a signal in which a non-zero sample is a **pulse**: a footstep, a beat, or the peaks found in a
 movement. :class:`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` works on a window of ``window`` samples (a result
-every ``hop`` samples). The distance between the first two pulses of the window is the reference. The window is
-**regular** when it holds at least three pulses and every other interval differs from the reference by at most
-``threshold`` samples. The outputs are ``is_regular``, ``pulse_count`` and ``is_regularity_detected``, which is true for
-the first regular window after a window that was not. Here steady steps every 6 samples are followed by a slower, still
+every ``hop`` samples). The window is **regular** when it holds at least three pulses and the spread of the intervals
+between them, the longest minus the shortest, is below ``threshold`` samples (``threshold=1``: equal intervals). The outputs are ``is_regular`` and ``pulse_count``; the moment the rhythm becomes regular is the
+rising edge of ``is_regular`` (computed below with ``np.diff``). Here steady steps every 6 samples are followed by a slower, still
 regular, rhythm of one step every 7.
 
-.. GENERATED FROM PYTHON SOURCE LINES 226-253
+.. GENERATED FROM PYTHON SOURCE LINES 225-254
 
 .. code-block:: Python
 
@@ -449,7 +448,7 @@ regular, rhythm of one step every 7.
     steps = np.zeros(140)
     steps[10:70:6] = 1
     steps[70::7] = 1
-    feature = BinaryPulsesRegularity(window=30, hop=5, threshold=0)
+    feature = BinaryPulsesRegularity(window=30, hop=5, threshold=1)
     print(feature.inputs)
     print(feature.outputs)
     record = feature.run(steps)
@@ -464,8 +463,10 @@ regular, rhythm of one step every 7.
     axes[1].plot(rows[ok_rows], record["pulse_count"][ok_rows], ".-")
     axes[1].set_ylabel("pulse_count")
     axes[2].step(rows[ok_rows], record["is_regular"][ok_rows].astype(int), where="post")
-    axes[2].plot(np.flatnonzero(record["is_regularity_detected"]), np.ones(int(record["is_regularity_detected"].sum())), "r^")
-    axes[2].set_ylabel("regular (red: detected)")
+    regular = record["is_regular"].astype(int)
+    onsets = np.flatnonzero(np.diff(regular[ok_rows]) == 1) + 1   # rising edges of is_regular (among the evaluated windows)
+    axes[2].plot(rows[ok_rows][onsets], np.ones(len(onsets)), "r^")
+    axes[2].set_ylabel("regular (red: onset)")
     axes[2].set_xlabel("sample")
     shade_status(axes[2], rows, record.status, codes=(1,))  # yellow: the first window is not full yet
     fig_pulses.tight_layout()
@@ -484,29 +485,29 @@ regular, rhythm of one step every 7.
  .. code-block:: none
 
     Inputs(signal: sample (1) - one value per call; a non-zero value is a pulse)
-    Schema(Output('is_regular', kind=bool), Output('pulse_count', kind=int), Output('is_regularity_detected', kind=bool))
+    Schema(Output('is_regular', kind=bool), Output('pulse_count', kind=int))
     regular windows: 20 of 23 | status counts: {'OK': 23, 'WARMING_UP': 29, 'NO_OUTPUT': 88}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 254-257
+.. GENERATED FROM PYTHON SOURCE LINES 255-258
 
 The plot shows the window that straddles the change of rhythm as not regular, and the trigger when the new rhythm is
-established. With ``threshold=1`` the two rhythms (intervals 6 and 7) are accepted together. ``threshold`` is a live parameter: it can be
+established. With ``threshold=2`` the two rhythms (intervals 6 and 7) are accepted together. ``threshold`` is a live parameter: it can be
 changed while the feature runs and the buffer is kept.
 
-.. GENERATED FROM PYTHON SOURCE LINES 257-270
+.. GENERATED FROM PYTHON SOURCE LINES 258-271
 
 .. code-block:: Python
 
 
-    tolerant = BinaryPulsesRegularity(window=30, hop=5, threshold=1).run(steps)
-    print("regular windows with threshold 1:", int(tolerant["is_regular"].sum()), "instead of", int(record["is_regular"].sum()))
-    live = BinaryPulsesRegularity(window=30, hop=5, threshold=0)
+    tolerant = BinaryPulsesRegularity(window=30, hop=5, threshold=2).run(steps)
+    print("regular windows with threshold 2:", int(tolerant["is_regular"].sum()), "instead of", int(record["is_regular"].sum()))
+    live = BinaryPulsesRegularity(window=30, hop=5, threshold=1)
     for value in steps[:60]:
         live.process(value)
-    live.threshold = 1
+    live.threshold = 2
     for value in steps[60:70]:
         answer = live.process(value)
         if answer.status.name == "OK":
@@ -521,17 +522,17 @@ changed while the feature runs and the buffer is kept.
 
  .. code-block:: none
 
-    regular windows with threshold 1: 23 instead of 20
+    regular windows with threshold 2: 23 instead of 20
     first window after the change: 5 pulses, regular: True
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 271-272
+.. GENERATED FROM PYTHON SOURCE LINES 272-273
 
-**Takeaway.** ``BinaryPulsesRegularity`` says when a pulse signal becomes regular; ``threshold`` is the tolerance in samples.
+**Takeaway.** ``BinaryPulsesRegularity`` says when a pulse signal becomes regular; ``threshold`` bounds the spread of the intervals, in samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 274-283
+.. GENERATED FROM PYTHON SOURCE LINES 275-284
 
 Putting streams side by side: TimeWindowSynchronizer
 ----------------------------------------------------
@@ -543,7 +544,7 @@ latest frame that starts before the end of the window. The class is a plain util
 ``push`` and ``push_frame`` add data, ``ready()`` says whether every stream holds enough, and ``pop()`` returns a
 :class:`~pyeyesweb.physical_signals.SynchronizedWindow`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 283-301
+.. GENERATED FROM PYTHON SOURCE LINES 284-302
 
 .. code-block:: Python
 
@@ -584,28 +585,28 @@ latest frame that starts before the end of the window. The class is a plain util
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 302-304
+.. GENERATED FROM PYTHON SOURCE LINES 303-305
 
 **Takeaway.** The synchronizer cuts streams of different sizes and rates into complete windows that cover the same
 interval.
 
-.. GENERATED FROM PYTHON SOURCE LINES 306-313
+.. GENERATED FROM PYTHON SOURCE LINES 307-314
 
 Try it
 ------
 1. Move the silhouette to the right with ``synthetic_silhouette(shift=...)`` for 30 frames and run ``SilhouetteCentroids``
    with ``parts=["center_of_gravity"]``. How many pixels does the centre of gravity move?
 2. Draw the motiongram of the arm clip with ``direction="right_to_left"``. How does the picture change?
-3. Feed ``BinaryPulsesRegularity`` pulses at intervals 6, 6, 6, 8, 6, 6 with ``threshold=0`` and ``threshold=2``. Which
+3. Feed ``BinaryPulsesRegularity`` pulses at intervals 6, 6, 6, 8, 6, 6 with ``threshold=1`` and ``threshold=3``. Which
    windows are regular?
 
-.. GENERATED FROM PYTHON SOURCE LINES 315-318
+.. GENERATED FROM PYTHON SOURCE LINES 316-319
 
 Solutions
 ---------
 Exercise 1. The body is moved by ``shift`` pixels, and so is its centre of gravity.
 
-.. GENERATED FROM PYTHON SOURCE LINES 318-323
+.. GENERATED FROM PYTHON SOURCE LINES 319-324
 
 .. code-block:: Python
 
@@ -627,11 +628,11 @@ Exercise 1. The body is moved by ``shift`` pixels, and so is its centre of gravi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 324-325
+.. GENERATED FROM PYTHON SOURCE LINES 325-326
 
 Exercise 2. The lines are written from the other side: the picture is mirrored in time.
 
-.. GENERATED FROM PYTHON SOURCE LINES 325-330
+.. GENERATED FROM PYTHON SOURCE LINES 326-331
 
 .. code-block:: Python
 
@@ -653,18 +654,18 @@ Exercise 2. The lines are written from the other side: the picture is mirrored i
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 331-332
+.. GENERATED FROM PYTHON SOURCE LINES 332-333
 
-Exercise 3. With ``threshold=0`` the window holds the interval 8 and is not regular; with ``threshold=2`` it is.
+Exercise 3. With ``threshold=1`` a window that holds the interval 8 is not regular (spread 2); with ``threshold=3`` it is.
 
-.. GENERATED FROM PYTHON SOURCE LINES 332-340
+.. GENERATED FROM PYTHON SOURCE LINES 333-341
 
 .. code-block:: Python
 
 
     irregular = np.zeros(60)
     irregular[[5, 11, 17, 23, 31, 37, 43]] = 1
-    for tolerance in (0, 2):
+    for tolerance in (1, 3):
         outcome = BinaryPulsesRegularity(window=30, hop=5, threshold=tolerance).run(irregular)
         flags = [int(flag) for flag, status in zip(outcome["is_regular"], outcome.status) if status == 0]
         print(f"threshold {tolerance}: regular flag of each window", flags)
@@ -677,13 +678,13 @@ Exercise 3. With ``threshold=0`` the window holds the interval 8 and is not regu
 
  .. code-block:: none
 
-    threshold 0: regular flag of each window [1, 0, 0, 0, 0, 1, 1]
-    threshold 2: regular flag of each window [1, 1, 1, 1, 1, 1, 1]
+    threshold 1: regular flag of each window [1, 0, 0, 0, 0, 1, 1]
+    threshold 3: regular flag of each window [1, 1, 1, 1, 1, 1, 1]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 341-349
+.. GENERATED FROM PYTHON SOURCE LINES 342-350
 
 Next steps
 ----------

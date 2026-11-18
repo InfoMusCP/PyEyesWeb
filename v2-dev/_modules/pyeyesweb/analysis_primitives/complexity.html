@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.complexity &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.complexity &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -466,7 +466,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindowedFeature</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span>
 
 <span class="n">_motion</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span>
 
@@ -475,28 +475,29 @@
 <a class="viewcode-back" href="../../../api/generated/analysis_primitives/SampleEntropy.html#pyeyesweb.analysis_primitives.SampleEntropy">[docs]</a>
 <span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"sampleentropy"</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SampleEntropy</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Sample entropy of a single-channel window, for template lengths 1 to ``embedding_dimension``.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Sample entropy of a single-channel window: how predictable the signal is.</span>
 
 <span class="sd">    Sample entropy measures the irregularity of a signal: how unlikely it is that two stretches of the signal that</span>
 <span class="sd">    are close to each other for ``m`` samples remain close at the next sample. A regular, predictable signal gives</span>
-<span class="sd">    a low value, an irregular one a high value. Two templates of length ``k`` match when every pair of corresponding</span>
-<span class="sd">    samples differs by less than the tolerance ``r``. With :math:`B_k` the number of matching template pairs of</span>
-<span class="sd">    length ``k`` and :math:`A_k` the number of those that still match when extended by one sample, the entry for</span>
-<span class="sd">    template length ``k`` is</span>
+<span class="sd">    a low value, an irregular one a high value. Two templates of length ``m`` match when every pair of corresponding</span>
+<span class="sd">    samples differs by at most the tolerance ``r``. With :math:`B` the number of matching template pairs of</span>
+<span class="sd">    length ``m`` and :math:`A` the number of those that still match when extended by one sample,</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \mathrm{SampEn}_k = -\ln \frac{A_k}{B_k}, \qquad k = 1 \dots \mathtt{embedding\_dimension}.</span>
+<span class="sd">        \mathrm{SampEn}(m, r) = -\ln \frac{A}{B},</span>
+
+<span class="sd">    the definition of Richman and Moorman (2000). The feature gives this one number.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    window : int</span>
-<span class="sd">        Samples per window (at least ``embedding_dimension + 1``). Changing it on a running feature keeps the newest</span>
-<span class="sd">        samples. *(live)*</span>
+<span class="sd">        Samples per window (at least ``embedding_dimension + 2``; in practice 100 to 200 or more). Changing it on a running</span>
+<span class="sd">        feature keeps the newest samples. *(live)*</span>
 <span class="sd">    hop : int, optional</span>
 <span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
 <span class="sd">    embedding_dimension : int, optional</span>
-<span class="sd">        Number of template lengths computed (the output has this many entries). Defaults to ``12``. *(structural)*</span>
+<span class="sd">        The template length ``m`` of the literature. Defaults to ``2``. *(structural)*</span>
 <span class="sd">    tolerance : float or None, optional</span>
 <span class="sd">        Absolute matching tolerance ``r``, in the units of the signal. ``None`` (default) uses</span>
 <span class="sd">        ``relative_tolerance`` times the standard deviation of the window. *(live)*</span>
@@ -509,16 +510,19 @@
 <span class="sd">    -----</span>
 <span class="sd">    **Inputs.** One value per call (a single channel).</span>
 
-<span class="sd">    **Outputs.** ``sample_entropy``, shape ``(embedding_dimension,)``: entry ``k - 1`` is</span>
-<span class="sd">    :math:`\mathrm{SampEn}_k` (nats). It is non-negative; it is ``inf`` or ``NaN`` when too few template pairs match.</span>
-<span class="sd">    ``timestamp`` is the timestamp (seconds) of the newest sample.</span>
+<span class="sd">    **Outputs.** ``sample_entropy``: :math:`\mathrm{SampEn}(m, r)` (nats), a single number. It is non-negative; ``0`` is a</span>
+<span class="sd">    perfectly predictable signal, about 1 to 2.5 an irregular one, and it is ``inf`` or ``NaN`` when no template pairs</span>
+<span class="sd">    match (the window is too short or ``r`` too small). Compare values between gestures or over time: the absolute number</span>
+<span class="sd">    depends on the window, on ``r`` and on the sampling rate. ``timestamp`` is the timestamp (seconds) of the newest sample.</span>
 
 <span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, ``OK`` whenever a window</span>
 <span class="sd">    was computed.</span>
 
-<span class="sd">    Corrected in the core: the template counts of length 2 and above were copied forward instead of shifted, so the</span>
-<span class="sd">    entropies of order 2 and above were wrong. The tolerance defaults to a fraction of the standard deviation of the</span>
-<span class="sd">    window instead of an absolute 0.3, which matched no pair on signals of another scale; an explicit ``tolerance``</span>
+<span class="sd">    Changed from the first release of the port (design review 2026-11-17): the feature used to return the entropies of</span>
+<span class="sd">    the template lengths ``0 ... embedding_dimension - 1`` (the pyEntropy convention), so the usual SampEn(2) needed</span>
+<span class="sd">    ``embedding_dimension=3`` and was the last entry. It now returns only SampEn(``embedding_dimension``). The template</span>
+<span class="sd">    counts of length 2 and above were also corrected in the core (copied forward instead of shifted), and the tolerance</span>
+<span class="sd">    defaults to a fraction of the standard deviation of the window instead of an absolute 0.3; an explicit ``tolerance``</span>
 <span class="sd">    gives the former numbers exactly.</span>
 
 <span class="sd">    Examples</span>
@@ -527,18 +531,18 @@
 <span class="sd">    &gt;&gt;&gt; from pyeyesweb.analysis_primitives import SampleEntropy</span>
 <span class="sd">    &gt;&gt;&gt; feature = SampleEntropy(window=60, embedding_dimension=2)</span>
 <span class="sd">    &gt;&gt;&gt; result = feature.run(np.sin(0.5 * np.arange(60)))[-1]</span>
-<span class="sd">    &gt;&gt;&gt; result.sample_entropy.round(3)</span>
-<span class="sd">    array([2.094, 0.943])</span>
+<span class="sd">    &gt;&gt;&gt; round(float(result.sample_entropy), 3)</span>
+<span class="sd">    0.331</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">SampleEntropy</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">embedding_dimension</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="n">embedding_dimension</span><span class="o">=</span><span class="n">embedding_dimension</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_window</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">embedding_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"embedding_dimension"</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>  <span class="c1"># C++ default</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"embedding_dimension"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
     <span class="nd">@embedding_dimension</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">embedding_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -561,99 +565,29 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">relative_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_param</span><span class="p">(</span><span class="s2">"relative_tolerance"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_block_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># The core gives the entropies of the template lengths 0 ... E - 1 (pyEntropy); SampEn(m) is the entry m, so E = m + 1.</span>
+        <span class="n">template_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embedding_dimension"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">template_length</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"embedding_dimension must be at least 1"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_block_params</span><span class="p">({</span><span class="o">**</span><span class="n">params</span><span class="p">,</span> <span class="s2">"embedding_dimension"</span><span class="p">:</span> <span class="n">template_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">})</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_minimum_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embedding_dimension"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dimension</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embedding_dimension"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dimension</span><span class="p">))</span> <span class="o">+</span> <span class="mi">2</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"signal"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"one value per call"</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"sample_entropy"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dimension</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"-log(A[k] / B[k]) for template length k + 1"</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"sample_entropy"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"SampEn(m, r) = -log(A / B) of the window"</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">sample_entropy</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">sample_entropy</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="CoarseGraining">
-<a class="viewcode-back" href="../../../api/generated/analysis_primitives/CoarseGraining.html#pyeyesweb.analysis_primitives.CoarseGraining">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"coarsegraining"</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CoarseGraining</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Coarse-grained series of a window: means of non-overlapping groups of ``factor`` samples.</span>
-
-<span class="sd">    Coarse graining looks at a signal at a slower time scale: each group of ``factor`` consecutive samples of a</span>
-<span class="sd">    channel is replaced by its mean. It is the first step of multi-scale analyses of complexity (see</span>
-<span class="sd">    ``MultiScaleEntropy``). For a window :math:`x_1 \dots x_N` and a factor :math:`\tau`,</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        y_j = \frac{1}{\tau} \sum_{i=(j-1)\tau+1}^{j\tau} x_i, \qquad j = 1 \dots \lfloor N / \tau \rfloor.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    window : int</span>
-<span class="sd">        Samples per window (at least ``factor``). *(live)*</span>
-<span class="sd">    hop : int, optional</span>
-<span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
-<span class="sd">    factor : int, optional</span>
-<span class="sd">        Number of samples averaged into one (the scale), at least 1. Defaults to ``2``. *(structural)*</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    **Inputs.** One sample per call, with one value per channel.</span>
-
-<span class="sd">    **Outputs.** ``coarse_grained``, shape ``(channels, window // factor)``, in the unit of the input; a trailing</span>
-<span class="sd">    remainder of fewer than ``factor`` samples is dropped.</span>
-
-<span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills; ``NO_OUTPUT`` between two hops, and on the windows</span>
-<span class="sd">    where the series is not recomputed (``coarse_grained`` is then not produced). As in the EyesWeb block, which</span>
-<span class="sd">    counts its activations modulo ``factor``, the series is computed on the first full window and then on every</span>
-<span class="sd">    ``factor``-th window, that is every ``factor * hop`` samples (the other windows say "not recomputed on this</span>
-<span class="sd">    activation"): with ``window=4, hop=2, factor=2`` the statuses of samples 1 to 8 are ``WARMING_UP`` (three times),</span>
-<span class="sd">    ``OK``, ``NO_OUTPUT``, ``NO_OUTPUT``, ``NO_OUTPUT``, ``OK``. With ``factor=1`` every window is computed.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.analysis_primitives import CoarseGraining</span>
-<span class="sd">    &gt;&gt;&gt; feature = CoarseGraining(window=6, factor=2)</span>
-<span class="sd">    &gt;&gt;&gt; feature.run(np.arange(6.0))[-1].coarse_grained</span>
-<span class="sd">    array([[0.5, 2.5, 4.5]])</span>
-<span class="sd">    """</span>
-    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">CoarseGraining</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_window</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">(</span><span class="s2">"factor"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># C++ default</span>
-
-    <span class="nd">@factor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_window</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_param</span><span class="p">(</span><span class="s2">"factor"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_minimum_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"factor"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inputs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"signal"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"one value per channel"</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"coarse_grained"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;input&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"coarse-grained series (channels, window // factor)"</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">NO_OUTPUT</span><span class="p">,</span> <span class="s2">"not recomputed on this activation"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">coarse_grained</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
-
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SampleEntropy"</span><span class="p">,</span> <span class="s2">"CoarseGraining"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SampleEntropy"</span><span class="p">]</span>
 </pre></div>
 
                 </article>
@@ -701,7 +635,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

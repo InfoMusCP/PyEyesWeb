@@ -5,7 +5,7 @@ BodyPartsFromCurvature
 
 Contour points at the curvature extrema of a silhouette, tracked as labelled body parts.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: body\_parts\_from\_curvature`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: body\_parts\_from\_curvature` :bdg-light:`Pose`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Imaging </theory/imaging>`.
 
@@ -28,6 +28,9 @@ Parameters
    * - ``track_points``
      - ``True``
      - ``bool``
+   * - ``tracking_distance``
+     - ``0.05``
+     - ``float``
 
 Inputs
 ------
@@ -41,11 +44,6 @@ Inputs
      - Shape
      - Unit
      - Description
-   * - ``curvature``
-     - sample
-     - (n,)
-     - 
-     - curvature of each contour point
    * - ``contour``
      - points
      - (n, 2)

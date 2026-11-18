@@ -5,7 +5,7 @@ TrajectoryNonPlanarity
 
 Non-planarity of a 3D trajectory: the mean distance of its points from local best-fit planes.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: GetAverageCurvatue (Curvature3D)`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: GetAverageCurvatue (Curvature3D)` :bdg-light:`Space` :bdg-light:`Trajectory`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Kinematics and energy </theory/kinematics_energy>`.
 
@@ -19,17 +19,11 @@ Parameters
    * - Name
      - Default
      - Type
-   * - ``output_type``
-     - ``'curvature_radius'``
-     - ``Literal['curvature_radius', 'curvature_value']``
    * - ``radius``
-     - ``100.0``
+     - ``0.1``
      - ``float``
    * - ``nan_fraction``
      - ``0.5``
-     - ``float``
-   * - ``nan_value``
-     - ``999.0``
      - ``float``
    * - ``units``
      - ``'m'``

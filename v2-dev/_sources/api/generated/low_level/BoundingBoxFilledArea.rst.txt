@@ -5,7 +5,7 @@ BoundingBoxFilledArea
 
 Contraction index of a 3D posture: convex hull area over bounding box area.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-light:`Space` :bdg-light:`Contraction / Expansion`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Shape, symmetry and balance </theory/shape_symmetry_balance>`.
 

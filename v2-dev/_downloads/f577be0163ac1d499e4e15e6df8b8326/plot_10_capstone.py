@@ -2,7 +2,7 @@
 Capstone: a pipeline
 ====================
 
-This tutorial puts the previous ones together in two ways. First a **live loop**: a chain of four features is fed one frame at a
+This tutorial puts the previous ones together in two ways. First a **live loop**: a chain of three features is fed one frame at a
 time, as it would be from a motion-capture stream, and a parameter is changed while it runs. Then a **batch analysis**: features
 from three layers are computed for a set of recordings, collected in a table with pandas, and used to compare the conditions of
 the example session with a plain nearest-centroid rule and a plot.
@@ -22,17 +22,12 @@ the example session with a plain nearest-centroid rule and a plot.
 # -----------
 # In a live set-up there is no recording to hand to ``run``: a frame arrives, the features are updated, the next frame arrives.
 # Each call of ``process`` takes one frame and returns a :class:`~pyeyesweb.data_models.Result`; every feature remembers what
-# it needs between calls (see :doc:`/concepts/results`). Here the chain is the one of the gesture tutorial,
+# it needs between calls (see :doc:`/concepts/results`). Here the chain is
 #
-# ``skeleton`` -> :class:`~pyeyesweb.low_level.KineticEnergy` -> :class:`~pyeyesweb.low_level.MotionNoiseDetector`
-# -> :class:`~pyeyesweb.mid_level.GestureSegmenter` -> :class:`~pyeyesweb.mid_level.MotionDuration`
+# ``skeleton`` -> :class:`~pyeyesweb.low_level.KineticEnergy` -> :class:`~pyeyesweb.analysis_primitives.ScalarPeakDetector`
 #
-# The kinetic energy of the body is the *intensity* that the segmenter thresholds to find gestures (energy per unit of mass, see
-# :doc:`/theory/kinematics_energy`). ``MotionNoiseDetector`` sets ``is_noisy`` when the speeds of a joint jump at random, as
-# with a tracker that loses a marker, and its flag is fed **directly** to the ``noise`` input of the segmenter: ``True`` means
-# noise, and no gesture can start while it is set. With several joints, only the joint whose name comes last in alphabetical
-# order decides the flag (``Spine`` for the 20 joints used here), see the class description. ``MotionDuration`` turns the
-# on/off signal ``is_gesturing`` into the length of each phase of motion and of pause (:doc:`/theory/gesture_segmentation`).
+# The kinetic energy of the body (energy per unit of mass, see :doc:`/theory/kinematics_energy`) is the signal whose peaks the
+# detector finds: each peak is a burst of movement, here a clap (:doc:`/theory/gesture_segmentation`).
 #
 # The recording is trial 7 (clapping hands) in **metres**; time is in seconds. A ``Recorder`` collects the results of a loop
 # with ``append``, which is all that ``run`` does for you.
@@ -43,8 +38,8 @@ import numpy as np
 from helpers import shade_status
 from pyeyesweb.data_models import Recorder
 from pyeyesweb.datasets import load_qualisys_trial
-from pyeyesweb.low_level import KineticEnergy, MotionNoiseDetector
-from pyeyesweb.mid_level import GestureSegmenter, MotionDuration
+from pyeyesweb.low_level import KineticEnergy
+from pyeyesweb.analysis_primitives import ScalarPeakDetector
 
 RATE = 100  # Hz, the sampling rate of the recordings
 
@@ -53,65 +48,60 @@ time = trial.timestamps
 
 
 def make_pipeline():
-    """The four features, built from the skeleton of the trial."""
+    """The two features, built from the skeleton of the trial."""
     return (KineticEnergy(skeleton=trial.skeleton, sampling_rate=RATE),
-            MotionNoiseDetector(skeleton=trial.skeleton, sampling_rate=RATE),
-            GestureSegmenter(firing_threshold=1.0),
-            MotionDuration(sampling_rate=RATE))
+            ScalarPeakDetector(window=20, threshold=1.0))
 
 
-energy, noise, segmenter, durations = make_pipeline()
-print(segmenter.inputs)
+energy, detector = make_pipeline()
+print(detector.inputs)
 
 # %%
-# The loop is four calls per frame. At 3 s we make the segmenter less sensitive by raising its ``firing_threshold`` from 1 to 4
+# The loop is two calls per frame. At 3 s we make the detector less sensitive by raising its ``threshold`` from 1 to 4
 # (a **live** parameter: the new value is used from the next call and nothing is lost). At 6 s we change
-# ``filter_window_length``, the smoothing of the segmenter, from 9 to 7 samples (a **structural** parameter: it shapes the
-# state of the filter, so the segmenter restarts, and the ``reason`` of the next result says so). The rule is in
+# ``window``, the buffer of the detector, from 20 to 30 samples (0.2 s to 0.3 s) (a **structural** parameter: it shapes the
+# state of the buffer, so the detector restarts, and the ``reason`` of the next result says so). The rule is in
 # :doc:`/concepts/time_units_parameters`, and the page of each feature marks its parameters *(live)* or *(structural)*.
 
-log = Recorder(segmenter)
-thresholds, motion = [], []
+log = Recorder(detector)
+thresholds, energies = [], []
 for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 3.0):
-        segmenter.firing_threshold = 4.0          # live: used from the next call, the state is kept
+        detector.threshold = 4.0                  # live: used from the next call, the state is kept
     if np.isclose(stamp, 6.0):
-        segmenter.filter_window_length = 7        # structural: the segmenter restarts and warms up again
+        detector.window = 30                      # structural: the detector restarts and warms up again
     ke = energy.process(frame, timestamp=stamp)
-    flag = noise.process(frame, timestamp=stamp)
-    gesture = segmenter.process(ke.kinetic_energy, flag.is_noisy, timestamp=stamp)
-    phase = durations.process(float(gesture.is_gesturing), timestamp=stamp)
-    log.append(gesture)
-    thresholds.append(segmenter.firing_threshold)
-    motion.append(phase.motion_duration)
+    peak = detector.process(ke.kinetic_energy, timestamp=stamp)
+    log.append(peak)
+    thresholds.append(detector.threshold)
+    energies.append(ke.kinetic_energy)
 
 changed = [(round(float(time[i]), 2), reason) for i, reason in enumerate(log.reasons) if "state reset" in reason]
 print("results with a state reset:", changed)
 print("WARMING_UP rows after the restart:", int(((log.status == 1) & (time > 6.0)).sum()))
-print("parameters now:", segmenter.parameters)
-motion = np.array(motion)
-print("motion phases that ended during the loop:", int(np.isfinite(motion).sum()))
+print("parameters now:", detector.parameters)
+print("peaks found during the loop:", int(np.asarray(log.is_peak).sum()))
 
 # %%
-# The figure shows the smoothed intensity that the segmenter thresholds, the threshold, and the gestures it finds (green). After
-# the first dashed line, the raised threshold lets only the strongest stretches count as gestures, with no gap in the signal; after
-# the second the segmenter warms up again for a few samples (yellow).
+# The figure shows the kinetic energy and the peaks that the detector reports (green lines), and below it the threshold. After the
+# first dashed line, the raised threshold lets only the strongest peaks count, with no gap in the signal; after the second the
+# detector warms up again for a few samples (yellow). A peak is reported a few samples after the maximum itself.
 
 # sphinx_gallery_thumbnail_number = 2
-fig, ax = plt.subplots(figsize=(8, 3.5))
-ax.plot(time, log.smoothed_intensity, lw=1, color="C0", label="smoothed intensity")
-ax.step(time, thresholds, where="post", color="C3", lw=0.9, label="firing_threshold")
-edges = np.flatnonzero(np.diff(np.r_[0, np.asarray(log.is_gesturing).astype(int), 0]))
-for a, b in zip(edges[::2], edges[1::2]):
-    ax.axvspan(time[a], time[min(b, len(time) - 1)], color="C2", alpha=0.25, lw=0)
+fig, (ax, below) = plt.subplots(2, 1, figsize=(8, 4.2), sharex=True, height_ratios=(3, 1))
+ax.plot(time, energies, lw=1, color="C0", label="kinetic energy")
+for moment in time[np.asarray(log.is_peak).astype(bool)]:
+    ax.axvline(moment, color="C2", alpha=0.6, lw=1)
 shade_status(ax, time, log.status, codes=(1,))
 for moment in (3.0, 6.0):
     ax.axvline(moment, color="0.3", ls="--", lw=0.8)
 ax.set_ylim(-0.5, 12)
-ax.set_xlabel("time (s)")
 ax.set_ylabel("kinetic energy (J/kg)")
 ax.legend(loc="upper right", fontsize=8)
 ax.set_title("Live loop on trial 7: a live change and a structural change (dashed)")
+below.step(time, thresholds, where="post", color="C3", lw=0.9)
+below.set_xlabel("time (s)")
+below.set_ylabel("threshold")
 
 # %%
 # **Takeaway.** A live parameter changes a running feature at once and keeps its state; a structural one restarts it, and the
@@ -123,13 +113,12 @@ ax.set_title("Live loop on trial 7: a live change and a structural change (dashe
 # ``run`` is defined as ``reset()`` followed by a loop of ``process``, so a live loop must give the numbers of the batch call
 # as long as no parameter changes. We check it on the first three seconds, before the first change, with a fresh pipeline.
 
-energy, noise, segmenter, durations = make_pipeline()
+energy, detector = make_pipeline()
 first = slice(0, 300)
 batch_energy = energy.run(trial.positions[first], timestamps=time[first]).kinetic_energy
-batch_noise = noise.run(trial.positions[first], timestamps=time[first]).is_noisy
-batch = segmenter.run(batch_energy, batch_noise, timestamps=time[first])
-print("same smoothed intensity as the live loop:", np.allclose(batch.smoothed_intensity, log.smoothed_intensity[first], equal_nan=True))
-print("same gesture flags:", bool(np.array_equal(batch.is_gesturing, log.is_gesturing[first])))
+batch = detector.run(batch_energy, timestamps=time[first])
+print("same energy as the live loop:", np.allclose(batch_energy, np.asarray(energies)[first], equal_nan=True))
+print("same peak flags:", bool(np.array_equal(batch.is_peak, np.asarray(log.is_peak)[first])))
 
 # %%
 # **Takeaway.** Develop a pipeline on recordings with ``run``; the same features give the same numbers when they are fed one
@@ -142,9 +131,8 @@ print("same gesture flags:", bool(np.array_equal(batch.is_gesturing, log.is_gest
 # (:doc:`/concepts/layers`), and each is a summary over the whole excerpt:
 #
 # * ``kinetic energy`` (mean, J/kg): :class:`~pyeyesweb.low_level.KineticEnergy`, how much the whole body moves;
-# * ``gestures per minute`` and ``% gesturing``: the number of gesture starts and the share of time inside a gesture, from the
-#   segmenter of the chain above; ``motion phase`` (median, s): :class:`~pyeyesweb.mid_level.MotionDuration`, the typical
-#   length of a gesture (0 if none ended);
+# * ``peaks per minute``: the number of peaks of the energy that the peak detector of the chain above reports in the excerpt,
+#   a measure of how often the body bursts into movement;
 # * ``smoothness`` (median): :class:`~pyeyesweb.low_level.SpectralArcLength` of the speed of the right hand, computed by
 #   :class:`~pyeyesweb.low_level.Kinematics`, in windows of 2 s; it is negative and closer to 0 means smoother
 #   (:doc:`/theory/smoothness`);
@@ -167,9 +155,7 @@ def trial_row(number, start, stop):
     data = load_qualisys_trial(number, start=start, stop=stop).to_units("m")
     stamps, positions, skeleton = data.timestamps, data.positions, data.skeleton
     intensity = KineticEnergy(skeleton=skeleton, sampling_rate=RATE).run(positions, timestamps=stamps).kinetic_energy
-    flag = MotionNoiseDetector(skeleton=skeleton, sampling_rate=RATE).run(positions, timestamps=stamps).is_noisy
-    gestures = GestureSegmenter(firing_threshold=1.0).run(intensity, flag, timestamps=stamps)
-    phases = MotionDuration(sampling_rate=RATE).run(gestures.is_gesturing.astype(float), timestamps=stamps).motion_duration
+    peaks = ScalarPeakDetector(window=20, threshold=1.0).run(intensity, timestamps=stamps).is_peak
     speed = Kinematics(sampling_rate=RATE).run(data.joint("Right_Hand"), timestamps=stamps).velocity
     arc = SpectralArcLength(window=200, hop=100, sampling_rate=RATE).run(np.asarray(speed), timestamps=stamps)
     symmetry = Symmetry(skeleton=skeleton, reference_point="Neck").run(positions).symmetry
@@ -179,17 +165,14 @@ def trial_row(number, start, stop):
     return {
         "trial": number, "task": data.task, "condition": data.condition,
         "kinetic energy (J/kg)": np.mean(intensity),
-        "gestures per minute": 60.0 * gestures.is_gesture_start.sum() / data.duration,
-        "% gesturing": 100.0 * gestures.is_gesturing.mean(),
-        "motion phase (s)": float(np.nanmedian(phases)) if np.isfinite(phases).any() else 0.0,
+        "peaks per minute": 60.0 * peaks.sum() / data.duration,
         "smoothness": np.median(arc.spectral_arc_length[arc.ok]),
         "symmetry": np.mean(symmetry),
         "phase locking": np.mean(locking.phase_locking_value[locking.ok]),
     }
 
 
-FEATURES = ["kinetic energy (J/kg)", "gestures per minute", "% gesturing", "motion phase (s)", "smoothness", "symmetry",
-            "phase locking"]
+FEATURES = ["kinetic energy (J/kg)", "peaks per minute", "smoothness", "symmetry", "phase locking"]
 synchronization = pd.DataFrame([trial_row(number, 5, 21) for number in (3, 4, 5, 6, 7, 8)]).set_index("trial")
 smoothness = pd.DataFrame([trial_row(number, 0, 12) for number in (11, 12, 13, 14)]).set_index("trial")
 print(synchronization.round(2).to_string())
@@ -247,7 +230,7 @@ fig.tight_layout()
 # A nearest-centroid comparison
 # -----------------------------
 # The simplest rule that uses all the features at once: the **centroid** of a condition is the mean of the z-scores of its
-# trials; a trial is assigned to the condition whose centroid is nearest (Euclidean distance over the seven features). To
+# trials; a trial is assigned to the condition whose centroid is nearest (Euclidean distance over the five features). To
 # avoid judging a trial with itself, each trial is left out in turn (**leave-one-out**) and assigned with the centroids of the
 # other trials. With so few trials this is a way to look at the features together, not an estimate of how well the conditions
 # could be told apart in general.
@@ -303,10 +286,10 @@ for title, table in groups.items():
 # %%
 # Try it
 # ------
-# 1. In the live loop, lower the threshold again at 8 s (``firing_threshold = 0.5``) and print the number of gesture starts in
+# 1. In the live loop, lower the threshold again at 8 s (``threshold = 0.5``) and print the number of peaks in
 #    each of the three stretches of the trial (before 3 s, 3 s to 8 s, after 8 s).
-# 2. Add two columns to the first table: the median pause (``pause_duration`` of ``MotionDuration``) and the ``Symmetry`` with
-#    ``method="reflection"``. Do the assignments of the leave-one-out rule change?
+# 2. Add two columns to the first table: the median interval between peaks (from the times of the samples where ``is_peak`` is
+#    true) and the ``Symmetry`` with ``method="reflection"``. Do the assignments of the leave-one-out rule change?
 # 3. Trials 10 and 19 are other tasks (a squat with weight shift, balance on tiptoes). Compute their rows with ``trial_row`` and
 #    print which centroid of the first comparison each is nearer to, with the z-scores made from the means and standard
 #    deviations of trials 3 to 8. What does the answer say about a rule that always names one of two conditions?
@@ -314,21 +297,20 @@ for title, table in groups.items():
 # %%
 # Solutions
 # ---------
-# Exercise 1. The same loop with a third threshold; the gesture starts are counted per stretch.
+# Exercise 1. The same loop with a third threshold; the peaks are counted per stretch.
 
-energy, noise, segmenter, durations = make_pipeline()
-starts = []
+energy, detector = make_pipeline()
+found = []
 for frame, stamp in zip(trial.positions, time):
     if np.isclose(stamp, 3.0):
-        segmenter.firing_threshold = 4.0
+        detector.threshold = 4.0
     if np.isclose(stamp, 8.0):
-        segmenter.firing_threshold = 0.5
+        detector.threshold = 0.5
     ke = energy.process(frame, timestamp=stamp)
-    gesture = segmenter.process(ke.kinetic_energy, noise.process(frame, timestamp=stamp).is_noisy, timestamp=stamp)
-    starts.append(bool(gesture.is_gesture_start))
-starts = np.array(starts)
+    found.append(bool(detector.process(ke.kinetic_energy, timestamp=stamp).is_peak))
+found = np.array(found)
 for label, (a, b) in {"before 3 s": (0, 3), "3 s to 8 s": (3, 8), "after 8 s": (8, 10)}.items():
-    print(f"{label:<11} gesture starts: {int(starts[int(a * RATE):int(b * RATE)].sum())}")
+    print(f"{label:<11} peaks: {int(found[int(a * RATE):int(b * RATE)].sum())}")
 
 # %%
 # Exercise 2. Two extra columns, then the same leave-one-out rule over nine features.
@@ -338,18 +320,18 @@ def extra_columns(number):
     data = load_qualisys_trial(number, start=5, stop=21).to_units("m")
     stamps = data.timestamps
     intensity = KineticEnergy(skeleton=data.skeleton, sampling_rate=RATE).run(data.positions, timestamps=stamps).kinetic_energy
-    gestures = GestureSegmenter(firing_threshold=1.0).run(intensity, timestamps=stamps)
-    pauses = MotionDuration(sampling_rate=RATE).run(gestures.is_gesturing.astype(float), timestamps=stamps).pause_duration
+    flags = ScalarPeakDetector(window=20, threshold=1.0).run(intensity, timestamps=stamps).is_peak
+    gaps = np.diff(np.asarray(stamps)[np.asarray(flags).astype(bool)])
     reflection = Symmetry(skeleton=data.skeleton, method="reflection").run(data.positions).pair_symmetry
-    return {"pause (s)": float(np.nanmedian(pauses)) if np.isfinite(pauses).any() else 0.0,
+    return {"peak interval (s)": float(np.median(gaps)) if len(gaps) else 0.0,
             "reflection symmetry": float(np.mean(reflection))}
 
 
 extended = synchronization.join(pd.DataFrame({number: extra_columns(number) for number in synchronization.index}).T)
-FEATURES = FEATURES + ["pause (s)", "reflection symmetry"]
+FEATURES = FEATURES + ["peak interval (s)", "reflection symmetry"]
 result = leave_one_out(extended)
 FEATURES = FEATURES[:-2]
-print(extended[["pause (s)", "reflection symmetry"]].round(2).to_string())
+print(extended[["peak interval (s)", "reflection symmetry"]].round(2).to_string())
 print("assigned to their own condition:", int((result.condition == result.assigned).sum()), "of", len(result))
 
 # %%
@@ -371,7 +353,7 @@ for number in (10, 19):
 # %%
 # Next steps
 # ----------
-# This tutorial used features of the points, the low and mid levels and the analysis primitives. Each tutorial below covers one
+# This tutorial used features of the points, the low level and the analysis primitives. Each tutorial below covers one
 # layer in depth:
 #
 # * :ref:`sphx_glr_tutorials_01_getting_started_plot_01_first_feature.py` and
@@ -380,7 +362,6 @@ for number in (10, 19):
 #   :ref:`sphx_glr_tutorials_02_physical_signals_plot_04_images.py`: signals from points and from images.
 # * :ref:`sphx_glr_tutorials_03_low_level_plot_05_motion.py` and
 #   :ref:`sphx_glr_tutorials_03_low_level_plot_06_shape.py`: motion, smoothness and the shape of the body.
-# * :ref:`sphx_glr_tutorials_04_mid_level_plot_07_gestures.py`: gestures, suddenness and impulsivity.
 # * :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_08_primitives.py`,
 #   :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09a_synchronization_signals.py` and
 #   :ref:`sphx_glr_tutorials_05_analysis_primitives_plot_09b_synchronization_events.py`: entropy, rarity, periodicity and

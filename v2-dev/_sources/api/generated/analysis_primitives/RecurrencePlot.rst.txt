@@ -5,7 +5,7 @@ RecurrencePlot
 
 Recurrence plot of a window of states: when a movement returns close to a state it has visited before.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: RecurrencePlot (RecurrenceMatrix)`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: RecurrencePlot (RecurrenceMatrix)` :bdg-light:`Complexity`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 

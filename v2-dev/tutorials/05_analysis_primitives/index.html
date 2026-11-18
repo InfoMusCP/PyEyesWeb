@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Analysis primitives &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Analysis primitives &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,7 +60,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Analysis primitives: complexity, rarity, periodicity" href="plot_08_primitives.html" />
-    <link rel="prev" title="Gestures and qualities" href="../04_mid_level/plot_07_gestures.html" />
+    <link rel="prev" title="Low level: shape and posture" href="../03_low_level/plot_06_shape.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -419,17 +419,13 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_physical_signals/index.html">Physical signals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02_physical_signals/plot_03_points.html">Physical signals: points and models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_physical_signals/plot_03_points.html">Physical signals: points in a grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02_physical_signals/plot_04_images.html">Physical signals: images</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03_low_level/index.html">Low-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03_low_level/plot_05_motion.html">Low level: motion and smoothness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03_low_level/plot_06_shape.html">Low level: shape and posture</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04_mid_level/index.html">Mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04_mid_level/plot_07_gestures.html">Gestures and qualities</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a aria-current="page" class="current reference internal" href="#">Analysis primitives</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -505,13 +501,13 @@
   <section id="analysis-primitives">
 <h1>Analysis primitives<a class="headerlink" href="#analysis-primitives" title="Link to this heading">#</a></h1>
 <p>Metrics that apply to any signal at any layer: entropy, rarity, periodicity, peaks, and the synchronization family with the high-level dominance.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate. It answers one question about any series of numbers. This tutorial uses six of them: how irregular a signal is at one and at several time scales (``SampleEntropy``, CoarseGraining, MultiScaleEntropy), who is the most regular of a group (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and which period repeats (``Periodicity``)."><img alt="" src="../../_images/sphx_glr_plot_08_primitives_thumb.png" />
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate. It answers one question about any series of numbers. This tutorial uses five of them: how irregular a signal is at one and at several time scales (``SampleEntropy``, MultiScaleEntropy), who is the most regular of a group (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and which period repeats (``Periodicity``)."><img alt="" src="../../_images/sphx_glr_plot_08_primitives_thumb.png" />
 <p><a class="reference internal" href="plot_08_primitives.html"><span class="doc">Analysis primitives: complexity, rarity, periodicity</span></a></p>
   <div class="sphx-glr-thumbnail-title">Analysis primitives: complexity, rarity, periodicity</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Two hands that rise and fall together, a group that breathes as one: synchronization is how far several movements are coordinated in time. This first of two tutorials compares continuous signals: it measures phase locking, correlation, partial correlation, nonlinear interdependence and recurrence, on a performer who moves both arms together (synchronised) or not (unsynchronised)."><img alt="" src="../../_images/sphx_glr_plot_09a_synchronization_signals_thumb.png" />
+</div><div class="sphx-glr-thumbcontainer" tooltip="Two hands that rise and fall together, a group that breathes as one: synchronization is how far several movements are coordinated in time. This first of two tutorials compares continuous signals: it measures phase locking, correlation, partial correlation and recurrence, on a performer who moves both arms together (synchronised) or not (unsynchronised)."><img alt="" src="../../_images/sphx_glr_plot_09a_synchronization_signals_thumb.png" />
 <p><a class="reference internal" href="plot_09a_synchronization_signals.html"><span class="doc">Synchronization of continuous signals</span></a></p>
   <div class="sphx-glr-thumbnail-title">Synchronization of continuous signals</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Often what is shared between two people is a set of moments, not a continuous curve: the instants of a clap, of a step, of a change of direction. This second tutorial on synchronization turns the movement of two hands into trains of events and measures how far the events of one train meet those of the other, with and without a chosen tolerance. It also counts a given order of events and follows a staged process in which several measures are reached one after the other."><img alt="" src="../../_images/sphx_glr_plot_09b_synchronization_events_thumb.png" />
+</div><div class="sphx-glr-thumbcontainer" tooltip="Often what is shared between two people is a set of moments, not a continuous curve: the instants of a clap, of a step, of a change of direction. This second tutorial on synchronization turns the movement of two hands into trains of events and measures how far the events of one train meet those of the other, within a chosen tolerance."><img alt="" src="../../_images/sphx_glr_plot_09b_synchronization_events_thumb.png" />
 <p><a class="reference internal" href="plot_09b_synchronization_events.html"><span class="doc">Synchronization of events</span></a></p>
   <div class="sphx-glr-thumbnail-title">Synchronization of events</div>
 </div></div><div class="toctree-wrapper compound">
@@ -538,12 +534,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../04_mid_level/plot_07_gestures.html"
+       href="../03_low_level/plot_06_shape.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Gestures and qualities</p>
+        <p class="prev-next-title">Low level: shape and posture</p>
       </div>
     </a>
     <a class="right-next"
@@ -606,7 +602,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

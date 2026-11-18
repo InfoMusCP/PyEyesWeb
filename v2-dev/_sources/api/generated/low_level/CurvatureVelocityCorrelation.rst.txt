@@ -5,7 +5,7 @@ CurvatureVelocityCorrelation
 
 Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: smoothnessindex (Smoothness)`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: smoothnessindex (Smoothness)` :bdg-light:`Trajectory` :bdg-light:`Smoothness`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Smoothness </theory/smoothness>`.
 
@@ -28,9 +28,6 @@ Parameters
    * - ``sampling_rate``
      - ``None``
      - ``Optional[float]``
-   * - ``velocity_threshold``
-     - ``0.001``
-     - ``float``
    * - ``standard_deviation_threshold``
      - ``0.0001``
      - ``float``
@@ -44,7 +41,7 @@ Parameters
      - ``9``
      - ``int``
    * - ``correlation_type``
-     - ``'pearson'``
+     - ``'simplified'``
      - ``Literal['pearson', 'simplified']``
    * - ``differentiate``
      - ``False``
@@ -98,16 +95,16 @@ Outputs
      - (n,)
      - \<length\>/s
      - velocity per sample
-   * - ``curvature_std``
+   * - ``log_curvature_std``
      - ``float``
      - scalar
-     - 1/\<length\>
      - 
-   * - ``velocity_std``
+     - standard deviation of log curvature
+   * - ``log_speed_std``
      - ``float``
      - scalar
-     - \<length\>/s
      - 
+     - standard deviation of log speed
 
 .. py:currentmodule:: pyeyesweb.low_level
 

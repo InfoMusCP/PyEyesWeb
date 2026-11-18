@@ -5,7 +5,7 @@ PartialRecurrenceSynchronization
 
 Partial correlation of a correlation matrix: the direct synchronization between each pair of signals.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: PARS (PartialRecurrenceSynchronizationMatrix)`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: PARS (PartialRecurrenceSynchronizationMatrix)` :bdg-light:`Coordination`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 
@@ -30,7 +30,7 @@ Inputs
      - matrix
      - (n, n)
      - 
-     - square matrix of CorrelationsMatrix
+     - square correlation matrix
 
 Outputs
 -------

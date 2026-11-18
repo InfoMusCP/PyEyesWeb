@@ -35,6 +35,5 @@ contraction and expansion, balance, impulsive and light movements. The tutorials
    01_getting_started/index
    02_physical_signals/index
    03_low_level/index
-   04_mid_level/index
    05_analysis_primitives/index
    06_capstone/index

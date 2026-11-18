@@ -22,8 +22,8 @@ Analysis primitives: complexity, rarity, periodicity
 ====================================================
 
 An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate.
-It answers one question about any series of numbers. This tutorial uses six of them: how irregular a signal is at one and
-at several time scales (``SampleEntropy``, ``CoarseGraining``, ``MultiScaleEntropy``), who is the most regular of a group
+It answers one question about any series of numbers. This tutorial uses five of them: how irregular a signal is at one and
+at several time scales (``SampleEntropy``, ``MultiScaleEntropy``), who is the most regular of a group
 (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and
 which period repeats (``Periodicity``).
 
@@ -112,13 +112,13 @@ Sample entropy: how regular is the signal?
 ------------------------------------------
 :class:`~pyeyesweb.analysis_primitives.SampleEntropy` measures irregularity. Two stretches of the signal of ``k`` samples
 *match* when all their samples differ by less than a tolerance; the entropy is large when stretches that match for ``k``
-samples rarely still match at the next one, that is when the signal is hard to predict. It returns one value for each
-template length 1 to ``embedding_dimension``, in nats. The tolerance is, by default, 0.2 times the standard deviation of
-the window, so the numbers do not depend on the unit of the signal.
+samples rarely still match at the next one, that is when the signal is hard to predict. It returns one number, in nats,
+for the template length ``m = embedding_dimension`` (2 by default). The tolerance is, by default, 0.2 times the standard
+deviation of the window, so the numbers do not depend on the unit of the signal.
 
 We use a window of 3 s (300 samples) that moves by 0.5 s (``hop=50``).
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-97
+.. GENERATED FROM PYTHON SOURCE LINES 76-98
 
 .. code-block:: Python
 
@@ -127,15 +127,16 @@ We use a window of 3 s (300 samples) that moves by 0.5 s (``hop=50``).
 
     entropy = {}
     for name, values in speeds.items():
-        entropy[name] = SampleEntropy(window=300, hop=50, embedding_dimension=4).run(values, timestamps=time)
-        mean_entropy = ok_rows(entropy[name], "sample_entropy").mean(axis=0)
-        print(f"{name:<22} mean entropy for template lengths 1 to 4: {np.round(mean_entropy, 2)}")
+        entropy[name] = {length: SampleEntropy(window=300, hop=50, embedding_dimension=length).run(values, timestamps=time)
+                         for length in (2, 3)}
+        mean_entropy = [ok_rows(entropy[name][length], "sample_entropy").mean() for length in (2, 3)]
+        print(f"{name:<22} mean entropy for template lengths 2 and 3: {np.round(mean_entropy, 2)}")
 
     fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharey=True)
-    for ax, (name, recorder) in zip(axes, entropy.items()):
-        values = np.asarray(recorder.sample_entropy)
-        ax.plot(recorder.timestamps[recorder.ok], values[recorder.ok, 1], label="template length 2")
-        ax.plot(recorder.timestamps[recorder.ok], values[recorder.ok, 3], label="template length 4")
+    for ax, (name, recorders) in zip(axes, entropy.items()):
+        for length, recorder in recorders.items():
+            ax.plot(recorder.timestamps[recorder.ok], np.asarray(recorder.sample_entropy)[recorder.ok], label=f"template length {length}")
+        recorder = recorders[2]
         shade_status(ax, recorder.timestamps, recorder.status, codes=(1,))
         ax.set_title(name, fontsize=9, loc="left")
         ax.set_xlabel("time (s)")
@@ -156,43 +157,40 @@ We use a window of 3 s (300 samples) that moves by 0.5 s (``hop=50``).
 
  .. code-block:: none
 
-    trial 11 (smooth)      mean entropy for template lengths 1 to 4: [1.71 0.12 0.12 0.12]
-    trial 12 (not smooth)  mean entropy for template lengths 1 to 4: [1.86 0.36 0.34 0.23]
+    trial 11 (smooth)      mean entropy for template lengths 2 and 3: [0.12 0.12]
+    trial 12 (not smooth)  mean entropy for template lengths 2 and 3: [0.34 0.23]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-104
+.. GENERATED FROM PYTHON SOURCE LINES 99-105
 
 The plot shows the entropy of the windows that end at each time; the yellow band is the warm-up, while the first window
 fills (see :doc:`/concepts/results`). The not smooth execution is the less predictable one, and its entropy is higher at
-every template length (see the printed means). Template length 1 compares single samples and is mostly a measure of the
-amplitude distribution; the longer templates are the usual "sample entropy".
+both template lengths (see the printed means). The usual choice is ``m = 2``; compare values between gestures, because the
+absolute number depends on the window, on the tolerance and on the sampling rate.
 
 **Takeaway.** A larger sample entropy means a less predictable signal; the window must hold at least a few hundred samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-111
+.. GENERATED FROM PYTHON SOURCE LINES 107-113
 
 Seeing a signal at a coarser scale
 ----------------------------------
-A signal can be irregular only at its finest scale. :class:`~pyeyesweb.analysis_primitives.CoarseGraining` replaces each
-group of ``factor`` consecutive samples by their mean, which is the same signal sampled ``factor`` times more slowly. It is
-the first step of the multi-scale analysis. Here a window of 0.5 s (50 samples) is reduced with ``factor=5``, to 10 values.
+A signal can be irregular only at its finest scale. **Coarse graining** replaces each group of ``factor`` consecutive samples
+by their mean, which is the same signal sampled ``factor`` times more slowly. It is the first step of the multi-scale
+analysis, done inside ``MultiScaleEntropy``; in NumPy it is one line. Here the last 0.5 s (50 samples) are reduced with a
+factor of 5, to 10 values.
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-130
+.. GENERATED FROM PYTHON SOURCE LINES 113-128
 
 .. code-block:: Python
 
 
-    from pyeyesweb.analysis_primitives import CoarseGraining
-
     values = speeds["trial 12 (not smooth)"]
-    coarse = CoarseGraining(window=50, factor=5).run(values, timestamps=time)
-    print("calls with a result:", int(coarse.ok.sum()), "of", len(coarse), "| status of the first calls:", coarse.status[:3], "...")
-    last = np.flatnonzero(coarse.ok)[-1]
+    last = len(values) - 1
     window_time = time[last - 49:last + 1]
-    means = ok_rows(coarse, "coarse_grained")[-1, 0]
-    print("coarse series:", means.shape, "values; the same as the block means:", bool(np.allclose(means, values[last - 49:last + 1].reshape(10, 5).mean(axis=1))))
+    means = values[last - 49:last + 1].reshape(10, 5).mean(axis=1)  # groups of 5 samples, averaged
+    print("coarse series:", means.shape, "values from 50 samples")
 
     fig, ax = plt.subplots(figsize=(8, 2.8))
     ax.plot(window_time, values[last - 49:last + 1], "o-", ms=3, lw=0.8, label="speed, 50 samples")
@@ -215,20 +213,16 @@ the first step of the multi-scale analysis. Here a window of 0.5 s (50 samples) 
 
  .. code-block:: none
 
-    calls with a result: 251 of 1300 | status of the first calls: [1 1 1] ...
-    coarse series: (10,) values; the same as the block means: True
+    coarse series: (10,) values from 50 samples
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-135
-
-The series is not recomputed on every window: after the first full window it comes every ``factor`` windows (here every
-fifth sample), and the calls in between have the status ``NO_OUTPUT``.
+.. GENERATED FROM PYTHON SOURCE LINES 129-130
 
 **Takeaway.** ``factor`` samples are averaged into one; a larger factor is a slower view of the same movement.
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-147
+.. GENERATED FROM PYTHON SOURCE LINES 132-142
 
 Multi-scale entropy and the complexity index
 --------------------------------------------
@@ -241,7 +235,7 @@ With the defaults (a window of 3000 samples) it needs 30 s of data; the examples
 ``minimum_points``, the number of samples that the coarsest scale must still have, to 100 (the estimate is coarser). A
 synthetic pair makes the idea clear: noise against a regular oscillation with a little noise.
 
-.. GENERATED FROM PYTHON SOURCE LINES 147-175
+.. GENERATED FROM PYTHON SOURCE LINES 142-170
 
 .. code-block:: Python
 
@@ -286,7 +280,7 @@ synthetic pair makes the idea clear: noise against a regular oscillation with a 
 
  .. code-block:: none
 
-    white noise                          complexity index 12.9
+    white noise                          complexity index 9.6
     oscillation (0.5 s period) + noise   complexity index 2.4
     trial 11 (smooth)                    complexity index 0.7
     trial 12 (not smooth)                complexity index 0.9
@@ -294,7 +288,7 @@ synthetic pair makes the idea clear: noise against a regular oscillation with a 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 176-181
+.. GENERATED FROM PYTHON SOURCE LINES 171-176
 
 The noise keeps a high entropy at all scales and has a large index; the oscillation is predictable and has a small one. In
 the recordings the not smooth figure-eight has the larger index.
@@ -302,7 +296,7 @@ the recordings the not smooth figure-eight has the larger index.
 **Takeaway.** The complexity index summarises the entropy curve in one number: high for a signal that stays irregular at
 slower scales.
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-194
+.. GENERATED FROM PYTHON SOURCE LINES 178-189
 
 Who is the most regular? Dominance in a group
 ---------------------------------------------
@@ -316,7 +310,7 @@ We have a single person, so the "participants" here are four body parts of trial
 speeds of the head, both hands and the right foot. One ``MultiScaleEntropy`` handles the four signals, which guarantees
 identical settings. The window is 12 s and moves by 3 s.
 
-.. GENERATED FROM PYTHON SOURCE LINES 194-220
+.. GENERATED FROM PYTHON SOURCE LINES 189-215
 
 .. code-block:: Python
 
@@ -365,7 +359,7 @@ identical settings. The window is 12 s and moves by 3 s.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 221-226
+.. GENERATED FROM PYTHON SOURCE LINES 216-221
 
 A score of 1 minus a ratio is relative to the group: the part with the lowest index has the highest score, the one with the
 highest index has 0. The same feature serves for the members of a quartet or of a dance group, one signal per person.
@@ -373,7 +367,7 @@ highest index has 0. The same feature serves for the members of a quartet or of 
 **Takeaway.** ``MultiScaleEntropy`` gives one complexity index per signal; ``EnsembleDominance`` turns the indices of a group
 into scores and a leader.
 
-.. GENERATED FROM PYTHON SOURCE LINES 228-242
+.. GENERATED FROM PYTHON SOURCE LINES 223-237
 
 Rarity: how unusual is the newest value?
 ----------------------------------------
@@ -390,7 +384,7 @@ We apply both to the kinetic energy of the whole body (:class:`~pyeyesweb.low_le
 heavy movement. The energy spans several orders of magnitude, so the ``information`` method receives its logarithm with
 bins of 0.1. The memory is 3 s (300 samples).
 
-.. GENERATED FROM PYTHON SOURCE LINES 242-274
+.. GENERATED FROM PYTHON SOURCE LINES 237-269
 
 .. code-block:: Python
 
@@ -445,7 +439,7 @@ bins of 0.1. The memory is 3 s (300 samples).
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 276-283
+.. GENERATED FROM PYTHON SOURCE LINES 271-278
 
 Both methods rise at bursts of energy that differ from the last seconds and decay as the memory adapts. The dotted lines are
 the cue times of trial 21 (the first two of the README list that fall inside the trimmed recording) and the "light" moments
@@ -455,7 +449,7 @@ The ``information`` method also has a ``measure="contrast"`` mode that compares 
 sample: the rarity of an input is large when it sits in a bin that the other inputs do not use. Here three body parts of
 trial 21, in the same bins.
 
-.. GENERATED FROM PYTHON SOURCE LINES 283-298
+.. GENERATED FROM PYTHON SOURCE LINES 278-293
 
 .. code-block:: Python
 
@@ -492,12 +486,12 @@ trial 21, in the same bins.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 299-301
+.. GENERATED FROM PYTHON SOURCE LINES 294-296
 
 **Takeaway.** Rarity flags values that the recent past makes unusual; ``information`` needs bin widths in the units of the
 signal, ``mode_distance`` does not.
 
-.. GENERATED FROM PYTHON SOURCE LINES 303-311
+.. GENERATED FROM PYTHON SOURCE LINES 298-306
 
 Peaks: when does a movement burst happen?
 -----------------------------------------
@@ -508,7 +502,7 @@ of the signal, not a level). Only maxima are reported, and a peak comes after th
 On the horizontal position of the right hand in trial 7 (clapping hands), in metres around its mean, a threshold of 3 cm and
 a buffer of 0.4 s mark the maxima of the swings.
 
-.. GENERATED FROM PYTHON SOURCE LINES 311-329
+.. GENERATED FROM PYTHON SOURCE LINES 306-324
 
 .. code-block:: Python
 
@@ -542,7 +536,7 @@ a buffer of 0.4 s mark the maxima of the swings.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 330-337
+.. GENERATED FROM PYTHON SOURCE LINES 325-332
 
 The markers come after the maximum, once the buffer holds the fall that follows it (a delay of up to the buffer length), and the minima are not marked. A larger threshold keeps only the large swings (the green markers); both parameters have to
 suit the amplitude and the rhythm of the signal. The ``is_peak`` train is what other features take as events (see
@@ -552,7 +546,7 @@ regularity of a pulse train).
 
 **Takeaway.** Choose ``threshold`` in the units of your signal and ``window`` as long as the swings you want to detect.
 
-.. GENERATED FROM PYTHON SOURCE LINES 339-345
+.. GENERATED FROM PYTHON SOURCE LINES 334-340
 
 Periodicity: which period repeats?
 ----------------------------------
@@ -561,7 +555,7 @@ periodicity transform, and a power between 0 and 1 for each (1 for a perfectly p
 the ``best_periods`` strongest; ``method="small2large"`` searches from the smallest period upward. A window should hold
 several repetitions. First a signal with a known answer: a sine of period 80 samples with noise.
 
-.. GENERATED FROM PYTHON SOURCE LINES 345-353
+.. GENERATED FROM PYTHON SOURCE LINES 340-348
 
 .. code-block:: Python
 
@@ -582,17 +576,17 @@ several repetitions. First a signal with a known answer: a sine of period 80 sam
  .. code-block:: none
 
     synthetic sine, period 80 samples, mbest      : periods [ 80. 266. 240.], powers [0.97 0.14 0.12]
-    synthetic sine, period 80 samples, small2large: periods [ 77.  81. 149.], powers [0.32 0.22 0.21]
+    synthetic sine, period 80 samples, small2large: periods [79. 76. 83.], powers [0.19 0.18 0.13]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 354-356
+.. GENERATED FROM PYTHON SOURCE LINES 349-351
 
 Now the clapping hand (trial 7), in a window of 3 s that holds about four claps. The period is also read from the autocorrelation
 of the whole 15 s recording, as an independent reading, and the powers of the detected periods are drawn.
 
-.. GENERATED FROM PYTHON SOURCE LINES 356-374
+.. GENERATED FROM PYTHON SOURCE LINES 351-369
 
 .. code-block:: Python
 
@@ -632,7 +626,7 @@ of the whole 15 s recording, as an independent reading, and the powers of the de
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 375-380
+.. GENERATED FROM PYTHON SOURCE LINES 370-375
 
 The strongest period is the interval between two claps. The other candidates are multiples or neighbours of it, with lower
 power: read the power as the strength of the repetition at that period, and look for the smallest period with a high power.
@@ -640,7 +634,7 @@ power: read the power as the strength of the repetition at that period, and look
 **Takeaway.** ``periods`` are in samples (divide by the sampling rate for seconds) and ``powers`` say how strongly the window
 repeats at each.
 
-.. GENERATED FROM PYTHON SOURCE LINES 382-389
+.. GENERATED FROM PYTHON SOURCE LINES 377-384
 
 Try it
 ------
@@ -650,13 +644,13 @@ Try it
 3. ``alpha`` scales the ``mode_distance`` rarity. Run it with ``alpha=1`` and ``alpha=2`` on the energy of trial 21 and
    compare the largest value of each.
 
-.. GENERATED FROM PYTHON SOURCE LINES 391-394
+.. GENERATED FROM PYTHON SOURCE LINES 386-389
 
 Solutions
 ---------
 Exercise 1. The tolerance changes the numbers but, here, not the order of the two trials.
 
-.. GENERATED FROM PYTHON SOURCE LINES 394-402
+.. GENERATED FROM PYTHON SOURCE LINES 389-397
 
 .. code-block:: Python
 
@@ -665,7 +659,7 @@ Exercise 1. The tolerance changes the numbers but, here, not the order of the tw
         means = {}
         for name, values in speeds.items():
             recorder = SampleEntropy(window=300, hop=50, embedding_dimension=2, relative_tolerance=tolerance).run(values)
-            means[name] = ok_rows(recorder, "sample_entropy")[:, 1].mean()
+            means[name] = ok_rows(recorder, "sample_entropy").mean()
         print(f"relative tolerance {tolerance}:", {name: round(float(value), 2) for name, value in means.items()})
 
 
@@ -676,17 +670,17 @@ Exercise 1. The tolerance changes the numbers but, here, not the order of the tw
 
  .. code-block:: none
 
-    relative tolerance 0.1: {'trial 11 (smooth)': 0.25, 'trial 12 (not smooth)': 0.68}
-    relative tolerance 0.4: {'trial 11 (smooth)': 0.06, 'trial 12 (not smooth)': 0.17}
+    relative tolerance 0.1: {'trial 11 (smooth)': 0.26, 'trial 12 (not smooth)': 0.41}
+    relative tolerance 0.4: {'trial 11 (smooth)': 0.06, 'trial 12 (not smooth)': 0.2}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 403-404
+.. GENERATED FROM PYTHON SOURCE LINES 398-399
 
 Exercise 2. The peaks of the small swings disappear first, then all of them once the threshold exceeds the swing.
 
-.. GENERATED FROM PYTHON SOURCE LINES 404-409
+.. GENERATED FROM PYTHON SOURCE LINES 399-404
 
 .. code-block:: Python
 
@@ -711,11 +705,11 @@ Exercise 2. The peaks of the small swings disappear first, then all of them once
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 410-411
+.. GENERATED FROM PYTHON SOURCE LINES 405-406
 
 Exercise 3. The score is proportional to ``alpha``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 411-417
+.. GENERATED FROM PYTHON SOURCE LINES 406-412
 
 .. code-block:: Python
 
@@ -738,7 +732,7 @@ Exercise 3. The score is proportional to ``alpha``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 418-424
+.. GENERATED FROM PYTHON SOURCE LINES 413-419
 
 Next steps
 ----------

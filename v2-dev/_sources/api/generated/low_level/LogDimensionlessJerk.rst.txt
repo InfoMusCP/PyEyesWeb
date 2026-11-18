@@ -5,7 +5,7 @@ LogDimensionlessJerk
 
 Log dimensionless jerk of a speed or acceleration profile: smoothness from the jerk of the movement.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-light:`Smoothness`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Smoothness </theory/smoothness>`.
 

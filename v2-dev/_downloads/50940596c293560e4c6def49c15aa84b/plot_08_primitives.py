@@ -3,8 +3,8 @@ Analysis primitives: complexity, rarity, periodicity
 ====================================================
 
 An analysis primitive does not care what its signal is: the speed of a hand, the kinetic energy of the body, a coordinate.
-It answers one question about any series of numbers. This tutorial uses six of them: how irregular a signal is at one and
-at several time scales (``SampleEntropy``, ``CoarseGraining``, ``MultiScaleEntropy``), who is the most regular of a group
+It answers one question about any series of numbers. This tutorial uses five of them: how irregular a signal is at one and
+at several time scales (``SampleEntropy``, ``MultiScaleEntropy``), who is the most regular of a group
 (``EnsembleDominance``), how unusual the newest value is (``Rarity``), when a peak happens (``ScalarPeakDetector``) and
 which period repeats (``Periodicity``).
 
@@ -68,9 +68,9 @@ fig.tight_layout()
 # ------------------------------------------
 # :class:`~pyeyesweb.analysis_primitives.SampleEntropy` measures irregularity. Two stretches of the signal of ``k`` samples
 # *match* when all their samples differ by less than a tolerance; the entropy is large when stretches that match for ``k``
-# samples rarely still match at the next one, that is when the signal is hard to predict. It returns one value for each
-# template length 1 to ``embedding_dimension``, in nats. The tolerance is, by default, 0.2 times the standard deviation of
-# the window, so the numbers do not depend on the unit of the signal.
+# samples rarely still match at the next one, that is when the signal is hard to predict. It returns one number, in nats,
+# for the template length ``m = embedding_dimension`` (2 by default). The tolerance is, by default, 0.2 times the standard
+# deviation of the window, so the numbers do not depend on the unit of the signal.
 #
 # We use a window of 3 s (300 samples) that moves by 0.5 s (``hop=50``).
 
@@ -78,15 +78,16 @@ from pyeyesweb.analysis_primitives import SampleEntropy
 
 entropy = {}
 for name, values in speeds.items():
-    entropy[name] = SampleEntropy(window=300, hop=50, embedding_dimension=4).run(values, timestamps=time)
-    mean_entropy = ok_rows(entropy[name], "sample_entropy").mean(axis=0)
-    print(f"{name:<22} mean entropy for template lengths 1 to 4: {np.round(mean_entropy, 2)}")
+    entropy[name] = {length: SampleEntropy(window=300, hop=50, embedding_dimension=length).run(values, timestamps=time)
+                     for length in (2, 3)}
+    mean_entropy = [ok_rows(entropy[name][length], "sample_entropy").mean() for length in (2, 3)]
+    print(f"{name:<22} mean entropy for template lengths 2 and 3: {np.round(mean_entropy, 2)}")
 
 fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharey=True)
-for ax, (name, recorder) in zip(axes, entropy.items()):
-    values = np.asarray(recorder.sample_entropy)
-    ax.plot(recorder.timestamps[recorder.ok], values[recorder.ok, 1], label="template length 2")
-    ax.plot(recorder.timestamps[recorder.ok], values[recorder.ok, 3], label="template length 4")
+for ax, (name, recorders) in zip(axes, entropy.items()):
+    for length, recorder in recorders.items():
+        ax.plot(recorder.timestamps[recorder.ok], np.asarray(recorder.sample_entropy)[recorder.ok], label=f"template length {length}")
+    recorder = recorders[2]
     shade_status(ax, recorder.timestamps, recorder.status, codes=(1,))
     ax.set_title(name, fontsize=9, loc="left")
     ax.set_xlabel("time (s)")
@@ -97,27 +98,24 @@ fig.tight_layout()
 # %%
 # The plot shows the entropy of the windows that end at each time; the yellow band is the warm-up, while the first window
 # fills (see :doc:`/concepts/results`). The not smooth execution is the less predictable one, and its entropy is higher at
-# every template length (see the printed means). Template length 1 compares single samples and is mostly a measure of the
-# amplitude distribution; the longer templates are the usual "sample entropy".
+# both template lengths (see the printed means). The usual choice is ``m = 2``; compare values between gestures, because the
+# absolute number depends on the window, on the tolerance and on the sampling rate.
 #
 # **Takeaway.** A larger sample entropy means a less predictable signal; the window must hold at least a few hundred samples.
 
 # %%
 # Seeing a signal at a coarser scale
 # ----------------------------------
-# A signal can be irregular only at its finest scale. :class:`~pyeyesweb.analysis_primitives.CoarseGraining` replaces each
-# group of ``factor`` consecutive samples by their mean, which is the same signal sampled ``factor`` times more slowly. It is
-# the first step of the multi-scale analysis. Here a window of 0.5 s (50 samples) is reduced with ``factor=5``, to 10 values.
-
-from pyeyesweb.analysis_primitives import CoarseGraining
+# A signal can be irregular only at its finest scale. **Coarse graining** replaces each group of ``factor`` consecutive samples
+# by their mean, which is the same signal sampled ``factor`` times more slowly. It is the first step of the multi-scale
+# analysis, done inside ``MultiScaleEntropy``; in NumPy it is one line. Here the last 0.5 s (50 samples) are reduced with a
+# factor of 5, to 10 values.
 
 values = speeds["trial 12 (not smooth)"]
-coarse = CoarseGraining(window=50, factor=5).run(values, timestamps=time)
-print("calls with a result:", int(coarse.ok.sum()), "of", len(coarse), "| status of the first calls:", coarse.status[:3], "...")
-last = np.flatnonzero(coarse.ok)[-1]
+last = len(values) - 1
 window_time = time[last - 49:last + 1]
-means = ok_rows(coarse, "coarse_grained")[-1, 0]
-print("coarse series:", means.shape, "values; the same as the block means:", bool(np.allclose(means, values[last - 49:last + 1].reshape(10, 5).mean(axis=1))))
+means = values[last - 49:last + 1].reshape(10, 5).mean(axis=1)  # groups of 5 samples, averaged
+print("coarse series:", means.shape, "values from 50 samples")
 
 fig, ax = plt.subplots(figsize=(8, 2.8))
 ax.plot(window_time, values[last - 49:last + 1], "o-", ms=3, lw=0.8, label="speed, 50 samples")
@@ -128,9 +126,6 @@ ax.legend(fontsize=8)
 fig.tight_layout()
 
 # %%
-# The series is not recomputed on every window: after the first full window it comes every ``factor`` windows (here every
-# fifth sample), and the calls in between have the status ``NO_OUTPUT``.
-#
 # **Takeaway.** ``factor`` samples are averaged into one; a larger factor is a slower view of the same movement.
 
 # %%
@@ -396,7 +391,7 @@ for tolerance in (0.1, 0.4):
     means = {}
     for name, values in speeds.items():
         recorder = SampleEntropy(window=300, hop=50, embedding_dimension=2, relative_tolerance=tolerance).run(values)
-        means[name] = ok_rows(recorder, "sample_entropy")[:, 1].mean()
+        means[name] = ok_rows(recorder, "sample_entropy").mean()
     print(f"relative tolerance {tolerance}:", {name: round(float(value), 2) for name, value in means.items()})
 
 # %%

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Inputs &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Inputs &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -640,10 +640,9 @@ takes no dict frames raises <code class="docutils literal notranslate"><span cla
 <h2>Skeletons<a class="headerlink" href="#skeletons" title="Link to this heading">#</a></h2>
 <p>Instead of listing joints by hand, a feature that works on a body takes <code class="docutils literal notranslate"><span class="pre">skeleton=</span></code>, either the name of a preset or a
 <a class="reference internal" href="../api/generated/pyeyesweb.data_models.Skeleton.html#pyeyesweb.data_models.Skeleton" title="pyeyesweb.data_models.Skeleton"><code class="xref py py-class docutils literal notranslate"><span class="pre">Skeleton</span></code></a> that you build. A skeleton carries the joint names, optionally the symmetric
-pairs, a reference joint and the weights of the joints. <code class="docutils literal notranslate"><span class="pre">skeleton=</span></code> is accepted by five classes:
-<a class="reference internal" href="../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><code class="xref py py-class docutils literal notranslate"><span class="pre">KineticEnergy</span></code></a> (joints and weights), <a class="reference internal" href="../api/generated/low_level/MotionNoiseDetector.html#pyeyesweb.low_level.MotionNoiseDetector" title="pyeyesweb.low_level.MotionNoiseDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code></a>,
-<a class="reference internal" href="../api/generated/low_level/Symmetry.html#pyeyesweb.low_level.Symmetry" title="pyeyesweb.low_level.Symmetry"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symmetry</span></code></a> (joints, pairs and reference), <a class="reference internal" href="../api/generated/low_level/PointsDensity.html#pyeyesweb.low_level.PointsDensity" title="pyeyesweb.low_level.PointsDensity"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsDensity</span></code></a> and
-<a class="reference internal" href="../api/generated/physical_signals/PointsPredictor.html#pyeyesweb.physical_signals.PointsPredictor" title="pyeyesweb.physical_signals.PointsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsPredictor</span></code></a>. An explicit <code class="docutils literal notranslate"><span class="pre">labels=</span></code>, <code class="docutils literal notranslate"><span class="pre">weights=</span></code> or <code class="docutils literal notranslate"><span class="pre">pairs=</span></code> always wins over the
+pairs, a reference joint and the weights of the joints. <code class="docutils literal notranslate"><span class="pre">skeleton=</span></code> is accepted by three classes:
+<a class="reference internal" href="../api/generated/low_level/KineticEnergy.html#pyeyesweb.low_level.KineticEnergy" title="pyeyesweb.low_level.KineticEnergy"><code class="xref py py-class docutils literal notranslate"><span class="pre">KineticEnergy</span></code></a> (joints and weights),
+<a class="reference internal" href="../api/generated/low_level/Symmetry.html#pyeyesweb.low_level.Symmetry" title="pyeyesweb.low_level.Symmetry"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symmetry</span></code></a> (joints, pairs and reference) and <a class="reference internal" href="../api/generated/low_level/PointsDensity.html#pyeyesweb.low_level.PointsDensity" title="pyeyesweb.low_level.PointsDensity"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsDensity</span></code></a>. An explicit <code class="docutils literal notranslate"><span class="pre">labels=</span></code>, <code class="docutils literal notranslate"><span class="pre">weights=</span></code> or <code class="docutils literal notranslate"><span class="pre">pairs=</span></code> always wins over the
 skeleton, and a feature given no joint information at all raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. (<code class="docutils literal notranslate"><span class="pre">KineticEnergy(labels=[...])</span></code> alone is joint
 information: it weighs every joint 1.0.)</p>
 <p>The presets are in <code class="docutils literal notranslate"><span class="pre">pyeyesweb.skeletons</span></code> (see <a class="reference internal" href="../api/skeletons.html"><span class="doc">Skeletons</span></a>). Names are case-insensitive, and <code class="docutils literal notranslate"><span class="pre">-</span></code> or a space counts as <code class="docutils literal notranslate"><span class="pre">_</span></code>.</p>
@@ -706,20 +705,6 @@ to centre a ratio on something else, subtract that point from the frame yourself
 </div>
 </section>
 </section>
-<section id="mapping-your-joint-names-to-a-model-joint-map">
-<h2>Mapping your joint names to a model: <code class="docutils literal notranslate"><span class="pre">joint_map</span></code><a class="headerlink" href="#mapping-your-joint-names-to-a-model-joint-map" title="Link to this heading">#</a></h2>
-<p>The humanoid and generic-model features of the physical-signals layer follow a captured skeleton with a body model. The model
-has its own joint names (<code class="docutils literal notranslate"><span class="pre">pyeyesweb.physical_signals.HUMANOID_JOINTS</span></code>), and <code class="docutils literal notranslate"><span class="pre">joint_map</span></code> says which label of your data feeds
-each model joint, as <code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">joint</span> <span class="pre">-&gt;</span> <span class="pre">your</span> <span class="pre">label</span></code>. The names you leave out keep their own. Only these six classes take
-<code class="docutils literal notranslate"><span class="pre">joint_map</span></code>: <code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code>, <code class="docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelSimulator</span></code>,
-<code class="docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code> and <code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code>.</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanoidSimulator</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">simulator</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">joint_map</span><span class="o">=</span><span class="p">{</span><span class="s2">"head"</span><span class="p">:</span> <span class="s2">"Head"</span><span class="p">,</span> <span class="s2">"neck"</span><span class="p">:</span> <span class="s2">"Neck"</span><span class="p">},</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">simulator</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"Head"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s2">"Neck"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)})</span><span class="o">.</span><span class="n">joints</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(21, 3)</span>
-</pre></div>
-</div>
-</section>
 <section id="images">
 <h2>Images<a class="headerlink" href="#images" title="Link to this heading">#</a></h2>
 <p>Image features take an 8-bit image per call, <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W)</span></code> for grayscale or <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W,</span> <span class="pre">C)</span></code> for colour. A mask is a <code class="docutils literal notranslate"><span class="pre">bool</span></code> array, read
@@ -781,8 +766,7 @@ sets. What differs is what the feature declares as its input, and how it reads i
 </section>
 <section id="the-dimension-of-a-signal-dims">
 <h2>The dimension of a signal: <code class="docutils literal notranslate"><span class="pre">dims</span></code><a class="headerlink" href="#the-dimension-of-a-signal-dims" title="Link to this heading">#</a></h2>
-<p>Four classes (<code class="docutils literal notranslate"><span class="pre">Kinematics</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> and <code class="docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code>) work on a point or signal of
-any dimension. Their <code class="docutils literal notranslate"><span class="pre">dims</span></code> parameter defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means “taken from the first frame”. The inferred value is
+<p><code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> works on a point or signal of any dimension. Its <code class="docutils literal notranslate"><span class="pre">dims</span></code> parameter defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means “taken from the first frame”. The inferred value is
 fixed for the rest of the run, a later frame of another size raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> forgets it.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span> <span class="o">=</span> <span class="n">Kinematics</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kinematics</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"dims"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -857,7 +841,6 @@ fixed for the rest of the run, a later frame of another size raises <code class=
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-reference-joint-of-symmetry">The reference joint of <code class="docutils literal notranslate"><span class="pre">Symmetry</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-your-joint-names-to-a-model-joint-map">Mapping your joint names to a model: <code class="docutils literal notranslate"><span class="pre">joint_map</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#images">Images</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-quantity-in-two-forms-from-constructors">One quantity in two forms: <code class="docutils literal notranslate"><span class="pre">from_*</span></code> constructors</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dimension-of-a-signal-dims">The dimension of a signal: <code class="docutils literal notranslate"><span class="pre">dims</span></code></a></li>
@@ -904,7 +887,7 @@ fixed for the rest of the run, a later frame of another size raises <code class=
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

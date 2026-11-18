@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.low_level.shape &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.low_level.shape &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -450,7 +450,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pyeyesweb.low_level.shape</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Shape of contours: contour filter, curvature, convex hull and body parts from curvature.</span>
+<span></span><span class="sd">"""Shape of contours: the salient points of a closed contour (body parts from curvature).</span>
 
 <span class="sd">A contour is one frame of ``(x, y)`` points, an ``(N, 2)`` array; the first and the last point are neighbours (the</span>
 <span class="sd">contour is closed). Every feature declares its outputs as a ``Schema`` (``feature.outputs``) and returns a ``Result``</span>
@@ -462,10 +462,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">XY</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">,</span> <span class="n">FrameFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">XY</span><span class="p">,</span> <span class="n">FrameFeature</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_finite</span><span class="p">,</span> <span class="n">points_input</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Inputs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
 
 <span class="n">_motion</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span>
@@ -473,77 +473,15 @@
 <span class="n">CONTOUR</span> <span class="o">=</span> <span class="n">points_input</span><span class="p">(</span><span class="s2">"contour"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"contour points (x, y)"</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">ContourFeature</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A feature taking one ``(N, 2)`` contour per call; an empty or non-finite one is ``INVALID_INPUT``."""</span>
-    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">CONTOUR</span><span class="p">)</span>
+<div class="viewcode-block" id="BodyPartsFromCurvature">
+<a class="viewcode-back" href="../../../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature">[docs]</a>
+<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"body_parts_from_curvature"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BodyPartsFromCurvature</span><span class="p">(</span><span class="n">FrameFeature</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Contour points at the curvature extrema of a silhouette, tracked as labelled body parts.</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contour</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="FilterContour">
-<a class="viewcode-back" href="../../../api/generated/low_level/FilterContour.html#pyeyesweb.low_level.FilterContour">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"filter_contour (FilterContour)"</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FilterContour</span><span class="p">(</span><span class="n">ContourFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Circular Gaussian smoothing of a closed 2D contour.</span>
-
-<span class="sd">    Smooths the coordinates of a closed contour, for instance the outline of a silhouette, by convolving each coordinate</span>
-<span class="sd">    with a Gaussian kernel. The kernel has ``window`` samples centred on the sample being filtered, with weights</span>
-<span class="sd">    proportional to :math:`\exp\!\big(-(i - \lfloor w / 2 \rfloor)^2 / (2 \sigma^2)\big)` for :math:`i = 0, \dots, w -</span>
-<span class="sd">    1` and normalised to sum 1, where :math:`w` is ``window`` and :math:`\sigma` is ``gaussian_sigma``. The contour is</span>
-<span class="sd">    treated as closed: the neighbours of the first point include the last ones, and the other way round.</span>
-
-<span class="sd">    Input: one contour per call, an ``(N, 2)`` array; ``process(frame, *, timestamp=None)`` (``run`` takes ``(T, N,</span>
-<span class="sd">    2)``). The feature keeps no state.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    window : int, optional</span>
-<span class="sd">        Number of samples of the Gaussian kernel, at least 1. It must be shorter than the contour, otherwise the call</span>
-<span class="sd">        has no output. Defaults to ``3``. *(live)*</span>
-<span class="sd">    gaussian_sigma : float, optional</span>
-<span class="sd">        Standard deviation of the Gaussian, in samples (not in length units), not negative; ``0`` gives NaN coordinates.</span>
-<span class="sd">        Defaults to ``3.0``. *(live)*</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    **Outputs.** ``contour``: ``(N, 2)`` smoothed contour (components x and y), in the unit of the input.</span>
-
-<span class="sd">    **Statuses.** ``NO_OUTPUT`` when ``window`` is not shorter than the contour; ``INVALID_INPUT`` for an empty contour</span>
-<span class="sd">    or NaN or infinite coordinates.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import FilterContour</span>
-<span class="sd">    &gt;&gt;&gt; theta = np.linspace(0.0, 2.0 * np.pi, 60, endpoint=False)</span>
-<span class="sd">    &gt;&gt;&gt; circle = np.column_stack([np.cos(theta), np.sin(theta)])</span>
-<span class="sd">    &gt;&gt;&gt; smooth = FilterContour(window=5, gaussian_sigma=1.0).process(circle)</span>
-<span class="sd">    &gt;&gt;&gt; print(smooth.contour.shape, f"{np.hypot(*smooth.contour[0]):.3f}")</span>
-<span class="sd">    (60, 2) 0.995</span>
-<span class="sd">    """</span>
-    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">FilterContour</span>
-    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"window"</span><span class="p">:</span> <span class="s2">"window_length"</span><span class="p">,</span> <span class="s2">"gaussian_sigma"</span><span class="p">:</span> <span class="s2">"sigma_value"</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"contour"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"smoothed contour"</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">NO_OUTPUT</span><span class="p">,</span> <span class="s2">"contour not longer than the filter window"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">contour</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="ContourCurvature">
-<a class="viewcode-back" href="../../../api/generated/low_level/ContourCurvature.html#pyeyesweb.low_level.ContourCurvature">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"contourstolist (CurvatureFunction)"</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ContourCurvature</span><span class="p">(</span><span class="n">ContourFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Signed curvature at every point of a closed 2D contour.</span>
-
-<span class="sd">    Estimates the curvature of a closed contour, for instance the outline of a silhouette, from each point and its two</span>
+<span class="sd">    Finds the salient points of a closed contour, such as the head, hands and feet of a silhouette, as the extrema of</span>
+<span class="sd">    its curvature, and gives them labels that stay with the same point from one call to the next. The feature takes the</span>
+<span class="sd">    ``(x, y)`` points of the contour only: it estimates the curvature itself, at every point from the point and its two</span>
 <span class="sd">    neighbours (the contour is closed, so the neighbours of the first point include the last one). With :math:`(x', y')`</span>
 <span class="sd">    the step from the previous point to the point and :math:`(x'', y'')` the difference between the next step and this</span>
 <span class="sd">    one, the curvature at the point is</span>
@@ -555,55 +493,16 @@
 <span class="sd">    which is :math:`1 / R` for a circle of radius :math:`R` and 0 for a straight run of equally spaced points. It is</span>
 <span class="sd">    positive where the contour turns counter-clockwise in the coordinate frame of the input and negative where it turns</span>
 <span class="sd">    clockwise (in image coordinates, with y pointing down, the orientation on the screen is reversed); it is 0 where the</span>
-<span class="sd">    point coincides with the next one. The values feed ``BodyPartsFromCurvature``.</span>
+<span class="sd">    point coincides with the next one.</span>
 
-<span class="sd">    Input: one contour per call, an ``(N, 2)`` array; ``process(frame, *, timestamp=None)`` (``run`` takes ``(T, N,</span>
-<span class="sd">    2)``). The feature has no parameters and keeps no state.</span>
+<span class="sd">    The contour is cut at the zero crossings of the curvature (at least ``minimum_distance`` points apart); in every</span>
+<span class="sd">    piece, the extremum of larger magnitude is a minimum point when it is negative and a maximum point when it is</span>
+<span class="sd">    positive. With ``track_points`` the labels of the previous call are carried over to the nearest new points (the</span>
+<span class="sd">    feature keeps the previous points as its state), up to ``number_of_points`` of them; a maximum that moved farther</span>
+<span class="sd">    than ``tracking_distance`` since the previous call loses its label.</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    **Outputs.** ``curvature``: ``(N,)``, one value per contour point (value ``i`` belongs to point ``i``), in the</span>
-<span class="sd">    inverse of the unit of the input.</span>
-
-<span class="sd">    **Statuses.** ``INVALID_INPUT`` for an empty contour or NaN or infinite coordinates; otherwise ``OK``.</span>
-
-<span class="sd">    Corrected in the core: the curvature values are aligned with the contour points (value ``i`` at point ``i``); the</span>
-<span class="sd">    sequence used to be rotated by one point.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import ContourCurvature</span>
-<span class="sd">    &gt;&gt;&gt; theta = np.linspace(0.0, 2.0 * np.pi, 60, endpoint=False)</span>
-<span class="sd">    &gt;&gt;&gt; circle = np.column_stack([2.0 * np.cos(theta), 2.0 * np.sin(theta)])</span>
-<span class="sd">    &gt;&gt;&gt; print(np.round(ContourCurvature().process(circle).curvature[:3], 2))</span>
-<span class="sd">    [0.5 0.5 0.5]</span>
-<span class="sd">    """</span>
-    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">ContourCurvature</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"curvature"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"1/&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"curvature per contour point"</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="BodyPartsFromCurvature">
-<a class="viewcode-back" href="../../../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"body_parts_from_curvature"</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">BodyPartsFromCurvature</span><span class="p">(</span><span class="n">CoreFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Contour points at the curvature extrema of a silhouette, tracked as labelled body parts.</span>
-
-<span class="sd">    Finds the salient points of a closed contour, such as the head, hands and feet of a silhouette, as the extrema of</span>
-<span class="sd">    its curvature, and gives them labels that stay with the same point from one call to the next. The contour is cut at</span>
-<span class="sd">    the zero crossings of the curvature (at least ``minimum_distance`` points apart); in every piece, the extremum of</span>
-<span class="sd">    larger magnitude is a minimum point when it is negative and a maximum point when it is positive. With</span>
-<span class="sd">    ``track_points`` the labels of the previous call are carried over to the nearest new points (the feature keeps the</span>
-<span class="sd">    previous points as its state), up to ``number_of_points`` of them.</span>
-
-<span class="sd">    Input: ``process(curvature, contour, *, timestamp=None)``, the ``(N,)`` curvature of each point of the ``(N, 2)``</span>
-<span class="sd">    contour (for example from ``ContourCurvature``); ``run`` takes ``(T, N)`` and ``(T, N, 2)`` recordings.</span>
+<span class="sd">    Input: ``process(contour, *, timestamp=None)``, the ``(N, 2)`` contour of one frame; ``run`` takes ``(T, N, 2)``.</span>
+<span class="sd">    The curvature is a derivative of the points, so it amplifies their noise: smooth the contour before the feature.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -616,6 +515,10 @@
 <span class="sd">    track_points : bool, optional</span>
 <span class="sd">        Keep the labels of the extrema between calls. With ``False`` each call labels its points afresh. Defaults to</span>
 <span class="sd">        ``True``. *(live)*</span>
+<span class="sd">    tracking_distance : float, optional</span>
+<span class="sd">        Largest move between two calls, in the unit of the contour, of a maximum that keeps its label; &gt; 0. Defaults to</span>
+<span class="sd">        ``0.05``, the constant of the original block, which suits a normalised contour: for a contour in pixels pass a</span>
+<span class="sd">        few pixels. *(live)*</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -623,35 +526,41 @@
 <span class="sd">    unit of the contour. They are labelled outputs, ``label -&gt; (x, y)`` with labels ``label_min&lt;i&gt;`` and</span>
 <span class="sd">    ``label_max&lt;i&gt;``; their number depends on the contour.</span>
 
-<span class="sd">    **Statuses.** ``OK`` always; ``ValueError`` when the curvature and the contour have a different number of points.</span>
+<span class="sd">    **Statuses.** ``INVALID_INPUT`` for an empty contour or NaN or infinite coordinates; otherwise ``OK``.</span>
 
-<span class="sd">    Corrected in the core: when the last piece of the contour wraps around into the first, the merged extremum keeps the</span>
-<span class="sd">    point of that extremum together with its value (it used to keep the point index of another extremum).</span>
+<span class="sd">    Changed (design review 2026-11-17): the feature took the curvature of each point as a first input, computed by the</span>
+<span class="sd">    public ``ContourCurvature`` feature. That feature had no use on its own and is gone: the curvature is computed here.</span>
+<span class="sd">    Corrected in the core: the curvature values are aligned with the contour points (value ``i`` at point ``i``; the</span>
+<span class="sd">    sequence used to be rotated by one point), and when the last piece of the contour wraps around into the first, the</span>
+<span class="sd">    merged extremum keeps the point of that extremum together with its value.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature</span>
+<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import BodyPartsFromCurvature</span>
 <span class="sd">    &gt;&gt;&gt; t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)</span>
 <span class="sd">    &gt;&gt;&gt; r = 10.0 + 3.0 * np.cos(5.0 * t)</span>
 <span class="sd">    &gt;&gt;&gt; contour = np.column_stack([r * np.cos(t), r * np.sin(t)])</span>
-<span class="sd">    &gt;&gt;&gt; parts = BodyPartsFromCurvature().process(ContourCurvature().process(contour).curvature, contour)</span>
+<span class="sd">    &gt;&gt;&gt; parts = BodyPartsFromCurvature().process(contour)</span>
 <span class="sd">    &gt;&gt;&gt; print(len(parts.minimums), len(parts.maximums))</span>
 <span class="sd">    5 5</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">BodyPartsFromCurvature</span>
-    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"number_of_points"</span><span class="p">:</span> <span class="s2">"points_number"</span><span class="p">}</span>
-    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"curvature"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"curvature of each contour point"</span><span class="p">),</span> <span class="n">CONTOUR</span><span class="p">)</span>
+    <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">CONTOUR</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curvature_block</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">ContourCurvature</span><span class="p">()</span>  <span class="c1"># the curvature of each contour point; it keeps no state</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"minimums"</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span> <span class="n">labelled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"points at curvature minima"</span><span class="p">),</span>
                       <span class="n">Output</span><span class="p">(</span><span class="s2">"maximums"</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span> <span class="n">labelled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"points at curvature maxima"</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curvature</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">contour</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">curvature</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">curvature</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"BodyPartsFromCurvature: curvature holds </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">curvature</span><span class="p">))</span><span class="si">}</span><span class="s2"> values but "</span>
-                             <span class="sa">f</span><span class="s2">"contour </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span><span class="si">}</span><span class="s2"> points: one curvature per contour point"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">curvature</span><span class="p">,</span> <span class="n">contour</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contour</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">contour</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curvature_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="n">contour</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
         <span class="n">minimums</span><span class="p">,</span> <span class="n">maximums</span> <span class="o">=</span> <span class="n">raw</span>
@@ -659,64 +568,7 @@
 
 
 
-<div class="viewcode-block" id="ConvexHull">
-<a class="viewcode-back" href="../../../api/generated/low_level/ConvexHull.html#pyeyesweb.low_level.ConvexHull">[docs]</a>
-<span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">LOW_LEVEL</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"ConvexHull"</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ConvexHull</span><span class="p">(</span><span class="n">ContourFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Convex hull polygon of a 2D contour.</span>
-
-<span class="sd">    Gives the smallest convex polygon that contains all the points of a contour, for instance the outline of a</span>
-<span class="sd">    silhouette, as the list of its vertices. Only strictly convex vertices are kept (collinear points on an edge are</span>
-<span class="sd">    dropped). The vertices run clockwise when y points up (counter-clockwise on a screen in image coordinates), starting</span>
-<span class="sd">    from the point with the smallest x, and from the smallest y among those. The hull is that of the exact input</span>
-<span class="sd">    coordinates.</span>
-
-<span class="sd">    Input: one contour per call, an ``(N, 2)`` array; ``process(frame, *, timestamp=None)`` (``run`` takes ``(T, N,</span>
-<span class="sd">    2)``). The feature keeps no state.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    integer_coordinates : bool, optional</span>
-<span class="sd">        Require integer coordinates, as the pixel contours of an image have. When ``True``, a contour with fractional</span>
-<span class="sd">        coordinates raises ``ValueError``; when ``False`` any real coordinates are accepted. It only validates the</span>
-<span class="sd">        input: the hull is the same in both cases (the core's own default is ``True``, the EyesWeb integer contour</span>
-<span class="sd">        datatype). Defaults to ``False``. *(live)*</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    **Outputs.** ``hull``: ``(H, 2)`` vertices of the hull (components x and y), in the unit of the input.</span>
-
-<span class="sd">    **Statuses.** ``INVALID_INPUT`` for an empty contour or NaN or infinite coordinates.</span>
-
-<span class="sd">    Corrected in the core: the hull of a contour with real coordinates is computed on the exact input points; the</span>
-<span class="sd">    coordinates used to be quantised to multiples of 0.001. The orientation tests are exact for any range of</span>
-<span class="sd">    coordinates.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from pyeyesweb.low_level import ConvexHull</span>
-<span class="sd">    &gt;&gt;&gt; contour = np.array([[0, 0], [4, 0], [4, 4], [0, 4], [2, 2]])</span>
-<span class="sd">    &gt;&gt;&gt; print(ConvexHull().process(contour).hull)</span>
-<span class="sd">    [[0. 0.]</span>
-<span class="sd">     [0. 4.]</span>
-<span class="sd">     [4. 4.]</span>
-<span class="sd">     [4. 0.]]</span>
-<span class="sd">    """</span>
-    <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_motion</span><span class="o">.</span><span class="n">ConvexHull</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">integer_coordinates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">integer_coordinates</span><span class="o">=</span><span class="n">integer_coordinates</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"hull"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">components</span><span class="o">=</span><span class="n">XY</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"&lt;length&gt;"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"convex hull vertices"</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span></div>
-
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"FilterContour"</span><span class="p">,</span> <span class="s2">"ContourCurvature"</span><span class="p">,</span> <span class="s2">"ConvexHull"</span><span class="p">,</span> <span class="s2">"BodyPartsFromCurvature"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"BodyPartsFromCurvature"</span><span class="p">]</span>
 </pre></div>
 
                 </article>
@@ -764,7 +616,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

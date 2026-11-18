@@ -19,12 +19,10 @@ notation
 kinematics_energy
 smoothness
 shape_symmetry_balance
-impulsivity_suddenness
 gesture_segmentation
 entropy_rarity_periodicity
 synchronization
 dominance
-humanoid_models
 imaging
 ```
 

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Porting status &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Porting status &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -488,7 +488,7 @@ correction of the original is recorded, and which blocks of earlier versions are
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pyeyesweb</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span> <span class="o">=</span> <span class="n">pyeyesweb</span><span class="o">.</span><span class="n">catalog</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">),</span> <span class="nb">sum</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">eyesweb_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">),</span> <span class="nb">sum</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">eyesweb_block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">)</span>
-<span class="go">(60, 47, 13)</span>
+<span class="go">(34, 25, 9)</span>
 </pre></div>
 </div>
 <p>The first number is the number of features, the second the number that come from an EyesWeb block (the block is the
@@ -532,9 +532,9 @@ nothing on a signal of another scale and gave infinite entropies; the corrected 
 <h3>Where corrections are described<a class="headerlink" href="#where-corrections-are-described" title="Link to this heading">#</a></h3>
 <p>Each correction is described where the feature is: in the <strong>Notes</strong> of its docstring, which the generated API page shows, and in
 the theory page of its family (<a class="reference internal" href="../theory/kinematics_energy.html"><span class="doc">Kinematics and energy</span></a>, <a class="reference internal" href="../theory/smoothness.html"><span class="doc">Smoothness</span></a>,
-<a class="reference internal" href="../theory/shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>, <a class="reference internal" href="../theory/impulsivity_suddenness.html"><span class="doc">Impulsivity and suddenness</span></a>, <a class="reference internal" href="../theory/gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>,
+<a class="reference internal" href="../theory/shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>, <a class="reference internal" href="../theory/gesture_segmentation.html"><span class="doc">Gesture segmentation</span></a>,
 <a class="reference internal" href="../theory/entropy_rarity_periodicity.html"><span class="doc">Entropy, rarity and periodicity</span></a>, <a class="reference internal" href="../theory/synchronization.html"><span class="doc">Synchronization</span></a>, <a class="reference internal" href="../theory/dominance.html"><span class="doc">Dominance</span></a>,
-<a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a>, <a class="reference internal" href="../theory/imaging.html"><span class="doc">Imaging</span></a>). The corrections of the 2.0 release are also in the changelog
+<a class="reference internal" href="../theory/imaging.html"><span class="doc">Imaging</span></a>). The corrections of the 2.0 release are also in the changelog
 (<a class="reference internal" href="../changelog.html"><span class="doc">Changelog</span></a>).</p>
 <p>A change of the Python layer that alters numbers follows the same rule: it is a decision, it is documented in the docstring and in
 the changelog, and no test of numbers is edited to make it pass.</p>
@@ -714,7 +714,7 @@ filled by the maintainers (<a class="reference internal" href="../howto/map_skel
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

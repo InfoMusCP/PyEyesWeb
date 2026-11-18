@@ -63,10 +63,10 @@ since each signal is normalised). The complexity index of each is computed over 
 >>> group = np.column_stack([first, second, third])               # one column per participant
 >>> complexity = MultiScaleEntropy(window=1200, max_scale=6, minimum_points=100).run(group)[-1].complexity_index
 >>> complexity.round(2)
-array([ 2.34,  7.94, 11.92])
+array([2.3 , 7.49, 9.84])
 >>> dominance = EnsembleDominance().process(complexity)
 >>> dominance.dominance_score.round(2), dominance.leader_index, round(float(dominance.leader_complexity), 2)
-(array([0.8 , 0.33, 0.  ]), 0, 2.34)
+(array([0.77, 0.24, 0.  ]), 0, 2.3)
 ```
 
 The regular participant has the lowest index, the highest dominance score and is the leader; the participant with the

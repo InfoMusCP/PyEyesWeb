@@ -5,7 +5,7 @@ Rarity
 
 Rarity of the newest value of a signal within a memory of past values, by \`\`method\`\`.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: rarityindex (Rarity)`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: rarityindex (Rarity)` :bdg-light:`Complexity`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Entropy, rarity and periodicity </theory/entropy_rarity_periodicity>`.
 
@@ -21,7 +21,7 @@ Parameters
      - Type
    * - ``method``
      - ``'information'``
-     - ``Literal['mode_distance', 'information']``
+     - ``Literal['mode_distance', 'information', 'novelty']``
    * - ``number_of_inputs``
      - ``2``
      - ``int``
@@ -40,6 +40,21 @@ Parameters
    * - ``alpha``
      - ``0.5``
      - ``float``
+   * - ``memory``
+     - ``300``
+     - ``int``
+   * - ``pattern``
+     - ``30``
+     - ``int``
+   * - ``neighbours``
+     - ``5``
+     - ``int``
+   * - ``step``
+     - ``1``
+     - ``int``
+   * - ``shape``
+     - ``False``
+     - ``bool``
 
 Inputs
 ------

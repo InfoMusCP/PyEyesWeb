@@ -22,7 +22,7 @@ The contract every feature follows
 ==================================
 
 Every PyEyesWeb feature takes its input and returns its output in the same way. This tutorial goes through those rules one
-at a time, with ``Kinematics`` for a point, ``Suddenness`` for a window of samples and ``KineticEnergy`` for a skeleton.
+at a time, with ``Kinematics`` for a point, ``DirectionChange`` for a window of samples and ``KineticEnergy`` for a skeleton.
 
 :Goals: use ``process`` (live) and ``run`` (offline) and know what ``reset`` does; read a ``Result`` and its ``Schema``;
         interpret ``Status`` and the warm-up; give time and units correctly; change a parameter while a feature runs; build a
@@ -253,7 +253,7 @@ contains ``None``.
 Status and warm-up
 ------------------
 A feature that works on a window of samples cannot answer before the window is full. The ``status`` of a result tells why
-a value is absent. :class:`~pyeyesweb.mid_level.Suddenness` looks at ``window`` samples of a trajectory and reports a new
+a value is absent. :class:`~pyeyesweb.low_level.DirectionChange` looks at ``window`` samples of a trajectory and reports a new
 result every ``hop`` samples. With ``window=8`` and ``hop=3``:
 
 * ``WARMING_UP``: fewer than 8 samples so far; the ``reason`` counts them;
@@ -266,12 +266,12 @@ result every ``hop`` samples. With ``window=8`` and ``hop=3``:
 .. code-block:: Python
 
 
-    from pyeyesweb.mid_level import Suddenness
+    from pyeyesweb.low_level import DirectionChange
 
-    suddenness = Suddenness(window=8, hop=3)
+    turns = DirectionChange(window=8, hop=3)
     rows = []
     for index in range(14):
-        result = suddenness.process(hand[index], timestamp=time[index])
+        result = turns.process(hand[index], timestamp=time[index])
         rows.append(result)
         print(f"sample {index:2d}: {result.status.name:<10} {result.reason}")
 
@@ -316,14 +316,14 @@ sphinx_gallery_thumbnail_number = 1
     ax.set_yticks([])
     ax.set_xticks(range(14))
     ax.set_xlabel("sample number")
-    ax.set_title("Suddenness(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT")
+    ax.set_title("DirectionChange(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT")
     ax.grid(False)
 
 
 
 
 .. image-sg:: /tutorials/01_getting_started/images/sphx_glr_plot_02_the_contract_001.png
-   :alt: Suddenness(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT
+   :alt: DirectionChange(window=8, hop=3): green OK, yellow WARMING_UP, grey NO_OUTPUT
    :srcset: /tutorials/01_getting_started/images/sphx_glr_plot_02_the_contract_001.png
    :class: sphx-glr-single-img
 
@@ -340,9 +340,9 @@ sphinx_gallery_thumbnail_number = 1
 .. code-block:: Python
 
 
-    print("latest:", suddenness.latest)
-    suddenness.reset()
-    print("latest after reset:", suddenness.latest)
+    print("latest:", turns.latest)
+    turns.reset()
+    print("latest after reset:", turns.latest)
 
 
 
@@ -352,7 +352,7 @@ sphinx_gallery_thumbnail_number = 1
 
  .. code-block:: none
 
-    latest: SuddennessResult(status=OK, is_sudden=True, alpha=2, beta=1, gamma=1.34499)
+    latest: DirectionChangeResult(status=OK, cosine=0.177835, polygon=8.08265e-05)
     latest after reset: None
 
 
@@ -368,15 +368,15 @@ On a whole recording the same statuses are columns of the recorder. ``plot_recor
 .. code-block:: Python
 
 
-    slow_window = Suddenness(window=100, hop=10).run(hand, timestamps=time)
+    slow_window = DirectionChange(window=100, hop=10).run(hand, timestamps=time)
     print(slow_window)
-    fig = plot_recorder(slow_window, names=["alpha"], t=time, title="Suddenness, window 100 samples (1 s), hop 10")
+    fig = plot_recorder(slow_window, names=["cosine"], t=time, title="DirectionChange, window 100 samples (1 s), hop 10")
 
 
 
 
 .. image-sg:: /tutorials/01_getting_started/images/sphx_glr_plot_02_the_contract_002.png
-   :alt: Suddenness, window 100 samples (1 s), hop 10
+   :alt: DirectionChange, window 100 samples (1 s), hop 10
    :srcset: /tutorials/01_getting_started/images/sphx_glr_plot_02_the_contract_002.png
    :class: sphx-glr-single-img
 
@@ -385,7 +385,7 @@ On a whole recording the same statuses are columns of the recorder. ``plot_recor
 
  .. code-block:: none
 
-    Recorder(Suddenness, rows=1000, columns=['is_sudden', 'alpha', 'beta', 'gamma'], status={'OK': 91, 'WARMING_UP': 99, 'NO_OUTPUT': 810})
+    Recorder(DirectionChange, rows=1000, columns=['cosine', 'polygon'], status={'OK': 91, 'WARMING_UP': 99, 'NO_OUTPUT': 810})
 
 
 
@@ -595,7 +595,7 @@ so. :class:`~pyeyesweb.low_level.KineticEnergy` has both: ``sampling_rate`` is l
 
 .. GENERATED FROM PYTHON SOURCE LINES 253-255
 
-For ``window`` and ``hop`` the newest samples are kept: ``suddenness.window = 12`` keeps the latest 12 samples and the
+For ``window`` and ``hop`` the newest samples are kept: ``turns.window = 12`` keeps the latest 12 samples and the
 feature goes on. Which parameter of which feature is live is listed in :doc:`/concepts/time_units_parameters`.
 
 .. GENERATED FROM PYTHON SOURCE LINES 257-258
@@ -710,12 +710,12 @@ are described in :doc:`/concepts/layers`.
 
  .. code-block:: none
 
-    60 features
-    Layer 1: physical signals  11  e.g. HumanoidSimulator, HumanoidOrientations, GenericModelOrientations
-    Layer 2: low-level features 22  e.g. Kinematics, KineticEnergy, BoundingBoxFilledArea
-    Layer 3: mid-level features  7  e.g. GestureSegmenter, MotionDuration, Suddenness
+    34 features
+    Layer 1: physical signals   4  e.g. SilhouetteCentroids, SilhouetteBodyParts, Videogram
+    Layer 2: low-level features 16  e.g. Kinematics, KineticEnergy, BoundingBoxFilledArea
+    Layer 3: mid-level features  0  e.g. 
     Layer 4: qualities communicated  1  e.g. EnsembleDominance
-    Analysis primitives        19  e.g. SampleEntropy, CoarseGraining, Rarity
+    Analysis primitives        13  e.g. SampleEntropy, Rarity, BinaryPulsesRegularity
 
 
 
@@ -730,7 +730,7 @@ Try it
 ------
 1. ``Kinematics`` can return the velocity, the acceleration and the jerk of the same hand in one call: give ``output_type``
    a list. How many outputs does the schema have? Run it and print the status counts of the recorder.
-2. Feed ``Suddenness(window=8, hop=3)`` the first 20 samples of the hand with ``process`` and list the sample numbers
+2. Feed ``DirectionChange(window=8, hop=3)`` the first 20 samples of the hand with ``process`` and list the sample numbers
    where the status is ``OK``. Then change ``hop`` to 1 and do it again. What changed?
 3. Break the contract on purpose: give ``process`` a timestamp that does not increase. What are the status and the reason, and
    does the next valid sample work?
@@ -775,7 +775,7 @@ Exercise 2. The first window ends at sample 7; ``hop`` sets how often a result f
 
 
     for hop in (3, 1):
-        feature = Suddenness(window=8, hop=hop)
+        feature = DirectionChange(window=8, hop=hop)
         ok = [i for i in range(20) if feature.process(hand[i], timestamp=time[i]).status.name == "OK"]
         print(f"hop={hop}: OK at samples {ok}")
 

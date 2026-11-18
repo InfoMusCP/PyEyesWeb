@@ -49,8 +49,8 @@ fig_body.tight_layout()
 # :class:`~pyeyesweb.physical_signals.SilhouetteCentroids` splits the silhouette recursively around its centre of gravity and
 # takes the centre of gravity of each rectangle: the shoulders from the upper quadrants, the head between them, the elbow,
 # the forearm and the hand outwards, the knee and the foot downwards. Without a skeleton it gives 14 points, in pixels
-# (``centroids``) and as a fraction of the frame (``normalized``), one row per name of the schema; a row is NaN when its
-# centroid does not exist.
+# (``centroids``, y pointing down from the top-left pixel), one row per name of the schema; a row is NaN when its
+# centroid does not exist. Divide by ``[width, height]`` for a fraction of the frame.
 
 from pyeyesweb.physical_signals import SilhouetteCentroids
 
@@ -60,7 +60,7 @@ print(centroids.outputs)
 result = centroids.process(body)
 names = centroids.outputs["centroids"].axis_names[0]
 print(names)
-print("centre of gravity (x, y) in pixels:", result.centroids[0], "| as a fraction of the frame:", result.normalized[0])
+print("centre of gravity (x, y) in pixels:", result.centroids[0], "| as a fraction of the frame:", result.centroids[0] / [body.shape[1], body.shape[0]])
 
 fig_centroids, ax = plt.subplots(figsize=(5, 4))
 ax.imshow(body, cmap="gray", alpha=0.5)
@@ -148,7 +148,7 @@ fig_parts.tight_layout()
 # As for the centroids, ``parts`` selects what is returned: the rows of the other parts are zero and ``masks`` keeps only the
 # selected ones.
 
-legs = SilhouetteBodyParts(parts=["right_leg", "left_leg"]).process(body)
+legs = SilhouetteBodyParts(parts=["left_leg", "right_leg"]).process(body)
 print("masks returned:", list(legs.masks))
 print("regions of the head, not selected:", legs.regions[part_names.index("head")])
 
@@ -218,10 +218,9 @@ print("another frame size ->", resized.process(film[1][:100]).reason)
 # ----------------------------------------
 # A rhythm can be read from a signal in which a non-zero sample is a **pulse**: a footstep, a beat, or the peaks found in a
 # movement. :class:`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` works on a window of ``window`` samples (a result
-# every ``hop`` samples). The distance between the first two pulses of the window is the reference. The window is
-# **regular** when it holds at least three pulses and every other interval differs from the reference by at most
-# ``threshold`` samples. The outputs are ``is_regular``, ``pulse_count`` and ``is_regularity_detected``, which is true for
-# the first regular window after a window that was not. Here steady steps every 6 samples are followed by a slower, still
+# every ``hop`` samples). The window is **regular** when it holds at least three pulses and the spread of the intervals
+# between them, the longest minus the shortest, is below ``threshold`` samples (``threshold=1``: equal intervals). The outputs are ``is_regular`` and ``pulse_count``; the moment the rhythm becomes regular is the
+# rising edge of ``is_regular`` (computed below with ``np.diff``). Here steady steps every 6 samples are followed by a slower, still
 # regular, rhythm of one step every 7.
 
 from pyeyesweb.analysis_primitives import BinaryPulsesRegularity
@@ -229,7 +228,7 @@ from pyeyesweb.analysis_primitives import BinaryPulsesRegularity
 steps = np.zeros(140)
 steps[10:70:6] = 1
 steps[70::7] = 1
-feature = BinaryPulsesRegularity(window=30, hop=5, threshold=0)
+feature = BinaryPulsesRegularity(window=30, hop=5, threshold=1)
 print(feature.inputs)
 print(feature.outputs)
 record = feature.run(steps)
@@ -244,23 +243,25 @@ rows = np.arange(len(record))  # one row per sample; a result is made every hop 
 axes[1].plot(rows[ok_rows], record["pulse_count"][ok_rows], ".-")
 axes[1].set_ylabel("pulse_count")
 axes[2].step(rows[ok_rows], record["is_regular"][ok_rows].astype(int), where="post")
-axes[2].plot(np.flatnonzero(record["is_regularity_detected"]), np.ones(int(record["is_regularity_detected"].sum())), "r^")
-axes[2].set_ylabel("regular (red: detected)")
+regular = record["is_regular"].astype(int)
+onsets = np.flatnonzero(np.diff(regular[ok_rows]) == 1) + 1   # rising edges of is_regular (among the evaluated windows)
+axes[2].plot(rows[ok_rows][onsets], np.ones(len(onsets)), "r^")
+axes[2].set_ylabel("regular (red: onset)")
 axes[2].set_xlabel("sample")
 shade_status(axes[2], rows, record.status, codes=(1,))  # yellow: the first window is not full yet
 fig_pulses.tight_layout()
 
 # %%
 # The plot shows the window that straddles the change of rhythm as not regular, and the trigger when the new rhythm is
-# established. With ``threshold=1`` the two rhythms (intervals 6 and 7) are accepted together. ``threshold`` is a live parameter: it can be
+# established. With ``threshold=2`` the two rhythms (intervals 6 and 7) are accepted together. ``threshold`` is a live parameter: it can be
 # changed while the feature runs and the buffer is kept.
 
-tolerant = BinaryPulsesRegularity(window=30, hop=5, threshold=1).run(steps)
-print("regular windows with threshold 1:", int(tolerant["is_regular"].sum()), "instead of", int(record["is_regular"].sum()))
-live = BinaryPulsesRegularity(window=30, hop=5, threshold=0)
+tolerant = BinaryPulsesRegularity(window=30, hop=5, threshold=2).run(steps)
+print("regular windows with threshold 2:", int(tolerant["is_regular"].sum()), "instead of", int(record["is_regular"].sum()))
+live = BinaryPulsesRegularity(window=30, hop=5, threshold=1)
 for value in steps[:60]:
     live.process(value)
-live.threshold = 1
+live.threshold = 2
 for value in steps[60:70]:
     answer = live.process(value)
     if answer.status.name == "OK":
@@ -268,7 +269,7 @@ for value in steps[60:70]:
         break
 
 # %%
-# **Takeaway.** ``BinaryPulsesRegularity`` says when a pulse signal becomes regular; ``threshold`` is the tolerance in samples.
+# **Takeaway.** ``BinaryPulsesRegularity`` says when a pulse signal becomes regular; ``threshold`` bounds the spread of the intervals, in samples.
 
 # %%
 # Putting streams side by side: TimeWindowSynchronizer
@@ -308,7 +309,7 @@ for _ in range(8):
 # 1. Move the silhouette to the right with ``synthetic_silhouette(shift=...)`` for 30 frames and run ``SilhouetteCentroids``
 #    with ``parts=["center_of_gravity"]``. How many pixels does the centre of gravity move?
 # 2. Draw the motiongram of the arm clip with ``direction="right_to_left"``. How does the picture change?
-# 3. Feed ``BinaryPulsesRegularity`` pulses at intervals 6, 6, 6, 8, 6, 6 with ``threshold=0`` and ``threshold=2``. Which
+# 3. Feed ``BinaryPulsesRegularity`` pulses at intervals 6, 6, 6, 8, 6, 6 with ``threshold=1`` and ``threshold=3``. Which
 #    windows are regular?
 
 # %%
@@ -328,11 +329,11 @@ forward = Videogram(window=len(motion)).run(motion)["videogram"][-1][:, :, 0]
 print("the mirrored videogram is the forward one flipped in time:", np.array_equal(mirrored, forward[:, ::-1]))
 
 # %%
-# Exercise 3. With ``threshold=0`` the window holds the interval 8 and is not regular; with ``threshold=2`` it is.
+# Exercise 3. With ``threshold=1`` a window that holds the interval 8 is not regular (spread 2); with ``threshold=3`` it is.
 
 irregular = np.zeros(60)
 irregular[[5, 11, 17, 23, 31, 37, 43]] = 1
-for tolerance in (0, 2):
+for tolerance in (1, 3):
     outcome = BinaryPulsesRegularity(window=30, hop=5, threshold=tolerance).run(irregular)
     flags = [int(flag) for flag, status in zip(outcome["is_regular"], outcome.status) if status == 0]
     print(f"threshold {tolerance}: regular flag of each window", flags)

@@ -36,7 +36,7 @@ Load a recording, compute a first feature, and learn the rules that every featur
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Every PyEyesWeb feature takes its input and returns its output in the same way. This tutorial goes through those rules one at a time, with Kinematics for a point, Suddenness for a window of samples and KineticEnergy for a skeleton.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Every PyEyesWeb feature takes its input and returns its output in the same way. This tutorial goes through those rules one at a time, with Kinematics for a point, DirectionChange for a window of samples and KineticEnergy for a skeleton.">
 
 .. only:: html
 

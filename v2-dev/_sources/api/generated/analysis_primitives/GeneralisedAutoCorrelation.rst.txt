@@ -5,7 +5,7 @@ GeneralisedAutoCorrelation
 
 Recurrence rate of a multichannel series as a function of the lag: how self-similar a movement is in time.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: generalised\_auto\_correlation`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: generalised\_auto\_correlation` :bdg-light:`Rhythm`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 
@@ -31,13 +31,10 @@ Parameters
    * - ``output_type``
      - ``'function_of_tau'``
      - ``Literal['scalar', 'function_of_tau']``
-   * - ``tau``
+   * - ``lag``
      - ``1``
      - ``int``
-   * - ``tau_min``
-     - ``1``
-     - ``int``
-   * - ``tau_spread``
+   * - ``max_lag``
      - ``10``
      - ``int``
 

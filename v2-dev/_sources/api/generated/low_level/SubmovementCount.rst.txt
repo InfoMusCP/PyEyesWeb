@@ -5,7 +5,7 @@ SubmovementCount
 
 Number of sub-movements of a speed profile: its prominent speed peaks, at least 100 ms apart.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-light:`Smoothness` :bdg-light:`Rhythm`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Smoothness </theory/smoothness>`.
 

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Time, units and parameters &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Time, units and parameters &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -564,8 +564,8 @@ call has the right step:</p>
 </div>
 <section id="window-metrics-need-a-rate">
 <h3>Window metrics need a rate<a class="headerlink" href="#window-metrics-need-a-rate" title="Link to this heading">#</a></h3>
-<p>Five low-level metrics work on a window of a speed or acceleration profile, which has no time axis of its own:
-<code class="docutils literal notranslate"><span class="pre">SpectralArcLength</span></code>, <code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk</span></code>, <code class="docutils literal notranslate"><span class="pre">Harmonicity</span></code>, <code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code> and <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code>. They
+<p>Four low-level metrics work on a window of a speed or acceleration profile, which has no time axis of its own:
+<code class="docutils literal notranslate"><span class="pre">SpectralArcLength</span></code>, <code class="docutils literal notranslate"><span class="pre">LogDimensionlessJerk</span></code>, <code class="docutils literal notranslate"><span class="pre">SubmovementCount</span></code> and <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code>. They
 require <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> and raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> at construction without it. They use <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> only to label the result:
 it does not enter the computation and its order is not checked.</p>
 </section>
@@ -586,10 +586,10 @@ status is <code class="docutils literal notranslate"><span class="pre">WARMING_U
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindowedFeature</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">windowed</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">pyeyesweb</span><span class="o">.</span><span class="n">catalog</span><span class="p">()</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">cls</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">windowed</span><span class="p">)</span>
-<span class="go">22</span>
+<span class="go">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="n">info</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"window"</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">windowed</span> <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"window"</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">}</span>
-<span class="go">{'SpectralArcLength': 60, 'LogDimensionlessJerk': 60, 'Harmonicity': 60, 'SubmovementCount': 60, 'MultiScaleEntropy': 3000}</span>
+<span class="go">{'SpectralArcLength': 60, 'LogDimensionlessJerk': 60, 'SubmovementCount': 60, 'MultiScaleEntropy': 3000}</span>
 </pre></div>
 </div>
 <p>A window can be changed on a running feature. <code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">hop</span></code> are neither live nor structural in the sense below: the newest
@@ -607,20 +607,19 @@ once, and both are validated together (<code class="docutils literal notranslate
 </pre></div>
 </div>
 <p>Some exceptions are worth knowing. <code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code> and <code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code> accumulate across windows, so
-<code class="docutils literal notranslate"><span class="pre">hop=None</span></code> means <code class="docutils literal notranslate"><span class="pre">hop</span> <span class="pre">=</span> <span class="pre">window</span></code> and no other value is accepted. Six classes have a <code class="docutils literal notranslate"><span class="pre">window</span></code> parameter without being windowed
-features: <code class="docutils literal notranslate"><span class="pre">Videogram</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">FilterContour</span></code>, <code class="docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code>, <code class="docutils literal notranslate"><span class="pre">Rarity</span></code> and
-<code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code>. There <code class="docutils literal notranslate"><span class="pre">window</span></code> is a length of the feature’s own, in samples, described on its page.
-<code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code> has no <code class="docutils literal notranslate"><span class="pre">hop</span></code> and returns a result for every call.</p>
+<code class="docutils literal notranslate"><span class="pre">hop=None</span></code> means <code class="docutils literal notranslate"><span class="pre">hop</span> <span class="pre">=</span> <span class="pre">window</span></code> and no other value is accepted. Three classes have a <code class="docutils literal notranslate"><span class="pre">window</span></code> parameter without being windowed
+features: <code class="docutils literal notranslate"><span class="pre">Videogram</span></code>, <code class="docutils literal notranslate"><span class="pre">Rarity</span></code> and <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code>. There <code class="docutils literal notranslate"><span class="pre">window</span></code> is a length of the
+feature’s own, in samples, described on its page.</p>
 </section>
 <section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Link to this heading">#</a></h2>
-<p>Lengths, positions, and thresholds that are lengths are in <strong>metres</strong>, the unit of the EyesWeb blocks. Ten classes take
+<p>Lengths, positions, and thresholds that are lengths are in <strong>metres</strong>, the unit of the EyesWeb blocks. Seven classes take
 <code class="docutils literal notranslate"><span class="pre">units=&quot;m&quot;</span></code> (the default) or <code class="docutils literal notranslate"><span class="pre">units=&quot;mm&quot;</span></code> for data recorded in millimetres:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">with_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">pyeyesweb</span><span class="o">.</span><span class="n">catalog</span><span class="p">()</span> <span class="k">if</span> <span class="s2">"units"</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">with_units</span><span class="p">)</span>
-<span class="go">10</span>
+<span class="go">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">with_units</span>
-<span class="go">['HumanoidSimulator', 'GenericModelSimulator', 'GenericModelPredictor', 'GenericModelEstimator', 'HitCellDetector', 'Kinematics', 'CurvatureDispersion', 'Equilibrium', 'MotionNoiseDetector', 'TrajectoryNonPlanarity']</span>
+<span class="go">['HitCellDetector', 'Kinematics', 'Equilibrium', 'TrajectoryNonPlanarity']</span>
 </pre></div>
 </div>
 <p>The rule is that <strong>parameters are scaled and data are not</strong>. A threshold is always written in metres, whatever <code class="docutils literal notranslate"><span class="pre">units</span></code> says,
@@ -638,36 +637,14 @@ untouched. <code class="docutils literal notranslate"><span class="pre">feature.
 </div>
 <p>The unit of an output (<code class="docutils literal notranslate"><span class="pre">Output.unit</span></code>) is documentation in the terms of the data. <code class="docutils literal notranslate"><span class="pre">&lt;length&gt;</span></code> is the length unit of the data,
 <code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code> is the unit of the input, <code class="docutils literal notranslate"><span class="pre">samples</span></code>, <code class="docutils literal notranslate"><span class="pre">frames</span></code>, <code class="docutils literal notranslate"><span class="pre">px</span></code>, <code class="docutils literal notranslate"><span class="pre">deg</span></code>, <code class="docutils literal notranslate"><span class="pre">s</span></code> and <code class="docutils literal notranslate"><span class="pre">cells</span></code> are what they say, and compounds such
-as <code class="docutils literal notranslate"><span class="pre">&lt;length&gt;/s</span></code> combine them. The text follows the parameters: the duration of <code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code> is in <code class="docutils literal notranslate"><span class="pre">frames</span></code> without a rate
-and in <code class="docutils literal notranslate"><span class="pre">s</span></code> with one.</p>
+as <code class="docutils literal notranslate"><span class="pre">&lt;length&gt;/s</span></code> combine them. A duration is in <code class="docutils literal notranslate"><span class="pre">s</span></code>; without timestamps and without <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> it counts samples, and the <code class="docutils literal notranslate"><span class="pre">reason</span></code> of
+every result says so.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KineticEnergy</span><span class="p">(</span><span class="n">skeleton</span><span class="o">=</span><span class="s2">"kinect_v2"</span><span class="p">)</span><span class="o">.</span><span class="n">outputs</span>
 <span class="go">Schema(Output('kinetic_energy', unit='&lt;length&gt;^2/s^2'))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">energy</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"kinetic_energy"</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span>
 <span class="go">'&lt;length&gt;^2/s^2'</span>
 </pre></div>
 </div>
-<section id="the-humanoid-model">
-<h3>The humanoid model<a class="headerlink" href="#the-humanoid-model" title="Link to this heading">#</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code> works internally in millimetres, because the body model of EyesWeb and its spring forces are defined in
-that unit. It still follows the same rule: <code class="docutils literal notranslate"><span class="pre">units</span></code> declares the unit of your frames, of <code class="docutils literal notranslate"><span class="pre">gravity</span></code> and <code class="docutils literal notranslate"><span class="pre">floor_position</span></code>, and of
-the output, and the wrapper converts at the boundary. A body run in metres and the same body run in millimetres give the same
-motion, to rounding:</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanoidSimulator</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"head"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)})</span><span class="o">.</span><span class="n">joints</span>      <span class="c1"># metres</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">in_metres</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">in_millimetres</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">"mm"</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">a</span> <span class="o">=</span> <span class="n">in_metres</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">pose</span> <span class="o">+</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span><span class="o">.</span><span class="n">joints</span>
-<span class="gp">... </span>    <span class="n">b</span> <span class="o">=</span> <span class="n">in_millimetres</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">pose</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span><span class="o">.</span><span class="n">joints</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">in_millimetres</span><span class="o">.</span><span class="n">outputs</span>
-<span class="go">Schema(Output('joints', shape=(21, 3), unit='mm'))</span>
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">GenericModel*</span></code> features are different: they run in the unit of the model you give them, and <code class="docutils literal notranslate"><span class="pre">units</span></code> only names it, so
-<code class="docutils literal notranslate"><span class="pre">&quot;m&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;mm&quot;</span></code> give the same numbers.</p>
-</section>
 </section>
 <section id="choices-are-strings-switches-are-booleans">
 <h2>Choices are strings, switches are booleans<a class="headerlink" href="#choices-are-strings-switches-are-booleans" title="Link to this heading">#</a></h2>
@@ -682,10 +659,11 @@ No parameter takes an enumeration: the only enumerations in the public interface
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">  </span><span class="c">...</span>
 <span class="gr">ValueError</span>: <span class="n">output_dims: invalid value 'bogus'; choose one of 'components', 'tangential'</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">length_forces</span><span class="o">=</span><span class="s2">"on"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">SilhouetteCentroids</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SilhouetteCentroids</span><span class="p">(</span><span class="n">filter_centroids</span><span class="o">=</span><span class="s2">"on"</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">  </span><span class="c">...</span>
-<span class="gr">TypeError</span>: <span class="n">length_forces must be True or False, got 'on'</span>
+<span class="gr">TypeError</span>: <span class="n">filter_centroids must be True or False, got 'on'</span>
 </pre></div>
 </div>
 <p>A feature with variants (<code class="docutils literal notranslate"><span class="pre">Symmetry</span></code> has <code class="docutils literal notranslate"><span class="pre">method=&quot;ratio&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;reflection&quot;</span></code>) refuses the parameters of the other variant:</p>
@@ -697,7 +675,7 @@ No parameter takes an enumeration: the only enumerations in the public interface
 </pre></div>
 </div>
 <p>A few features choose which outputs they compute with <code class="docutils literal notranslate"><span class="pre">parts=</span></code>, a sequence of names validated like any other choice:
-<code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code>, <code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code> and <code class="docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code>. The value is read back as a tuple in the order of
+<code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code> and <code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code>. The value is read back as a tuple in the order of
 the block, which is not necessarily the order you gave.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">SilhouetteBodyParts</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">SilhouetteBodyParts</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="s2">"head"</span><span class="p">,</span> <span class="s2">"trunk"</span><span class="p">])</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"parts"</span><span class="p">]</span>
@@ -705,7 +683,7 @@ the block, which is not necessarily the order you gave.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">SilhouetteBodyParts</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="s2">"tail"</span><span class="p">])</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">  </span><span class="c">...</span>
-<span class="gr">ValueError</span>: <span class="n">parts: invalid value 'tail'; choose one of 'right_leg', 'left_leg', 'trunk', 'right_arm', 'left_arm', 'head'</span>
+<span class="gr">ValueError</span>: <span class="n">parts: invalid value 'tail'; choose one of 'left_leg', 'right_leg', 'trunk', 'left_arm', 'right_arm', 'head'</span>
 </pre></div>
 </div>
 <p>Not every <code class="docutils literal notranslate"><span class="pre">output_dims</span></code> has the same vocabulary: <code class="docutils literal notranslate"><span class="pre">Kinematics</span></code> accepts <code class="docutils literal notranslate"><span class="pre">components</span></code> or <code class="docutils literal notranslate"><span class="pre">tangential</span></code>, <code class="docutils literal notranslate"><span class="pre">PointsDensity</span></code>
@@ -816,10 +794,7 @@ read when the block is created is structural; when in doubt, structural). The pa
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#windows-and-hops">Windows and hops</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#units">Units</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-humanoid-model">The humanoid model</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#units">Units</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choices-are-strings-switches-are-booleans">Choices are strings, switches are booleans</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-and-setting-parameters">Reading and setting parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-and-structural-parameters">Live and structural parameters</a></li>
@@ -866,7 +841,7 @@ read when the block is created is structural; when in doubt, structural). The pa
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

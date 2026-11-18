@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.signal_events &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.signal_events &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -453,8 +453,7 @@
 <span></span><span class="sd">"""Peak events of a scalar signal (EyesWeb DANCE).</span>
 
 <span class="sd">The feature is a stateful stream over a scalar signal: `process(value, timestamp=None)` takes one sample per call and</span>
-<span class="sd">returns an always-`OK` `Result` whose `timestamp` is the timestamp in seconds (`NaN` when not given); `reset()`</span>
-<span class="sd">restarts the stream.</span>
+<span class="sd">returns a `Result` whose `timestamp` is the timestamp in seconds (`NaN` when not given); `reset()` restarts the stream.</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
@@ -465,7 +464,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.base.core_feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameFeature</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
 
 <span class="n">_dance</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">dance</span>
 
@@ -502,7 +501,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    window : int, optional</span>
-<span class="sd">        Length of the buffer, in samples. Defaults to ``5``. *(structural)*</span>
+<span class="sd">        Length of the buffer, in samples, at least 1. Defaults to ``5``. *(structural)*</span>
 <span class="sd">    threshold : float, optional</span>
 <span class="sd">        Detection threshold, in the units of the signal. Defaults to ``0.01``. *(live)*</span>
 
@@ -515,7 +514,13 @@
 <span class="sd">    just appeared in the buffer after a rise; the sample is up to ``window`` samples after the maximum itself. ``timestamp`` is the timestamp in seconds</span>
 <span class="sd">    (``NaN`` when not given).</span>
 
-<span class="sd">    **Statuses.** Always ``OK``.</span>
+<span class="sd">    **Statuses.** ``WARMING_UP`` for the first ``window - 1`` samples, while the buffer fills (no peak can be</span>
+<span class="sd">    reported: the original analysed a zero-filled buffer, so a signal that starts high and falls gave a false peak);</span>
+<span class="sd">    ``OK`` afterwards; ``INVALID_INPUT`` for a NaN or infinite sample, which is kept out of the buffer.</span>
+
+<span class="sd">    **Compared with** ``scipy.signal.find_peaks(x, prominence=threshold)``: the same idea, a maximum that stands out by</span>
+<span class="sd">    more than ``threshold``, but causal and sample by sample, on a buffer of ``window`` samples only, reported with a delay,</span>
+<span class="sd">    and as a yes/no flag instead of positions. A peak whose fall takes longer than ``window`` samples is missed.</span>
 
 <span class="sd">    Corrected in the core: the running maximum was seeded with the smallest positive number, so a signal that stays</span>
 <span class="sd">    at or below 0 never produced a peak.</span>
@@ -524,18 +529,22 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from pyeyesweb.analysis_primitives import ScalarPeakDetector</span>
 <span class="sd">    &gt;&gt;&gt; detector = ScalarPeakDetector(window=3, threshold=0.5)</span>
-<span class="sd">    &gt;&gt;&gt; [detector.process(value).is_peak for value in [0, 1, 3, 1, 0, 0, 2, 0, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; results = [detector.process(value) for value in [0, 1, 3, 1, 0, 0, 2, 0, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; [result.is_peak for result in results]</span>
 <span class="sd">    [False, False, False, False, True, False, False, False, True, False]</span>
+<span class="sd">    &gt;&gt;&gt; [result.status.name for result in results[:3]]</span>
+<span class="sd">    ['WARMING_UP', 'WARMING_UP', 'OK']</span>
 
 <span class="sd">    The maxima are at samples 2 and 6 and the peaks are reported two samples later, at samples 4 and 8.</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">_dance</span><span class="o">.</span><span class="n">ScalarPeakDetector</span>
-    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"window"</span><span class="p">:</span> <span class="s2">"buffer_length"</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"is_peak"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">WARMING_UP</span><span class="p">,</span> <span class="s2">"buffer filling"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">is_peak</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
 
 
@@ -588,7 +597,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

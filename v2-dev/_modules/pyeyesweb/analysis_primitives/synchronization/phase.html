@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.synchronization.phase &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.synchronization.phase &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -458,9 +458,11 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Inputs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb._core</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_and_normalize_filter_params</span>
 
@@ -471,13 +473,17 @@
 <a class="viewcode-back" href="../../../../api/generated/analysis_primitives/PhaseLockingValue.html#pyeyesweb.analysis_primitives.PhaseLockingValue">[docs]</a>
 <span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PhaseLockingValue</span><span class="p">(</span><span class="n">_TrainPairBlock</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Phase Locking Value of two signals, from the Hilbert phases of their (optionally band-passed) series.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Phase Locking Value over time within a window (mean phase coherence) of two signals, from their Hilbert phases.</span>
 
 <span class="sd">    The Phase Locking Value quantifies phase synchronization between two movement signals, for example the</span>
-<span class="sd">    oscillation of two dancers' hands or of two body segments, independently of their amplitudes. Each window of</span>
-<span class="sd">    each signal is optionally band-pass filtered, the instantaneous phase :math:`\phi(t)` is taken from the</span>
-<span class="sd">    analytic signal obtained with the Hilbert transform, and the PLV is the length of the mean phasor of the phase</span>
-<span class="sd">    difference over the :math:`N` samples of the window:</span>
+<span class="sd">    oscillation of two dancers' hands or of two body segments, independently of their amplitudes. This is the</span>
+<span class="sd">    single-trial form suited to movement data, the *mean phase coherence* of :cite:`mormann2000mean` (eq. 8): the</span>
+<span class="sd">    average is taken over the samples of one window, while the PLV of :cite:`lachaux1999measuring`, where the measure</span>
+<span class="sd">    comes from, averages over repeated trials at each instant. Each window of each signal is optionally band-pass</span>
+<span class="sd">    filtered, its mean is removed, it is tapered with a Hann window, the instantaneous phase :math:`\phi(t)` is taken</span>
+<span class="sd">    from the analytic signal obtained with the Hilbert transform, and the PLV is the length of the mean phasor of the</span>
+<span class="sd">    phase difference over the middle 80 % of the :math:`N` samples (the 10 % at each end, distorted by the edges of the</span>
+<span class="sd">    transform, are left out, as in Mormann et al.):</span>
 
 <span class="sd">    .. math::</span>
 
@@ -486,14 +492,17 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \mathrm{PLV} = \left| \frac{1}{N} \sum_{t=1}^{N} e^{\,i\,\Delta\phi(t)} \right| \in [0, 1].</span>
+<span class="sd">        \mathrm{PLV} = \left| \frac{1}{N - 2k} \sum_{t=k+1}^{N-k} e^{\,i\,\Delta\phi(t)} \right| \in [0, 1],</span>
+<span class="sd">        \qquad k = \lfloor 0.1 N \rfloor.</span>
 
 <span class="sd">    A value of 1 means that the phase difference is constant over the window (perfect phase locking, whatever the</span>
 <span class="sd">    offset); a value near 0 means that it is uniformly spread (no phase relation).</span>
 
-<span class="sd">    The Hilbert phase is only meaningful for narrow-band signals: on broadband movement data the PLV stays near 1</span>
-<span class="sd">    whatever the coupling. Nothing is filtered unless ``low_frequency`` and ``high_frequency`` are given, so band-limit</span>
-<span class="sd">    the signals first or pass the band. For 2D or 3D data reduce each participant to one signal first, for example</span>
+<span class="sd">    The Hilbert phase is only meaningful for narrow-band, oscillatory signals (Lachaux et al. band-pass at</span>
+<span class="sd">    :math:`f \pm 2` Hz first). On broadband data the value is not a phase relation: independent white noise gives about</span>
+<span class="sd">    0.08 on 200 samples, but independent random walks about 0.57, because each window is dominated by one slow trend.</span>
+<span class="sd">    Nothing is filtered unless ``low_frequency`` and ``high_frequency`` are given, so band-limit the signals first or pass</span>
+<span class="sd">    the band, and use windows of several whole periods; for irregular movement see ``NonlinearInterdependence``. For 2D or 3D data reduce each participant to one signal first, for example</span>
 <span class="sd">    the tangential ``velocity`` output of ``Kinematics``, or the projection on the dominant axis of the movement.</span>
 
 <span class="sd">    Parameters</span>
@@ -522,13 +531,14 @@
 
 <span class="sd">    **Statuses.** ``WARMING_UP`` (``"k of N samples"``) until the first window of ``window`` samples is full,</span>
 <span class="sd">    ``NO_OUTPUT`` between two windows when ``hop &gt; 1``, ``INVALID_INPUT`` when a sample of the window is NaN or</span>
-<span class="sd">    infinite. A constant signal has no defined phase evolution: the block reports 1 for two constant windows.</span>
+<span class="sd">    infinite, and when a signal is constant over the window (``"constant signal: no phase"``).</span>
 
 <span class="sd">    The measure assumes that the phase relation is stationary over the window.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    :cite:`varni2010system`, :cite:`sabharwal2022husync`</span>
+<span class="sd">    :cite:`mormann2000mean` (definition), :cite:`lachaux1999measuring` (origin of the PLV),</span>
+<span class="sd">    :cite:`sabharwal2022husync` (application to movement)</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -538,10 +548,10 @@
 <span class="sd">    &gt;&gt;&gt; locked, drifting = np.sin(2 * np.pi * 3 * t + 0.5), np.sin(2 * np.pi * 4.3 * t)</span>
 <span class="sd">    &gt;&gt;&gt; plv = PhaseLockingValue(window=200, low_frequency=1.0, high_frequency=10.0, sampling_rate=100.0)</span>
 <span class="sd">    &gt;&gt;&gt; round(float(plv.run(x, locked).phase_locking_value[-1]), 2)</span>
-<span class="sd">    0.98</span>
+<span class="sd">    0.99</span>
 <span class="sd">    &gt;&gt;&gt; plv.reset()</span>
 <span class="sd">    &gt;&gt;&gt; round(float(plv.run(x, drifting).phase_locking_value[-1]), 2)</span>
-<span class="sd">    0.15</span>
+<span class="sd">    0.04</span>
 <span class="sd">    """</span>
 
     <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
@@ -577,6 +587,8 @@
         <span class="k">return</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">_train</span><span class="p">(</span><span class="s2">"first_signal"</span><span class="p">,</span> <span class="s2">"one value per call"</span><span class="p">),</span> <span class="n">_train</span><span class="p">(</span><span class="s2">"second_signal"</span><span class="p">,</span> <span class="s2">"one value per call"</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_to_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"constant signal: no phase"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">phase_locking_value</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
 
 
@@ -629,7 +641,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

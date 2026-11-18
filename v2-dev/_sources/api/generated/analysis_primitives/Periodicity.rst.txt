@@ -5,7 +5,7 @@ Periodicity
 
 Periods and their normalised power for each channel of a window, by the Periodicity Transform.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: PeriodicityIndex (Periodicity)`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: PeriodicityIndex (Periodicity)` :bdg-light:`Rhythm`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Entropy, rarity and periodicity </theory/entropy_rarity_periodicity>`.
 
@@ -29,7 +29,7 @@ Parameters
      - ``'small2large'``
      - ``Literal['small2large', 'mbest']``
    * - ``threshold``
-     - ``0.2``
+     - ``0.1``
      - ``float``
    * - ``best_periods``
      - ``10``

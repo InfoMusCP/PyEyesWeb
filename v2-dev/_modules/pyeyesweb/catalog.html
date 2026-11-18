@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.catalog &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.catalog &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -583,8 +583,9 @@
 
 <div class="viewcode-block" id="describe">
 <a class="viewcode-back" href="../../api/generated/pyeyesweb.catalog.describe.html#pyeyesweb.catalog.describe">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="n">layer</span><span class="p">:</span> <span class="n">Layer</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timescale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timescale</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">eyesweb</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Class decorator: attach ``LAYER``, ``TIMESCALE`` and ``EYESWEB_BLOCK`` to a feature class.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="n">layer</span><span class="p">:</span> <span class="n">Layer</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timescale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timescale</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">eyesweb</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">released</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Class decorator: attach ``LAYER``, ``TIMESCALE``, ``EYESWEB_BLOCK`` and ``RELEASED`` to a feature class.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -594,12 +595,16 @@
 <span class="sd">        Defaults to the timescale of the layer.</span>
 <span class="sd">    eyesweb : str, optional</span>
 <span class="sd">        The EyesWeb block the feature comes from, if any.</span>
+<span class="sd">    released : bool, optional</span>
+<span class="sd">        ``False`` for a feature kept in the code but held back from the release while it is investigated: its layer</span>
+<span class="sd">        package does not export it, so it is not in ``catalog()`` (default ``True``).</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">LAYER</span> <span class="o">=</span> <span class="n">layer</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">TIMESCALE</span> <span class="o">=</span> <span class="n">timescale</span> <span class="ow">or</span> <span class="n">_DEFAULT_TIMESCALE</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">EYESWEB_BLOCK</span> <span class="o">=</span> <span class="n">eyesweb</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">RELEASED</span> <span class="o">=</span> <span class="n">released</span>
         <span class="k">return</span> <span class="bp">cls</span>
 
     <span class="k">return</span> <span class="n">apply</span></div>
@@ -673,7 +678,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from pyeyesweb import Layer, catalog</span>
 <span class="sd">    &gt;&gt;&gt; features = catalog()</span>
-<span class="sd">    &gt;&gt;&gt; len(features) &gt; 40, len(catalog(Layer.LOW_LEVEL)) &lt; len(features)</span>
+<span class="sd">    &gt;&gt;&gt; len(features) &gt; 30, len(catalog(Layer.LOW_LEVEL)) &lt; len(features)</span>
 <span class="sd">    (True, True)</span>
 <span class="sd">    &gt;&gt;&gt; info = next(info for info in features if info.name == "KineticEnergy")</span>
 <span class="sd">    &gt;&gt;&gt; info.layer.name, info.timescale.value</span>
@@ -766,7 +771,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

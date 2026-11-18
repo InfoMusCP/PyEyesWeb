@@ -5,7 +5,7 @@ SilhouetteCentroids
 
 Hierarchical centroids of a human silhouette: centre of gravity, head, shoulders, limbs.
 
-:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: centroids\_calc (Centroids Calc)`
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: centroids\_calc (Centroids Calc)` :bdg-light:`Pose`
 
 Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Imaging </theory/imaging>`.
 
@@ -69,12 +69,7 @@ Outputs
      - ``float``
      - (14, 2)
      - px
-     - centroid coordinates in the frame; NaN where absent
-   * - ``normalized``
-     - ``float``
-     - (14, 2)
-     - 
-     - the centroids divided by the frame width and height
+     - centroid coordinates in the frame, y down from the top-left pixel; NaN where absent
 
 .. py:currentmodule:: pyeyesweb.physical_signals
 

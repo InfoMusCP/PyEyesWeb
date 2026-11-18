@@ -5,7 +5,7 @@ Directness
 
 Directness index of a path: straight-line distance over path length, 1 for a straight line.
 
-:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: GetTrajectoryFeatures (TrajectoryBasicFeatures)`
+:bdg-primary:`Layer 2: low-level features` :bdg-secondary:`timescale: up to ~0.5 s` :bdg-info:`EyesWeb: GetTrajectoryFeatures (TrajectoryBasicFeatures)` :bdg-light:`Trajectory` :bdg-light:`Smoothness`
 
 Layer: :doc:`Layer 2: low-level features </api/low_level>`. Family: :doc:`Kinematics and energy </theory/kinematics_energy>`.
 

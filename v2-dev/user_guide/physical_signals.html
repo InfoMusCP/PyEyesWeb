@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Physical signals &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Physical signals &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -503,90 +503,54 @@
 <h1>Physical signals<a class="headerlink" href="#physical-signals" title="Link to this heading">#</a></h1>
 <p>Layer 1 of the conceptual model (<a class="reference internal" href="../theory/framework.html"><span class="doc">Conceptual framework</span></a>) holds the signals that come from sensors and the virtual sensors
 built on them. In PyEyesWeb a feature of this layer takes raw frames or a model and gives a signal again, so that the features
-of the upper layers can work on cleaner or richer data: it simulates a body, extracts centroids or parts from an image, or
-locates points in a grid. Its timescale is the frame: a value belongs to one call, not to a window. This page helps to choose
-among the 11 features of the layer; the layers are described in <a class="reference internal" href="../concepts/layers.html"><span class="doc">Layers and the catalog</span></a>.</p>
+of the upper layers can work on cleaner or richer data: it extracts centroids or parts from an image, or locates points
+in a grid. Its timescale is the frame: a value belongs to one call, not to a window. This page helps to choose
+among the 4 features of the layer; the layers are described in <a class="reference internal" href="../concepts/layers.html"><span class="doc">Layers and the catalog</span></a>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <colgroup>
-<col style="width: 20.0%" />
-<col style="width: 38.0%" />
-<col style="width: 10.0%" />
-<col style="width: 20.0%" />
-<col style="width: 12.0%" />
+<col style="width: 18.0%" />
+<col style="width: 32.0%" />
+<col style="width: 9.0%" />
+<col style="width: 17.0%" />
+<col style="width: 16.0%" />
+<col style="width: 8.0%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Feature</p></th>
 <th class="head"><p>Summary</p></th>
 <th class="head"><p>Timescale</p></th>
 <th class="head"><p>Family</p></th>
+<th class="head"><p>Analysis</p></th>
 <th class="head"><p>Link</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code></p></td>
-<td><p>A physically based humanoid that follows a captured skeleton.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/HumanoidSimulator.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code></p></td>
-<td><p>The orientation of every bone of a skeleton relative to its parent bone.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/HumanoidOrientations.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code></p></td>
-<td><p>The bone vectors of a mass-spring model from the positions of its masses.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/GenericModelOrientations.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GenericModelSimulator</span></code></p></td>
-<td><p>A mass-spring model that follows bone directions.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/GenericModelSimulator.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code></p></td>
-<td><p>The positions a mass-spring model will have a short time ahead.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/GenericModelPredictor.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code></p></td>
-<td><p>Adaptive estimation of the parameters of a mass-spring model from observed joints.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/GenericModelEstimator.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PointsPredictor</span></code></p></td>
-<td><p>One-step linear extrapolation of labelled points.</p></td>
-<td><p>frame</p></td>
-<td><p><a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a></p></td>
-<td><p><a class="reference internal" href="../api/generated/physical_signals/PointsPredictor.html"><span class="doc">API</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></p></td>
 <td><p>Hierarchical centroids of a human silhouette: centre of gravity, head, shoulders, limbs.</p></td>
 <td><p>frame</p></td>
 <td><p><a class="reference internal" href="../theory/imaging.html"><span class="doc">Imaging</span></a></p></td>
+<td><p>Pose</p></td>
 <td><p><a class="reference internal" href="../api/generated/physical_signals/SilhouetteCentroids.html"><span class="doc">API</span></a></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code></p></td>
 <td><p>Head, trunk, arms and legs of a human silhouette, from its projection histograms.</p></td>
 <td><p>frame</p></td>
 <td><p><a class="reference internal" href="../theory/imaging.html"><span class="doc">Imaging</span></a></p></td>
+<td><p>Pose</p></td>
 <td><p><a class="reference internal" href="../api/generated/physical_signals/SilhouetteBodyParts.html"><span class="doc">API</span></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Videogram</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Videogram</span></code></p></td>
 <td><p>Videogram or motiongram: each frame collapsed to one line, the lines stacked over time.</p></td>
 <td><p>frame</p></td>
 <td><p><a class="reference internal" href="../theory/imaging.html"><span class="doc">Imaging</span></a></p></td>
+<td><p>Energy</p></td>
 <td><p><a class="reference internal" href="../api/generated/physical_signals/Videogram.html"><span class="doc">API</span></a></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code></p></td>
 <td><p>The grid cells hit by a list of 2D points.</p></td>
 <td><p>frame</p></td>
 <td><p><a class="reference internal" href="../theory/shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a></p></td>
+<td><p>Space</p></td>
 <td><p><a class="reference internal" href="../api/generated/physical_signals/HitCellDetector.html"><span class="doc">API</span></a></p></td>
 </tr>
 </tbody>
@@ -594,23 +558,7 @@ among the 11 features of the layer; the layers are described in <a class="refere
 </div>
 <section id="which-feature-for-which-problem">
 <h2>Which feature for which problem<a class="headerlink" href="#which-feature-for-which-problem" title="Link to this heading">#</a></h2>
-<p>The features fall in three groups, one for each kind of input.</p>
-<p><strong>You have a skeleton and want a cleaner or a forecast one.</strong> The captured joints jitter and drop out; a mass-spring model
-follows them and gives a smooth, articulated pose with constant bone lengths.</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="../api/generated/physical_signals/HumanoidSimulator.html#pyeyesweb.physical_signals.HumanoidSimulator" title="pyeyesweb.physical_signals.HumanoidSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code></a> for the fixed 21-joint humanoid (the joints of the first Kinect
-SDK as EyesWeb names them). It is the choice for a body captured by any system whose joints you can map to those names (see
-<a class="reference internal" href="../howto/map_skeleton.html"><span class="doc">Map your marker set to a skeleton</span></a>).</p></li>
-<li><p><a class="reference internal" href="../api/generated/physical_signals/HumanoidOrientations.html#pyeyesweb.physical_signals.HumanoidOrientations" title="pyeyesweb.physical_signals.HumanoidOrientations"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code></a> when you need the posture itself, the direction of each bone in
-the frame of its parent, which does not depend on where the body is.</p></li>
-<li><p><a class="reference internal" href="../api/generated/physical_signals/GenericModelSimulator.html#pyeyesweb.physical_signals.GenericModelSimulator" title="pyeyesweb.physical_signals.GenericModelSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelSimulator</span></code></a>, <a class="reference internal" href="../api/generated/physical_signals/GenericModelOrientations.html#pyeyesweb.physical_signals.GenericModelOrientations" title="pyeyesweb.physical_signals.GenericModelOrientations"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code></a>,
-<a class="reference internal" href="../api/generated/physical_signals/GenericModelPredictor.html#pyeyesweb.physical_signals.GenericModelPredictor" title="pyeyesweb.physical_signals.GenericModelPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code></a> and
-<a class="reference internal" href="../api/generated/physical_signals/GenericModelEstimator.html#pyeyesweb.physical_signals.GenericModelEstimator" title="pyeyesweb.physical_signals.GenericModelEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code></a> when the structure is not a human body (a limb, a puppet, an
-instrument) or you want to predict a movement or identify the parameters of a body. They take a <code class="docutils literal notranslate"><span class="pre">MassSpringModel</span></code>.</p></li>
-<li><p><a class="reference internal" href="../api/generated/physical_signals/PointsPredictor.html#pyeyesweb.physical_signals.PointsPredictor" title="pyeyesweb.physical_signals.PointsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointsPredictor</span></code></a> for the simplest forecast of any labelled points, a constant-velocity
-extrapolation one frame ahead, with no model.</p></li>
-</ul>
-<p>Theory, assumptions and the units exception: <a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a>.</p>
+<p>The features fall in two groups, one for each kind of input.</p>
 <p><strong>You have video and want the body without a skeleton.</strong> The silhouette of a person is a binary mask.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../api/generated/physical_signals/SilhouetteCentroids.html#pyeyesweb.physical_signals.SilhouetteCentroids" title="pyeyesweb.physical_signals.SilhouetteCentroids"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></a> for 14 points of a body (centre of gravity, head, shoulders,
@@ -622,33 +570,11 @@ trace, for inspection or for a visual feature of the movement over time.</p></li
 </ul>
 <p>Theory: <a class="reference internal" href="../theory/imaging.html"><span class="doc">Imaging</span></a>. The outline of a silhouette is measured by the contour features of layer 2.</p>
 <p><strong>You have positions in a plane and want to know where they fall.</strong> <a class="reference internal" href="../api/generated/physical_signals/HitCellDetector.html#pyeyesweb.physical_signals.HitCellDetector" title="pyeyesweb.physical_signals.HitCellDetector"><code class="xref py py-class docutils literal notranslate"><span class="pre">HitCellDetector</span></code></a>
-divides a rectangle into a grid and gives the cell of each point. It is the first step of the space-occupation features of
-layer 3 (<a class="reference internal" href="mid_level.html"><span class="doc">Mid-level features</span></a>); its theory is in <a class="reference internal" href="../theory/shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>.</p>
+divides a rectangle into a grid and gives the cell of each point. Its theory is in <a class="reference internal" href="../theory/shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>.</p>
 </section>
 <section id="a-typical-pipeline">
 <h2>A typical pipeline<a class="headerlink" href="#a-typical-pipeline" title="Link to this heading">#</a></h2>
-<p>A skeleton passes through the simulator and then to the features of layer 2. The simulator is driven by three captured frames,
-with a joint missing in the second one (a dropout); it gives the 21 joints at every call, and the simulated joints, labelled like
-the model, feed any feature that takes a labelled skeleton.</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.physical_signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">HUMANOID_JOINTS</span><span class="p">,</span> <span class="n">HumanoidSimulator</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">KineticEnergy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">simulator</span> <span class="o">=</span> <span class="n">HumanoidSimulator</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">energy</span> <span class="o">=</span> <span class="n">KineticEnergy</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">),</span> <span class="n">weights</span><span class="o">=</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">HUMANOID_JOINTS</span><span class="p">},</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tpose</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">process</span><span class="p">({</span><span class="s2">"head"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)})</span><span class="o">.</span><span class="n">joints</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">frame</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">,</span> <span class="n">tpose</span><span class="p">)}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">second</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">point</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">"left_hand"</span><span class="p">}</span>    <span class="c1"># dropout</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">statuses</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">captured</span> <span class="ow">in</span> <span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">simulated</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">captured</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">statuses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">simulated</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">simulated</span><span class="o">.</span><span class="n">joints</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">statuses</span>
-<span class="go">[('OK', True), ('OK', True), ('OK', True)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">energy</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">HUMANOID_JOINTS</span><span class="p">,</span> <span class="n">simulated</span><span class="o">.</span><span class="n">joints</span><span class="p">)))</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span>
-<span class="go">'OK'</span>
-</pre></div>
-</div>
-<p>The other pipeline of the layer goes from an image to the measures of an outline: a mask, then
+<p>The pipeline of the layer goes from an image to the measures of an outline: a mask, then
 <a class="reference internal" href="../api/generated/physical_signals/SilhouetteCentroids.html#pyeyesweb.physical_signals.SilhouetteCentroids" title="pyeyesweb.physical_signals.SilhouetteCentroids"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></a> or the contour of the mask, then the contour features of
 <a class="reference internal" href="low_level.html"><span class="doc">Low-level features</span></a>.</p>
 </section>
@@ -656,13 +582,10 @@ the model, feed any feature that takes a labelled skeleton.</p>
 <h2>What to know before choosing<a class="headerlink" href="#what-to-know-before-choosing" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>The features of this layer do not wait for data: every valid call is <code class="docutils literal notranslate"><span class="pre">OK</span></code>, with no warm-up (see <a class="reference internal" href="../concepts/results.html"><span class="doc">Results, statuses and recorders</span></a>).</p></li>
-<li><p>Time is in seconds. The simulators, the predictor and the estimator advance their model by the time of the call
-(<a class="reference internal" href="../concepts/time_units_parameters.html"><span class="doc">Time, units and parameters</span></a>); the image features and <code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code> have no time axis.</p></li>
-<li><p>Units: <code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code> is the one feature of the library that converts data (its model is in millimetres and it converts at
-the boundary); the generic models do not. <a class="reference internal" href="../theory/humanoid_models.html"><span class="doc">Humanoid and mass-spring models</span></a> explains the difference.</p></li>
+<li><p>The image features and <code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code> have no time axis: a value belongs to one call.</p></li>
 <li><p>Image features take 8-bit images or masks and return pixel coordinates (see <a class="reference internal" href="../concepts/inputs.html"><span class="doc">Inputs</span></a>).</p></li>
 </ul>
-<p>Hands-on: see <a class="reference internal" href="../tutorials/02_physical_signals/plot_03_points.html#sphx-glr-tutorials-02-physical-signals-plot-03-points-py"><span class="std std-ref">Physical signals: points and models</span></a> (points) and <a class="reference internal" href="../tutorials/02_physical_signals/plot_04_images.html#sphx-glr-tutorials-02-physical-signals-plot-04-images-py"><span class="std std-ref">Physical signals: images</span></a> (images).</p>
+<p>Hands-on: see <a class="reference internal" href="../tutorials/02_physical_signals/plot_03_points.html#sphx-glr-tutorials-02-physical-signals-plot-03-points-py"><span class="std std-ref">Physical signals: points in a grid</span></a> (points) and <a class="reference internal" href="../tutorials/02_physical_signals/plot_04_images.html#sphx-glr-tutorials-02-physical-signals-plot-04-images-py"><span class="std std-ref">Physical signals: images</span></a> (images).</p>
 </section>
 </section>
 
@@ -759,7 +682,7 @@ the boundary); the generic models do not. <a class="reference internal" href="..
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

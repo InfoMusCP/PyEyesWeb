@@ -5,7 +5,7 @@ MultiScaleEntropy
 
 Multi-scale entropy curve and complexity index of one or several signals.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-light:`Complexity`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Entropy, rarity and periodicity </theory/entropy_rarity_periodicity>`.
 

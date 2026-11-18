@@ -5,7 +5,7 @@ Videogram
 
 Videogram or motiongram: each frame collapsed to one line, the lines stacked over time.
 
-:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: video\_gram (VideoGram)`
+:bdg-primary:`Layer 1: physical signals` :bdg-secondary:`timescale: frame` :bdg-info:`EyesWeb: video\_gram (VideoGram)` :bdg-light:`Energy`
 
 Layer: :doc:`Layer 1: physical signals </api/physical_signals>`. Family: :doc:`Imaging </theory/imaging>`.
 

@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.skeletons &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.skeletons &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -452,8 +452,7 @@
   <h1>Source code for pyeyesweb.skeletons</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Skeletons of the capture devices of the lab: presets of :class:`~pyeyesweb.data_models.Skeleton`.</span>
 
-<span class="sd">The features that must know the joints (``KineticEnergy``, ``MotionNoiseDetector``, ``Symmetry``, ``PointsDensity``,</span>
-<span class="sd">``PointsPredictor``) refuse to be built without joint information (they would silently read nothing). Give them</span>
+<span class="sd">The features that must know the joints (``KineticEnergy``, ``MotionNoiseDetector``, ``Symmetry``, ``PointsDensity``) refuse to be built without joint information (they would silently read nothing). Give them</span>
 <span class="sd">``skeleton=`` (a ``Skeleton`` or its name: ``"kinect_v2"``, ``"qualisys_sport"``, ``"mediapipe"``, ``"openpose"``;</span>
 <span class="sd">case-insensitive, ``-`` and spaces count as ``_``) to describe the joints of your device, or explicit ``labels=`` /</span>
 <span class="sd">``weights=`` / ``pairs=``. A parameter given explicitly always wins over the skeleton.</span>
@@ -465,7 +464,6 @@
 <span class="sd">``MotionNoiseDetector``   ``joints``</span>
 <span class="sd">``Symmetry``              ``joints``, ``pairs`` (the couples), ``reference`` (ratio method)</span>
 <span class="sd">``PointsDensity``         ``joints`` (names of the points; they do not enter the maths)</span>
-<span class="sd">``PointsPredictor``       ``joints``</span>
 <span class="sd">========================  ==========================================================================================</span>
 
 <span class="sd">Presets and the fields they define:</span>
@@ -701,7 +699,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

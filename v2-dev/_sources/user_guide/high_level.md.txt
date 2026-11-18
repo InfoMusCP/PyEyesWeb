@@ -41,15 +41,15 @@ window of the signals, and the dominance follows from the two indices.
 >>> entropy = MultiScaleEntropy(window=600, max_scale=6, minimum_points=100)
 >>> index = entropy.run(signals).complexity_index[-1]
 >>> np.round(index, 2).tolist()
-[1.06, 10.36]
+[1.06, 9.43]
 >>> result = EnsembleDominance().process(index)
 >>> np.round(result.dominance_score, 2).tolist(), int(result.leader_index)
-([0.9, 0.0], 0)
+([0.89, 0.0], 0)
 ```
 
 The participant with the lower index, the regular one, is the leader and has the higher score. The scores are relative to the
-group: they say nothing about one participant alone, and a participant whose index is NaN (a constant signal, which has no
-entropy) is ignored.
+group: they say nothing about one participant alone, and a participant whose index is NaN (a constant signal, or too few samples for the
+tolerance at one of the scales) is ignored.
 
 ## What to know before choosing
 

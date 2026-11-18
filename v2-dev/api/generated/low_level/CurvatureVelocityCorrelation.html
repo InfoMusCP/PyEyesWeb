@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>CurvatureVelocityCorrelation &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>CurvatureVelocityCorrelation &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="DirectionChange" href="DirectionChange.html" />
-    <link rel="prev" title="CurvatureDispersion" href="CurvatureDispersion.html" />
+    <link rel="prev" title="BoundingBoxFilledArea" href="BoundingBoxFilledArea.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -416,17 +416,9 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../physical_signals.html">Layer 1: physical signals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.MassSpringModel.html">pyeyesweb.physical_signals.MassSpringModel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.TimeWindowSynchronizer.html">pyeyesweb.physical_signals.TimeWindowSynchronizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pyeyesweb.physical_signals.SynchronizedWindow.html">pyeyesweb.physical_signals.SynchronizedWindow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelEstimator.html">GenericModelEstimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelOrientations.html">GenericModelOrientations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelPredictor.html">GenericModelPredictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/GenericModelSimulator.html">GenericModelSimulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physical_signals/HitCellDetector.html">HitCellDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/HumanoidOrientations.html">HumanoidOrientations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/HumanoidSimulator.html">HumanoidSimulator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physical_signals/PointsPredictor.html">PointsPredictor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physical_signals/SilhouetteBodyParts.html">SilhouetteBodyParts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physical_signals/SilhouetteCentroids.html">SilhouetteCentroids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physical_signals/Videogram.html">Videogram</a></li>
@@ -435,20 +427,14 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../low_level.html">Layer 2: low-level features</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="BodyPartsFromCurvature.html">BodyPartsFromCurvature</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BoundingBoxFilledArea.html">BoundingBoxFilledArea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ContourCurvature.html">ContourCurvature</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ConvexHull.html">ConvexHull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="CurvatureDispersion.html">CurvatureDispersion</a></li>
 <li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">CurvatureVelocityCorrelation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DirectionChange.html">DirectionChange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Directness.html">Directness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="EllipsoidSphericity.html">EllipsoidSphericity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Equilibrium.html">Equilibrium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="FilterContour.html">FilterContour</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Harmonicity.html">Harmonicity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Kinematics.html">Kinematics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="KineticEnergy.html">KineticEnergy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="LogDimensionlessJerk.html">LogDimensionlessJerk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MotionNoiseDetector.html">MotionNoiseDetector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="PointsDensity.html">PointsDensity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SpectralArcLength.html">SpectralArcLength</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SubmovementCount.html">SubmovementCount</a></li>
@@ -457,30 +443,18 @@
 <li class="toctree-l2"><a class="reference internal" href="TriangleSymmetry.html">TriangleSymmetry</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../mid_level.html">Layer 3: mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/ContractionImpulsivity.html">ContractionImpulsivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/GestureSegmenter.html">GestureSegmenter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/MotionDuration.html">MotionDuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/PositionDependingPotentials.html">PositionDependingPotentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/RegionDependingPotentials.html">RegionDependingPotentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/Suddenness.html">Suddenness</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mid_level/SuddennessImpulsivity.html">SuddennessImpulsivity</a></li>
-</ul>
-</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mid_level.html">Layer 3: mid-level features</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../high_level.html">Layer 4: qualities communicated</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../high_level/EnsembleDominance.html">EnsembleDominance</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../analysis_primitives.html">Analysis primitives</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/BinaryPulsesRegularity.html">BinaryPulsesRegularity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CoarseGraining.html">CoarseGraining</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CorrelationsMatrix.html">CorrelationsMatrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/CrossRecurrencePlot.html">CrossRecurrencePlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/EventSynchronization.html">EventSynchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/EventSynchronizationMECS.html">EventSynchronizationMECS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/GeneralisedAutoCorrelation.html">GeneralisedAutoCorrelation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/MultiScaleEntropy.html">MultiScaleEntropy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/NonlinearInterdependence.html">NonlinearInterdependence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/PartialRecurrenceSynchronization.html">PartialRecurrenceSynchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/Periodicity.html">Periodicity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/PhaseLockingValue.html">PhaseLockingValue</a></li>
@@ -488,9 +462,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/RecurrencePlot.html">RecurrencePlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SampleEntropy.html">SampleEntropy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/ScalarPeakDetector.html">ScalarPeakDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SequenceDetector.html">SequenceDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/SpikeSynchronization.html">SpikeSynchronization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analysis_primitives/TemporalSynchronization.html">TemporalSynchronization</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../data_models.html">Data models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -596,7 +567,7 @@
   <section id="curvaturevelocitycorrelation">
 <span id="feature-curvaturevelocitycorrelation"></span><h1>CurvatureVelocityCorrelation<a class="headerlink" href="#curvaturevelocitycorrelation" title="Link to this heading">#</a></h1>
 <p>Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.</p>
-<p><span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">Layer 2: low-level features</span> <span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">timescale: up to ~0.5 s</span> <span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">EyesWeb: smoothnessindex (Smoothness)</span></p>
+<p><span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">Layer 2: low-level features</span> <span class="sd-sphinx-override sd-badge sd-bg-secondary sd-bg-text-secondary">timescale: up to ~0.5 s</span> <span class="sd-sphinx-override sd-badge sd-bg-info sd-bg-text-info">EyesWeb: smoothnessindex (Smoothness)</span> <span class="sd-sphinx-override sd-badge sd-bg-light sd-bg-text-light">Trajectory</span> <span class="sd-sphinx-override sd-badge sd-bg-light sd-bg-text-light">Smoothness</span></p>
 <p>Layer: <a class="reference internal" href="../../low_level.html"><span class="doc">Layer 2: low-level features</span></a>. Family: <a class="reference internal" href="../../../theory/smoothness.html"><span class="doc">Smoothness</span></a>.</p>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
@@ -625,35 +596,31 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Optional[float]</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">velocity_threshold</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">0.001</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">standard_deviation_threshold</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">standard_deviation_threshold</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.0001</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">upper_limit</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upper_limit</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">100.0</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_window_length</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">9</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">correlation_type</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'pearson'</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">correlation_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'simplified'</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Literal['pearson',</span> <span class="pre">'simplified']</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">differentiate</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">differentiate</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input_kind</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_kind</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'static'</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Literal['static',</span> <span class="pre">'dynamic']</span></code></p></td>
 </tr>
@@ -727,17 +694,17 @@
 <td><p>&lt;length&gt;/s</p></td>
 <td><p>velocity per sample</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">curvature_std</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_curvature_std</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 <td><p>scalar</p></td>
-<td><p>1/&lt;length&gt;</p></td>
 <td></td>
+<td><p>standard deviation of log curvature</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">velocity_std</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log_speed_std</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 <td><p>scalar</p></td>
-<td><p>&lt;length&gt;/s</p></td>
 <td></td>
+<td><p>standard deviation of log speed</p></td>
 </tr>
 </tbody>
 </table>
@@ -747,19 +714,22 @@
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyeyesweb.low_level.CurvatureVelocityCorrelation">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.low_level.</span></span><span class="sig-name descname"><span class="pre">CurvatureVelocityCorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standard_deviation_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pearson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'static'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/smoothness.html#CurvatureVelocityCorrelation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.CurvatureVelocityCorrelation" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyeyesweb.low_level.</span></span><span class="sig-name descname"><span class="pre">CurvatureVelocityCorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standard_deviation_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'simplified'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'static'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyeyesweb/low_level/smoothness.html#CurvatureVelocityCorrelation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyeyesweb.low_level.CurvatureVelocityCorrelation" title="Link to this definition">#</a></dt>
 <dd><p>Correlation between curvature and velocity of a 1 to 3 channel trajectory, a smoothness index.</p>
-<p>A smooth movement slows down where its path bends: curvature and speed are negatively related. The feature
-measures that coupling inside a window of the trajectory. The samples of the window are
-smoothed and differentiated by a Savitzky-Golay filter, which gives the velocity <span class="math notranslate nohighlight">\(v_k\)</span> and the curvature
-<span class="math notranslate nohighlight">\(\kappa_k\)</span> at every sample <span class="math notranslate nohighlight">\(k\)</span>; the <code class="docutils literal notranslate"><span class="pre">smoothness</span></code> output is then, by default, their Pearson
-correlation coefficient over the window,</p>
+<p>A smooth movement slows down where its path bends: curvature and speed are negatively related, close to a power
+law (log speed falls linearly with log curvature). The feature measures that coupling inside a window of the
+trajectory, as Mazzarino et al. (2009) and Piana et al. (2016) define it. The samples of the window are smoothed and
+differentiated by a Savitzky-Golay filter, which gives the velocity <span class="math notranslate nohighlight">\(v_k\)</span> and the curvature <span class="math notranslate nohighlight">\(\kappa_k\)</span>
+at every sample <span class="math notranslate nohighlight">\(k\)</span>. The index is computed on their logarithms; by default (<code class="docutils literal notranslate"><span class="pre">correlation_type=&quot;simplified&quot;</span></code>,
+the papers’ form for a short window) it is</p>
 <div class="math notranslate nohighlight">
-\[S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}
-{\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],\]</div>
-<p>which is strongly negative for a smooth movement (high curvature, low speed). With <code class="docutils literal notranslate"><span class="pre">correlation_type=&quot;simplified&quot;</span></code>
-the index is a simplified form of the original block, bounded above by <code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>. The outputs also hold the
-per-sample <code class="docutils literal notranslate"><span class="pre">curvature</span></code> and <code class="docutils literal notranslate"><span class="pre">velocity</span></code> series of the window and their standard deviations.</p>
+\[S = \frac{1}{\sigma_{\log\kappa}\,\sigma_{\log |v|}},\]</div>
+<p>capped at <code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>: large for a smooth movement, whose curvature and speed vary together within a narrow
+band, and close to 1 for a jerky one (about 10 against 1 on the smooth and jerky figure-eights of the example
+session). <code class="docutils literal notranslate"><span class="pre">correlation_type=&quot;pearson&quot;</span></code> gives the correlation coefficient of the two logarithms instead, in
+[-1, 1]; on movement data it does not rank smooth above jerky (stops pair a near-zero speed with a large curvature,
+which also correlates strongly). Samples with zero curvature or speed have no logarithm and are left out of the
+window.</p>
 <p>The filters keep their history between windows (the previous window feeds the start of the next one), so
 consecutive windows overlap by <code class="docutils literal notranslate"><span class="pre">window</span> <span class="pre">-</span> <span class="pre">hop</span></code> samples; <code class="docutils literal notranslate"><span class="pre">hop=window</span></code> means no overlap.</p>
 <dl class="field-list simple">
@@ -772,13 +742,11 @@ consecutive windows overlap by <code class="docutils literal notranslate"><span 
 </dd>
 <dt><strong>sampling_rate</strong><span class="classifier">float</span></dt><dd><p>Sampling rate of the series in Hz. Required: the window carries no time axis of its own. <em>(structural)</em></p>
 </dd>
-<dt><strong>velocity_threshold</strong><span class="classifier">float, optional</span></dt><dd><p>Velocity threshold of the original block. It has no effect: the block validates it and never reads it.
-Defaults to <code class="docutils literal notranslate"><span class="pre">0.001</span></code>. <em>(live)</em></p>
-</dd>
-<dt><strong>standard_deviation_threshold</strong><span class="classifier">float, optional</span></dt><dd><p>Threshold of the original block on the standard deviations of the curvature and the velocity, used by the
-<code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code> index only. It acts on the quantities the filters give, so on the velocity per sample
-(not per second) unless <code class="docutils literal notranslate"><span class="pre">differentiate</span></code> is set; the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> outputs are always per second. Defaults to
-<code class="docutils literal notranslate"><span class="pre">0.0001</span></code>. <em>(live)</em></p>
+<dt><strong>standard_deviation_threshold</strong><span class="classifier">float, optional</span></dt><dd><p>Smallest variation that counts: when the standard deviation of the (linear) curvature or velocity of the window
+is below it, there is nothing to correlate (a straight path, a constant speed) and the result is
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>. It acts on the quantities the filters give, so on the velocity per sample (not per second)
+unless <code class="docutils literal notranslate"><span class="pre">differentiate</span></code> is set; the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> outputs are always per second. Defaults to <code class="docutils literal notranslate"><span class="pre">0.0001</span></code>.
+<em>(live)</em></p>
 </dd>
 <dt><strong>upper_limit</strong><span class="classifier">float, optional</span></dt><dd><p>Upper bound of the index (dimensionless); the <code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code> index is capped at it. Defaults to <code class="docutils literal notranslate"><span class="pre">100.0</span></code>.
 <em>(live)</em></p>
@@ -788,14 +756,14 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">0.001</
 <dt><strong>filter_window_length</strong><span class="classifier">int, optional</span></dt><dd><p>Samples of the Savitzky-Golay window (odd, greater than <code class="docutils literal notranslate"><span class="pre">filter_polyorder</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">9</span></code>.
 <em>(structural)</em></p>
 </dd>
-<dt><strong>correlation_type</strong><span class="classifier">{“pearson”, “simplified”}, optional</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code> (default): the Pearson correlation coefficient. <code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code>: the simplified index of the
-original block, at most <code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>. <em>(live)</em></p>
+<dt><strong>correlation_type</strong><span class="classifier">{“simplified”, “pearson”}, optional</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code> (default): <span class="math notranslate nohighlight">\(1 / (\sigma_{\log\kappa}\,\sigma_{\log |v|})\)</span>, at most <code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>.
+<code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code>: the correlation coefficient of the logarithms. <em>(live)</em></p>
 </dd>
 <dt><strong>differentiate</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether the derivatives of the filter are taken with respect to time in seconds. With the default
 <code class="docutils literal notranslate"><span class="pre">False</span></code> they are taken per sample and the velocity outputs are multiplied by <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>, so they
-are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and the Pearson correlation do
-not depend on it; the <code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code> index and <code class="docutils literal notranslate"><span class="pre">standard_deviation_threshold</span></code> do, because they act on the
-velocity before that conversion. <em>(structural)</em></p>
+are per second in both modes. The curvature (of a 2 or 3 channel trajectory) and both indices do not depend on
+it (a scale factor does not change the spread of a logarithm); <code class="docutils literal notranslate"><span class="pre">standard_deviation_threshold</span></code> does, because
+it acts on the velocity before that conversion. <em>(structural)</em></p>
 </dd>
 <dt><strong>input_kind</strong><span class="classifier">{“static”, “dynamic”}, optional</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;static&quot;</span></code> (default): every window has the shape of the first one. <code class="docutils literal notranslate"><span class="pre">&quot;dynamic&quot;</span></code>: the series may change
 length from window to window; a window of another length or channel count rebuilds the filters with an empty
@@ -811,16 +779,20 @@ value (y), 2 (x, y) or 3 (x, y, z). The feature buffers <code class="docutils li
 result: it does not enter the computation and is not checked.</p>
 <p><strong>Outputs.</strong> <code class="docutils literal notranslate"><span class="pre">smoothness</span></code> (dimensionless; in [-1, 1] for <code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code>); <code class="docutils literal notranslate"><span class="pre">curvature</span></code>: the per-sample curvature
 of the window (<code class="docutils literal notranslate"><span class="pre">window</span></code> values, 1/length); <code class="docutils literal notranslate"><span class="pre">velocity</span></code>: the per-sample velocity of the window (<code class="docutils literal notranslate"><span class="pre">window</span></code>
-values, length/s); <code class="docutils literal notranslate"><span class="pre">curvature_std</span></code> and <code class="docutils literal notranslate"><span class="pre">velocity_std</span></code>: their sample standard deviations of the window.</p>
+values, length/s); <code class="docutils literal notranslate"><span class="pre">log_curvature_std</span></code> and <code class="docutils literal notranslate"><span class="pre">log_speed_std</span></code>: the sample standard deviations of the logarithms
+of curvature and speed that enter the index (dimensionless).</p>
 <p><strong>Statuses.</strong> <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> while the first window fills (<code class="docutils literal notranslate"><span class="pre">&quot;k</span> <span class="pre">of</span> <span class="pre">N</span> <span class="pre">samples&quot;</span></code>) and for the first window after
-it, because the filters need a previous window (<code class="docutils literal notranslate"><span class="pre">smoothness</span></code> is then NaN); <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> between two windows
-when <code class="docutils literal notranslate"><span class="pre">hop</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>; <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> when the data does not support the index (a null movement, for example) or a
-sample is NaN or infinite.</p>
+it, because the filters need a previous window (no output); <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code> between two windows when <code class="docutils literal notranslate"><span class="pre">hop</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>;
+<code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> (no output) when there is nothing to correlate (curvature or velocity does not vary, or fewer
+than 3 samples have a non-zero curvature and speed) or a sample is NaN or infinite.</p>
+<p><strong>Changed from EyesWeb.</strong> The block correlated the linear values of curvature and velocity; the index here is on
+their logarithms, as the papers define it, and <code class="docutils literal notranslate"><span class="pre">&quot;simplified&quot;</span></code> is the default. A window without variation gave
+<code class="docutils literal notranslate"><span class="pre">upper_limit</span></code> or a correlation of rounding noise; it is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>.</p>
 <p>Corrected in the core: the curvature used half of the second derivative of the Savitzky-Golay fit. With
 <code class="docutils literal notranslate"><span class="pre">input_kind=&quot;dynamic&quot;</span></code>, the window after a change of length or channel count is <code class="docutils literal notranslate"><span class="pre">WARMING_UP</span></code> (it was reported
 as <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>) and the windows after it are valid again.</p>
 <p class="rubric">References</p>
-<p><span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../../references.html#id15" title="Barbara Mazzarino, Maurizio Mancini, and others. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored. 2009.">3</a>]</span></p>
+<p><span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../../references.html#id22" title="Barbara Mazzarino, Maurizio Mancini, and others. The need for impulsivity &amp; smoothness: improving hci by qualitatively measuring new high-level human motion features. In Proceedings of the International Conference on Signal Processing and Multimedia Applications (IEEE sponsored. 2009.">8</a>]</span>, <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../../references.html#id38" title="Stefano Piana, Alessandra Staglianò, Francesca Odone, and Antonio Camurri. Adaptive body gesture representation for automatic emotion recognition. ACM Transactions on Interactive Intelligent Systems (TiiS), 6(1):1–31, 2016.">17</a>]</span></p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">CurvatureVelocityCorrelation</span>
@@ -828,14 +800,17 @@ as <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</s
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ellipse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">feature</span> <span class="o">=</span> <span class="n">CurvatureVelocityCorrelation</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span><span class="o">.</span><span class="n">smoothness</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
-<span class="go">-0.94</span>
+<span class="go">5.77</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pearson</span> <span class="o">=</span> <span class="n">CurvatureVelocityCorrelation</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">correlation_type</span><span class="o">=</span><span class="s2">"pearson"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">pearson</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span><span class="o">.</span><span class="n">smoothness</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># an ellipse follows the power law exactly</span>
+<span class="go">-1.0</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <section id="examples-using-pyeyesweb-low-level-curvaturevelocitycorrelation">
 <h3>Examples using <code class="docutils literal notranslate"><span class="pre">pyeyesweb.low_level.CurvatureVelocityCorrelation</span></code><a class="headerlink" href="#examples-using-pyeyesweb-low-level-curvaturevelocitycorrelation" title="Link to this heading">#</a></h3>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="How fast, how energetic and how smooth a movement is. This tutorial computes the velocity, acceleration, jerk and curvature of a hand, the kinetic energy of the whole body, six smoothness metrics (first on synthetic reaches whose smoothness we control, then on recordings), two shape measures of a path, and a test that tells a tracking error from a movement."><img alt="" src="../../../_images/sphx_glr_plot_05_motion_thumb.png" />
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="How fast, how energetic and how smooth a movement is. This tutorial computes the velocity, acceleration, jerk and curvature of a hand, the kinetic energy of the whole body, four smoothness metrics (first on synthetic reaches whose smoothness we control, then on recordings) and two shape measures of a path."><img alt="" src="../../../_images/sphx_glr_plot_05_motion_thumb.png" />
 <p><a class="reference internal" href="../../../tutorials/03_low_level/plot_05_motion.html"><span class="doc">Low level: motion and smoothness</span></a></p>
   <div class="sphx-glr-thumbnail-title">Low level: motion and smoothness</div>
 </div></div><div class="clearer"></div></section>
@@ -853,12 +828,12 @@ as <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="CurvatureDispersion.html"
+       href="BoundingBoxFilledArea.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CurvatureDispersion</p>
+        <p class="prev-next-title">BoundingBoxFilledArea</p>
       </div>
     </a>
     <a class="right-next"
@@ -940,7 +915,7 @@ as <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</s
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

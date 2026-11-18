@@ -3,9 +3,9 @@
 SampleEntropy
 =============
 
-Sample entropy of a single-channel window, for template lengths 1 to \`\`embedding\_dimension\`\`.
+Sample entropy of a single-channel window: how predictable the signal is.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: sampleentropy`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: sampleentropy` :bdg-light:`Complexity`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Entropy, rarity and periodicity </theory/entropy_rarity_periodicity>`.
 
@@ -26,7 +26,7 @@ Parameters
      - ``1``
      - ``int``
    * - ``embedding_dimension``
-     - ``12``
+     - ``2``
      - ``int``
    * - ``tolerance``
      - ``None``
@@ -67,9 +67,9 @@ Outputs
      - Description
    * - ``sample_entropy``
      - ``float``
-     - (12,)
+     - scalar
      - 
-     - \-log(A[k] / B[k]) for template length k + 1
+     - SampEn(m, r) = -log(A / B) of the window
 
 .. py:currentmodule:: pyeyesweb.analysis_primitives
 

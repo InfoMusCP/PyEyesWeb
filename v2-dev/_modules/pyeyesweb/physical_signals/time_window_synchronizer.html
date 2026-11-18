@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.physical_signals.time_window_synchronizer &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.physical_signals.time_window_synchronizer &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -458,6 +458,7 @@
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -503,7 +504,7 @@
 <span class="sd">    samples, motion capture in a few, video in single frames. The synchronizer buffers every stream and releases, one window</span>
 <span class="sd">    at a time, the data of the same stretch of time, ready to be given together to features that need aligned inputs;</span>
 <span class="sd">    :math:`t` advances by one window at each ``pop()``. A sampled stream (audio, motion capture, any time series) gives</span>
-<span class="sd">    ``int(sampling_rate * window)`` samples per window, cut from and concatenated over the chunks received: samples that do</span>
+<span class="sd">    ``round(sampling_rate * window)`` samples per window (a warning when that product is not a whole number), cut from and concatenated over the chunks received: samples that do</span>
 <span class="sd">    not fit stay for the next window. A frame stream (video) gives the latest frame that starts before the end of the</span>
 <span class="sd">    window. The synchronizer is pull-based: ``push`` and ``push_frame`` add data, ``ready()`` says whether every stream</span>
 <span class="sd">    holds enough for the next window and ``pop()`` returns it.</span>
@@ -527,7 +528,9 @@
 <span class="sd">    ``samples_per_window(stream)`` gives the samples of a window of a sampled stream (0 for a frame stream); ``reset()``</span>
 <span class="sd">    drops everything buffered and restarts at ``start_time``.</span>
 
-<span class="sd">    **Corrected in the core.** The part of a chunk that did not fit in a window is kept and opens the next window (the</span>
+<span class="sd">    **Gaps are not detected:** samples are counted, not timed, so a stream that loses samples shifts against the others</span>
+<span class="sd">    unless ``push`` is given ``timestamp``. **Corrected in the core.** The count of samples per window is rounded to the</span>
+<span class="sd">    nearest integer (the original truncated it, which lost a sample to floating point, as 0.29 s at 100 Hz gave 28). The part of a chunk that did not fit in a window is kept and opens the next window (the</span>
 <span class="sd">    original dropped it as soon as a window was full). Unlike the EyesWeb block, which outputs once per activation and</span>
 <span class="sd">    possibly an incomplete window, this one outputs only complete windows.</span>
 
@@ -549,6 +552,11 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>  <span class="c1"># the samples of a window are rate * window, rounded; say so when it was not a whole number</span>
+            <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">-</span> <span class="nb">round</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"TimeWindowSynchronizer: </span><span class="si">{</span><span class="n">stream</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> Hz * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="si">}</span><span class="s2"> s = </span><span class="si">{</span><span class="n">stream</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> samples is "</span>
+                              <span class="sa">f</span><span class="s2">"not a whole number; the window holds </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">)</span><span class="si">}</span><span class="s2"> samples"</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">,</span>
+                              <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_core</span> <span class="o">=</span> <span class="n">_Synchronizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="p">[</span><span class="n">_Synchronizer</span><span class="o">.</span><span class="n">Input</span><span class="o">.</span><span class="n">frames</span><span class="p">()</span> <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_Synchronizer</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="o">*</span><span class="n">stream</span><span class="p">)</span>
                                                   <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampled</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">)</span>
@@ -675,7 +683,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

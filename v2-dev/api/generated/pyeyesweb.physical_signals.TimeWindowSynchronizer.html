@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pyeyesweb.physical_signals.TimeWindowSynchronizer &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.physical_signals.TimeWindowSynchronizer &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="pyeyesweb.physical_signals.SynchronizedWindow" href="pyeyesweb.physical_signals.SynchronizedWindow.html" />
-    <link rel="prev" title="pyeyesweb.physical_signals.MassSpringModel" href="pyeyesweb.physical_signals.MassSpringModel.html" />
+    <link rel="prev" title="Layer 1: physical signals" href="../physical_signals.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -416,17 +416,9 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../physical_signals.html">Layer 1: physical signals</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="pyeyesweb.physical_signals.MassSpringModel.html">pyeyesweb.physical_signals.MassSpringModel</a></li>
 <li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">pyeyesweb.physical_signals.TimeWindowSynchronizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyeyesweb.physical_signals.SynchronizedWindow.html">pyeyesweb.physical_signals.SynchronizedWindow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelEstimator.html">GenericModelEstimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelOrientations.html">GenericModelOrientations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelPredictor.html">GenericModelPredictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/GenericModelSimulator.html">GenericModelSimulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="physical_signals/HitCellDetector.html">HitCellDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/HumanoidOrientations.html">HumanoidOrientations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/HumanoidSimulator.html">HumanoidSimulator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="physical_signals/PointsPredictor.html">PointsPredictor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="physical_signals/SilhouetteBodyParts.html">SilhouetteBodyParts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="physical_signals/SilhouetteCentroids.html">SilhouetteCentroids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="physical_signals/Videogram.html">Videogram</a></li>
@@ -435,20 +427,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../low_level.html">Layer 2: low-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="low_level/BodyPartsFromCurvature.html">BodyPartsFromCurvature</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/BoundingBoxFilledArea.html">BoundingBoxFilledArea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low_level/ContourCurvature.html">ContourCurvature</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low_level/ConvexHull.html">ConvexHull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low_level/CurvatureDispersion.html">CurvatureDispersion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/CurvatureVelocityCorrelation.html">CurvatureVelocityCorrelation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/DirectionChange.html">DirectionChange</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/Directness.html">Directness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/EllipsoidSphericity.html">EllipsoidSphericity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/Equilibrium.html">Equilibrium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low_level/FilterContour.html">FilterContour</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low_level/Harmonicity.html">Harmonicity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/Kinematics.html">Kinematics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/KineticEnergy.html">KineticEnergy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/LogDimensionlessJerk.html">LogDimensionlessJerk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low_level/MotionNoiseDetector.html">MotionNoiseDetector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/PointsDensity.html">PointsDensity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/SpectralArcLength.html">SpectralArcLength</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low_level/SubmovementCount.html">SubmovementCount</a></li>
@@ -457,30 +443,18 @@
 <li class="toctree-l2"><a class="reference internal" href="low_level/TriangleSymmetry.html">TriangleSymmetry</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../mid_level.html">Layer 3: mid-level features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/ContractionImpulsivity.html">ContractionImpulsivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/GestureSegmenter.html">GestureSegmenter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/MotionDuration.html">MotionDuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/PositionDependingPotentials.html">PositionDependingPotentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/RegionDependingPotentials.html">RegionDependingPotentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/Suddenness.html">Suddenness</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mid_level/SuddennessImpulsivity.html">SuddennessImpulsivity</a></li>
-</ul>
-</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../mid_level.html">Layer 3: mid-level features</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../high_level.html">Layer 4: qualities communicated</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="high_level/EnsembleDominance.html">EnsembleDominance</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../analysis_primitives.html">Analysis primitives</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/BinaryPulsesRegularity.html">BinaryPulsesRegularity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/CoarseGraining.html">CoarseGraining</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/CorrelationsMatrix.html">CorrelationsMatrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/CrossRecurrencePlot.html">CrossRecurrencePlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/EventSynchronization.html">EventSynchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/EventSynchronizationMECS.html">EventSynchronizationMECS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/GeneralisedAutoCorrelation.html">GeneralisedAutoCorrelation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/MultiScaleEntropy.html">MultiScaleEntropy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/NonlinearInterdependence.html">NonlinearInterdependence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/PartialRecurrenceSynchronization.html">PartialRecurrenceSynchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/Periodicity.html">Periodicity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/PhaseLockingValue.html">PhaseLockingValue</a></li>
@@ -488,9 +462,6 @@
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/RecurrencePlot.html">RecurrencePlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/SampleEntropy.html">SampleEntropy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis_primitives/ScalarPeakDetector.html">ScalarPeakDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/SequenceDetector.html">SequenceDetector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/SpikeSynchronization.html">SpikeSynchronization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis_primitives/TemporalSynchronization.html">TemporalSynchronization</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../data_models.html">Data models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -603,7 +574,7 @@
 samples, motion capture in a few, video in single frames. The synchronizer buffers every stream and releases, one window
 at a time, the data of the same stretch of time, ready to be given together to features that need aligned inputs;
 <span class="math notranslate nohighlight">\(t\)</span> advances by one window at each <code class="docutils literal notranslate"><span class="pre">pop()</span></code>. A sampled stream (audio, motion capture, any time series) gives
-<code class="docutils literal notranslate"><span class="pre">int(sampling_rate</span> <span class="pre">*</span> <span class="pre">window)</span></code> samples per window, cut from and concatenated over the chunks received: samples that do
+<code class="docutils literal notranslate"><span class="pre">round(sampling_rate</span> <span class="pre">*</span> <span class="pre">window)</span></code> samples per window (a warning when that product is not a whole number), cut from and concatenated over the chunks received: samples that do
 not fit stay for the next window. A frame stream (video) gives the latest frame that starts before the end of the
 window. The synchronizer is pull-based: <code class="docutils literal notranslate"><span class="pre">push</span></code> and <code class="docutils literal notranslate"><span class="pre">push_frame</span></code> add data, <code class="docutils literal notranslate"><span class="pre">ready()</span></code> says whether every stream
 holds enough for the next window and <code class="docutils literal notranslate"><span class="pre">pop()</span></code> returns it.</p>
@@ -627,7 +598,9 @@ dropped. <code class="docutils literal notranslate"><span class="pre">push_frame
 <code class="docutils literal notranslate"><span class="pre">pop()</span></code> returns a <a class="reference internal" href="pyeyesweb.physical_signals.SynchronizedWindow.html#pyeyesweb.physical_signals.SynchronizedWindow" title="pyeyesweb.physical_signals.SynchronizedWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchronizedWindow</span></code></a> and raises <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> when <code class="docutils literal notranslate"><span class="pre">ready()</span></code> is false;
 <code class="docutils literal notranslate"><span class="pre">samples_per_window(stream)</span></code> gives the samples of a window of a sampled stream (0 for a frame stream); <code class="docutils literal notranslate"><span class="pre">reset()</span></code>
 drops everything buffered and restarts at <code class="docutils literal notranslate"><span class="pre">start_time</span></code>.</p>
-<p><strong>Corrected in the core.</strong> The part of a chunk that did not fit in a window is kept and opens the next window (the
+<p><strong>Gaps are not detected:</strong> samples are counted, not timed, so a stream that loses samples shifts against the others
+unless <code class="docutils literal notranslate"><span class="pre">push</span></code> is given <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>. <strong>Corrected in the core.</strong> The count of samples per window is rounded to the
+nearest integer (the original truncated it, which lost a sample to floating point, as 0.29 s at 100 Hz gave 28). The part of a chunk that did not fit in a window is kept and opens the next window (the
 original dropped it as soon as a window was full). Unlike the EyesWeb block, which outputs once per activation and
 possibly an incomplete window, this one outputs only complete windows.</p>
 <p class="rubric">Examples</p>
@@ -744,12 +717,12 @@ possibly an incomplete window, this one outputs only complete windows.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pyeyesweb.physical_signals.MassSpringModel.html"
+       href="../physical_signals.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pyeyesweb.physical_signals.MassSpringModel</p>
+        <p class="prev-next-title">Layer 1: physical signals</p>
       </div>
     </a>
     <a class="right-next"
@@ -834,7 +807,7 @@ possibly an incomplete window, this one outputs only complete windows.</p>
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

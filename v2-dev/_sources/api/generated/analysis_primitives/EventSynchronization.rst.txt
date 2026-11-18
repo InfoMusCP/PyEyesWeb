@@ -5,7 +5,7 @@ EventSynchronization
 
 Event synchronization of two event trains: how often events of one series follow those of the other.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: Event Sync`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: Event Sync` :bdg-light:`Rhythm` :bdg-light:`Coordination`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Synchronization </theory/synchronization>`.
 
@@ -25,14 +25,11 @@ Parameters
    * - ``hop``
      - ``None``
      - ``Optional[int]``
-   * - ``tau``
+   * - ``max_lag``
      - ``5``
      - ``int``
    * - ``reset_every_buffer``
-     - ``False``
-     - ``bool``
-   * - ``weighted``
-     - ``False``
+     - ``True``
      - ``bool``
 
 Inputs

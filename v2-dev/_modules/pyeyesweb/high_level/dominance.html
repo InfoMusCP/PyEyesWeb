@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.high_level.dominance &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.high_level.dominance &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -497,7 +497,8 @@
 <span class="sd">    index over the largest one. ``leader_index``: position of the leader among the participants, ``-1`` when no</span>
 <span class="sd">    participant has an index. ``leader_complexity``: the complexity index of the leader, in the unit of the input.</span>
 
-<span class="sd">    **Statuses.** ``INVALID_INPUT`` for an infinite index; NaN is data, not an error.</span>
+<span class="sd">    **Statuses.** ``INVALID_INPUT`` for an infinite index and for a negative one (a complexity index built from sample</span>
+<span class="sd">    entropy is not negative, and with one the score :math:`D_i` would leave [0, 1]); NaN is data, not an error.</span>
 
 <span class="sd">    Corrected in the core: a NaN complexity index no longer zeroes every score and becomes the leader; such a</span>
 <span class="sd">    participant is ignored (score NaN, never the leader).</span>
@@ -529,6 +530,8 @@
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"infinite values"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">indices</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>  <span class="c1"># sample entropy is not negative, and a score above 1 would leave [0, 1]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"negative complexity index"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
         <span class="n">dominance_score</span><span class="p">,</span> <span class="n">leader_index</span><span class="p">,</span> <span class="n">leader_complexity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">dominance_score</span><span class="o">=</span><span class="n">dominance_score</span><span class="p">,</span> <span class="n">leader_index</span><span class="o">=</span><span class="n">leader_index</span><span class="p">,</span>
                            <span class="n">leader_complexity</span><span class="o">=</span><span class="n">leader_complexity</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
@@ -583,7 +586,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

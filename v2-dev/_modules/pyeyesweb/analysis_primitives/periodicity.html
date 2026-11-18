@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.periodicity &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.periodicity &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -462,7 +462,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">describe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindowedFeature</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">InputKind</span><span class="p">,</span> <span class="n">Inputs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.data_models.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Status</span>
 
 
 <div class="viewcode-block" id="Periodicity">
@@ -486,8 +486,9 @@
 <span class="sd">        Search strategy of the transform: ``"small2large"`` (periods from the smallest to the largest) or</span>
 <span class="sd">        ``"mbest"`` (the ``best_periods`` best periods). Defaults to ``"small2large"``.</span>
 <span class="sd">    threshold : float, optional</span>
-<span class="sd">        Threshold on the normalised power below which a period is not reported, dimensionless. Defaults to ``0.2``.</span>
-<span class="sd">        *(live)*</span>
+<span class="sd">        Threshold on the normalised power below which a period is not reported (``"small2large"``), dimensionless.</span>
+<span class="sd">        Defaults to ``0.1``, the upper end of the range ``0.01 &lt; T &lt; 0.1`` advised by :cite:`sethares1999periodicity`</span>
+<span class="sd">        (p. 2957); the original block used ``0.2``. *(live)*</span>
 <span class="sd">    best_periods : int, optional</span>
 <span class="sd">        Number of periods searched by ``"mbest"``. Defaults to ``10``.</span>
 <span class="sd">    sort_by_power : bool, optional</span>
@@ -500,10 +501,24 @@
 
 <span class="sd">    **Outputs.** ``periods`` and ``powers``, both of shape ``(channels, columns)`` (``columns`` depends on the</span>
 <span class="sd">    method and the window, so they are not part of ``to_array()``): entry ``k`` of channel ``c`` is a detected period,</span>
-<span class="sd">    in samples, and its normalised power. Unused entries are ``-1``. The ``powers`` of a perfectly periodic</span>
-<span class="sd">    signal is 1.</span>
+<span class="sd">    in samples, and its normalised power. The ``powers`` of a perfectly periodic signal is 1. Unused entries are ``-1``</span>
+<span class="sd">    with ``"small2large"``; ``"mbest"`` always fills its ``best_periods`` columns, padding with period 0 and power 0,</span>
+<span class="sd">    and its last entries can be periods of noise-level power.</span>
 
-<span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, otherwise ``OK``.</span>
+<span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` when</span>
+<span class="sd">    no channel has a period to find (every channel constant over the window, or ``"mbest"`` on fewer than 3 samples),</span>
+<span class="sd">    otherwise ``OK``; a constant channel among others gives ``-1`` (``"small2large"``) or ``0`` (``"mbest"``) entries and</span>
+<span class="sd">    the ``reason`` names it.</span>
+
+<span class="sd">    **Differences from the paper** :cite:`sethares1999periodicity`, kept from the original block: the projection on a</span>
+<span class="sd">    period averages the partial last repetition too (an exact least-squares projection; the paper's eq. 7 uses complete</span>
+<span class="sd">    repetitions only), and ``"mbest"`` searches periods up to a third of the window, not half (at least three</span>
+<span class="sd">    repetitions; the lab's use, :cite:`mancini2012computing`, only accepts periods well below half the window) and</span>
+<span class="sd">    refines its list differently. ``"mbest"`` can report a multiple of the true period first (a train of period 5 can</span>
+<span class="sd">    give 10); the paper's M-Best-gamma variant, more robust to this, is not implemented.</span>
+
+<span class="sd">    **Real time.** About 11 ms per call for a window of 1024 samples with ``hop=1``, too slow for 100 Hz; use a</span>
+<span class="sd">    ``hop`` above 1 or a smaller window.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -515,7 +530,6 @@
 <span class="sd">    5.0 1.0</span>
 <span class="sd">    """</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">PeriodicityIndex</span>
-    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"method"</span><span class="p">:</span> <span class="s2">"algorithm"</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -532,8 +546,17 @@
                       <span class="n">Output</span><span class="p">(</span><span class="s2">"powers"</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"normalised power of each period, -1 = unused"</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">powers</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">)</span></div>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">"mbest"</span> <span class="ow">and</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"mbest needs at least 3 samples"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">constant</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="s2">"constant window: no period"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">periods</span><span class="p">,</span> <span class="n">powers</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">powers</span><span class="p">[</span><span class="n">constant</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">powers</span><span class="p">[</span><span class="n">constant</span><span class="p">]),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">powers</span><span class="p">[</span><span class="n">constant</span><span class="p">])</span>  <span class="c1"># mbest gives NaN for no signal</span>
+        <span class="n">reason</span> <span class="o">=</span> <span class="s2">"constant channel(s) "</span> <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">constant</span><span class="p">))</span> <span class="o">+</span> <span class="s2">": no period"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">constant</span><span class="p">)</span> <span class="k">else</span> <span class="s2">""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="n">periods</span><span class="p">,</span> <span class="n">powers</span><span class="o">=</span><span class="n">powers</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span></div>
 
 
 
@@ -585,7 +608,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

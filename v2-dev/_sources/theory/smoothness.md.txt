@@ -7,10 +7,10 @@ the study of expressive movement {cite}`piana2016fluidity,alborno2016interactive
 {cite}`balasubramanian2015analysis`.
 
 No single number is the smoothness of a movement: the metrics below capture different aspects, and they do not rank
-movements in the same way. This page defines the six features of the family and says what each one measures:
+movements in the same way. This page defines the four features of the family and says what each one measures:
 {py:class}`~pyeyesweb.low_level.SpectralArcLength`, {py:class}`~pyeyesweb.low_level.LogDimensionlessJerk`,
-{py:class}`~pyeyesweb.low_level.Harmonicity`, {py:class}`~pyeyesweb.low_level.SubmovementCount`,
-{py:class}`~pyeyesweb.low_level.CurvatureDispersion` and {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`. The
+{py:class}`~pyeyesweb.low_level.SubmovementCount` and
+{py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation`. The
 symbols are those of {doc}`notation`.
 
 ## What is a smooth movement
@@ -77,18 +77,8 @@ $$
 
 where the derivatives are taken by finite differences. With `input_mode="acceleration"` the input is the magnitude of the
 acceleration, the jerk is its first difference, and the normalisation uses the duration and the peak of the acceleration
-(`LogDimensionlessJerk.from_acceleration`). The measure is dimensionless and negative, closer to 0 for a smoother movement, and
-a flat signal gives 0. It is the more sensitive of the two to noise, because it differentiates twice: filter the speed first.
-
-### Harmonicity
-
-A smooth ballistic movement has one peak of speed, and a repeated movement alternates peaks and valleys.
-{py:class}`~pyeyesweb.low_level.Harmonicity` compares the number of peaks of the speed in the window with the number of sign
-changes of its gradient, the turning points of the speed. It is 1 when peaks and valleys alternate regularly, as in a single
-bell-shaped profile or in a regular oscillation, and lower when the speed has turning points that do not belong to that
-pattern; a maximum at the border of the window is not counted as a peak. The measure is dimensionless and lies in $[0, 1]$.
-Unlike SPARC and LDLJ it does not compare the movement with a reference shape: it says whether the peaks and the valleys
-are regular.
+(`LogDimensionlessJerk.from_acceleration`). The measure is dimensionless and negative, closer to 0 for a smoother movement; a
+flat signal has no jerk to measure and gives `INVALID_INPUT`. It is the more sensitive of the two to noise, because it differentiates twice: filter the speed first.
 
 ### Sub-movements
 
@@ -104,7 +94,7 @@ Three speed profiles of one second, sampled at 100 Hz, show the metrics at work:
 and the bell with measurement noise added. One window holds the whole movement.
 
 ```{doctest}
->>> from pyeyesweb.low_level import SpectralArcLength, LogDimensionlessJerk, Harmonicity, SubmovementCount
+>>> from pyeyesweb.low_level import SpectralArcLength, LogDimensionlessJerk, SubmovementCount
 >>> rate = 100.0
 >>> time = np.arange(100) / rate
 >>> bump = lambda centre, width, height: height * np.exp(-0.5 * ((time - centre) / width) ** 2)
@@ -114,14 +104,14 @@ and the bell with measurement noise added. One window holds the whole movement.
 ...     "bell with noise": np.sin(np.pi * time) ** 2 + np.random.default_rng(1).normal(scale=0.08, size=100),
 ... }
 >>> metrics = {"SPARC": (SpectralArcLength, "spectral_arc_length"), "LDLJ": (LogDimensionlessJerk, "log_dimensionless_jerk"),
-...            "harmonicity": (Harmonicity, "harmonicity"), "sub-movements": (SubmovementCount, "submovement_count")}
+...            "sub-movements": (SubmovementCount, "submovement_count")}
 >>> for name, speed in profiles.items():
 ...     values = {label: round(float(getattr(cls(window=100, sampling_rate=rate).run(speed), output)[-1]), 2)
 ...               for label, (cls, output) in metrics.items()}
 ...     print(f"{name:18s}", values)
-one bell           {'SPARC': -1.43, 'LDLJ': -5.25, 'harmonicity': 1.0, 'sub-movements': 1.0}
-three corrections  {'SPARC': -2.89, 'LDLJ': -10.45, 'harmonicity': 1.0, 'sub-movements': 3.0}
-bell with noise    {'SPARC': -1.42, 'LDLJ': -14.67, 'harmonicity': 1.0, 'sub-movements': 4.0}
+one bell           {'SPARC': -1.43, 'LDLJ': -5.25, 'sub-movements': 1.0}
+three corrections  {'SPARC': -2.89, 'LDLJ': -10.45, 'sub-movements': 3.0}
+bell with noise    {'SPARC': -1.42, 'LDLJ': -14.67, 'sub-movements': 4.0}
 ```
 
 ```{eval-rst}
@@ -165,28 +155,33 @@ Two features take the path of the point instead of its speed profile.
 ### Curvature and speed
 
 A hand that follows a curve slows down where the curve bends, and speeds up where it straightens. For a smooth movement the
-curvature $\kappa$ and the speed $v$ are therefore negatively correlated, and the correlation is a smoothness index
-{cite}`mazzarino2009need`. In a window of the trajectory,
+curvature $\kappa$ and the speed $v$ follow a power law, $\log v$ falling linearly with $\log \kappa$, and how closely they
+do is a smoothness index {cite}`mazzarino2009need,piana2016adaptive`. In a window of the trajectory,
 {py:class}`~pyeyesweb.low_level.CurvatureVelocityCorrelation` smooths and differentiates the samples by a Savitzky-Golay
-filter, which gives the velocity $v_k$ and the curvature $\kappa_k$ at every sample
-$k$ of the window, and its `smoothness` output is by default their Pearson correlation,
+filter, which gives the velocity $v_k$ and the curvature $\kappa_k$ at every sample $k$ of the window. Its `smoothness`
+output is computed on their logarithms; by default (`correlation_type="simplified"`) it is the papers' form for a short
+window,
 
 $$
-S = \frac{\sum_k (\kappa_k - \bar{\kappa})(v_k - \bar{v})}
-{\sqrt{\sum_k (\kappa_k - \bar{\kappa})^2 \, \sum_k (v_k - \bar{v})^2}} \in [-1, 1],
+S = \frac{1}{\sigma_{\log\kappa}\,\sigma_{\log |v|}},
 $$
 
-strongly negative for a smooth movement. It takes a trajectory of one, two or three channels, one sample per call, and
-needs the sampling rate. The outputs also hold the per-sample `curvature` and `velocity` of the window and their standard
-deviations. The filters keep their history between windows, so consecutive windows share $N - H$ samples, and the status is
-`WARMING_UP` while the first window fills and for the first window after it, because the filters need a previous window
-(`smoothness` is then NaN). A null movement
-gives `INVALID_INPUT`. The default `correlation_type="pearson"` is the coefficient above; `"simplified"` is a simplified
-index of the original block, capped at `upper_limit`. Corrected in the core: the curvature used half of the second
-derivative of the fit.
+capped at `upper_limit`: large when curvature and speed vary together within a narrow band, close to 1 for a jerky
+movement. `correlation_type="pearson"` gives instead the correlation coefficient of $\log\kappa$ and $\log |v|$, in
+$[-1, 1]$; on recorded movement it is not a smoothness ranking, because the stops of a jerky movement pair a near-zero
+speed with a large curvature, which also correlates strongly. Samples with zero curvature or speed have no logarithm and
+are left out of the window.
 
-An ellipse traced at constant angular speed slows down at the ends of its long axis, where the curvature is largest, and
-the correlation is strongly negative:
+It takes a trajectory of one, two or three channels, one sample per call, and needs the sampling rate. The outputs also
+hold the per-sample `curvature` and `velocity` of the window and the standard deviations of their logarithms. The filters
+keep their history between windows, so consecutive windows share $N - H$ samples, and the status is `WARMING_UP` while the
+first window fills and for the first window after it, because the filters need a previous window. A window where the
+curvature or the speed does not vary (a straight path, a constant speed) has nothing to correlate and gives
+`INVALID_INPUT`. The original block correlated the linear values; corrected in the core, the curvature used half of the
+second derivative of the fit.
+
+An ellipse traced at constant angular speed slows down at the ends of its long axis, where the curvature is largest; it
+follows the power law exactly, so the logarithms correlate perfectly:
 
 ```{doctest}
 >>> from pyeyesweb.low_level import CurvatureVelocityCorrelation
@@ -194,35 +189,10 @@ the correlation is strongly negative:
 >>> ellipse = np.c_[2 * np.cos(np.pi * time), np.sin(np.pi * time)]
 >>> feature = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0)
 >>> round(float(feature.run(ellipse).smoothness[-1]), 2)
--0.94
-```
-
-### Curvature dispersion
-
-{py:class}`~pyeyesweb.low_level.CurvatureDispersion` is a curvature-based index of a movement that relates how much the path
-bends to the distance that the point travelled over the last `window` calls (50 by default). It is computed from the
-velocity and the acceleration vectors of the point, from which the feature derives the curvature $\kappa$ and the arc
-length $\lVert\mathbf{v}\rVert \, \Delta t$ of each call, keeps both over a ring of `window` calls, and returns one
-dimensionless value per call, from the first call on. The index is 1 while the movement is slower than `movement_threshold`:
-a point at rest has no smoothness to measure. A path with curvature 0 everywhere, a perfectly straight one, has no finite
-index and gives `INVALID_INPUT`. The empty entries of the rings weigh in until they have filled, so the first `window`
-values are not comparable with the later ones. Corrected in the core: every call now adds the speed times the time step to
-the arc length (above and below the threshold). This index was the `smoothness` output of `Kinematics` in earlier versions.
-
-The velocity and the acceleration come from two `Kinematics` features with the same filter parameters and time rule, one for
-each, with `output_dims="components"`:
-
-```{doctest}
->>> from pyeyesweb.low_level import CurvatureDispersion, Kinematics
->>> time = np.arange(200) / 100.0
->>> circle = np.c_[np.cos(2 * np.pi * time), np.sin(2 * np.pi * time)]     # a circle of radius 1 m
->>> velocity = Kinematics(output_type="velocity", output_dims="components", sampling_rate=100.0)
->>> acceleration = Kinematics(output_type="acceleration", output_dims="components", sampling_rate=100.0)
->>> feature = CurvatureDispersion(window=50, sampling_rate=100.0)
->>> for point in circle:
-...     result = feature.process(velocity.process(point).velocity, acceleration.process(point).acceleration)
->>> round(float(result.curvature_dispersion), 2)
-0.06
+5.77
+>>> pearson = CurvatureVelocityCorrelation(window=100, hop=100, sampling_rate=100.0, correlation_type="pearson")
+>>> round(float(pearson.run(ellipse).smoothness[-1]), 2)
+-1.0
 ```
 
 ## How to read the outputs
@@ -230,11 +200,9 @@ each, with `output_dims="components"`:
 | Feature | Output | Unit | Smoother means | Range |
 |---|---|---|---|---|
 | `SpectralArcLength` | `spectral_arc_length` | none | closer to 0 | negative |
-| `LogDimensionlessJerk` | `log_dimensionless_jerk` | none | closer to 0 | negative; 0 for a flat signal |
-| `Harmonicity` | `harmonicity` | none | closer to 1 | $[0, 1]$ |
+| `LogDimensionlessJerk` | `log_dimensionless_jerk` | none | closer to 0 | negative; `INVALID_INPUT` for a flat signal |
 | `SubmovementCount` | `submovement_count` | none | lower | integer, 0 or more |
-| `CurvatureVelocityCorrelation` | `smoothness` | none | closer to $-1$ | $[-1, 1]$ for `"pearson"` |
-| `CurvatureDispersion` | `curvature_dispersion` | none | see the example | 1 below the movement threshold |
+| `CurvatureVelocityCorrelation` | `smoothness` | none | higher (`"simplified"`) | positive, at most `upper_limit`; $[-1, 1]$ for `"pearson"` |
 
 The metrics are dimensionless and independent of the unit of the data, which makes them comparable between movements of
 different size and speed, but a value is only meaningful relative to the same metric on a comparable movement: the absolute

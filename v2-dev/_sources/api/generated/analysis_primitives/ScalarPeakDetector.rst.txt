@@ -5,7 +5,7 @@ ScalarPeakDetector
 
 Peak detection on a scalar signal: flags the samples at which a peak has been found.
 
-:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: scalar\_peak\_detector`
+:bdg-primary:`Analysis primitives` :bdg-secondary:`timescale: any` :bdg-info:`EyesWeb: scalar\_peak\_detector` :bdg-light:`Rhythm`
 
 Layer: :doc:`Analysis primitives </api/analysis_primitives>`. Family: :doc:`Gesture segmentation </theory/gesture_segmentation>`.
 

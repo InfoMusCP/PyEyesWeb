@@ -23,10 +23,10 @@ Low level: shape and posture
 
 How a body occupies space at one instant, and how a path changes direction. This tutorial measures the contraction and
 expansion of a posture, its symmetry and its balance, the turns of a hand path, and the outline of a silhouette: its
-curvature, its convex hull and its salient points.
+curvature and its salient points.
 
 :Goals: measure how much space a posture fills; compare left and right; estimate balance on the floor; measure the changes of
-        direction of a path; go from a contour to its curvature, hull and body parts.
+        direction of a path; go from a contour to its curvature and body parts.
 :Prerequisites: :ref:`sphx_glr_tutorials_01_getting_started_plot_02_the_contract.py`.
 :Data: trials 3 to 8 (synchronized and unsynchronized arm movements), 10 (sumo squat), 11 to 14 (figure eight and caress),
        17 and 18 (hiding and opening up) and 19 (alternating balance) of the example session; a synthetic silhouette.
@@ -551,26 +551,24 @@ the same length.
 
 **Takeaway.** ``DirectionChange`` summarises the turns of a path in a window by a cosine in [0, 1] and an enclosed area.
 
-.. GENERATED FROM PYTHON SOURCE LINES 301-317
+.. GENERATED FROM PYTHON SOURCE LINES 301-315
 
-Contours: curvature, hull and body parts
-----------------------------------------
-A **contour** is the closed outline of a shape, an ordered ``(N, 2)`` array of points. Four features work on a contour, one
-call per outline (see :doc:`/theory/imaging`):
+Contours: curvature and body parts
+-----------------------------------
+A **contour** is the closed outline of a shape, an ordered ``(N, 2)`` array of points. One feature works on a contour, one
+call per outline (see :doc:`/theory/imaging`): :class:`~pyeyesweb.low_level.BodyPartsFromCurvature` finds the salient points
+(head, hands, feet) as the extremes of the signed curvature of the outline, which it computes itself (1/r on a circle of
+radius r, positive where the contour turns left, counter-clockwise).
 
-* :class:`~pyeyesweb.low_level.FilterContour` smooths each coordinate with a Gaussian kernel, because the outline of a
-  silhouette is jagged, as it follows the pixels;
-* :class:`~pyeyesweb.low_level.ContourCurvature` gives the signed curvature at every point, 1/r on a circle of radius r, positive
-  where the contour turns left (counter-clockwise);
-* :class:`~pyeyesweb.low_level.ConvexHull` gives the vertices of the smallest convex polygon around the contour;
-* :class:`~pyeyesweb.low_level.BodyPartsFromCurvature` finds the salient points (head, hands, feet) as the extremes of the
-  curvature.
+Two steps around them are done with SciPy: the outline of a silhouette is jagged, as it follows the pixels, so it is smoothed
+first with a Gaussian filter along the contour (``scipy.ndimage.gaussian_filter1d`` with ``mode="wrap"``, because the contour
+is closed), and the smallest convex polygon around it is ``scipy.spatial.ConvexHull``.
 
 The example data hold motion capture only, so we use a synthetic silhouette (a body with its arms out, from ``helpers``). Its
 outline is found with the contour routine of matplotlib, resampled to 300 equally spaced points and given counter-clockwise
 order in a frame where ``y`` points up.
 
-.. GENERATED FROM PYTHON SOURCE LINES 317-334
+.. GENERATED FROM PYTHON SOURCE LINES 315-332
 
 .. code-block:: Python
 
@@ -604,30 +602,40 @@ order in a frame where ``y`` points up.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 335-338
+.. GENERATED FROM PYTHON SOURCE LINES 333-336
 
 We check the curvature on shapes whose answer is known (a circle of radius 100 pixels has curvature 0.01), then smooth the
-outline, take its curvature and hull, and look for the body parts. ``BodyPartsFromCurvature`` wants a smooth contour: on the
+outline, take its curvature and its hull, and look for the body parts. ``BodyPartsFromCurvature`` wants a smooth contour: on the
 raw outline every pixel step is a corner. On a counter-clockwise contour the tips are the curvature **maximums**.
 
-.. GENERATED FROM PYTHON SOURCE LINES 338-357
+.. GENERATED FROM PYTHON SOURCE LINES 336-365
 
 .. code-block:: Python
 
 
-    from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature, ConvexHull, FilterContour
+    from scipy.ndimage import gaussian_filter1d
+    from scipy.spatial import ConvexHull
+
+    from pyeyesweb.low_level import BodyPartsFromCurvature
+
+
+
+    def curvature_of(points):
+        """The discrete curvature that ``BodyPartsFromCurvature`` computes inside, written out to look at it (the contour is closed)."""
+        step = points - np.roll(points, 1, axis=0)  # from the previous point to this one
+        change = np.roll(step, -1, axis=0) - step  # next step minus this step
+        return (step[:, 0] * change[:, 1] - step[:, 1] * change[:, 0]) / (step ** 2).sum(axis=1) ** 1.5
+
 
     circle_angle = np.linspace(0, 2 * np.pi, 100, endpoint=False)
     circle = np.c_[100 * np.cos(circle_angle), 100 * np.sin(circle_angle)]
-    curvature_of = ContourCurvature()
-    print("circle of radius 100: curvature", np.round(curvature_of.process(circle).curvature[:3], 4))
+    print("circle of radius 100: curvature", np.round(curvature_of(circle)[:3], 4))
 
-    smoother = FilterContour(window=15, gaussian_sigma=4.0)
-    smooth = smoother.process(outline).contour
-    curvature = curvature_of.process(smooth).curvature
-    hull = ConvexHull().process(smooth).hull
-    parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(curvature, smooth)
-    print("raw curvature range:", np.round([curvature_of.process(outline).curvature.min(), curvature_of.process(outline).curvature.max()], 2),
+    smooth = gaussian_filter1d(outline, sigma=4.0, axis=0, mode="wrap")  # each coordinate, along the closed contour
+    curvature = curvature_of(smooth)
+    hull = smooth[ConvexHull(smooth).vertices]  # the hull vertices, in counter-clockwise order
+    parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(smooth)
+    print("raw curvature range:", np.round([curvature_of(outline).min(), curvature_of(outline).max()], 2),
           "| smoothed:", np.round([curvature.min(), curvature.max()], 2))
     print("hull:", hull.shape[0], "vertices |", len(parts.maximums), "maximums (x, y) in pixels:")
     for label, point in parts.maximums.items():
@@ -642,17 +650,18 @@ raw outline every pixel step is a corner. On a counter-clockwise contour the tip
  .. code-block:: none
 
     circle of radius 100: curvature [0.01 0.01 0.01]
-    raw curvature range: [-1.17  0.43] | smoothed: [-0.47  0.25]
-    hull: 31 vertices | 4 maximums (x, y) in pixels:
-      label_max0: (83, 164)
-      label_max1: (159, 219)
-      label_max2: (237, 166)
-      label_max3: (202, 18)
+    raw curvature range: [-1.17  0.43] | smoothed: [-0.48  0.26]
+    hull: 31 vertices | 5 maximums (x, y) in pixels:
+      label_max0: (84, 164)
+      label_max1: (159, 218)
+      label_max2: (236, 166)
+      label_max3: (148, 18)
+      label_max4: (201, 19)
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 358-379
+.. GENERATED FROM PYTHON SOURCE LINES 366-387
 
 .. code-block:: Python
 
@@ -689,18 +698,17 @@ raw outline every pixel step is a corner. On a counter-clockwise contour the tip
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 380-388
+.. GENERATED FROM PYTHON SOURCE LINES 388-395
 
-The maximums sit at the head, the two hands and one foot, which is what the detector is for; the second foot is not found,
-because its corner is rounder after the smoothing. The number of parts found therefore depends on the smoothing and on
-``minimum_distance``. The hull touches the tips and bridges the concave parts (armpits and crotch), so the area between the
+The maximums sit at the head, the two hands and the two feet, which is what the detector is for. The number of parts found
+depends on the smoothing and on ``minimum_distance``: a stronger smoothing rounds a corner until it is no longer found. The hull touches the tips and bridges the concave parts (armpits and crotch), so the area between the
 outline and the hull measures how far the body is from convex. With ``track_points=True`` (the default) the labels of one call
 are carried over to the nearest points of the next, which is what a video needs.
 
-**Takeaway.** Smooth the contour, then read its curvature, hull and body parts; the orientation of the contour decides which
+**Takeaway.** Smooth the contour, then read its curvature and body parts; the orientation of the contour decides which
 extremes are the tips.
 
-.. GENERATED FROM PYTHON SOURCE LINES 390-398
+.. GENERATED FROM PYTHON SOURCE LINES 397-405
 
 Try it
 ------
@@ -711,13 +719,13 @@ Try it
 3. In ``DirectionChange``, set ``metrics=["polygon"]`` and change ``number_of_subsamples`` from 20 to 5. What happens to the
    median polygon of trial 14?
 
-.. GENERATED FROM PYTHON SOURCE LINES 400-403
+.. GENERATED FROM PYTHON SOURCE LINES 407-410
 
 Solutions
 ---------
 Exercise 1. The box of the index is axis-aligned, so a performer who turns changes the index even without changing the posture.
 
-.. GENERATED FROM PYTHON SOURCE LINES 403-409
+.. GENERATED FROM PYTHON SOURCE LINES 410-416
 
 .. code-block:: Python
 
@@ -741,11 +749,11 @@ Exercise 1. The box of the index is axis-aligned, so a performer who turns chang
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 410-411
+.. GENERATED FROM PYTHON SOURCE LINES 417-418
 
 Exercise 2. The two options change the level of the value, not which trial is more symmetric.
 
-.. GENERATED FROM PYTHON SOURCE LINES 411-417
+.. GENERATED FROM PYTHON SOURCE LINES 418-424
 
 .. code-block:: Python
 
@@ -769,11 +777,11 @@ Exercise 2. The two options change the level of the value, not which trial is mo
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 418-419
+.. GENERATED FROM PYTHON SOURCE LINES 425-426
 
 Exercise 3. Fewer subsamples give a coarser polygon; in this recording it encloses less area.
 
-.. GENERATED FROM PYTHON SOURCE LINES 419-426
+.. GENERATED FROM PYTHON SOURCE LINES 426-433
 
 .. code-block:: Python
 
@@ -798,7 +806,7 @@ Exercise 3. Fewer subsamples give a coarser polygon; in this recording it enclos
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 427-434
+.. GENERATED FROM PYTHON SOURCE LINES 434-441
 
 Next steps
 ----------

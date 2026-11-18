@@ -19,7 +19,7 @@ Putting it together: a real-time loop with a parameter changed while it runs, an
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial puts the previous ones together in two ways. First a live loop: a chain of four features is fed one frame at a time, as it would be from a motion-capture stream, and a parameter is changed while it runs. Then a batch analysis: features from three layers are computed for a set of recordings, collected in a table with pandas, and used to compare the conditions of the example session with a plain nearest-centroid rule and a plot.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial puts the previous ones together in two ways. First a live loop: a chain of three features is fed one frame at a time, as it would be from a motion-capture stream, and a parameter is changed while it runs. Then a batch analysis: features from three layers are computed for a set of recordings, collected in a table with pandas, and used to compare the conditions of the example session with a plain nearest-centroid rule and a plot.">
 
 .. only:: html
 

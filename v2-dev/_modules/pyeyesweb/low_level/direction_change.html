@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.low_level.direction_change &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.low_level.direction_change &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -486,7 +486,10 @@
 <span class="sd">        0 &amp; \text{otherwise,} \end{cases}</span>
 
 <span class="sd">    so that :math:`D_{\cos}` is 1 for a right-angle turn (:math:`\theta = 90^\circ`) and falls to 0 at a distance</span>
-<span class="sd">    ``epsilon`` from it; a straight path or a U-turn gives 0.</span>
+<span class="sd">    ``epsilon`` from it; a straight path or a U-turn gives 0. This is Algorithm 2 of :cite:`niewiadomski2015impulsive`,</span>
+<span class="sd">    where the paper says that a sudden movement along a line (a change of direction by 180 or 0 degrees) is not</span>
+<span class="sd">    detected as impulsive; the three points are the window's first, middle and last samples here, the paper's are</span>
+<span class="sd">    two time steps apart.</span>
 
 <span class="sd">    **Polygon metric.** The positions are subsampled to ``number_of_subsamples`` points and the feature returns the</span>
 <span class="sd">    area of the polygon they form, the shoelace sum of cross products :math:`\tfrac12\lVert\sum_i \mathbf{X}_i\times</span>
@@ -543,7 +546,6 @@
 
     <span class="n">_ALLOWED_METRICS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"cosine"</span><span class="p">,</span> <span class="s2">"polygon"</span><span class="p">]</span>
     <span class="n">_core_class</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">motion</span><span class="o">.</span><span class="n">DirectionChange</span>
-    <span class="n">_core_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"number_of_subsamples"</span><span class="p">:</span> <span class="s2">"num_subsamples"</span><span class="p">}</span>
     <span class="n">_lazy_block</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
@@ -682,7 +684,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

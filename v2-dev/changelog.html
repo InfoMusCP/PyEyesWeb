@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Changelog &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=944fa962"></script>
+    <script src="_static/documentation_options.js?v=a3b72308"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -481,8 +481,53 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
-<section id="id1">
-<h2>2.0.0<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="a2-early-release-the-date-is-set-at-the-tag">
+<h2>2.0.0a2 (early release; the date is set at the tag)<a class="headerlink" href="#a2-early-release-the-date-is-set-at-the-tag" title="Link to this heading">#</a></h2>
+<p>The version is 2.0.0a2, not 2.0.0a1: a first 2.0.0a1 core was uploaded to TestPyPI before the review of the algorithms and cannot be
+replaced, so the reviewed core and package are 2.0.0a2.</p>
+<p>The early release holds the 34 features whose algorithms were reviewed against their sources and judged solid on movement
+data: <code class="docutils literal notranslate"><span class="pre">pyeyesweb.catalog()</span></code> lists them (4 physical signals, 16 low-level, no mid-level, 1 high-level, 13 analysis
+primitives). The other features of the library are kept in the code, tested and documented in the sources, and are left
+out of this release for further investigation: <code class="docutils literal notranslate"><span class="pre">MassSpringSimulator</span></code>, <code class="docutils literal notranslate"><span class="pre">Harmonicity</span></code>, <code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code> (until the noise test
+that belongs to it, <code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code>, is finished, so the release has no mid-level feature), <code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code>, <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SuddennessImpulsivity</span></code>, <code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code>, <code class="docutils literal notranslate"><span class="pre">PositionDependingPotentials</span></code>, <code class="docutils literal notranslate"><span class="pre">RegionDependingPotentials</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NonlinearInterdependence</span></code> and <code class="docutils literal notranslate"><span class="pre">SpikeSynchronization</span></code>. Every change of a number against the EyesWeb block or the 1.x
+library that the review decided is listed in the migration guide (“Behaviour changes that alter numbers”).</p>
+<section id="design-review-2026-11-17">
+<h3>Design review (2026-11-17)<a class="headerlink" href="#design-review-2026-11-17" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Removed: <code class="docutils literal notranslate"><span class="pre">ContourCurvature</span></code> (no use on its own; <code class="docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code> now takes the contour only and computes the curvature
+itself). The catalog holds 34 features.</p></li>
+<li><p>Outputs and parameters dropped because the user computes them afterwards: <code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids.normalized</span></code> (divide by the width
+and the height), <code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity.is_regularity_detected</span></code> (the rising edge of <code class="docutils literal notranslate"><span class="pre">is_regular</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code> returns one value, SampEn(m, r), with <code class="docutils literal notranslate"><span class="pre">embedding_dimension</span></code> as the template length m (default 2); it used to
+return the entropies of the template lengths 0 to <code class="docutils literal notranslate"><span class="pre">embedding_dimension</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></li>
+</ul>
+</section>
+<section id="algorithm-review">
+<h3>Algorithm review<a class="headerlink" href="#algorithm-review" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Library-wide rules: a result that is not defined is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code> with NaN outputs; durations are in seconds and lags
+and windows in samples; the Savitzky-Golay filter fits the newest samples; the compiled core and the TouchDesigner
+operators use the public parameter names.</p></li>
+<li><p>Merged: <code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code> into <code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code> (outputs <code class="docutils literal notranslate"><span class="pre">motion_duration</span></code>, <code class="docutils literal notranslate"><span class="pre">pause_duration</span></code>, no noise input); the four
+humanoid and model blocks into <code class="docutils literal notranslate"><span class="pre">MassSpringSimulator</span></code>. Removed: <code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">ConvexHull</span></code>, <code class="docutils literal notranslate"><span class="pre">FilterContour</span></code>, <code class="docutils literal notranslate"><span class="pre">PointsPredictor</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code>.</p></li>
+<li><p>Numbers that changed: <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> at a tolerance (<code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code>, <code class="docutils literal notranslate"><span class="pre">RecurrencePlot</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code>); <code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code> one tolerance for all scales; <code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code> taper and edges;
+<code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code> spread rule; <code class="docutils literal notranslate"><span class="pre">Periodicity</span></code> threshold 0.1; <code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code> linear kernel;
+<code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code> per window; <code class="docutils literal notranslate"><span class="pre">Videogram</span></code> mean; <code class="docutils literal notranslate"><span class="pre">HitCellDetector</span></code> cell edges; <code class="docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code> centre of
+gravity of half silhouettes; <code class="docutils literal notranslate"><span class="pre">SilhouetteBodyParts</span></code> left = smaller x; <code class="docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code> radius 0.1 m;
+<code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code> on logarithms; <code class="docutils literal notranslate"><span class="pre">TriangleSymmetry</span></code> rounding tolerance and the new <code class="docutils literal notranslate"><span class="pre">method</span></code> option.</p></li>
+<li><p>New statuses for undefined cases: <code class="docutils literal notranslate"><span class="pre">PartialRecurrenceSynchronization</span></code>, <code class="docutils literal notranslate"><span class="pre">Periodicity</span></code>, <code class="docutils literal notranslate"><span class="pre">PhaseLockingValue</span></code>,
+<code class="docutils literal notranslate"><span class="pre">MultiScaleEntropy</span></code>, <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code> (warm-up), <code class="docutils literal notranslate"><span class="pre">EnsembleDominance</span></code> (negative index), <code class="docutils literal notranslate"><span class="pre">KineticEnergy</span></code> (missing
+reference joint).</p></li>
+</ul>
+</section>
+</section>
+<section id="series-against-1-x-cumulative">
+<h2>2.0 series, against 1.x (cumulative)<a class="headerlink" href="#series-against-1-x-cumulative" title="Link to this heading">#</a></h2>
 <p>PyEyesWeb 2.0 is a new library over a compiled port of the EyesWeb Expressive Gesture Analysis library. The migration table for every removed or renamed name is in the migration guide
 (<code class="docutils literal notranslate"><span class="pre">docs/migration.md</span></code>, “Migrating from 1.x”).</p>
 <section id="breaking-changes">
@@ -496,7 +541,7 @@ holds the last <code class="docutils literal notranslate"><span class="pre">OK</
 mask and one attribute per output; <code class="docutils literal notranslate"><span class="pre">is_valid</span></code> remains as an alias of <code class="docutils literal notranslate"><span class="pre">ok</span></code>. A missing value is <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code> for integer and
 <code class="docutils literal notranslate"><span class="pre">False</span></code> for boolean outputs), never <code class="docutils literal notranslate"><span class="pre">None</span></code>, and array shapes do not change between calls.</p></li>
 <li><p>feat!: layered architecture. Features live in <code class="docutils literal notranslate"><span class="pre">pyeyesweb.physical_signals</span></code>, <code class="docutils literal notranslate"><span class="pre">low_level</span></code>, <code class="docutils literal notranslate"><span class="pre">mid_level</span></code>, <code class="docutils literal notranslate"><span class="pre">high_level</span></code> and
-<code class="docutils literal notranslate"><span class="pre">analysis_primitives</span></code>; the catalog (<code class="docutils literal notranslate"><span class="pre">pyeyesweb.catalog()</span></code>) holds 60 features (11, 22, 7, 1 and 19). <code class="docutils literal notranslate"><span class="pre">pyeyesweb.Smoothness</span></code>
+<code class="docutils literal notranslate"><span class="pre">analysis_primitives</span></code>; the catalog (<code class="docutils literal notranslate"><span class="pre">pyeyesweb.catalog()</span></code>) holds 34 features (4, 16, 0, 1 and 13). <code class="docutils literal notranslate"><span class="pre">pyeyesweb.Smoothness</span></code>
 and <code class="docutils literal notranslate"><span class="pre">pyeyesweb.Synchronization</span></code> are no longer exported at the top level.</p></li>
 <li><p>The features run in a compiled core, the module <code class="docutils literal notranslate"><span class="pre">eyesweb_core</span></code>, a package separate from <code class="docutils literal notranslate"><span class="pre">pyeyesweb</span></code> (a development build is
 found through <code class="docutils literal notranslate"><span class="pre">EYESWEB_CORE_PATH</span></code>). <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">pyeyesweb</span></code>, <code class="docutils literal notranslate"><span class="pre">pyeyesweb.data_models</span></code> and <code class="docutils literal notranslate"><span class="pre">Layer</span></code> work without it. The minimum
@@ -517,6 +562,16 @@ indexed, signatures are explicit and keyword-only after <code class="docutils li
 <code class="docutils literal notranslate"><span class="pre">ScalarBinarySyncDetector</span></code>, the trajectory datatype and its blocks, the <code class="docutils literal notranslate"><span class="pre">GeometricTrajectory3D</span></code> transforms,
 <code class="docutils literal notranslate"><span class="pre">pyeyesweb.utils.math_utils</span></code>, <code class="docutils literal notranslate"><span class="pre">pyeyesweb.utils.signal_processing</span></code> and <code class="docutils literal notranslate"><span class="pre">TSVReader</span></code>. See the migration guide for the
 replacements.</p></li>
+<li><p>Algorithm review (2026-11): removed <code class="docutils literal notranslate"><span class="pre">PointsPredictor</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelPredictor</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelEstimator</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">ConvexHull</span></code>, <code class="docutils literal notranslate"><span class="pre">FilterContour</span></code>, <code class="docutils literal notranslate"><span class="pre">CorrelationsMatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code>, <code class="docutils literal notranslate"><span class="pre">SequenceDetector</span></code> and
+<code class="docutils literal notranslate"><span class="pre">TemporalSynchronization</span></code> (no published definition, or a NumPy/SciPy one-liner; substitutes in the migration guide).</p></li>
+<li><p>Algorithm review: <code class="docutils literal notranslate"><span class="pre">HumanoidSimulator</span></code>, <code class="docutils literal notranslate"><span class="pre">HumanoidOrientations</span></code>, <code class="docutils literal notranslate"><span class="pre">GenericModelOrientations</span></code> and <code class="docutils literal notranslate"><span class="pre">GenericModelSimulator</span></code> are
+one feature, <code class="docutils literal notranslate"><span class="pre">MassSpringSimulator</span></code>: <code class="docutils literal notranslate"><span class="pre">model=&quot;humanoid&quot;</span></code> (default) or a <code class="docutils literal notranslate"><span class="pre">MassSpringModel</span></code>; it takes joint positions (a model
+of your own too) and an optional <code class="docutils literal notranslate"><span class="pre">directions</span></code> input (the former <code class="docutils literal notranslate"><span class="pre">control</span></code>), and returns <code class="docutils literal notranslate"><span class="pre">joints</span></code> and <code class="docutils literal notranslate"><span class="pre">directions</span></code>.</p></li>
+<li><p>Algorithm review: <code class="docutils literal notranslate"><span class="pre">tau</span></code> is <code class="docutils literal notranslate"><span class="pre">max_lag</span></code> in <code class="docutils literal notranslate"><span class="pre">EventSynchronization</span></code> and <code class="docutils literal notranslate"><span class="pre">EventSynchronizationMECS</span></code> (<code class="docutils literal notranslate"><span class="pre">weighted</span></code> removed);
+<code class="docutils literal notranslate"><span class="pre">GeneralisedAutoCorrelation</span></code> takes <code class="docutils literal notranslate"><span class="pre">lag</span></code> and <code class="docutils literal notranslate"><span class="pre">max_lag</span></code> (<code class="docutils literal notranslate"><span class="pre">tau</span></code>, <code class="docutils literal notranslate"><span class="pre">tau_min</span></code>, <code class="docutils literal notranslate"><span class="pre">tau_spread</span></code> and <code class="docutils literal notranslate"><span class="pre">set_tau_min</span></code> removed);
+<code class="docutils literal notranslate"><span class="pre">CrossRecurrencePlot</span></code> takes one <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> (<code class="docutils literal notranslate"><span class="pre">multiple_epsilons</span></code> removed); <code class="docutils literal notranslate"><span class="pre">Suddenness</span></code> has no <code class="docutils literal notranslate"><span class="pre">is_sudden</span></code> output and no
+<code class="docutils literal notranslate"><span class="pre">method</span></code>; <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code> has no <code class="docutils literal notranslate"><span class="pre">velocity_threshold</span></code>.</p></li>
 </ul>
 </section>
 <section id="features">
@@ -536,6 +591,8 @@ synchronization family (<code class="docutils literal notranslate"><span class="
 <code class="docutils literal notranslate"><span class="pre">TrajectoryNonPlanarity</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">CurvatureVelocityCorrelation</span></code>, <code class="docutils literal notranslate"><span class="pre">TriangleSymmetry</span></code>,
 <code class="docutils literal notranslate"><span class="pre">MotionNoiseDetector</span></code>, <code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code>, <code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code>, <code class="docutils literal notranslate"><span class="pre">ContractionImpulsivity</span></code>, <code class="docutils literal notranslate"><span class="pre">Periodicity</span></code>, <code class="docutils literal notranslate"><span class="pre">SampleEntropy</span></code>,
 <code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code>, <code class="docutils literal notranslate"><span class="pre">BinaryPulsesRegularity</span></code>, <code class="docutils literal notranslate"><span class="pre">ScalarPeakDetector</span></code> and <code class="docutils literal notranslate"><span class="pre">TimeWindowSynchronizer</span></code>.</p></li>
+<li><p>feat!: <code class="docutils literal notranslate"><span class="pre">MotionDuration</span></code> is merged into <code class="docutils literal notranslate"><span class="pre">GestureSegmenter</span></code>, whose outputs <code class="docutils literal notranslate"><span class="pre">motion_duration</span></code> and <code class="docutils literal notranslate"><span class="pre">pause_duration</span></code> follow the
+timestamps; the <code class="docutils literal notranslate"><span class="pre">noise</span></code> input of the segmenter is removed and the Savitzky-Golay fit uses the newest samples.</p></li>
 <li><p>feat: <code class="docutils literal notranslate"><span class="pre">KineticEnergy(input_mode=&quot;velocity&quot;)</span></code> and a PCA fit of a point cloud in <code class="docutils literal notranslate"><span class="pre">EllipsoidSphericity.process</span></code> (with
 <code class="docutils literal notranslate"><span class="pre">axis_ratio</span></code> and <code class="docutils literal notranslate"><span class="pre">radii</span></code>), extensions of the EyesWeb blocks; the default behaviour is the faithful one.</p></li>
 <li><p>feat: discovery metadata (<code class="docutils literal notranslate"><span class="pre">LAYER</span></code>, <code class="docutils literal notranslate"><span class="pre">TIMESCALE</span></code>, <code class="docutils literal notranslate"><span class="pre">EYESWEB_BLOCK</span></code>) on every feature class, <code class="docutils literal notranslate"><span class="pre">pyeyesweb.catalog()</span></code> and
@@ -573,8 +630,8 @@ layer, one generated API page per feature, how-to guides, a developer guide, a g
 </section>
 <section id="v1-0-1-2026-04-07">
 <h2>v1.0.1 (2026-04-07)<a class="headerlink" href="#v1-0-1-2026-04-07" title="Link to this heading">#</a></h2>
-<section id="id2">
-<h3>Features<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id1">
+<h3>Features<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>feat: add Equilibrium class for elliptical postural balance analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/15e4e6310333141df469c15f48e882f76c2d7b4f"><code class="docutils literal notranslate"><span class="pre">15e4e63</span></code></a>)</p></li>
 <li><p>feat: implement GeometricSymmetry feature for skeletal frame and spatial symmetry analysis (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/d6c70cd260955f2e267c876df85b30cbb1085b04"><code class="docutils literal notranslate"><span class="pre">d6c70cd</span></code></a>, <a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/2cdec2cf6fa94580c2369a90a3bd4de958e288af"><code class="docutils literal notranslate"><span class="pre">2cdec2c</span></code></a>)</p></li>
@@ -605,14 +662,14 @@ layer, one generated API page per feature, how-to guides, a developer guide, a g
 </section>
 <section id="v0-1-0-2026-03-23">
 <h2>v0.1.0 (2026-03-23)<a class="headerlink" href="#v0-1-0-2026-03-23" title="Link to this heading">#</a></h2>
-<section id="id3">
-<h3>Bug Fixes<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>Bug Fixes<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>fix: Correct parameter name from ‘methods’ to ‘metrics’ in StatisticalMoment initialization (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/7ab172286f23074459ed4d865dcf57c9d95700ff"><code class="docutils literal notranslate"><span class="pre">7ab1722</span></code></a>)</p></li>
 </ul>
 </section>
-<section id="id4">
-<h3>Features<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Features<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>feat: Add new analytical primitives for synchronization, kinetic energy, rarity, and statistical moments. (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/8adbdf180be372274ba0d830b1aac1f135faeb35"><code class="docutils literal notranslate"><span class="pre">8adbdf1</span></code></a>)</p></li>
 <li><p>feat: add &#64;property to set Smoothness parameters (<a class="reference external" href="https://github.com/InfoMusCP/PyEyesWeb/commit/575a9cb0c6ecf7250602159f3e0695ed5abbba17"><code class="docutils literal notranslate"><span class="pre">575a9cb</span></code></a>)</p></li>
@@ -1025,7 +1082,12 @@ refactored other classes  to align with current design (<a class="reference exte
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Changelog</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.0.0</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a2-early-release-the-date-is-set-at-the-tag">2.0.0a2 (early release; the date is set at the tag)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#design-review-2026-11-17">Design review (2026-11-17)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithm-review">Algorithm review</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#series-against-1-x-cumulative">2.0 series, against 1.x (cumulative)</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-changes">Breaking Changes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#behaviour-changes">Behaviour changes</a></li>
@@ -1033,15 +1095,15 @@ refactored other classes  to align with current design (<a class="reference exte
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v1-0-1-2026-04-07">v1.0.1 (2026-04-07)</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Features</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bug-fixes">Bug Fixes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#refactoring-improvements">Refactoring &amp; Improvements</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maintenance">Maintenance</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-1-0-2026-03-23">v0.1.0 (2026-03-23)</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Bug Fixes</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Bug Fixes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Features</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#refactoring">Refactoring</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unknown">Unknown</a></li>
 </ul>
@@ -1096,7 +1158,7 @@ refactored other classes  to align with current design (<a class="reference exte
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

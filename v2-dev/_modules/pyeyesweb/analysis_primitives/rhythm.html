@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.rhythm &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.rhythm &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -470,13 +470,19 @@
 <a class="viewcode-back" href="../../../api/generated/analysis_primitives/BinaryPulsesRegularity.html#pyeyesweb.analysis_primitives.BinaryPulsesRegularity">[docs]</a>
 <span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"binary_pulses_regularity (BinaryPulsesRegularity)"</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinaryPulsesRegularity</span><span class="p">(</span><span class="n">MinimumWindow</span><span class="p">,</span> <span class="n">WindowedFeature</span><span class="p">,</span> <span class="n">CoreFeature</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Whether the pulses of a window are equally spaced.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Whether the pulses of a window are equally spaced.</span>
 
 <span class="sd">    A pulse is a non-zero sample of a single-channel signal (a step, a beat, the ``is_peak`` flag of</span>
-<span class="sd">    ``ScalarPeakDetector``). The distance between the first two pulses of a window is the reference interval; the</span>
-<span class="sd">    window is regular when at least three pulses are found and every other interval differs from the reference by at</span>
-<span class="sd">    most ``threshold`` samples. It measures the regularity of a rhythm, such as a steady walk or a metronomic</span>
-<span class="sd">    gesture.</span>
+<span class="sd">    ``ScalarPeakDetector``). With :math:`I` the intervals between consecutive pulses of a window, in samples, the window</span>
+<span class="sd">    is regular when it holds at least three pulses and the spread of the intervals is below ``threshold``,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \max(I) - \min(I) &lt; \mathtt{threshold},</span>
+
+<span class="sd">    as in :cite:`niewiadomski2019embodied` (sec. 3.2). It measures the regularity of a rhythm, such as a steady walk or</span>
+<span class="sd">    a metronomic gesture. The rule does not depend on the order of the intervals; a steady drift (intervals 5, 6, 7, 8)</span>
+<span class="sd">    is not regular.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -486,17 +492,20 @@
 <span class="sd">    hop : int, optional</span>
 <span class="sd">        New samples between two windows. Defaults to ``1``. *(live)*</span>
 <span class="sd">    threshold : int, optional</span>
-<span class="sd">        Tolerance in samples when two intervals are compared, at least 0. Defaults to ``0``: the intervals must be</span>
-<span class="sd">        equal. *(live)*</span>
+<span class="sd">        Largest spread of the intervals that is still regular, in samples, exclusive, at least 1. Defaults to ``1``:</span>
+<span class="sd">        the intervals must be equal; ``2`` accepts intervals that differ by one sample. *(live)*</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    **Inputs.** One value per call (a single channel); a non-zero value is a pulse.</span>
 
 <span class="sd">    **Outputs.** ``is_regular`` (bool): the intervals between the pulses are equal within ``threshold``;</span>
-<span class="sd">    ``pulse_count`` (int, at least 0): number of pulses (non-zero samples) in the window;</span>
-<span class="sd">    ``is_regularity_detected`` (bool): ``is_regular`` on the first window after a window that was not regular (a</span>
-<span class="sd">    trigger).</span>
+<span class="sd">    ``pulse_count`` (int, at least 0): number of pulses (non-zero samples) in the window. The moment a rhythm *becomes*</span>
+<span class="sd">    regular is the rising edge of ``is_regular``, which is left to the user: ``np.diff(record["is_regular"].astype(int)) == 1``</span>
+<span class="sd">    on a recording, or ``regular and not previous_regular`` in a loop.</span>
+
+<span class="sd">    The original block compared every interval with the first one (within ``threshold``, inclusive), which accepted a</span>
+<span class="sd">    spread up to twice the threshold and depended on the first interval; its threshold ``t`` is ``t + 1`` here.</span>
 
 <span class="sd">    **Statuses.** ``WARMING_UP`` while the first window fills, ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` for a</span>
 <span class="sd">    window that holds a ``NaN`` or an infinite value.</span>
@@ -514,8 +523,7 @@
     <span class="n">MIN_WINDOW</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">_INPUTS</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">"signal"</span><span class="p">,</span> <span class="n">InputKind</span><span class="o">.</span><span class="n">SAMPLE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"one value per call; a non-zero value is a pulse"</span><span class="p">))</span>
     <span class="n">_OUTPUTS</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s2">"is_regular"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"the intervals between the pulses are equal within the threshold"</span><span class="p">),</span>
-                     <span class="n">Output</span><span class="p">(</span><span class="s2">"pulse_count"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"number of pulses in the window"</span><span class="p">),</span>
-                     <span class="n">Output</span><span class="p">(</span><span class="s2">"is_regularity_detected"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"first regular window after a window that was not"</span><span class="p">))</span>
+                     <span class="n">Output</span><span class="p">(</span><span class="s2">"pulse_count"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">"number of pulses in the window"</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="o">=</span><span class="n">hop</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -524,8 +532,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">reason</span> <span class="o">:=</span> <span class="n">non_finite</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_output</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID_INPUT</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-        <span class="n">regular</span><span class="p">,</span> <span class="n">pulse_count</span><span class="p">,</span> <span class="n">detected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">is_regular</span><span class="o">=</span><span class="n">regular</span><span class="p">,</span> <span class="n">pulse_count</span><span class="o">=</span><span class="n">pulse_count</span><span class="p">,</span> <span class="n">is_regularity_detected</span><span class="o">=</span><span class="n">detected</span><span class="p">)</span></div>
+        <span class="n">regular</span><span class="p">,</span> <span class="n">pulse_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">is_regular</span><span class="o">=</span><span class="n">regular</span><span class="p">,</span> <span class="n">pulse_count</span><span class="o">=</span><span class="n">pulse_count</span><span class="p">)</span></div>
 
 
 
@@ -577,7 +585,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Imaging &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>Imaging &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="References" href="../references.html" />
-    <link rel="prev" title="Humanoid and mass-spring models" href="humanoid_models.html" />
+    <link rel="prev" title="Dominance" href="dominance.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -424,12 +424,10 @@
 <li class="toctree-l1"><a class="reference internal" href="kinematics_energy.html">Kinematics and energy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="smoothness.html">Smoothness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="shape_symmetry_balance.html">Shape, symmetry and balance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="impulsivity_suddenness.html">Impulsivity and suddenness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gesture_segmentation.html">Gesture segmentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="entropy_rarity_periodicity.html">Entropy, rarity and periodicity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="synchronization.html">Synchronization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dominance.html">Dominance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="humanoid_models.html">Humanoid and mass-spring models</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Imaging</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Literature</span></p>
@@ -502,7 +500,7 @@ to separate the body from the background and to reduce it to a few quantities th
 features that do so, from the silhouette of a person: where its centre and its parts are, how its images evolve over time,
 and how the shape of its outline can be measured. They are the image-side counterpart of the skeleton features, and their
 outputs (points in the image, regions, contours) can feed the low-level features of <a class="reference internal" href="kinematics_energy.html"><span class="doc">Kinematics and energy</span></a> and
-<a class="reference internal" href="shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>. The EyesWeb platform <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">6</a>]</span> offered the same operations as blocks of its
+<a class="reference internal" href="shape_symmetry_balance.html"><span class="doc">Shape, symmetry and balance</span></a>. The EyesWeb platform <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">5</a>]</span> offered the same operations as blocks of its
 imaging library.</p>
 <section id="notation-and-conventions">
 <h2>Notation and conventions<a class="headerlink" href="#notation-and-conventions" title="Link to this heading">#</a></h2>
@@ -510,7 +508,8 @@ imaging library.</p>
 the top, from 0), so the <span class="math notranslate nohighlight">\(y\)</span> axis points down. Coordinates are in pixels of the frame of the image you give, never in the frame
 of a cropped region. A <strong>silhouette</strong> is a binary mask <span class="math notranslate nohighlight">\(S(x, y)\)</span> in which every non-zero pixel is foreground, the body. A <code class="docutils literal notranslate"><span class="pre">bool</span></code>
 array is a 0 / 1 mask; any other numeric array must hold whole numbers in 0 to 255. “Left” and “right” are those of the image:
-left means the smaller <span class="math notranslate nohighlight">\(x\)</span> (so the right arm and the right leg of the body parts are on the smaller <span class="math notranslate nohighlight">\(x\)</span>).</p>
+left means the smaller <span class="math notranslate nohighlight">\(x\)</span>, for the centroids and the body parts alike (the left arm of the body parts is the
+subject’s right arm when the subject faces the camera).</p>
 <p>A <strong>contour</strong> is a closed sequence of <span class="math notranslate nohighlight">\(N\)</span> points <span class="math notranslate nohighlight">\(\mathbf{p}_i = (x_i, y_i)\)</span>, an <span class="math notranslate nohighlight">\((N, 2)\)</span> array in which the last point is
 a neighbour of the first. The contour of a silhouette comes from any contour-finding step of your image pipeline; the features
 here take the points, in the unit you give them.</p>
@@ -562,7 +561,7 @@ parameters are fractions of the area and of the width.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span> <span class="o">=</span> <span class="n">SilhouetteCentroids</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span><span class="o">.</span><span class="n">centroids</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>                  <span class="c1"># centre of gravity and head, (x, y) in pixels</span>
 <span class="go">[[160.0, 114.0], [159.0, 48.0]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>                  <span class="c1"># the centre of gravity, as a fraction of the frame</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">centroids</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">[</span><span class="mi">320</span><span class="p">,</span> <span class="mi">240</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>    <span class="c1"># the centre of gravity as a fraction of the frame: divide by [width, height]</span>
 <span class="go">[0.5, 0.475]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span> <span class="o">=</span> <span class="n">SilhouetteBodyParts</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span><span class="o">.</span><span class="n">regions</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>                            <span class="c1"># (x, y, width, height) of each part</span>
@@ -571,8 +570,8 @@ parameters are fractions of the area and of the width.</p>
 <span class="go">[True, True, True, True, True, True]</span>
 </pre></div>
 </div>
-<p>The rows of <code class="docutils literal notranslate"><span class="pre">regions</span></code> are in the order right leg, left leg, trunk, right arm, left arm, head (zeros for a part that was not
-found). The figure shows the centroids and the boxes on this synthetic silhouette.</p>
+<p>The rows of <code class="docutils literal notranslate"><span class="pre">regions</span></code> are in the order left leg, right leg, trunk, left arm, right arm, head (zeros for a part that was not
+found); a part that touches the first row or column of the frame is found. The figure shows the centroids and the boxes on this synthetic silhouette.</p>
 <figure class="align-default">
 <img alt="../_images/imaging-1.png" class="plot-directive" src="../_images/imaging-1.png" />
 </figure>
@@ -581,16 +580,19 @@ found). The figure shows the centroids and the boxes on this synthetic silhouett
 <h2>How the image evolves: the videogram<a class="headerlink" href="#how-the-image-evolves-the-videogram" title="Link to this heading">#</a></h2>
 <p>A video is summarised in one image that shows its evolution in time: every frame is reduced to a single line and the lines of
 successive frames are placed side by side, so that a movement becomes a visible trace. With a motion image (a frame
-difference) the result is called a motiongram <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id32" title="Alexander Refsum Jensenius. Using motiongrams in the study of musical gestures. In ICMC. 2006.">30</a>]</span>. For a grayscale frame
-<span class="math notranslate nohighlight">\(I(h, w)\)</span> and <code class="docutils literal notranslate"><span class="pre">mode=&quot;horizontal&quot;</span></code>, the line of a frame is the sum of each row, scaled by its maximum to 0 to 255,</p>
+difference) the result is called a motiongram <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../references.html#id39" title="Alexander Refsum Jensenius. Using motiongrams in the study of musical gestures. In ICMC. 2006.">35</a>]</span>. For a grayscale frame
+<span class="math notranslate nohighlight">\(I(h, w)\)</span> of width <span class="math notranslate nohighlight">\(W\)</span> and <code class="docutils literal notranslate"><span class="pre">mode=&quot;horizontal&quot;</span></code>, the line of a frame is the mean of each row, truncated,</p>
 <div class="math notranslate nohighlight">
 \[
-v(h) = 255\,\frac{\sum_w I(h, w)}{\max_h \sum_w I(h, w)},
+v(h) = \Big\lfloor\frac{1}{W}\sum_w I(h, w)\Big\rfloor,
 \]</div>
-<p>each channel of a colour frame being summed and scaled on its own; <code class="docutils literal notranslate"><span class="pre">mode=&quot;vertical&quot;</span></code> sums the columns instead.
+<p>each channel of a colour frame on its own; <code class="docutils literal notranslate"><span class="pre">mode=&quot;vertical&quot;</span></code> takes the mean of the columns instead <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id39" title="Alexander Refsum Jensenius. Using motiongrams in the study of musical gestures. In ICMC. 2006.">35</a>]</span>.
+The mean keeps where and how much motion there is: a still frame stays dark and a small movement weak (the original block
+scaled every line to its own maximum, so camera noise on a still frame became full brightness).
 <a class="reference internal" href="../api/generated/physical_signals/Videogram.html#pyeyesweb.physical_signals.Videogram" title="pyeyesweb.physical_signals.Videogram"><code class="xref py py-class docutils literal notranslate"><span class="pre">Videogram</span></code></a> keeps the last <code class="docutils literal notranslate"><span class="pre">window</span></code> lines (500 by default). The newest line is written
 at a position that wraps around, so the oldest is overwritten (<code class="docutils literal notranslate"><span class="pre">direction</span></code> sets where it goes), and <code class="docutils literal notranslate"><span class="pre">end_of_image_mode=&quot;scroll&quot;</span></code>
-rotates the image once it is full so that the oldest line comes first. The output is an integer image in 0 to 255 with channels
+rotates the image once it is full so that the lines run in the direction of writing: the oldest first left to right,
+the newest first right to left. The output is an integer image in 0 to 255 with channels
 last; the lines not written yet are 0, and so is the line of a black frame. A frame of another size restarts the videogram (the
 <code class="docutils literal notranslate"><span class="pre">reason</span></code> says so).</p>
 <p>A bar that moves up and down in front of a still background draws a sine in the videogram:</p>
@@ -603,8 +605,8 @@ last; the lines not written yet are 0, and so is the line of a black frame. A fr
 <span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">videogram</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="o">.</span><span class="n">shape</span>                            <span class="c1"># (rows of the frame, window, channels)</span>
 <span class="go">(60, 100, 1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-<span class="go">255</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>                       <span class="c1"># the bar fills half of each row: the mean is 127</span>
+<span class="go">127</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">videogram</span><span class="p">[:,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">37</span><span class="p">)]</span>   <span class="c1"># row of the bar at four instants</span>
 <span class="go">[27, 46, 27, 7]</span>
 </pre></div>
@@ -612,16 +614,16 @@ last; the lines not written yet are 0, and so is the line of a black frame. A fr
 </section>
 <section id="the-shape-of-the-outline-contours">
 <h2>The shape of the outline: contours<a class="headerlink" href="#the-shape-of-the-outline-contours" title="Link to this heading">#</a></h2>
-<p>The four contour features act on an <span class="math notranslate nohighlight">\((N, 2)\)</span> contour, one per call, and keep no state, except the labels of
-<a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a>. They are low-level features: they measure one frame.</p>
-<p><strong>Smoothing.</strong> The outline of a silhouette is jagged because it follows the pixel grid.
-<a class="reference internal" href="../api/generated/low_level/FilterContour.html#pyeyesweb.low_level.FilterContour" title="pyeyesweb.low_level.FilterContour"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterContour</span></code></a> convolves each coordinate with a Gaussian kernel of <code class="docutils literal notranslate"><span class="pre">window</span></code> samples centred on the
-sample being filtered, with weights proportional to <span class="math notranslate nohighlight">\(\exp\bigl(-(i-\lfloor w/2\rfloor)^2/(2\sigma^2)\bigr)\)</span> for
-<span class="math notranslate nohighlight">\(i=0,\dots,w-1\)</span>, normalised to sum 1, where <span class="math notranslate nohighlight">\(w\)</span> is <code class="docutils literal notranslate"><span class="pre">window</span></code> and <span class="math notranslate nohighlight">\(\sigma\)</span> is <code class="docutils literal notranslate"><span class="pre">gaussian_sigma</span></code>. The contour is treated as closed:
-the neighbours of the first point include the last ones. <span class="math notranslate nohighlight">\(\sigma\)</span> is in samples, not in length units, and the window must be
-shorter than the contour, otherwise the status is <code class="docutils literal notranslate"><span class="pre">NO_OUTPUT</span></code>.</p>
-<p><strong>Curvature.</strong> <a class="reference internal" href="../api/generated/low_level/ContourCurvature.html#pyeyesweb.low_level.ContourCurvature" title="pyeyesweb.low_level.ContourCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContourCurvature</span></code></a> estimates the curvature at every point from the point and its
-two neighbours. With <span class="math notranslate nohighlight">\((x', y')\)</span> the step from the previous point to this one and <span class="math notranslate nohighlight">\((x'', y'')\)</span> the difference between the next
+<p><a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a> acts on an <span class="math notranslate nohighlight">\((N, 2)\)</span> contour, one per call, and keeps only the labels of its
+points as state. It is a low-level feature: it measures one frame.</p>
+<p><strong>Smoothing.</strong> The outline of a silhouette is jagged because it follows the pixel grid. The curvature is a second difference
+of the points, so it amplifies this noise, and the extrema that <a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a> looks
+for are lost among spurious ones. Smooth the contour before the feature. The library has no feature for this: use
+<code class="docutils literal notranslate"><span class="pre">scipy.ndimage.gaussian_filter1d(contour,</span> <span class="pre">sigma,</span> <span class="pre">axis=0,</span> <span class="pre">mode=&quot;wrap&quot;)</span></code>, which convolves each coordinate with a Gaussian kernel
+of standard deviation <code class="docutils literal notranslate"><span class="pre">sigma</span></code>. With <code class="docutils literal notranslate"><span class="pre">mode=&quot;wrap&quot;</span></code> the contour is treated as closed: the neighbours of the first point include
+the last ones. <code class="docutils literal notranslate"><span class="pre">sigma</span></code> is in samples, not in length units.</p>
+<p><strong>Curvature.</strong> <a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a> takes only the contour and estimates the curvature at every
+point itself, from the point and its two neighbours. With <span class="math notranslate nohighlight">\((x', y')\)</span> the step from the previous point to this one and <span class="math notranslate nohighlight">\((x'', y'')\)</span> the difference between the next
 step and this one,</p>
 <div class="math notranslate nohighlight">
 \[
@@ -631,39 +633,30 @@ step and this one,</p>
 turns, counter-clockwise (positive) or clockwise, in the coordinate frame of the input; in image coordinates, where <span class="math notranslate nohighlight">\(y\)</span> points
 down, the orientation on the screen is reversed. Value <span class="math notranslate nohighlight">\(i\)</span> belongs to point <span class="math notranslate nohighlight">\(i\)</span> (the values used to be rotated by one point in
 the original, which is corrected in the core). The unit is the inverse of the unit of the contour.</p>
-<p><strong>Convex hull.</strong> <a class="reference internal" href="../api/generated/low_level/ConvexHull.html#pyeyesweb.low_level.ConvexHull" title="pyeyesweb.low_level.ConvexHull"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvexHull</span></code></a> gives the smallest convex polygon that contains the contour, as the
-list of its vertices; only strictly convex vertices are kept, so collinear points on an edge are dropped. The vertices run
-clockwise when <span class="math notranslate nohighlight">\(y\)</span> points up, starting from the point with the smallest <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <p><strong>Body parts from curvature.</strong> <a class="reference internal" href="../api/generated/low_level/BodyPartsFromCurvature.html#pyeyesweb.low_level.BodyPartsFromCurvature" title="pyeyesweb.low_level.BodyPartsFromCurvature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyPartsFromCurvature</span></code></a> finds the salient points of the outline
 (the head, the hands and the feet of a silhouette) as the extrema of its curvature. The contour is cut at the zero crossings
 of the curvature, at least <code class="docutils literal notranslate"><span class="pre">minimum_distance</span></code> points apart, and in every piece the extremum of larger magnitude is a minimum
 point when it is negative and a maximum point when it is positive. With <code class="docutils literal notranslate"><span class="pre">track_points=True</span></code> the labels of the previous call are
 carried over to the nearest new points, up to <code class="docutils literal notranslate"><span class="pre">number_of_points</span></code> of them, so a label stays with the same body part from frame to
-frame. The extremities of a body are read from the curvature of its silhouette, as in the EyesWeb silhouette analysis.</p>
+frame; a maximum that moved farther than <code class="docutils literal notranslate"><span class="pre">tracking_distance</span></code> (0.05 by default, in the unit of the contour: pass a few pixels for a
+contour in pixels) loses its label. The extremities of a body are read from the curvature of its silhouette, as in the EyesWeb silhouette analysis.</p>
 <p>A contour with five lobes shows the chain. Without smoothing, noise of standard deviation 0.05 in the coordinates (the radius is about 10)
-multiplies the largest curvature by about six and creates spurious extrema; after the Gaussian filter the five lobes and five
-valleys are found.</p>
-<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">BodyPartsFromCurvature</span><span class="p">,</span> <span class="n">ContourCurvature</span><span class="p">,</span> <span class="n">ConvexHull</span><span class="p">,</span> <span class="n">FilterContour</span>
+multiplies the curvature by about six and creates spurious extrema (11 minimums instead of 5); after the Gaussian filter the five
+lobes and five valleys are found.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter1d</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyeyesweb.low_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">BodyPartsFromCurvature</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">noisy</span> <span class="o">=</span> <span class="n">clean</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">clean</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curvature</span> <span class="o">=</span> <span class="n">ContourCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">curvature</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">curvature</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
-<span class="go">7.7</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">smooth</span> <span class="o">=</span> <span class="n">FilterContour</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">gaussian_sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">contour</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">smooth_curvature</span> <span class="o">=</span> <span class="n">ContourCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">smooth</span><span class="p">)</span><span class="o">.</span><span class="n">curvature</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">smooth_curvature</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
-<span class="go">1.3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">BodyPartsFromCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">curvature</span><span class="p">,</span> <span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">minimums</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">BodyPartsFromCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span><span class="o">.</span><span class="n">minimums</span><span class="p">)</span>
 <span class="go">11</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span> <span class="o">=</span> <span class="n">BodyPartsFromCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">smooth_curvature</span><span class="p">,</span> <span class="n">smooth</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">smooth</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="n">noisy</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"wrap"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parts</span> <span class="o">=</span> <span class="n">BodyPartsFromCurvature</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">smooth</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">minimums</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">maximums</span><span class="p">)</span>
 <span class="go">(5, 5)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">maximums</span><span class="p">)</span>
 <span class="go">['label_max0', 'label_max1', 'label_max2', 'label_max3', 'label_max4']</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ConvexHull</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(35, 2)</span>
 </pre></div>
 </div>
 <figure class="align-default">
@@ -676,8 +669,8 @@ valleys are found.</p>
 colour; <code class="docutils literal notranslate"><span class="pre">run</span></code> takes <code class="docutils literal notranslate"><span class="pre">(T,</span> <span class="pre">H,</span> <span class="pre">W[,</span> <span class="pre">C])</span></code> or a list of images. An empty image is <code class="docutils literal notranslate"><span class="pre">INVALID_INPUT</span></code>, and so is a mask without
 foreground. The result of these features is otherwise <code class="docutils literal notranslate"><span class="pre">OK</span></code> on every call: there is no warm-up. Outputs that are images have a
 shape known only from the first frame.</p>
-<p><strong>Units.</strong> Centroids and regions are in pixels; <code class="docutils literal notranslate"><span class="pre">normalized</span></code> divides by the frame size and is dimensionless in <span class="math notranslate nohighlight">\([0, 1]\)</span>. The
-contour features keep the unit of the contour. To go from pixels to metres, scale the input: the library does not know the
+<p><strong>Units.</strong> Centroids and regions are in pixels, with y pointing down from the top-left pixel (use <code class="docutils literal notranslate"><span class="pre">height</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">y</span></code> for an axis that points up); divide by the frame size for coordinates in <span class="math notranslate nohighlight">\([0, 1]\)</span>. The
+contour feature keeps the unit of the contour. To go from pixels to metres, scale the input: the library does not know the
 scale of your camera.</p>
 <p><strong>Known limitation.</strong> The tests of the body-parts detector read pixels outside the mask or the region of interest in some
 cases (the neck test and the walk over the arm columns, in particular when <code class="docutils literal notranslate"><span class="pre">arm_percentage</span></code> is above 1); such pixels count as
@@ -687,7 +680,7 @@ the channel sums of the videogram are independent (the original aliased them).</
 </section>
 <section id="further-reading">
 <h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
-<p>The platform that the imaging features come from is described in <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">6</a>]</span> and <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id4" title="Gualtiero Volpe, Paolo Alborno, Antonio Camurri, Paolo Coletta, Simone Ghisio, Maurizio Mancini, Alberto Massari, Radoslaw Niewiadomski, Stefano Piana, Roberto Sagoleo, and others. Designing multimodal interactive systems using eyesweb xmi. In CEUR Workshop Proceedings, 49–56. CEUR-WS, 2016.">8</a>]</span>. For the
+<p>The platform that the imaging features come from is described in <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../references.html#id2" title="A. Camurri, B. Mazzarino, and G. Volpe. Analysis of expressive gesture: the eyesweb expressive gesture processing library. In International gesture workshop, 460–467. Berlin, Heidelberg, apr 2003. Springer Berlin Heidelberg.">5</a>]</span> and <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../references.html#id4" title="Gualtiero Volpe, Paolo Alborno, Antonio Camurri, Paolo Coletta, Simone Ghisio, Maurizio Mancini, Alberto Massari, Radoslaw Niewiadomski, Stefano Piana, Roberto Sagoleo, and others. Designing multimodal interactive systems using eyesweb xmi. In CEUR Workshop Proceedings, 49–56. CEUR-WS, 2016.">7</a>]</span>. For the
 parameters of each feature see its API page, for example <a class="reference internal" href="../api/generated/physical_signals/SilhouetteCentroids.html#pyeyesweb.physical_signals.SilhouetteCentroids" title="pyeyesweb.physical_signals.SilhouetteCentroids"><code class="xref py py-class docutils literal notranslate"><span class="pre">SilhouetteCentroids</span></code></a>.</p>
 </section>
 </section>
@@ -703,12 +696,12 @@ parameters of each feature see its API page, for example <a class="reference int
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="humanoid_models.html"
+       href="dominance.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Humanoid and mass-spring models</p>
+        <p class="prev-next-title">Dominance</p>
       </div>
     </a>
     <a class="right-next"
@@ -789,7 +782,7 @@ parameters of each feature see its API page, for example <a class="reference int
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   

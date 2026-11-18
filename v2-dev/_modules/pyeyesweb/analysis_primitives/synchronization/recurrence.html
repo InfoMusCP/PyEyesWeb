@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyeyesweb.analysis_primitives.synchronization.recurrence &#8212; PyEyesWeb 2.0.0a1</title>
+    <title>pyeyesweb.analysis_primitives.synchronization.recurrence &#8212; PyEyesWeb 2.0.0a2</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=944fa962"></script>
+    <script src="../../../../_static/documentation_options.js?v=a3b72308"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -470,8 +470,9 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_Epsilons</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Mixin, placed before the series block, of the plots with one threshold per sample: `multiple_epsilons=None` is</span>
-<span class="sd">    `epsilon` for each of the `window` samples (the core wants one value per sample when `use_multiple_epsilons`)."""</span>
+<span class="w">    </span><span class="sd">"""Mixin, placed before the series block, of the plot with one threshold per sample (RecurrencePlot only):</span>
+<span class="sd">    `multiple_epsilons=None` is `epsilon` for each of the `window` samples (the core wants one value per sample when</span>
+<span class="sd">    `use_multiple_epsilons`)."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">multiple_epsilons</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">multiple_epsilons</span><span class="o">=</span><span class="n">multiple_epsilons</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -501,7 +502,7 @@
 <span class="sd">        R_{ij} = \Theta\left(\epsilon_i - \lVert x_i - x_j \rVert_p\right), \qquad</span>
 <span class="sd">        \lVert v \rVert_p = \Big(\sum_c |v_c|^p\Big)^{1/p},</span>
 
-<span class="sd">    with :math:`\Theta` the Heaviside step (a distance equal to :math:`\epsilon` is not a recurrence), :math:`p` the</span>
+<span class="sd">    with :math:`\Theta` the Heaviside step, :math:`\Theta(0) = 1` (a distance equal to :math:`\epsilon` is a recurrence), :math:`p` the</span>
 <span class="sd">    ``order`` and :math:`\epsilon_i` the threshold of row :math:`i` (``epsilon`` unless ``use_multiple_epsilons``).</span>
 <span class="sd">    The diagonal is 1. Periodic movements give diagonal lines, whose spacing is the period.</span>
 
@@ -537,6 +538,9 @@
 <span class="sd">    **Corrected in the core.** ``order`` was ignored (every order above 0 gave the Euclidean distance); it is the</span>
 <span class="sd">    Minkowski order.</span>
 
+<span class="sd">    **Real time.** The cost grows with the square of the window: about 2.6 ms per call for a window of 256 samples and</span>
+<span class="sd">    40 ms for 1024 with ``hop=1``. For large windows use a ``hop`` above 1.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
@@ -562,7 +566,7 @@
 <div class="viewcode-block" id="CrossRecurrencePlot">
 <a class="viewcode-back" href="../../../../api/generated/analysis_primitives/CrossRecurrencePlot.html#pyeyesweb.analysis_primitives.CrossRecurrencePlot">[docs]</a>
 <span class="nd">@describe</span><span class="p">(</span><span class="n">Layer</span><span class="o">.</span><span class="n">ANALYSIS_PRIMITIVE</span><span class="p">,</span> <span class="n">eyesweb</span><span class="o">=</span><span class="s2">"CrossRecurrencePlot (CrossRecurrenceMatrix)"</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CrossRecurrencePlot</span><span class="p">(</span><span class="n">_Epsilons</span><span class="p">,</span> <span class="n">_SeriesBlock</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CrossRecurrencePlot</span><span class="p">(</span><span class="n">_SeriesBlock</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Cross-recurrence plot of two windows of states: when one movement visits states of the other.</span>
 
 <span class="sd">    Compares two multichannel movement signals with the same channels, for example two participants performing the</span>
@@ -571,9 +575,9 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        R_{ij} = \Theta\left(\epsilon_i - \lVert x_i - y_j \rVert_p\right),</span>
+<span class="sd">        R_{ij} = \Theta\left(\epsilon - \lVert x_i - y_j \rVert_p\right),</span>
 
-<span class="sd">    with the distance and the thresholds defined as for `RecurrencePlot`. Long diagonal lines mean that the two</span>
+<span class="sd">    with the distance defined as for `RecurrencePlot` and one threshold :math:`\epsilon` (``epsilon``) for every row. Long diagonal lines mean that the two</span>
 <span class="sd">    signals follow the same trajectory, possibly with a time shift.</span>
 
 <span class="sd">    Parameters</span>
@@ -583,17 +587,11 @@
 <span class="sd">        again. *(live)*</span>
 <span class="sd">    hop : int, optional</span>
 <span class="sd">        Samples between two results, ``1 &lt;= hop &lt;= window`` (default 1). *(live)*</span>
-<span class="sd">    multiple_epsilons : sequence of float, optional</span>
-<span class="sd">        One threshold per sample of the window, in the unit of the signal, used when ``use_multiple_epsilons`` is</span>
-<span class="sd">        ``True``; the threshold of row :math:`i` is ``multiple_epsilons[i]``. ``None`` (default) means ``epsilon``</span>
-<span class="sd">        for every sample of the window. *(live)*</span>
 <span class="sd">    order : float, optional</span>
 <span class="sd">        Order :math:`p` of the Minkowski distance, positive (default 2: Euclidean); ``numpy.inf`` gives the maximum</span>
 <span class="sd">        norm. *(live)*</span>
 <span class="sd">    epsilon : float, optional</span>
 <span class="sd">        Recurrence threshold, in the unit of the signal (default 0.5). *(live)*</span>
-<span class="sd">    use_multiple_epsilons : bool, optional</span>
-<span class="sd">        Use ``multiple_epsilons`` instead of ``epsilon`` (default ``False``). *(live)*</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -608,6 +606,9 @@
 
 <span class="sd">    **Corrected in the core.** ``order`` was ignored (every order above 0 gave the Euclidean distance), and the rows of</span>
 <span class="sd">    a plot of two series of different length were scrambled.</span>
+
+<span class="sd">    **Real time.** The cost grows with the square of the window: about 2.6 ms per call for a window of 256 samples and</span>
+<span class="sd">    40 ms for 1024 with ``hop=1``. For large windows use a ``hop`` above 1.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -680,7 +681,7 @@
   </p>
 </div>
       
-        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a1 (build f861532)</p></div>
+        <div class="footer-item"><p class="sphinx-version">EyesWeb core 2.0.0a2 (build 482812c)</p></div>
       
     </div>
   
