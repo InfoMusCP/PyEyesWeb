@@ -11,7 +11,7 @@ from test_contract_all_features import NAMES, factory_and_recordings
 
 EXEMPT = {
     "a ratio, an index or a score without a unit": (
-        "SilhouetteCentroids.normalized BoundingBoxFilledArea.contraction_index EllipsoidSphericity.sphericity "
+        "BoundingBoxFilledArea.contraction_index EllipsoidSphericity.sphericity "
         "EllipsoidSphericity.axis_ratio Symmetry.symmetry TriangleSymmetry.symmetry "
         "SpectralArcLength.spectral_arc_length LogDimensionlessJerk.log_dimensionless_jerk Harmonicity.harmonicity "
         "CurvatureVelocityCorrelation.smoothness CurvatureVelocityCorrelation.log_curvature_std "

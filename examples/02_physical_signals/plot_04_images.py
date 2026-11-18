@@ -49,8 +49,8 @@ fig_body.tight_layout()
 # :class:`~pyeyesweb.physical_signals.SilhouetteCentroids` splits the silhouette recursively around its centre of gravity and
 # takes the centre of gravity of each rectangle: the shoulders from the upper quadrants, the head between them, the elbow,
 # the forearm and the hand outwards, the knee and the foot downwards. Without a skeleton it gives 14 points, in pixels
-# (``centroids``) and as a fraction of the frame (``normalized``), one row per name of the schema; a row is NaN when its
-# centroid does not exist.
+# (``centroids``, y pointing down from the top-left pixel), one row per name of the schema; a row is NaN when its
+# centroid does not exist. Divide by ``[width, height]`` for a fraction of the frame.
 
 from pyeyesweb.physical_signals import SilhouetteCentroids
 
@@ -60,7 +60,7 @@ print(centroids.outputs)
 result = centroids.process(body)
 names = centroids.outputs["centroids"].axis_names[0]
 print(names)
-print("centre of gravity (x, y) in pixels:", result.centroids[0], "| as a fraction of the frame:", result.normalized[0])
+print("centre of gravity (x, y) in pixels:", result.centroids[0], "| as a fraction of the frame:", result.centroids[0] / [body.shape[1], body.shape[0]])
 
 fig_centroids, ax = plt.subplots(figsize=(5, 4))
 ax.imshow(body, cmap="gray", alpha=0.5)
@@ -219,8 +219,8 @@ print("another frame size ->", resized.process(film[1][:100]).reason)
 # A rhythm can be read from a signal in which a non-zero sample is a **pulse**: a footstep, a beat, or the peaks found in a
 # movement. :class:`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity` works on a window of ``window`` samples (a result
 # every ``hop`` samples). The window is **regular** when it holds at least three pulses and the spread of the intervals
-# between them, the longest minus the shortest, is below ``threshold`` samples (``threshold=1``: equal intervals). The outputs are ``is_regular``, ``pulse_count`` and ``is_regularity_detected``, which is true for
-# the first regular window after a window that was not. Here steady steps every 6 samples are followed by a slower, still
+# between them, the longest minus the shortest, is below ``threshold`` samples (``threshold=1``: equal intervals). The outputs are ``is_regular`` and ``pulse_count``; the moment the rhythm becomes regular is the
+# rising edge of ``is_regular`` (computed below with ``np.diff``). Here steady steps every 6 samples are followed by a slower, still
 # regular, rhythm of one step every 7.
 
 from pyeyesweb.analysis_primitives import BinaryPulsesRegularity
@@ -243,8 +243,10 @@ rows = np.arange(len(record))  # one row per sample; a result is made every hop 
 axes[1].plot(rows[ok_rows], record["pulse_count"][ok_rows], ".-")
 axes[1].set_ylabel("pulse_count")
 axes[2].step(rows[ok_rows], record["is_regular"][ok_rows].astype(int), where="post")
-axes[2].plot(np.flatnonzero(record["is_regularity_detected"]), np.ones(int(record["is_regularity_detected"].sum())), "r^")
-axes[2].set_ylabel("regular (red: detected)")
+regular = record["is_regular"].astype(int)
+onsets = np.flatnonzero(np.diff(regular[ok_rows]) == 1) + 1   # rising edges of is_regular (among the evaluated windows)
+axes[2].plot(rows[ok_rows][onsets], np.ones(len(onsets)), "r^")
+axes[2].set_ylabel("regular (red: onset)")
 axes[2].set_xlabel("sample")
 shade_status(axes[2], rows, record.status, codes=(1,))  # yellow: the first window is not full yet
 fig_pulses.tight_layout()

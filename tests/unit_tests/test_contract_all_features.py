@@ -132,9 +132,7 @@ def _humanoid_control():
 
 # name -> (factory, data); features not listed are built with no argument and driven by `from_inputs`
 OVERRIDES = {
-    "ContourCurvature": (None, _contours),
-    "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1),
-                               lambda: (_random(10).choice([-1.0, 1.0], size=(12, 8)), _contours()[0])),
+    "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), _contours),
     "HitCellDetector": (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=1.0, y_max=1.0), _hits),
     "MassSpringSimulator": (lambda: MassSpringSimulator(**MILLIMETRES), _humanoid_control),
     "SilhouetteCentroids": (lambda: SilhouetteCentroids(filter_centroids=True, alpha=0.5), _moving_body),

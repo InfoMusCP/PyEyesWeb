@@ -42,8 +42,10 @@ def _speed_mm_per_s():
 
 @pytest.mark.parametrize("entry,signal,expected", _frozen_cases())
 def test_explicit_tolerance_gives_the_frozen_numbers_bit_for_bit(entry, signal, expected):
-    feature = SampleEntropy(window=len(signal), embedding_dimension=entry["embedding_dimension"], tolerance=entry["tolerance"])
-    assert_same_floats(feature._process_window(signal)["sample_entropy"], expected)
+    # The frozen numbers are the entropies of the template lengths 0 ... E - 1 (the core); the feature gives SampEn(m), the
+    # entry m = E - 1.
+    feature = SampleEntropy(window=len(signal), embedding_dimension=entry["embedding_dimension"] - 1, tolerance=entry["tolerance"])
+    assert_same_floats(feature._process_window(signal)["sample_entropy"], expected[-1])
 
 
 def test_the_tolerance_defaults_to_none_and_relative_tolerance_to_0_2():
@@ -81,14 +83,14 @@ def test_a_real_speed_window_in_mm_per_s_is_finite_by_default_and_inf_with_the_o
 
 def test_a_constant_window_uses_a_tiny_tolerance_and_does_not_divide_by_zero():
     result = SampleEntropy(window=20, embedding_dimension=3)._process_window(np.full(20, 5.0))
-    assert result.status is Status.OK and np.isfinite(result["sample_entropy"]).all()
-    assert result["sample_entropy"][0] == 0.0
+    assert result.status is Status.OK and np.isfinite(result["sample_entropy"])
+    assert result["sample_entropy"] == 0.0   # every template matches every other: A = B
 
 
 def test_tolerance_and_relative_tolerance_are_live_and_validated():
     signal = np.random.default_rng(9).standard_normal(60)
     feature = SampleEntropy(window=60, embedding_dimension=2)
-    first = feature._process_window(signal)["sample_entropy"].copy()
+    first = feature._process_window(signal)["sample_entropy"]
     feature.tolerance = 0.5
     assert np.array_equal(feature._process_window(signal)["sample_entropy"],
                           SampleEntropy(window=60, embedding_dimension=2, tolerance=0.5)._process_window(signal)["sample_entropy"])

@@ -85,16 +85,18 @@ class SilhouetteCentroids(_ImageFeature):
 
     Notes
     -----
+    **Coordinates.** ``y`` points down: ``(0, 0)`` is the top-left pixel of the mask (the image convention of EyesWeb). To draw over a plot or a TouchDesigner TOP, where y points up, use ``y_up = height - 1 - y``; to get coordinates in [0, 1] divide by the width and the height of the mask (``centroids / [width, height]``): the feature does not output them.
+
     **Outputs.** ``centroids``: ``(14, 2)`` array of ``(x, y)`` in pixels of the frame, one row per label in the order above
-    (whole-pixel values); the rows of the parts that were not requested are NaN. ``normalized``: the same coordinates divided
-    by the width and the height of the frame, dimensionless, in [0, 1]. A mask without foreground is ``INVALID_INPUT``
+    (whole-pixel values); the rows of the parts that were not requested are NaN. A mask without foreground is ``INVALID_INPUT``
     (``"no foreground pixels in the silhouette"``); an empty image too (``"empty image"``). The result is otherwise ``OK``
     (no warm-up).
 
     As in EyesWeb, the centroids are truncated to whole pixels, inside the filter too: on average they lie half a pixel
     up and left of the true centroid, and the filtered value lags more on a growing coordinate than on a shrinking one.
-    Every non-zero pixel of the frame is foreground: threshold the mask and keep only the body (its largest connected
-    region) first, since a stray pixel moves every centroid.
+    Every non-zero pixel of the frame is foreground, and the feature has no threshold of its own: threshold the mask
+    beforehand (``mask > t``) and keep only the body (its largest connected region), since a stray pixel moves every
+    centroid.
 
     Examples
     --------
@@ -111,15 +113,13 @@ class SilhouetteCentroids(_ImageFeature):
     _INPUTS = Inputs(image_input("silhouette", "mask of the body: every non-zero pixel is foreground"))
     _OUTPUTS = Schema(
         Output("centroids", (len(_CENTROIDS), 2), labels=_CENTROIDS, components=XY, unit="px",
-               doc="centroid coordinates in the frame; NaN where absent"),
-        Output("normalized", (len(_CENTROIDS), 2), labels=_CENTROIDS, components=XY,
-               doc="the centroids divided by the frame width and height"))
+               doc="centroid coordinates in the frame, y down from the top-left pixel; NaN where absent"))
 
     def _from_image(self, mask: np.ndarray, timestamp: Optional[float]) -> Result:
         found, raw = self._block.process(mask)
         if not found:
             return self._no_output(Status.INVALID_INPUT, "no foreground pixels in the silhouette", timestamp)
-        return self._result(timestamp=timestamp, centroids=raw[:, :2], normalized=raw[:, 2:])
+        return self._result(timestamp=timestamp, centroids=raw[:, :2])   # raw[:, 2:] are the normalised ones: left to the user
 
 
 @describe(Layer.PHYSICAL_SIGNALS, eyesweb="BlobSubRegions")

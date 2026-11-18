@@ -16,7 +16,7 @@ pytest.importorskip("pyeyesweb._core", exc_type=ImportError)
 from contract_suite import check_feature_contract  # noqa: E402
 from pyeyesweb.data_models import InputKind  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
-    BodyPartsFromCurvature, ContourCurvature, Directness, Kinematics, TrajectoryNonPlanarity
+    BodyPartsFromCurvature, Directness, Kinematics, TrajectoryNonPlanarity
 )
 from pyeyesweb.mid_level.space_occupation import PositionDependingPotentials, RegionDependingPotentials
 from pyeyesweb.physical_signals import HitCellDetector  # noqa: E402
@@ -36,8 +36,7 @@ TRAJECTORIES = RNG.standard_normal((FRAME_COUNT, 5, 3))
 
 FACTORIES = {
     "HitCellDetector": (lambda: HitCellDetector(cells_along_x=4, cells_along_y=4, x_max=1.0, y_max=1.0), UNIT_POINTS),
-    "ContourCurvature": (lambda: ContourCurvature(), CONTOURS),
-    "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), CURVATURES, CONTOURS),
+    "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), CONTOURS),
     "Kinematics": (lambda: Kinematics(dims=2), POINT_2D),
     "Kinematics several outputs": (lambda: Kinematics(dims=2, output_type=["velocity", "direction", "curvature"]), POINT_2D),
     "Directness": (lambda: Directness(), TRAJECTORIES),
@@ -55,7 +54,7 @@ def test_contract(name):
 
 
 def test_declared_inputs():
-    assert BodyPartsFromCurvature().inputs.names == ("curvature", "contour")
+    assert BodyPartsFromCurvature().inputs.names == ("contour",)   # the curvature is computed inside
     assert Kinematics(dims=2).inputs["point"].kind is InputKind.SAMPLE
     assert Directness().inputs["points"].shape == (None, None)
     regions = RegionDependingPotentials(input_kind="hit_regions")
@@ -90,16 +89,15 @@ def test_kinematics_series_mode():
 def test_body_parts_tracking_distance_and_zero_points():
     t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
     contour = np.c_[(10.0 + 3.0 * np.cos(5.0 * t)) * np.cos(t), (10.0 + 3.0 * np.cos(5.0 * t)) * np.sin(t)]
-    curvature = ContourCurvature().process(contour).curvature
     moved = contour + 0.3  # every point moves 0.42: farther than the default 0.05
     near, far = BodyPartsFromCurvature(tracking_distance=1.0), BodyPartsFromCurvature()
     for feature in (near, far):
-        feature.process(curvature, contour)
-    assert len(near.process(curvature, moved).maximums) == 5
-    assert len(far.process(curvature, moved).maximums) == 0
+        feature.process(contour)
+    assert len(near.process(moved).maximums) == 5
+    assert len(far.process(moved).maximums) == 0
     with pytest.raises(ValueError):
         BodyPartsFromCurvature(tracking_distance=0.0)
     none = BodyPartsFromCurvature(number_of_points=0)  # no maxima, all the minima
-    none.process(curvature, contour)
-    result = none.process(curvature, contour)
+    none.process(contour)
+    result = none.process(contour)
     assert not result.maximums and len(result.minimums) == 5

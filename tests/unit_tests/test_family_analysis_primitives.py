@@ -32,8 +32,8 @@ def test_multi_scale_entropy_rejects_a_window_that_drops_scales():
 
 @pytest.mark.parametrize("build,minimum", [
     (lambda window_size: Rarity(method="mode_distance", window=window_size), 2),
-    (lambda window_size: SampleEntropy(window=window_size, embedding_dimension=4), 5),
-    (lambda window_size: SampleEntropy(window=window_size), 13),
+    (lambda window_size: SampleEntropy(window=window_size, embedding_dimension=4), 6),   # m + 2 samples
+    (lambda window_size: SampleEntropy(window=window_size), 4),                            # m = 2
     (lambda window_size: Periodicity(window=window_size), 2),
 ])
 def test_minimum_window_at_construction_and_when_set(build, minimum):
@@ -47,11 +47,11 @@ def test_minimum_window_at_construction_and_when_set(build, minimum):
 
 def test_sample_entropy_revalidates_on_parameter_change():
     entropy = SampleEntropy(window=8, embedding_dimension=3)
-    with pytest.raises(ValueError, match=">= 9"):
+    with pytest.raises(ValueError, match=">= 10"):
         entropy.embedding_dimension = 8
-    assert entropy.embedding_dimension == 3 and entropy.outputs["sample_entropy"].shape == (3,)
-    entropy.embedding_dimension = 7
-    assert entropy.outputs["sample_entropy"].shape == (7,)
+    assert entropy.embedding_dimension == 3 and entropy.outputs["sample_entropy"].shape == ()
+    entropy.embedding_dimension = 6
+    assert entropy.embedding_dimension == 6
     assert entropy._process_window(RNG.standard_normal((1, 8))).ok
 
 

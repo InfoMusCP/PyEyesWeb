@@ -31,9 +31,8 @@ contraction and expansion; {py:class}`~pyeyesweb.low_level.Symmetry` and {py:cla
 the left/right symmetry; {py:class}`~pyeyesweb.low_level.Equilibrium` the balance of the barycentre between the feet.
 Theory: {doc}`../theory/shape_symmetry_balance`.
 
-**What shape is an outline?** {py:class}`~pyeyesweb.low_level.ContourCurvature` and
-{py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` work on the closed contour of a silhouette, one frame at a time; smooth
-the contour first. Theory: {doc}`../theory/imaging`.
+**What shape is an outline?** {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` works on the closed contour of a
+silhouette, one frame at a time, and finds its salient points from the curvature it computes; smooth the contour first. Theory: {doc}`../theory/imaging`.
 
 ## Frame features and window features
 

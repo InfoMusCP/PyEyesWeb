@@ -54,10 +54,10 @@ lower entropy.
 >>> regular = np.sin(2 * np.pi * n / 40)
 >>> irregular = rng.standard_normal(400)
 >>> entropy = SampleEntropy(window=200, embedding_dimension=2)
->>> a = entropy.run(regular).sample_entropy[-1, -1]               # template length 2, last window
->>> b = entropy.run(irregular).sample_entropy[-1, -1]
+>>> a = entropy.run(regular).sample_entropy[-1]                  # SampEn(2, r) of the last window
+>>> b = entropy.run(irregular).sample_entropy[-1]
 >>> round(float(a), 2), round(float(b), 2)
-(0.39, 2.19)
+(0.3, 2.19)
 ```
 
 ## What to know before choosing

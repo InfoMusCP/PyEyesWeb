@@ -46,9 +46,9 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     **Inputs.** One value per call (a single channel); a non-zero value is a pulse.
 
     **Outputs.** ``is_regular`` (bool): the intervals between the pulses are equal within ``threshold``;
-    ``pulse_count`` (int, at least 0): number of pulses (non-zero samples) in the window;
-    ``is_regularity_detected`` (bool): ``is_regular`` on the first window after a window that was not regular (a
-    trigger).
+    ``pulse_count`` (int, at least 0): number of pulses (non-zero samples) in the window. The moment a rhythm *becomes*
+    regular is the rising edge of ``is_regular``, which is left to the user: ``np.diff(record["is_regular"].astype(int)) == 1``
+    on a recording, or ``regular and not previous_regular`` in a loop.
 
     The original block compared every interval with the first one (within ``threshold``, inclusive), which accepted a
     spread up to twice the threshold and depended on the first interval; its threshold ``t`` is ``t + 1`` here.
@@ -69,8 +69,7 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     MIN_WINDOW = 3
     _INPUTS = Inputs(Input("signal", InputKind.SAMPLE, (1,), doc="one value per call; a non-zero value is a pulse"))
     _OUTPUTS = Schema(Output("is_regular", kind=bool, doc="the intervals between the pulses are equal within the threshold"),
-                     Output("pulse_count", kind=int, doc="number of pulses in the window"),
-                     Output("is_regularity_detected", kind=bool, doc="first regular window after a window that was not"))
+                     Output("pulse_count", kind=int, doc="number of pulses in the window"))
 
     def __init__(self, window: int, hop: int = 1, **params: Any):
         super().__init__(window=window, hop=hop, **params)
@@ -79,8 +78,8 @@ class BinaryPulsesRegularity(MinimumWindow, WindowedFeature, CoreFeature):
     def _process_window(self, series: Any, *, timestamp: Optional[float] = None) -> Result:
         if reason := non_finite(series):
             return self._no_output(Status.INVALID_INPUT, reason, timestamp)
-        regular, pulse_count, detected = self._block.process(np.asarray(series, dtype=float))
-        return self._result(timestamp=timestamp, is_regular=regular, pulse_count=pulse_count, is_regularity_detected=detected)
+        regular, pulse_count = self._block.process(np.asarray(series, dtype=float))
+        return self._result(timestamp=timestamp, is_regular=regular, pulse_count=pulse_count)
 
 
 __all__ = ["BinaryPulsesRegularity"]

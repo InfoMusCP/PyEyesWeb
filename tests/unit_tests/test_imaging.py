@@ -112,10 +112,10 @@ def test_an_empty_image_is_invalid_input_and_a_wrong_channel_count_raises():
 def test_centroids_of_a_silhouette():
     feature = SilhouetteCentroids()
     result = feature.process(BODY)
-    assert result.status is Status.OK and result.centroids.shape == (14, 2) and result.normalized.shape == (14, 2)
+    assert result.status is Status.OK and result.centroids.shape == (14, 2)
+    assert "normalized" not in feature.outputs.names   # normalising is left to the user
     assert feature.outputs["centroids"].axis_names[0] == tuple(LABELS)
     assert not np.isnan(result.centroids).any()
-    assert np.allclose(result.normalized, result.centroids / [320, 240])
     assert result["centroids_center_of_gravity_x"] == result.centroids[0, 0]
     assert result.centroids[2, 0] < result.centroids[0, 0] < result.centroids[6, 0]  # shoulders around the COG
 
@@ -236,9 +236,9 @@ def test_binary_pulses_regularity():
     train = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]
     results = [feature.process(value) for value in train]
     assert [result.status for result in results[:9]] == [Status.WARMING_UP] * 9
-    assert results[9].is_regular and results[9].pulse_count == 4 and results[9].is_regularity_detected
-    assert not results[10].is_regularity_detected and results[10].is_regular and results[10].pulse_count == 3
-    assert list(feature.outputs.names) == ["is_regular", "pulse_count", "is_regularity_detected"]
+    assert results[9].is_regular and results[9].pulse_count == 4
+    assert results[10].is_regular and results[10].pulse_count == 3
+    assert list(feature.outputs.names) == ["is_regular", "pulse_count"]   # the onset is the rising edge of is_regular: left to the user
     irregular = BinaryPulsesRegularity(window=11)
     for value in [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]:
         result = irregular.process(value)
@@ -286,15 +286,13 @@ def test_the_videogram_equals_the_oracle_on_the_reference_videos():
 
 
 def _paper_regularity(windows, threshold):
-    """Niewiadomski et al. 2019, sec. 3.2: regular when max(I) - min(I) < threshold, with at least 3 pulses; the trigger
-    is the first regular window after one that was not."""
-    out, before = [], False
+    """Niewiadomski et al. 2019, sec. 3.2: regular when max(I) - min(I) < threshold, with at least 3 pulses."""
+    out = []
     for window in windows:
         pulses = np.flatnonzero(np.asarray(window) != 0)
         intervals = np.diff(pulses)
         regular = len(pulses) >= 3 and int(intervals.max() - intervals.min()) < threshold
-        out.append((regular, len(pulses), regular and not before))
-        before = regular
+        out.append((regular, len(pulses)))
     return out
 
 
@@ -303,7 +301,7 @@ def test_pulse_regularity_follows_the_paper(threshold):
     # The windows of the frozen port; the rule changed on purpose (algorithm review, D1), so the oracle is the paper's.
     block = BinaryPulsesRegularity(window=3, threshold=threshold)._block  # the core block, one window per call
     assert [block.process(window) for window in PULSE_WINDOWS] == _paper_regularity(PULSE_WINDOWS, threshold)
-    assert any(regular for regular, _, _ in _paper_regularity(PULSE_WINDOWS, threshold))
+    assert any(regular for regular, _ in _paper_regularity(PULSE_WINDOWS, threshold))
 
 
 def test_parts_default_to_everything_and_are_listed_in_the_signature():

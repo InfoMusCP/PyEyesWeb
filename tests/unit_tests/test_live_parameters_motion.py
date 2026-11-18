@@ -28,10 +28,11 @@ _CIRCLE = np.column_stack([np.cos(_ANGLES), np.sin(_ANGLES)])
 CONTOURS = [_CIRCLE * (1 + 0.1 * _rng.normal(size=(24, 1))) for _ in range(_FRAMES)]
 HULLS = [_rng.integers(0, 6, size=(12, 2)).astype(float) for _ in range(_FRAMES)]
 
-_CURVE_ANGLES = 2 * np.pi * np.arange(40) / 40
-_CURVE_CIRCLE = np.column_stack([np.cos(_CURVE_ANGLES), np.sin(_CURVE_ANGLES)])
-# 3 zero crossings pairs, 6-7 points apart, drifting by 0.05 rad per frame
-CURVATURES = [(np.sin(3 * (_CURVE_ANGLES + 0.05 * frame)), _CURVE_CIRCLE) for frame in range(_FRAMES)]
+_CURVE_ANGLES = 2 * np.pi * np.arange(120) / 120
+# a contour with 3 lobes drifting by 0.05 rad per frame: the zero crossings of its curvature are more than 5 points apart
+CURVATURES = [(np.column_stack([(1 + 0.3 * np.sin(3 * (_CURVE_ANGLES + 0.05 * frame))) * np.cos(_CURVE_ANGLES),
+                                (1 + 0.3 * np.sin(3 * (_CURVE_ANGLES + 0.05 * frame))) * np.sin(_CURVE_ANGLES)]),)
+              for frame in range(_FRAMES)]
 
 SQUARE_WAVE = [float((frame // 7) % 2) for frame in range(_FRAMES + 20)]
 SAMPLES_2 = [list(_rng.uniform(0, 1, size=2)) for _ in range(_FRAMES)]

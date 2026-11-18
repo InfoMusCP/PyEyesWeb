@@ -9,14 +9,14 @@ from .symmetry import Symmetry, TriangleSymmetry
 from .smoothness import SpectralArcLength, LogDimensionlessJerk, SubmovementCount, CurvatureVelocityCorrelation
 from .equilibrium import Equilibrium
 from .direction_change import DirectionChange
-from .shape import ContourCurvature, BodyPartsFromCurvature
+from .shape import BodyPartsFromCurvature
 from .directness import Directness
 from .non_planarity import TrajectoryNonPlanarity, average_curvature_3d
 
 __all__ = [
     "Kinematics", "KineticEnergy", "BoundingBoxFilledArea", "EllipsoidSphericity", "PointsDensity", "Symmetry",
     "TriangleSymmetry", "SpectralArcLength", "LogDimensionlessJerk", "SubmovementCount",
-    "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange", "ContourCurvature", "BodyPartsFromCurvature",
+    "CurvatureVelocityCorrelation", "Equilibrium", "DirectionChange", "BodyPartsFromCurvature",
     "Directness", "TrajectoryNonPlanarity", "average_curvature_3d",
 ]
 

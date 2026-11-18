@@ -74,7 +74,8 @@ image. Give the result as a `bool` array, or as an array of 0 and 255. The synth
 True
 ```
 
-`centroids` has one row `(x, y)` per centroid, 14 in all, in pixels; `normalized` has the same rows scaled to the frame. A centroid that
+`centroids` has one row `(x, y)` per centroid, 14 in all, in pixels, with y pointing down from the top-left pixel (for a plot or a
+TouchDesigner TOP use `height - 1 - y`; for 0 to 1, divide by `[width, height]`). A centroid that
 cannot be found is NaN. `parts=` chooses the centroids that are output (it is live); the others are NaN, and the shape does not
 change.
 

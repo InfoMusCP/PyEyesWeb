@@ -1,4 +1,4 @@
-"""Rarity of the newest value of a signal, with two methods.
+"""Rarity of the newest value of a signal, with three methods.
 
 This module implements the [Rarity][pyeyesweb.analysis_primitives.rarity.Rarity] feature: how typical or atypical the
 current state is relative to a memory of past states. The formula is chosen by `method`.
@@ -60,17 +60,37 @@ class Rarity(VariantFeature, CoreFeature):
     fractions of the window (the paper uses counts): multiply :math:`\alpha` by :math:`N` for the paper's scale. The
     paper used windows of 100 frames; the default here is 50.
 
+    ``"novelty"``: how unusual the movement of the last ``pattern`` samples is compared with the movement of the recent
+    past, for any signal (a speed, an energy, a position, several features together). The two methods above measure how
+    rare the current *level* is: a change of shape inside a bin, or a movement that stays among values already seen, is
+    invisible to them. This method compares *patterns*. At every sample it takes the last ``pattern`` samples (one
+    point every ``step`` samples, all channels) as a pattern, and compares it with the patterns of the last ``memory``
+    samples, leaving out the newest ``pattern / 2`` of them, which overlap it. Each channel is divided by its standard
+    deviation over the memory, so no channel dominates because of its unit; the distance between two patterns is
+    Euclidean. With :math:`d` the mean distance from the current pattern to its ``neighbours`` nearest patterns,
+
+    .. math::
+
+        R = \frac{d}{\operatorname{median}(d \text{ over the last } \mathtt{memory} \text{ samples})},
+
+    so the value is dimensionless and about 1 for a movement as familiar as usual; it is larger for a movement that has not
+    happened in the memory, and ``0`` when the pattern is exactly in the memory. A repeated movement becomes familiar
+    (its patterns enter the memory) and its rarity falls back to about 1; a movement not done for ``memory`` samples is
+    new again. With ``shape=True`` the newest sample is subtracted from the pattern, so only the *shape* of the movement
+    counts, not where it happens (use it for positions); without it the level is part of the pattern (use it for scalars
+    such as a speed or an energy). It is not an EyesWeb block: it is new in this library (design review 2026-11-17).
+
     Use ``"information"`` to reproduce EyesWeb or to compare several signals with chosen bin widths; use
-    ``"mode_distance"`` for a self-contained score of one stream.
+    ``"mode_distance"`` for a self-contained score of one stream; use ``"novelty"`` to find unusual gestures.
 
     Parameters
     ----------
-    method : {"information", "mode_distance"}, optional
+    method : {"information", "mode_distance", "novelty"}, optional
         Formula. Defaults to ``"information"``. Which of the other parameters apply depends on the method; all are
         keyword-only.
     number_of_inputs : int, optional
-        ``"information"`` only: number of scalar signals per sample. ``measure="contrast"`` needs at least 2.
-        Defaults to ``2``. *(structural)*
+        ``"information"`` and ``"novelty"``: number of scalar signals per sample. ``measure="contrast"`` needs at least 2.
+        Defaults to ``2`` (``"information"``) and ``1`` (``"novelty"``). *(structural)*
     measure : {"rarity", "contrast"}, optional
         ``"information"`` only: rarity across the last ``window`` values of each input, or contrast across the
         inputs. Defaults to ``"rarity"``. *(live)*
@@ -86,15 +106,29 @@ class Rarity(VariantFeature, CoreFeature):
     alpha : float, optional
         ``"mode_distance"`` only: scaling factor :math:`\alpha`, greater than 0, dimensionless. Defaults to ``0.5``
         (the paper does not give its value). *(live)*
+    memory : int, optional
+        ``"novelty"`` only: samples of patterns kept for the comparison, at least ``3 * pattern``. Defaults to ``300``.
+        It is the time after which a movement that has not been repeated is new again. *(structural)*
+    pattern : int, optional
+        ``"novelty"`` only: samples of one pattern, at least 2: how long a gesture is. Defaults to ``30``. *(structural)*
+    neighbours : int, optional
+        ``"novelty"`` only: number of nearest patterns averaged, at least 1. Defaults to ``5``. *(live)*
+    step : int, optional
+        ``"novelty"`` only: samples between two points of a pattern, at least 1 (a larger step is cheaper). Defaults to
+        ``1``. *(structural)*
+    shape : bool, optional
+        ``"novelty"`` only: compare the shape of the pattern, not its position (subtract the newest sample). Defaults to
+        ``False``. *(structural)*
 
     Notes
     -----
-    **Inputs.** ``"information"``: one sample of ``number_of_inputs`` values per call. ``"mode_distance"``: one value
-    per call, buffered over ``window`` samples and computed every ``hop`` samples.
+    **Inputs.** ``"information"`` and ``"novelty"``: one sample of ``number_of_inputs`` values per call. ``"mode_distance"``:
+    one value per call, buffered over ``window`` samples and computed every ``hop`` samples.
 
     **Outputs.** ``rarity``: for ``"information"`` shape ``(number_of_inputs,)``, :math:`R` per input (a larger
     value is rarer), together with a ``timestamp`` in seconds (``NaN`` when not given); for ``"mode_distance"`` a
-    scalar :math:`R \ge 0`, higher meaning more atypical.
+    scalar :math:`R \ge 0`, higher meaning more atypical; for ``"novelty"`` a scalar :math:`R \ge 0`, about 1 for a
+    familiar movement.
 
     **Statuses.** ``"information"`` with ``measure="rarity"``: the memory starts filled with zeros, so the result is
     ``WARMING_UP`` (``"the memory holds k of window values"``; the numbers are given but are artefacts) until
@@ -102,8 +136,10 @@ class Rarity(VariantFeature, CoreFeature):
     ``INVALID_INPUT`` (``"value outside the bins"``), whose outputs are empty; a non-finite value is ``INVALID_INPUT``.
     ``"mode_distance"``: ``WARMING_UP`` while the window holds fewer than 2 samples (and while the first window
     fills), ``NO_OUTPUT`` between two hops, ``INVALID_INPUT`` while the window holds a ``NaN`` or an infinite value
-    (until that sample leaves the window). ``reset()`` clears the memory and the bin indices, so ``run`` is a pure
-    function of the recording.
+    (until that sample leaves the window). ``"novelty"``: ``WARMING_UP`` (``"the memory is filling"``) until the memory holds
+    twice the pattern length of patterns to compare with (``pattern - 1 + 2 * pattern + pattern // 2 - 1`` samples),
+    ``INVALID_INPUT`` for a ``NaN`` or infinite sample, which is not used. ``reset()`` clears the memory and the bin
+    indices, so ``run`` is a pure function of the recording.
 
     Corrected in the core: ``reset()`` kept the previous bin indices; a contrast with one input, or a rarity with a
     memory of one value, divided 0 by 0 and gave ``NaN``: both combinations are invalid and raise ``ValueError`` at
@@ -118,13 +154,25 @@ class Rarity(VariantFeature, CoreFeature):
     >>> rarity = Rarity(method="mode_distance", window=10, alpha=1.0)
     >>> rarity.run([0.0, 0.1, 0.0, 0.1, 0.0, 0.1, 0.0, 0.1, 0.0, 1.0])[-1].rarity
     1.6
+
+    The ``"novelty"`` method sees a pause in an oscillation that the other two cannot (a pause at the middle of the cycle
+    stays inside the values already seen):
+
+    >>> import numpy as np
+    >>> oscillation = np.sin(2 * np.pi * np.arange(220) / 20)
+    >>> oscillation[150:160] = 0.0                                          # ten samples of pause
+    >>> novelty = Rarity(method="novelty", memory=90, pattern=10).run(oscillation)
+    >>> bool(novelty.status[0] == 1 and novelty.status[-1] == 0)            # WARMING_UP at first, then OK
+    True
+    >>> round(float(max(novelty.rarity[100:150])), 1), round(float(max(novelty.rarity[150:175])), 1)
+    (1.0, 15.5)
     """
 
     _SWITCH = ("method", "information")
     _variants = {}
 
     @property
-    def method(self) -> Literal["information", "mode_distance"]:
+    def method(self) -> Literal["information", "mode_distance", "novelty"]:
         return self._variant
 
 
@@ -216,7 +264,36 @@ class _InformationRarity(Rarity, FrameFeature, variant="information"):
                                rarity=rarity, timestamp=timestamp)
         return self._result(rarity=rarity, timestamp=timestamp)
 
-for _variant in (_ModeDistanceRarity, _InformationRarity):
+class _NoveltyRarity(Rarity, FrameFeature, variant="novelty"):
+    """Rarity of the newest pattern of ``number_of_inputs`` signals within a memory of patterns (method ``"novelty"``).
+
+    Input: one sample of ``number_of_inputs`` values per call. See ``Rarity``.
+    """
+    _core_class = core.motion.NoveltyRarity
+
+    def __init__(self, *, method: str = "novelty", number_of_inputs: int = 1, **params: Any):
+        super().__init__(number_of_inputs=number_of_inputs, **params)
+
+    def _number_of_inputs(self) -> int:
+        return int(self._param("number_of_inputs", 1))
+
+    def _inputs(self) -> Inputs:
+        return Inputs(Input("signals", InputKind.SAMPLE, (self._number_of_inputs(),), doc="one value per signal"))
+
+    def _schema(self) -> Schema:
+        return Schema(Output("rarity", doc="distance to the nearest patterns of the memory, relative to its median; about 1 = familiar"))
+
+    def _process(self, sample: Any, timestamp: Optional[float]) -> Result:
+        values = np.asarray(sample, dtype=float).ravel()
+        if reason := non_finite(values):
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
+        rarity = self._block.process(values)
+        if rarity is None:
+            return self._no_output(Status.WARMING_UP, "the memory is filling", timestamp)
+        return self._result(rarity=rarity, timestamp=timestamp)
+
+
+for _variant in (_ModeDistanceRarity, _InformationRarity, _NoveltyRarity):
     _variant.__name__ = Rarity.__name__
 
 

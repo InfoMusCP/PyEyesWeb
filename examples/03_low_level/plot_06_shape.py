@@ -300,13 +300,10 @@ fig.tight_layout()
 # %%
 # Contours: curvature and body parts
 # -----------------------------------
-# A **contour** is the closed outline of a shape, an ordered ``(N, 2)`` array of points. Two features work on a contour, one
-# call per outline (see :doc:`/theory/imaging`):
-#
-# * :class:`~pyeyesweb.low_level.ContourCurvature` gives the signed curvature at every point, 1/r on a circle of radius r, positive
-#   where the contour turns left (counter-clockwise);
-# * :class:`~pyeyesweb.low_level.BodyPartsFromCurvature` finds the salient points (head, hands, feet) as the extremes of the
-#   curvature.
+# A **contour** is the closed outline of a shape, an ordered ``(N, 2)`` array of points. One feature works on a contour, one
+# call per outline (see :doc:`/theory/imaging`): :class:`~pyeyesweb.low_level.BodyPartsFromCurvature` finds the salient points
+# (head, hands, feet) as the extremes of the signed curvature of the outline, which it computes itself (1/r on a circle of
+# radius r, positive where the contour turns left, counter-clockwise).
 #
 # Two steps around them are done with SciPy: the outline of a silhouette is jagged, as it follows the pixels, so it is smoothed
 # first with a Gaussian filter along the contour (``scipy.ndimage.gaussian_filter1d`` with ``mode="wrap"``, because the contour
@@ -340,18 +337,26 @@ print("outline:", outline.shape, "(points, xy) in pixels")
 from scipy.ndimage import gaussian_filter1d
 from scipy.spatial import ConvexHull
 
-from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
+from pyeyesweb.low_level import BodyPartsFromCurvature
+
+
+
+def curvature_of(points):
+    """The discrete curvature that ``BodyPartsFromCurvature`` computes inside, written out to look at it (the contour is closed)."""
+    step = points - np.roll(points, 1, axis=0)  # from the previous point to this one
+    change = np.roll(step, -1, axis=0) - step  # next step minus this step
+    return (step[:, 0] * change[:, 1] - step[:, 1] * change[:, 0]) / (step ** 2).sum(axis=1) ** 1.5
+
 
 circle_angle = np.linspace(0, 2 * np.pi, 100, endpoint=False)
 circle = np.c_[100 * np.cos(circle_angle), 100 * np.sin(circle_angle)]
-curvature_of = ContourCurvature()
-print("circle of radius 100: curvature", np.round(curvature_of.process(circle).curvature[:3], 4))
+print("circle of radius 100: curvature", np.round(curvature_of(circle)[:3], 4))
 
 smooth = gaussian_filter1d(outline, sigma=4.0, axis=0, mode="wrap")  # each coordinate, along the closed contour
-curvature = curvature_of.process(smooth).curvature
+curvature = curvature_of(smooth)
 hull = smooth[ConvexHull(smooth).vertices]  # the hull vertices, in counter-clockwise order
-parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(curvature, smooth)
-print("raw curvature range:", np.round([curvature_of.process(outline).curvature.min(), curvature_of.process(outline).curvature.max()], 2),
+parts = BodyPartsFromCurvature(minimum_distance=15, track_points=False).process(smooth)
+print("raw curvature range:", np.round([curvature_of(outline).min(), curvature_of(outline).max()], 2),
       "| smoothed:", np.round([curvature.min(), curvature.max()], 2))
 print("hull:", hull.shape[0], "vertices |", len(parts.maximums), "maximums (x, y) in pixels:")
 for label, point in parts.maximums.items():

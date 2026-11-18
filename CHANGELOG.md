@@ -14,6 +14,15 @@ that belongs to it, `MotionNoiseDetector`, is finished, so the release has no mi
 `NonlinearInterdependence` and `SpikeSynchronization`. Every change of a number against the EyesWeb block or the 1.x
 library that the review decided is listed in the migration guide ("Behaviour changes that alter numbers").
 
+### Design review (2026-11-17)
+
+* Removed: `ContourCurvature` (no use on its own; `BodyPartsFromCurvature` now takes the contour only and computes the curvature
+  itself). The catalog holds 34 features.
+* Outputs and parameters dropped because the user computes them afterwards: `SilhouetteCentroids.normalized` (divide by the width
+  and the height), `BinaryPulsesRegularity.is_regularity_detected` (the rising edge of `is_regular`).
+* `SampleEntropy` returns one value, SampEn(m, r), with `embedding_dimension` as the template length m (default 2); it used to
+  return the entropies of the template lengths 0 to `embedding_dimension - 1`.
+
 ### Algorithm review
 
 * Library-wide rules: a result that is not defined is `INVALID_INPUT` with NaN outputs; durations are in seconds and lags

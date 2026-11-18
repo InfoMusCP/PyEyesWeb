@@ -1,0 +1,42 @@
+# Analysis tags: what kind of analysis a feature performs. A feature can have several; every catalog feature has at least one
+# (the extension fails the build otherwise). The layers and the families (families.yaml) are separate axes. The same tags and
+# the same assignment are used in the TouchDesigner documentation (EyesWebTD/docs/src/data/tags.ts).
+pose:
+  title: Pose
+  desc: Where the parts of the body are, the posture.
+  features: [SilhouetteCentroids, SilhouetteBodyParts, BodyPartsFromCurvature]
+space:
+  title: Space
+  desc: Shape, geometry and position of the body at one instant.
+  features: [HitCellDetector, BoundingBoxFilledArea,
+             EllipsoidSphericity, Equilibrium, PointsDensity, Symmetry, TriangleSymmetry, TrajectoryNonPlanarity]
+contraction:
+  title: Contraction / Expansion
+  desc: How much space the body takes, gathered or open.
+  features: [BoundingBoxFilledArea, EllipsoidSphericity, PointsDensity]
+trajectory:
+  title: Trajectory
+  desc: The shape of the path the body follows.
+  features: [DirectionChange, Directness, TrajectoryNonPlanarity, CurvatureVelocityCorrelation]
+energy:
+  title: Energy
+  desc: How much and how fast the body moves.
+  features: [Videogram, Kinematics, KineticEnergy]
+smoothness:
+  title: Smoothness
+  desc: The quality of the movement, fluid or jerky.
+  features: [SpectralArcLength, LogDimensionlessJerk, SubmovementCount, CurvatureVelocityCorrelation, Directness]
+complexity:
+  title: Complexity
+  desc: Predictability and rarity, entropy and novelty.
+  features: [SampleEntropy, MultiScaleEntropy, Rarity, EnsembleDominance, RecurrencePlot, CrossRecurrencePlot]
+rhythm:
+  title: Rhythm
+  desc: Periodicity, events and regularity of beats.
+  features: [Periodicity, GeneralisedAutoCorrelation, ScalarPeakDetector, BinaryPulsesRegularity, SubmovementCount,
+             EventSynchronization, EventSynchronizationMECS]
+coordination:
+  title: Coordination
+  desc: Relations between signals or between people.
+  features: [EventSynchronization, EventSynchronizationMECS, PartialRecurrenceSynchronization, PhaseLockingValue,
+             EnsembleDominance, TimeWindowSynchronizer]

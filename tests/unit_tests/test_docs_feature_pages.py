@@ -46,6 +46,16 @@ def test_pages_name_the_class_and_every_output(pages):
             assert output.name in text, f"{info.name}: output {output.name} missing from the page"
 
 
+def test_every_catalog_feature_has_an_analysis_tag_and_the_pages_show_them():
+    entries = pyeyesweb.catalog()
+    owner, table = feature_pages.load_tags(DATA / "tags.yaml", entries)
+    assert all(owner[info.name] for info in entries)
+    assert set(table) == {"pose", "space", "contraction", "trajectory", "energy", "smoothness", "complexity", "rhythm", "coordination"}
+    assert owner["SilhouetteCentroids"] == ["pose"]
+    assert owner["PointsDensity"] == ["space", "contraction"]                  # a feature can have several tags
+    assert owner["Rarity"] == ["complexity"]
+
+
 def test_wp4_todo_file(pages):
     import json
     todo = json.loads((pages / "_wp4_todo.json").read_text(encoding="utf-8"))

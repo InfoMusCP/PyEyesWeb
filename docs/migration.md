@@ -312,7 +312,7 @@ These are names of the development states or of the EyesWeb blocks that a user o
 | `SmoothnessIndex` (development `Smoothness`) | `CurvatureVelocityCorrelation` | |
 | `GetKinematicalFeatures`, `TrajectoryFeatures` | `Kinematics` | |
 | `AverageCurvature` | `TrajectoryNonPlanarity` | it measures the distance from local best-fit planes, not a curvature; for the curvature of a trajectory use `Kinematics(output_type="curvature")` |
-| `Curvature` | `ContourCurvature` | |
+| `Curvature` | (inside `BodyPartsFromCurvature`) | the curvature of a contour is no longer a feature of its own: `BodyPartsFromCurvature` takes the contour and computes it |
 | `SymmetryIndex3D`, `GeometricSymmetry` | `Symmetry` | `method="ratio"` or `"reflection"` |
 | `TriangleSymmetryIndex` | `TriangleSymmetry` | the output `symmetry` is 1 minus the EyesWeb asymmetry |
 | the development `GestureSegmenter` that read skeletons | `KineticEnergy` then `GestureSegmenter`, which takes the intensity | |

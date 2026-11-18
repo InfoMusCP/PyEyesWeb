@@ -26,19 +26,21 @@ still close at the next sample {cite}`richman2000physiological`, a measure used 
 length $m$ in a window. Two templates match when every pair of corresponding samples differs by at most a tolerance $r$
 (Chebyshev distance). With $B_m$ the number of matching pairs of templates of length $m$, and $A_m$ the number of those pairs
 that still match when both are extended by one sample (that is, the number of matching pairs of length $m+1$), the entry for
-the template length $m$ is
+the sample entropy is
 
 $$
-\mathrm{SampEn}(m) = -\ln\frac{A_m}{B_m}, \qquad m=0,\dots,M-1 ,
+\mathrm{SampEn}(m, r) = -\ln\frac{A}{B},
 $$
 
-in nats, where $M$ is `embedding_dimension`. Entry 0 compares single samples with all the pairs ($B_0=N(N-1)/2$). A regular signal, in which a match is usually followed by another match, gives
-a ratio $A_k/B_k$ close to 1 and a value close to 0; an irregular signal gives a large value. The value is `inf` or `NaN` when
+in nats, where $m$ is `embedding_dimension`. A regular signal, in which a match is usually followed by another match, gives
+a ratio $A/B$ close to 1 and a value close to 0; an irregular signal gives a large value (about 1 to 2.5 for noise). The value is `inf` or `NaN` when
 too few pairs match (a short window, or a tolerance that is too small).
 
-{py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` returns the whole vector $\mathrm{SampEn}(0),\dots,\mathrm{SampEn}(M-1)$:
-entry $m$ is the template length $m$, the convention of {cite}`richman2000physiological` and of pyEntropy, so the common
-choice $m=2$ is entry 2 and the $m=3$ of {cite}`glowinski2013movements` is entry 3. The counts are the raw numbers of
+{py:class}`~pyeyesweb.analysis_primitives.SampleEntropy` returns this one number, $\mathrm{SampEn}(m, r)$ with $m$ =
+`embedding_dimension` (default 2, the choice of {cite}`richman2000physiological`; the $m=3$ of {cite}`glowinski2013movements` is
+`embedding_dimension=3`). Compare values between gestures or over time: the absolute number depends on the window, on $r$ and
+on the sampling rate. (Until the design review of 2026-11-17 the feature returned the entropies of all the template lengths
+$0,\dots,M-1$, the convention of pyEntropy, so that the usual $m=2$ was the last of three entries.) The counts are the raw numbers of
 pairs of Richman and Moorman; the normalised form of {cite}`glowinski2013movements` (eqs. 2-4) gives values lower by a term
 of order $1/N$. The tolerance is `tolerance` in the unit of the signal, or, when it is not given,
 `relative_tolerance` (default 0.2) times the standard deviation of the window, so that the result does not depend on the scale
@@ -96,11 +98,11 @@ windows lower both and expect a coarser estimate at the largest scales.
 >>> noise = rng.normal(size=1200)                                             # irregular at every scale
 >>> oscillation = np.sin(2 * np.pi * samples / 50) + 0.1 * rng.normal(size=1200)  # regular, with a little noise
 >>> for name, signal in [("noise", noise), ("oscillation", oscillation)]:
-...     sampen = SampleEntropy(window=200, embedding_dimension=2).run(signal)[-1].sample_entropy
+...     sampen = round(float(SampleEntropy(window=200, embedding_dimension=2).run(signal)[-1].sample_entropy), 2)
 ...     mse = MultiScaleEntropy(window=1200, max_scale=6, minimum_points=100).run(signal)[-1]
-...     print(name, sampen.round(2), mse.complexity_index.round(2), mse.scale_entropies.round(2))
-noise [2.18 2.19] [9.68] [[2.47 2.06 1.95 1.82 1.76 1.73]]
-oscillation [2.04 0.74] [2.51] [[0.96 0.7  0.59 0.47 0.12 0.29]]
+...     print(name, sampen, mse.complexity_index.round(2), mse.scale_entropies.round(2))
+noise 2.29 [9.68] [[2.47 2.06 1.95 1.82 1.76 1.73]]
+oscillation 0.72 [2.51] [[0.96 0.7  0.59 0.47 0.12 0.29]]
 ```
 
 The noise has the highest entropy at every scale, so its index is large, but its entropy falls from 2.47 to 1.73 as the scale
@@ -113,7 +115,7 @@ at the finest scale and a small index.
 Rarity tells how atypical the newest value of a signal is with respect to the values that preceded it: a value that has
 occurred often in the recent past is common, a value that has hardly occurred is rare. It can flag the unusual movement in a
 performance. Rarity is one of the mid-level qualities used in the sonification study of {cite}`niewiadomski2019embodied`.
-{py:class}`~pyeyesweb.analysis_primitives.Rarity` offers two different formulas, selected by `method`; they are not special
+{py:class}`~pyeyesweb.analysis_primitives.Rarity` offers three different formulas, selected by `method`; they are not special
 cases of one another, they have different parameters and a parameter of the other method raises an error.
 
 `method="information"` (the EyesWeb rarity, the default) discretises each of `number_of_inputs` scalar signals into bins of
@@ -140,11 +142,37 @@ with `alpha` a gain. $R=0$ when the newest sample is in the most common bin and 
 much less frequent its own bin is. It needs no bin widths. Use `"information"` to reproduce EyesWeb or to compare several
 signals with chosen bin widths, and `"mode_distance"` for a score of a single stream.
 
-Both methods report `INVALID_INPUT` for a non-finite value. With `"information"`, a value beyond the sum of the bin widths is
+`method="novelty"` answers a different question: not how rare the current *level* of the signal is, but how new the *movement*
+is. Both methods above are blind to what happens inside a bin: a change of shape, a pause in the middle of an oscillation, a
+smaller amplitude that stays among values already seen all look common. The novelty method compares patterns. At every sample
+the last `pattern` samples (one point every `step` samples, all channels) are a pattern, compared with the patterns of the last
+`memory` samples, leaving out the newest `pattern / 2` of them because they overlap it. Each channel is divided by its standard
+deviation over the memory, and the distance between two patterns is Euclidean. With $d$ the mean distance from the current
+pattern to its `neighbours` nearest patterns,
+
+$$
+R=\frac{d}{\operatorname{median}\bigl(d\text{ over the last }\mathtt{memory}\text{ samples}\bigr)},
+$$
+
+which has no unit: about 1 for a movement as familiar as usual, larger for a movement that has not happened in the memory
+(3 and above is a clear novelty), and 0 when the pattern is exactly in the memory. A repeated movement becomes familiar, because
+its patterns enter the memory, and its rarity falls back to about 1; a movement not done for `memory` samples is new again.
+It takes any signal, a scalar such as a speed or an energy (`shape=False`, the level is part of the pattern), a position
+(`shape=True` subtracts the newest sample from the pattern, so the same gesture done somewhere else is familiar), or several
+features together. On a recording of one performer (Qualisys, left wrist, 50 Hz, `shape=True`) it flags the first arm
+movement after standing still and the first time the arms go straight up, and not the repeated lateral raises. It is new in
+this library (design review 2026-11-17), not a port of an EyesWeb block.
+
+Both methods above report `INVALID_INPUT` for a non-finite value. With `"information"`, a value beyond the sum of the bin widths is
 outside the bins: it keeps the previous bin and the call is `INVALID_INPUT` (reason `"value outside the bins"`).
 
 ```{doctest}
 >>> from pyeyesweb.analysis_primitives import Rarity
+>>> oscillation = np.sin(2 * np.pi * np.arange(220) / 20)
+>>> oscillation[150:160] = 0.0                        # ten samples of pause
+>>> novelty = Rarity(method="novelty", memory=90, pattern=10).run(oscillation)
+>>> round(float(max(novelty.rarity[100:150])), 1), round(float(max(novelty.rarity[150:175])), 1)
+(1.0, 15.5)
 >>> rarity = Rarity(method="mode_distance", window=20, alpha=1.0)
 >>> stream = np.tile([0.0, 0.1], 20)                  # a regular back-and-forth
 >>> stream[-1] = 1.0                                  # and then a sudden large value
@@ -187,8 +215,8 @@ A pulse is a non-zero sample of a single-channel signal: a step, a beat, or the 
 {py:class}`~pyeyesweb.analysis_primitives.ScalarPeakDetector`. {py:class}`~pyeyesweb.analysis_primitives.BinaryPulsesRegularity`
 asks whether the pulses of a window are equally spaced. With $I$ the intervals between consecutive pulses, in samples, the
 window is regular when it holds at least three pulses and $\max(I)-\min(I)<$ `threshold` {cite}`niewiadomski2019embodied`;
-the default threshold, 1, accepts only equal intervals. It returns `is_regular`, the `pulse_count` and `is_regularity_detected`, a trigger
-that is true on the first window that is regular after one that was not. It measures the regularity of a rhythm, such as a
+the default threshold, 1, accepts only equal intervals. It returns `is_regular` and the `pulse_count`; the moment a rhythm becomes regular is the rising edge of
+`is_regular` (`np.diff(is_regular) == 1`), left to the user. It measures the regularity of a rhythm, such as a
 steady walk or a metronomic gesture, and complements the periodicity, which finds the period but does not require the events
 to be equally spaced.
 

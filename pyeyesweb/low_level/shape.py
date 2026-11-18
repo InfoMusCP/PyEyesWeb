@@ -1,4 +1,4 @@
-"""Shape of contours: contour filter, curvature, convex hull and body parts from curvature.
+"""Shape of contours: the salient points of a closed contour (body parts from curvature).
 
 A contour is one frame of ``(x, y)`` points, an ``(N, 2)`` array; the first and the last point are neighbours (the
 contour is closed). Every feature declares its outputs as a ``Schema`` (``feature.outputs``) and returns a ``Result``
@@ -10,10 +10,10 @@ from typing import Any, Optional
 import numpy as np
 
 from pyeyesweb._core import core
-from pyeyesweb.base.core_feature import XY, CoreFeature, FrameFeature
+from pyeyesweb.base.core_feature import XY, FrameFeature
 from pyeyesweb.base.inputs import non_finite, points_input
 from pyeyesweb.catalog import Layer, describe
-from pyeyesweb.data_models.inputs import Input, InputKind, Inputs
+from pyeyesweb.data_models.inputs import Inputs
 from pyeyesweb.data_models.results import Output, Result, Schema, Status
 
 _motion = core.motion
@@ -21,21 +21,13 @@ _motion = core.motion
 CONTOUR = points_input("contour", None, "contour points (x, y)", dims=2)
 
 
-class ContourFeature(FrameFeature):
-    """A feature taking one ``(N, 2)`` contour per call; an empty or non-finite one is ``INVALID_INPUT``."""
-    _INPUTS = Inputs(CONTOUR)
+@describe(Layer.LOW_LEVEL, eyesweb="body_parts_from_curvature")
+class BodyPartsFromCurvature(FrameFeature):
+    r"""Contour points at the curvature extrema of a silhouette, tracked as labelled body parts.
 
-    def _process(self, contour: Any, timestamp: Optional[float]) -> Result:
-        if reason := non_finite(contour):
-            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
-        return self._to_result(self._block.process(contour), timestamp)
-
-
-@describe(Layer.LOW_LEVEL, eyesweb="contourstolist (CurvatureFunction)")
-class ContourCurvature(ContourFeature):
-    r"""Signed curvature at every point of a closed 2D contour.
-
-    Estimates the curvature of a closed contour, for instance the outline of a silhouette, from each point and its two
+    Finds the salient points of a closed contour, such as the head, hands and feet of a silhouette, as the extrema of
+    its curvature, and gives them labels that stay with the same point from one call to the next. The feature takes the
+    ``(x, y)`` points of the contour only: it estimates the curvature itself, at every point from the point and its two
     neighbours (the contour is closed, so the neighbours of the first point include the last one). With :math:`(x', y')`
     the step from the previous point to the point and :math:`(x'', y'')` the difference between the next step and this
     one, the curvature at the point is
@@ -47,53 +39,16 @@ class ContourCurvature(ContourFeature):
     which is :math:`1 / R` for a circle of radius :math:`R` and 0 for a straight run of equally spaced points. It is
     positive where the contour turns counter-clockwise in the coordinate frame of the input and negative where it turns
     clockwise (in image coordinates, with y pointing down, the orientation on the screen is reversed); it is 0 where the
-    point coincides with the next one. The values feed ``BodyPartsFromCurvature``.
+    point coincides with the next one.
 
-    Input: one contour per call, an ``(N, 2)`` array; ``process(frame, *, timestamp=None)`` (``run`` takes ``(T, N,
-    2)``). The feature has no parameters and keeps no state.
+    The contour is cut at the zero crossings of the curvature (at least ``minimum_distance`` points apart); in every
+    piece, the extremum of larger magnitude is a minimum point when it is negative and a maximum point when it is
+    positive. With ``track_points`` the labels of the previous call are carried over to the nearest new points (the
+    feature keeps the previous points as its state), up to ``number_of_points`` of them; a maximum that moved farther
+    than ``tracking_distance`` since the previous call loses its label.
 
-    Notes
-    -----
-    **Outputs.** ``curvature``: ``(N,)``, one value per contour point (value ``i`` belongs to point ``i``), in the
-    inverse of the unit of the input.
-
-    **Statuses.** ``INVALID_INPUT`` for an empty contour or NaN or infinite coordinates; otherwise ``OK``.
-
-    Corrected in the core: the curvature values are aligned with the contour points (value ``i`` at point ``i``); the
-    sequence used to be rotated by one point.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from pyeyesweb.low_level import ContourCurvature
-    >>> theta = np.linspace(0.0, 2.0 * np.pi, 60, endpoint=False)
-    >>> circle = np.column_stack([2.0 * np.cos(theta), 2.0 * np.sin(theta)])
-    >>> print(np.round(ContourCurvature().process(circle).curvature[:3], 2))
-    [0.5 0.5 0.5]
-    """
-    _core_class = _motion.ContourCurvature
-
-    def _schema(self) -> Schema:
-        return Schema(Output("curvature", (None,), unit="1/<length>", doc="curvature per contour point"))
-
-    def _to_result(self, raw: np.ndarray, timestamp: float) -> Result:
-        return self._result(timestamp=timestamp, curvature=raw)
-
-
-@describe(Layer.LOW_LEVEL, eyesweb="body_parts_from_curvature")
-class BodyPartsFromCurvature(CoreFeature):
-    """Contour points at the curvature extrema of a silhouette, tracked as labelled body parts.
-
-    Finds the salient points of a closed contour, such as the head, hands and feet of a silhouette, as the extrema of
-    its curvature, and gives them labels that stay with the same point from one call to the next. The contour is cut at
-    the zero crossings of the curvature (at least ``minimum_distance`` points apart); in every piece, the extremum of
-    larger magnitude is a minimum point when it is negative and a maximum point when it is positive. With
-    ``track_points`` the labels of the previous call are carried over to the nearest new points (the feature keeps the
-    previous points as its state), up to ``number_of_points`` of them; a maximum that moved farther than
-    ``tracking_distance`` since the previous call loses its label.
-
-    Input: ``process(curvature, contour, *, timestamp=None)``, the ``(N,)`` curvature of each point of the ``(N, 2)``
-    contour (for example from ``ContourCurvature``); ``run`` takes ``(T, N)`` and ``(T, N, 2)`` recordings.
+    Input: ``process(contour, *, timestamp=None)``, the ``(N, 2)`` contour of one frame; ``run`` takes ``(T, N, 2)``.
+    The curvature is a derivative of the points, so it amplifies their noise: smooth the contour before the feature.
 
     Parameters
     ----------
@@ -117,38 +72,45 @@ class BodyPartsFromCurvature(CoreFeature):
     unit of the contour. They are labelled outputs, ``label -> (x, y)`` with labels ``label_min<i>`` and
     ``label_max<i>``; their number depends on the contour.
 
-    **Statuses.** ``OK`` always; ``ValueError`` when the curvature and the contour have a different number of points.
+    **Statuses.** ``INVALID_INPUT`` for an empty contour or NaN or infinite coordinates; otherwise ``OK``.
 
-    Corrected in the core: when the last piece of the contour wraps around into the first, the merged extremum keeps the
-    point of that extremum together with its value (it used to keep the point index of another extremum).
+    Changed (design review 2026-11-17): the feature took the curvature of each point as a first input, computed by the
+    public ``ContourCurvature`` feature. That feature had no use on its own and is gone: the curvature is computed here.
+    Corrected in the core: the curvature values are aligned with the contour points (value ``i`` at point ``i``; the
+    sequence used to be rotated by one point), and when the last piece of the contour wraps around into the first, the
+    merged extremum keeps the point of that extremum together with its value.
 
     Examples
     --------
     >>> import numpy as np
-    >>> from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
+    >>> from pyeyesweb.low_level import BodyPartsFromCurvature
     >>> t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
     >>> r = 10.0 + 3.0 * np.cos(5.0 * t)
     >>> contour = np.column_stack([r * np.cos(t), r * np.sin(t)])
-    >>> parts = BodyPartsFromCurvature().process(ContourCurvature().process(contour).curvature, contour)
+    >>> parts = BodyPartsFromCurvature().process(contour)
     >>> print(len(parts.minimums), len(parts.maximums))
     5 5
     """
     _core_class = _motion.BodyPartsFromCurvature
-    _INPUTS = Inputs(Input("curvature", InputKind.SAMPLE, (None,), doc="curvature of each contour point"), CONTOUR)
+    _INPUTS = Inputs(CONTOUR)
+
+    def __init__(self, **params: Any):
+        self._curvature_block = _motion.ContourCurvature()  # the curvature of each contour point; it keeps no state
+        super().__init__(**params)
 
     def _schema(self) -> Schema:
         return Schema(Output("minimums", components=XY, labelled=True, unit="<length>", doc="points at curvature minima"),
                       Output("maximums", components=XY, labelled=True, unit="<length>", doc="points at curvature maxima"))
 
-    def process(self, curvature: Any, contour: Any, *, timestamp: Optional[float] = None) -> Result:
-        if len(np.atleast_1d(curvature)) != len(contour) and len(contour) and np.size(curvature):
-            raise ValueError(f"BodyPartsFromCurvature: curvature holds {len(np.atleast_1d(curvature))} values but "
-                             f"contour {len(contour)} points: one curvature per contour point")
-        return self._to_result(self._block.process(curvature, contour), timestamp)
+    def _process(self, contour: Any, timestamp: Optional[float]) -> Result:
+        if reason := non_finite(contour):
+            return self._no_output(Status.INVALID_INPUT, reason, timestamp)
+        contour = np.asarray(contour, dtype=float)
+        return self._to_result(self._block.process(self._curvature_block.process(contour), contour), timestamp)
 
     def _to_result(self, raw: Any, timestamp: Optional[float]) -> Result:
         minimums, maximums = raw
         return self._result(timestamp=timestamp, minimums=minimums, maximums=maximums)
 
 
-__all__ = ["ContourCurvature", "BodyPartsFromCurvature"]
+__all__ = ["BodyPartsFromCurvature"]

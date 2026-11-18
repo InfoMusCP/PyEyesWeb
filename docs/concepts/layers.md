@@ -45,7 +45,7 @@ it was ported from.
 - **High-level** features need several people.
 - An **analysis primitive** takes any scalar, vector or event signal and knows nothing of bodies, skeletons or geometry.
 
-So `ContourCurvature`, `Directness` and `TrajectoryNonPlanarity` are low-level features, and the synchronization measures
+So `BodyPartsFromCurvature`, `Directness` and `TrajectoryNonPlanarity` are low-level features, and the synchronization measures
 between signals are analysis primitives although they are mostly applied to movement.
 
 ## Browsing the catalog

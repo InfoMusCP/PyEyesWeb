@@ -38,4 +38,4 @@ dominance:
 imaging:
   title: Imaging
   doc: theory/imaging
-  features: [SilhouetteCentroids, SilhouetteBodyParts, Videogram, ContourCurvature, BodyPartsFromCurvature]
+  features: [SilhouetteCentroids, SilhouetteBodyParts, Videogram, BodyPartsFromCurvature]

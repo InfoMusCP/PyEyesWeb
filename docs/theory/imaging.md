@@ -74,7 +74,7 @@ parameters are fractions of the area and of the width.
 >>> centroids = SilhouetteCentroids().process(mask)
 >>> centroids.centroids[:2].tolist()                  # centre of gravity and head, (x, y) in pixels
 [[160.0, 114.0], [159.0, 48.0]]
->>> centroids.normalized[0].tolist()                  # the centre of gravity, as a fraction of the frame
+>>> (centroids.centroids[0] / [320, 240]).tolist()    # the centre of gravity as a fraction of the frame: divide by [width, height]
 [0.5, 0.475]
 >>> parts = SilhouetteBodyParts().process(mask)
 >>> parts.regions.tolist()                            # (x, y, width, height) of each part
@@ -158,18 +158,18 @@ A bar that moves up and down in front of a still background draws a sine in the 
 
 ## The shape of the outline: contours
 
-The two contour features act on an $(N, 2)$ contour, one per call, and keep no state, except the labels of
-{py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature`. They are low-level features: they measure one frame.
+{py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` acts on an $(N, 2)$ contour, one per call, and keeps only the labels of its
+points as state. It is a low-level feature: it measures one frame.
 
 **Smoothing.** The outline of a silhouette is jagged because it follows the pixel grid. The curvature is a second difference
 of the points, so it amplifies this noise, and the extrema that {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` looks
-for are lost among spurious ones. Smooth the contour before the two features. The library has no feature for this: use
+for are lost among spurious ones. Smooth the contour before the feature. The library has no feature for this: use
 `scipy.ndimage.gaussian_filter1d(contour, sigma, axis=0, mode="wrap")`, which convolves each coordinate with a Gaussian kernel
 of standard deviation `sigma`. With `mode="wrap"` the contour is treated as closed: the neighbours of the first point include
 the last ones. `sigma` is in samples, not in length units.
 
-**Curvature.** {py:class}`~pyeyesweb.low_level.ContourCurvature` estimates the curvature at every point from the point and its
-two neighbours. With $(x', y')$ the step from the previous point to this one and $(x'', y'')$ the difference between the next
+**Curvature.** {py:class}`~pyeyesweb.low_level.BodyPartsFromCurvature` takes only the contour and estimates the curvature at every
+point itself, from the point and its two neighbours. With $(x', y')$ the step from the previous point to this one and $(x'', y'')$ the difference between the next
 step and this one,
 
 $$
@@ -190,26 +190,20 @@ frame; a maximum that moved farther than `tracking_distance` (0.05 by default, i
 contour in pixels) loses its label. The extremities of a body are read from the curvature of its silhouette, as in the EyesWeb silhouette analysis.
 
 A contour with five lobes shows the chain. Without smoothing, noise of standard deviation 0.05 in the coordinates (the radius is about 10)
-multiplies the largest curvature by about six and creates spurious extrema; after the Gaussian filter the five lobes and five
-valleys are found.
+multiplies the curvature by about six and creates spurious extrema (11 minimums instead of 5); after the Gaussian filter the five
+lobes and five valleys are found.
 
 ```{doctest}
 >>> from scipy.ndimage import gaussian_filter1d
->>> from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
+>>> from pyeyesweb.low_level import BodyPartsFromCurvature
 >>> t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
 >>> radius = 10.0 + 3.0 * np.cos(5.0 * t)
 >>> clean = np.column_stack([radius * np.cos(t), radius * np.sin(t)])
 >>> noisy = clean + np.random.default_rng(0).normal(0.0, 0.05, clean.shape)
->>> curvature = ContourCurvature().process(noisy).curvature
->>> round(float(np.abs(curvature).max()), 1)
-7.7
->>> smooth = gaussian_filter1d(noisy, 2.0, axis=0, mode="wrap")
->>> smooth_curvature = ContourCurvature().process(smooth).curvature
->>> round(float(np.abs(smooth_curvature).max()), 1)
-1.2
->>> len(BodyPartsFromCurvature().process(curvature, noisy).minimums)
+>>> len(BodyPartsFromCurvature().process(noisy).minimums)
 11
->>> parts = BodyPartsFromCurvature().process(smooth_curvature, smooth)
+>>> smooth = gaussian_filter1d(noisy, 2.0, axis=0, mode="wrap")
+>>> parts = BodyPartsFromCurvature().process(smooth)
 >>> len(parts.minimums), len(parts.maximums)
 (5, 5)
 >>> sorted(parts.maximums)
@@ -224,15 +218,17 @@ valleys are found.
    import matplotlib.pyplot as plt
    import numpy as np
    from scipy.ndimage import gaussian_filter1d
-   from pyeyesweb.low_level import BodyPartsFromCurvature, ContourCurvature
+   from pyeyesweb.low_level import BodyPartsFromCurvature
 
    t = np.linspace(0.0, 2.0 * np.pi, 200, endpoint=False)
    radius = 10.0 + 3.0 * np.cos(5.0 * t)
    clean = np.column_stack([radius * np.cos(t), radius * np.sin(t)])
    noisy = clean + np.random.default_rng(0).normal(0.0, 0.05, clean.shape)
    smooth = gaussian_filter1d(noisy, 2.0, axis=0, mode="wrap")
-   curvature = ContourCurvature().process(smooth).curvature
-   parts = BodyPartsFromCurvature().process(curvature, smooth)
+   parts = BodyPartsFromCurvature().process(smooth)
+   step = smooth - np.roll(smooth, 1, axis=0)                      # the curvature that the feature computes, to plot it
+   change = np.roll(step, -1, axis=0) - step
+   curvature = (step[:, 0] * change[:, 1] - step[:, 1] * change[:, 0]) / (step ** 2).sum(axis=1) ** 1.5
 
    fig, (left, right) = plt.subplots(1, 2, figsize=(7.0, 3.2))
    left.plot(noisy[:, 0], noisy[:, 1], color="0.7", linewidth=0.8, label="noisy")
@@ -257,8 +253,8 @@ colour; `run` takes `(T, H, W[, C])` or a list of images. An empty image is `INV
 foreground. The result of these features is otherwise `OK` on every call: there is no warm-up. Outputs that are images have a
 shape known only from the first frame.
 
-**Units.** Centroids and regions are in pixels; `normalized` divides by the frame size and is dimensionless in $[0, 1]$. The
-contour features keep the unit of the contour. To go from pixels to metres, scale the input: the library does not know the
+**Units.** Centroids and regions are in pixels, with y pointing down from the top-left pixel (use `height - 1 - y` for an axis that points up); divide by the frame size for coordinates in $[0, 1]$. The
+contour feature keeps the unit of the contour. To go from pixels to metres, scale the input: the library does not know the
 scale of your camera.
 
 **Known limitation.** The tests of the body-parts detector read pixels outside the mask or the region of interest in some

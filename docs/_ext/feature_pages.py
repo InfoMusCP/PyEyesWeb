@@ -52,6 +52,22 @@ def load_families(path, entries):
     return owner, table
 
 
+def load_tags(path, entries):
+    """Return ``{feature: [tag keys]}`` and the tag table; raise unless every catalog feature has a tag and every name exists."""
+    table = _yaml(path)
+    owner = {}
+    for key, tag in table.items():
+        for name in tag["features"]:
+            owner.setdefault(name, []).append(key)
+    names = {info.name for info in entries}
+    missing = sorted(names - set(owner))
+    # a name in tags.yaml that is not a catalog feature is allowed only for the utility TimeWindowSynchronizer (not in the catalog)
+    unknown = sorted(set(owner) - names - {"TimeWindowSynchronizer"})
+    if missing or unknown:
+        raise ValueError(f"tags.yaml does not match the catalog: no tag for {missing}, not in the catalog {unknown}")
+    return owner, table
+
+
 def _model():
     from pyeyesweb.physical_signals.humanoid import MassSpringModel
     model = MassSpringModel()
@@ -127,15 +143,16 @@ def public_class(info):
     return module
 
 
-def render_page(info, family_key, families, feature):
-    """The reST text of one feature page."""
+def render_page(info, family_key, families, feature, tags=()):
+    """The reST text of one feature page. `tags` are the titles of the analysis tags of the feature."""
     layer = info.layer
     public_class(info)
     family = families[family_key]
     title = info.name
     lines = [f".. _feature-{info.name}:", "", title, "=" * len(title), "", _esc(info.summary), "",
              f":bdg-primary:`{_esc(layer.title)}` :bdg-secondary:`timescale: {_esc(info.timescale.value)}`"
-             + (f" :bdg-info:`EyesWeb: {_esc(info.eyesweb_block)}`" if info.eyesweb_block else ""), "",
+             + (f" :bdg-info:`EyesWeb: {_esc(info.eyesweb_block)}`" if info.eyesweb_block else "")
+             + "".join(f" :bdg-light:`{_esc(tag)}`" for tag in tags), "",
              f"Layer: :doc:`{_esc(layer.title)} </api/{layer.value}>`. "
              f"Family: :doc:`{_esc(family['title'])} </{family['doc']}>`.", "",
              "Parameters", "----------", ""]
@@ -198,6 +215,7 @@ def generate(entries, out_dir, data_dir):
     """Write one page per entry under ``out_dir/<layer>/<Name>.rst``; return the report (raises on any failure)."""
     out_dir, data_dir = Path(out_dir), Path(data_dir)
     owner, families = load_families(data_dir / "families.yaml", entries)
+    tag_owner, tag_table = load_tags(data_dir / "tags.yaml", entries)
     minimum = _yaml(data_dir / "instantiation.yaml")
     waivers = _yaml(data_dir / "wp4_waivers.yaml") or []
     report = docstring_report(entries, waivers)
@@ -206,7 +224,8 @@ def generate(entries, out_dir, data_dir):
     for info in entries:
         target = out_dir / info.layer.value / f"{info.name}.rst"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(render_page(info, owner[info.name], families, instantiate(info, minimum)), encoding="utf-8")
+        titles = [tag_table[key]["title"] for key in tag_owner[info.name]]
+        target.write_text(render_page(info, owner[info.name], families, instantiate(info, minimum), titles), encoding="utf-8")
     written = sorted(out_dir.glob("*/*.rst"))
     if len(written) != len(entries):
         raise RuntimeError(f"feature_pages: {len(written)} pages written for {len(entries)} catalog features")
@@ -230,10 +249,12 @@ class FeatureTable(Directive):
         if not entries:
             raise self.error(f"feature-table: no catalog feature in layer {layer!r}")
         owner, families = load_families(DOCS / "_data/families.yaml", pyeyesweb.catalog())
+        tag_owner, tag_table = load_tags(DOCS / "_data/tags.yaml", pyeyesweb.catalog())
         rows = [[_lit(i.name), _esc(i.summary), _esc(i.timescale.value),
                  f":doc:`{_esc(families[owner[i.name]]['title'])} </{families[owner[i.name]]['doc']}>`",
+                 _esc(", ".join(tag_table[key]["title"] for key in tag_owner[i.name])),
                  f":doc:`API </{GENERATED}/{layer}/{i.name}>`"] for i in entries]
-        text = _table(["Feature", "Summary", "Timescale", "Family", "Link"], rows, [20, 38, 10, 20, 12])
+        text = _table(["Feature", "Summary", "Timescale", "Family", "Analysis", "Link"], rows, [18, 32, 9, 17, 16, 8])
         # The table is reStructuredText whatever the page is written in: parse it with the RST parser, not with the state
         # machine of the page (on a MyST page that one reads Markdown and would print the list-table as a paragraph).
         document = utils.new_document(self.state.document.current_source, self.state.document.settings)

@@ -5,7 +5,7 @@ import pytest
 
 from pyeyesweb.analysis_primitives import EventSynchronization
 from pyeyesweb.data_models import Input, InputKind, Status
-from pyeyesweb.low_level import (BodyPartsFromCurvature, ContourCurvature, KineticEnergy,
+from pyeyesweb.low_level import (BodyPartsFromCurvature, KineticEnergy,
                                  PointsDensity)
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector
 from pyeyesweb.mid_level.segmentation import GestureSegmenter
@@ -31,9 +31,9 @@ def _impulsivity():
 
 # (feature factory, wrong sample(s) per input, name of the offending input)
 WRONG = [
-    (lambda: ContourCurvature(), [RNG.normal(size=(40, 3))], "contour"),
-    (lambda: ContourCurvature(), [RNG.normal(size=(40, 1))], "contour"),
-    (lambda: ContourCurvature(), [RNG.normal(size=80)], "contour"),
+    (lambda: BodyPartsFromCurvature(), [RNG.normal(size=(40, 3))], "contour"),
+    (lambda: BodyPartsFromCurvature(), [RNG.normal(size=(40, 1))], "contour"),
+    (lambda: BodyPartsFromCurvature(), [RNG.normal(size=80)], "contour"),
     (lambda: HitCellDetector(), [RNG.normal(size=(5, 3))], "points"),
     (lambda: PositionDependingPotentials(), [np.ones((4, 3))], "cells"),
     (lambda: MotionNoiseDetector(labels=LABELS), [SKELETON[:2]], "skeleton"),
@@ -57,19 +57,10 @@ def test_a_wrongly_shaped_sample_raises_naming_feature_and_input(make, wrong, na
     assert type(feature).__name__ in str(error.value) and f"'{name}'" in str(error.value)
 
 
-def test_curvature_and_contour_of_different_lengths_raise():
-    feature = BodyPartsFromCurvature()
-    with pytest.raises(ValueError, match="BodyPartsFromCurvature"):
-        feature.process(np.zeros(30), CONTOUR)
-    assert feature.process(np.zeros(len(CONTOUR)), CONTOUR).status is Status.OK
-
-
 def test_multi_input_features_check_each_input():
     feature = BodyPartsFromCurvature()
     with pytest.raises(ValueError, match="'contour'"):
-        feature.process(np.zeros(40), RNG.normal(size=(40, 3)))
-    with pytest.raises(ValueError, match="'curvature'"):
-        feature.process(np.zeros((40, 2)), CONTOUR)
+        feature.process(RNG.normal(size=(40, 3)))
     sync = EventSynchronization(window=8)
     with pytest.raises(ValueError, match="'second_signal'"):
         sync.process(1.0, np.array([1.0, 2.0]))
@@ -91,8 +82,8 @@ def test_process_window_checks_the_channels_of_a_fixed_input():
 
 
 def test_run_with_a_mis_shaped_recording_raises_before_looping():
-    feature = ContourCurvature()
-    with pytest.raises(ValueError, match="ContourCurvature"):
+    feature = BodyPartsFromCurvature()
+    with pytest.raises(ValueError, match="BodyPartsFromCurvature"):
         feature.run(RNG.normal(size=(5, 40, 3)))
     ke = KineticEnergy(labels=LABELS, weights=WEIGHTS)
     with pytest.raises(ValueError, match="KineticEnergy"):
@@ -108,7 +99,7 @@ def test_run_with_a_mis_shaped_recording_raises_before_looping():
 # ----------------------------------------------------------------------------------------- valid input still works
 
 def test_valid_inputs_of_every_kind_are_accepted():
-    assert ContourCurvature().process(CONTOUR).status is Status.OK
+    assert BodyPartsFromCurvature().process(CONTOUR).status is Status.OK
     assert KineticEnergy(labels=LABELS, weights=WEIGHTS).process(SKELETON).status is Status.OK
     suddenness = _suddenness()
     results = [suddenness.process(RNG.normal(size=2)) for _ in range(8)]
@@ -117,7 +108,7 @@ def test_valid_inputs_of_every_kind_are_accepted():
     assert EventSynchronization(window=8).process(1.0, np.array([0.0])).status in (Status.OK, Status.WARMING_UP)
 
 
-@pytest.mark.parametrize("make", [ContourCurvature, HitCellDetector,
+@pytest.mark.parametrize("make", [BodyPartsFromCurvature, HitCellDetector,
                                   lambda: PointsDensity()])
 def test_empty_frames_still_reach_the_feature(make):
     feature = make()

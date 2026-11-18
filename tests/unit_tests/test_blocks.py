@@ -30,7 +30,7 @@ from pyeyesweb.analysis_primitives.synchronization.events import NonlinearInterd
 from pyeyesweb.data_models.recorder import Recorder  # noqa: E402
 from pyeyesweb.data_models.results import Result, Schema, Status  # noqa: E402
 from pyeyesweb.low_level import (  # noqa: E402
-    BodyPartsFromCurvature, ContourCurvature, EllipsoidSphericity, Kinematics, KineticEnergy, PointsDensity, CurvatureVelocityCorrelation,
+    BodyPartsFromCurvature, EllipsoidSphericity, Kinematics, KineticEnergy, PointsDensity, CurvatureVelocityCorrelation,
     Symmetry, TriangleSymmetry
 )
 from pyeyesweb.low_level.motion_noise import MotionNoiseDetector  # noqa: E402
@@ -49,6 +49,8 @@ RATIO = dict(pairs=[("left_hip", "right_hip")], reference_point="torso")  # the 
 SINE = np.sin(np.arange(60) / 3.0)
 PERIODIC = np.tile([3.0, -1, 0, 2, -4], 10)
 CIRCLE = [(math.cos(angle), math.sin(angle)) for angle in np.linspace(0, 2 * math.pi, 8, endpoint=False)]
+_ANGLE = np.linspace(0, 2 * math.pi, 80, endpoint=False)
+FLOWER = np.column_stack([(10 + 3 * np.cos(5 * _ANGLE)) * np.cos(_ANGLE), (10 + 3 * np.cos(5 * _ANGLE)) * np.sin(_ANGLE)])  # a contour with 5 petals
 
 # name -> (block factory, call on the block). Every block, constructed with typical parameters, run once.
 CASES = {
@@ -66,9 +68,7 @@ CASES = {
     "PointsDensity": (lambda: PointsDensity(), lambda block: block.process({"a": (0, 0, 0), "b": (2, 0, 0)})),
     "TriangleSymmetry": (lambda: TriangleSymmetry(), lambda block: block.process((0, 1), (-1, 0), (1, 0))),
     "EllipsoidSphericity": (lambda: EllipsoidSphericity(), lambda block: block.process_axes(1, 2, 3)),
-    "ContourCurvature": (lambda: ContourCurvature(), lambda block: block.process(SQUARE)),
-    "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), lambda block: block.process(
-        [1.0, -1, 1, -1, 1, -1, 1, -1], CIRCLE)),
+    "BodyPartsFromCurvature": (lambda: BodyPartsFromCurvature(minimum_distance=1), lambda block: block.process(FLOWER)),
     "Kinematics": (lambda: Kinematics(dims=2), lambda block: block.process([0.0, 1.0])),
     "PartialRecurrenceSynchronization": (lambda: PartialRecurrenceSynchronization(), lambda block: block.process(np.eye(2))),
     "GeneralisedAutoCorrelation": (lambda: GeneralisedAutoCorrelation(window=50),
@@ -223,7 +223,7 @@ def test_structured_outputs_flatten_with_meaningful_keys():
     assert list(gac.taus) == [1, 2, 3, 4] and gac.recurrence_rate.shape == gac.taus.shape
     assert gac.taus.dtype.kind == "i"
 
-    bp = BodyPartsFromCurvature(minimum_distance=1).process([1.0, -1, 1, -1, 1, -1, 1, -1], CIRCLE)
+    bp = BodyPartsFromCurvature(minimum_distance=1).process(FLOWER)
     for labelled in (bp.minimums, bp.maximums):
         assert all(array.shape == (2,) for array in labelled.values())
 
@@ -289,7 +289,7 @@ def test_rarity_and_sample_entropy_and_mecs_sizes_follow_parameters():
     rarity = Rarity(method="information", number_of_inputs=3)
     assert rarity.outputs["rarity"].shape == (3,) and rarity.process([0.1, 0.5, 0.9]).rarity.shape == (3,)
     entropy = SampleEntropy(window=len(SINE), embedding_dimension=4, tolerance=0.5)
-    assert entropy.outputs["sample_entropy"].shape == (4,) and entropy._process_window(SINE).sample_entropy.shape == (4,)
+    assert entropy.outputs["sample_entropy"].shape == () and np.ndim(entropy._process_window(SINE).sample_entropy) == 0   # one value: SampEn(m)
     mecs = EventSynchronizationMECS(window=40, hop=40, number_of_event_classes=2)
     assert mecs.outputs["events"].shape == (2,)
     out = mecs._process_window(*[np.vstack([EVENTS] * 2)] * 2)
@@ -298,7 +298,7 @@ def test_rarity_and_sample_entropy_and_mecs_sizes_follow_parameters():
 
 @pytest.mark.parametrize("name,expected", [
     ("Rarity", {"rarity": (2,)}),
-    ("SampleEntropy", {"sample_entropy": (12,)}),
+    ("SampleEntropy", {"sample_entropy": ()}),
     ("EventSynchronizationMECS", {"synchronization": (3,), "events": (3,)}),
     ("Symmetry", {"symmetry": ()}),
     ("PointsDensity", {"density": (), "centroid": (3,)}),
@@ -316,7 +316,7 @@ def test_default_constructor_matches_declared_defaults(name, expected):
     if name == "Rarity":
         assert block.process([0.1, 0.9]).rarity.shape == (2,)
     elif name == "SampleEntropy":
-        assert block._process_window(np.sin(np.arange(200) / 3.0)).sample_entropy.shape == (12,)
+        assert np.ndim(block._process_window(np.sin(np.arange(200) / 3.0)).sample_entropy) == 0
 
 
 # ----------------------------------------------------------------------------------- (e) immutability, (f) recorder
@@ -353,7 +353,7 @@ def test_recorder_over_a_stream_of_one_block():
 
 
 def test_reset_exists_on_every_block_and_attributes_pass_through():
-    for factory in (ContourCurvature, EllipsoidSphericity):
+    for factory in (EllipsoidSphericity,):
         factory().reset()  # stateless blocks: no-op
 
 
