@@ -19,6 +19,11 @@ from floats import assert_same_floats  # noqa: E402
 # PLV goes through an FFT-based phase (Hilbert transform) and an average over the window: the last-digit differences between
 # MSVC and GCC grow to a relative ~2e-12 (seen on Linux, noise_filter2). 1e-10 still flags any real change of behaviour.
 PLV_RTOL = 1e-10
+# With the band-pass filter: a 4th-order Butterworth band-pass as one polynomial (b, a) through filtfilt, like
+# scipy.signal.butter + filtfilt. That form is ill-conditioned for a narrow low band: the last-bit differences of tan / sin /
+# cos between the maths libraries (Apple's libm against MSVC and glibc) grow to an absolute ~4e-6 on the PLV (seen on
+# Apple silicon). 1e-5 on an index in [0, 1] is far below any meaningful change. Second-order sections would remove it.
+PLV_FILTERED_ATOL = 1e-5
 from pyeyesweb.data_models.results import Status  # noqa: E402
 
 
@@ -107,4 +112,6 @@ def test_two_input_feature_reproduces_the_frozen_outputs_of_the_list_input_featu
     for result, expected in zip(results, entry["records"]):
         assert (int(result.status), result.reason) == (expected["status"], expected["reason"])
         assert np.array_equal(result.timestamp, expected["timestamp"], equal_nan=True)
-        assert_same_floats(result["phase_locking_value"], expected["outputs"]["phase_locking_value"], rtol=PLV_RTOL)
+        filtered = params.get("low_frequency") is not None
+        assert_same_floats(result["phase_locking_value"], expected["outputs"]["phase_locking_value"], rtol=PLV_RTOL,
+                           atol=PLV_FILTERED_ATOL if filtered else 1e-14)
