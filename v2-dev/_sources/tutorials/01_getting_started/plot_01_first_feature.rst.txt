@@ -510,7 +510,7 @@ Exercise 1. The same feature object, another joint.
  .. code-block:: none
 
 
-    <matplotlib.legend.Legend object at 0x71e7e2db6ed0>
+    <matplotlib.legend.Legend object at 0x76be83b3db50>
 
 
 
