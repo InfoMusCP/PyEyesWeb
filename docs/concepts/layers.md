@@ -59,7 +59,7 @@ Pass a {py:class}`~pyeyesweb.catalog.Layer` to list one group.
 >>> from pyeyesweb import Layer, catalog
 >>> features = catalog()
 >>> Counter(info.layer.value for info in features)
-Counter({'low_level': 17, 'analysis_primitives': 13, 'physical_signals': 4, 'high_level': 1})
+Counter({'low_level': 16, 'analysis_primitives': 13, 'physical_signals': 4, 'high_level': 1})
 >>> [info.name for info in catalog(Layer.MID_LEVEL)]
 []
 >>> info = next(info for info in features if info.name == "KineticEnergy")

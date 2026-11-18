@@ -129,7 +129,7 @@ read from the catalog:
 >>> from collections import Counter
 >>> from pyeyesweb import catalog
 >>> Counter((info.layer.name, info.timescale.value) for info in catalog())
-Counter({('LOW_LEVEL', 'up to ~0.5 s'): 17, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('HIGH_LEVEL', '3 s and above'): 1})
+Counter({('LOW_LEVEL', 'up to ~0.5 s'): 16, ('ANALYSIS_PRIMITIVE', 'any'): 13, ('PHYSICAL_SIGNALS', 'frame'): 4, ('HIGH_LEVEL', '3 s and above'): 1})
 ```
 
 A few remarks on the placement make the mapping precise.
